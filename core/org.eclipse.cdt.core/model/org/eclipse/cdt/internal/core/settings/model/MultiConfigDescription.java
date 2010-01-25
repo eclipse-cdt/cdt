@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -191,7 +191,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		ArrayList<ICFileDescription> lst = new ArrayList<ICFileDescription>();
 		for (int i=0; i<fCfgs.length; i++) 
 			lst.addAll(Arrays.asList(fCfgs[i].getFileDescriptions()));
-		return (ICFileDescription[])lst.toArray(new ICFileDescription[lst.size()]);
+		return lst.toArray(new ICFileDescription[lst.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -201,7 +201,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		ArrayList<ICFolderDescription> lst = new ArrayList<ICFolderDescription>();
 		for (int i=0; i<fCfgs.length; i++) 
 			lst.addAll(Arrays.asList(fCfgs[i].getFolderDescriptions()));
-		return (ICFolderDescription[])lst.toArray(new ICFolderDescription[lst.size()]);
+		return lst.toArray(new ICFolderDescription[lst.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -263,13 +263,13 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		if (lst.size() == 0)
 			return null;
 		if (lst.size() == 1)
-			return (ICResourceDescription)lst.get(0);
+			return lst.get(0);
 		if (isForFolder)
 			return new MultiFolderDescription(
-				(ICFolderDescription[])lst.toArray(new ICFolderDescription[lst.size()]));
+				lst.toArray(new ICFolderDescription[lst.size()]));
 		else
 			return new MultiFileDescription(
-					(ICFileDescription[])lst.toArray(new ICFileDescription[lst.size()]));
+					lst.toArray(new ICFileDescription[lst.size()]));
 	}
 	
 	/* (non-Javadoc)
@@ -279,7 +279,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
 		for (int i=0; i<fCfgs.length; i++) 
 			lst.addAll(Arrays.asList(fCfgs[i].getResourceDescriptions()));
-		return (ICResourceDescription[])lst.toArray(new ICResourceDescription[lst.size()]);
+		return lst.toArray(new ICResourceDescription[lst.size()]);
 	}
 
 	/* (non-Javadoc)

@@ -107,6 +107,22 @@ public class ActionsList extends Composite {
 		updateButtons();
 	}
 
+	/**
+	 * Remove an action from the list
+	 * 
+	 * @since 7.0
+	 */
+	public void removeAction(IBreakpointAction action) {
+		TableItem[] currentItems = table.getItems();
+		for (int i = 0; i < currentItems.length; i++) {
+			if (((IBreakpointAction) currentItems[i].getData()).equals(action)) {
+				table.remove(i);
+				break;
+			}
+		}
+		updateButtons();
+	}
+
 	public String getActionNames() {
 		StringBuffer result = new StringBuffer();
 		TableItem[] currentItems = table.getItems();

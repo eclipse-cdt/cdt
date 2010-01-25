@@ -117,11 +117,6 @@ public class GlobalActionsList extends Composite {
 		editButton.setEnabled(hasActions);
 
 		deleteButton = new Button(this, SWT.NONE);
-		deleteButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				HandleDeleteButton();
-			}
-		});
 		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		deleteButton.setText(Messages.getString("GlobalActionsList.6")); //$NON-NLS-1$
 		deleteButton.setEnabled(hasActions);
@@ -130,6 +125,13 @@ public class GlobalActionsList extends Composite {
 
 	public Button getAttachButton() {
 		return attachButton;
+	}
+
+	/**
+	 * @since 7.0
+	 */
+	public Button getDeleteButton() {
+		return deleteButton;
 	}
 
 	public IBreakpointAction[] getSelectedActions() {

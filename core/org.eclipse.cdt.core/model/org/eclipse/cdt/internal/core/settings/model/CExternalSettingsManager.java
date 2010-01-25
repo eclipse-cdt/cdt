@@ -206,9 +206,9 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return NullContainer.INSTANCE;
 		}
 
-		public String[] getSupplierIds() {
-			return null;
-		}
+//		public String[] getSupplierIds() {
+//			return null;
+//		}
 
 		@Override
 		public void removeListener(ICExternalSettingsListener listener) {
@@ -249,9 +249,9 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return NullFactory.INSTANCE;
 		}
 		
-		public String getId(){
-			return fId;
-		}
+//		public String getId(){
+//			return fId;
+//		}
 		
 		public void shutdown(){
 			if(fFactory != null){
@@ -429,16 +429,16 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return -1;
 		}
 
-		public ICConfigurationDescription getConfigurationById(String id, boolean write){
-			ICConfigurationDescription cfg = fProjDes.getConfigurationById(id);
-			if(cfg == null)
-				return null;
-			if(write && fProjDes.isReadOnly()){
-				makeWritable();
-				cfg = fProjDes.getConfigurationById(id);
-			}
-			return cfg;
-		}
+//		public ICConfigurationDescription getConfigurationById(String id, boolean write){
+//			ICConfigurationDescription cfg = fProjDes.getConfigurationById(id);
+//			if(cfg == null)
+//				return null;
+//			if(write && fProjDes.isReadOnly()){
+//				makeWritable();
+//				cfg = fProjDes.getConfigurationById(id);
+//			}
+//			return cfg;
+//		}
 
 		public int size() {
 			return fCfgList.size();
@@ -446,13 +446,13 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 	
 	private static class DeltaInfo{
-		private boolean fCalculated;
-		private ExtSettingsDelta[] fDeltas;
+//		private boolean fCalculated;
+//		private ExtSettingsDelta[] fDeltas;
 		
-		void setDelta(ExtSettingsDelta[] deltas){
-			fDeltas = deltas;
-			fCalculated = true;
-		}
+//		void setDelta(ExtSettingsDelta[] deltas){
+//			fDeltas = deltas;
+////			fCalculated = true;
+//		}
 	}
 
 	private FactoryDescriptor getFactoryDescriptor(String id){

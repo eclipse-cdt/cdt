@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class CExternalSettingsDeltaProcessor {
 				current = new ICSourceEntry[0];
 			}
 		}
-		List<ICSettingEntry> newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
+		List<ICSourceEntry> newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
 		if(newEntries != null){
 			try {
 				cfgDes.setSourceEntries(newEntries.toArray(new ICSourceEntry[newEntries.size()]));
@@ -121,7 +122,7 @@ public class CExternalSettingsDeltaProcessor {
 			}
 		}
 
-		List<ICSettingEntry> newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
+		List<ICOutputEntry> newEntries = calculateUpdatedEntries(current, diff[0], diff[1]);
 		if(newEntries != null){
 			try {
 				bs.setOutputDirectories(newEntries.toArray(new ICOutputEntry[newEntries.size()]));
@@ -197,7 +198,7 @@ public class CExternalSettingsDeltaProcessor {
 				continue;
 			
 			entries = setting.getSettingEntries(kind);
-			List list = calculateUpdatedEntries(entries, diff[0], diff[1]);
+			List<ICLanguageSettingEntry> list = calculateUpdatedEntries(entries, diff[0], diff[1]);
 			
 			if(list != null){
 				setting.setSettingEntries(kind, list);
@@ -207,7 +208,7 @@ public class CExternalSettingsDeltaProcessor {
 		return changed;
 	}
 	
-	private static List<ICSettingEntry> calculateUpdatedEntries(ICSettingEntry current[], ICSettingEntry added[], ICSettingEntry removed[]){
+	private static <T extends ICSettingEntry> List<T> calculateUpdatedEntries(T current[], ICSettingEntry added[], ICSettingEntry removed[]){
 		LinkedHashMap<EntryContentsKey, ICSettingEntry> map = new LinkedHashMap<EntryContentsKey, ICSettingEntry>();
 		boolean changed = false;
 		if(added != null){
@@ -234,7 +235,8 @@ public class CExternalSettingsDeltaProcessor {
 				}
 			}
 		}
-		return changed ? new ArrayList<ICSettingEntry>(map.values()) : null;
+		Collection<T> values = (Collection<T>) map.values();
+		return changed ? new ArrayList<T>(values) : null;
 	}
 	
 	private static boolean isSettingCompatible(ICLanguageSetting setting, CExternalSetting provider){

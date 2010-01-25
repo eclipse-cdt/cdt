@@ -724,7 +724,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					path.lastSegment(), path.removeLastSegments(1).toString()));
 			long start= System.currentTimeMillis();
 			IASTTranslationUnit ast= createAST(tu, lang, scanInfo, fASTOptions, inContext, pm);
-			fStatistics.fParsingTime += System.currentTimeMillis()-start;
+			fStatistics.fParsingTime += System.currentTimeMillis() - start;
 			if (ast != null) {
 				writeToIndex(linkageID, ast, computeHashCode(scanInfo), pm);
 			}
@@ -913,14 +913,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (a != null) {
 				for (String element : a) {
 					result= addToHashcode(result, element);
-
 				}
 			}		
 			a= esi.getMacroFiles();
 			if (a != null) {
 				for (String element : a) {
 					result= addToHashcode(result, element);
-
 				}
 			}		
 		}

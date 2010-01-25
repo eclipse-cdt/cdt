@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements IScannerInfoProvider, IScannerInfoChangeListener{
-	private Map listeners;
+	private Map<IProject, List<IScannerInfoChangeListener>> listeners;
 	private IScannerInfoProvider fProvider;
 
 
@@ -39,13 +39,9 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 	}
 	
 	
-	/**
-	 * @param project
-	 * @param info
-	 */
 	protected void notifyInfoListeners(IResource rc, IScannerInfo info) {
 		// Call in the cavalry
-		List listeners = (List)getListeners().get(rc);
+		List<IScannerInfoChangeListener> listeners = getListeners().get(rc);
 		if (listeners == null) {
 			return;
 		}
@@ -69,11 +65,11 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		}
 		IProject project = resource.getProject();
 		// Get listeners for this resource
-		Map map = getListeners();
-		List list = (List)map.get(project);
+		Map<IProject, List<IScannerInfoChangeListener>> map = getListeners();
+		List<IScannerInfoChangeListener> list = map.get(project);
 		if (list == null) {
 			// Create a new list
-			list = new ArrayList();
+			list = new ArrayList<IScannerInfoChangeListener>();
 			map.put(project, list);
 		}
 		if (!list.contains(listener)) {
@@ -85,9 +81,9 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 	/*
 	 * @return
 	 */
-	private Map getListeners() {
+	private Map<IProject, List<IScannerInfoChangeListener>> getListeners() {
 		if (listeners == null) {
-			listeners = new HashMap();
+			listeners = new HashMap<IProject, List<IScannerInfoChangeListener>>();
 		}
 		return listeners;
 	}
@@ -104,8 +100,8 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		}
 		IProject project = resource.getProject();
 		// Remove the listener
-		Map map = getListeners();
-		List list = (List)map.get(project);
+		Map<IProject, List<IScannerInfoChangeListener>> map = getListeners();
+		List<IScannerInfoChangeListener> list = map.get(project);
 		if (list != null && !list.isEmpty()) {
 			// The list is not empty so try to remove listener
 			list.remove(listener);

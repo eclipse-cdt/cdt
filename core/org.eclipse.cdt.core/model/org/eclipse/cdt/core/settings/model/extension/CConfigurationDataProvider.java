@@ -34,12 +34,13 @@ public abstract class CConfigurationDataProvider {
 	 * 2. When the configuration copy (clone) is being created for the copy description
 
 	 * @param des
-	 * @param base
+	 * @param baseDescription
+	 * @param baseData
 	 * @param clone true indicates that the configuration copy (clone) is being created for 
 	 * the copy description.
-	 * false indicates that the new configuration is being created based upon the already existing one via 
-	 * theICProjectDescription.createConfiguration method call
-	 * @return
+	 * @param monitor
+	 * @return {@code false} indicates that the new configuration is being created based upon the already existing one via 
+	 * theICProjectDescription.createConfiguration method call, {@code true} otherwise
 	 * @throws CoreException
 	 */
 	public abstract CConfigurationData createConfiguration(ICConfigurationDescription des, 
@@ -49,9 +50,6 @@ public abstract class CConfigurationDataProvider {
 	
 	/**
 	 * called to notify the provider that the configuration is removed
-	 * 
-	 * @param des
-	 * @param data
 	 */
 	public abstract void removeConfiguration(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor);
 
@@ -61,12 +59,7 @@ public abstract class CConfigurationDataProvider {
 	 * method. See {@link #applyConfiguration(ICConfigurationDescription, ICConfigurationDescription, CConfigurationData, IModificationContext, IProgressMonitor)}
 	 * for detail
 	 * 
-	 * @param des
-	 * @param base
-	 * @return
 	 * @throws CoreException
-	 * 
-	 * @see {@link #applyConfiguration(ICConfigurationDescription, ICConfigurationDescription, CConfigurationData, IModificationContext, IProgressMonitor)}
 	 */
 	public CConfigurationData applyConfiguration(ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
@@ -92,7 +85,6 @@ public abstract class CConfigurationDataProvider {
 	 * ICProjectDesacription framework
 	 * @param monitor
 	 * 
-	 * @return
 	 * @throws CoreException
 	 */
 	public CConfigurationData applyConfiguration(ICConfigurationDescription des, 
@@ -107,9 +99,6 @@ public abstract class CConfigurationDataProvider {
 	 * called to notify that the configuration data was cached
 	 * implementors can do any necessary cleaning, etc.
 	 * Default implementation is empty
-	 * 
-	 * @param cfgDes
-	 * @param data
 	 */
 	public void dataCached(ICConfigurationDescription cfgDes, CConfigurationData data, IProgressMonitor monitor){
 	}

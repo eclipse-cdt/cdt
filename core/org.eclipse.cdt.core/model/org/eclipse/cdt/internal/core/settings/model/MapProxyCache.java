@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,32 +18,32 @@ import java.util.Map;
 import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 
 public class MapProxyCache implements IProxyCache {
-	private HashMap fMap;
+	private HashMap<String, CDataProxy> fMap;
 
-	private HashMap getMap(boolean create){
+	private HashMap<String, CDataProxy> getMap(boolean create){
 		if(fMap == null && create)
-			fMap = new HashMap();
+			fMap = new HashMap<String, CDataProxy>();
 		return fMap;
 	}
 
 	public CDataProxy[] getCachedProxies() {
-		Map map = getMap(false);
+		Map<String, CDataProxy> map = getMap(false);
 		if(map != null){
-			Collection c = map.values();
-			return (CDataProxy[])c.toArray(new CDataProxy[c.size()]);
+			Collection<CDataProxy> c = map.values();
+			return c.toArray(new CDataProxy[c.size()]);
 		}
 		return new CDataProxy[0];
 	}
 
 	public CDataProxy getCachedProxy(String id) {
-		Map map = getMap(false);
+		Map<String, CDataProxy> map = getMap(false);
 		if(map != null)
-			return (CDataProxy)map.get(id);
+			return map.get(id);
 		return null;
 	}
 
 	public void removeCachedProxy(String id) {
-		Map map = getMap(false);
+		Map<String, CDataProxy> map = getMap(false);
 		if(map != null)
 			map.remove(id);
 	}
@@ -56,8 +56,9 @@ public class MapProxyCache implements IProxyCache {
 		getMap(true).put(proxy.getId(), proxy);
 	}
 
-	public Map getCachedProxiesMap() {
-		return (Map)getMap(true).clone();
+	@SuppressWarnings("unchecked")
+	public Map<String, CDataProxy> getCachedProxiesMap() {
+		return (Map<String, CDataProxy>)getMap(true).clone();
 	}
 
 	public CDataProxy getCachedProxy(CDataObject data) {
@@ -68,7 +69,7 @@ public class MapProxyCache implements IProxyCache {
 		removeCachedProxy(proxy.getId());
 	}
 
-	public void reuseProxies(List dataList, Map freeProxyMap) {
+	public void reuseProxies(List<CDataObject> dataList, Map<String, CDataProxy> freeProxyMap) {
 	}
 }
 

@@ -57,7 +57,7 @@ class TimersVMNode extends AbstractDMVMNode
             new LabelAttribute[] { 
                 new LabelText("Timer #{0}", new String[] { PROP_TIMER_NUMBER }), 
                 new LabelImage(DsfExamplesPlugin.getDefault().getImageRegistry().
-                    getDescriptor(DsfExamplesPlugin.IMG_ALARM))
+                    getDescriptor(DsfExamplesPlugin.IMG_TIMER))
             });
         fgLabelProvider.setColumnInfo(TimersViewColumnPresentation.COL_ID, idCol);
         

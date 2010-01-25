@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.core.runtime.IPath;
 
 public class CSettingEntryFactory {
-	private static final HashSet EMPTY_SET = new HashSet(0);
+	private static final HashSet<IPath> EMPTY_SET = new HashSet<IPath>(0);
 	
 	private KindBasedStore fStore = new KindBasedStore(false);
 	
@@ -41,7 +41,7 @@ public class CSettingEntryFactory {
 		return null;
 	}
 
-	private HashMap getFlagMap(int kind, String name, String value, IPath[] exclusionPatters, boolean create){
+	private HashMap<Integer, ICSettingEntry> getFlagMap(int kind, String name, String value, IPath[] exclusionPatters, boolean create){
 		switch(kind){
 		case ICSettingEntry.MACRO:
 			HashMap valueMap = getValueMap(name, create);
@@ -53,7 +53,7 @@ public class CSettingEntryFactory {
 		case ICSettingEntry.OUTPUT_PATH:
 			HashMap excPatternMap = getExclusionPatternsMap(kind, name, create);
 			if(excPatternMap != null){
-				HashSet setKey = exclusionPatters == null || exclusionPatters.length == 0 ? EMPTY_SET : new HashSet(Arrays.asList(exclusionPatters)); 
+				HashSet<IPath> setKey = exclusionPatters == null || exclusionPatters.length == 0 ? EMPTY_SET : new HashSet<IPath>(Arrays.asList(exclusionPatters)); 
 				return getMap(excPatternMap, setKey, create);
 			}
 			return null;
@@ -102,10 +102,10 @@ public class CSettingEntryFactory {
 	}
 
 	private ICSettingEntry getEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, ICSettingEntry baseEntry, boolean create){
-		HashMap flagMap = getFlagMap(kind, name, value, exclusionPatterns, create);
+		HashMap<Integer, ICSettingEntry> flagMap = getFlagMap(kind, name, value, exclusionPatterns, create);
 		if(flagMap != null){
 			Integer iFlags = new Integer(flags);
-			ICSettingEntry entry = (ICSettingEntry)flagMap.get(iFlags);
+			ICSettingEntry entry = flagMap.get(iFlags);
 			if(entry == null && create){
 				entry = baseEntry != null ? baseEntry : CDataUtil.createEntry(kind, name, value, exclusionPatterns, flags);
 				flagMap.put(iFlags, entry);

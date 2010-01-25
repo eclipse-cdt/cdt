@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class CEntriesSet {
-	private LinkedHashMap fEntriesMap = new LinkedHashMap();
+	private LinkedHashMap<Object, ICSettingEntry> fEntriesMap = new LinkedHashMap<Object, ICSettingEntry>();
 
 	public CEntriesSet(){
 	}
 
-	public CEntriesSet(List list){
+	public CEntriesSet(List<ICSettingEntry> list){
 		setEntries(list);
 	}
 
@@ -42,40 +41,35 @@ public class CEntriesSet {
 	}
 */
 	public ICSettingEntry[] toArray() {
-		return (ICSettingEntry[])fEntriesMap.values().toArray(new ICSettingEntry[fEntriesMap.size()]);
+		return fEntriesMap.values().toArray(new ICSettingEntry[fEntriesMap.size()]);
 	}
-	
+
 	protected Object getKey(ICSettingEntry entry){
 		return entry;
 	}
-	
+
 	public ICSettingEntry addEntry(ICSettingEntry entry) {
-		return (ICSettingEntry)fEntriesMap.put(getKey(entry), entry);
+		return fEntriesMap.put(getKey(entry), entry);
 	}
 
 	public void clear() {
 		fEntriesMap.clear();
 	}
-	
-	public void setEntries(List list) {
+
+	public void setEntries(List<ICSettingEntry> list) {
 		clear();
-		for(Iterator iter = list.iterator(); iter.hasNext();){
-			Object obj = iter.next();
-			if(obj instanceof ICSettingEntry){
-				ICSettingEntry entry = (ICSettingEntry)obj;
-				addEntry(entry);
-			}
+		for (ICSettingEntry entry : list) {
+			addEntry(entry);
 		}
 	}
 
 	public void setEntries(ICSettingEntry[] entries) {
 		clear();
-		for(int i = 0; i < entries.length; i++){
-			ICSettingEntry entry = entries[i];
+		for (ICSettingEntry entry : entries) {
 			if(entry != null){
 				addEntry(entry);
 			}
 		}
 	}
-	
+
 }

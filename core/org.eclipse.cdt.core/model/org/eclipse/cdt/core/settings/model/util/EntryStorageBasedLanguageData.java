@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,8 @@ public abstract class EntryStorageBasedLanguageData extends CDefaultLanguageData
 	public ICLanguageSettingEntry[] getEntries(int kind) {
 		AbstractEntryStorage storage = getStorage(kind);
 		if(storage != null){
-			List list = storage.getEntries(null);
-			return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]); 
+			List<ICLanguageSettingEntry> list = storage.getEntries(null);
+			return list.toArray(new ICLanguageSettingEntry[list.size()]); 
 		}
 		return new ICLanguageSettingEntry[0];
 	}

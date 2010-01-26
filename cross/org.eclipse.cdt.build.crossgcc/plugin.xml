@@ -50,6 +50,13 @@
          </option>
          <tool
                commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
+               id="cdt.managedbuild.tool.gnu.cross.c.compiler"
+               isAbstract="false"
+               name="Cross GCC Compiler"
+               superClass="cdt.managedbuild.tool.gnu.c.compiler">
+         </tool>
+         <tool
+               commandLineGenerator="org.eclipse.cdt.internal.build.crossgcc.CrossCommandLineGenerator"
                id="cdt.managedbuild.tool.gnu.cross.cpp.compiler"
                isAbstract="false"
                name="Cross G++ Compiler"

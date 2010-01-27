@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Wind River Systems - initial API and implementation
  *     Nokia 			  - created GDBBackend service. Sep. 2008
  *     IBM Corporation 
+ *     Ericsson           - Support for Tracing Control service
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -27,6 +28,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -110,6 +112,16 @@ public class ServicesLaunchSequence extends Sequence {
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
         	fLaunch.getServiceFactory().createService(IDisassembly.class, fSession).initialize(requestMonitor);
+        }},
+        new Step() { @Override
+        public void execute(RequestMonitor requestMonitor) {
+           	IGDBTraceControl traceService = fLaunch.getServiceFactory().createService(IGDBTraceControl.class, fSession, fLaunch.getLaunchConfiguration());
+           	// Note that for older versions of GDB, we don't support tracing, so there is no trace service.
+           	if (traceService != null) {
+           		traceService.initialize(requestMonitor);
+           	} else {
+           		requestMonitor.done();
+           	}
         }},
     };
 

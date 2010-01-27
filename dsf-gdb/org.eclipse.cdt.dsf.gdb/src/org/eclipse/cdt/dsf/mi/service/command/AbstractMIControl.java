@@ -704,6 +704,57 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	return clientMsg.toString();
         }
 
+       private String getBackendMessage(MIOutput response) {
+            
+        	// Attempt to extract a message from the result record:
+        	String message = null;
+        	String[] parameters = null;
+        	if (response != null && response.getMIResultRecord() != null) {
+        		MIResult[] results = response.getMIResultRecord().getMIResults();
+
+        		// Extract the parameters
+        		MIResult paramsRes = findResultRecord(results, "parameters"); //$NON-NLS-1$
+        		if (paramsRes != null && paramsRes.getMIValue() instanceof MIList) {
+        			MIValue[] paramValues = ((MIList)paramsRes.getMIValue()).getMIValues();
+        			parameters = new String[paramValues.length];
+        			for (int i = 0; i < paramValues.length; i++) {
+        				if (paramValues[i] instanceof MIConst) {
+        					parameters[i] = ((MIConst)paramValues[i]).getString();
+        				} else {
+        					parameters[i] = ""; //$NON-NLS-1$
+        				}
+        			}
+        		}
+        		MIResult messageRes = findResultRecord(results, "message"); //$NON-NLS-1$
+        		if (messageRes != null && messageRes.getMIValue() instanceof MIConst) {
+        			message = ((MIConst)messageRes.getMIValue()).getString();
+        		}
+        		// FRCH: I believe that the actual string is "msg" ...
+        		// FRCH: (at least for the version of gdb I'm using)
+        		else {
+        			messageRes = findResultRecord(results, "msg"); //$NON-NLS-1$
+        			if (messageRes != null && messageRes.getMIValue() instanceof MIConst) {
+        				message = ((MIConst)messageRes.getMIValue()).getString();
+        			}
+        		}
+        	}
+        	StringBuilder clientMsg = new StringBuilder();
+        	if (message != null) {
+        		if (parameters != null) {
+        			try {
+        				clientMsg.append(MessageFormat.format(message, parameters));
+        			} catch(IllegalArgumentException e2) {
+        				// Message format string invalid.  Fallback to just appending the strings. 
+        				clientMsg.append(message);
+        				clientMsg.append(parameters);
+        			}
+        		} else {
+        			clientMsg.append(message);
+        		}
+        	}
+        	return clientMsg.toString();
+        }
+
         void processMIOutput(String line) {
             MIParser.RecordType recordType = fMiParser.getRecordType(line);
             
@@ -740,7 +791,9 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						
 						if ( errorResult.equals(MIResultRecord.ERROR) ) {
 							String status = getStatusString(commandHandle.getCommand(),response);
-							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, status, null)); 
+							String message = getBackendMessage(response);
+							Exception exception = new Exception(message);
+							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, status, exception)); 
 						}
 						
 						/*

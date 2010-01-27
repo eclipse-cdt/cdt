@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
-import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.MIDisassembly;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.mi.service.MIModules;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters;
@@ -71,8 +71,13 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 					return (V)createBackendGDBService(session, (ILaunchConfiguration)arg);
 				}
 			}
+		} else if (IGDBTraceControl.class.isAssignableFrom(clazz)) {
+			for (Object arg : optionalArguments) {
+				if (arg instanceof ILaunchConfiguration) {
+					return (V)createTraceControlService(session, (ILaunchConfiguration)arg);
+				}
+			}
 		}
-
 
         return super.createService(clazz, session);
 	}
@@ -153,5 +158,16 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	@Override
 	protected IStack createStackService(DsfSession session) {
 		return new MIStack(session);
+	}
+	
+	/** @since 2.1 */
+	protected IGDBTraceControl createTraceControlService(DsfSession session, ILaunchConfiguration config) {
+		// This service is available for GDB 7.1. But until that GDB is itself available
+		// there is a pre-release that has a version of 6.8.50.20090414
+		if ("6.8.50.20090414".compareTo(fVersion) <= 0) {
+			return new GDBTraceControl_7_1(session, config);
+		}
+		// There is no implementation of the TraceControl service before GDB 7.1
+		return null;		
 	}
 }

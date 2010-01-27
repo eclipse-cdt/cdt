@@ -355,5 +355,56 @@
             debugModelId="org.eclipse.cdt.dsf.gdb">
       </modelContextBinding>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints.TraceControlView"
+            icon="icons/full/view16/tracecontrol_view.gif"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view"
+            name="%view.traceControl.name">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+         <menuContribution
+            locationURI="toolbar:org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.startTracing"
+               icon="icons/full/obj16/starttracing.gif"
+               label="%toolbar.startTracing.name"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.stopTracing"
+               icon="icons/full/obj16/stoptracing.gif"
+               label="%toolbar.stopTracing.name"
+               style="push">
+         </command>
+      </menuContribution>
+         <menuContribution
+               locationURI="menu:org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view?after=additions">
+            <command
+                  commandId="org.eclipse.cdt.debug.ui.command.saveTraceData"
+                  icon="icons/full/obj16/savetrace.gif"
+                  label="%toolbar.saveTracing.name"
+                  style="push">
+            </command>
+         </menuContribution>
+   </extension>
 </plugin>

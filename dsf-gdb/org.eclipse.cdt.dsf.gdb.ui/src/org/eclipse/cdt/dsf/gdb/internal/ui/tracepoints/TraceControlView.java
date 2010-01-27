@@ -1,0 +1,511 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Ericsson and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Ericsson - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.RejectedExecutionException;
+
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceVariableDMData;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStartedDMEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingStoppedDMEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITracingSupportedChangeDMEvent;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.ViewPart;
+
+/**
+ * TraceControlView Part
+ * 
+ * This view is used to control Tracing.
+ * 
+ * @since 2.1
+ */
+public class TraceControlView extends ViewPart implements IViewPart, SessionEndedListener {
+
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
+	public class FailedTraceVariableCreationException extends Exception {
+	    private static final long serialVersionUID = -3042693455630687285L;
+
+		FailedTraceVariableCreationException() {}
+		
+		FailedTraceVariableCreationException(String errorMessage) {
+			super(errorMessage);
+		}
+	}
+	
+	/**
+	 * Action to refresh the content of the view.
+	 */
+	private final class ActionRefreshView extends Action {
+		public ActionRefreshView() {
+			setText(TracepointsMessages.TraceControlView_action_Refresh_label);
+			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Refresh_enabled));
+			setDisabledImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Refresh_disabled));
+		}
+		@Override
+		public void run() {
+			updateContent();
+		}
+	}
+
+	private final class ActionOpenTraceVarDetails extends Action {
+		public ActionOpenTraceVarDetails() {
+			setText(TracepointsMessages.TraceControlView_action_trace_variable_details);
+			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Trace_Variables));
+		}
+		@Override
+		public void run() {
+			Shell shell = Display.getDefault().getActiveShell();
+			TraceVarDetailsDialog dialog = new TraceVarDetailsDialog(shell, TraceControlView.this);
+			dialog.open();
+		}
+	}
+
+	private ISelectionListener fDebugViewListener = null;
+	private String fDebugSessionId = null;
+	private DsfServicesTracker fServicesTracker = null;
+	private volatile ITraceTargetDMContext fTargetContext = null;
+
+	private StyledText fStatusText = null;
+	protected Action fActionRefreshView = null;
+	protected Action fOpenTraceVarDetails = null;
+	private boolean fTracingSupported = false;
+
+	public TraceControlView() {
+	}
+	
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		site.getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, 
+				                            fDebugViewListener = new ISelectionListener() {
+			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+				updateDebugContext();
+			}});
+	}
+	
+	@Override
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		init(site);
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(1, false);
+		composite.setLayout(layout);
+		
+		// Let's just create a place to put a text status for now.
+		// A fancier display would be nicer though
+		fStatusText = new StyledText(composite, SWT.MULTI);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		fStatusText.setLayoutData(gd);
+		fStatusText.setEditable(false);
+		fStatusText.setCaret(null);
+		
+		createActions();
+
+		if (fDebugSessionId != null) {
+			debugSessionChanged();
+		} else {
+			updateDebugContext();
+		}
+		DsfSession.addSessionEndedListener(this);
+	}
+
+	protected void createActions() {
+		IActionBars bars = getViewSite().getActionBars();
+		IToolBarManager manager = bars.getToolBarManager();
+				
+		// Create the action to refresh the view
+		fActionRefreshView = new ActionRefreshView();
+		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fActionRefreshView);
+		manager.add(fActionRefreshView);
+
+		// Create the action to open the trace variable details
+		fOpenTraceVarDetails = new ActionOpenTraceVarDetails();
+		manager.add(fOpenTraceVarDetails);
+		
+		bars.updateActionBars();
+		updateActionEnablement();
+	}
+	
+	@Override
+	public void dispose() {
+		getSite().getPage().removeSelectionListener(fDebugViewListener);
+		setDebugContext(null);
+		super.dispose();
+	}
+
+	protected void updateContent() {
+		asyncExec(new Runnable() {
+			public void run() {
+				String content = ""; //$NON-NLS-1$
+				String status = retrieveStatus();
+				if (status != null && status.length() > 0) {
+					Calendar cal = Calendar.getInstance();
+					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+
+					content = TracepointsMessages.TraceControlView_trace_view_content_updated_label +
+					          sdf.format(cal.getTime()) + "\n" + status;  //$NON-NLS-1$
+				}
+				fStatusText.setText(content);
+				updateActionEnablement();
+			}});
+	}
+		
+	protected String retrieveStatus() {
+		if (fDebugSessionId == null) {
+			return EMPTY_STRING;
+		}
+		
+		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
+		if (ctx == null) {
+			return EMPTY_STRING;
+		}
+		
+		Query<ITraceStatusDMData> query = new Query<ITraceStatusDMData>() {
+			@Override
+			protected void execute(DataRequestMonitor<ITraceStatusDMData> rm) {
+				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
+				if (traceControl != null) {
+					traceControl.getTraceStatus(ctx, rm);
+				} else {
+					rm.setData(null);
+					rm.done();
+				}
+			}
+		};
+		try {
+			getSession().getExecutor().execute(query);
+			ITraceStatusDMData data = query.get();
+			if (data != null) {
+				fTracingSupported = data.isTracingSupported();
+				if (fTracingSupported) return data.toString();
+			} else {
+				fTracingSupported = false;
+			}
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		}
+
+		return EMPTY_STRING;
+	}
+
+	protected void updateDebugContext() {
+		IAdaptable debugContext = DebugUITools.getDebugContext();
+		if (debugContext instanceof IDMVMContext) {
+			setDebugContext((IDMVMContext)debugContext);
+		} else {
+			setDebugContext(null);
+		}
+	}
+
+	protected void setDebugContext(IDMVMContext vmContext) {
+		if (vmContext != null) {
+			IDMContext dmContext = vmContext.getDMContext();
+			String sessionId = dmContext.getSessionId();
+			fTargetContext = DMContexts.getAncestorOfType(dmContext, ITraceTargetDMContext.class);
+			if (!sessionId.equals(fDebugSessionId)) {
+				if (fDebugSessionId != null && getSession() != null) {
+					try {
+						final DsfSession session = getSession();
+						session.getExecutor().execute(new DsfRunnable() {
+							public void run() {
+								session.removeServiceEventListener(TraceControlView.this);
+							}
+						});
+					} catch (RejectedExecutionException e) {
+						// Session is shut down.
+					}
+				}
+				fDebugSessionId = sessionId;
+				if (fServicesTracker != null) {
+					fServicesTracker.dispose();
+				}
+				fServicesTracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), sessionId);
+				debugSessionChanged();
+			}
+		} else if (fDebugSessionId != null) {
+			if (getSession() != null) {
+				try {
+					final DsfSession session = getSession();
+					session.getExecutor().execute(new DsfRunnable() {
+						public void run() {
+							session.removeServiceEventListener(TraceControlView.this);
+						}
+					});
+        		} catch (RejectedExecutionException e) {
+                    // Session is shut down.
+        		}
+			}
+			fDebugSessionId = null;
+			fTargetContext = null;
+			if (fServicesTracker != null) {
+				fServicesTracker.dispose();				
+				fServicesTracker = null;
+			}
+			debugSessionChanged();
+		}
+	}
+
+	private void debugSessionChanged() {
+		// When dealing with a new debug session, assume tracing is not supported.
+		// updateContent() will fix it
+		fTracingSupported = false;
+		
+		if (fDebugSessionId != null) {
+			try {
+				final DsfSession session = getSession();
+				session.getExecutor().execute(new DsfRunnable() {
+					public void run() {
+						session.addServiceEventListener(TraceControlView.this, null);
+					}
+				});
+    		} catch (RejectedExecutionException e) {
+                // Session is shut down.
+    		}
+        }
+		
+		updateContent();
+	}
+
+	protected void updateActionEnablement() {
+		enableActions(fTracingSupported);
+	}
+	
+	protected void enableActions(boolean enabled) {
+		fOpenTraceVarDetails.setEnabled(enabled);
+		fActionRefreshView.setEnabled(enabled);
+	}
+	
+	private void asyncExec(Runnable runnable) {
+		if (fStatusText != null) {
+			fStatusText.getDisplay().asyncExec(runnable);
+		}
+	}
+
+	public void sessionEnded(DsfSession session) {
+		if (session.getId().equals(fDebugSessionId)) {
+			asyncExec(new Runnable() {
+				public void run() {
+					setDebugContext(null);
+				}});
+		}
+	}
+
+	/*
+	 * When tracing starts, we know the status has changed
+	 */
+	@DsfServiceEventHandler
+	public void handleEvent(ITracingStartedDMEvent event) {
+		updateContent();
+	}
+
+	/*
+	 * When tracing stops, we know the status has changed
+	 */
+	@DsfServiceEventHandler
+	public void handleEvent(ITracingStoppedDMEvent event) {
+		updateContent();
+	}
+
+	/*
+	 * Since something suspended, might as well refresh our status
+	 * to show the latest.
+	 */
+	@DsfServiceEventHandler
+	public void handleEvent(ISuspendedDMEvent event) {
+		updateContent();
+	}
+
+	/*
+	 * Tracing support has changed, update view
+	 */
+	@DsfServiceEventHandler
+	public void handleEvent(ITracingSupportedChangeDMEvent event) {
+		updateContent();
+	}
+
+	
+	@Override
+	public void setFocus() {
+		if (fStatusText != null) {
+			fStatusText.setFocus();
+		}
+	}
+	
+	private DsfSession getSession() {
+		return DsfSession.getSession(fDebugSessionId);
+	}
+	
+	private <V> V getService(Class<V> serviceClass) {
+		if (fServicesTracker != null) {
+			return fServicesTracker.getService(serviceClass);
+		}
+		return null;
+	}
+
+	/**
+	 * Get the list of trace variables from the backend.
+	 * 
+	 * @return null when the list cannot be obtained.
+	 */
+	public ITraceVariableDMData[] getTraceVarList() {
+		if (fDebugSessionId == null) {
+			return null;
+		}
+		
+		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
+		if (ctx == null) {
+			return null;
+		}
+		
+		Query<ITraceVariableDMData[]> query = new Query<ITraceVariableDMData[]>() {
+			@Override
+			protected void execute(final DataRequestMonitor<ITraceVariableDMData[]> rm) {
+				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
+				
+				if (traceControl != null) {
+					traceControl.getTraceVariables(ctx,
+							new DataRequestMonitor<ITraceVariableDMData[]>(getSession().getExecutor(), rm) {
+						@Override
+						protected void handleCompleted() {
+							if (isSuccess()) {
+								rm.setData(getData());
+							} else {
+								rm.setData(null);
+							}
+							rm.done();
+						};
+
+					});
+				} else {
+					rm.setData(null);
+					rm.done();
+				}
+			}
+		};
+		try {
+			getSession().getExecutor().execute(query);
+			return query.get();
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		}
+
+		return null;
+	}
+
+	/**
+	 * Create a new trace variable in the backend.
+     *
+	 * @throws FailedTraceVariableCreationException when the creation fails.  The exception
+	 *         will contain the error message to display to the user.
+	 */
+	protected void createVariable(final String name, final String value) throws FailedTraceVariableCreationException {
+		if (fDebugSessionId == null) {
+			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
+		}
+		
+		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
+		if (ctx == null) {
+			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
+		}
+
+		Query<String> query = new Query<String>() {
+			@Override
+			protected void execute(final DataRequestMonitor<String> rm) {
+				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
+				
+				if (traceControl != null) {
+					traceControl.createTraceVariable(ctx, name, value, 
+							new RequestMonitor(getSession().getExecutor(), rm) {
+						@Override
+						protected void handleFailure() {
+							String message = TracepointsMessages.TraceControlView_create_variable_error;
+							Throwable t = getStatus().getException();
+							if (t != null) {
+								message = t.getMessage();
+							}
+							FailedTraceVariableCreationException e = 
+								new FailedTraceVariableCreationException(message);
+				            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Backend error", e));
+							rm.done();
+						};
+					});
+				} else {
+					FailedTraceVariableCreationException e = 
+						new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_trace_variable_tracing_unavailable);
+		            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Tracing unavailable", e));
+					rm.done();
+				}
+			}
+		};
+		try {
+			getSession().getExecutor().execute(query);
+			query.get();
+		} catch (InterruptedException e) {
+			// Session terminated
+		} catch (ExecutionException e) {
+			Throwable t = e.getCause();
+			if (t instanceof CoreException) {
+				t = ((CoreException)t).getStatus().getException();
+				if (t instanceof FailedTraceVariableCreationException) {
+					throw (FailedTraceVariableCreationException)t;
+				}
+			}
+			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
+		}
+	}
+}
+

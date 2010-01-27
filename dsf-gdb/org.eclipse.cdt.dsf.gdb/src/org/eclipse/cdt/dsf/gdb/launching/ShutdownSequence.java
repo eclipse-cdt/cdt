@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
@@ -26,12 +25,11 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.IDsfService;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 public class ShutdownSequence extends Sequence {
 
@@ -66,6 +64,11 @@ public class ShutdownSequence extends Sequence {
             fTracker.dispose();
             fTracker = null;
             requestMonitor.done();
+        }
+    }, new Step() {
+        @Override
+        public void execute(RequestMonitor requestMonitor) {
+            shutdownService(IGDBTraceControl.class, requestMonitor);
         }
     }, new Step() {
         @Override
@@ -155,8 +158,8 @@ public class ShutdownSequence extends Sequence {
                 }
             });
         } else {
-            requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-                "Service '" + clazz.getName() + "' not found.", null)); //$NON-NLS-1$//$NON-NLS-2$
+        	// It is possible that a particular service was not instantiated at all
+        	// depending on our backend
             requestMonitor.done();
         }
     }

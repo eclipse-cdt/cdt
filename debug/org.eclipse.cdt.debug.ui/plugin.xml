@@ -2021,6 +2021,29 @@
           id="org.eclipse.cdt.debug.ui.command.uncall"
           name="%Uncall.name">
     </command>
+    <category
+          description="%TracingCategory.description"
+          id="org.eclipse.cdt.debug.ui.category.tracing"
+          name="%TracingCategory.name">
+    </category>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.tracing"
+          description="%StartTracing.description"
+          id="org.eclipse.cdt.debug.ui.command.startTracing"
+          name="%StartTracing.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.tracing"
+          description="%StopTracing.description"
+          id="org.eclipse.cdt.debug.ui.command.stopTracing"
+          name="%StopTracing.name">
+    </command>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.tracing"
+          description="%SaveTraceData.description"
+          id="org.eclipse.cdt.debug.ui.command.saveTraceData"
+          name="%SaveTraceData.name">
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -2043,6 +2066,18 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.UncallCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.uncall">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.StartTracingCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.startTracing">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.StopTracingCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.stopTracing">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.SaveTraceDataCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.saveTraceData">
       </handler>
  </extension>
  <extension
@@ -2344,6 +2379,33 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.DebugView?before=renderGroup">
+       <command
+             commandId="org.eclipse.cdt.debug.ui.command.startTracing"
+             icon="icons/obj16/start_tracing_obj.gif"
+             label="%StartTracing.name"
+             style="push">
+          <visibleWhen
+                checkEnabled="false">
+             <reference
+                   definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
+             </reference>
+          </visibleWhen>
+       </command>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.command.stopTracing"
+             icon="icons/obj16/stop_tracing_obj.gif"
+             label="%StopTracing.name"
+             style="push">
+          <visibleWhen
+                checkEnabled="false">
+             <reference
+                   definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
+             </reference>
+          </visibleWhen>
+       </command>
+    </menuContribution>
  </extension>
  <extension
        point="org.eclipse.ui.popupMenus">

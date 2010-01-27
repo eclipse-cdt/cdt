@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,10 @@ import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepOverHandler;
 import org.eclipse.cdt.debug.core.model.IReverseToggleHandler;
+import org.eclipse.cdt.debug.core.model.ISaveTraceDataHandler;
+import org.eclipse.cdt.debug.core.model.IStartTracingHandler;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
+import org.eclipse.cdt.debug.core.model.IStopTracingHandler;
 import org.eclipse.cdt.debug.core.model.IUncallHandler;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
@@ -44,6 +47,9 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseResumeCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepIntoCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepOverCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseToggleCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbSaveTraceDataCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStartTracingCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStopTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbUncallCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -104,6 +110,9 @@ public class GdbAdapterFactory
 		final SteppingController fSteppingController;
         final DefaultRefreshAllTarget fRefreshAllTarget;
         final GdbReverseToggleCommand fReverseToggleTarget;
+        final GdbStartTracingCommand fStartTracingTarget;
+        final GdbStopTracingCommand fStopTracingTarget;
+        final GdbSaveTraceDataCommand fSaveTraceDataTarget;
 
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
@@ -140,7 +149,10 @@ public class GdbAdapterFactory
             fModelSelectionPolicyFactory = new DefaultDsfModelSelectionPolicyFactory();
             fRefreshAllTarget = new DefaultRefreshAllTarget();
             fReverseToggleTarget = new GdbReverseToggleCommand(session);
-            
+            fStartTracingTarget = new GdbStartTracingCommand(session);
+            fStopTracingTarget = new GdbStopTracingCommand(session);
+            fSaveTraceDataTarget = new GdbSaveTraceDataCommand(session);
+
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
             session.registerModelAdapter(IReverseStepIntoHandler.class, fReverseStepIntoCommand);
@@ -158,6 +170,9 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IModelSelectionPolicyFactory.class, fModelSelectionPolicyFactory);
             session.registerModelAdapter(IRefreshAllTarget.class, fRefreshAllTarget);
             session.registerModelAdapter(IReverseToggleHandler.class, fReverseToggleTarget);
+            session.registerModelAdapter(IStartTracingHandler.class, fStartTracingTarget);
+            session.registerModelAdapter(IStopTracingHandler.class, fStopTracingTarget);
+            session.registerModelAdapter(ISaveTraceDataHandler.class, fSaveTraceDataTarget);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
@@ -203,6 +218,9 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IModelSelectionPolicyFactory.class);
             session.unregisterModelAdapter(IRefreshAllTarget.class);
             session.unregisterModelAdapter(IReverseToggleHandler.class);
+            session.unregisterModelAdapter(IStartTracingHandler.class);
+            session.unregisterModelAdapter(IStopTracingHandler.class);
+            session.unregisterModelAdapter(ISaveTraceDataHandler.class);
             
             fSteppingModeTarget.dispose();
             fStepIntoCommand.dispose();
@@ -220,6 +238,9 @@ public class GdbAdapterFactory
             fDisconnectCommand.dispose();
             fSuspendTrigger.dispose();
             fReverseToggleTarget.dispose();
+            fStartTracingTarget.dispose();
+            fStopTracingTarget.dispose();
+            fSaveTraceDataTarget.dispose();
         }
     }
 

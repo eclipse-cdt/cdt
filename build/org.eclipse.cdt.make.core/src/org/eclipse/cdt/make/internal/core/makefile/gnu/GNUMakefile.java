@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,8 @@ import org.eclipse.cdt.make.internal.core.makefile.TargetRule;
 import org.eclipse.cdt.make.internal.core.makefile.Util;
 import org.eclipse.cdt.make.internal.core.makefile.posix.PosixMakefileUtil;
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -107,8 +109,13 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		MakefileReader reader;
 		if (makefileReaderProvider == null) {
 			try {
+				final IFileStore store = EFS.getStore(fileURI);
+				final IFileInfo info = store.fetchInfo();
+				if (!info.exists() || info.isDirectory())
+					throw new IOException();
+				
 				reader = new MakefileReader(new InputStreamReader(
-						EFS.getStore(fileURI).openInputStream(EFS.NONE, null)));
+						store.openInputStream(EFS.NONE, null)));
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
 				throw new IOException(e.getMessage());
@@ -127,8 +134,8 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
 		Rule[] rules = null;
-		Stack conditions = new Stack();
-		Stack defines = new Stack();
+		Stack<Directive> conditions = new Stack<Directive>();
+		Stack<VariableDefinition> defines = new Stack<VariableDefinition>();
 		int startLine = 0;
 		int endLine = 0;
 
@@ -145,7 +152,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 			if (GNUMakefileUtil.isEndef(line)) {
 				// We should have a "define" for a "endef".
 				if (!defines.empty()) {
-					VariableDefinition def = (VariableDefinition) defines.pop();
+					VariableDefinition def = defines.pop();
 					def.setEndLine(endLine);
 				}
 				Endef endef = new Endef(this);
@@ -168,7 +175,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 
 			// We still in a define.
 			if (!defines.empty()) {
-				VariableDefinition def = (VariableDefinition) defines.peek();
+				VariableDefinition def = defines.peek();
 				StringBuffer sb = def.getValue();
 				if (sb.length() > 0) {
 					sb.append('\n');
@@ -342,7 +349,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		//validator.validateDirectives(null, getDirectives());
 	}
 
-	private void addDirective(Stack conditions, Directive directive) {
+	private void addDirective(Stack<Directive> conditions, Directive directive) {
 		if (conditions.empty()) {
 			addDirective(directive);
 		} else {
@@ -545,7 +552,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		String[] directories;
 		StringTokenizer st = new StringTokenizer(line);
 		int count = st.countTokens();
-		List dirs = new ArrayList(count);
+		List<String> dirs = new ArrayList<String>(count);
 		if (count > 0) {
 			for (int i = 0; i < count; i++) {
 				if (count == 0) {
@@ -561,7 +568,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				}
 			}
 		}
-		directories = (String[]) dirs.toArray(new String[0]);
+		directories = dirs.toArray(new String[0]);
 		if (pattern == null) {
 			pattern = new String();
 		}
@@ -795,12 +802,13 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		return new InferenceRule(this, new Target(tgt));
 	}
 
+	@Override
 	public IDirective[] getDirectives(boolean expand) {
 		if (!expand) {
 			return getDirectives();
 		}
 		IDirective[] dirs = getDirectives();
-		ArrayList list = new ArrayList(Arrays.asList(dirs));
+		ArrayList<IDirective> list = new ArrayList<IDirective>(Arrays.asList(dirs));
 		for (int i = 0; i < dirs.length; ++i) {
 			if (dirs[i] instanceof Include) {
 				Include include = (Include)dirs[i];
@@ -811,12 +819,13 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				}
 			}
 		}
-		return (IDirective[]) list.toArray(new IDirective[list.size()]);
+		return list.toArray(new IDirective[list.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.makefile.AbstractMakefile#getBuiltins()
 	 */
+	@Override
 	public IDirective[] getBuiltins() {
 		if (builtins == null) {
 			String location =  "builtin" + File.separator + "gnu.mk"; //$NON-NLS-1$ //$NON-NLS-2$

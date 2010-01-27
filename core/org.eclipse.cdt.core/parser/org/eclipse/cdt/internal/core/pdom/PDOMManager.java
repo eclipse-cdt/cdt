@@ -188,9 +188,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	private ArrayList<IndexerSetupParticipant> fSetupParticipants= new ArrayList<IndexerSetupParticipant>();
 	private HashSet<ICProject> fPostponedProjects= new HashSet<ICProject>();
 	private int fLastNotifiedState= IndexerStateEvent.STATE_IDLE;
+	private boolean fInShutDown;
     
 	public PDOMManager() {
 		PDOM.sDEBUG_LOCKS= "true".equals(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$//$NON-NLS-2$
+		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);
 		fPreferenceChangeListener= new IPreferenceChangeListener() {
@@ -247,6 +249,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	public void shutdown() {
+		fInShutDown= true;
 		new InstanceScope().getNode(CCorePlugin.PLUGIN_ID).removePreferenceChangeListener(fPreferenceChangeListener);
 		CCorePlugin.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(fProjectDescriptionListener);
 		final CoreModel model = CoreModel.getDefault();
@@ -1400,6 +1403,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	 * @param project
 	 */
 	public void notifyIndexerSetup(IndexerSetupParticipant participant,	ICProject project) {
+		if (fInShutDown)
+			return;
 		synchronized(fSetupParticipants) {
 			if (fPostponedProjects.contains(project)) {
 				addProject(project);

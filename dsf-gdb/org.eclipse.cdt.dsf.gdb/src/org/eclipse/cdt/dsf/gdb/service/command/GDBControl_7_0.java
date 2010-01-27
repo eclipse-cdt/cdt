@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
@@ -566,7 +567,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     			// If the last process we are debugging finishes, let's terminate GDB
     			// but not for a remote attach session, since we could request to attach
     			// to another process
-    			terminate(new RequestMonitor(getExecutor(), null));
+    			terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
     		}
     	}
     }

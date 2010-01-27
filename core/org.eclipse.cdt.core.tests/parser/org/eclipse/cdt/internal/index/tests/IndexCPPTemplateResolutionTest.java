@@ -1700,4 +1700,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		getBindingFromASTName("Noder1<int>", 11, ICPPClassSpecialization.class);
 		getBindingFromASTName("Noder2<int>", 11, ICPPClassSpecialization.class);
 	}
+	
+
+	//	template <typename> struct CT;
+	//	template <typename T> struct CT {
+	//		T f;
+	//	};
+	//	struct X {
+	//		int x;
+	//	};
+
+	//	void test() {
+	//		CT<X> p;
+	//		p.f.x; 
+	//	}
+	public void testTemplateParameterWithoutName_300978() throws Exception { 
+		getBindingFromASTName("x;", 1, ICPPField.class);
+		ICPPClassSpecialization ctx = getBindingFromASTName("CT<X>", 5, ICPPClassSpecialization.class);
+		ICPPClassTemplate ct= (ICPPClassTemplate) ctx.getSpecializedBinding();
+		assertEquals("T", ct.getTemplateParameters()[0].getName());
+	}
+
 }

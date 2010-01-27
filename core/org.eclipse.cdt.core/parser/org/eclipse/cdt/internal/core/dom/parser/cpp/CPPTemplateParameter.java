@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -92,15 +93,24 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
-	public String getName() {
+	public final String getName() {
 		return new String(getNameCharArray());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
-	public char[] getNameCharArray() {
-		return declarations[0].getSimpleID();
+	public final char[] getNameCharArray() {
+		// Search for the first declaration that has a name.
+		for (IASTName decl : declarations) {
+			if (decl == null)
+				break;
+			
+			final char[] result= decl.getSimpleID();
+			if (result.length > 0)
+				return result;
+		}
+		return CharArrayUtils.EMPTY;
 	}
 
 	public int getParameterID() {

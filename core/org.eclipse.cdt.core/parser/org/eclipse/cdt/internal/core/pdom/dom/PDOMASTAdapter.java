@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.core.runtime.CoreException;
@@ -237,7 +238,7 @@ public class PDOMASTAdapter {
 			throw new PDOMNotImplementedError();
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -289,7 +290,7 @@ public class PDOMASTAdapter {
 			return fDelegate.findField(name);
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -375,7 +376,7 @@ public class PDOMASTAdapter {
 			return qn;
 		}
 
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
@@ -482,28 +483,28 @@ public class PDOMASTAdapter {
 	 */
 	public static IBinding getAdapterForAnonymousASTBinding(IBinding binding) {
 		if (binding != null && !(binding instanceof IIndexBinding)) {
-			char[] name= binding.getNameCharArray();
+			char[] name = binding.getNameCharArray();
 			if (name.length == 0) {
 				if (binding instanceof IEnumeration) {
-					name= ASTTypeUtil.createNameForAnonymous(binding);
+					name = ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						if (binding instanceof ICPPBinding) {
 							return new AnonymousCPPEnumeration(name, (IEnumeration) binding);
 						}
 						return new AnonymousEnumeration(name, (IEnumeration) binding);
 					}
-				}
-				else if (binding instanceof ICPPClassType) {
-					name= ASTTypeUtil.createNameForAnonymous(binding);
+				} else if (binding instanceof ICPPClassType) {
+					name = ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						return new AnonymousClassType(name, (ICPPClassType) binding);
 					}
-				}
-				else if (binding instanceof ICompositeType) {
-					name= ASTTypeUtil.createNameForAnonymous(binding);
+				} else if (binding instanceof ICompositeType) {
+					name = ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						return new AnonymousCompositeType(name, (ICompositeType) binding);
 					}
+				} else if (binding instanceof ICPPTemplateParameter) {
+					return binding;
 				}
 				return null;
 			}

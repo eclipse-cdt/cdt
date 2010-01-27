@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *    Andrew Ferguson (Symbian)
  *    Sergey Prigogin (Google)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.core.index;
 
 import java.util.Collection;
@@ -134,11 +133,19 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
 		assert establishReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 
+		// Bug 297641: Result cache of read only providers needs to be cleared.
+		if (establishReadlockCount == 0) {
+			clearResultCache();
+		}
+
 		fIsWriteLocked= false;
 		fWritableFragment.releaseWriteLock(establishReadlockCount, flush);
-		
-		// Bug 297641: Result cache of read only providers needs to be cleared.
-		clearResultCaches();
+	}
+
+	@Override
+	public void clearResultCache() {
+		assert fIsWriteLocked: "Need to hold a write lock to clear result caches"; //$NON-NLS-1$
+		super.clearResultCache();
 	}
 
 	public void flush() throws CoreException {

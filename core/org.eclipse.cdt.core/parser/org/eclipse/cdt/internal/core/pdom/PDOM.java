@@ -863,7 +863,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	
 	@SuppressWarnings("nls")
 	public void releaseWriteLock(int establishReadLocks, boolean flush) {
-		clearResultCache();
+		// When all locks are released we can clear the result cache.
+		if (establishReadLocks == 0) {
+			clearResultCache();
+		}
 		try {
 			db.giveUpExclusiveLock(flush);
 		} catch (CoreException e) {

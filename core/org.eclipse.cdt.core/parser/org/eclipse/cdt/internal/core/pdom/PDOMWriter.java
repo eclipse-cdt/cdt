@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,6 +219,11 @@ abstract public class PDOMWriter {
 				} catch (AssertionError e) {
 					th= e;
 				} finally {
+					// When the caller holds a read-lock, the result cache of the index is never cleared.
+					// ==> Before releasing the lock for the last time in this ast, we clear the result cache.
+					if (readlockCount > 0  && i == ifls.length-1) {
+						index.clearResultCache();
+					}
 					lock.release();
 				}
 				if (th != null) {

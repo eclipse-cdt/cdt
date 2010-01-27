@@ -29,46 +29,55 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 
 public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
-	private String originalMessage;
+	protected String originalMessage;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
-		
+		createPathEditor();
+		createVersionEditor();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
+	 * ()
+	 */
+	protected void createPathEditor() {
+
 		Composite parent = getFieldEditorParent();
-		
-		fPathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, Messages.XLCompilerPropertyPage_0, parent) 
-		{
-			protected boolean doCheckState() 
-			{
-				// always return true, as we don't want to fail cases when compiler is installed remotely
+
+		fPathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT,
+				Messages.XLCompilerPropertyPage_0, parent) {
+			protected boolean doCheckState() {
+				// always return true, as we don't want to fail cases when
+				// compiler is installed remotely
 				// just warn user
-				if (!super.doCheckState())
-				{
+				if (!super.doCheckState()) {
 					setMessage(Messages.XLCompilerPropertyPage_2, IMessageProvider.WARNING);
-				}
-				else
-				{
+				} else {
 					setMessage(originalMessage);
 				}
-				
+
 				return true;
 			}
 
-			protected boolean checkState() 
-			{
+			protected boolean checkState() {
 				return doCheckState();
 			}
-			
+
 		};
 
 		addField(fPathEditor);
-		
+
 		IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
-		
+
 		String currentPath = null;
-		
+
 		try {
 			currentPath = project.getPersistentProperty(new QualifiedName("", //$NON-NLS-1$
 					PreferenceConstants.P_XL_COMPILER_ROOT));
@@ -76,26 +85,30 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(currentPath == null) {
+
+		if (currentPath == null) {
 			// if the property isn't set, then use the workbench preference
 			IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 			currentPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 		}
-		
+
 		fPathEditor.setStringValue(currentPath);
-		
-		String[] versionEntries = {PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, 
-				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME,
-				PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME};
-		
+
+	}
+
+	protected void createVersionEditor() {
+
+		IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
+		String[] versionEntries = { PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME,
+				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME };
+
 		Composite versionParent = getFieldEditorParent();
-		
+
 		fVersionEditor = new BuildOptionComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
 				Messages.XLCompilerPropertyPage_1, versionEntries, null, versionParent);
-		
+
 		addField(fVersionEditor);
-		
+
 		String currentVersion = null;
 		try {
 			currentVersion = project.getPersistentProperty(new QualifiedName("", //$NON-NLS-1$
@@ -104,49 +117,50 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(currentVersion == null) {
+
+		if (currentVersion == null) {
 			// if the property isn't set, then use the workbench preference
 			IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 			currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 		}
-		
+
 		Combo versionCombo = fVersionEditor.getComboControl(versionParent);
 		versionCombo.setText(PreferenceConstants.getVersionLabel(currentVersion));
 
 	}
 
-	private DirectoryFieldEditor fPathEditor;
+	protected DirectoryFieldEditor fPathEditor;
 
-	private BuildOptionComboFieldEditor fVersionEditor;
+	protected BuildOptionComboFieldEditor fVersionEditor;
 
-	//private Composite parent;
-
+	// private Composite parent;
 
 	/**
 	 * Constructor for SamplePropertyPage.
 	 */
 	public XLCompilerPropertyPage() {
 		super(FieldEditorPreferencePage.FLAT);
-		
+
 		originalMessage = getMessage();
 	}
 
-	
 	protected void performDefaults() {
 		// default to whatever is set on the workbench preference
 		IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 		String currentPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 		String currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 		String currentVersionLabel = PreferenceConstants.getVersionLabel(currentVersion);
-		
-		fPathEditor.setStringValue(currentPath);
+		if (fPathEditor != null) {
+			fPathEditor.setStringValue(currentPath);
+		}
 
 		fVersionEditor.getComboControl(getFieldEditorParent()).setText(currentVersionLabel);
 
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
 	public boolean performOk() {
@@ -154,14 +168,14 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		try {
 			IProject project = ((IResource) (getElement().getAdapter(IResource.class))).getProject();
 
-			project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
-					PreferenceConstants.P_XL_COMPILER_ROOT), fPathEditor
-					.getStringValue());
-			
+			if (fPathEditor != null) {
+				project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
+						PreferenceConstants.P_XL_COMPILER_ROOT), fPathEditor.getStringValue());
+			}
 			String version = null;
 			if (fVersionEditor.getSelection() != null) {
 				version = PreferenceConstants.getVersion(fVersionEditor.getSelection());
-			
+
 				project.setPersistentProperty(new QualifiedName("", //$NON-NLS-1$
 						PreferenceConstants.P_XLC_COMPILER_VERSION), version);
 			}
@@ -170,28 +184,29 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		}
 		return true;
 	}
-	
-    /**
-     * The element.
-     */
-    private IAdaptable element;
 
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
-     */
-    public IAdaptable getElement() {
-        return element;
-    }
+	/**
+	 * The element.
+	 */
+	private IAdaptable element;
 
-    /**
-     * Sets the element that owns properties shown on this page.
-     * 
-     * @param element
-     *            the element
-     */
-    public void setElement(IAdaptable element) {
-        this.element = element;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
+	 */
+	public IAdaptable getElement() {
+		return element;
+	}
+
+	/**
+	 * Sets the element that owns properties shown on this page.
+	 * 
+	 * @param element
+	 *            the element
+	 */
+	public void setElement(IAdaptable element) {
+		this.element = element;
+	}
 
 }

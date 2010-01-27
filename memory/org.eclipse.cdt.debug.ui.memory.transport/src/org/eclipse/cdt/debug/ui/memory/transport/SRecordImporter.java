@@ -17,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.Properties;
 
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -61,11 +61,11 @@ public class SRecordImporter implements IMemoryImporter {
 	
 	private ImportMemoryDialog fParentDialog;
 	
-	private Properties fProperties;
+	private IDialogSettings fProperties;
 	
 	private static final int BUFFER_LENGTH = 64 * 1024;
 	
-	public Control createControl(final Composite parent, IMemoryBlock memBlock, Properties properties, ImportMemoryDialog parentDialog)
+	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ImportMemoryDialog parentDialog)
 	{
 		fMemoryBlock = memBlock;
 		fParentDialog = parentDialog;
@@ -75,10 +75,10 @@ public class SRecordImporter implements IMemoryImporter {
 		{
 			public void dispose()
 			{
-				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
-				fProperties.setProperty(TRANSFER_START, fStartText.getText());
-				fProperties.setProperty(TRANSFER_SCROLL_TO_START, Boolean.toString(fScrollToBeginningOnImportComplete.getSelection()));
-				fProperties.setProperty(TRANSFER_CUSTOM_START_ADDRESS, "" + fComboRestoreToThisAddress.getSelection()); //$NON-NLS-1$
+				fProperties.put(TRANSFER_FILE, fFileText.getText());
+				fProperties.put(TRANSFER_START, fStartText.getText());
+				fProperties.put(TRANSFER_SCROLL_TO_START, fScrollToBeginningOnImportComplete.getSelection());
+				fProperties.put(TRANSFER_CUSTOM_START_ADDRESS, fComboRestoreToThisAddress.getSelection());
 				
 				fStartAddress = getStartAddress();
 				fInputFile = getFile();
@@ -97,14 +97,14 @@ public class SRecordImporter implements IMemoryImporter {
 		fComboRestoreToFileAddress = new Button(composite, SWT.RADIO);
 		fComboRestoreToFileAddress.setSelection(true);
 		fComboRestoreToFileAddress.setText(Messages.getString("SRecordImporter.FileAddressRestore"));  //$NON-NLS-1$
-		fComboRestoreToFileAddress.setSelection(!Boolean.getBoolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, Boolean.FALSE.toString()))); 
+		fComboRestoreToFileAddress.setSelection(!fProperties.getBoolean(TRANSFER_CUSTOM_START_ADDRESS)); 
 		//comboRestoreToFileAddress.setLayoutData(data);
 		
 		// restore to this address
 		
 		fComboRestoreToThisAddress = new Button(composite, SWT.RADIO);
 		fComboRestoreToThisAddress.setText(Messages.getString("SRecordImporter.CustomAddressRestore"));   //$NON-NLS-1$
-		fComboRestoreToThisAddress.setSelection(Boolean.parseBoolean(properties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, Boolean.FALSE.toString()))); 
+		fComboRestoreToThisAddress.setSelection(fProperties.getBoolean(TRANSFER_CUSTOM_START_ADDRESS)); 
 		FormData data = new FormData();
 		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		fComboRestoreToThisAddress.setLayoutData(data);
@@ -157,16 +157,11 @@ public class SRecordImporter implements IMemoryImporter {
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
 		
-		fFileText.setText(properties.getProperty(TRANSFER_FILE, "")); //$NON-NLS-1$
-		try
-		{
-			fStartText.setText(properties.getProperty(TRANSFER_START));
-		}
-		catch(IllegalArgumentException e)
-		{
-			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-		    	DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
-		}
+		String textValue = fProperties.get(TRANSFER_FILE);
+		fFileText.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
+
+		textValue = fProperties.get(TRANSFER_START);
+		fStartText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
 		
 		fileButton.addSelectionListener(new SelectionListener() {
 
@@ -226,7 +221,7 @@ public class SRecordImporter implements IMemoryImporter {
 		data = new FormData();
 		data.top = new FormAttachment(fileButton);
 		fScrollToBeginningOnImportComplete.setLayoutData(data);
-		final boolean scrollToStart = Boolean.valueOf(properties.getProperty(TRANSFER_SCROLL_TO_START, Boolean.TRUE.toString())).booleanValue();
+		final boolean scrollToStart = fProperties.getBoolean(TRANSFER_SCROLL_TO_START);
 		fScrollToBeginningOnImportComplete.setSelection(scrollToStart);
 		
 		composite.pack();
@@ -314,7 +309,7 @@ public class SRecordImporter implements IMemoryImporter {
 					BigInteger scrollToAddress = null;
 					
 					BigInteger offset = null;
-					if(!Boolean.parseBoolean(fProperties.getProperty(TRANSFER_CUSTOM_START_ADDRESS, Boolean.FALSE.toString())))  
+					if(!fProperties.getBoolean(TRANSFER_CUSTOM_START_ADDRESS))  
 						offset = BigInteger.ZERO;
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fInputFile)));

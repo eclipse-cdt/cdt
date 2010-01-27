@@ -11,10 +11,9 @@
 
 package org.eclipse.cdt.debug.ui.memory.transport.model;
 
-import java.util.Properties;
-
 import org.eclipse.cdt.debug.ui.memory.transport.ImportMemoryDialog;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -32,7 +31,7 @@ public interface IMemoryImporter
 	 * @param parentDialog
 	 * @return
 	 */
-	public Control createControl(Composite parent, IMemoryBlock memBlock, Properties properties, ImportMemoryDialog parentDialog);
+	public Control createControl(Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ImportMemoryDialog parentDialog);
 	
 	public void importMemory();
 	

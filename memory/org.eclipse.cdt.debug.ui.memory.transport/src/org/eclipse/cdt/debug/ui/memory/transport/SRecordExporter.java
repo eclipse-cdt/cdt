@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Properties;
-
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,6 +24,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -57,9 +56,9 @@ public class SRecordExporter implements IMemoryExporter
 	
 	private ExportMemoryDialog fParentDialog;
 	
-	private Properties fProperties;
+	private IDialogSettings fProperties;
 	
-	public Control createControl(final Composite parent, IMemoryBlock memBlock, Properties properties, ExportMemoryDialog parentDialog)
+	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ExportMemoryDialog parentDialog)
 	{
 		fMemoryBlock = memBlock;
 		fParentDialog = parentDialog;
@@ -69,9 +68,9 @@ public class SRecordExporter implements IMemoryExporter
 		{
 			public void dispose()
 			{
-				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
-				fProperties.setProperty(TRANSFER_START, fStartText.getText());
-				fProperties.setProperty(TRANSFER_END, fEndText.getText());
+				fProperties.put(TRANSFER_FILE, fFileText.getText());
+				fProperties.put(TRANSFER_START, fStartText.getText());
+				fProperties.put(TRANSFER_END, fEndText.getText());
 				
 				fStartAddress = getStartAddress();
 				fEndAddress = getEndAddress();
@@ -153,18 +152,16 @@ public class SRecordExporter implements IMemoryExporter
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
 		
-		fFileText.setText(properties.getProperty(TRANSFER_FILE, "")); //$NON-NLS-1$
-		try
-		{
-			fStartText.setText(properties.getProperty(TRANSFER_START));
-			fEndText.setText(properties.getProperty(TRANSFER_END));
-			fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
-		}
-		catch(IllegalArgumentException e)
-		{
-			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-		    	DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
-		}
+		String textValue = fProperties.get(TRANSFER_FILE);
+		fFileText.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
+
+		textValue = fProperties.get(TRANSFER_START);
+		fStartText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
+
+		textValue = fProperties.get(TRANSFER_END);
+		fEndText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
+
+		fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
 		
 		fileButton.addSelectionListener(new SelectionListener() {
 

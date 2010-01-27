@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.debug.ui.memory.transport;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -60,5 +61,18 @@ public class MemoryTransportPlugin extends AbstractUIPlugin
 			return window.getShell();
 		}
 		return null;
+	}
+	
+	/**
+	 * Get settings section from plugin dialog settings 
+	 * @param node - required section. Will create a new one if does not exist
+	 * @return dialog settings
+	 */
+	public IDialogSettings getDialogSettings(String node) {
+		IDialogSettings nodeSettings  = getDialogSettings().getSection(node);
+		if (nodeSettings == null) {
+			nodeSettings = getDialogSettings().addNewSection(node);
+		}
+		return nodeSettings;
 	}
 }

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.ui.memory"
       label="%featureName"
-      version="1.2.0.qualifier"
+      version="2.1.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -20,12 +20,6 @@
    <url>
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/galileo"/>
    </url>
-
-   <!--
-   <includes
-         id="org.eclipse.cdt.debug.ui.memory.source"
-         version="0.0.0"/>
-   -->
 
    <requires>
       <import plugin="org.eclipse.debug.core"/>

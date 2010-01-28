@@ -15,15 +15,15 @@ import java.util.List;
 public class PathEntryResolveInfo {
 	private PathEntryResolveInfoElement[] fElements;
 	
-	public PathEntryResolveInfo(List list){
+	public PathEntryResolveInfo(List<PathEntryResolveInfoElement> list){
 		if(list != null){
-			fElements = (PathEntryResolveInfoElement[])list.toArray(new PathEntryResolveInfoElement[list.size()]);
+			fElements = list.toArray(new PathEntryResolveInfoElement[list.size()]);
 		} else {
 			fElements = new PathEntryResolveInfoElement[0];
 		}
 	}
 	
 	public PathEntryResolveInfoElement[] getElements(){
-		return (PathEntryResolveInfoElement[])fElements.clone();
+		return fElements.clone();
 	}
 }

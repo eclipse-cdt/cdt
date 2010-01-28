@@ -40,7 +40,7 @@ public class CfgProxyCache implements IProxyCache {
 				if(proxy != null)
 					fProxyMap.put(proxy.getId(),proxy);
 				else if(oldValue != null){
-					fProxyMap.remove((CDataProxy)oldValue);
+					fProxyMap.remove(oldValue);
 				}
 			}
 
@@ -82,6 +82,7 @@ public class CfgProxyCache implements IProxyCache {
 		removeCachedProxy(proxy);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<String, CDataProxy> getCachedProxiesMap() {
 		return (Map<String, CDataProxy>)fProxyMap.clone();
 	}

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 
 class EntriesNamesContainer {
 //	private String fLanguageSettingsId;
-	private KindBasedStore fRemovedEntryNamesStore = new KindBasedStore();
+	private KindBasedStore<Set<String>> fRemovedEntryNamesStore = new KindBasedStore<Set<String>>();
 	
 //	EntriesNamesContainer(ICLanguageSetting setting) {
 //		fLanguageSettingsId = setting.getId();
@@ -30,11 +30,11 @@ class EntriesNamesContainer {
 
 	public EntriesNamesContainer(EntriesNamesContainer base) {
 //		fLanguageSettingsId = base.fLanguageSettingsId;
-		IKindBasedInfo infos[] = base.fRemovedEntryNamesStore.getContents();
+		IKindBasedInfo<Set<String>> infos[] = base.fRemovedEntryNamesStore.getContents();
 		for(int i = 0; i < infos.length; i++){
-			Set set = (Set)infos[i].getInfo();
+			Set<String> set = infos[i].getInfo();
 			if(set != null)
-				fRemovedEntryNamesStore.put(infos[i].getKind(), new HashSet(set));
+				fRemovedEntryNamesStore.put(infos[i].getKind(), new HashSet<String>(set));
 		}
 	}
 
@@ -42,10 +42,10 @@ class EntriesNamesContainer {
 //		return fLanguageSettingsId;
 //o	}
 
-	private Set getRemovedNamesSet(int kind, boolean create){
-		Set set = (Set)fRemovedEntryNamesStore.get(kind);
+	private Set<String> getRemovedNamesSet(int kind, boolean create){
+		Set<String> set = fRemovedEntryNamesStore.get(kind);
 		if(set == null && create){
-			set = new HashSet();
+			set = new HashSet<String>();
 			fRemovedEntryNamesStore.put(kind, set);
 		}
 		return set;
@@ -60,7 +60,7 @@ class EntriesNamesContainer {
 	}
 	
 	public boolean contains(int kind, String name){
-		Set set = getRemovedNamesSet(kind, false);
+		Set<String> set = getRemovedNamesSet(kind, false);
 		if(set != null)
 			return set.contains(name);
 		return false;
@@ -71,7 +71,7 @@ class EntriesNamesContainer {
 	}
 
 	public boolean remove(int kind, String name){
-		Set set = getRemovedNamesSet(kind, false);
+		Set<String> set = getRemovedNamesSet(kind, false);
 		if(set != null)
 			return set.remove(name);
 		return false;
@@ -81,13 +81,13 @@ class EntriesNamesContainer {
 		if(names == null || names.length == 0) {
 			clear(kind);
 		} else {
-			Set set = getRemovedNamesSet(kind, true);
+			Set<String> set = getRemovedNamesSet(kind, true);
 			set.clear();
 			add(set, names);
 		}
 	}
 
-	private static void add(Set set, String names[]){
+	private static void add(Set<String> set, String names[]){
 		for(int i = 0; i < names.length; i++){
 			set.add(names[i]);
 		}
@@ -97,7 +97,7 @@ class EntriesNamesContainer {
 		if(names == null || names.length == 0) {
 			return;
 		} else {
-			Set set = getRemovedNamesSet(kind, true);
+			Set<String> set = getRemovedNamesSet(kind, true);
 			add(set, names);
 		}
 	}

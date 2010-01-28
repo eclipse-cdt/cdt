@@ -255,7 +255,7 @@ public class PathEntryConfigurationDataProvider extends
 		ICProject cproject = manager.create(project);
 		IPathEntry[] curRawEntries = PathEntryManager.getDefault().getRawPathEntries(cproject);
 		
-		List list = new ArrayList();
+		List<IPathEntry> list = new ArrayList<IPathEntry>();
 		list.addAll(Arrays.asList(entries));
 		for(int i = 0; i < curRawEntries.length; i++){
 			if(curRawEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER){
@@ -263,7 +263,7 @@ public class PathEntryConfigurationDataProvider extends
 			}
 		}
 		
-		IPathEntry[] newEntries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
+		IPathEntry[] newEntries = list.toArray(new IPathEntry[list.size()]);
 		PathEntryManager.getDefault().setRawPathEntries(cproject, newEntries, new NullProgressMonitor());
 		return createData(des, base, false, false);
 	}

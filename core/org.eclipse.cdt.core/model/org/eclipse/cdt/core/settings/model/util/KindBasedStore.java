@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  * A storage where stored data is organized by "kind".
  * In most cases kind is one of {@link ICLanguageSettingEntry}, i.e. include path, macro etc.
  * 
+ * @param <T> - stored type
+ * 
  * @see ICSettingEntry#INCLUDE_PATH
  * @see ICSettingEntry#INCLUDE_FILE
  * @see ICSettingEntry#MACRO
@@ -27,7 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  * @see ICSettingEntry#SOURCE_PATH
  *
  */
-public class KindBasedStore<TypeStored> implements Cloneable {
+public class KindBasedStore<T> implements Cloneable {
 	private static final int INDEX_INCLUDE_PATH = 0;
 	private static final int INDEX_INCLUDE_FILE = 1;
 	private static final int INDEX_MACRO = 2;
@@ -149,19 +151,19 @@ public class KindBasedStore<TypeStored> implements Cloneable {
 		throw new IllegalArgumentException(UtilMessages.getString("KindBasedStore.1")); //$NON-NLS-1$
 	}
 	@SuppressWarnings("unchecked")
-	public TypeStored get(int kind){
-		return (TypeStored) fEntryStorage[kindToIndex(kind)];
+	public T get(int kind){
+		return (T) fEntryStorage[kindToIndex(kind)];
 	}
 
-	@SuppressWarnings("unchecked")
-	public TypeStored put(int kind, TypeStored object){
+	public T put(int kind, T object){
 		int index = kindToIndex(kind);
-		TypeStored old = (TypeStored) fEntryStorage[index];
+		@SuppressWarnings("unchecked")
+		T old = (T) fEntryStorage[index];
 		fEntryStorage[index] = object;
 		return old;
 	}
 	
-	private class KindBasedInfo implements IKindBasedInfo {
+	private class KindBasedInfo implements IKindBasedInfo<T> {
 		int fIdex;
 		int fKind;
 		
@@ -175,31 +177,35 @@ public class KindBasedStore<TypeStored> implements Cloneable {
 			}
 		}
 	
-		public Object getInfo() {
-			return fEntryStorage[fIdex];
+		public T getInfo() {
+			@SuppressWarnings("unchecked")
+			T info = (T)fEntryStorage[fIdex];
+			return info;
 		}
 
 		public int getKind() {
 			return fKind;
 		}
 
-		public Object setInfo(Object newInfo) {
-			Object old = fEntryStorage[fIdex];
+		public T setInfo(T newInfo) {
+			@SuppressWarnings("unchecked")
+			T old = (T)fEntryStorage[fIdex];
 			fEntryStorage[fIdex] = newInfo;
 			return old;
 		}
 		
 	}
 	
-	public IKindBasedInfo[] getContents(){
-		IKindBasedInfo infos[] = new IKindBasedInfo[fEntryStorage.length];
+	public IKindBasedInfo<T>[] getContents(){
+		@SuppressWarnings("unchecked")
+		IKindBasedInfo<T> infos[] = new IKindBasedInfo[fEntryStorage.length];
 		for(int i = 0; i < fEntryStorage.length; i++){
 			infos[i] = new KindBasedInfo(i, false);
 		}
 		return infos;
 	}
 	
-	public IKindBasedInfo getInfo(int kind){
+	public IKindBasedInfo<T> getInfo(int kind){
 		return new KindBasedInfo(kind, true);
 	}
 	
@@ -213,7 +219,7 @@ public class KindBasedStore<TypeStored> implements Cloneable {
 	public Object clone() {
 		try {
 			@SuppressWarnings("unchecked")
-			KindBasedStore<TypeStored> clone = (KindBasedStore<TypeStored>)super.clone();
+			KindBasedStore<T> clone = (KindBasedStore<T>)super.clone();
 			clone.fEntryStorage = fEntryStorage.clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {

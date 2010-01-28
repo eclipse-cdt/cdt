@@ -21,12 +21,12 @@ public class ConfigBasedPathEntryContainer implements IPathEntryContainer {
 	public static final IPath CONTAINER_PATH = new Path("org.eclipse.cdt.core.CFG_BASED_CONTAINER");	//$NON-NLS-1$
 	private IPathEntry[] fEntries;
 
-	public ConfigBasedPathEntryContainer(List list){
-		this.fEntries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
+	public ConfigBasedPathEntryContainer(List<IPathEntry> list){
+		this.fEntries = list.toArray(new IPathEntry[list.size()]);
 	}
 
 	public ConfigBasedPathEntryContainer(IPathEntry entries[]){
-		this.fEntries = (IPathEntry[])entries.clone();
+		this.fEntries = entries.clone();
 	}
 	
 	public String getDescription() {
@@ -38,7 +38,7 @@ public class ConfigBasedPathEntryContainer implements IPathEntryContainer {
 	}
 
 	public IPathEntry[] getPathEntries() {
-		return (IPathEntry[])fEntries.clone();
+		return fEntries.clone();
 	}
 
 }

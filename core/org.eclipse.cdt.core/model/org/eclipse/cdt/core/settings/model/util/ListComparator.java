@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public class ListComparator {
 	private static Comparator fDefaultComparator; 
 	
@@ -45,14 +46,14 @@ public class ListComparator {
 		if(a1 == null || a1.length == 0)
 			return null;
 		if(a2 == null || a2.length == 0){
-			List list = new ArrayList(a1.length);
+			List<Object> list = new ArrayList<Object>(a1.length);
 			for(int i = 0; i < a1.length; i++){
 				list.add(a1[i]);
 			}
 			return list;
 		}
 		
-		List list = new ArrayList(a1.length);
+		List<Object> list = new ArrayList<Object>(a1.length);
 		Object o1;
 		for(int i = 0; i < a1.length; i++){
 			o1 = a1[i];
@@ -65,6 +66,7 @@ public class ListComparator {
 		return list.size() != 0 ? list : null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static boolean match(Object a1[], Object a2[], Comparator c){
 		if(a1 == null)
 			return a2 == null;

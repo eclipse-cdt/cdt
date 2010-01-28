@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ThreadLocalMap {
-	private ThreadLocal fLocal = new ThreadLocal();
+	private ThreadLocal<Map<Object, Object>> fLocal = new ThreadLocal<Map<Object, Object>>();
 	
 	public Object get(Object key){
-		Map map = getMap(false);
+		Map<Object, Object> map = getMap(false);
 		return map != null ? map.get(key) : null;
 	}
 
@@ -25,24 +25,24 @@ public class ThreadLocalMap {
 		if(value == null)
 			clear(key);
 		else {
-			Map map = getMap(true);
+			Map<Object, Object> map = getMap(true);
 			map.put(key, value);
 		}
 	}
 
 	public void clear(Object key){
-		Map map = getMap(false);
+		Map<Object, Object> map = getMap(false);
 		if(map != null){
 			map.remove(key);
-			if(map == null)
-				fLocal.set(null);
 		}
+//		if(map == null)
+//			fLocal.set(null);
 	}
 
-	private Map getMap(boolean create){
-		Map map = (Map)fLocal.get();
+	private Map<Object, Object> getMap(boolean create){
+		Map<Object, Object> map = fLocal.get();
 		if(map == null && create){
-			map = new HashMap();
+			map = new HashMap<Object, Object>();
 			fLocal.set(map);
 		}
 		return map;

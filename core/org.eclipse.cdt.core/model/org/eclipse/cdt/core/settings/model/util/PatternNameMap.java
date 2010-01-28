@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.model.CoreModelUtil;
 
@@ -25,9 +26,9 @@ public class PatternNameMap {
 	private static final char[] SPEC_CHARS = new char[]{'*', '?'}; 
 	static final String DOUBLE_STAR_PATTERN = "**";  //$NON-NLS-1$
 
-	private Map fChildrenMap;
-	private Map fPatternMap;
-	private Collection fValues;
+	private Map<String, PathSettingsContainer> fChildrenMap;
+	private Map<StringCharArray, PathSettingsContainer> fPatternMap;
+	private Collection<PathSettingsContainer> fValues;
 	private boolean fContainsDoubleStar;
 
 	private static class StringCharArray {
@@ -67,13 +68,13 @@ public class PatternNameMap {
 		}
 	}
 	
-	private class EmptyIterator implements Iterator{
+	private class EmptyIterator implements Iterator<PathSettingsContainer>{
 
 		public boolean hasNext() {
 			return false;
 		}
 
-		public Object next() {
+		public PathSettingsContainer next() {
 			throw new NoSuchElementException();
 		}
 
@@ -83,27 +84,27 @@ public class PatternNameMap {
 		
 	}
 	
-	private class ValuesCollection extends AbstractCollection {
+	private class ValuesCollection extends AbstractCollection<PathSettingsContainer> {
 		
-		private class Iter implements Iterator {
-			private Iterator fEntrySetIter;
-			private Map.Entry fCur;
+		private class Iter implements Iterator<PathSettingsContainer> {
+			private Iterator<Entry<String, PathSettingsContainer>> fEntrySetIter;
+			private Entry<String, PathSettingsContainer> fCur;
 
-			Iter (Iterator entryIter){
+			Iter (Iterator<Entry<String, PathSettingsContainer>> entryIter){
 				this.fEntrySetIter = entryIter;
 			}
 			public boolean hasNext() {
 				return fEntrySetIter.hasNext();
 			}
 
-			public Object next() {
-				fCur = (Map.Entry)fEntrySetIter.next();
+			public PathSettingsContainer next() {
+				fCur = fEntrySetIter.next();
 				return fCur.getValue();
 			}
 
 			public void remove() {
 				fEntrySetIter.remove();
-				String name = (String)fCur.getKey();
+				String name = fCur.getKey();
 				if(DOUBLE_STAR_PATTERN.equals(name)){
 					fContainsDoubleStar = false;
 				} else {
@@ -113,8 +114,8 @@ public class PatternNameMap {
 		}
 
 		@Override
-		public Iterator iterator() {
-			return fChildrenMap != null ? (Iterator)new Iter(fChildrenMap.entrySet().iterator()) : (Iterator)new EmptyIterator();
+		public Iterator<PathSettingsContainer> iterator() {
+			return fChildrenMap != null ? new Iter(fChildrenMap.entrySet().iterator()) : new EmptyIterator();
 		}
 
 		@Override
@@ -133,7 +134,7 @@ public class PatternNameMap {
 		}
 	}
 
-	public Object get(String name){
+	public /* PathSettingsContainer */ Object get(String name){
 		return fChildrenMap != null ? fChildrenMap.get(name) : null;
 	}
 	
@@ -153,35 +154,35 @@ public class PatternNameMap {
 		return (fPatternMap != null && fPatternMap.size() != 0);
 	}
 
-	public List getValues(String name){
+	public List<PathSettingsContainer> getValues(String name){
 		if(fChildrenMap == null)
 			return null;
 		
-		Object val = fChildrenMap.get(name);
+		PathSettingsContainer val = fChildrenMap.get(name);
 		if(hasPatternsMap()){
-			List list;
+			List<PathSettingsContainer> list;
 			if(val != null){
-				list = new ArrayList(3);
+				list = new ArrayList<PathSettingsContainer>(3);
 				list.add(val);
 			} else {
-				list = null;;
+				list = null;
 			}
 			
-			Map.Entry entry;
+			Map.Entry<PatternNameMap.StringCharArray,PathSettingsContainer> entry;
 			StringCharArray strCA;
 			char[] nameCharArray = name.toCharArray(); 
-			for(Iterator iter = fPatternMap.entrySet().iterator(); iter.hasNext();){
-				entry = (Map.Entry)iter.next();
-				strCA = (StringCharArray)entry.getKey();
+			for(Iterator<Map.Entry<PatternNameMap.StringCharArray,PathSettingsContainer>> iter = fPatternMap.entrySet().iterator(); iter.hasNext();){
+				entry = iter.next();
+				strCA = entry.getKey();
 				if(CoreModelUtil.match(strCA.getCharArray(), nameCharArray, true)){
 					if(list == null)
-						list = new ArrayList(2);
+						list = new ArrayList<PathSettingsContainer>(2);
 					list.add(entry.getValue());
 				}
 			}
 			return list;
 		} else if (val != null){
-			List list = new ArrayList(1);
+			List<PathSettingsContainer> list = new ArrayList<PathSettingsContainer>(1);
 			list.add(val);
 			return list;
 		}
@@ -192,13 +193,17 @@ public class PatternNameMap {
 		return fContainsDoubleStar;
 	}
 	
-	public Object put(String name, Object value){
+	public /* PathSettingsContainer */ Object put(String name, /* PathSettingsContainer */Object value){
+		return put(name, (PathSettingsContainer)value);
+	}
+	
+	private PathSettingsContainer put(String name, PathSettingsContainer value){
 		if(value == null)
-			return remove(name);
+			return (PathSettingsContainer)remove(name);
 		
-		Object oldValue;
+		PathSettingsContainer oldValue;
 		if(fChildrenMap == null){
-			fChildrenMap = new HashMap();
+			fChildrenMap = new HashMap<String, PathSettingsContainer>();
 			oldValue = null;
 		} else {
 			oldValue = fChildrenMap.get(name);
@@ -211,7 +216,7 @@ public class PatternNameMap {
 		} else if(isPatternName(name)){
 			StringCharArray strCA = new StringCharArray(name);
 			if(fPatternMap == null)
-				fPatternMap = new HashMap();
+				fPatternMap = new HashMap<StringCharArray, PathSettingsContainer>();
 			
 			fPatternMap.put(strCA, value);
 		}
@@ -219,9 +224,9 @@ public class PatternNameMap {
 		return oldValue;
 	}
 	
-	public Object remove(String name){
+	public /* PathSettingsContainer */ Object remove(String name){
 		if(fChildrenMap != null){
-			Object oldVal = fChildrenMap.remove(name);
+			PathSettingsContainer oldVal = fChildrenMap.remove(name);
 			if(fChildrenMap.size() == 0){
 				fChildrenMap = null;
 				fPatternMap = null;
@@ -263,7 +268,7 @@ public class PatternNameMap {
 		fContainsDoubleStar = false;
 	}
 	
-	public Collection values(){
+	public Collection<PathSettingsContainer> values(){
 		if(fValues == null)
 			fValues = new ValuesCollection();
 		return fValues;

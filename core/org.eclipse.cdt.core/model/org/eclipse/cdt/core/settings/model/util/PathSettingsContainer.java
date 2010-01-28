@@ -243,8 +243,7 @@ public final class PathSettingsContainer {
 		if(pMap != null){
 			if(list == null)
 				list = new ArrayList<PathSettingsContainer>();
-			for(Iterator iter = pMap.values().iterator(); iter.hasNext(); ){
-				PathSettingsContainer cr = (PathSettingsContainer)iter.next();
+			for (PathSettingsContainer cr : pMap.values()) {
 				if(cr.fValue == INEXISTENT_VALUE){
 					cr.doGetDirectChildren(list);
 				} else {
@@ -256,7 +255,7 @@ public final class PathSettingsContainer {
 	}
 
 	public Object[] getValues(final boolean includeThis){
-		final List list = new ArrayList();
+		final List<Object> list = new ArrayList<Object>();
 		accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {
@@ -332,8 +331,8 @@ public final class PathSettingsContainer {
 			return;
 
 
-		Collection c = pMap.values();
-		PathSettingsContainer childContainers[] = (PathSettingsContainer[])c.toArray(new PathSettingsContainer[c.size()]);
+		Collection<PathSettingsContainer> c = pMap.values();
+		PathSettingsContainer childContainers[] = c.toArray(new PathSettingsContainer[c.size()]);
 
 		for (PathSettingsContainer childContainer : childContainers) {
 			childContainer.removeChildren();
@@ -520,8 +519,7 @@ public final class PathSettingsContainer {
 
 		PatternNameMap pMap = getPatternChildrenMap(false);
 		if(pMap != null){
-			for(Iterator iter = pMap.values().iterator(); iter.hasNext();){
-				PathSettingsContainer child = (PathSettingsContainer)iter.next();
+			for (PathSettingsContainer child : pMap.values()) {
 				if(!child.doAccept(visitor))
 					return false;
 			}
@@ -551,8 +549,8 @@ public final class PathSettingsContainer {
 		if(!moveChildren){
 			if(hasChildren()){
 				PathSettingsContainer cr = new PathSettingsContainer(fRootContainer, fDirectParentContainer, fName, fIsPatternMode);
-				for(Iterator iter = fPatternChildrenMap.values().iterator(); iter.hasNext();){
-					PathSettingsContainer child = (PathSettingsContainer)iter.next();
+				for(Iterator<PathSettingsContainer> iter = fPatternChildrenMap.values().iterator(); iter.hasNext();){
+					PathSettingsContainer child = iter.next();
 					iter.remove();
 					child.setParent(cr);
 					cr.connectChild(child);

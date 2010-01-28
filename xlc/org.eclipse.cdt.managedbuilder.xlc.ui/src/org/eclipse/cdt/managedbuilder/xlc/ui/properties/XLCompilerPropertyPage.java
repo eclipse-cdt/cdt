@@ -30,7 +30,10 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
 	protected String originalMessage;
-	
+
+	protected Composite versionParent;
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
@@ -102,7 +105,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		String[] versionEntries = { PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME,
 				PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME };
 
-		Composite versionParent = getFieldEditorParent();
+		versionParent = getFieldEditorParent();
 
 		fVersionEditor = new BuildOptionComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
 				Messages.XLCompilerPropertyPage_1, versionEntries, null, versionParent);
@@ -153,8 +156,13 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		if (fPathEditor != null) {
 			fPathEditor.setStringValue(currentPath);
 		}
+		//set the selection to default setting
+		fVersionEditor.setPreferenceStore(prefStore);
+		fVersionEditor.setPreferenceName(PreferenceConstants.P_XLC_COMPILER_VERSION);
+		fVersionEditor.loadDefault();
+		//set the text entry to default setting
+		fVersionEditor.getComboControl(versionParent).setText(currentVersionLabel);
 
-		fVersionEditor.getComboControl(getFieldEditorParent()).setText(currentVersionLabel);
 
 	}
 

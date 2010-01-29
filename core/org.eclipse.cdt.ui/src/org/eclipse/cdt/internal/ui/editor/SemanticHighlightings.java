@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -510,7 +510,7 @@ public class SemanticHighlightings {
 					return false;
 				}
 				IBinding binding= token.getBinding();
-				if (binding instanceof ICPPMethod) {
+				if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
 					try {
 						return ((ICPPMethod)binding).isStatic();
 					} catch (DOMException exc) {
@@ -1992,7 +1992,7 @@ public class SemanticHighlightings {
 			if(node instanceof IASTImplicitName) {
 				IASTImplicitName name = (IASTImplicitName) node;
 				IBinding binding = name.resolveBinding();
-				if(binding instanceof ICPPMethod && ((ICPPMethod)binding).isImplicit()) {
+				if(binding instanceof ICPPMethod  && !(binding instanceof IProblemBinding) && ((ICPPMethod)binding).isImplicit()) {
 					return false;
 				}
 				char[] chars = name.toCharArray();

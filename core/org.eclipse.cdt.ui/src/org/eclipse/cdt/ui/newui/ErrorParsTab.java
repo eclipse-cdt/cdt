@@ -534,8 +534,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		if (isErrorParsersEditable()) {
 			// Must be Build Settings Preference Page
 			if (MessageDialog.openQuestion(usercomp.getShell(),
-					UIMessages.getString(UIMessages.getString("ErrorParsTab.title.ConfirmReset")), //$NON-NLS-1$
-					UIMessages.getString(UIMessages.getString("ErrorParsTab.message.ConfirmReset")))) { //$NON-NLS-1$
+					UIMessages.getString("ErrorParsTab.title.ConfirmReset"), //$NON-NLS-1$
+					UIMessages.getString("ErrorParsTab.message.ConfirmReset"))) { //$NON-NLS-1$
 
 				try {
 					ErrorParserManager.setUserDefinedErrorParsers(null);

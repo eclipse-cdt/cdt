@@ -113,7 +113,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				return td.var.getName();
 			case 1:
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					return UIMessages.getString(UIMessages.getString("EnvironmentTab.20")); //$NON-NLS-1$
+					return UIMessages.getString("EnvironmentTab.20"); //$NON-NLS-1$
 				return td.var.getValue();
 			case 2:
 				return ce.getOrigin(td.var);

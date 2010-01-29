@@ -186,7 +186,7 @@ public class ErrorParserManagerTest extends TestCase {
 			epManager.write(b, 0, k);
 		}
 		end();
-		assertEquals(19, errorList.size());
+		assertEquals(22, errorList.size());
 
 	}
 

@@ -370,7 +370,7 @@
           cleanBuildTarget="clean"
           ignoreErrCmd="-k"
           parallelBuildCmd="-j*"
-          errorParsers="org.eclipse.cdt.core.MakeErrorParser"
+          errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser"
           name="%GNUMakeBuilder.name"
           isSystem="true">
    	  </builder>   

@@ -149,14 +149,210 @@
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->
+<!-- MakeErrorParser is deprecated as of CDT 7.0 (replaced with WorkingDirLocator and GmakeErrorParser) -->
    <extension
          id="MakeErrorParser"
-         name="%CDTGNUMakeErrorParser.name"
+         name="%CDTGNUMakeErrorParser.name.deprecated"
          point="org.eclipse.cdt.core.ErrorParser">
       <errorparser
             id="org.eclipse.cdt.core.MakeErrorParser"
-            name="%CDTGNUMakeErrorParser.name"
+            name="%CDTGNUMakeErrorParser.name.deprecated"
             class="org.eclipse.cdt.internal.errorparsers.MakeErrorParser">
+      </errorparser>
+   </extension>
+   <extension
+         id="WorkingDirLocator"
+         name="%CDTWorkingDirLocator.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.internal.errorparsers.CWDLocator"
+            id="org.eclipse.cdt.core.CWDLocator"
+            name="%CDTWorkingDirLocator.name">
+      </errorparser>
+   </extension>
+   <extension
+         id="GmakeErrorParser"
+         name="%CDTGNUMakeErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
+            id="org.eclipse.cdt.core.GmakeErrorParser"
+            name="%CDTGNUMakeErrorParser.name">
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make: \*\*\* \[.*\] Error .*"
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*\[.*\] Error [-]{0,1}\d*.*"
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*missing separator.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*missing separator \(did you mean TAB instead of 8 spaces?\).\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*commands commence before first target.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*missing rule before commands.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*No rule to make target `.*'."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*No rule to make target `.*', needed by `.*'."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*No targets specified and no makefile found.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*No targets.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*Makefile `.*' was not found."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*Included makefile `.*' was not found."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*warning: overriding commands for target `.*'"
+               severity="Warning"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*warning: ignoring old commands for target `.*'"
+               severity="Warning"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*Circular .+ &lt;- .+ dependency dropped."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*Recursive variable `.*' references itself \(eventually\).\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*[uU]nterminated variable reference.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*insufficient arguments to function `.*'.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*missing target pattern.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*multiple target patterns.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*target pattern contains no `%'.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*mixed implicit and static pattern rules.\s*Stop."
+               severity="Error"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*warning: -jN forced in submake: disabling jobserver mode."
+               severity="Warning"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*warning: jobserver unavailable: using -j1. Add `+' to parent make rule."
+               severity="Warning"/>
+         <pattern
+               description-expr="$0"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="make.*target `.*' doesn't match the target pattern"
+               severity="Error"/>
       </errorparser>
    </extension>
    <extension

@@ -1818,7 +1818,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(expectedBinParserId, targetPlatform.getBinaryParserList()[0]);
 		// This target defines errors parsers.  Check that the error parsers
 		// have been assigned.
-		assertEquals("org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser", configs[0].getErrorParserIds());
+		assertEquals("org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser", configs[0].getErrorParserIds());
 		
 		// Tool
 		ITool[] tools = configs[0].getTools();

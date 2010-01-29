@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Platform;
  * properly locate and resolve filenames found in build output in case of EFS files/folders.
  */
 public class ErrorParserEfsFileMatchingTest extends TestCase {
-	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.MakeErrorParser";
+	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.CWDLocator";
 	private String mockErrorParserId = null;
 
 	private final static String testName = "FindMatchingFilesEfsTest";

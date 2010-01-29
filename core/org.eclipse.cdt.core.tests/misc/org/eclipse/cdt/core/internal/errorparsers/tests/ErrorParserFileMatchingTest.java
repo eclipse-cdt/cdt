@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.Platform;
  * properly locate and resolve filenames found in build output.
  */
 public class ErrorParserFileMatchingTest extends TestCase {
-	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.MakeErrorParser";
+	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.CWDLocator";
 	private String mockErrorParserId = null;
 
 	private final static String testName = "FindMatchingFilesTest";

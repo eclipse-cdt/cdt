@@ -108,11 +108,12 @@ public class ErrorParserManagerTest extends TestCase {
 
 		};
 		String[] errorParsersIds = {
-			"org.eclipse.cdt.core.MakeErrorParser",
+			"org.eclipse.cdt.core.CWDLocator",
 			"org.eclipse.cdt.core.GCCErrorParser",
 			"org.eclipse.cdt.core.GASErrorParser",
 			"org.eclipse.cdt.core.GLDErrorParser",
 			"org.eclipse.cdt.core.VCErrorParser",
+			"org.eclipse.cdt.core.GmakeErrorParser",
 		};
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, errorParsersIds);
 

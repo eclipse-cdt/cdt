@@ -44,9 +44,10 @@ public class BackwardCompatiblityTests extends TestCase {
 		};
 		
 		String[] ERR_PARSERS = new String[]{
-				"org.eclipse.cdt.core.MakeErrorParser",
+				"org.eclipse.cdt.core.CWDLocator",
 				"org.eclipse.cdt.core.GASErrorParser",
-				"org.eclipse.cdt.core.VCErrorParser"
+				"org.eclipse.cdt.core.VCErrorParser",
+				"org.eclipse.cdt.core.GmakeErrorParser",
 		};
 		
 		IProject project = loadStdProject(PROJ_NAME);

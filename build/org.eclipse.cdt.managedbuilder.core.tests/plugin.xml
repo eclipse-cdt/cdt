@@ -372,7 +372,7 @@
       </target>
       <target
             isTest="true"
-            errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser"
+            errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
             name="Test Error Parsers"
             binaryParser="org.eclipse.cdt.core.PE"
             isAbstract="false"
@@ -1214,7 +1214,7 @@
                name="Dbg"
                id="cdt.managedbuild.config.testgnu.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.exe.debug"
 		          name="Dbg ToolChain"
@@ -1287,7 +1287,7 @@
                name="Rel"
                id="cdt.managedbuild.config.testgnu.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.exe.release"
 		          name="Rel ToolChain"
@@ -1361,7 +1361,7 @@
                name="Debug"
                cleanCommand="rm -rf"
                artifactExtension="so"               
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                          
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"                          
                id="cdt.managedbuild.config.testgnu.so.debug">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.so.debug"
@@ -1443,7 +1443,7 @@
                name="Release"
                cleanCommand="rm -rf"
                artifactExtension="so"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
                id="cdt.managedbuild.config.testgnu.so.release">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.so.release"
@@ -1532,7 +1532,7 @@
 			   name="Dbg"
 			   artifactExtension="a"
 			   cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
 			   id="cdt.managedbuild.config.testgnu.lib.debug">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.lib.debug"
@@ -1598,7 +1598,7 @@
                name="Rel"
                artifactExtension="a"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
                id="cdt.managedbuild.config.testgnu.lib.release">
                <toolChain
 		          id="cdt.managedbuild.toolchain.testgnu.lib.release"
@@ -2582,7 +2582,7 @@
                name="MBS30ConfigName.Dbg"
                id="cdt.managedbuild.config.testgnu30.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
@@ -2647,7 +2647,7 @@
                name="MBS30ConfigName.Rel"
                id="cdt.managedbuild.config.testgnu30.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
@@ -2719,7 +2719,7 @@
                name="MBS30ConfigName.Dbg"
                cleanCommand="rm -rf"
                artifactExtension="so"               
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"                          
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"                          
                id="cdt.managedbuild.config.testgnu30.so.debug">
                <toolChain
                      archList="all"
@@ -2809,7 +2809,7 @@
                name="MBS30ConfigName.Rel"
                cleanCommand="rm -rf"
                artifactExtension="so"
-               errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+               errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
                id="cdt.managedbuild.config.testgnu30.so.release">
                <toolChain
                      archList="all"
@@ -2906,7 +2906,7 @@
 			   name="MBS30ConfigName.Dbg"
 			   artifactExtension="a"
 			   cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
 			   id="cdt.managedbuild.config.testgnu30.lib.debug">
                <toolChain
                      archList="all"
@@ -2968,7 +2968,7 @@
                name="MBS30ConfigName.Rel"
                artifactExtension="a"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
                id="cdt.managedbuild.config.testgnu30.lib.release">
                <toolChain
                      archList="all"
@@ -3072,7 +3072,7 @@
                name="Dbg"
                id="cdt.managedbuild.config.Testprepost30.gnu.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                       archList="all"
                       osList="solaris,linux,hpux,aix,qnx"
@@ -3161,7 +3161,7 @@
                id="test30_1.gnu.so.config"
                artifactExtension="so.4.5.6"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                       archList="all"
                       osList="all"
@@ -3632,7 +3632,7 @@
                name="One"
                id="cdt.managedbuild.config.testenv.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                      archList="all"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -3698,7 +3698,7 @@
                name="Two"
                id="cdt.managedbuild.config.testenv.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain
                      archList="all"
                      configurationMacroSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -3805,7 +3805,7 @@
                name="Five"
                id="cdt.managedbuild.config.testenv.exe.five"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                      archList="all"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -3955,7 +3955,7 @@
             <configuration
             	id="TopTC.config.exe.debug"
             	name="Debug"
-		      	errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+		      	errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
 		      	cleanCommand="rm -rf">
 		      		<toolChain
 		      			id="TopTC.toolchain.exe.debug"
@@ -3974,7 +3974,7 @@
             <configuration
             	id="TopTC.config.exe.release"
             	name="Release"
-		      	errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser"
+		      	errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser"
 		      	cleanCommand="rm -rf">
 		      		<toolChain
 		      			id="TopTC.toolchain.exe.release"
@@ -4007,7 +4007,7 @@
                description="debug configuration for IA32 windows"
                id="cdt.managedbuild.config.testMultipleVersions.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain
                      id="cdt.managedbuild.toolchain.testMultipleVersions.exe.debug_1.1.0"
                      name="Debug IA32 ToolChain"
@@ -4047,7 +4047,7 @@
                description="release configuration for IA32 windows"
                id="cdt.managedbuild.config.testMultipleVersions.exe.release"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain
                      archList="x86"                                         
                      osList="linux"
@@ -4150,7 +4150,7 @@
                description="debug configuration for IA32 windows"
                id="config.testProjectConverterConvenienceRoutines.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
                      id="toolchain.testProjectConverterConvenienceRoutines.exe.debug_1.1.0"
                      name="Debug IA32 ToolChain"
@@ -4318,7 +4318,7 @@
                name="Test Configuration"
                id="test.config_1.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain isSystem="true"
 		          id="test.toolChain_1.0.0"
 		          name="Test ToolChain Ver 1.0"
@@ -4362,7 +4362,7 @@
                name="Test Configuration 2.0"
                id="test.config_2.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain isSystem="true"
 		          id="test.toolChain_2.0.0"
 		          name="Test ToolChain Ver 2.0"
@@ -4465,7 +4465,7 @@
                name="Test Configuration"
                id="testProject.config_1.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain isSystem="true"
 		          id="testProject.toolChain_1.0.0"
 		          name="Test ToolChain Ver 1.0"
@@ -4506,7 +4506,7 @@
                name="Test Configuration"
                id="testProject.config_2.0.0"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">               
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">               
                <toolChain isSystem="true"
 		          id="testProject.toolChain_2.0.0"
 		          name="Test ToolChain Ver 2.0"
@@ -5020,7 +5020,7 @@
                name="One"
                id="cdt.managedbuild.config.enablement.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
                      archList="all"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.core.tests.TestMacro"
@@ -6197,7 +6197,7 @@
                name="MBS30ConfigName.Dbg"
                id="cdt.managedbuild.config.bdm.exe.debug"
                cleanCommand="rm -rf"
-			   errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser">
+			   errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser">
                <toolChain isSystem="true"
                      archList="all"
                      osList="solaris,linux,hpux,aix,qnx"
@@ -7874,7 +7874,7 @@
           cleanBuildTarget="clean"
           ignoreErrCmd="-k"
           parallelBuildCmd="-j*"
-          errorParsers="org.eclipse.cdt.core.MakeErrorParser"
+          errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser"
           name="%GNUMakeBuilder.name">
    	  </builder>   
    	  

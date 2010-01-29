@@ -71,7 +71,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		int expecectedNumConfigs = 2;				
 		String[] expectedConfigName = {"Dbg", "Rel"};
 		String expectedCleanCmd = "rm -rf";
-		String expectedParserId = "org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser";		
+		String expectedParserId = "org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser";		
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;
 		String[] expectedArchList = {"all"};
@@ -244,7 +244,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		int expecectedNumConfigs = 2;				
 		String[] expectedConfigName = {"Debug", "Release"};
 		String expectedCleanCmd = "rm -rf";
-		String expectedParserId = "org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser";
+		String expectedParserId = "org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser";
 		String expectedArtifactExtension = "so";	
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;
@@ -443,7 +443,7 @@ public class ManagedBuildCoreTests extends TestCase {
 		int expecectedNumConfigs = 2;				
 		String[] expectedConfigName = {"Dbg", "Rel"};
 		String expectedCleanCmd = "rm -rf";
-		String expectedParserId = "org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser";
+		String expectedParserId = "org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser";
 		String expectedArtifactExtension = "a";	
 		String expectedOSList = "solaris,linux,hpux,aix,qnx";
 		int expectedSizeOSList = 5;

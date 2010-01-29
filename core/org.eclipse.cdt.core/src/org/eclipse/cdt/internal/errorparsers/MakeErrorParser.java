@@ -20,6 +20,11 @@ import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
 import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.core.runtime.Path;
 
+/**
+ * @deprecated replaced with {@link CWDLocator} and {@code GmakeErrorParser}
+ *
+ */
+@Deprecated
 public class MakeErrorParser extends AbstractErrorParser {
 	private static final ErrorPattern[] patterns = {
 		new ErrorPattern("make\\[(.*)\\]: Entering directory `(.*)'", 0, 0) {  //$NON-NLS-1$

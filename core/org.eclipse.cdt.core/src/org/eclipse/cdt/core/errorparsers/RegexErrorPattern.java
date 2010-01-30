@@ -277,7 +277,8 @@ public class RegexErrorPattern implements Cloneable {
 	 */
 	public boolean processLine(String line, ErrorParserManager eoParser) {
 		Matcher matcher = getMatcher(line);
-		if (!matcher.find())
+		// pattern should cover the whole line
+		if (!(matcher.find() && matcher.group(0).length()==line.length()))
 			return false;
 
 		recordError(matcher, eoParser);

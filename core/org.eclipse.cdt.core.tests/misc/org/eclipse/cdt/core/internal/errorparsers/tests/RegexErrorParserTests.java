@@ -686,4 +686,26 @@ public class RegexErrorParserTests extends TestCase {
 			assertNotSame(clone1, clone2);
 		}
 	}
+	
+	/**
+	 * Check how RegexErrorParser parses output.
+	 *
+	 * @throws Exception...
+	 */
+	public void testRegexErrorParserExternalLocation_bug301338() throws Exception {
+		RegexErrorParser regexErrorParser = new RegexErrorParser();
+		regexErrorParser.addPattern(new RegexErrorPattern("pattern",
+				"", "", "", "$0", IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
+
+		ErrorParserManager epManager = new ErrorParserManager(fProject, markerGenerator, new String[0]);
+
+		regexErrorParser.processLine("wrong pattern", epManager);
+		regexErrorParser.processLine("pattern wrong", epManager);
+
+		errorList.clear();
+		epManager.reportProblems();
+		assertEquals(0, errorList.size());
+	}
+
+
 }

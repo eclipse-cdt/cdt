@@ -42,7 +42,6 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 		// Ignored
 		"make[3]: Nothing to be done for `all'.",
 		"make[2]: `all' is up to date.",
-
 	};
 	private static final int GMAKE_ERROR_STREAM0_INFOS = 2;
 	private static final int GMAKE_ERROR_STREAM0_WARNINGS = 3;
@@ -62,6 +61,15 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 	private static final int GMAKE_ERROR_STREAM1_ERRORS = 5;
 	private static final String[] GMAKE_ERROR_STREAM1_FILENAMES = {"Makefile1", "Makefile2",
 		"Makefile3", "Makefile4", "Makefile5", "Makefile6"};
+
+	private static final String[] GMAKE_ERROR_STREAM2 = {
+		// Errors
+		"gmake[3]: *** [Hello.o] Error 1",
+		"make-381.exe: *** [Hello.o] Error 1",
+		"gmake381: Target `all' not remade because of errors.",
+	};
+	private static final int GMAKE_ERROR_STREAM2_WARNINGS = 0;
+	private static final int GMAKE_ERROR_STREAM2_ERRORS = 3;
 
 	public MakeErrorParserTests() {
 		super();
@@ -84,5 +92,10 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 	public void testGMakeMessages1() throws IOException {
 		runParserTest(GMAKE_ERROR_STREAM1, GMAKE_ERROR_STREAM1_ERRORS, GMAKE_ERROR_STREAM1_WARNINGS,
 				GMAKE_ERROR_STREAM1_FILENAMES, null, new String[]{GMAKE_ERROR_PARSER_ID});
+	}
+
+	public void testGmakeMessages2() throws IOException {
+		runParserTest(GMAKE_ERROR_STREAM2, GMAKE_ERROR_STREAM2_ERRORS, GMAKE_ERROR_STREAM2_WARNINGS,
+				null, null, new String[]{GMAKE_ERROR_PARSER_ID});
 	}
 }

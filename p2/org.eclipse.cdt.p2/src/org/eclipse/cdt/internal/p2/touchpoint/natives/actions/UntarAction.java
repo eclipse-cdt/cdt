@@ -29,11 +29,12 @@ import org.eclipse.equinox.internal.p2.touchpoint.natives.Messages;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.Util;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.ActionConstants;
 import org.eclipse.equinox.internal.p2.touchpoint.natives.actions.UnzipAction;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IFileArtifactRepository;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.engine.ProvisioningAction;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.engine.spi.ProvisioningAction;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -99,17 +100,18 @@ public class UntarAction extends ProvisioningAction {
 		
 		IInstallableUnit iu = (IInstallableUnit) parameters.get(ActionConstants.PARM_IU);
 		Profile profile = (Profile) parameters.get(ActionConstants.PARM_PROFILE);
+		IProvisioningAgent agent = (IProvisioningAgent) parameters.get(ActionConstants.PARM_AGENT);
 
 		if (source.equals(ActionConstants.PARM_AT_ARTIFACT)) {
 			//TODO: fix wherever this occurs -- investigate as this is probably not desired
-			if (iu.getArtifacts() == null || iu.getArtifacts().length == 0)
+			if (iu.getArtifacts() == null || iu.getArtifacts().size() == 0)
 				return Status.OK_STATUS;
 
-			IArtifactKey artifactKey = iu.getArtifacts()[0];
+			IArtifactKey artifactKey = iu.getArtifacts().iterator().next();
 
 			IFileArtifactRepository downloadCache;
 			try {
-				downloadCache = Util.getDownloadCacheRepo();
+				downloadCache = Util.getDownloadCacheRepo(agent);
 			} catch (ProvisionException e) {
 				return e.getStatus();
 			}

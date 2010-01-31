@@ -25,24 +25,24 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository;
 import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.ArtifactDescriptor;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepository;
-import org.eclipse.equinox.internal.provisional.p2.artifact.repository.IArtifactRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.core.ProvisionException;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IArtifactKey;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ILicense;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IRequiredCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.ITouchpointType;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IUpdateDescriptor;
+import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.VersionRange;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.repository.IRepository;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.ILicense;
+import org.eclipse.equinox.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.p2.metadata.ITouchpointType;
+import org.eclipse.equinox.p2.metadata.IUpdateDescriptor;
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.VersionRange;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.spi.ArtifactDescriptor;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 
 /**
  * @author DSchaefe
@@ -280,7 +280,7 @@ public class WascanaGenerator implements IApplication {
 		InstallableUnitDescription iuDesc = new MetadataFactory.InstallableUnitDescription();
 		iuDesc.setId(id);
 		iuDesc.setVersion(version);
-		iuDesc.setLicense(license);
+		iuDesc.setLicenses(new ILicense[] { license });
 		iuDesc.setSingleton(true);
 		iuDesc.setProperty(IInstallableUnit.PROP_NAME, name);
 		iuDesc.setCapabilities(new IProvidedCapability[] {
@@ -296,7 +296,7 @@ public class WascanaGenerator implements IApplication {
 		if (reqs != null)
 			iuDesc.setRequiredCapabilities(reqs);
 
-		iuDesc.setProperty(IInstallableUnit.PROP_TYPE_GROUP, String.valueOf(true));
+		iuDesc.setProperty(InstallableUnitDescription.PROP_TYPE_GROUP, String.valueOf(true));
 		iuDesc.setTouchpointType(NATIVE_TOUCHPOINT);
 		Map<String, String> tpdata = new HashMap<String, String>();
 		
@@ -318,7 +318,7 @@ public class WascanaGenerator implements IApplication {
 		InstallableUnitDescription iuDesc = createIUDesc(id, name, version, null);
 		if (reqs != null)
 			iuDesc.setRequiredCapabilities(reqs);
-		iuDesc.setProperty(IInstallableUnit.PROP_TYPE_CATEGORY, String.valueOf(true));
+		iuDesc.setProperty(InstallableUnitDescription.PROP_TYPE_CATEGORY, String.valueOf(true));
 		IInstallableUnit iu = MetadataFactory.createInstallableUnit(iuDesc);
 		iuList.add(iu);
 		return iu;

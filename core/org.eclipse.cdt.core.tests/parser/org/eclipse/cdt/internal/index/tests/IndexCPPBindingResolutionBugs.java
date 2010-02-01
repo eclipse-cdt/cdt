@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1153,5 +1153,26 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	}
 	public void testLateDefinitionOfInheritance_Bug292749() throws Exception {
     	getBindingFromASTName("useBase(x.d", 7, ICPPFunction.class);
+	}
+	
+	// namespace one {
+	//   void fx();
+	//   void fx(int);
+	//   void fx(int, int);
+	// }
+	// namespace two {
+	//   using one::fx;
+    // }
+	
+	// #include "header.h"
+	// void test() {
+	//    two::fx();
+	//    two::fx(1);
+	//    two::fx(1,1);
+	// }
+	public void testUsingDeclaration_Bug300019() throws Exception {
+    	getBindingFromASTName("fx();", 2, ICPPFunction.class);
+    	getBindingFromASTName("fx(1);", 2, ICPPFunction.class);
+    	getBindingFromASTName("fx(1,1);", 2, ICPPFunction.class);
 	}
 }

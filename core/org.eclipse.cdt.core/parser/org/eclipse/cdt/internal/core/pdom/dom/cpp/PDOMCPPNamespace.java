@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,16 +147,16 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		IBinding[] result = null;
 		try {
 			if (!prefixLookup) {
-				return getBindingsViaCache(name.getLookupKey());
+				result= getBindingsViaCache(name.getLookupKey());
+			} else {
+				BindingCollector visitor= new BindingCollector(getLinkage(), name.getLookupKey(),
+						IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
+				getIndex().accept(visitor);
+				result = visitor.getBindings();
 			}
-			BindingCollector visitor= new BindingCollector(getLinkage(), name.getLookupKey(),
-					IndexFilter.CPP_DECLARED_OR_IMPLICIT_NO_INSTANCE, prefixLookup, !prefixLookup);
-			getIndex().accept(visitor);
-			IBinding[] bindings = visitor.getBindings();
 			if (fileSet != null) {
-				bindings= fileSet.filterFileLocalBindings(bindings);
+				result= fileSet.filterFileLocalBindings(result);
 			}
-			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

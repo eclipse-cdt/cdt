@@ -608,7 +608,7 @@
                     schema="schema/templates.exsd"/>
    <extension-point id="templateProcessTypes" name="%templateProcessTypes.name" schema="schema/templateProcessTypes.exsd"/>
    <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>
-   <extension-point id="ScannerInfoProvider2" name="Scanner Info Provider" schema="schema/ScannerInfoProvider2.exsd"/>
+   <extension-point id="ScannerInfoProvider2" name="%scannerInfoProvider2.name" schema="schema/ScannerInfoProvider2.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

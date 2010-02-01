@@ -436,7 +436,7 @@
    </extension>
    <extension
          id="baseProperties"
-         name="Base Build Properties Definition"
+         name="%extension.name"
          point="org.eclipse.cdt.managedbuilder.core.buildProperties">
       <propertyValue
             id="org.eclipse.cdt.build.core.buildArtefactType.xlupc.exe"

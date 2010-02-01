@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="newWizardPages" name="Custom MBS New Wizard Pages" schema="schema/newWizardPages.exsd"/>
+     <extension-point id="newWizardPages" name="%extension-point.name" schema="schema/newWizardPages.exsd"/>
 
    <extension
          point="org.eclipse.ui.newWizards">

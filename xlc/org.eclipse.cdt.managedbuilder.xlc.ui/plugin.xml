@@ -6,7 +6,7 @@
 <!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"
-         name="Managed Build Tools Description"
+         name="%extension.name"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
 	    <managedBuildRevision
     	        fileVersion="4.0.0">
@@ -930,7 +930,7 @@
             errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
             isAbstract="true"
-            name="Abstract XL Compiler">
+            name="%tool.name">
          <envVarBuildPath 
 			pathType="buildpathInclude"
 			variableList="CPATH,C_INCLUDE_PATH">
@@ -3050,7 +3050,7 @@
             errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
             isAbstract="true"
-            name="Abstract XL Linker"
+            name="%tool.name.0"
             outputFlag="-o">
                   <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -3246,7 +3246,7 @@
             errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
             isAbstract="true"
-            name="Abstract XL Shared Object Linker"
+            name="%tool.name.1"
             superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker">
             <option
             	name="%Option.Linking.mkshrobj"

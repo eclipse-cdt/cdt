@@ -6,7 +6,7 @@
 <!-- Managed Make Builder Tool Specifications -->
    <extension
          id="cdt.managed.build.info"
-         name="Managed Build Tools Description"
+         name="%extension.name"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision
             fileVersion="4.0.0">

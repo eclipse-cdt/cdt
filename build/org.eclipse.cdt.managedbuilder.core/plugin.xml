@@ -2,11 +2,11 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-     <extension-point id="ManagedBuildInfo" name="Managed Build Tools 2.0 (Deprecated)" schema="schema/ManagedBuildTools.exsd"/>
-   <extension-point id="buildDefinitions" name="Managed Build Definitions" schema="schema/buildDefinitions.exsd"/>
-   <extension-point id="projectConverter" name="Managed Build Project Converter" schema="schema/Converter.exsd"/>
-   <extension-point id="buildProperties" name="Build Properties" schema="schema/buildProperties.exsd"/>
-   <extension-point id="tcModificationInfo" name="ToolChain Modification Info" schema="schema/tcModificationInfo.exsd"/>
+     <extension-point id="ManagedBuildInfo" name="%extension-point.name" schema="schema/ManagedBuildTools.exsd"/>
+   <extension-point id="buildDefinitions" name="%extension-point.name.0" schema="schema/buildDefinitions.exsd"/>
+   <extension-point id="projectConverter" name="%extension-point.name.1" schema="schema/Converter.exsd"/>
+   <extension-point id="buildProperties" name="%extension-point.name.2" schema="schema/buildProperties.exsd"/>
+   <extension-point id="tcModificationInfo" name="%extension-point.name.3" schema="schema/tcModificationInfo.exsd"/>
    
 
 <!-- =================================================================================== -->
@@ -75,7 +75,7 @@
    </extension>
    <extension
          id="GCCManagedMakePerProjectProfile"
-         name="GNU C/C++ managed make per project SCD profile"
+         name="%extension.name"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
@@ -94,7 +94,7 @@
    </extension>
    <extension
          id="GCCManagedMakePerProjectProfileCPP"
-         name="GNU C/C++ managed make per project SCD profile"
+         name="%extension.name.0"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
@@ -113,7 +113,7 @@
    </extension>
    <extension
          id="GCCManagedMakePerProjectProfileC"
-         name="GNU C/C++ managed make per project SCD profile"
+         name="%extension.name.1"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
@@ -132,7 +132,7 @@
    </extension>
    <extension
          id="GCCWinManagedMakePerProjectProfile"
-         name="GNU C/C++ managed make per project SCD profile (Windows)"
+         name="%extension.name.2"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
@@ -151,7 +151,7 @@
    </extension>
    <extension
          id="GCCWinManagedMakePerProjectProfileCPP"
-         name="GNU C/C++ managed make per project SCD profile (Windows)"
+         name="%extension.name.3"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
@@ -170,7 +170,7 @@
    </extension>
    <extension
          id="GCCWinManagedMakePerProjectProfileC"
-         name="GNU C/C++ managed make per project SCD profile (Windows)"
+         name="%extension.name.4"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
       <scannerInfoCollector
             class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
@@ -270,7 +270,7 @@
    
       <extension
          id="baseProperties"
-         name="Base Build Properties Definition"
+         name="%extension.name.5"
          point="org.eclipse.cdt.managedbuilder.core.buildProperties">
       <propertyType id="org.eclipse.cdt.build.core.buildType" name="%BuildProperty.type.name.buildType"/>
       <propertyType id="org.eclipse.cdt.build.core.buildArtefactType" name="%BuildProperty.type.name.buildArtefactType"/>
@@ -301,7 +301,7 @@
       
          <extension
          id="emptyConfigs"
-         name="Empty Configurations for make projects"
+         name="%extension.name.6"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       <managedBuildRevision
             fileVersion="4.0.0">
@@ -317,24 +317,24 @@
 	 	 >     
 	  <toolChain
 	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"
-	  	name="No ToolChain"
+	  	name="%toolChain.name"
 	  	supportsManagedBuild="false"
 	  	isSystem="true">
       <tool
       	id="org.eclipse.cdt.build.core.settings.holder.libs"
 	  	supportsManagedBuild="false"
-      	name="holder for library settings"
+      	name="%tool.name"
       	errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser"
       	isSystem="true">
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
        		browseType="directory"
-      		name="Library Paths"
+      		name="%option.name"
 			valueType="libPaths"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.libfiles"
-      		name="Library Files"
+      		name="%option.name.0"
 			valueType="libFiles"
       		browseType="file"
       	/>
@@ -381,7 +381,7 @@
       <tool
       	id="org.eclipse.cdt.build.core.settings.holder"
 	  	supportsManagedBuild="false"
-      	name="holder for includes and symbols settings"
+      	name="%tool.name.0"
       	errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser"
       	isSystem="true">
       	<inputType
@@ -389,48 +389,48 @@
       	</inputType>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.incpaths"
-      		name="Include Paths"
+      		name="%option.name.1"
       		browseType="directory"
       		valueType="includePath"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.symbols"
-      		name="Symbols"
+      		name="%option.name.2"
 			valueType="definedSymbols"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.symbolfiles"
-      		name="Symbol Files"
+      		name="%option.name.3"
       		browseType="file"
 			valueType="symbolFiles"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.includefiles"
-      		name="Include Files"
+      		name="%option.name.4"
       		browseType="file"
 			valueType="includeFiles"
       	/>
 
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths"
-      		name="Undefined Include Paths"
+      		name="%option.name.5"
       		browseType="directory"
       		valueType="undefIncludePath"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.undef.symbols"
-      		name="Undefined Symbols"
+      		name="%option.name.6"
 			valueType="undefDefinedSymbols"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.undef.symbolfiles"
-      		name="Undefined Symbol Files"
+      		name="%option.name.7"
       		browseType="file"
 			valueType="undefSymbolFiles"
       	/>
       	<option
       		id="org.eclipse.cdt.build.core.settings.holder.undef.includefiles"
-      		name="Undefined Include Files"
+      		name="%option.name.8"
       		browseType="file"
 			valueType="undefIncludeFiles"
       	/>
@@ -584,7 +584,7 @@
    </extension>
    <extension
          id="headlessbuild"
-         name="CDT Headless Build"
+         name="%extension.name.7"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"

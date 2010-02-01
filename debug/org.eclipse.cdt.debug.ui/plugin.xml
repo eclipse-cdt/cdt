@@ -595,7 +595,7 @@
             objectClass="org.eclipse.cdt.debug.core.model.ICVariable"
             id="org.eclipse.cdt.debug.ui.CVariableActions">
          <action
-               label="View Memory"
+               label="%viewMemory.label"
                helpContextId="view_memory_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ViewMemoryActionDelegate"
                menubarPath="variableGroup"
@@ -1106,7 +1106,7 @@
             targetID="org.eclipse.cdt.debug.ui.DisassemblyView">
          <menu
                id="org.eclipse.cdt.debug.ui.disassemblyViewMenu"
-               label="disassemblyViewMenu">
+               label="%disassemblyViewMenu.label">
          </menu>
          <action
                class="org.eclipse.cdt.debug.internal.ui.views.disassembly.GoToAddressActionDelegate"
@@ -1693,7 +1693,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="C/C++ Source Not Found Editor"
+            name="%sourceNotFoundEditor.name"
             icon="$nl$/icons/obj16/c_app.gif"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor"
             id="org.eclipse.cdt.debug.ui.SourceNotFoundEditor">
@@ -1833,7 +1833,7 @@
           name="%DisassemblyDisplayMode.name">
        <commandParameter
              id="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
-             name="displayMode"
+             name="%displayMode.name"
              optional="false">
        </commandParameter>
     </command>

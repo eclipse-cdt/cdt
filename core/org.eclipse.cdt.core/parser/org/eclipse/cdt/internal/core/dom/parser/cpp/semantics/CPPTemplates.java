@@ -1569,7 +1569,7 @@ public class CPPTemplates {
 				if (tmplArgs == null || fnArgs == null) {
 					tmplArgs = ICPPTemplateArgument.EMPTY_ARGUMENTS;
 					try {
-						if (containsDependentType(fnArgs)) {
+						if (fnArgs == null || containsDependentType(fnArgs)) {
 							functions[i]= CPPUnknownFunction.createForSample(template);
 							return;
 						}

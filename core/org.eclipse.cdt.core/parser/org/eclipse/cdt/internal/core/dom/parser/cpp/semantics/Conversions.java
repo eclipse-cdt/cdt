@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -41,13 +39,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.ReferenceBinding;
 
@@ -207,7 +203,7 @@ public class Conversions {
 		
 		// [13.3.3.1-6] Derived to base conversion
 		if (uqsource instanceof ICPPClassType && uqtarget instanceof ICPPClassType) {
-			int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, uqsource, uqtarget);
+			int depth= SemanticUtil.calculateInheritanceDepth(uqsource, uqtarget);
 			if (depth > -1) {
 				if (depth == 0) {
 					return new Cost(uqsource, uqtarget, Rank.IDENTITY);
@@ -356,7 +352,7 @@ public class Conversions {
 				s= SemanticUtil.getNestedType(((IQualifierType) s).getType(), TDEF | REF);
 
 			if (t instanceof ICPPClassType && s instanceof ICPPClassType) {
-				return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, s, t);
+				return SemanticUtil.calculateInheritanceDepth(s, t);
 			}
 		}
 		if (t == s || (t != null && s != null && t.isSameType(s))) {
@@ -486,7 +482,7 @@ public class Conversions {
 					if (op != null && !(op instanceof IProblemBinding)) {
 						final IType returnType = op.getType().getReturnType();
 						final IType uqReturnType= getNestedType(returnType, REF | TDEF | CVTYPE);
-						final int dist = calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, uqReturnType, t);
+						final int dist = SemanticUtil.calculateInheritanceDepth(uqReturnType, t);
 						if (dist >= 0) {
 							final ICPPFunctionType ft = op.getType();
 							IType implicitType= CPPSemantics.getImplicitType(op, ft.isConst(), ft.isVolatile());
@@ -555,49 +551,6 @@ public class Conversions {
 			return cost2;
 		}
 		return null;
-	}
-
-	/**
-	 * Calculates the number of edges in the inheritance path of <code>clazz</code> to
-	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.
-	 * @param clazz the class to search upwards from
-	 * @param ancestorToFind the class to find in the inheritance graph
-	 * @return the number of edges in the inheritance graph, or -1 if the specified classes have
-	 * no inheritance relation
-	 * @throws DOMException
-	 */
-	static final int calculateInheritanceDepth(int maxdepth, IType type, IType ancestorToFind)
-			throws DOMException {
-		if (type == ancestorToFind || type.isSameType(ancestorToFind)) {
-			return 0;
-		}
-
-		if (maxdepth > 0 && type instanceof ICPPClassType && ancestorToFind instanceof ICPPClassType) {
-			ICPPClassType clazz = (ICPPClassType) type;
-			if (clazz instanceof ICPPDeferredClassInstance) {
-				clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
-			}
-			
-			for (ICPPBase cppBase : clazz.getBases()) {
-				IBinding base= cppBase.getBaseClass();
-				if (base instanceof IType) {
-					IType tbase= (IType) base;
-					if (tbase.isSameType(ancestorToFind) || 
-							(ancestorToFind instanceof ICPPSpecialization &&  // allow some flexibility with templates 
-							((IType)((ICPPSpecialization) ancestorToFind).getSpecializedBinding()).isSameType(tbase))) {
-						return 1;
-					}
-
-					if (tbase instanceof ICPPClassType) {
-						int n= calculateInheritanceDepth(maxdepth - 1, tbase, ancestorToFind);
-						if (n > 0)
-							return n + 1;
-					}
-				}
-			}
-		}
-
-		return -1;
 	}
 
 	/**
@@ -872,7 +825,7 @@ public class Conversions {
 					// to an rvalue of type "pointer to cv B", where B is a base class of D.
 					IType srcPtrTgt= getNestedType(srcPtr.getType(), TDEF | CVTYPE | REF);
 					if (tgtPtrTgt instanceof ICPPClassType && srcPtrTgt instanceof ICPPClassType) {
-						int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, srcPtrTgt, tgtPtrTgt);
+						int depth= SemanticUtil.calculateInheritanceDepth(srcPtrTgt, tgtPtrTgt);
 						if (depth == -1) {
 							cost.setRank(Rank.NO_MATCH);
 							return true;
@@ -896,8 +849,8 @@ public class Conversions {
 					IType st = spm.getType();
 					IType tt = tpm.getType();
 					if (st != null && tt != null && st.isSameType(tt)) {
-						int depth= calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH,
-								tpm.getMemberOfClass(), spm.getMemberOfClass());
+						int depth = SemanticUtil.calculateInheritanceDepth(tpm.getMemberOfClass(), 
+								spm.getMemberOfClass());
 						if (depth == -1) {
 							cost.setRank(Rank.NO_MATCH);
 							return true;

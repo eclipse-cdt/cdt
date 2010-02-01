@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -537,5 +538,52 @@ public class SemanticUtil {
 			return ((IBasicType) ptype).getKind() == Kind.eVoid;
 		}
 		return false;
+	}
+
+	/**
+	 * Calculates the number of edges in the inheritance path of <code>type</code> to
+	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.
+	 * @param type the class to search upwards from
+	 * @param baseClass the class to find in the inheritance graph
+	 * @return the number of edges in the inheritance graph, or -1 if the specified classes have
+	 * no inheritance relation
+	 * @throws DOMException
+	 */
+	public static final int calculateInheritanceDepth(IType type, IType baseClass) throws DOMException {
+		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, type, baseClass);
+	}
+	
+	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType baseClass)
+			throws DOMException {
+		if (type == baseClass || type.isSameType(baseClass)) {
+			return 0;
+		}
+	
+		if (maxdepth > 0 && type instanceof ICPPClassType && baseClass instanceof ICPPClassType) {
+			ICPPClassType clazz = (ICPPClassType) type;
+			if (clazz instanceof ICPPDeferredClassInstance) {
+				clazz= (ICPPClassType) ((ICPPDeferredClassInstance) clazz).getSpecializedBinding();
+			}
+			
+			for (ICPPBase cppBase : clazz.getBases()) {
+				IBinding base= cppBase.getBaseClass();
+				if (base instanceof IType) {
+					IType tbase= (IType) base;
+					if (tbase.isSameType(baseClass) || 
+							(baseClass instanceof ICPPSpecialization &&  // allow some flexibility with templates 
+							((IType)((ICPPSpecialization) baseClass).getSpecializedBinding()).isSameType(tbase))) {
+						return 1;
+					}
+	
+					if (tbase instanceof ICPPClassType) {
+						int n= calculateInheritanceDepth(maxdepth - 1, tbase, baseClass);
+						if (n > 0)
+							return n + 1;
+					}
+				}
+			}
+		}
+	
+		return -1;
 	}
 }

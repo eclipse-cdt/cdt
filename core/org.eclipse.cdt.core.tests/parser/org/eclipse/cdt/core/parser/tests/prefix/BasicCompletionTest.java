@@ -191,4 +191,17 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkCompletion(code, true, expectedCpp);
 		checkCompletion(code, false, expectedC);
 	}
+	
+	//	struct A{
+	//		virtual void test() {}
+	//	};
+	//	struct B : A {
+	//		void test() {}
+	//		void func() {
+	//			A::t
+	public void testQualifiedMemberAccess_Bug300139() throws Exception {
+		String code = getAboveComment();
+		String[] expectedCpp= {"test"};
+		checkCompletion(code, true, expectedCpp);
+	}
 }

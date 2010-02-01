@@ -2163,7 +2163,7 @@ public class CPPSemantics {
 				    if (CPPTemplates.isDependentType(implicitType) || CPPTemplates.isDependentType(thisType)) {
 				    	IType s= getNestedType(thisType, TDEF|REF|CVTYPE);
 				    	IType t= getNestedType(implicitType, TDEF|REF|CVTYPE);
-				    	if (Conversions.calculateInheritanceDepth(MAX_INHERITANCE_DEPTH, s, t) >= 0)
+				    	if (SemanticUtil.calculateInheritanceDepth(s, t) >= 0)
 				    		return null;
 				    	
 				    	return CONTAINS_DEPENDENT_TYPES;

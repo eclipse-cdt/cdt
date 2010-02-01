@@ -54,6 +54,9 @@
 	<feature id="org.eclipse.cdt.debug.ui.memory" url="features/org.eclipse.cdt.debug.ui.memory_2.1.0.@timeStamp@.jar" version="2.1.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
+	<feature id="org.eclipse.cdt.debug.edc" url="features/org.eclipse.cdt.debug.edc_1.0.0.@timeStamp@.jar" version="1.0.0.@timeStamp@">
+		<category name="CDT Optional Features"/>
+	</feature>
 	<feature id="org.eclipse.cdt.launch.remote" url="features/org.eclipse.cdt.launch.remote_6.0.0.@timeStamp@.jar" version="6.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>

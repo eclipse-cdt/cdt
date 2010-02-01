@@ -143,6 +143,7 @@ public class RenameTests extends RefactoringTests {
     
 	protected void waitForIndexer() throws InterruptedException {
 		final IIndexManager im = CCorePlugin.getIndexManager();
+		assertTrue(im.joinIndexer(10000, NPM));
 		int sleep= 1;
 		while (im.isIndexerSetupPostponed(cproject)) {
 			Thread.sleep(sleep);

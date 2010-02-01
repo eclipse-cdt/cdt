@@ -55,11 +55,13 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fProjects.clear();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		for (Iterator iterator = fProjects.iterator(); iterator.hasNext();) {
 			ICProject project = (ICProject) iterator.next();
@@ -109,8 +111,9 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		} finally {
 			pj.dispose();
 		}
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
-		return CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
+		ICProject result= CoreModel.getDefault().create(workspace.getRoot().getProject(prjName));
+		waitForIndexer(result);
+		return result;
 	}
 
 	private void checkVariable(ICProject prj, String var, int expectedCount)

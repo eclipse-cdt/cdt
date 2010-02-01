@@ -273,6 +273,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	private void waitForIndexer() throws InterruptedException {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		assertTrue(indexManager.joinIndexer(INDEX_WAIT_TIME, NPM));
 		long waitms= 1;
 		while (waitms < 2000 && indexManager.isIndexerSetupPostponed(fCProject)) {
 			Thread.sleep(waitms);

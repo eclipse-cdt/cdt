@@ -116,9 +116,12 @@ public class BaseUITestCase extends BaseTestCase {
 	protected void waitForIndexer(IIndex index, IFile file, int maxmillis) throws Exception {
 		boolean firstTime= true;
 		long endTime= System.currentTimeMillis() + maxmillis;
+		long sleep= 1;
 		while (firstTime || System.currentTimeMillis() < endTime) {
-			if (!firstTime) 
-				Thread.sleep(50);
+			if (!firstTime) {
+				Thread.sleep(sleep);
+				sleep= Math.min(250, sleep*2);
+			}
 			firstTime= false;
 			
 			if (CCorePlugin.getIndexManager().isIndexerSetupPostponed(CoreModel.getDefault().create(file.getProject())))
@@ -220,10 +223,9 @@ public class BaseUITestCase extends BaseTestCase {
 	
 	protected void closeAllEditors() {
 		IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i= 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages= windows[i].getPages();
-			for (int j= 0; j < pages.length; j++) {
-				IWorkbenchPage page= pages[j];
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages= window.getPages();
+			for (IWorkbenchPage page : pages) {
 				page.closeAllEditors(false);
 			}
 		}
@@ -235,13 +237,11 @@ public class BaseUITestCase extends BaseTestCase {
 		runEventQueue(0);
 
 		IViewReference[] viewRefs= page.getViewReferences();
-		for (int i = 0; i < viewRefs.length; i++) {
-			IViewReference ref = viewRefs[i];
+		for (IViewReference ref : viewRefs) {
 			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
 		}
 		IEditorReference[] editorRefs= page.getEditorReferences();
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorReference ref = editorRefs[i];
+		for (IEditorReference ref : editorRefs) {
 			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
 		}
 		runEventQueue(0);
@@ -273,8 +273,8 @@ public class BaseUITestCase extends BaseTestCase {
 		if (w instanceof Composite) {
 			Composite comp= (Composite) w;
 			Control[] children= comp.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				findControls(children[i], clazz, result);
+			for (Control element : children) {
+				findControls(element, clazz, result);
 			}
 		}
 	}

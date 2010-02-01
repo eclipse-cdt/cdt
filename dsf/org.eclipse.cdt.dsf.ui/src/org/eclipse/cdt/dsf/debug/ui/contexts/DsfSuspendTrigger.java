@@ -86,8 +86,16 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
         getIsLaunchSuspended(new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
             @Override
             protected void handleSuccess() {
-                if (!fDisposed && getData().booleanValue()) {
+                if (isSuccess() && !fDisposed && getData().booleanValue()) {
                     listener.suspended(fLaunch, null);
+                }
+            }
+            @Override
+            protected void handleErrorOrWarning() {
+                // Ignore expected race condition and not supported error.
+                // Log other errors.
+                if (getStatus().getCode() > IDsfStatusConstants.NOT_SUPPORTED) {
+                    super.handleErrorOrWarning();
                 }
             }
         });
@@ -131,6 +139,15 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
             protected void handleSuccess() {
                 if (!fDisposed && getData().booleanValue()) {
                     fireSuspended(null);
+                }
+            }
+            
+            @Override
+            protected void handleErrorOrWarning() {
+                // Ignore expected race condition and not supported error.
+                // Log other errors.
+                if (getStatus().getCode() > IDsfStatusConstants.NOT_SUPPORTED) {
+                    super.handleErrorOrWarning();
                 }
             }
         });

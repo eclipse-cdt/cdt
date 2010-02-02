@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [208951] new priority field
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
  * Martin Oberhuber (Wind River) - [219975] Fix implementations of clone()
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core.model;
@@ -33,7 +34,9 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 	public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 	private String name;
 	private String extension;
-	private boolean isBinary = true;
+	private int fileType = ISystemFileTransferModeMapping.FILE_TYPE_BINARY;
+	
+	
 	private int priority = DEFAULT_PRIORITY;
 
 	/**
@@ -96,7 +99,15 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#isBinary()
 	 */
 	public boolean isBinary() {
-		return isBinary;
+		return fileType == ISystemFileTransferModeMapping.FILE_TYPE_BINARY;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#isXML()
+	 */
+	public boolean isXML(){
+		return fileType == ISystemFileTransferModeMapping.FILE_TYPE_XML;
 	}
 
 	/*
@@ -104,23 +115,32 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 	 * @see org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping#isText()
 	 */
 	public boolean isText() {
-		return !isBinary();
+		return fileType == ISystemFileTransferModeMapping.FILE_TYPE_TEXT;
 	}
 
 	/**
 	 * Set whether transfer mode is binary
 	 */
 	public void setAsBinary() {
-		isBinary = true;
+		fileType = ISystemFileTransferModeMapping.FILE_TYPE_BINARY;
+	}
+	
+	/**
+	 * Set whether transfer mode is XML
+	 */
+	public void setAsXML() {
+		fileType = ISystemFileTransferModeMapping.FILE_TYPE_XML;
 	}
 
 	/**
 	 * Set whether transfer mode is text
 	 */
 	public void setAsText() {
-		isBinary = false;
+		fileType = ISystemFileTransferModeMapping.FILE_TYPE_TEXT;
 	}
 
+	
+	
 	/**
 	 * Set the name
 	 */

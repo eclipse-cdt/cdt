@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [231209] [api][breaking] IRemoteFile.getSystemConnection() should be changed to IRemoteFile.getHost()
  * David McKnight   (IBM)        - [277911] cached results of remote file query need to be sorted
  * David McKnight   (IBM)        - [289387] Remote Search does not return line nodes in result tree
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -53,6 +54,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -384,8 +386,11 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	{
 		if (isDirectory())
 		  return false;
-		else
-		  return RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(this);
+		
+		else {
+			ISystemFileTransferModeRegistry reg = RemoteFileUtility.getSystemFileTransferModeRegistry();
+			return reg.isBinary(this) || reg.isXML(this); // xml files also transfer as binary
+		}
 	}
 
 	/**

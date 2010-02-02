@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [208951] Use remoteFileTypes extension point to determine file types
  * Martin Oberhuber (Wind River) - [220020][api][breaking] SystemFileTransferModeRegistry should be internal
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 package org.eclipse.rse.internal.subsystems.files.core.model;
 
@@ -73,6 +74,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	private static final String MODE_ATTRIBUTE = "mode"; //$NON-NLS-1$
 	private static final String BINARY_VALUE = "binary";  //$NON-NLS-1$
 	private static final String TEXT_VALUE = "text"; //$NON-NLS-1$
+	private static final String XML_VALUE = "xml"; //$NON-NLS-1$s
 	private static final String PRIORITY_ATTRIBUTE = "priority"; //$NON-NLS-1$
 
 	/**
@@ -144,6 +146,11 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 					// add extension to list of binary types
 					if (type.equalsIgnoreCase("binary")) { //$NON-NLS-1$
 						mapping.setAsBinary();
+					}
+					
+					// add extension to list of xml types
+					if (type.equalsIgnoreCase("xml")) { //$NON-NLS-1$
+						mapping.setAsXML();
 					}
 
 					int priority = SystemFileTransferModeMapping.DEFAULT_PRIORITY;
@@ -302,7 +309,37 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		return isText(remoteFile.getName());
 	}
 
+	/**
+	 * @see ISystemFileTransferModeRegistry#isText(String)
+	 */
+	public boolean isXML(String fileName) {
+		return getMapping(fileName).isXML();
+	}
 
+
+	/**
+	 * @see ISystemFileTransferModeRegistry#isText(File)
+	 */
+	public boolean isXML(File file) {
+		return isXML(file.getName());
+	}
+
+
+	/**
+	 * @see ISystemFileTransferModeRegistry#isText(IFile)
+	 */
+	public boolean isXML(IFile file) {
+		return isXML(file.getName());
+	}
+
+
+	/**
+	 * @see ISystemFileTransferModeRegistry#isText(IRemoteFile)
+	 */
+	public boolean isXML(IRemoteFile remoteFile) {
+		return isXML(remoteFile.getName());
+	}
+	
 	/**
 	 * Get the mode mapping given a file name
 	 */
@@ -357,10 +394,15 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		{
 			fileMapping.setAsText();
 		}
-		else
+		else if (mapping.isXML())
+		{
+			fileMapping.setAsXML();
+		}
+		else 
 		{
 			fileMapping.setAsBinary();
 		}
+
 
 		return fileMapping;
 	}
@@ -458,6 +500,9 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 				if (mode.equals(TEXT_VALUE)) {
 					mapping.setAsText();
 				}
+				else if (mode.equals(XML_VALUE)){
+					mapping.setAsXML();
+				}
 				else {
 					mapping.setAsBinary();
 				}
@@ -523,7 +568,17 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 			IMemento infoMemento = memento.createChild(INFO_NODE);
 			infoMemento.putString(NAME_ATTRIBUTE, mapping.getName());
 			infoMemento.putString(EXTENSION_ATTRIBUTE, mapping.getExtension());
-			infoMemento.putString(MODE_ATTRIBUTE, mapping.isBinary() ? BINARY_VALUE : TEXT_VALUE);
+			
+			if (mapping.isText()){
+				infoMemento.putString(MODE_ATTRIBUTE, TEXT_VALUE);
+			}
+			else if (mapping.isXML()){
+				infoMemento.putString(MODE_ATTRIBUTE, XML_VALUE);
+			}
+			else {
+				infoMemento.putString(MODE_ATTRIBUTE, BINARY_VALUE);
+			}
+
 			infoMemento.putInteger(PRIORITY_ATTRIBUTE, mapping.getPriority());
 		}
 

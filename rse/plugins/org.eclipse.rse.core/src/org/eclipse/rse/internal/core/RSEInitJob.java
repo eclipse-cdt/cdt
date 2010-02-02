@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2009,2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -10,6 +10,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David Dykstal (IBM) = [226958] add status values to waitForInitCompletion(phase)
  * David Dykstal (IBM) - [235581] Initialize RSE should be a daemon job
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  ********************************************************************************/
 package org.eclipse.rse.internal.core;
 
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -40,7 +40,6 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.logging.Logger;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 
 /**
  * This is a job named "Initialize RSE". It is instantiated and run during
@@ -187,7 +186,7 @@ public final class RSEInitJob extends Job {
 			}
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -221,6 +220,8 @@ public final class RSEInitJob extends Job {
 			submonitor.done();
 		}
 
+		/*
+		 * default encoding provider moved to startup of files.core
 		// set the default encoding provider
 		SystemEncodingUtil encodingUtil = SystemEncodingUtil.getInstance();
 		encodingUtil.setDefaultEncodingProvider(
@@ -229,7 +230,8 @@ public final class RSEInitJob extends Job {
 						   return ResourcesPlugin.getEncoding();
 					   }
 				});
-
+*/
+		
 		initializerPhase.done(result);
 		// finish up - propogate cancel if necessary
 		if (monitor.isCanceled()) {

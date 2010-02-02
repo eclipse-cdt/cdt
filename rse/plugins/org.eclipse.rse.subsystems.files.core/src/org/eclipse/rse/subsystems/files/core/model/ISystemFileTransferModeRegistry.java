@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight    (IBM) - [208951] Don't use hard-coded file type defaults
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -40,4 +41,14 @@ public interface ISystemFileTransferModeRegistry extends ISystemFileTypes
 	// Query whether a file should be treated as text
 	public boolean isText(IFile file);
 	public boolean isText(IRemoteFile remoteFile);
+	
+	// Query whether a file should be treated as xml
+	/**
+	 * @since 3.2
+	 */
+	public boolean isXML(IFile file);
+	/**
+	 * @since 3.2
+	 */
+	public boolean isXML(IRemoteFile remoteFile);
 }

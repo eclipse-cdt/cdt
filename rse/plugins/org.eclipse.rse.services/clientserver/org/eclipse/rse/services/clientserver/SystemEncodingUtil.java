@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM) [215847]SystemEncodingUtil needs to convert to unsigned when checking xml file
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -71,6 +72,36 @@ public class SystemEncodingUtil {
 	      public String getLocalDefaultEncoding() {
 	          return System.getProperty("file.encoding"); //$NON-NLS-1$
 	      }
+	      
+
+	    /**
+		 * @since 3.2
+		 */
+	    public boolean isXML(String filePath) {
+			int index = filePath.lastIndexOf("."); //$NON-NLS-1$
+
+			// check if there is a "."
+			if (index == -1) {
+				return false;
+			}
+			else {
+
+				// check if the name ends with "."
+				if (index == filePath.length() - 1) {
+					return false;
+				}
+				else {
+					String extension = filePath.substring(index+1);
+
+					if (extension.equalsIgnoreCase("xml") || extension.equalsIgnoreCase("xmi")) { //$NON-NLS-1$ //$NON-NLS-2$
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+	      }
 	   }
 
    	/**
@@ -115,30 +146,7 @@ public class SystemEncodingUtil {
 	 * @return <code>true</code> if the file is an XML file, <code>false</code> otherwise.
 	 */
 	public boolean isXML(String filePath) {
-
-		int index = filePath.lastIndexOf("."); //$NON-NLS-1$
-
-		// check if there is a "."
-		if (index == -1) {
-			return false;
-		}
-		else {
-
-			// check if the name ends with "."
-			if (index == filePath.length() - 1) {
-				return false;
-			}
-			else {
-				String extension = filePath.substring(index+1);
-
-				if (extension.equalsIgnoreCase("xml") || extension.equalsIgnoreCase("xmi")) { //$NON-NLS-1$ //$NON-NLS-2$
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-		}
+		return _defaultEncodingProvider.isXML(filePath);
 	}
 
 	/**

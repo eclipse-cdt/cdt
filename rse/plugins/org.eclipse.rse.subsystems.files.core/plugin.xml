@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?><!--
-    Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+    Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
     This program and the accompanying materials are made available under the terms
     of the Eclipse Public License v1.0 which accompanies this distribution, and is 
     available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
     
     Contributors:
     Anna Dushistova (MontaVista) - [227535] Avoid dependency on files.core
+    David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  -->
 
 <plugin>
@@ -55,8 +56,8 @@
   <remoteFileTypes extension="tif" type="binary"/>
   <remoteFileTypes extension="txt" type="text"/>
   <remoteFileTypes extension="xls" type="binary"/>
-  <remoteFileTypes extension="xmi" type="binary"/>
-  <remoteFileTypes extension="xml" type="binary"/>
+  <remoteFileTypes extension="xmi" type="xml"/>
+  <remoteFileTypes extension="xml" type="xml"/>
   <remoteFileTypes extension="zip" type="binary"/>
 
 </extension>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -475,9 +476,10 @@ public class UniversalPreferencePage
 		
 		
 	
-		String[] contentTypes = new String[2];
+		String[] contentTypes = new String[3];
 		contentTypes[0] = FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL;
 		contentTypes[1] = FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL;
+		contentTypes[2] = FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_XML_LABEL;
 		
 	    CellEditor editors[] = new CellEditor[3];
 	    editors[0] = null;
@@ -617,8 +619,9 @@ public class UniversalPreferencePage
 			binaryFileImage = applyBinaryDecoration(fileImage);
 		}
 		
+		
 		// for now just always using the same image
-		if (mapping.isBinary())
+		if (mapping.isBinary() || mapping.isXML())
 		{
 			return binaryFileImage;
 		}
@@ -645,9 +648,19 @@ public class UniversalPreferencePage
 		item.setImage(0, image);
 		item.setText(1, mapping.getLabel());
 		
-		boolean binary = mapping.isBinary();
-		item.setText(2, binary ? FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL : FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
-				
+		
+		boolean isText = mapping.isText();
+		boolean isXML = mapping.isXML();
+
+		if (isText){
+			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
+		}
+		else if (isXML){
+			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_XML_LABEL);
+		}
+		else {
+			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL);
+		}	
 		
 		if (selected)
 			resourceTypeTable.setSelection(index);
@@ -747,6 +760,11 @@ public class UniversalPreferencePage
 			mapping.setAsBinary();
 			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL);
 			item.setImage(getImageFor(mapping));
+		}
+		else if (mapping.isXML()){
+			mapping.setAsXML();
+			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_XML_LABEL);
+			item.setImage(getImageFor(mapping));			
 		}
 	}
 	
@@ -1060,18 +1078,19 @@ public class UniversalPreferencePage
 				if (value instanceof Integer)
 				{
 					int index = ((Integer)value).intValue();
-					if (index == 0)
-					{
+					if (index == 0) {
 						mapping.setAsBinary();
 						item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL);
-						item.setImage(getImageFor(mapping));
 					}
-					else
-					{
+					else if (index == 1){
 						mapping.setAsText();
-						item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
-						item.setImage(getImageFor(mapping));
+						item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);						
 					}
+					else if (index == 2){					
+						mapping.setAsXML();
+						item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_XML_LABEL);						
+					}
+					item.setImage(getImageFor(mapping));
 				}
 				
 			}

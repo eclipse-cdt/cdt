@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [223204] [cleanup] fix broken nls strings in files.ui and others
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -154,6 +155,8 @@ public class SystemFileResources extends NLS
 	
 	public static String MSG_FILE_CANNOT_BE_SAVED;
 	public static String MSG_FILE_CANNOT_BE_SAVED_DETAILS;	
+	
+	public static String RESID_JOB_SETUP_ENCODING_PROVIDER;
 	
 	static {
 		// load message values from bundle file

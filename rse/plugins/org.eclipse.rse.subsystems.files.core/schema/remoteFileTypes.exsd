@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.rse.subsystems.files.core">
+<schema targetNamespace="org.eclipse.rse.subsystems.files.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.rse.subsystems.files.core" id="remoteFileTypes" name="Remote File Types"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         This extension point is used to register information about whether particular file types should be considered to contain text or binary data.
-This information is important as it will determine how files will be transferred. The exact meaning of how the transfer of text files differs from binary
+         This extension point is used to register information about whether particular file types should be considered to contain text, binary or xml data.
+This information is important as it will determine how files will be transferred. The exact meaning of how the transfer of text files differs from binary and xml
 files depends on the actual file service implementation. In general, though, services will strive to change the encoding of remote text files during transfer
-such that it matches the local platform default encoding.
+such that it matches the local platform default encoding.  File types that are specified as xml will normally transfer as binary but will have it&apos;s encoding determined via inspection of the text.
 &lt;p&gt;
 Specific encoding conversions also depend on provided extensions to the
-&lt;a href="org_eclipse_rse_services_codePageConverters.html"&gt;org.eclipse.rse.services.codePageConverters&lt;/a&gt;
+&lt;a href=&quot;org_eclipse_rse_services_codePageConverters.html&quot;&gt;org.eclipse.rse.services.codePageConverters&lt;/a&gt;
 extension point.
 For example, transferring files from a remote dstore Linux host to a local Windows client, the file service may convert text files from
 UTF-8 encoding to Windows cp1252 encoding, and convert remote LF only line endings to local CRLF line endings.
@@ -27,6 +27,11 @@ See also the &lt;tt&gt;org.eclipse.team.core.fileTypes&lt;/tt&gt; extension poin
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="remoteFileTypes" minOccurs="0" maxOccurs="unbounded"/>
@@ -50,22 +55,22 @@ See also the &lt;tt&gt;org.eclipse.team.core.fileTypes&lt;/tt&gt; extension poin
 
    <element name="remoteFileTypes">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="extension"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <attribute name="extension" type="string" use="required">
             <annotation>
                <documentation>
-                  the file extension being identified by this contribution.                 
+                  the file extension being identified by this contribution.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  one of either &quot;text&quot; or &quot;binary&quot;, identifying the contents of files matching the value of extension.                  
+                  one of either &quot;text&quot; or &quot;binary&quot;, identifying the contents of files matching the value of extension.
                </documentation>
             </annotation>
             <simpleType>
@@ -73,6 +78,8 @@ See also the &lt;tt&gt;org.eclipse.team.core.fileTypes&lt;/tt&gt; extension poin
                   <enumeration value="text">
                   </enumeration>
                   <enumeration value="binary">
+                  </enumeration>
+                  <enumeration value="xml">
                   </enumeration>
                </restriction>
             </simpleType>
@@ -90,57 +97,51 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
    </element>
 
    <annotation>
-      <appInfo>
-         <meta.section type="examples"/>
-      </appInfo>
-      <documentation>
-         &lt;extension point=&quot;org.eclipse.rse.subsystems.files.core.remoteFileTypes&quot;&gt;
- &lt;remoteFileTypes extension=&quot;txt&quot; type=&quot;text&quot;/&gt;
- &lt;remoteFileTypes extension=&quot;gif&quot; type=&quot;binary&quot;/&gt;
- &lt;remoteFileTypes extension=&quot;exe&quot; type=&quot;binary&quot; priority=&quot;100&quot;/&gt;
-&lt;/extension&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         There is no code to implement for this extension point.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
+      <appinfo>
+         <meta.section type="apiInfo"/>
+      </appinfo>
       <documentation>
-         
+         There is no code to implement for this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
       <documentation>
-         Copyright (c) 2006, 2007 IBM Corporation. All Rights Reserved.
+         &lt;extension point=&quot;org.eclipse.rse.subsystems.files.core.remoteFileTypes&quot;&gt;
+ &lt;remoteFileTypes extension=&quot;txt&quot; type=&quot;text&quot;/&gt;
+ &lt;remoteFileTypes extension=&quot;gif&quot; type=&quot;binary&quot;/&gt;
+  &lt;remoteFileTypes extension=&quot;xmi&quot; type=&quot;xml&quot;/&gt;
+ &lt;remoteFileTypes extension=&quot;exe&quot; type=&quot;binary&quot; priority=&quot;100&quot;/&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2006, 2010 IBM Corporation. All Rights Reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html
 
 Contributors:
 IBM Corporation - initial API and implementation
+David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
       </documentation>
    </annotation>
 

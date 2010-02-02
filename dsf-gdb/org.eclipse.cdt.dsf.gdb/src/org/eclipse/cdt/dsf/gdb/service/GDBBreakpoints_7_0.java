@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -513,9 +513,15 @@ public class GDBBreakpoints_7_0 extends AbstractDsfService implements IBreakpoin
 				new DataRequestMonitor<CLITraceInfo>(getExecutor(), drm) {
 					@Override
 					protected void handleSuccess() {
+						final Integer tpReference = getData().getTraceReference();
+						if (tpReference == null) {
+							drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+							drm.done();
+							return;
+						}
+						
 						// The simplest way to convert from the CLITraceInfo to a MIBreakInsertInfo
 						// is to list the breakpoints and take the proper output
-						final int tpReference = getData().getTraceReference();
 						fConnection.queueCommand(
 								new MIBreakList(context),
 								new DataRequestMonitor<MIBreakListInfo>(getExecutor(), drm) {

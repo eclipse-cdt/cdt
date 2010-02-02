@@ -288,7 +288,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 
 		@Override
 		public String toString() {
-			return (fAddr == null ? "null" : "(0x" + fAddr.toString()) + ", " + fSize + ")"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+			return (fAddr == null ? "null" : "(" + fAddr.toHexAddressString()) + ", " + fSize + ")"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 		}
     }
 
@@ -635,7 +635,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
     				protected void handleSuccess() {
     					String tmpAddrStr = getData().getValue();
     					
-    					// Deal with adresses of contents of a char* which is in
+    					// Deal with addresses of contents of a char* which is in
     					// the form of "0x12345678 \"This is a string\""
     					int split = tmpAddrStr.indexOf(' '); 
     			    	if (split != -1) tmpAddrStr = tmpAddrStr.substring(0, split);

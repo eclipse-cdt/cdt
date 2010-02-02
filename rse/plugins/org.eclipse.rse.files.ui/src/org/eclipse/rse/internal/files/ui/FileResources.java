@@ -23,6 +23,7 @@
  * Rupen Mardirossian (IBM)		 - [227213] Added RESID_CONFLICT_COPY_PATTERN to be used for copying resources to parent folder.
  * David Dykstal (IBM) [231841] Correcting messages for folder creation
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
+ * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -110,6 +111,9 @@ public class FileResources extends NLS
 
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL;
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_TOOLTIP;
+	
+	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_XML_LABEL;
+	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_XML_TOOLTIP;
 
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_DEFAULT_MODE_LABEL;
 	public static String RESID_PREF_UNIVERSAL_FILES_FILETYPES_DEFAULT_MODE_TOOLTIP;

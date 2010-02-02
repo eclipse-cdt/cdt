@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.xlc.core.activator.Activator;
 import org.eclipse.cdt.make.xlc.core.messages.Messages;
+import org.eclipse.cdt.make.xlc.core.scannerconfig.util.XLCCommandDSC;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -752,7 +753,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
         			else if (child.getNodeName().equals(CC_ELEM)) { 
 	                    Element cmdElem = (Element) child;
 	                    boolean cppFileType = cmdElem.getAttribute(FILE_TYPE_ATTR).equals("c++"); //$NON-NLS-1$
-	                    CCommandDSC command = new CCommandDSC(cppFileType, project);
+	                    XLCCommandDSC command = new XLCCommandDSC(cppFileType, project);
 	                    command.setCommandId(Integer.parseInt(cmdElem.getAttribute(ID_ATTR)));
 	                    // deserialize command
 	                    command.deserialize(cmdElem);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.make.xlc.core.scannerconfig;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.KVStringPair;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SCDOptionsEnum;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.make.xlc.core.scannerconfig.util.XLCCommandDSC;
 import org.eclipse.cdt.utils.FileSystemUtilityManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -299,7 +299,7 @@ public class XLCBuildOutputParserUtility {
     public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
 		ArrayList dirafter = new ArrayList();
 		ArrayList includes = new ArrayList();
-        CCommandDSC command = new CCommandDSC(cppFileType, getProject());
+        XLCCommandDSC command = new XLCCommandDSC(cppFileType, getProject());
         command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[idxOfCompilerCommand]));
         for (int i = idxOfCompilerCommand+1; i < tokens.length; ++i) {
         	String token = tokens[i];

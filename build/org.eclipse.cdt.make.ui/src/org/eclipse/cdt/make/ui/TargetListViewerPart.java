@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,14 +42,19 @@ public class TargetListViewerPart extends StructuredViewerPart {
     private final int REMOVE_TARGET = 1;
     private final int EDIT_TARGET = 2;
     private IContainer fContainer;
-
-    public TargetListViewerPart(IContainer container) {
+    private boolean recursive;  
+    
+    /** 
+     * @param container 
+     * @param recursive {@code true} if to search recursively for target
+     */
+    public TargetListViewerPart(IContainer container, boolean recursive) {
         super(new String[] {
                 MakeUIPlugin.getResourceString("TargetListViewer.button.add"), //$NON-NLS-1$
-                MakeUIPlugin
-                        .getResourceString("TargetListViewer.button.remove"), //$NON-NLS-1$
+                MakeUIPlugin.getResourceString("TargetListViewer.button.remove"), //$NON-NLS-1$
                 MakeUIPlugin.getResourceString("TargetListViewer.button.edit")}); //$NON-NLS-1$
-        fContainer = container;
+        this.fContainer = container;
+        this.recursive = recursive;
     }
 
     @Override
@@ -79,7 +84,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
                                         .getSelection());
                     }
                 });
-        tableViewer.setContentProvider(new MakeContentProvider(true));
+        tableViewer.setContentProvider(new MakeContentProvider(recursive));
         tableViewer.addFilter(new ViewerFilter() {
 
             @Override

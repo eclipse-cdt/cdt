@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,21 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Axel Mueller - Rebuild last target
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.actions;
 
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -26,13 +30,16 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.part.EditorPart;
 
 public abstract class AbstractTargetAction
 	extends ActionDelegate
 	implements IObjectActionDelegate, IWorkbenchWindowActionDelegate {
 	private IWorkbenchPart fPart;
 	private IWorkbenchWindow fWindow;
-	private IContainer fContainer;
+	private boolean isEnabled;
+	protected IContainer fContainer;
 
 	protected Shell getShell() {
 		if (fPart != null) {
@@ -55,8 +62,9 @@ public abstract class AbstractTargetAction
 		fWindow = window;
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		boolean enabled = false;
+		isEnabled = false;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
 			Object obj = sel.getFirstElement();
@@ -75,14 +83,29 @@ public abstract class AbstractTargetAction
 				} else {
 					fContainer = ((IResource)obj).getParent();
 				}
+			} else if (obj instanceof IMakeTarget) {
+				fContainer = ((IMakeTarget)obj).getContainer();
 			} else {
 				fContainer = null;
 			}
-			if (fContainer != null && MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(fContainer.getProject())) {
-				enabled = true;
+		} else if (selection instanceof ITextSelection)
+		{	// key binding pressed inside active text editor
+			IWorkbenchPart part = fPart != null ? fPart : fWindow.getActivePage().getActivePart();
+			if ( part instanceof TextEditor ) {
+				IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(((EditorPart) part).getEditorInput());
+				fContainer = file.getParent();
+			} else {
+				fContainer = null;
 			}
 		}
-		action.setEnabled(enabled);
+		if (fContainer != null && MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(fContainer.getProject())) {
+			isEnabled = true;
+		}
+		if ( action != null )
+			action.setEnabled(isEnabled);
 	}
 
+	public boolean isEnabled() {
+		return isEnabled;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,10 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.TargetBuild;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -38,6 +42,16 @@ public class BuildTargetAction extends SelectionListenerAction {
 		if (canBuild()) {
 			IMakeTarget[] targets = getSelectedElements().toArray(new IMakeTarget[0]);
 			TargetBuild.buildTargets(shell, targets);
+			// set last target property for last element
+			IContainer container = targets[targets.length-1].getContainer();
+			IPath path = container.getProjectRelativePath().removeFirstSegments(
+					container.getProjectRelativePath().segmentCount());
+			path = path.append(targets[targets.length-1].getName());
+			try {
+				container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),"lastTarget"), //$NON-NLS-1$
+						path.toString());
+			} catch (CoreException e) {
+			}
 		}
 	}
 

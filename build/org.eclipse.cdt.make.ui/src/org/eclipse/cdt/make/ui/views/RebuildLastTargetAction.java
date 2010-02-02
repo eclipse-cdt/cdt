@@ -1,0 +1,40 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Axel Mueller and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Axel Mueller - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.make.ui.views;
+
+
+
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.actions.BuildLastTargetAction;
+import org.eclipse.ui.actions.SelectionListenerAction;
+
+/**
+ * Rebuild last target of selected resource or project.
+ */
+public class RebuildLastTargetAction extends SelectionListenerAction {
+	
+	public RebuildLastTargetAction() {
+		super(MakeUIPlugin.getResourceString("BuildLastTargetAction.label")); //$NON-NLS-1$
+		
+		setToolTipText(MakeUIPlugin.getResourceString("BuildLastTargetAction.tooltip")); //$NON-NLS-1$		
+		setEnabled(false);
+	}
+	
+	@Override
+	public void run() {
+		final BuildLastTargetAction buildAction= new BuildLastTargetAction();
+		buildAction.selectionChanged(null, this.getStructuredSelection());
+
+		if (buildAction.isEnabled()) {
+			buildAction.run(null);
+		}
+	}
+}

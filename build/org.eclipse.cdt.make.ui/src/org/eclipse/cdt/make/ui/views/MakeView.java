@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,9 +77,12 @@ import org.eclipse.ui.part.ViewPart;
 
 public class MakeView extends ViewPart {
 
+	private static final String TARGET_BUILD_LAST_COMMAND = "org.eclipse.cdt.make.ui.targetBuildLastCommand"; //$NON-NLS-1$
+
 	private Clipboard clipboard;
 
 	private BuildTargetAction buildTargetAction;
+	private RebuildLastTargetAction buildLastTargetAction;
 	private EditTargetAction editTargetAction;
 	private DeleteTargetAction deleteTargetAction;
 	private AddTargetAction newTargetAction;
@@ -287,6 +290,7 @@ public class MakeView extends ViewPart {
 		clipboard = new Clipboard(shell.getDisplay());
 
 		buildTargetAction = new BuildTargetAction(shell);
+		buildLastTargetAction = new RebuildLastTargetAction();
 		newTargetAction = new AddTargetAction(shell);
 		copyTargetAction = new CopyTargetAction(shell, clipboard, pasteTargetAction);
 		pasteTargetAction = new PasteTargetAction(shell, clipboard);
@@ -345,6 +349,7 @@ public class MakeView extends ViewPart {
 		manager.add(deleteTargetAction);
 		manager.add(new Separator());
 		manager.add(buildTargetAction);
+		manager.add(buildLastTargetAction);
 
 		// Other plug-ins can contribute there actions here
 		// manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -362,6 +367,7 @@ public class MakeView extends ViewPart {
 	void updateActions(IStructuredSelection sel) {
 		newTargetAction.selectionChanged(sel);
 		buildTargetAction.selectionChanged(sel);
+		buildLastTargetAction.selectionChanged(sel);
 		deleteTargetAction.selectionChanged(sel);
 		editTargetAction.selectionChanged(sel);
 		copyTargetAction.selectionChanged(sel);
@@ -406,6 +412,10 @@ public class MakeView extends ViewPart {
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
 				if (keyBinding != null) deleteTargetAction.setText(
 						MakeUIPlugin.getResourceString("DeleteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_LAST_COMMAND);
+				if (keyBinding != null) buildLastTargetAction.setText(
+						MakeUIPlugin.getResourceString("BuildLastTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	};

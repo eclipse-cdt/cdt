@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -73,7 +75,21 @@ public class DeleteTargetAction extends SelectionListenerAction {
 		try {
 			for (Object target : getSelectedElements()) {
 				if (target instanceof IMakeTarget) {
-						manager.removeTarget((IMakeTarget) target);
+					manager.removeTarget((IMakeTarget) target);
+					// if necessary remove last target property 
+					String lastTargetName = null;
+					IContainer container = ((IMakeTarget) target).getContainer();
+					try {
+						lastTargetName = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
+					} catch (CoreException e) {
+					}
+					if (lastTargetName != null && lastTargetName.equals(((IMakeTarget) target).getName())) {
+						try {
+							container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(),
+									"lastTarget"), null); //$NON-NLS-1$
+						} catch (CoreException e) {
+						}
+					}
 				}
 			}
 		} catch (CoreException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -476,6 +477,21 @@ public class MakeTargetDialog extends Dialog {
 				target = fTargetManager.createTarget(fContainer.getProject(), targetName, targetBuildID);
 			} else {
 				if (!target.getName().equals(targetName)) {
+					// if necessary rename last target property, too
+					String lastTargetName = null;
+					IContainer container = target.getContainer();
+					try {
+						lastTargetName = (String)container.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget")); //$NON-NLS-1$
+					} catch (CoreException e) {
+					}
+					if (lastTargetName != null && lastTargetName.equals(target.getName())) {
+						IPath path = container.getProjectRelativePath().removeFirstSegments(
+								container.getProjectRelativePath().segmentCount());
+						path = path.append(targetName);
+						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), //$NON-NLS-1$
+								path.toString());
+					}
+					
 					fTargetManager.renameTarget(target, targetName);
 				}
 			}

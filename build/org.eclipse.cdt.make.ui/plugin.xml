@@ -54,6 +54,14 @@
             adaptable="true"
             id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution">
          <action
+               label="%LastTargetBuild.name"
+               class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"
+               menubarPath="org.eclipse.cdt.make.ui.menu/gm1"
+               id="org.eclipse.cdt.make.ui.NavigatorBuildLastTargetAction"
+               enablesFor="1"
+               definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand">
+         </action>   
+         <action
                label="%ActionMakeBuildTarget.label"
                class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
                menubarPath="org.eclipse.cdt.make.ui.menu/gm1"
@@ -134,6 +142,16 @@
             contextId="org.eclipse.cdt.make.ui.makefileEditorScope"
             commandId="org.eclipse.cdt.make.ui.edit.text.makefile.uncomment"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="Shift+F9"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.cdt.make.ui.targetBuildCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>             
+      <key
+            sequence="F9"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.cdt.make.ui.targetBuildLastCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>             
    </extension>
    <extension
       point="org.eclipse.ui.commands">
@@ -143,6 +161,13 @@
             categoryId="org.eclipse.ui.category.project"
             id="org.eclipse.cdt.make.ui.targetBuildCommand">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.project"
+            defaultHandler="org.eclipse.cdt.make.ui.actions.BuildLastTargetHandler"
+            description="%LastTargetBuild.description"
+            id="org.eclipse.cdt.make.ui.targetBuildLastCommand"
+            name="%LastTargetBuild.name">
+      </command>  
       <command
             name="%CommandTargetCreate.name"
             description="%CommandTargetCreate.description"
@@ -281,7 +306,7 @@
             id="org.eclipse.cdt.make.ui">
       </category>
       <view
-            name="%ViewMake.name"
+            name="%Make.Target.label"
             icon="icons/view16/make_target.gif"
             category="org.eclipse.cdt.make.ui"
             class="org.eclipse.cdt.make.ui.views.MakeView"
@@ -326,7 +351,31 @@
                <groupMarker
                   name="gm1">
                </groupMarker>
-            </menu>         
+            </menu>   
+            <action
+               definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand"
+               label="%LastTargetBuild.name"
+               class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"               
+               menubarPath="project/org.eclipse.cdt.make.ui.prjmenu/gm1"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.actions.buildLastTargetAction">
+               <enablement>
+               <or>
+                  <objectClass
+                        name="org.eclipse.core.resources.IContainer">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.core.resources.IFile">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.cdt.core.model.ICContainer">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.cdt.core.model.ICProject">
+                  </objectClass>
+               </or>
+            </enablement>
+         </action>  
             <action
                definitionId="org.eclipse.cdt.make.ui.targetBuildCommand"
                label="%ActionMakeBuildTarget.label"
@@ -340,10 +389,16 @@
                         name="org.eclipse.core.resources.IContainer">
                   </objectClass>
                   <objectClass
+                        name="org.eclipse.core.resources.IFile">
+                  </objectClass>
+                  <objectClass
                         name="org.eclipse.cdt.core.model.ICContainer">
                   </objectClass>
                   <objectClass
                         name="org.eclipse.cdt.core.model.ICProject">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.cdt.MakeTarget">
                   </objectClass>
                </or>
             </enablement>

@@ -2306,7 +2306,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			        if (fDebugSessionId != null) {
 			        	if (getSession() != null) {
 			        		try {
-			        			// Store the values that we are going to change
+								// Don't call getSession() from executor; may
+								// return different session by the time it runs
 			        			final DsfSession session = getSession();
 			        			session.getExecutor().execute(new DsfRunnable() {
 			        				public void run() {
@@ -2343,7 +2344,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else if (fDebugSessionId != null) {
 			if (getSession() != null) {
 				try {
-					// Store the values that we are going to change
+					// Don't call getSession() from executor; may return
+					// different session by the time it runs
 					final DsfSession session = getSession();
 					session.getExecutor().execute(new DsfRunnable() {
 						public void run() {

@@ -38,6 +38,8 @@
 			<topic label="Removing Build Automatically" href="tasks/cdt_t_autobuild.htm"/>
 			<topic label="Autosaving on a build" href="tasks/cdt_t_autosave.htm"/>
 			<topic label="Creating a make target" href="tasks/cdt_t_addmaketarget.htm"/>
+   <topic href="tasks/cdt_t_proj_referenced_configs.htm" label="Creating Project References">
+   </topic>
 			<topic label="Customizing the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>
 			<topic label="Viewing and managing compile errors" href="tasks/cdt_o_tasksview.htm">
 				<topic label="Jumping to errors" href="tasks/cdt_t_jumperror.htm"/>

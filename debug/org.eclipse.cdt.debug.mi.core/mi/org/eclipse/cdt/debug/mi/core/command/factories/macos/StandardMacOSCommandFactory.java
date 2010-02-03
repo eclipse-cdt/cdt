@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Nokia and others.
+ * Copyright (c) 2006, 2007, 2010 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoProc;
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
+import org.eclipse.cdt.debug.mi.core.command.CLIPType;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
@@ -42,6 +43,10 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 
 	public MIEnvironmentCD createMIEnvironmentCD(String pathdir) {
 		return new MacOSMIEnvironmentCD(getMIVersion(), pathdir);
+	}
+
+	public CLIPType createCLIPType(String name) {
+		return new MacOSCLIPtype(name);
 	}
 
 	public MIInfoSharedLibrary createMIInfoSharedLibrary() {

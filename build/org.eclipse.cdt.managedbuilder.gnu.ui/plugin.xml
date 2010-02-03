@@ -1043,6 +1043,11 @@
 				  command="-O3"
 				  id="gnu.c.optimization.level.most">
 		  </enumeratedOptionValue>
+          <enumeratedOptionValue
+                  command="-Os"
+                  id="gnu.c.optimization.level.size"
+                  name="%Option.Posix.Optimize.Size">
+          </enumeratedOptionValue>
 		      <enablement 
               	type="CONTAINER_ATTRIBUTE" 
               	attribute="defaultValue" 
@@ -1337,6 +1342,11 @@
 				  command="-O3"
 				  id="gnu.cpp.compiler.optimization.level.most">
 		  </enumeratedOptionValue>
+          <enumeratedOptionValue
+                  command="-Os"
+                  id="gnu.cpp.compiler.optimization.level.size"
+                  name="%Option.Posix.Optimize.Size">
+          </enumeratedOptionValue>
 		      <enablement 
               	type="CONTAINER_ATTRIBUTE" 
               	attribute="value" 

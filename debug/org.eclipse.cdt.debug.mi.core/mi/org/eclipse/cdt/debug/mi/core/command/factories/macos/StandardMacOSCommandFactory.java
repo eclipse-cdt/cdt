@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.mi.core.command.CLIInfoProc;
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.CLIPType;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
+import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.command.factories.StandardCommandFactory;
@@ -63,6 +64,10 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 	
 	public CLIInfoProc createCLIInfoProc() {
 		return new MacOSCLIInfoPID();
+	}
+
+	public MIExecInterrupt createMIExecInterrupt() {
+		return new MIExecInterrupt(getMIVersion());
 	}
 
 	public CLIInfoThreads createCLIInfoThreads() {

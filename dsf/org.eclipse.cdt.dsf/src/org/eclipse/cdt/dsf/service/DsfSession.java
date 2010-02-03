@@ -297,13 +297,23 @@ public class DsfSession
     /** Returns the DSF executor of this session */
     @ThreadSafe
     public DsfExecutor getExecutor() { return fExecutor; }
- 
-    /**
-     * Adds a new listener for service events in this session.
-     * @param listener the listener that will receive service events
-     * @param filter optional filter to restrict the services that the 
-     * listener will receive events from 
-     */
+
+	/**
+	 * Adds a new listener for service events in this session.
+	 * 
+	 * <p>
+	 * Listeners don't implement any particular interfaces. They declare one or
+	 * more methods that are annotated with '@DsfServiceEventHandler', and which
+	 * take a single event parameter. The type of the parameter indicates what
+	 * events the handler is interested in. Any event that can be cast to that
+	 * type (and which meets the optional filter) will be sent to it.
+	 * 
+	 * @param listener
+	 *            the listener that will receive service events.
+	 * @param filter
+	 *            optional filter to restrict the services that the listener
+	 *            will receive events from
+	 */
     public void addServiceEventListener(Object listener, Filter filter) {
         assert getExecutor().isInExecutorThread();
         

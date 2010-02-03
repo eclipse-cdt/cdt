@@ -7,12 +7,14 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
- * Marc-Andre Laperle - patch for bug #250037
+ * Marc-Andre Laperle - patch for bug #250037, 294538
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.command.factories.macos;
 
 import java.io.File;
 
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoProc;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSharedLibrary;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
@@ -54,5 +56,12 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 		return new MacOSMIVarUpdate(getMIVersion(), name);
 	}
 	
+	public CLIInfoProc createCLIInfoProc() {
+		return new MacOSCLIInfoPID();
+	}
+
+	public CLIInfoThreads createCLIInfoThreads() {
+		return new MacOSCLIInfoThreads();
+	}
 
 }

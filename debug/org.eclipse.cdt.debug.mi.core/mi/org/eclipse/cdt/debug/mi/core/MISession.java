@@ -74,10 +74,12 @@ public class MISession extends Observable {
 	Process sessionProcess;
 	MIProcess gdbProcess;
 	InputStream inChannel;
+	InputStream inErrChannel;
 	OutputStream outChannel;
 
 	TxThread txThread;
 	RxThread rxThread;
+	ErrorThread errorThread;
 	EventThread eventThread;
 
 	CommandQueue txQueue;
@@ -145,6 +147,7 @@ public class MISession extends Observable {
 	public MISession(MIProcess process, IMITTY tty, int type, CommandFactory commandFactory, int commandTimeout, int launchTimeout, IProgressMonitor monitor) throws MIException {
 		gdbProcess = process;
 		inChannel = process.getInputStream();
+		inErrChannel = process.getErrorStream();
 		outChannel = process.getOutputStream();
 
 		factory = commandFactory;
@@ -162,6 +165,7 @@ public class MISession extends Observable {
 		
 		txThread = new TxThread(this);
 		rxThread = new RxThread(this);
+		errorThread = new ErrorThread(this);
 		eventThread = new EventThread(this);
 
 		// initialize/setup
@@ -182,6 +186,7 @@ public class MISession extends Observable {
 	public MISession(MIProcess process, IMITTY tty, int type, CommandFactory commandFactory, int commandTimeout) throws MIException {
 		gdbProcess = process;
 		inChannel = process.getInputStream();
+		inErrChannel = process.getErrorStream();
 		outChannel = process.getOutputStream();
 
 		factory = commandFactory;
@@ -199,12 +204,14 @@ public class MISession extends Observable {
 		
 		txThread = new TxThread(this);
 		rxThread = new RxThread(this);
+		errorThread = new ErrorThread(this);
 		eventThread = new EventThread(this);
 
 		setup();
 
 		txThread.start();
 		rxThread.start();
+		errorThread.start();
 		eventThread.start();	
 	}
 
@@ -251,6 +258,10 @@ public class MISession extends Observable {
 			if (rxThread.isAlive()) {
 				rxThread.interrupt();
 			}
+			// Kill the Error reading Thread.
+			if (errorThread.isAlive()) {
+				errorThread.interrupt();
+			}
 			// Kill the event Thread.
 			if (eventThread.isAlive()) {
 				eventThread.interrupt();
@@ -291,6 +302,7 @@ public class MISession extends Observable {
 
 		txThread.start();
 		rxThread.start();
+		errorThread.start();
 		eventThread.start();
 			
 		try {
@@ -307,6 +319,10 @@ public class MISession extends Observable {
 			// Kill the Receiving Thread.
 			if (rxThread.isAlive()) {
 				rxThread.interrupt();
+			}
+			// Kill the Error Thread.
+			if (errorThread.isAlive()) {
+				errorThread.interrupt();
 			}
 			// Kill the event Thread.
 			if (eventThread.isAlive()) {
@@ -740,7 +756,14 @@ public class MISession extends Observable {
 			}
 		} catch (InterruptedException e) {
 		}
-
+		// Kill the Error Thread.
+		try {
+			if (errorThread.isAlive()) {
+				errorThread.interrupt();
+				errorThread.join(cmdTimeout);
+			}
+		} catch (InterruptedException e) {
+		}
 		// Kill the event Thread ... if it is not us.
 		if (!eventThread.equals(Thread.currentThread())) {			
 			// Kill the event Thread.
@@ -800,6 +823,10 @@ public class MISession extends Observable {
 
 	InputStream getChannelInputStream() {
 		return inChannel;
+	}
+
+	InputStream getChannelErrorStream() {
+		return inErrChannel;
 	}
 
 	OutputStream getChannelOutputStream() {

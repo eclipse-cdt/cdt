@@ -146,7 +146,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 		if (expectedDescriptions != null) {
 			assertNotNull(markerGenerator.lastDescription);
 			for (int i = 0; i < expectedDescriptions.length; i++) {
-				assertTrue(markerGenerator.lastDescription.matches(expectedDescriptions[i]));
+				assertEquals(expectedDescriptions[i],markerGenerator.lastDescription);
 			}
 		}
 	}

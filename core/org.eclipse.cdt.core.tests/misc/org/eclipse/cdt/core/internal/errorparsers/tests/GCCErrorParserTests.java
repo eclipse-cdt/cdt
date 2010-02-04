@@ -126,4 +126,17 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 		runParserTest(GCC_ERROR_STREAM5, GCC_ERROR_STREAM5_ERRORS, GCC_ERROR_STREAM5_WARNINGS, GCC_ERROR_STREAM5_FILENAMES,
 				null, new String[]{GCC_ERROR_PARSER_ID});
 	}
+	
+	public void testGccErrorMessages_Colon_bug263987() throws IOException {
+		runParserTest(
+				new String[] {"foo.cc:11:20: error: value with length 0 violates the length restriction: length (1 .. infinity)",},
+				1, // errors
+				0, // warnings
+				new String[] {"foo.cc"},
+				new String[] {"value with length 0 violates the length restriction: length (1 .. infinity)"},
+				new String[] {GCC_ERROR_PARSER_ID}
+			);
+	}
+	
+
 }

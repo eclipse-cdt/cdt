@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2010 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
-import org.eclipse.cdt.internal.errorparsers.GCCErrorParser;
+import org.eclipse.cdt.internal.errorparsers.GASErrorParser;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +38,7 @@ public class RegexErrorParserTests extends TestCase {
 	// These should match id and name of extension point defined in plugin.xml
 	private static final String REGEX_ERRORPARSER_ID = "org.eclipse.cdt.core.tests.RegexErrorParserId";
 	private static final String REGEX_ERRORPARSER_NAME = "Test Plugin RegexErrorParser";
-	private static final String GCC_ERRORPARSER_ID = "org.eclipse.cdt.core.GCCErrorParser";
+	private static final String NOTREGEX_ERRORPARSER_ID = "org.eclipse.cdt.core.GASErrorParser";
 
 	private static final String TEST_PROJECT_NAME = "RegexErrorParserTests";
 
@@ -258,13 +258,13 @@ public class RegexErrorParserTests extends TestCase {
 
 		// CCorePlugin.getAllErrorParsersIDs()
 		String all = ErrorParserManager.toDelimitedString(cCorePlugin.getAllErrorParsersIDs());
-		assertTrue(all.contains(GCC_ERRORPARSER_ID));
+		assertTrue(all.contains(NOTREGEX_ERRORPARSER_ID));
 
 		// CCorePlugin.getErrorParser(id)
-		IErrorParser[] gccErrorParserArray = cCorePlugin.getErrorParser(GCC_ERRORPARSER_ID);
+		IErrorParser[] gccErrorParserArray = cCorePlugin.getErrorParser(NOTREGEX_ERRORPARSER_ID);
 		assertNotNull(gccErrorParserArray);
 		assertEquals(1, gccErrorParserArray.length);
-		assertTrue(gccErrorParserArray[0] instanceof GCCErrorParser);
+		assertTrue(gccErrorParserArray[0] instanceof GASErrorParser);
 	}
 
 	/**
@@ -475,7 +475,7 @@ public class RegexErrorParserTests extends TestCase {
 
 		{
 			// Create error parser
-			IErrorParser errorParser = new GCCErrorParser();
+			IErrorParser errorParser = new GASErrorParser();
 			// Add to available parsers
 			ErrorParserExtensionManager.setUserDefinedErrorParsersInternal(new IErrorParserNamed[] {new ErrorParserNamedWrapper(TESTING_ID, TESTING_NAME, errorParser)});
 			assertNotNull(ErrorParserManager.getErrorParserCopy(TESTING_ID));
@@ -496,7 +496,7 @@ public class RegexErrorParserTests extends TestCase {
 			assertNotNull(errorParser);
 			assertEquals(TESTING_NAME, errorParser.getName());
 			assertTrue(errorParser instanceof ErrorParserNamedWrapper);
-			assertTrue(((ErrorParserNamedWrapper)errorParser).getErrorParser() instanceof GCCErrorParser);
+			assertTrue(((ErrorParserNamedWrapper)errorParser).getErrorParser() instanceof GASErrorParser);
 		}
 		{
 			// Remove from available parsers as clean-up
@@ -674,8 +674,8 @@ public class RegexErrorParserTests extends TestCase {
 			assertNotSame(clone1, clone2);
 		}
 		{
-			IErrorParserNamed clone1 = ErrorParserManager.getErrorParserCopy(GCC_ERRORPARSER_ID);
-			IErrorParserNamed clone2 = ErrorParserManager.getErrorParserCopy(GCC_ERRORPARSER_ID);
+			IErrorParserNamed clone1 = ErrorParserManager.getErrorParserCopy(NOTREGEX_ERRORPARSER_ID);
+			IErrorParserNamed clone2 = ErrorParserManager.getErrorParserCopy(NOTREGEX_ERRORPARSER_ID);
 			assertEquals(clone1, clone2);
 			assertNotSame(clone1, clone2);
 

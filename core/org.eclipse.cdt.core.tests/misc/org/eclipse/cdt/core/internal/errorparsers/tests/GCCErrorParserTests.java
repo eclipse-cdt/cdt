@@ -50,17 +50,24 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 	public static final String[] GCC_ERROR_STREAM3_DESCRIPTIONS = {"ISO C++", "are ambiguous", "worst conversion",
 			"conversion for the latter"};
 
-	public static final String[] GCC_ERROR_STREAM4 = {"C:/QNX630/workspace/System/inc/RPNEvaluator.hpp: In member function `",
+	public static final String[] GCC_ERROR_STREAM4 = {
+			"C:/QNX630/workspace/System/inc/RPNEvaluator.hpp: In member function `",
 			"   NumericType RPNEvaluator<NumericType>::evaluate(const char*) [with ", "   NumericType = int8]':",
 			"C:/QNX630/workspace/System/src/CommonScriptClasses.cpp:609:   instantiated from here",
 			"C:/QNX630/workspace/System/inc/RPNEvaluator.hpp:370: error: ISO C++ says that `",
 			"   char& String::operator[](unsigned int)' and `operator[]' are ambiguous even ",
-			"   though the worst conversion for the former is better than the worst ", "   conversion for the latter"};
+			"   though the worst conversion for the former is better than the worst ",
+			"   conversion for the latter",
+		};
 	public static final int GCC_ERROR_STREAM4_WARNINGS = 0;
 	public static final int GCC_ERROR_STREAM4_ERRORS = 1;
 	public static final String[] GCC_ERROR_STREAM4_FILENAMES = {"RPNEvaluator.hpp"};
-	public static final String[] GCC_ERROR_STREAM4_DESCRIPTIONS = {"ISO C++", "are ambiguous", "worst conversion for",
-			"conversion for the latter"};
+	public static final String[] GCC_ERROR_STREAM4_DESCRIPTIONS = {
+			"ISO C++",
+			"are ambiguous",
+			"worst conversion for",
+			"conversion for the latter"
+		};
 
 	public static final String[] GCC_ERROR_STREAM5 = {
 			"make -k all",
@@ -72,7 +79,8 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 			"main.c:6: error: parse error before \"return\"",
 			"main.c:7:2: warning: no newline at end of file",
 			"make: *** [hallo.o] Error 1",
-			"make: Target `all' not remade because of errors." };
+			"make: Target `all' not remade because of errors."
+		};
 	public static final int GCC_ERROR_STREAM5_WARNINGS = 1;
 	public static final int GCC_ERROR_STREAM5_ERRORS = 2;
 	public static final String[] GCC_ERROR_STREAM5_FILENAMES = {"main.c"};
@@ -136,6 +144,83 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] {"value with length 0 violates the length restriction: length (1 .. infinity)"},
 				new String[] {GCC_ERROR_PARSER_ID}
 			);
+	}
+	
+	public void testGccErrorMessages_C90Comments_bug193982() throws IOException {
+		runParserTest(
+				new String[] {
+						"Myfile.c:66:3: warning: C++ style comments are not allowed in ISO C90",
+						"Myfile.c:66:3: warning: (this will be reported only once per input file)",
+					},
+				0, // errors
+				1, // warnings
+				new String[] {"Myfile.c"},
+				new String[] {"C++ style comments are not allowed in ISO C90"},
+				new String[] {GCC_ERROR_PARSER_ID}
+		);
+	}
+	
+	public void testGccErrorMessages_ConflictingTypes() throws IOException {
+		runParserTest(
+				new String[] {
+						"bar.h:42: error: conflicting types for 'jmp_buf'",
+						"foo.c:12: warning: conflicting types for built-in function `memset'",
+				},
+				1, // errors
+				1, // warnings
+				new String[] {"bar.h", "foo.c"},
+				new String[] {
+						"conflicting types for 'jmp_buf'",
+						"conflicting types for built-in function `memset'",
+					},
+				new String[] {GCC_ERROR_PARSER_ID}
+		);
+	}
+	
+	public void testGccErrorMessages_InstantiatedFromHere() throws IOException {
+		runParserTest(
+				new String[] {
+						"C:/QNX630/workspace/System/src/CommonScriptClasses.cpp:609:   instantiated from here",
+				},
+				0, // errors
+				0, // warnings
+				1, // infos
+				new String[] {"CommonScriptClasses.cpp"},
+				new String[] {"instantiated from here"},
+				new String[] {GCC_ERROR_PARSER_ID}
+		);
+	}
+	
+	public void testGccErrorMessages_Infos() throws IOException {
+		runParserTest(
+				new String[] {
+						"foo.c:5: note: Offset of packed bit-field 'b' has changed in GCC 4.4",
+						"bar.c:7: Info: foo undeclared, assumed to return int",
+				},
+				0, // errors
+				0, // warnings
+				2, // infos
+				new String[] {"bar.c", "foo.c"},
+				new String[] {
+						"Offset of packed bit-field 'b' has changed in GCC 4.4",
+						"foo undeclared, assumed to return int",
+					},
+				new String[] {GCC_ERROR_PARSER_ID}
+		);
+	}
+	
+	public void testGccErrorMessages_DangerousFunction_bug248669() throws IOException {
+		runParserTest(
+				new String[] {
+						"mktemp.o(.text+0x19): In function 'main':",
+						"mktemp.c:15: the use of 'mktemp' is dangerous, better use 'mkstemp'",
+				},
+				0, // errors
+				1, // warnings
+				new String[] {"mktemp.c"},
+				new String[] {"the use of 'mktemp' is dangerous, better use 'mkstemp'",},
+				new String[] {GCC_ERROR_PARSER_ID}
+		);
 	}
 	
 

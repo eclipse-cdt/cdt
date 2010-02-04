@@ -157,17 +157,20 @@
             class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
             id="org.eclipse.cdt.core.GCCErrorParser"
             name="%CDTGNUCErrorParser.name">
-         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUMakeErrorParser.regex.ReportedOnlyOnce" severity="Ignore"/>
-         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUMakeErrorParser.regex.ForEachFunctionItAppearsIn" severity="Ignore"/>
-         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUMakeErrorParser.regex.InstantiatedFrom" severity="Ignore"/>
-         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUMakeErrorParser.regex.GenericNote" severity="Ignore"/>
-         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.ParseErrorBefore" severity="Error" variable-expr="$5"/>
-         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.ErrorUndeclared" severity="Error" variable-expr="$5"/>
-         <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.GenericError" severity="Error"/>
-         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.DefinedButNotUsed" severity="Warning" variable-expr="$5"/>
-         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.ConflictingTypesFor" severity="Warning" variable-expr="$5"/>
-         <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.GenericWarning" severity="Warning"/>
-         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUMakeErrorParser.regex.OtherError" severity="Error"/>
+         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ReportedOnlyOnce" severity="Ignore"/>
+         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ForEachFunctionItAppearsIn" severity="Ignore"/>
+         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ReportedOnlyOncePerInputFile" severity="Ignore"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.ErrorUndeclared" severity="Error" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.ErrorConflictingTypesFor" severity="Error" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.ParseErrorBefore" severity="Error" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.DefinedButNotUsed" severity="Warning" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.WarningConflictingTypesFor" severity="Warning" variable-expr="$5"/>
+         <pattern description-expr="$5" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.WarningDangerousFunction" severity="Warning" variable-expr="$6"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.InstantiatedFromHere" severity="Info"/>
+         <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericError" severity="Error"/>
+         <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericWarning" severity="Warning"/>
+         <pattern description-expr="$9" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericInfo" severity="Info"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.OtherError" severity="Error"/>
       </errorparser>
    </extension>
    <extension

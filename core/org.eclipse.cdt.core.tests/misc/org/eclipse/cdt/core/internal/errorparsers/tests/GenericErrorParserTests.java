@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -144,9 +145,9 @@ public abstract class GenericErrorParserTests extends TestCase {
 		}
 
 		if (expectedDescriptions != null) {
-			assertNotNull(markerGenerator.lastDescription);
+			assertNotNull(markerGenerator.descriptions);
 			for (int i = 0; i < expectedDescriptions.length; i++) {
-				assertEquals(expectedDescriptions[i],markerGenerator.lastDescription);
+				assertEquals(expectedDescriptions[i],markerGenerator.descriptions.get(i));
 			}
 		}
 	}
@@ -194,7 +195,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 		public int numInfos;
 		public int numMarkers;
 		public ArrayList uniqFiles;
-		public String lastDescription;
+		public List<String> descriptions;
 		private Comparator fFileNameComparator;
 
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
@@ -220,7 +221,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 				numInfos++;
 			}
 
-			lastDescription = problemMarkerInfo.description;
+			descriptions.add(problemMarkerInfo.description);
 			numMarkers++;
 		}
 
@@ -230,6 +231,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 			numWarnings = 0;
 			numInfos = 0;
 			uniqFiles = new ArrayList(0);
+			descriptions = new ArrayList<String>(0);
 			fFileNameComparator = new FileNameComparator();
 		}
 	}

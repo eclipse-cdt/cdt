@@ -22,39 +22,6 @@ import junit.framework.TestSuite;
  */
 public class GLDErrorParserTests extends GenericErrorParserTests {
 
-	// old style: no colons before sections
-	public static final String[] GLD_ERROR_STREAM0 = {
-		"make -k all",
-		"gcc -o hallo.o main.c libfoo.a",
-		"main.c(.text+0x14): undefined reference to `foo()'",
-		"main.o(.rodata+0x14): undefined reference to `something'",
-		"make: Target `all' not remade because of errors." };
-	public static final int GLD_ERROR_STREAM0_WARNINGS = 0;
-	public static final int GLD_ERROR_STREAM0_ERRORS = 2;
-	public static final String[] GLD_ERROR_STREAM0_FILENAMES = {"main.c","main.o"};
-	
-	// new style: colons before sections
-	public static final String[] GLD_ERROR_STREAM1 = {
-		"make -k all",
-		"gcc -o hallo.o main.c libfoo.a",
-		"main.c:(.text+0x14): undefined reference to `foo()'",
-		"main.o:(.rodata+0x14): undefined reference to `something'",
-		"make: Target `all' not remade because of errors." };
-	public static final int GLD_ERROR_STREAM1_WARNINGS = 0;
-	public static final int GLD_ERROR_STREAM1_ERRORS = 2;
-	public static final String[] GLD_ERROR_STREAM1_FILENAMES = {"main.c","main.o"};
-
-	public static final String[] GLD_ERROR_STREAM2 = {
-		"make -k all",
-		"gcc -o hallo.o main.c libfoo.a",
-		"libfoo.a(foo.o): In function `foo':",
-		"foo.c:(.text+0x7): undefined reference to `bar'",
-		"make: Target `all' not remade because of errors." };
-	public static final int GLD_ERROR_STREAM2_WARNINGS = 0;
-	public static final int GLD_ERROR_STREAM2_ERRORS = 1;
-	public static final String[] GLD_ERROR_STREAM2_FILENAMES = {"foo.c"};
-
-
 	public GLDErrorParserTests() {
 		super();
 	}
@@ -65,15 +32,84 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 	}
 
 	public void testLinkerMessages0() throws IOException {
-		runParserTest(GLD_ERROR_STREAM0, GLD_ERROR_STREAM0_ERRORS, GLD_ERROR_STREAM0_WARNINGS, GLD_ERROR_STREAM0_FILENAMES,
-				null, new String[]{GLD_ERROR_PARSER_ID});
+		runParserTest(
+				// old style: no colons before sections
+				new String[] {
+						"make -k all",
+						"gcc -o hallo.o main.c libfoo.a",
+						"main.c(.text+0x14): undefined reference to `foo()'",
+						"main.o(.rodata+0x14): undefined reference to `something'",
+						"make: Target `all' not remade because of errors.",
+				},
+				2, // errors
+				0, // warnings
+				0, // Infos
+				new String[] {"main.c","main.o"},
+				new String[] {
+						"undefined reference to `foo()'",
+						"undefined reference to `something'"
+					},
+				new String[]{GLD_ERROR_PARSER_ID}
+			);
 	}
+	
 	public void testLinkerMessages1() throws IOException {
-		runParserTest(GLD_ERROR_STREAM1, GLD_ERROR_STREAM1_ERRORS, GLD_ERROR_STREAM1_WARNINGS, GLD_ERROR_STREAM1_FILENAMES,
-				null, new String[]{GLD_ERROR_PARSER_ID});
+		runParserTest(
+				// new style: colons before sections
+				new String[] {
+						"make -k all",
+						"gcc -o hallo.o main.c libfoo.a",
+						"main.c:(.text+0x14): undefined reference to `foo()'",
+						"main.o:(.rodata+0x14): undefined reference to `something'",
+						"make: Target `all' not remade because of errors.",
+				},
+				2, // errors
+				0, // warnings
+				0, // Infos
+				new String[] {"main.c","main.o"},
+				new String[] {
+						"undefined reference to `foo()'",
+						"undefined reference to `something'"
+					},
+				new String[]{GLD_ERROR_PARSER_ID}
+			);
 	}
+
 	public void testLinkerMessages2() throws IOException {
-		runParserTest(GLD_ERROR_STREAM2, GLD_ERROR_STREAM2_ERRORS, GLD_ERROR_STREAM2_WARNINGS, GLD_ERROR_STREAM2_FILENAMES,
-				null, new String[]{GLD_ERROR_PARSER_ID});
+		runParserTest(
+				new String[] {
+						"make -k all",
+						"gcc -o hallo.o main.c libfoo.a",
+						"libfoo.a(foo.o): In function `foo':",
+						"foo.c:(.text+0x7): undefined reference to `bar'",
+						"make: Target `all' not remade because of errors.",
+				},
+				1, // errors
+				0, // warnings
+				0, // Infos
+				new String[] {"foo.c"},
+				new String[] {"undefined reference to `bar'"},
+				new String[] {GLD_ERROR_PARSER_ID}
+		);
+	}
+
+	public void testLinkerMessages_DangerousFunction_bug248669() throws IOException {
+		runParserTest(
+				new String[] {
+						"mktemp.o(.text+0x19): In function 'main':",
+						"mktemp.c:15: the use of 'mktemp' is dangerous, better use 'mkstemp'",
+						"1.o: In function `main':",
+						"1.c:(.text+0x19): warning: the use of `mktemp' is dangerous, better use `mkstemp'",
+				},
+				0, // errors
+				2, // warnings
+				0, // Infos
+				new String[] {"1.c", "mktemp.c"},
+				new String[] {
+						"the use of 'mktemp' is dangerous, better use 'mkstemp'",
+						"the use of `mktemp' is dangerous, better use `mkstemp'",
+					},
+				new String[] {GLD_ERROR_PARSER_ID}
+		);
 	}
 }

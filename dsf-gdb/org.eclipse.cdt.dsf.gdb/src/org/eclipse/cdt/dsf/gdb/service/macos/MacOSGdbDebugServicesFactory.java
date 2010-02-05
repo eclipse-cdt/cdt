@@ -13,6 +13,7 @@
 package org.eclipse.cdt.dsf.gdb.service.macos;
 
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -39,5 +40,10 @@ public class MacOSGdbDebugServicesFactory extends GdbDebugServicesFactory {
 	@Override
 	protected IRunControl createRunControlService(DsfSession session) {
 		return new MacOSGDBRunControl(session);
+	}
+
+	@Override
+	protected IProcesses createProcessesService(DsfSession session) {
+		return new MacOSGDBProcesses(session);
 	}
 }

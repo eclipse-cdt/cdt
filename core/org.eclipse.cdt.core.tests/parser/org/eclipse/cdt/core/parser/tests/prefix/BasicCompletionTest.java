@@ -204,4 +204,15 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expectedCpp= {"test"};
 		checkCompletion(code, true, expectedCpp);
 	}
+	
+//	typedef int MyType;
+//	void func(){
+//	    static_cast<My
+	public void testCastExpression_Bug301933() throws Exception {
+		String code = getAboveComment();
+		String[] expectedCpp= {"MyType"};
+		checkCompletion(code, true, expectedCpp);
+	}
+
+	
 }

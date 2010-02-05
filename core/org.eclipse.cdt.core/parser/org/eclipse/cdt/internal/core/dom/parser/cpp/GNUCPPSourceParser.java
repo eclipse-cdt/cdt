@@ -1432,10 +1432,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         final IASTTypeId typeID = typeId(DeclarationOptions.TYPEID);
         if (typeID == null) 
         	throw backtrack; 
-        consume(IToken.tGT);
-        consume(IToken.tLPAREN);
-        final IASTExpression operand= expression();
-        final int endOffset= consume(IToken.tRPAREN).getEndOffset();
+        consumeOrEOC(IToken.tGT);
+        consumeOrEOC(IToken.tLPAREN);
+        IASTExpression operand= null;
+        if (LT(1) != IToken.tEOC) {
+        	operand= expression();
+        }
+        final int endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
         int operator;
         switch(optype) {
 	        case IToken.t_dynamic_cast:
@@ -2231,7 +2234,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			endOffset= consume().getEndOffset();
         			break;
         		case IToken.t_mutable:
-        			storageClass = ICPPASTDeclSpecifier.sc_mutable;
+        			storageClass = IASTDeclSpecifier.sc_mutable;
         			endOffset= consume().getEndOffset();
         			break;
         		case IToken.t_typedef:
@@ -2318,14 +2321,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		case IToken.t_wchar_t:
         			if (encounteredTypename)
         				break declSpecifiers;
-        			simpleType = ICPPASTSimpleDeclSpecifier.t_wchar_t;
+        			simpleType = IASTSimpleDeclSpecifier.t_wchar_t;
         			encounteredRawType= true;
         			endOffset= consume().getEndOffset();
         			break;
         		case IToken.t_bool:
         			if (encounteredTypename)
         				break declSpecifiers;
-        			simpleType = ICPPASTSimpleDeclSpecifier.t_bool;
+        			simpleType = IASTSimpleDeclSpecifier.t_bool;
         			encounteredRawType= true;
         			endOffset= consume().getEndOffset();
         			break;

@@ -299,7 +299,8 @@ public class DsfSession
     public DsfExecutor getExecutor() { return fExecutor; }
 
 	/**
-	 * Adds a new listener for service events in this session.
+	 * Adds a new listener for service events in this session.  If the given 
+	 * object is already registered as a listener, then this call does nothing.
 	 * 
 	 * <p>
 	 * Listeners don't implement any particular interfaces. They declare one or
@@ -318,7 +319,6 @@ public class DsfSession
         assert getExecutor().isInExecutorThread();
         
         ListenerEntry entry = new ListenerEntry(listener, filter);
-        assert !fListeners.containsKey(entry);
         if (DEBUG_SESSION_LISTENERS) {
         	String msg = new Formatter().format(
         			"%s %s added as a service listener to %s (id=%s)", //$NON-NLS-1$
@@ -333,14 +333,15 @@ public class DsfSession
     }
     
     /**
-     * Removes the given listener.
+     * Removes the given listener.  If the given object is not registered as a 
+     * listener, then this call does nothing.
+     * 
      * @param listener listener to remove
      */
     public void removeServiceEventListener(Object listener) {
         assert getExecutor().isInExecutorThread();
 
         ListenerEntry entry = new ListenerEntry(listener, null);
-        assert fListeners.containsKey(entry);
         if (DEBUG_SESSION_LISTENERS) {
         	String msg = new Formatter().format(
         			"%s %s removed as a service listener to %s (id=%s)", //$NON-NLS-1$

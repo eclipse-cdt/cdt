@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,6 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -32,6 +35,8 @@ import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
 
@@ -150,6 +155,78 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	@Override
 	protected ActionGroup createMemberFilterActionGroup() {
 		return new MemberFilterActionGroup(getTreeViewer(), "COutlineViewer"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * This action toggles namespace grouping
+	 * 
+	 * @since 5.2
+	 */
+	protected static class NamespaceGroupingAction extends Action {
+
+		public NamespaceGroupingAction(AbstractCModelOutlinePage outlinePage) {
+			super(ActionMessages.getString("NamespacesGroupingAction.label")); //$NON-NLS-1$
+			setDescription(ActionMessages.getString("NamespacesGroupingAction.description")); //$NON-NLS-1$
+			setToolTipText(ActionMessages.getString("NamespacesGroupingAction.tooltip")); //$NON-NLS-1$
+			this.setImageDescriptor(CPluginImages.DESC_OBJS_NAMESPACE);
+			this.setDisabledImageDescriptor(CPluginImages.DESC_OBJS_NAMESPACE);
+
+			boolean enabled= isNamspacesGroupingEnabled();
+			setChecked(enabled);
+		}
+
+		/**
+		 * Runs the action.
+		 */
+		@Override
+		public void run() {
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, isChecked());
+		}
+
+		public boolean isNamspacesGroupingEnabled () {
+			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES);
+		}
+
+	}
+	
+	/**
+	 * This action toggles member definition grouping
+	 * 
+	 * @since 5.2
+	 */
+	protected static class MemberGroupingAction extends Action {
+
+		public MemberGroupingAction(AbstractCModelOutlinePage outlinePage) {
+			super(ActionMessages.getString("MemberGroupingAction.label")); //$NON-NLS-1$
+			setDescription(ActionMessages.getString("MemberGroupingAction.description")); //$NON-NLS-1$
+			setToolTipText(ActionMessages.getString("MemberGroupingAction.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC);
+
+			boolean enabled= isMemberGroupingEnabled();
+			setChecked(enabled);
+		}
+
+		/**
+		 * Runs the action.
+		 */
+		@Override
+		public void run() {
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MEMBERS, isChecked());
+		}
+
+		public boolean isMemberGroupingEnabled () {
+			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
+		}
+
+	}
+	
+	@Override
+	protected void registerActionBars(IActionBars actionBars) {
+		super.registerActionBars(actionBars);
+		IMenuManager menu= actionBars.getMenuManager();
+		
+		menu.appendToGroup("group.layout", new MemberGroupingAction(this)); //$NON-NLS-1$
+		menu.appendToGroup("group.layout", new NamespaceGroupingAction(this)); //$NON-NLS-1$
 	}
 
 }

@@ -212,6 +212,40 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	}
 
 	/**
+	 * This action toggles macro grouping
+	 * 
+	 * @since 5.2
+	 */
+	protected static class MacroGroupingAction extends Action {
+
+		public MacroGroupingAction(AbstractCModelOutlinePage outlinePage) {
+			super(ActionMessages.getString("MacroGroupingAction.label")); //$NON-NLS-1$
+			setDescription(ActionMessages.getString("MacroGroupingAction.description")); //$NON-NLS-1$
+			setToolTipText(ActionMessages.getString("MacroGroupingAction.tooltip")); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);
+			this.setImageDescriptor(CPluginImages.DESC_OBJS_MACRO);
+			this.setDisabledImageDescriptor(CPluginImages.DESC_OBJS_MACRO);
+			
+
+			boolean enabled= isMacroGroupingEnabled();
+			setChecked(enabled);
+		}
+
+		/**
+		 * Runs the action.
+		 */
+		@Override
+		public void run() {
+			PreferenceConstants.getPreferenceStore().setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, isChecked());
+		}
+
+		public boolean isMacroGroupingEnabled () {
+			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS);
+		}
+
+	}
+	
+	/**
 	 * This action toggles whether this C Outline page links
 	 * its selection to the active editor.
 	 * 
@@ -248,7 +282,6 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	protected String fContextMenuId;
 	private Menu fMenu;
 	protected OpenIncludeAction fOpenIncludeAction;
-	private IncludeGroupingAction fIncludeGroupingAction;
 	private ToggleLinkingAction fToggleLinkingAction;
 	private ActionGroup fMemberFilterActionGroup;
 	private ActionGroup fSelectionSearchGroup;
@@ -563,8 +596,10 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		
 		fToggleLinkingAction= new ToggleLinkingAction();
 		menu.add(fToggleLinkingAction);
-		fIncludeGroupingAction= new IncludeGroupingAction(this);
-		menu.add(fIncludeGroupingAction);
+		
+		menu.add(new Separator("group.layout")); //$NON-NLS-1$
+		menu.add(new IncludeGroupingAction(this));
+		menu.add(new MacroGroupingAction(this));
 	}
 
 	/**

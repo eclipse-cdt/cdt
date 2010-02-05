@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - bug 300053
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
@@ -14,8 +15,10 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
 import java.math.BigInteger;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IBreakpointLocationProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -100,6 +103,8 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 				getAnnotationModelEvent().annotationChanged(a);
 			}
 			fireModelChanged();
+		} else {
+			addBreakpointAnnotation(breakpoint, true);
 		}
 	}
 
@@ -130,7 +135,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 			return;
 		}
 		try {
-			Position position= createPositionFromBreakpoint(breakpoint);
+			Position position = createPositionFromBreakpoint(breakpoint);
 			if (position != null) {
 				addAnnotation(new MarkerAnnotation(marker), position, fireEvent);
 			}
@@ -142,30 +147,71 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	}
 	
 	private Position createPositionFromBreakpoint(IBreakpoint breakpoint) throws CoreException {
-		if (breakpoint instanceof ICAddressBreakpoint) {
-			ICAddressBreakpoint addressBreakpoint= (ICAddressBreakpoint) breakpoint;
-			return createPositionFromAddress(decodeAddress(addressBreakpoint.getAddress()));
-		} else if (breakpoint instanceof ILineBreakpoint) {
-			ILineBreakpoint lineBreakpoint= (ILineBreakpoint) breakpoint;
-			Position position= null;
-			final int lineNumber= lineBreakpoint.getLineNumber() - 1;
-			final IMarker marker= breakpoint.getMarker();
-			if (marker.getResource().getType() == IResource.FILE) {
-				position= createPositionFromSourceLine((IFile) marker.getResource(), lineNumber);
-			} else if (breakpoint instanceof ICLineBreakpoint) {
-				ICLineBreakpoint cBreakpoint= (ICLineBreakpoint) breakpoint;
-				position= createPositionFromSourceLine(cBreakpoint.getFileName(), lineNumber);
-				if (position == null) {
-					position= createPositionFromAddress(decodeAddress(cBreakpoint.getAddress()));
-				}
+		IBreakpointLocationProvider locationProvider = (IBreakpointLocationProvider) breakpoint.getAdapter(IBreakpointLocationProvider.class);
+			
+		/* if there is a location provider, than use the provider to retrieve the location */
+		if (locationProvider != null) {						
+
+			/* if there is source info, than create a source line position */
+			String sourceFile = locationProvider.getSourceFile(breakpoint);
+			if (sourceFile != null) {
+				int lineNumber = locationProvider.getLineNumber(breakpoint) - 1;
+				return createPositionFromSourceLine(sourceFile, lineNumber);
+			
 			} else {
-				String fileName= marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
-				if (fileName != null) {
-					position= createPositionFromSourceLine(fileName, lineNumber);
+				/* if there is label info, than create a label position */
+				IAddress labelAddress = locationProvider.getLabelAddress(breakpoint);
+				if (labelAddress != null) {
+					return createPositionFromLabel(labelAddress.getValue());
+				
+				/* Otherwise, create an address position */
+				} else {				
+				
+					// Discussion with Anton - comment #5 (Bug 300053)
+					//
+					// Since there can only be one annotation per marker and in order to support multiple 
+					// annotations per breakpoint, we need a specialized annotation type.
+					//
+					// So for now, we only create an annotation for the first valid address. We can add 
+					// support for multiple annotations per breakpoint when it's needed.
+					IAddress[] addresses = locationProvider.getAddresses(breakpoint);
+					for (int i = 0; addresses != null && i < addresses.length; ++i) {
+						BigInteger address = addresses[i].getValue();
+						Position position = createPositionFromAddress(address);
+						if (position != null)
+							return position;
+					}
 				}
 			}
-			return position;
+			
+		/* otherwise, use legacy ICBreakpoint location info */
+		} else {
+			if (breakpoint instanceof ICAddressBreakpoint) {
+				ICAddressBreakpoint addressBreakpoint= (ICAddressBreakpoint) breakpoint;
+				return createPositionFromAddress(decodeAddress(addressBreakpoint.getAddress()));
+			} else if (breakpoint instanceof ILineBreakpoint) {
+				ILineBreakpoint lineBreakpoint= (ILineBreakpoint) breakpoint;
+				Position position= null;
+				final int lineNumber= lineBreakpoint.getLineNumber() - 1;
+				final IMarker marker= breakpoint.getMarker();
+				if (marker.getResource().getType() == IResource.FILE) {
+					position= createPositionFromSourceLine((IFile) marker.getResource(), lineNumber);
+				} else if (breakpoint instanceof ICLineBreakpoint) {
+					ICLineBreakpoint cBreakpoint= (ICLineBreakpoint) breakpoint;
+					position= createPositionFromSourceLine(cBreakpoint.getFileName(), lineNumber);
+					if (position == null) {
+						position= createPositionFromAddress(decodeAddress(cBreakpoint.getAddress()));
+					}
+				} else {
+					String fileName= marker.getAttribute(ICLineBreakpoint.SOURCE_HANDLE, null);
+					if (fileName != null) {
+						position= createPositionFromSourceLine(fileName, lineNumber);
+					}
+				}
+				return position;
+			}
 		}
+		
 		return null;
 	}
 
@@ -180,6 +226,16 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	private Position createPositionFromAddress(BigInteger address) {
 		if (address != null) {
 			AddressRangePosition p= getDisassemblyDocument().getDisassemblyPosition(address);
+			if (p != null && p.fValid) {
+				return new Position(p.offset, p.length);
+			}
+		}
+		return null;
+	}
+	
+	private Position createPositionFromLabel(BigInteger address) {
+		if (address != null) {
+			LabelPosition p = getDisassemblyDocument().getLabelPosition(address);
 			if (p != null && p.fValid) {
 				return new Position(p.offset, p.length);
 			}

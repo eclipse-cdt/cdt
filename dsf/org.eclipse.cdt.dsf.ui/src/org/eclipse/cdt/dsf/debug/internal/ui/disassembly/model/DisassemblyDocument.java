@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,8 @@ import java.util.Map;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDDocument;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDTextStore;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -1400,6 +1402,19 @@ public class DisassemblyDocument extends REDDocument {
 		for (Iterator<SourceFileInfo> iter = fFileInfoMap.values().iterator(); iter.hasNext();) {
 			SourceFileInfo info = iter.next();
 			if (file.equals(info.fFileKey)) {
+				return info;
+			}
+		}
+		return getSourceInfo(new Path(file));
+	}
+
+	public SourceFileInfo getSourceInfo(IPath file) {
+		if (fFileInfoMap == null || file == null) {
+			return null;
+		}
+		for (Iterator<SourceFileInfo> iter = fFileInfoMap.values().iterator(); iter.hasNext();) {
+			SourceFileInfo info = iter.next();
+			if (file.equals(new Path(info.fFileKey))) {
 				return info;
 			}
 		}

@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+/** @since 2.1 */
 public class MacOSGDBRunControl extends GDBRunControl {
 
 	public MacOSGDBRunControl(DsfSession session) {

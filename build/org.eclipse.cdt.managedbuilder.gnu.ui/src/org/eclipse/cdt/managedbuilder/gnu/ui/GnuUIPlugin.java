@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Texas Instruments Inc. and others.
+ * Copyright (c) 2005, 2010 Texas Instruments Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,9 @@ import java.util.*;
 
 /**
  * The main plugin class to be used in the desktop.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GnuUIPlugin extends Plugin {
 	
@@ -39,6 +42,7 @@ public class GnuUIPlugin extends Plugin {
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 	}
@@ -46,6 +50,7 @@ public class GnuUIPlugin extends Plugin {
 	/**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;

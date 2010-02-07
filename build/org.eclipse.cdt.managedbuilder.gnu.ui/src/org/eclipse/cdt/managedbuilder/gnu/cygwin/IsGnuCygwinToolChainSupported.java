@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,8 @@ import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
-/*
- * This class inplements the IManagedIsToolChainSupported for the Gnu Cygwin tool-chain
+/**
+ * This class implements the IManagedIsToolChainSupported for the Gnu Cygwin tool-chain
  * The class is NOT used currently, because currently the gnu cygwin tool-chain
  * is intended to be used not only with Cygwin, but with MinGW also, and there is no 
  * correct way of determining whether the appropriate packages are installed for MinGW.
@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  * for the MinGW and define a set of converters using the tool-chain converter mechanism that MBS will provide,
  * that would convert the CygWin to the MinGW projects/tool-chains, and vice a versa.
  * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class IsGnuCygwinToolChainSupported implements
 		IManagedIsToolChainSupported {

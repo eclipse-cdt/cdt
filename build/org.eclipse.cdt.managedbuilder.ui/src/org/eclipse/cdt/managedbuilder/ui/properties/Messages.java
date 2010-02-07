@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,10 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class Messages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.ui.properties.messages"; //$NON-NLS-1$
 

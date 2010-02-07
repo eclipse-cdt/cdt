@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 - 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,8 +47,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-/*
+/**
  * the dialog used to create or edit the build macro
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class NewVarDialog extends Dialog {
 	// String constants
@@ -112,6 +115,7 @@ public class NewVarDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (fTitle != null)
@@ -121,6 +125,7 @@ public class NewVarDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NULL);
 		comp.setFont(parent.getFont());
@@ -148,6 +153,7 @@ public class NewVarDialog extends Dialog {
 			}
 		});
 		fMacroNameEdit.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e){
 				handleMacroNameSelection();
 			}
@@ -160,6 +166,7 @@ public class NewVarDialog extends Dialog {
 			gd.horizontalSpan = 3;
 			c_all.setLayoutData(gd);
 			c_all.addSelectionListener(new SelectionAdapter(){
+				@Override
 				public void widgetSelected(SelectionEvent e){
 					isForAllCfgs = ((Button)e.widget).getSelection();
 				}
@@ -218,6 +225,7 @@ public class NewVarDialog extends Dialog {
 		fBrowseButton.setFont(comp.getFont());
 		fBrowseButton.setText(UIMessages.getString(BROWSE));
 		fBrowseButton.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e){
 				handleBrowseButtonPressed();
 			}
@@ -451,6 +459,7 @@ public class NewVarDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed(){
 		String name = getSelectedVarName();
 		if(name != null || !EMPTY_STRING.equals(name)){
@@ -467,6 +476,7 @@ public class NewVarDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
+	@Override
 	public int open(){
 		fResultingMacro = null;
 		return super.open();
@@ -573,6 +583,7 @@ public class NewVarDialog extends Dialog {
 		}
 	}
 	
+	@Override
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
 		fTotalSizeCalculated = true;

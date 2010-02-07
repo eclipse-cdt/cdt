@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2010 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,9 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 /**
  *   This class is responsible for storing all of the data associated with a given custom wizard page.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MBSCustomPageData
 {
@@ -99,7 +102,8 @@ public final class MBSCustomPageData
        /* (non-Javadoc)
         * @see java.lang.Object#equals(java.lang.Object)
         */
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
 			if (obj == null || !(obj instanceof ToolchainData))
 				return false;
            if (this == obj) {

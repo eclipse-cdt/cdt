@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2010 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,9 @@ import org.eclipse.jface.wizard.IWizardPage;
  *  New Project wizards.
  *  
  *  This class is a singleton.
+ *  
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MBSCustomPageManager
 {

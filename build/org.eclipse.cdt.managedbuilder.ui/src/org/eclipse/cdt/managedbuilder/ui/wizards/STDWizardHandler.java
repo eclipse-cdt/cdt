@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,12 +31,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class STDWizardHandler extends MBSWizardHandler {
 
 	public STDWizardHandler(Composite p, IWizard w) {
 		super(Messages.getString("StdBuildWizard.0"), p, w); //$NON-NLS-1$
 	}
 
+	@Override
 	public void addTc(IToolChain tc) {
 		if (tc == null) {
 			full_tcs.put(UIMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
@@ -101,6 +106,7 @@ public class STDWizardHandler extends MBSWizardHandler {
     }
 	public boolean canCreateWithoutToolchain() { return true; } 
 	
+	@Override
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
 	    setProjectDescription(proj, true, true, monitor);
 	}
@@ -108,6 +114,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 	/**
 	 * If no toolchains selected by user, use default toolchain
 	 */
+	@Override
 	public IToolChain[] getSelectedToolChains() {
 		if (full_tcs.size() == 0 || table.getSelection().length == 0) 
 			return new IToolChain[] { null };

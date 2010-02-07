@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	
 	private static final IToolChainModificationManager tcmmgr = ManagedBuildManager.getToolChainModificationManager();
@@ -88,6 +92,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private IResourceInfo ri;
 	private IToolListModification mod;
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
@@ -100,6 +105,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		gd.horizontalSpan = 1;
 		c_toolchain.setLayoutData(gd);
 		c_toolchain.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				modifyToolchain();
 			}});
@@ -114,6 +120,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		gd.horizontalSpan = 1;
 		c_builder.setLayoutData(gd);
 		c_builder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				modifyBuilder();
 			}});
@@ -131,6 +138,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			gd.horizontalSpan = 2;
 			c_tool.setLayoutData(gd);
 			c_tool.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					saveToolSelected();
 				}});
@@ -154,6 +162,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			gdb.widthHint = 80;
 			button_edit.setLayoutData(gdb);
 			button_edit.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent event) {
 					modifyTools();
 				}});
@@ -170,6 +179,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			return tcmmgr.createModification((IFileInfo)ri);
 	}
 	
+	@Override
 	protected void updateData(ICResourceDescription rcfg) {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
@@ -422,9 +432,11 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		return result;
 	}
 		
-    protected void checkPressed(SelectionEvent e) {
+    @Override
+	protected void checkPressed(SelectionEvent e) {
     	updateData();
     }
+	@Override
 	protected void performApply(ICResourceDescription src,
 			ICResourceDescription dst) {
 		if (mod == null)
@@ -440,6 +452,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		}
 	}
 	
+	@Override
 	protected void performDefaults() {
 		if (mod != null) {
 			mod.restoreDefaults();
@@ -448,6 +461,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		}
 	}
 	
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 
 	private void saveToolSelected() {

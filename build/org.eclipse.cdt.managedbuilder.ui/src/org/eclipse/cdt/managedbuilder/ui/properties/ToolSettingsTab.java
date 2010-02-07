@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation, QNX Software Systems, and others.
+ * Copyright (c) 2007, 2010 Intel Corporation, QNX Software Systems, and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ScrollBar;
 
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPreferencePageContainer {
 		/*
 		 * Dialog widgets
@@ -171,7 +175,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		/**
 		 * @param name - header of the tooltip help
 		 * @param tip - tooltip text
-		 * @since 5.2
+		 * @since 7.0
 		 */
 		protected void updateTipText(String name, String tip) {
 			if (tipText==null) {

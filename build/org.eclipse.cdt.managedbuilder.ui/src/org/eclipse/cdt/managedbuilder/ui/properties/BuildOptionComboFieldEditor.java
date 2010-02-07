@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class BuildOptionComboFieldEditor extends FieldEditor {
 
 	// Widgets and bookeeping variables
@@ -93,6 +97,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		// For now grab the excess space
 		GridData gd = (GridData)optionSelector.getLayoutData();
@@ -103,6 +108,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = numColumns;
@@ -122,6 +128,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 		selectorData.grabExcessHorizontalSpace = true;
 		optionSelector.setLayoutData(selectorData);
 		optionSelector.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				String oldValue = selected;
 				int index = optionSelector.getSelectionIndex();
@@ -135,6 +142,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
+	@Override
 	protected void doLoad() {
 		// set all the options to option selector
 		optionSelector.removeAll();
@@ -151,6 +159,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
 	 */
+	@Override
 	protected void doLoadDefault() {
 		doLoad();
 	}
@@ -158,6 +167,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#doStore()
 	 */
+	@Override
 	protected void doStore() {
 		// Save the selected item in the store
 		int index = optionSelector.getSelectionIndex();
@@ -172,6 +182,7 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
 	 */
+	@Override
 	public int getNumberOfControls() {
 		// There is just the label from the parent and the combo
 		return 2;
@@ -205,7 +216,8 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
      * @param parent The parent of the controls in the group.
      *  Used to create the controls if required.
      */
-    public void setEnabled(boolean enabled, Composite parent) {
+    @Override
+	public void setEnabled(boolean enabled, Composite parent) {
         getLabelControl(parent).setEnabled(enabled);
         optionSelector.setEnabled(enabled);
     }

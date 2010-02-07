@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private Combo combo;
 	private Combo preCmd;
@@ -86,6 +90,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	};
 	
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
@@ -149,6 +154,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		combo = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		combo.setItems(rcbsApplicabilityRules);
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				rcfg.setRcbsApplicability(sel2app(combo.getSelectionIndex()));
 			}});
@@ -196,6 +202,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}});
 	}
 	
+	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
 		config = getCfg(cfgd.getConfiguration());
@@ -304,6 +311,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		return path.toString();
 	}
 
+	@Override
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (page.isForProject()) {
 			IConfiguration cfg1 = getCfg(src.getConfiguration());
@@ -379,6 +387,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	
 	
 	// This page can be displayed for managed project only
+	@Override
 	public boolean canBeVisible() {
 		if (page.isForProject() || page.isForFile()) {
 			if (page.isMultiCfg()) {
@@ -396,6 +405,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			return false;
 	}
 
+	@Override
 	protected void performDefaults() {
 		if (page.isForProject()) {
 			config.setPrebuildStep(null);
@@ -417,6 +427,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		}
 		update();
 	}
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 	
 	private Combo setCombo(Composite c, FIELD field, Set<String> set) {

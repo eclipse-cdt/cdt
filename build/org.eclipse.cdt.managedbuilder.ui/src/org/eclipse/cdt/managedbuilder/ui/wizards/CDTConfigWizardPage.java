@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class CDTConfigWizardPage extends WizardPage {
 
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.CConfigWizardPage"; //$NON-NLS-1$
@@ -127,9 +131,11 @@ public class CDTConfigWizardPage extends WizardPage {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 		tv.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				return element == null ? EMPTY_STR : ((CfgHolder)element).getName();
 			}
+			@Override
 			public Image getImage(Object element) { return IMG; }
 		});
 		tv.addCheckStateListener(new ICheckStateListener() {
@@ -145,6 +151,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		b1.setText(UIMessages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
 		b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) { 
 				tv.setAllChecked(true);
 				setPageComplete(isCustomPageComplete());
@@ -155,6 +162,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		b2.setText(UIMessages.getString("CConfigWizardPage.8")); //$NON-NLS-1$
 		b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b2.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				tv.setAllChecked(false);
 				setPageComplete(isCustomPageComplete());
@@ -168,6 +176,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		b3.setText(UIMessages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
 		b3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b3.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				advancedDialog();
 			}});
@@ -256,7 +265,8 @@ public class CDTConfigWizardPage extends WizardPage {
     /**
      * 
      */
-    public void setVisible(boolean visible) {
+    @Override
+	public void setVisible(boolean visible) {
 		parent.setVisible(visible);
     	isVisible = visible;
 		if (visible && handler != null && !isVisited()) {
@@ -293,10 +303,15 @@ public class CDTConfigWizardPage extends WizardPage {
 		return l;
 	}
 
+	@Override
 	public String getName() { return TITLE; }
+	@Override
 	public Control getControl() { return parent; }
+	@Override
 	public String getErrorMessage() { return errorMessage; }
+	@Override
 	public String getMessage() { return message; }
+	@Override
 	public String getTitle()   { return TITLE; }
 
 	protected void update() {
@@ -329,6 +344,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		}
 	}
 	
+	@Override
 	public IWizardPage getNextPage() {
 		pagesLoaded = true;
 		return MBSCustomPageManager.getNextPage(PAGE_ID);

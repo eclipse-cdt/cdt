@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
     
     private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
@@ -70,6 +74,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		super(pageName);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		IStructuredSelection sel = ((BasicNewResourceWizard) getWizard())
@@ -80,6 +85,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		}
 	}
 
+	@Override
 	protected void addToMainPage(Composite container) {
 		super.addToMainPage(container);
 
@@ -116,6 +122,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		tree = new Tree(c, SWT.SINGLE | SWT.BORDER);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null || tis.length == 0)
@@ -161,6 +168,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		};
 
 		show_sup.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (h_selected != null)
 					h_selected.setSupportedOnly(show_sup.getSelection());
@@ -219,7 +227,8 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
      * Method getWzTitleResource returns the correct Title Label for this class
      * overriding the default in the superclass.
      */
-    protected String getWzTitleResource(){
+    @Override
+	protected String getWzTitleResource(){
         return MakeUIPlugin.getResourceString(WZ_TITLE);
     }
     
@@ -227,7 +236,8 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
      * Method getWzDescriptionResource returns the correct description
      * Label for this class overriding the default in the superclass.
      */
-    protected String getWzDescriptionResource(){
+    @Override
+	protected String getWzDescriptionResource(){
         return MakeUIPlugin.getResourceString(WZ_DESC);
     }
        
@@ -239,13 +249,15 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
      * old style managed projects
      * are refused.
      */
-    public boolean isCandidate(IProject project) {
+    @Override
+	public boolean isCandidate(IProject project) {
     	boolean a = !AbstractPage.isCDTPrj(project); 
     	boolean b = ManagedBuilderCorePlugin.getDefault().isOldStyleMakeProject(project);
 		return a || b; 
     }    
 
-    public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException{
+    @Override
+	public void convertProject(IProject project, String bsId, IProgressMonitor monitor) throws CoreException{
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
 			if (ManagedBuilderCorePlugin.getDefault().isOldStyleMakeProject(project)) {
@@ -261,6 +273,7 @@ public class ConvertToMakeWizardPage extends ConvertProjectWizardPage {
 		}
     }
 
+	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {

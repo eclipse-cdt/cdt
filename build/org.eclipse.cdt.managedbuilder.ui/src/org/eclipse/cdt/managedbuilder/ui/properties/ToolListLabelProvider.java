@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
  
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ToolListLabelProvider extends LabelProvider {
 	private final Image IMG_TOOL = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_TOOL);
 	private final Image IMG_CAT = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CAT);
@@ -53,6 +57,7 @@ public class ToolListLabelProvider extends LabelProvider {
 		return img;
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (!(element instanceof ToolListElement)) {
 			throw unknownElement(element);
@@ -81,6 +86,7 @@ public class ToolListLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (!(element instanceof ToolListElement)) {
 			throw unknownElement(element);
@@ -106,9 +112,10 @@ public class ToolListLabelProvider extends LabelProvider {
      * 
      * @since 3.0
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (descriptor != null && manager != null) {
             manager.destroyImage(descriptor);
         }
-    };
+    }
 }

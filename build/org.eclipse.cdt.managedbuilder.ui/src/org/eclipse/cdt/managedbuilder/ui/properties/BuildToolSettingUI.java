@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class BuildToolSettingUI extends AbstractToolSettingUI {
 	
 	//  Label class for a preference page.
@@ -49,10 +53,12 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			this.createControl( parent );
 		}
 
+		@Override
 		protected void adjustForNumColumns( int numColumns ) {
 			((GridData)fTitleLabel.getLayoutData()).horizontalSpan = 2;
 		}
 
+		@Override
 		protected void doFillIntoGrid( Composite parent, int numColumns ) {
 			fTitleLabel = new Label( parent, SWT.WRAP );
 			fTitleLabel.setText( fTitle );
@@ -63,12 +69,16 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			fTitleLabel.setLayoutData( gd );
 		}
 
+		@Override
 		public int getNumberOfControls() {	return 1; }
 		/**
 		 * The label field editor is only used to present a text label on a preference page.
 		 */
+		@Override
 		protected void doLoad() {}
+		@Override
 		protected void doLoadDefault() {}
+		@Override
 		protected void doStore() {}
 	}
 
@@ -117,6 +127,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
 	 */
+	@Override
 	public Point computeSize() {
 		return super.computeSize();
 	}
@@ -126,6 +137,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
+	@Override
 	protected void createFieldEditors() {
 		
 		// Load up the preference store
@@ -238,6 +250,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * @param tool
 	 * @return
 	 */
+	@Override
 	public boolean isFor(Object tool, Object unused) {
 		if (tool != null && tool instanceof ITool && unused == null) {
 			return tool.equals(fTool);
@@ -462,6 +475,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		return super.performOk();
 	}
@@ -469,16 +483,19 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	/**
 	 * Update the field editor that displays all the build options
 	 */
+	@Override
 	public void updateFields() {
 		allOptionFieldEditor.load();
 	}
 	
+	@Override
 	public void setValues(){
 		commandStringField.load();
 		commandLinePatternField.load();
 		updateFields();
 	}
 	
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// allow superclass to handle as well
 		super.propertyChange(event);

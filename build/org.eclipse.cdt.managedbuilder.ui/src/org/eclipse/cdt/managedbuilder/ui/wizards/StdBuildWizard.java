@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,10 @@ import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class StdBuildWizard extends AbstractCWizard {
 	private static final String NAME = Messages.getString("StdBuildWizard.0"); //$NON-NLS-1$
 	private static final String ID = "org.eclipse.cdt.build.makefile.projectType"; //$NON-NLS-1$
@@ -25,6 +29,7 @@ public class StdBuildWizard extends AbstractCWizard {
 	 */
 	public static final String EMPTY_PROJECT = Messages.getString("AbstractCWizard.0");  //$NON-NLS-1$
 	
+	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {
 		STDWizardHandler h = new STDWizardHandler(parent, wizard);
 		h.addTc(null); // add default toolchain
@@ -34,7 +39,7 @@ public class StdBuildWizard extends AbstractCWizard {
 				h.addTc(tcs[i]);
 		EntryDescriptor wd = new EntryDescriptor(ID, null, NAME, true, h, null);
 				
-		EntryDescriptor wd2 = new EntryDescriptor(ID + ".default", ID,
+		EntryDescriptor wd2 = new EntryDescriptor(ID + ".default", ID, //$NON-NLS-1$
 				EMPTY_PROJECT, false, h, null);
 				wd2.setDefaultForCategory(true);
 						

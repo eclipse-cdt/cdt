@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * @since 5.1
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
@@ -42,6 +45,7 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
     private Button w_1;
     
     
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		GridLayout g = new GridLayout(1, false);
@@ -97,6 +101,7 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		}
 	}
 
+	@Override
 	protected void performOK() {
 		int x = 0;
 		if (d_1.getSelection()) 
@@ -112,6 +117,7 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		CDTPrefUtil.setInt(CDTPrefUtil.KEY_WMODE, x);
 	}
 	
+	@Override
 	protected void performDefaults() {
 		d_1.setSelection(true);
 		d_2.setSelection(false);
@@ -119,7 +125,10 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		w_1.setSelection(false);
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }
+	@Override
 	protected void updateData(ICResourceDescription cfg) {}  // Do nothing. Data is read once after creation
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,11 +79,13 @@ public class ToolSelectionDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(Messages.getString("ToolSelectionDialog.0")); //$NON-NLS-1$
 	}
 	
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
@@ -155,6 +157,7 @@ public class ToolSelectionDialog extends Dialog {
 		b_add = new Button(c2, SWT.PUSH);
 		b_add.setText(Messages.getString("ToolSelectionDialog.12"));  //$NON-NLS-1$
 		b_add.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int x = t1.getSelectionIndex();
 				if (x == -1)
@@ -170,6 +173,7 @@ public class ToolSelectionDialog extends Dialog {
 		b_rep = new Button(c2, SWT.PUSH);
 		b_rep.setText(Messages.getString("ToolSelectionDialog.14")); //$NON-NLS-1$
 		b_rep.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleReplace();
 			}});
@@ -179,6 +183,7 @@ public class ToolSelectionDialog extends Dialog {
 		b_del.setText(Messages.getString("ToolSelectionDialog.13"));  //$NON-NLS-1$
 		b_del.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b_del.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int x = t2.getSelectionIndex();
 				if (x == -1)
@@ -200,6 +205,7 @@ public class ToolSelectionDialog extends Dialog {
 		b_all.setText(Messages.getString("ToolSelectionDialog.15")); //$NON-NLS-1$
 		b_all.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b_all.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSelection();
 			}});
@@ -442,8 +448,8 @@ public class ToolSelectionDialog extends Dialog {
 			add(t, t2, !exists);
 		}
 		IModificationStatus st = fi.getToolChainModificationStatus(
-				(ITool[])removed.toArray(new ITool[removed.size()]), 
-				(ITool[])added.toArray(new ITool[added.size()]));
+				removed.toArray(new ITool[removed.size()]), 
+				added.toArray(new ITool[added.size()]));
 		if (st.isOK()) {
 			errorLabel.setText(EMPTY_STR);
 			if(getButton(IDialogConstants.OK_ID) != null)

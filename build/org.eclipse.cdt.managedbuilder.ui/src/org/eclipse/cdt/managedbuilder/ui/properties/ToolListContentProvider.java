@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,10 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ToolListContentProvider implements ITreeContentProvider{
 	public static final int FILE = 0x1;
 	public static final int FOLDER = 0x2;
@@ -65,7 +69,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 				createChildElements(e);
 			}
 		}
-		return (ToolListElement[])elementList.toArray(new ToolListElement[elementList.size()]);		
+		return elementList.toArray(new ToolListElement[elementList.size()]);		
 	}
 
 	private ToolListElement[] createElements(IResourceInfo info) {
@@ -87,7 +91,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 				createChildElements(e);
 			}
 		}
-		return (ToolListElement[])elementList.toArray(new ToolListElement[elementList.size()]);		
+		return elementList.toArray(new ToolListElement[elementList.size()]);		
 	}
 
 	private void createChildElements(ToolListElement parentElement) {

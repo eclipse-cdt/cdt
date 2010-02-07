@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Composite;
  * It is subclassed from AbstractDiscoveryOptionsBlock 
  * just to be passed to existing discovery pages.
  * All methods referenced by these pages are rewritten.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DiscoveryPageWrapper extends AbstractDiscoveryOptionsBlock {
 
@@ -38,32 +41,50 @@ public class DiscoveryPageWrapper extends AbstractDiscoveryOptionsBlock {
 		page = _page;
 		container = c;
 	}
+	@Override
 	public IScannerConfigBuilderInfo2 getBuildInfo() {
 		return container.getBuildInfo();
 	}
+	@Override
 	public IProject getProject() { 
 		return page.getProject(); 
 	}
-    public String getErrorMessage() { 
+    @Override
+	public String getErrorMessage() { 
     	return AbstractCPropertyTab.EMPTY_STR; 
     }
-    public Preferences getPrefs() {
+    @Override
+	public Preferences getPrefs() {
         return page.getPreferences();
     }
-    public boolean isProfileDifferentThenPersisted() { return true; }
-    public boolean isInitialized() { return true; } 
-    public boolean isValid() { return true; }
+    @Override
+	public boolean isProfileDifferentThenPersisted() { return true; }
+    @Override
+	public boolean isInitialized() { return true; } 
+    @Override
+	public boolean isValid() { return true; }
+	@Override
 	public boolean checkDialogForChanges() { return true; }
 
+	@Override
 	public void callPerformApply() {}
-    public void setInitialized(boolean initialized) {}
-    public void setContainer(ICOptionContainer container) {}
+    @Override
+	public void setInitialized(boolean initialized) {}
+    @Override
+	public void setContainer(ICOptionContainer container) {}
+	@Override
 	public void updateContainer() {}
+	@Override
 	public void updatePersistedProfile() {}
-    public void setVisible(boolean visible) {}
+    @Override
+	public void setVisible(boolean visible) {}
 	
+	@Override
 	protected String getCurrentProfileId() { return null; }
+	@Override
 	public void createControl(Composite parent) {}
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {}
+	@Override
 	public void performDefaults() {}
 }

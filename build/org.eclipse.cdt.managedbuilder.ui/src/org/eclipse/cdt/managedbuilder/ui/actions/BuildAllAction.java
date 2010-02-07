@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,9 +50,12 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 /**
  * Action which changes active build configuration of the current project to 
  * the given one.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class BuildAllAction extends ActionDelegate implements
-IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
+public class BuildAllAction extends ActionDelegate
+		implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 
 	private static final String TIP_ALL = Messages.getString("BuildAllAction.0");//$NON-NLS-1$
 	private static final String LBL_ALL = Messages.getString("BuildAllAction.1");//$NON-NLS-1$
@@ -67,6 +70,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 	private ActionContributionItem it_all = null;
 	private ActionContributionItem it_sel = null; 
 	
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		projects = null;
 		
@@ -101,10 +105,12 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 		action.setMenuCreator(this);
 	}
 	
+	@Override
 	public void run(IAction action) {} // do nothing - show menus only 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
 	
 	// doing nothing
+	@Override
 	public void dispose() { }
 	public void init(IWorkbenchWindow window) { }
 
@@ -119,6 +125,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			IConfiguration[] cf = new IConfiguration[cfs.length];
 			for (int i=0; i<cfs.length; i++) 
@@ -138,6 +145,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 		 */
+		@Override
 		public boolean belongsTo(Object family) {
 			return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 		}
@@ -173,16 +181,17 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 			setToolTipText(forAll ? TIP_ALL : TIP_SEL);
 		}
 		
+		@Override
 		public void run() {
 			if (projects == null || projects.isEmpty()) 
 				return;
 			Iterator<IProject> it = projects.iterator();
 			if (forAll) {
 				while(it.hasNext()) 
-					processProject((IProject)it.next());
+					processProject(it.next());
 			} else {
 				if (it.hasNext()) 
-					processProject((IProject)it.next());
+					processProject(it.next());
 			}
 		}
 		
@@ -208,6 +217,7 @@ IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate, IMenuCreator {
 					public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 				}, 
 				new LabelProvider() {
+					@Override
 					public String getText(Object element) {
 						if (element == null || !(element instanceof ICConfigurationDescription)) return null;
 						return ((ICConfigurationDescription)element).getName();

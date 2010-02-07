@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,17 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * @since 5.1
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PrefPage_NewCDTProject extends AbstractPrefPage {
 	private ICConfigurationDescription prefCfgd = null;
 
+	@Override
 	protected boolean isSingle() { return false; }
 
+	@Override
 	public ICResourceDescription getResDesc() {
 		if (prefCfgd == null)
 			try {
@@ -36,6 +41,7 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 		return prefCfgd.getRootFolderDescription();
 	}
 	
+	@Override
 	public boolean performOk() {
 		forEach(ICPropertyTab.OK, null);
 		try {
@@ -44,6 +50,7 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 		return true;
 	}
 
+	@Override
 	protected String getHeader() { 
 		return  UIMessages.getString("AbstractPrefPage.0"); //$NON-NLS-1$
 	}

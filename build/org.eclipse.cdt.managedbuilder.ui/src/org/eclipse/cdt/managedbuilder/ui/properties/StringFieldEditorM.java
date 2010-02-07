@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,17 +20,22 @@ import org.eclipse.swt.widgets.Text;
  * valueChanged() can be called outside.
  * 
  * It allows to add extra listeners to Text widget.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class StringFieldEditorM extends StringFieldEditor {
     public StringFieldEditorM(String name, String labelText, Composite parent) {
         super(name, labelText, parent);
     }
 
-    public Text getTextControl() {
+    @Override
+	public Text getTextControl() {
         return super.getTextControl();
     }
        
-    public void valueChanged() {
+    @Override
+	public void valueChanged() {
         setPresentsDefaultValue(false);
         boolean oldState = super.isValid();
         super.refreshValidState();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Texas Instruments Incorporated and others.
+ * Copyright (c) 2006, 2010 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,8 @@ import org.eclipse.ui.actions.ActionDelegate;
 /**
  * @author crecoskie
  *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CleanFilesAction extends ActionDelegate implements
 		IWorkbenchWindowActionDelegate {
@@ -75,6 +77,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
@@ -83,6 +86,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		this.action = action;
 		update();
@@ -194,6 +198,7 @@ public class CleanFilesAction extends ActionDelegate implements
 		 * 
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (getClass()) {
 				if (monitor.isCanceled()) {
@@ -221,7 +226,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 					// clean each file
 					while (iterator.hasNext() && !monitor.isCanceled()) {
-						IFile file = (IFile) iterator.next();
+						IFile file = iterator.next();
 
 						GeneratedMakefileBuilder builder = new GeneratedMakefileBuilder();
 						builder.cleanFile(file, monitor);
@@ -242,6 +247,7 @@ public class CleanFilesAction extends ActionDelegate implements
 			return Status.OK_STATUS;
 		}
 
+		@Override
 		public boolean belongsTo(Object family) {
 			return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 		}
@@ -252,6 +258,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 
 		List<IFile> selectedFiles = getSelectedBuildableFiles();
@@ -338,6 +345,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		update();
 	}

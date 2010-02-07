@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Rational Software Corporation and others.
+ * Copyright (c) 2004, 2010 Rational Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,10 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 
 	protected AbstractCBuildPropertyTab buildPropPage;
@@ -59,7 +63,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 
 	/**
 	 * @param flag indicating that tooltip box need to be displayed
-	 * @since 5.2
+	 * @since 7.0
 	 */
 	protected void setToolTipBoxNeeded(boolean flag) {
 		toolTipBoxNeeded = flag;
@@ -67,7 +71,7 @@ public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 	
 	/**
 	 * @return true if this page needs to have a tool tip box.
-	 * @since 5.2
+	 * @since 7.0
 	 */
 	protected boolean isToolTipBoxNeeded() {
 		return toolTipBoxNeeded;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Intel Corporation and others.
+ * Copyright (c) 2006, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,17 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
 
-/*******************************************************************************
+/**
  * This class represent the elements in the TreeViewer that displays the tools
  * and categories in the tool options property pages.  The reason for these
  * elements is illustrated by bugzilla #123461.  We used to use the ToolChain, 
  * Tool and OptionCategory objects themselves as the elements in the TreeViewer,
  * but the same OptionCategory can appear more than once in the list of Tree
  * Viewer items, and this caused problems.
- *******************************************************************************/
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ToolListElement {
 	
 	/*
@@ -109,7 +112,7 @@ public class ToolListElement {
 	 */
 	public ToolListElement[] getChildElements() {
 		if (childElements != null)
-			return (ToolListElement[])childElements.toArray(new ToolListElement[childElements.size()]);
+			return childElements.toArray(new ToolListElement[childElements.size()]);
 		else
 			return new ToolListElement[0];
 	}

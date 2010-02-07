@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,12 +22,16 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * @since 5.1
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class WizardDefaultsTab extends AbstractCPropertyTab {
 
     private Button show_sup;
     private Button show_oth;
 
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
@@ -44,17 +48,22 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 		show_oth.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_OTHERS));
 	}
 
+	@Override
 	protected void performOK() {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOSUPP, !show_sup.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_OTHERS, show_oth.getSelection());
 	}
 	
+	@Override
 	protected void performDefaults() {
 		show_sup.setSelection(true);
 		show_oth.setSelection(false);
 	}
 
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK(); }
+	@Override
 	protected void updateData(ICResourceDescription cfg) {} // Do nothing. Data is read once after creation
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,10 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ConvertTargetDialog extends Dialog {
 
 	final private String title;
@@ -66,6 +70,7 @@ public class ConvertTargetDialog extends Dialog {
 		setShellStyle(getShellStyle()|SWT.RESIZE);		
 	}
 	
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 		
@@ -108,12 +113,14 @@ public class ConvertTargetDialog extends Dialog {
 	}
 
 	
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null)
 			shell.setText(title);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		
 		Composite comp = new Composite(parent, SWT.NULL);
@@ -161,8 +168,7 @@ public class ConvertTargetDialog extends Dialog {
 		String selectedConverterName = convertersList
 				.getItem(selectionIndex);
 
-		IConfigurationElement selectedElement = (IConfigurationElement) getConversionElements()
-				.get(selectedConverterName);
+		IConfigurationElement selectedElement = getConversionElements().get(selectedConverterName);
 		setSelectedConversionElement(selectedElement);
 		return;
 	}

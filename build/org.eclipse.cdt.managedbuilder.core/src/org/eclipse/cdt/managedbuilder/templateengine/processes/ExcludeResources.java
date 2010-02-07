@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2010 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *   <li> <b>invertConfigMatching</b> if this is set to "true" then the set of configurations for which resources matching any of the specified file patterns will
  *   be inverted. This enables you to specify which resources the files should not be excluded for without having to know what other configurations may exist.
  * </ul>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ExcludeResources extends ProcessRunner {
 	

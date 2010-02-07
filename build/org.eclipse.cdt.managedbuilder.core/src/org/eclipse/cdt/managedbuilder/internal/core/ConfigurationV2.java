@@ -37,7 +37,10 @@ import org.w3c.dom.NodeList;
 
 /**
  * This class is deprecated in 2.1
+ * 
+ * @deprecated
  */
+@Deprecated
 public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	private boolean isDirty = false;
 	private IConfigurationV2 parent;

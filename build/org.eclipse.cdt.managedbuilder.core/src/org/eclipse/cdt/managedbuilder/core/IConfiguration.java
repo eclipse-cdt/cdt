@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * A tool-integrator defines default configurations as children of the project type.
  * These provide a template for the configurations added to the user's project, 
- * which are stored in the project's .cdtbuild file.  
+ * which are stored in the project's .cproject file.  
  * <p>
  * The configuration contains one child of type tool-chain.  This describes how the 
  * project's resources are transformed into the build artifact. The configuration can
@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.IPath;
  * settings of individual resources that are different from the configuration as a whole.
  * 
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesContainer {
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
@@ -80,9 +82,9 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	/**
 	 * Creates the <code>IToolChain</code> child of this configuration.
 	 *
-	 * @param ToolChain The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new tool chain
+	 * @param name The name for the new tool chain
 	 * 
 	 * @return IToolChain
 	 */
@@ -331,8 +333,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 
 	/**
 	 * Removes a resource configuration from the configuration's list.
-	 * 
-	 * @param option
 	 */
 	public void removeResourceConfiguration(IResourceInfo resConfig);
 	
@@ -399,8 +399,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
    
     /** 
 	 * Sets the command used to clean the outputs of this configuration.
-	 * 
-	 * @param name
 	 */
 	public void setCleanCommand(String command);
 
@@ -556,7 +554,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * Returns a <code>ITool</code> for the tool associated with the 
 	 * input extension.
 	 * 
-	 * @param extension the file extension of the input file
+	 * @param sourceExtension the file extension of the input file
 	 * @return ITool
 	 * 
 	 * @since 3.1

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,14 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 
+/**
+ * ManagedBuilderCorePlugin is the life-cycle owner of the managedbuilder core plug-in.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class ManagedBuilderCorePlugin extends Plugin {
-	/** @since 6.1 */
+	/** @since 7.0*/
 	public static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.core"; //$NON-NLS-1$
 	// The shared instance
 	private static ManagedBuilderCorePlugin plugin;
@@ -214,7 +220,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	/**
 	 * Log a String error to the error log
 	 * @param str string error message to log
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	public static void error(String str) {
 		log(new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, str, new Exception()));
@@ -223,7 +229,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	/**
 	 * Log a String info message to the log
 	 * @param str string info message to log
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	public static void info(String str) {
 		log(new Status(IStatus.INFO, getUniqueIdentifier(), IStatus.OK, str, new Exception()));

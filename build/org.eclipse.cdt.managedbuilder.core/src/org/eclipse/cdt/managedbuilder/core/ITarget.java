@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,11 @@ import org.eclipse.core.resources.IResource;
  * This class represents targets for the managed build process.  A target
  * is some type of resource built using a given collection of tools.
  *
- * Note: This class was deprecated in 2.1
+ * @deprecated This class was deprecated in 2.1
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public interface ITarget extends IBuildObject {
 	public static final String TARGET_ELEMENT_NAME = "target";	//$NON-NLS-1$
 	public static final String ARTIFACT_NAME = "artifactName";	//$NON-NLS-1$
@@ -119,6 +122,7 @@ public interface ITarget extends IBuildObject {
 	 * @return String
 	 * @deprecated
 	 */
+	@Deprecated
 	public String getDefaultExtension();	
 
 	/**
@@ -277,7 +281,7 @@ public interface ITarget extends IBuildObject {
 	/**
 	 * Set the rebuild state of the receiver.
 	 * 
-	 * @param <code>true</code> will force a rebuild the next time the project builds 
+	 * @param rebuild <code>true</code> will force a rebuild the next time the project builds 
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setRebuildState(boolean)
 	 */
 	public void setRebuildState(boolean rebuild);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,12 @@ import org.eclipse.core.resources.IResource;
  * <p>  
  * The configuration contains one or more children of type tool-reference.
  *
- * This class was deprecated in 2.1
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * 
+ * @deprecated This class was deprecated in 2.1
  */
+@Deprecated
 public interface IConfigurationV2 extends IBuildObject {
 	// Schema element names
 	public static final String CONFIGURATION_ELEMENT_NAME = "configuration";	//$NON-NLS-1$

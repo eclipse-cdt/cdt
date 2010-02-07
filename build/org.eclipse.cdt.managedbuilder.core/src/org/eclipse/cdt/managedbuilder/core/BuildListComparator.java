@@ -17,6 +17,9 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 
 /**
  * This class is intended to compare MBS-specific classes
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildListComparator extends CDTListComparator {
 	private static final String EMPTY = ""; //$NON-NLS-1$

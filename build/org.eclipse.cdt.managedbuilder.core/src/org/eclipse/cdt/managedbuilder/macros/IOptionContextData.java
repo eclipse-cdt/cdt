@@ -17,6 +17,8 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
  * This interface is used to represent an option context data
  *  
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public interface IOptionContextData {
 	/**

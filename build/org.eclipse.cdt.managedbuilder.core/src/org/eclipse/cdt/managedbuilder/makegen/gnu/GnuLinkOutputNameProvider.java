@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,13 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-//
-//  This class provides a name for the Gnu Linker tool when it is not used
-//  as the target tool of a tool-chain
-//
+/**
+ * This class provides a name for the Gnu Linker tool when it is not used
+ * as the target tool of a tool-chain
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 
 	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames) {

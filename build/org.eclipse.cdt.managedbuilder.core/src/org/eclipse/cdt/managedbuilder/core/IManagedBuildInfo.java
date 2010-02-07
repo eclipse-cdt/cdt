@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 Rational Software Corporation and others.
+ * Copyright (c) 2003, 2010 Rational Software Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.runtime.IPath;
 
-/*
+/**
  *  There is a ManagedBuildInfo per CDT managed build project.  Here are
  *  some notes on their usage:
  *   o  You can look up the managed build info associated with a CDT
@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.IPath;
  *         information from the default configuration, and the other managed
  *         build system model elements that can be reached from the
  *         configuration. 
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public interface IManagedBuildInfo {
 	public static final String DEFAULT_CONFIGURATION = "defaultConfig";	//$NON-NLS-1$

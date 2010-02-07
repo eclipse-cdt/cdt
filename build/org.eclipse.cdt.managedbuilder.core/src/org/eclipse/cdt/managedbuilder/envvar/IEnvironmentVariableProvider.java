@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
  * to be used for querying the build environment
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public interface IEnvironmentVariableProvider{
 
@@ -48,6 +50,7 @@ public interface IEnvironmentVariableProvider{
 	 *    4. null to represent the system environment passed to eclipse
 	 * @deprecated use {@link IEnvironmentVariableProvider#getVariable(String, IConfiguration, boolean)} instead
 	 */
+	@Deprecated
 	public IBuildEnvironmentVariable getVariable(
 				String variableName, Object level, boolean includeParentLevels, boolean resolveMacros);
 
@@ -63,6 +66,7 @@ public interface IEnvironmentVariableProvider{
 	 *
 	 * @return the array of IBuildEnvironmentVariable that represents the environment variables 
 	 */
+	@Deprecated
 	public IBuildEnvironmentVariable[] getVariables(
 				Object level, boolean includeParentLevels, boolean resolveMacros);
 

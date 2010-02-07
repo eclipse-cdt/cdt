@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,9 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
  * This interface represents a utility of some sort that is used in the build process.
  * A tool will generally process one or more resources to produce output resources.
  * Most tools have a set of options that can be used to modify the behavior of the tool.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public interface ITool extends IBuildObject, IHoldsOptions {
 	// Schema element names

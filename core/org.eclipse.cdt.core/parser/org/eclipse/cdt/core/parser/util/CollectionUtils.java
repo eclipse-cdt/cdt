@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-
 /**
  * Useful utility methods for dealing with Collections.
  * 
@@ -25,8 +24,7 @@ public final class CollectionUtils {
 	private CollectionUtils() {
 		// this class has just static utility methods
 	}
-	
-	
+
 	/**
 	 * Returns an iterator that iterates backwards over the given list.
 	 * The remove() method is not implemented and will throw UnsupportedOperationException.
@@ -49,13 +47,12 @@ public final class CollectionUtils {
 			}
 		};
 	}
-	
-	
+
 	/**
 	 * Allows a foreach loop to iterate backwards over a list
 	 * from the end to the start.
 	 * 
-	 * eg)
+	 * e.g.
 	 * for(Object o : reverseIterable(list)) { ... }
 	 * 
 	 * @throws NullPointerException if list is null
@@ -63,15 +60,14 @@ public final class CollectionUtils {
 	public static <T> Iterable<T> reverseIterable(final List<T> list) {
 		return iterable(reverseIterator(list));
 	}
-	
-	
+
 	/**
 	 * Creates an Iterable instance that just returns
 	 * the given Iterator from its iterator() method.
 	 * 
 	 * This is useful for using an iterator in a foreach loop directly.
 	 * 
-	 * eg)
+	 * e.g.
 	 * 
 	 * for(Object o : iterable(list.listIterator())) {
 	 *     // do something
@@ -80,7 +76,7 @@ public final class CollectionUtils {
 	 * @throws NullPointerException if list is null
 	 */
 	public static <T> Iterable<T> iterable(final Iterator<T> iter) {
-		if(iter == null)
+		if (iter == null)
 			throw new NullPointerException("iter parameter is null"); //$NON-NLS-1$
 			
 		return new Iterable<T>() {
@@ -89,9 +85,7 @@ public final class CollectionUtils {
 			}
 		};
 	}
-	
-	
-	
+
 	/**
 	 * Finds the first object in the heterogeneous list that is an instance of 
 	 * the given class, removes it from the list, and returns it.
@@ -103,9 +97,9 @@ public final class CollectionUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T findFirstAndRemove(List<?> list, Class<T> clazz) {
-		for(Iterator<?> iter = list.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = list.iterator(); iter.hasNext();) {
 			Object o = iter.next();
-			if(clazz.isInstance(o)) {
+			if (clazz.isInstance(o)) {
 				iter.remove();
 				return (T) o; // safe
 			}

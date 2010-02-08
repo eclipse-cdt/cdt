@@ -28,6 +28,8 @@ import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -53,6 +55,8 @@ public class WascanaGenerator implements IApplication {
 	private static Version binutilsVersion = Version.parseVersion("2.20.0.0");
 	private static Version gccBaseVersion = Version.parseVersion("4.4.1.0");
 	private static Version gccVersion = Version.parseVersion("4.4.1.0");
+	private static Version msysVersion = Version.parseVersion("1.0.11.0");
+	
 	private static Version mingwrtVersion = Version.parseVersion("3.15.2.0");
 	private static Version w32apiVersion = Version.parseVersion("3.13.0.0");
 	private static Version qtVersion = Version.parseVersion("4.6.0.0");
@@ -103,18 +107,18 @@ public class WascanaGenerator implements IApplication {
 		
 		IInstallableUnit gccIU = createIU(
 				"wascana.gcc.core",
-				"Wascana TDM/MinGW GCC C Compiler",
+				"Wascana MinGW/TDM GCC C Compiler",
 				gccVersion,
 				gpl30License,
 				null);
 				
 		IInstallableUnit gppIU = createIU(
 				"wascana.gcc.g++",
-				"Wascana TDM/MinGW GCC C++ Compiler",
+				"Wascana MinGW/TDM GCC C++ Compiler",
 				gccVersion,
 				gpl30License,
 				null);
-				
+		
 		IInstallableUnit gccSrcIU = createIU(
 				"wascana.gcc.core.source",
 				"Wascana Base GCC C Compiler Source",
@@ -136,6 +140,34 @@ public class WascanaGenerator implements IApplication {
 				gpl30License,
 				null);
 				
+		IInstallableUnit gdbIU = createIU(
+				"wascana.gdb",
+				"Wascana MinGW GDB Debugger",
+				Version.parseVersion("7.0.1.1"),
+				gpl30License,
+				null);
+
+		IInstallableUnit gdbSrcIU = createIU(
+				"wascana.gdb.source",
+				"Wascana GDB Debugger Source",
+				Version.parseVersion("7.0.1.0"),
+				gpl30License,
+				null);
+				
+		IInstallableUnit msysIU = createIU(
+				"wascana.msys",
+				"Wascana MSYS Shell Environment",
+				msysVersion,
+				gpl30License,
+				null);
+		
+		IInstallableUnit msysSrcIU = createIU(
+				"wascana.msys.source",
+				"Wascana MSYS Shell Environment Source",
+				msysVersion,
+				gpl30License,
+				null);
+		
 		IInstallableUnit toolsIU = createCategory(
 				"wascana.tools",
 				"Wascana Tools",
@@ -144,6 +176,8 @@ public class WascanaGenerator implements IApplication {
 						createRequiredCap(binutilsIU),
 						createRequiredCap(gccIU),
 						createRequiredCap(gppIU),
+						createRequiredCap(gdbIU),
+						createRequiredCap(msysIU),
 				});
 
 		// sdks
@@ -209,6 +243,8 @@ public class WascanaGenerator implements IApplication {
 						createRequiredCap(gccSrcIU),
 						createRequiredCap(gppSrcIU),
 						createRequiredCap(gccTDMSrcIU),
+						createRequiredCap(gdbSrcIU),
+						createRequiredCap(msysSrcIU),
 						createRequiredCap(mingwrtSrcIU),
 						createRequiredCap(w32apiSrcIU),
 						createRequiredCap(qtSrcIU),
@@ -243,9 +279,15 @@ public class WascanaGenerator implements IApplication {
 		new File(repoDir, "content.xml").delete();
 		
 		URI repoLocation = repoDir.toURI();
+		
+		IProvisioningAgent agent = Activator.getService(IProvisioningAgent.class);
+		if (agent == null) {
+			IProvisioningAgentProvider provider = Activator.getService(IProvisioningAgentProvider.class);
+			agent = provider.createAgent(null);
+		}
 
-		IMetadataRepositoryManager metaRepoMgr = Activator.getService(IMetadataRepositoryManager.class);
-		IArtifactRepositoryManager artiRepoMgr = Activator.getService(IArtifactRepositoryManager.class);
+		IMetadataRepositoryManager metaRepoMgr = (IMetadataRepositoryManager)agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
+		IArtifactRepositoryManager artiRepoMgr = (IArtifactRepositoryManager)agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
 		
 		metaRepo = metaRepoMgr.createRepository(repoLocation, REPO_NAME, IMetadataRepositoryManager.TYPE_SIMPLE_REPOSITORY, null);
 		metaRepo.setProperty(IRepository.PROP_COMPRESSED, Boolean.TRUE.toString());

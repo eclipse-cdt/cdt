@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+/**
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public final class PathInfo {
 	private static final Path[] EMPTY_PATH_ARRAY = new Path[0];
 	public final static PathInfo EMPTY_INFO = new PathInfo(null, null, null, null, null);

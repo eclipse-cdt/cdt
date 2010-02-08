@@ -364,6 +364,9 @@ public class TemplateArgumentDeduction {
 					deducedArg= tpar.getDefaultValue();
 					if (deducedArg != null) {
 						deducedArg= CPPTemplates.instantiateArgument(deducedArg, tpMap, -1, null);
+						if (deducedArg != null) {
+							tpMap.put(tpar, deducedArg);
+						}
 					}
 				}
 				if (deducedArg == null) 

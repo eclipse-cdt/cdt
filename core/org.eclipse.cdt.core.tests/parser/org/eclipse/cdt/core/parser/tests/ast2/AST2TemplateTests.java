@@ -4754,4 +4754,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	template <class T, class U = double> void f(T t = 0, U u = 0);
+	//    void g() {
+	//        f(1, 'c');         // f<int,char>(1,'c')
+	//        f(1);              // f<int,double>(1,0)
+	//        f();               // error: T cannot be deduced
+	//        f<int>();          // f<int,double>(0,0)
+	//        f<int,char>();     // f<int,char>(0,0)
+	//    }
+	public void testDefaultTemplateArgsForFunctionTemplates_294730() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		
+		ICPPTemplateInstance f= bh.assertNonProblem("f(1, 'c');", 1);
+		assertEquals("<int,char>", ASTTypeUtil.getArgumentListString(f.getTemplateArguments(), true));
+		f= bh.assertNonProblem("f(1);", 1);
+		assertEquals("<int,double>", ASTTypeUtil.getArgumentListString(f.getTemplateArguments(), true));
+		bh.assertProblem("f();", 1);
+		f= bh.assertNonProblem("f<int>();", -3);
+		assertEquals("<int,double>", ASTTypeUtil.getArgumentListString(f.getTemplateArguments(), true));
+		f= bh.assertNonProblem("f<int,char>();", -3);
+		assertEquals("<int,char>", ASTTypeUtil.getArgumentListString(f.getTemplateArguments(), true));
+	}
 }

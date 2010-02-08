@@ -7276,4 +7276,17 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
+	
+	//	void func(int* obj) {
+	//	    int* obj = 0;
+	//	}
+	public void testParameterRedeclaration_301779() throws Exception {
+        final String code = getAboveComment();
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+        bh.assertNonProblem("obj", 3, IParameter.class);
+        bh.assertProblem("obj =", 3);
+        bh= new BindingAssertionHelper(code, false);
+        bh.assertNonProblem("obj", 3, IParameter.class);
+        bh.assertProblem("obj =", 3);
+	}
 }

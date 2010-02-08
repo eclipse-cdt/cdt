@@ -610,7 +610,7 @@ public class CPPVisitor extends ASTQueries {
         } else if (parent instanceof IASTSimpleDeclaration) {
         	IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;
         	if (simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-        		// typedef declaration
+        		// Typedef declaration
         		if (binding instanceof ICPPInternalBinding && binding instanceof ITypedef && name.isActive()) {
         			IType t1 = ((ITypedef) binding).getType();
         			IType t2 = createType(declarator);
@@ -620,23 +620,26 @@ public class CPPVisitor extends ASTQueries {
         			}
         			return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
         		}
-        		// if we don't resolve the target type first, we get a problem binding in case the typedef
+        		// If we don't resolve the target type first, we get a problem binding in case the typedef
         		// redeclares the target type, otherwise it is safer to defer the resolution of the target type.
         		IType targetType= createType(declarator);
         		CPPTypedef td= new CPPTypedef(name);
         		td.setType(targetType);
         		binding = td;
         	} else if (typeRelevantDtor instanceof IASTFunctionDeclarator) {
-        		// function declaration
+        		// Function declaration via function declarator
     			isFunction= true;
     		} else {
-        		// looks like a variable declaration
+        		// Looks like a variable declaration
         	    IType t1 = createType(declarator);
         	    if (SemanticUtil.getNestedType(t1, TDEF) instanceof IFunctionType) {
-        	    	// function declaration with typedef
+        	    	// Function declaration via a typedef for a function type
         	    	isFunction= true;
+        	    } else if (binding instanceof IParameter) {
+        	    	// Variable declaration redeclaring a parameter
+        	    	binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
         	    } else {
-        	    	// variable declaration
+        	    	// Variable declaration
         	    	IType t2= null;
         	    	if (binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)) {
         	    		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -272,11 +272,13 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 
 		for (int i = 0; i < ns.length && ns[i] != null; i++) {
 			IASTNode parent = ns[i].getParent();
-			while (!(parent instanceof IASTParameterDeclaration))
+			while (parent != null && !(parent instanceof IASTParameterDeclaration))
 				parent = parent.getParent();
-			IASTDeclSpecifier declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
-			if (declSpec.getStorageClass() == storage)
-				return true;
+			if (parent != null) {
+				IASTDeclSpecifier declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
+				if (declSpec.getStorageClass() == storage)
+					return true;
+			}
 		}
 		return false;
 	}

@@ -65,7 +65,6 @@ import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 /**
  * Options page for RegexErrorParser in Error Parsers Tab of properties/preferences.
  *
- * @noextend This class is not intended to be subclassed by clients.
  * @since 5.2
  */
 public final class RegexErrorParserOptionPage extends AbstractCOptionPage {

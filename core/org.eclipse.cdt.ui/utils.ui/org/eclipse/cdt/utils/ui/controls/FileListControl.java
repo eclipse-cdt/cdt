@@ -337,7 +337,6 @@ public class FileListControl {
 	 * An extended List control with support for cut / copy / paste & undo
 	 * Needs to be public for the copy method to be called by the platform via reflection
 	 * @since 5.2
-	 * @noextend
 	 * @noinstantiate This class is not intended to be instantiated by clients.
 	 */
 	public final class ClipboardList extends List {

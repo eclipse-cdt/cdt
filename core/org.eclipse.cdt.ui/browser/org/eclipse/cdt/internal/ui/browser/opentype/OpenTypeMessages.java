@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.browser.opentype;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class OpenTypeMessages extends NLS {

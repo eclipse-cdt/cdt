@@ -144,7 +144,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * (value <code>"org.eclipse.cdt.ui.CHierarchyPerspective"</code>).
 	 * 
 	 * @deprecated This perspective no longer exists.
-	 * @noreference This field is not intended to be referenced by clients.
 	 */	
 	@Deprecated
 	public static final String ID_CHIERARCHY_PERSPECTIVE = PLUGIN_ID + ".CHierarchyPerspective"; //$NON-NLS-1$
@@ -155,7 +154,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @since 2.0
 	 * @deprecated This perspective no longer exists.
-	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	public static final String ID_CBROWSING_PERSPECTIVE = PLUGIN_ID + ".CBrowsingPerspective"; //$NON-NLS-1$

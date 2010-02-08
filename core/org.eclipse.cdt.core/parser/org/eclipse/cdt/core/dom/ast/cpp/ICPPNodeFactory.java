@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -144,8 +143,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 	
-	public IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration);
-
 	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration);
 
 	public ICPPASTTryBlockStatement newTryBlockStatement(IASTStatement body);
@@ -227,4 +224,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP();
+
+	/**
+	 * @deprecated Replaced by {@link #newExplicitTemplateInstantiation(IASTDeclaration)}.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration);
+
+
 }

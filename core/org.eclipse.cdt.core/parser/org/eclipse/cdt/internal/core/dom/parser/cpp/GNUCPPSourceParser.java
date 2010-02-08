@@ -111,7 +111,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
@@ -1587,63 +1586,50 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request for a backtrack
      */
     protected IASTDeclaration templateDeclaration(DeclarationOptions option) throws EndOfFileException, BacktrackException {
-    	IToken firstToken = null;
+    	final int offset= LA(1).getOffset();
     	boolean exported = false;
-    	boolean encounteredExtraMod = false;
-    	if (LT(1) == IToken.t_export) {
+    	int explicitInstMod= 0;
+		switch(LT(1)) {
+    	case IToken.t_export:
     		exported = true;
-    		firstToken = consume();
-    		consume(IToken.t_template);
-    	} else {
-    		if (supportExtendedTemplateSyntax) {
-    			switch (LT(1)) {
-    			case IToken.t_static:
-    			case IToken.t_extern:
-    			case IToken.t_inline:
-    				firstToken = consume();
-    				consume(IToken.t_template);
-    				encounteredExtraMod = true;
-    				break;
-    			default:
-    				firstToken = consume(IToken.t_template);
-    				break;
-    			}
-    		} else
-    			firstToken = consume(IToken.t_template);
+    		consume();
+    		break;
+    	case IToken.t_extern:
+    		consume();
+    		explicitInstMod= ICPPASTExplicitTemplateInstantiation.EXTERN;
+    		break;
+    	case IToken.t_static:
+    		consume();
+    		explicitInstMod= ICPPASTExplicitTemplateInstantiation.STATIC;
+    		break;
+		case IToken.t_inline:
+			consume();
+    		explicitInstMod= ICPPASTExplicitTemplateInstantiation.INLINE;
+			break;
     	}
+    	
+    	consume(IToken.t_template);
+    	
     	if (LT(1) != IToken.tLT) {
     		// explicit-instantiation
-    		ICPPASTExplicitTemplateInstantiation templateInstantiation = null;
-    		if (encounteredExtraMod && supportExtendedTemplateSyntax) {
-    			IGPPASTExplicitTemplateInstantiation temp = nodeFactory.newExplicitTemplateInstantiationGPP(null);
-    			switch (firstToken.getType()) {
-    			case IToken.t_static:
-    				temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_static);
-    				break;
-    			case IToken.t_extern:
-    				temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_extern);
-    				break;
-    			case IToken.t_inline:
-    				temp.setModifier(IGPPASTExplicitTemplateInstantiation.ti_inline);
-    				break;
-    			}
-    			templateInstantiation = temp;
-    		} else {
-    			templateInstantiation = nodeFactory.newExplicitTemplateInstantiation(null);
-    		}
     		IASTDeclaration d = declaration(option);
-    		((ASTNode) templateInstantiation).setOffsetAndLength(firstToken
-    				.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
-    		templateInstantiation.setDeclaration(d);
-    		return templateInstantiation;
+    		ICPPASTExplicitTemplateInstantiation ti= nodeFactory.newExplicitTemplateInstantiation(d);
+			ti.setModifier(explicitInstMod);
+    		setRange(ti, offset, calculateEndOffset(d));
+    		return ti;
     	}
-    	consume(); // check for LT made before
+    	
+    	// Modifiers for explicit instantiations
+    	if (explicitInstMod != 0) {
+    		throwBacktrack(LA(1));
+    	}
+    	consume(IToken.tLT); 
     	if (LT(1) == IToken.tGT) {
     		// explicit-specialization
     		consume();
     		IASTDeclaration d = declaration(option);
     		ICPPASTTemplateSpecialization templateSpecialization = nodeFactory.newTemplateSpecialization(d);
-    		((ASTNode) templateSpecialization).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
+    		setRange(templateSpecialization, offset, calculateEndOffset(d));
     		return templateSpecialization;
     	}
 
@@ -1651,7 +1637,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	consume(IToken.tGT, IToken.tGT_in_SHIFTR);
     	IASTDeclaration d = declaration(option);
     	ICPPASTTemplateDeclaration templateDecl = nodeFactory.newTemplateDeclaration(d);
-    	((ASTNode) templateDecl).setOffsetAndLength(firstToken.getOffset(), calculateEndOffset(d) - firstToken.getOffset());
+		setRange(templateDecl, offset, calculateEndOffset(d));
     	templateDecl.setExported(exported);
     	for (int i = 0; i < parms.size(); ++i) {
     		ICPPASTTemplateParameter parm = parms.get(i);
@@ -1806,7 +1792,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_extern:
             if (LT(2) == IToken.tSTRING)
                 return linkageSpecification();
-        	if (supportExtendedTemplateSyntax && LT(2) == IToken.t_template)
+        	if (LT(2) == IToken.t_template)
                 return templateDeclaration(option);
             break;
         case IToken.t_static:

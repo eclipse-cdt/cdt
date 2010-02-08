@@ -104,7 +104,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -399,10 +398,6 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTExplicitTemplateInstantiation(declaration);
 	}
 	
-	public IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration) {
-		return new GPPASTExplicitTemplateInstantiation(declaration);
-	}
-
 	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration) {
 		return new CPPASTTemplateSpecialization(declaration);
 	}
@@ -529,4 +524,14 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP() {
 		return new GPPASTSimpleDeclSpecifier();
 	}
+
+	/**
+	 * @deprecated Replaced by {@link #newExplicitTemplateInstantiation(IASTDeclaration)}.
+	 */
+	@Deprecated
+	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration) {
+		return new GPPASTExplicitTemplateInstantiation(declaration);
+	}
+
+
 }

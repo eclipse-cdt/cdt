@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -4776,5 +4777,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals("<int,double>", ASTTypeUtil.getArgumentListString(f.getTemplateArguments(), true));
 		f= bh.assertNonProblem("f<int,char>();", -3);
 		assertEquals("<int,char>", ASTTypeUtil.getArgumentListString(f.getTemplateArguments(), true));
+	}
+	
+	//	template<typename T> class CT {};
+	//	extern template class CT<int>;
+	public void testExternTemplates_294730() throws Exception {
+		final String code= getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		ICPPASTExplicitTemplateInstantiation ti= getDeclaration(tu, 1);
+		assertEquals(ICPPASTExplicitTemplateInstantiation.EXTERN, ti.getModifier());
 	}
 }

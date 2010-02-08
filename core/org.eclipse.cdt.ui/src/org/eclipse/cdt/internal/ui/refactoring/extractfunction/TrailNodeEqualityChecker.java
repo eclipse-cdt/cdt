@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -61,7 +62,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -216,9 +216,9 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			IASTASMDeclaration asmDecl = (IASTASMDeclaration) node;
 			
 			return trailASMDecl.getAssembly().equals(asmDecl.getAssembly());
-		} else if (trailNode instanceof IGPPASTExplicitTemplateInstantiation) {
-			IGPPASTExplicitTemplateInstantiation trailTempl = (IGPPASTExplicitTemplateInstantiation) trailNode;
-			IGPPASTExplicitTemplateInstantiation templ = (IGPPASTExplicitTemplateInstantiation) node;
+		} else if (trailNode instanceof ICPPASTExplicitTemplateInstantiation) {
+			ICPPASTExplicitTemplateInstantiation trailTempl = (ICPPASTExplicitTemplateInstantiation) trailNode;
+			ICPPASTExplicitTemplateInstantiation templ = (ICPPASTExplicitTemplateInstantiation) node;
 			
 			return trailTempl.getModifier() == templ.getModifier();
 		} else if (trailNode instanceof ICPPASTLinkageSpecification) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -236,19 +235,16 @@ public class DeclarationWriter extends NodeWriter{
 	}
 
 	private void writeExplicitTemplateInstantiation(ICPPASTExplicitTemplateInstantiation explicitTemplateInstantiation) {
-		if (explicitTemplateInstantiation instanceof IGPPASTExplicitTemplateInstantiation) {
-			IGPPASTExplicitTemplateInstantiation gppExplicitTemplateInstantiation = (IGPPASTExplicitTemplateInstantiation) explicitTemplateInstantiation;
-			switch(gppExplicitTemplateInstantiation.getModifier()){
-			case IGPPASTExplicitTemplateInstantiation.ti_extern:
-				scribe.print(EXTERN);
-				break;
-			case IGPPASTExplicitTemplateInstantiation.ti_inline:
-				scribe.print(INLINE);
-				break;
-			case IGPPASTExplicitTemplateInstantiation.ti_static:
-				scribe.print(STATIC);
-				break;
-			}
+		switch(explicitTemplateInstantiation.getModifier()){
+		case ICPPASTExplicitTemplateInstantiation.EXTERN:
+			scribe.print(EXTERN);
+			break;
+		case ICPPASTExplicitTemplateInstantiation.INLINE:
+			scribe.print(INLINE);
+			break;
+		case ICPPASTExplicitTemplateInstantiation.STATIC:
+			scribe.print(STATIC);
+			break;
 		}
 		
 		scribe.print(TEMPLATE);

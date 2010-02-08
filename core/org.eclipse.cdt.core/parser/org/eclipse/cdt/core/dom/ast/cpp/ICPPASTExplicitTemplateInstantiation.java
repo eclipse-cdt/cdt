@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -14,12 +15,28 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
- * This interface represents an explict template instantiation.
+ * This interface represents an explicit template instantiation.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
+
+	/**
+	 * Gnu extension.
+	 * @since 5.2
+	 */
+	public static final int STATIC = 1;
+	/**
+	 * Gnu extension.
+	 * @since 5.2
+	 */
+	public static final int INLINE = 2;
+	/**
+	 * C++0x.
+	 * @since 5.2
+	 */
+	public static final int EXTERN = 3;
 
 	/**
 	 * <code>OWNED_DECLARATION</code> represents the role of the inner
@@ -47,4 +64,16 @@ public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 	 * @since 5.1
 	 */
 	public ICPPASTExplicitTemplateInstantiation copy();
+	
+	/**
+	 * Returns {@link #STATIC}, {@link #INLINE}, {@link #EXTERN}, or <code>0</code>.
+	 * @since 5.2
+	 */
+	public int getModifier();
+
+	/**
+	 * Set the modifier value, not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setModifier(int value);
 }

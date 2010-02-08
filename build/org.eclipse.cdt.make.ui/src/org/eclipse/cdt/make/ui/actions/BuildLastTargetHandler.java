@@ -19,6 +19,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for {@link org.eclipse.cdt.make.ui.actions.BuildLastTargetAction}
+ * 
+ * @since 7.0
  */
 public class BuildLastTargetHandler extends AbstractHandler {
 	

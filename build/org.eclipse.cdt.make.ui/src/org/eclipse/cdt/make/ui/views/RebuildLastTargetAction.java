@@ -18,6 +18,8 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Rebuild last target of selected resource or project.
+ * 
+ * @since 7.0
  */
 public class RebuildLastTargetAction extends SelectionListenerAction {
 	

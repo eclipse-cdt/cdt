@@ -34,12 +34,20 @@ public class BuildTargetDialog extends Dialog {
 	private final TargetListViewerPart targetPart;
 	private final IContainer fContainer;
 
+	/**
+	 * @since 7.0
+	 */
 	public BuildTargetDialog(Shell parent, IContainer container, boolean recursive) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fContainer = container;
 		targetPart = new TargetListViewerPart(fContainer, recursive);
 	}
+	
+	public BuildTargetDialog(Shell parent, IContainer container) {
+		this(parent, container, true);
+	}
+
 
 	public void setTarget(IMakeTarget target) {
 		targetPart.setSelectedTarget(target);

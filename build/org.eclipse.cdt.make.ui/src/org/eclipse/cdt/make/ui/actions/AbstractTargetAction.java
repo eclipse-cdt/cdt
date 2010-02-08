@@ -39,6 +39,9 @@ public abstract class AbstractTargetAction
 	private IWorkbenchPart fPart;
 	private IWorkbenchWindow fWindow;
 	private boolean isEnabled;
+	/**
+	 * @since 7.0
+	 */
 	protected IContainer fContainer;
 
 	protected Shell getShell() {
@@ -105,6 +108,9 @@ public abstract class AbstractTargetAction
 			action.setEnabled(isEnabled);
 	}
 
+	/**
+	 * @since 7.0
+	 */
 	public boolean isEnabled() {
 		return isEnabled;
 	}

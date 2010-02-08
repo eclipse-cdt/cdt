@@ -28,6 +28,8 @@ import org.eclipse.jface.window.Window;
  * Rebuild last target of selected resource or project.
  * Search is done non-recursively.
  * If no valid last target is found, show the build target dialog.
+ * 
+ * @since 7.0
  */
 public class BuildLastTargetAction extends AbstractTargetAction {
 	

@@ -47,6 +47,8 @@ public class TargetListViewerPart extends StructuredViewerPart {
     /** 
      * @param container 
      * @param recursive {@code true} if to search recursively for target
+     * 
+     * @since 7.0
      */
     public TargetListViewerPart(IContainer container, boolean recursive) {
         super(new String[] {
@@ -55,6 +57,10 @@ public class TargetListViewerPart extends StructuredViewerPart {
                 MakeUIPlugin.getResourceString("TargetListViewer.button.edit")}); //$NON-NLS-1$
         this.fContainer = container;
         this.recursive = recursive;
+    }
+
+    public TargetListViewerPart(IContainer container) {
+    	this(container, true);
     }
 
     @Override

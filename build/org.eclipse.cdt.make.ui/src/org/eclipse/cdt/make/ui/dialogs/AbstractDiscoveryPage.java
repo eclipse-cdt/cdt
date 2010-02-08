@@ -46,6 +46,7 @@ public abstract class AbstractDiscoveryPage extends DialogPage {
     
     protected static final String SI_ENABLE = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.parser.enabled.button"); //$NON-NLS-1$
     protected static final String SI_COMMAND = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.command.label"); //$NON-NLS-1$
+    /** @since 7.0 */
     protected static final String SI_ARGS = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.args.label"); //$NON-NLS-1$
     protected static final String SI_BROWSE = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.browse.button"); //$NON-NLS-1$
     protected static final String SI_DIALOG = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.browse.runCommandDialog"); //$NON-NLS-1$

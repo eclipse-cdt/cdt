@@ -237,10 +237,16 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         getContainer().updateContainer();
     }
 
+    /**
+	 * @since 7.0
+	 */
     protected void handleModifyRunArgsText() {
         getContainer().updateContainer();
     }
     
+    /**
+	 * @since 7.0
+	 */
     protected void handleSIPEnabledButtonSelected() {
         sipRunCommandText.setEnabled(sipEnabledButton.getSelection());
         sipRunArgsText.setEnabled(sipEnabledButton.getSelection());

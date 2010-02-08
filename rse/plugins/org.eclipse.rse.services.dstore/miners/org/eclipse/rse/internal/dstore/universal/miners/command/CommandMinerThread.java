@@ -25,6 +25,7 @@
  *  David McKnight     (IBM)   [290743] [dstore][shells] allow bash shells and custom shell invocation
  *  David McKnight     (IBM)   [287305] [dstore] Need to set proper uid for commands when using SecuredThread and single server for multiple clients[
  *  Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
+ *  David McKnight     (IBM)   [302174] [dstore] shell init command can potentially get called too late
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -61,6 +62,34 @@ import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Pattern
  */
 public class CommandMinerThread extends MinerThread
 {
+	class InitRunnable implements Runnable 
+	{
+		private boolean _done = false;
+		private String _initCmd;
+		
+		public InitRunnable(String command){
+			_initCmd = command;
+		}
+		
+		public boolean isDone(){
+			return _done;
+		}
+		
+		public void run()
+		{				
+			// wait a second so the profile can complete startup
+			try {
+				sleep(1000);
+			}
+			catch (Exception e)
+			{									
+			}
+
+			_done = true; // setting before the call so that sendInput doesn't wait on this
+			sendInput(_initCmd);								
+		}
+	}
+	
 	private DataElement _status;
 	private String _invocation;
 
@@ -93,6 +122,8 @@ public class CommandMinerThread extends MinerThread
 	private String PSEUDO_TERMINAL;
 
 	private DataElement _lastPrompt;
+	private InitRunnable _initRunnable;
+	private Thread _cdThread;
 
 	public CommandMinerThread(DataElement theElement, String invocation, DataElement status, Patterns thePatterns, CommandMiner.CommandMinerDescriptors descriptors)
 	{ 
@@ -510,27 +541,10 @@ public class CommandMinerThread extends MinerThread
 					 initCmd += "cd " + _cwdStr; //$NON-NLS-1$
 				 }
 				 				 
-				// need to CD to the correct directory
-				final String finitCmd = initCmd;
-				Thread cdThread = new Thread(
-						new Runnable()
-						{
-							public void run()
-							{				
-								// wait a second so the profile can complete startup
-								try
-								{
-									sleep(1000);
-								}
-								catch (Exception e)
-								{
-									
-								}
-								sendInput(finitCmd);
-							}
-						});
-				cdThread.start();
-
+				// need to CD to the correct directory				
+				_initRunnable = new InitRunnable(initCmd);
+				_cdThread = new Thread(_initRunnable);						
+				_cdThread.start();
 			}			
 			else if (_isShell && !_isWindows && !_isTTY)
 			{				
@@ -627,6 +641,14 @@ public class CommandMinerThread extends MinerThread
 	{
 		if (!_isDone)
 		{
+			if (_initRunnable != null && !_initRunnable.isDone()){
+				try {
+					_cdThread.join();
+				}
+				catch (InterruptedException e){}
+			}
+			
+			
 			String origInput = input;
 			input = convertSpecialCharacters(input);
 			input.getBytes();

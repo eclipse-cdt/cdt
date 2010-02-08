@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFolderData;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFolderInfo extends IResourceInfo {
 	public final static String FOLDER_INFO_ELEMENT_NAME = "folderInfo"; //$NON-NLS-1$

@@ -31,7 +31,7 @@ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
  * 
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IToolChain extends IBuildObject, IHoldsOptions {
 	public static final String TOOL_CHAIN_ELEMENT_NAME = "toolChain";	//$NON-NLS-1$

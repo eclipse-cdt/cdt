@@ -16,7 +16,7 @@ package org.eclipse.cdt.managedbuilder.core;
  * Basic Tool / Toolchain Option type.
  * 
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IOption extends IBuildObject {
 	// Type for the value of the option

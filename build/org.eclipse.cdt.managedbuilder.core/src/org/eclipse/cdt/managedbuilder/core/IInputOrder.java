@@ -19,7 +19,7 @@ package org.eclipse.cdt.managedbuilder.core;
  * 
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IInputOrder {
 	public static final String INPUT_ORDER_ELEMENT_NAME = "inputOrder";	//$NON-NLS-1$

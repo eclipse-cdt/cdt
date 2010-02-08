@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IStatus;
  * 
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildMacroException extends CdtVariableException {
 	/**

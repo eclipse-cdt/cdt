@@ -52,7 +52,6 @@ import org.eclipse.core.runtime.Path;
  * and outputs while a Gnu makefile is being generated.
  * 
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	

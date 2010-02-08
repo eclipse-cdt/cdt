@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
  * 
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITargetPlatform extends IBuildObject {
 	public static final String TARGET_PLATFORM_ELEMENT_NAME = "targetPlatform"; //$NON-NLS-1$

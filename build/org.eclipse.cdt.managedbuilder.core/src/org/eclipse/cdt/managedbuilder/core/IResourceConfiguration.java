@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IResource;
  * 
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceConfiguration extends IResourceInfo {
 	public static final String RESOURCE_CONFIGURATION_ELEMENT_NAME = "resourceConfiguration"; //$NON-NLS-1$

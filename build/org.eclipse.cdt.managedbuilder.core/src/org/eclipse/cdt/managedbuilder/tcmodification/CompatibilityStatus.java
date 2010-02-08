@@ -16,10 +16,6 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.ConflictSet;
 import org.eclipse.core.runtime.Status;
 
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 public final class CompatibilityStatus extends Status {
 
 	public static final CompatibilityStatus OK_COMPATIBILITY_STATUS = new CompatibilityStatus(OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), ""); //$NON-NLS-1$

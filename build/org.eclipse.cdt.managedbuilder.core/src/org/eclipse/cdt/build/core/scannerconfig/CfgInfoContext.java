@@ -23,10 +23,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.resources.IProject;
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 public final class CfgInfoContext{
 	private static final String DELIMITER = ";"; //$NON-NLS-1$
 	private static final int NULL_OBJ_CODE = 29;

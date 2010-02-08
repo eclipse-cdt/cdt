@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.tcmodification;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileInfoModification extends IToolListModification {
 

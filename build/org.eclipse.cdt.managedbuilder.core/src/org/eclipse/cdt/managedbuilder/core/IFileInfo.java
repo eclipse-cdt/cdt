@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.settings.model.extension.CFileData;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileInfo extends IResourceConfiguration {
 	public static final String FILE_INFO_ELEMENT_NAME = "fileInfo"; //$NON-NLS-1$

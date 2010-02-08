@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceInfo extends IBuildObject {
 //	public static final String PARENT_FOLDER_INFO_ID = "parentFolderInfoId";

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
@@ -143,9 +142,6 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#getBuiltinBindingsProvider()
 	 */
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
-		if (supportGCCOtherBuiltinSymbols()) {
-			return new GCCBuiltinSymbolProvider(ParserLanguage.CPP);
-		}
-		return null;
+		return new GCCBuiltinSymbolProvider(ParserLanguage.CPP, supportGCCOtherBuiltinSymbols());
 	}
 }

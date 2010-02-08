@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.CBuiltinSymbolProvider;
 import org.eclipse.cdt.internal.core.dom.parser.GCCBuiltinSymbolProvider;
 
 
@@ -83,10 +82,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#getBuiltinSymbolProvider()
 	 */
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
-		if (supportGCCOtherBuiltinSymbols()) {
-			return new GCCBuiltinSymbolProvider(ParserLanguage.C);
-		}
-		return new CBuiltinSymbolProvider();
+		return new GCCBuiltinSymbolProvider(ParserLanguage.C, supportGCCOtherBuiltinSymbols());
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -359,12 +359,21 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 	private IBinding[] bindings= new IBinding[NUM_OTHER_GCC_BUILTINS];
 	private IScope scope= null;
-	private ParserLanguage lang= null;
-	public GCCBuiltinSymbolProvider(ParserLanguage lang) {
+	private final ParserLanguage lang;
+	private final boolean supportGnuSymbols;
+	public GCCBuiltinSymbolProvider(ParserLanguage lang, boolean supportGnuSymbols) {
 		this.lang = lang;
+		this.supportGnuSymbols= supportGnuSymbols;
 	}
 	
 	private void initialize() {
+		// Symbols for all parsers
+		__func__();
+		
+		// Gnu only
+		if (!supportGnuSymbols)
+			return;
+		
 		__builtin_va_list();
 		__builtin_va_start();
 		__builtin_va_end();
@@ -392,7 +401,6 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
         __builtin_mem();
         __builtin_str_strn();
         __builtin_less_greater();
-        __func__();
 	}
 	
 	private void __func__() {

@@ -5663,6 +5663,7 @@ public class AST2Tests extends AST2BaseTest {
 	//	}
 	public void testPredefinedFunctionName_Bug247747() throws Exception {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C, false);
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, false);
 	}
 
 	//	void alloc(const char * id) {}

@@ -29,7 +29,6 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String TOOL = "/cygpath -w -p "; //$NON-NLS-1$ 

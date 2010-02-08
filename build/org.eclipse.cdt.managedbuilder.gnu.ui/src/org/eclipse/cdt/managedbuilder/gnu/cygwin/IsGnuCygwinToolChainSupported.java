@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  * that would convert the CygWin to the MinGW projects/tool-chains, and vice a versa.
  * 
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class IsGnuCygwinToolChainSupported implements
 		IManagedIsToolChainSupported {

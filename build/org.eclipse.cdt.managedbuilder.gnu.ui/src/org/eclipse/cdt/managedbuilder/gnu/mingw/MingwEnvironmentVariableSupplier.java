@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.Platform;
  * @author Doug Schaefer
  *
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MingwEnvironmentVariableSupplier implements
 		IConfigurationEnvironmentVariableSupplier {

@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.gnu.ui;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GprofAppCalculator extends ProfAppCalculator {
 	@Override

@@ -23,10 +23,6 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 public abstract class AbstractCWizard extends CNewWizard {
 
 	protected static final Image IMG0 = CPluginImages.get(CPluginImages.IMG_OBJS_CFOLDER);

@@ -25,9 +25,6 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Bug #183341 : Single property page which does not  
  * require separate cPropertyTab to display data.
- *
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class AbstractSingleBuildPage extends AbstractSinglePage {
 	public IConfiguration getConfigurationFromHoldsOptions(IHoldsOptions ho){

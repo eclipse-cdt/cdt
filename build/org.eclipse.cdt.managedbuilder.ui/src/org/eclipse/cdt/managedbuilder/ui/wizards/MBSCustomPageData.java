@@ -23,9 +23,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 /**
  *   This class is responsible for storing all of the data associated with a given custom wizard page.
- * 
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MBSCustomPageData
 {

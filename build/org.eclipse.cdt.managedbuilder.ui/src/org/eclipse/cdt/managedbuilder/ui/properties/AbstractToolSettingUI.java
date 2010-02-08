@@ -18,10 +18,6 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 public abstract class AbstractToolSettingUI extends FieldEditorPreferencePage {
 
 	protected AbstractCBuildPropertyTab buildPropPage;

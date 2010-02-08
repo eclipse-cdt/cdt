@@ -30,9 +30,6 @@ import org.eclipse.core.runtime.IPath;
  * In addition to AbstractCPropertyTab functionality,
  * provides several utility methods for configurations
  * handling.
- * 
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class AbstractCBuildPropertyTab extends AbstractCPropertyTab {
 	public IConfiguration getConfigurationFromHoldsOptions(IHoldsOptions ho){

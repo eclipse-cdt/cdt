@@ -39,7 +39,6 @@ import org.eclipse.jface.wizard.IWizardPage;
  *  
  *  This class is a singleton.
  *  
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MBSCustomPageManager

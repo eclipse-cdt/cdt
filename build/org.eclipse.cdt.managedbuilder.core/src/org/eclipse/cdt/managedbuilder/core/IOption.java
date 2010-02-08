@@ -75,6 +75,8 @@ public interface IOption extends IBuildObject {
 	
 	// Schema attribute names for option elements
 	public static final String BROWSE_TYPE = "browseType";	//$NON-NLS-1$
+	/** @since 7.0 */
+	public static final String BROWSE_FILTER_EXTENSIONS = "browseFilterExtensions"; //$NON-NLS-1$
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
@@ -172,6 +174,20 @@ public interface IOption extends IBuildObject {
 	 * @param int
 	 */
 	public void setBrowseType(int type);
+	
+	/**
+	 * @return the setting of the browseFilterExtensions attribute. For options of {@link #BROWSE_FILE} type.
+	 * @since 7.0
+	 */
+	public String[] getBrowseFilterExtensions();
+	
+	/**
+	 * Sets the browseFilterExtensions attribute. For options of {@link #BROWSE_FILE} type.
+	 * @param extensions - file extensions to show in browse files dialog
+	 * 
+	 * @since 7.0
+	 */
+	public void setBrowseFilterExtensions(String[] extensions);
 	
 	/**
 	 * Returns the setting of the resourceFilter attribute

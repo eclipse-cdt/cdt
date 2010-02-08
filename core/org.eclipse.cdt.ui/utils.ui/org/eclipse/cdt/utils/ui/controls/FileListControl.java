@@ -319,6 +319,9 @@ public class FileListControl {
 								if (currentName != null && currentName.trim().length() != 0) {
 									browseDialog.setFilterPath(currentName);
 								}
+								if (FileListControl.this.filterExtensions != null) {
+									browseDialog.setFilterExtensions(FileListControl.this.filterExtensions);
+								}
 								result = browseDialog.open();
 								if (result != null) {
 									fSetByBrowseDialog = true;
@@ -465,6 +468,7 @@ public class FileListControl {
 
 	// The type of browse support that is required
 	private int browseType;
+	private String[] filterExtensions;
 	/** The base path that should be used when adding new resources */
 	private IPath path = new Path(""); //$NON-NLS-1$
 
@@ -955,6 +959,16 @@ public class FileListControl {
 			promptForDelete = type == BROWSE_FILE || type == BROWSE_DIR;
 	}
 
+	/**
+	 * Sets the filter-extensions for the underlying Browse dialog. Only applies when browseType is 'file'.
+	 * @param filterExtensions
+	 * 
+	 * @since 5.2
+	 */
+	public void setFilterExtensions(String[] filterExtensions) {
+		this.filterExtensions = filterExtensions;
+	}
+	
 	/**
 	 * Enable/Disable workspace support. If enabled, the workspace browse button
 	 * will be visible in the SelectPathInputDialog.

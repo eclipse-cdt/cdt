@@ -56,6 +56,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private Integer browseType;
+	private String[] browseFilterExtensions;
 	private List builtIns;
 	private IOptionCategory category;
 	private String categoryId;
@@ -201,6 +202,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (option.browseType != null) {
 			browseType = new Integer(option.browseType.intValue());
+		}
+		if (option.browseFilterExtensions != null) {
+			browseFilterExtensions = option.browseFilterExtensions.clone();
 		}
 		if (option.resourceFilter != null) {
 			resourceFilter = new Integer(option.resourceFilter.intValue());
@@ -356,6 +360,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			browseType = new Integer(BROWSE_DIR);
 		}
 
+		// Get the browseFilterExtensions attribute
+		String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
+		if (browseFilterExtensionsStr != null) {
+			this.browseFilterExtensions = browseFilterExtensionsStr.split("\\s*,\\s*"); //$NON-NLS-1$
+		}
+		
 		categoryId = element.getAttribute(CATEGORY);
 		
 		// Get the resourceFilter attribute
@@ -585,6 +595,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				browseType = new Integer(BROWSE_FILE);
 			} else if (browseTypeStr.equals(DIR)) {
 				browseType = new Integer(BROWSE_DIR);
+			}
+		}
+
+		// Get the browseFilterExtensions attribute
+		if (element.getAttribute(BROWSE_FILTER_EXTENSIONS) != null) {
+			String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
+			if (browseFilterExtensionsStr != null) {
+				this.browseFilterExtensions = browseFilterExtensionsStr.split("\\s*,\\s*"); //$NON-NLS-1$
 			}
 		}
 
@@ -861,6 +879,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			element.setAttribute(BROWSE_TYPE, str);
 		}
 		
+		// browse filter extensions
+		if (browseFilterExtensions != null) {
+			StringBuilder sb = new StringBuilder();
+			for(String ext : browseFilterExtensions) {
+				sb.append(ext + ',');
+			}
+			element.setAttribute(BROWSE_FILTER_EXTENSIONS, sb.toString());
+		}
+		
 		if (categoryId != null) {
 			element.setAttribute(CATEGORY, categoryId);
 		}
@@ -985,6 +1012,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return browseType.intValue();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterExtensions()
+	 */
+	public String[] getBrowseFilterExtensions() {
+		if (browseFilterExtensions == null) {
+			if (superClass != null) {
+				return superClass.getBrowseFilterExtensions();
+			} else {
+				return null;
+			}
+		}
+		return browseFilterExtensions.clone();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getResourceFilter()
 	 */
@@ -1675,6 +1716,19 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterExtensions(java.lang.String[])
+	 */
+	public void setBrowseFilterExtensions(String[] extensions) {
+		if (browseFilterExtensions == null || !(browseFilterExtensions.equals(extensions))) {
+			browseFilterExtensions = extensions;
+			if(!isExtensionElement()) {
+				isDirty = true;
+				rebuildState = true;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(boolean)
 	 */
 	public void setValue(boolean value) throws BuildException {
@@ -1901,6 +1955,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (superClass != null &&
 			unusedChildren == null &&
 		    browseType == null &&
+		    browseFilterExtensions == null &&
 		    (builtIns == null || builtIns.size() == 0) &&
 		    category == null &&
 			categoryId == null &&

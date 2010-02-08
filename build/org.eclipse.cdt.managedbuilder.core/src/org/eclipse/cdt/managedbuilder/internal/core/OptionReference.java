@@ -476,6 +476,13 @@ public class OptionReference implements IOption {
 		return option.getBrowseType();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterExtensions()
+	 */
+	public String[] getBrowseFilterExtensions() {
+		return option.getBrowseFilterExtensions();
+	}
+
 	private List getBuiltInList() {
 		if (builtIns == null) {
 			builtIns = new ArrayList();
@@ -786,6 +793,12 @@ public class OptionReference implements IOption {
 	public void setBrowseType(int type) {
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterExtensions(java.lang.String[])
+	 */
+	public void setBrowseFilterExtensions(String[] extensions) {
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
 	 */

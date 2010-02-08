@@ -226,6 +226,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 											return true;
 										}
 									};
+									((FileFieldEditor)stringField).setFileExtensions(opt.getBrowseFilterExtensions());
 								} break;
 		
 								case IOption.BROWSE_NONE: {
@@ -325,6 +326,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String tooltipHoverStr = displayFixedTip ? null : tipStr;
 							fieldEditor = new FileListControlFieldEditor(optId, nameStr, 
 									tooltipHoverStr, contextId, fieldEditorParent, opt.getBrowseType());
+							((FileListControlFieldEditor)fieldEditor).setFilterExtensions(opt.getBrowseFilterExtensions());
+							
 							if (pageHasToolTipBox) {
 								Label label = fieldEditor.getLabelControl(fieldEditorParent);
 								label.setData(new TipInfo(nameStr,tipStr));

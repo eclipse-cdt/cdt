@@ -1306,6 +1306,13 @@ Additional special types exist to flag options of special relevance to the build
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="browseFilterExtensions" type="string">
+            <annotation>
+               <documentation>
+                  An optional value that specifies a comma-separated string of file-extension filters for the underlying file browse-dialog. For filters with multiple extensions, use semicolon as a separator - eg. "*.lib;*.a;*.cmd,*.*". This attribute only applies when user chooses to browse the file-system, and only when browseType is 'file'.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="value" type="string">
             <annotation>
                <documentation>

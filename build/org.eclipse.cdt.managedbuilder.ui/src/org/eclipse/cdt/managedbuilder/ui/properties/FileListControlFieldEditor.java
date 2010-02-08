@@ -143,6 +143,16 @@ public class FileListControlFieldEditor extends FieldEditor {
 	}
 
 	/**
+	 * Sets the filter-extensions for the underlying Browse dialog. Only applies when browseType is 'file'.
+	 * @param filterExtensions
+	 * 
+	 * @since 7.0
+	 */
+	public void setFilterExtensions(String[] filterExtensions) {
+		list.setFilterExtensions(filterExtensions);
+	}
+	
+	/**
 	 * Fills this field editor's basic controls into the given parent.
 	 */
 	@Override

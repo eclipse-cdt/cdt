@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,9 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * mainPage.setDescription("Add C or C++ a Nature to a project.");
  * </pre>
  * </p>
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
     
@@ -58,7 +61,8 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
      * Method getWzTitleResource returns the correct Title Label for this class
      * overriding the default in the superclass.
      */
-    protected String getWzTitleResource(){
+    @Override
+	protected String getWzTitleResource(){
         return MakeUIPlugin.getResourceString(WZ_TITLE);
     }
     
@@ -66,7 +70,8 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
      * Method getWzDescriptionResource returns the correct description
      * Label for this class overriding the default in the superclass.
      */
-    protected String getWzDescriptionResource(){
+    @Override
+	protected String getWzDescriptionResource(){
         return MakeUIPlugin.getResourceString(WZ_DESC);
     }
        
@@ -76,10 +81,12 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
      * @param project
      * @return boolean
      */
-    public boolean isCandidate(IProject project) { 
+    @Override
+	public boolean isCandidate(IProject project) { 
 		return true; // all 
     }    
     
+	@Override
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
@@ -93,6 +100,7 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		IStructuredSelection sel = ((BasicNewResourceWizard)getWizard()).getSelection();

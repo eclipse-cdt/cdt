@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,9 @@ import org.eclipse.swt.widgets.Label;
  * 
  * @author vhirsl
  * @since 3.0
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation"; //$NON-NLS-1$
@@ -86,7 +89,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#setContainer(org.eclipse.cdt.ui.dialogs.ICOptionContainer)
      */
-    public void setContainer(ICOptionContainer container) {
+    @Override
+	public void setContainer(ICOptionContainer container) {
         super.setContainer(container);
         if (container.getProject() == null) {
             fCreatePathContainer = true;
@@ -96,7 +100,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         // Create the composite control for the tab
         int tabColumns = 2;
         Font font = parent.getFont();
@@ -174,7 +179,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
                 : (getBuildInfo().isAutoDiscoveryEnabled()
                     && !getBuildInfo().getSelectedProfileId().equals(ScannerConfigProfileManager.NULL_PROFILE_ID)));
         scEnabledButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 enableAllControls();
             }
         });
@@ -195,7 +201,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 
         profileComboBox = new Combo(scGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
         profileComboBox.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 getBuildInfo().setSelectedProfileId(getCurrentProfileId());
                 handleDiscoveryProfileChanged();
             }
@@ -229,7 +236,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */
-    public void setVisible(boolean visible) {
+    @Override
+	public void setVisible(boolean visible) {
         if (!visible) {
             if (!checkDialogForChanges()) {
                 createBuildInfo();
@@ -247,7 +255,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
      /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryOptionsBlock#getCurrentProfileId()
      */
-    protected String getCurrentProfileId() {
+    @Override
+	protected String getCurrentProfileId() {
         int pos = profileComboBox.getSelectionIndex();
         if (pos >= 0) {
             String selectedProfileName = profileComboBox.getItem(pos);
@@ -259,7 +268,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void performApply(IProgressMonitor monitor) throws CoreException {
+    @Override
+	public void performApply(IProgressMonitor monitor) throws CoreException {
         if (monitor == null) {
             monitor = new NullProgressMonitor();
         }
@@ -357,7 +367,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
      * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
      */
 
-    public void performDefaults() {
+    @Override
+	public void performDefaults() {
         if (!isInitialized() && !needsSCNature) {
             // Missing builder info on a non-legacy project
             return;

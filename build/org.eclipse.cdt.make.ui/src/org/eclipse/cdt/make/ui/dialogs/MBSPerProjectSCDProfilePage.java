@@ -33,6 +33,9 @@ import org.eclipse.swt.widgets.Text;
  * SCD per project profile property/preference page
  * 
  * @author vhirsl
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     private static final String providerId = "specsFile";  //$NON-NLS-1$

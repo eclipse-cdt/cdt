@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,9 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
  * A dialog page to manage discovered scanner configuration
  * 
  * @author vhirsl
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntryContainerPage {
 	private static final String PREFIX = "DiscoveredScannerConfigurationContainerPage"; //$NON-NLS-1$
@@ -149,6 +152,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		deregisterActionHandlers();
 		super.dispose();
@@ -382,6 +386,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		fDiscoveredContainerList.setButtonsMinWidth(buttonBarWidth);
 
 		fDiscoveredContainerList.getTreeViewer().addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof DiscoveredElement) {
 					DiscoveredElement elem = (DiscoveredElement) element;
@@ -834,6 +839,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
+		@Override
 		public void run() {
 			if (discoveredEntry != null) {
 				// copy to clipboard

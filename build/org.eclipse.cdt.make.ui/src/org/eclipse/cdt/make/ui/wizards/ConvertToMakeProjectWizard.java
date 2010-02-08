@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,14 @@ import org.eclipse.cdt.ui.wizards.conversion.ConversionWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.wizard.Wizard;
 
 /**
  * This wizard provides a method by which the user can 
  * add a C nature to a project that previously had no nature associated with it.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConvertToMakeProjectWizard extends ConversionWizard {
 
@@ -87,16 +91,19 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	/**
 	 * Method addPages adds our Simple to C conversion Wizard page.
 	 * 
-	 * @see Wizard#createPages
+	 * @see Wizard#addPages
 	 */
+	@Override
 	public void addPages() {
 		addPage(mainPage = new ConvertToMakeProjectWizardPage(getPrefix()));
 	}
 
+	@Override
 	public String getProjectID() {
 		return MakeCorePlugin.MAKE_PROJECT_ID;
 	}
 
+	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 2); //$NON-NLS-1$
 		try {

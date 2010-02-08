@@ -27,6 +27,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class BuildTargetAction extends AbstractTargetAction {
 	
 	private static final String TARGET_BUILD_COMMAND = "org.eclipse.cdt.make.ui.targetBuildCommand"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,10 @@ import org.eclipse.cdt.make.ui.actions.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class UpdateMakeProjectWizard extends Wizard {
 	private static final String MAKE_UPDATE_WINDOW_TITLE = "MakeWizardUpdate.window_title";  //$NON-NLS-1$
 
@@ -28,6 +32,7 @@ public class UpdateMakeProjectWizard extends Wizard {
 		this.selected = selected;
 	}
 
+	@Override
 	public boolean performFinish() {
 		Object[] finalSelected = page1.getSelected();
 
@@ -37,6 +42,7 @@ public class UpdateMakeProjectWizard extends Wizard {
 		return true;
 	}
 
+	@Override
 	public void addPages() {
 		page1 = new UpdateMakeProjectWizardPage(selected);
 		addPage(page1);

@@ -21,6 +21,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * Handler for {@link org.eclipse.cdt.make.ui.actions.BuildLastTargetAction}
  * 
  * @since 7.0
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildLastTargetHandler extends AbstractHandler {
 	

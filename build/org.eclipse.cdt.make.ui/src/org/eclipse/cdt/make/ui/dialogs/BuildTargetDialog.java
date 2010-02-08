@@ -30,6 +30,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class BuildTargetDialog extends Dialog {
 	private final TargetListViewerPart targetPart;
 	private final IContainer fContainer;

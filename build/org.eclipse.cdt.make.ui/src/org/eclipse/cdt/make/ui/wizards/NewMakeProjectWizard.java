@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
 
-/**
- */
 public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 	
 	protected MakeProjectWizardOptionPage fOptionPage;
@@ -34,12 +32,15 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 		super(title, desc);
 	}
 
+	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
 	}
 
+	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 	}
 
+	@Override
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -59,10 +60,12 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 		}
 	}
 	
+	@Override
 	public String getProjectID() {
 		return MakeCorePlugin.MAKE_PROJECT_ID;
 	}
 	
+	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls( pageContainer );
 		

@@ -29,6 +29,10 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 
 import com.ibm.icu.text.MessageFormat;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class DeleteTargetAction extends SelectionListenerAction {
 	private final Shell shell;
 

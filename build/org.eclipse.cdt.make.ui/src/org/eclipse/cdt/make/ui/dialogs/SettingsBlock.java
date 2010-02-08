@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class SettingsBlock extends AbstractCOptionPage {
 
 	private static final String PREFIX = "SettingsBlock"; //$NON-NLS-1$
@@ -134,6 +138,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_DEFAULT));
 		defButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
 					buildCommand.setEnabled(false);
@@ -186,6 +191,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	protected void createWorkBenchBuildControls(Composite parent) {
 		SelectionAdapter selectionAdapter = new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				targetAuto.setEnabled(autoButton.getSelection());
 				autoVariableButton.setEnabled(autoButton.getSelection());
@@ -258,6 +264,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				handleVariablesButtonSelected(control);
 			}
@@ -310,6 +317,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		ControlAccessibleListener(String name) {
 			controlName = name;
 		}
+		@Override
 		public void getName(AccessibleEvent e) {
 			e.result = controlName;
 		}
@@ -349,6 +357,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		browseWorkspace.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_WORKSPACE));
 		browseWorkspace.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(), true,
 						MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
@@ -365,6 +374,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		browseFilesystem.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_FILESYSTEM));
 		browseFilesystem.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.NONE);
 				dialog.setText(MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
@@ -402,6 +412,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		dialog.open();
 		return dialog.getVariableExpression();
 	}
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 		setControl(composite);
@@ -423,6 +434,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		}
 	}
 
+	@Override
 	public boolean isValid() {
 		if (defButton != null && defButton.getSelection() != true) {
 			String cmd = getBuildLine();
@@ -433,6 +445,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		return true;
 	}
 
+	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		// Missing builder info
 		if (fBuildInfo == null) {
@@ -503,6 +516,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		}
 	}
 
+	@Override
 	public void performDefaults() {
 		// Missing builder info
 		if (fBuildInfo == null) {
@@ -572,6 +586,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		return null;
 	}
 
+	@Override
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 		if (getContainer().getProject() != null) {
@@ -584,6 +599,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		}
 	}
 
+	@Override
 	public String getErrorMessage() {
 		if (!useDefaultBuildCmd()) {
 			String cmd = getBuildLine();

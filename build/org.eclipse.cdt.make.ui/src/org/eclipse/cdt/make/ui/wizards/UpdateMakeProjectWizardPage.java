@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 
 	private static final String MAKE_UPDATE_TITLE = "MakeWizardUpdatePage.title"; //$NON-NLS-1$
@@ -52,10 +56,12 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		public TablePart(String mainLabel) {
 			super(mainLabel);
 		}
+		@Override
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			dialogChanged();
 		}
+		@Override
 		protected StructuredViewer createStructuredViewer(Composite parent, int style) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style);
 			return viewer;
@@ -70,6 +76,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		tablePart = new TablePart(MakeUIPlugin.getResourceString("MakeWizardUpdatePage.projectList")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 	}

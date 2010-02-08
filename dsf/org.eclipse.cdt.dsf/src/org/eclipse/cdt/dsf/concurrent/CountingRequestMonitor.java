@@ -14,7 +14,6 @@ import java.util.concurrent.Executor;
 
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * A request monitor that is used for multiple activities. We are told the
@@ -54,7 +53,7 @@ public class CountingRequestMonitor extends RequestMonitor {
 
     public CountingRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         super(executor, parentRequestMonitor);
-        super.setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "", null) { //$NON-NLS-1$
+        super.setStatus(new DsfMultiStatus(DsfPlugin.PLUGIN_ID, 0, "", null) { //$NON-NLS-1$
             @Override
             public String getMessage() {
                 StringBuffer message = new StringBuffer();

@@ -673,7 +673,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	
 	/**
 	 * @return true if the page needs to have the tool tip box.
-	 * @since 5.2
+	 * @since 7.0
 	 */
 	protected boolean needToolTipBox(IHoldsOptions optionHolder, IOptionCategory category) {
 		if (optionHolder instanceof ITool) { // option category page

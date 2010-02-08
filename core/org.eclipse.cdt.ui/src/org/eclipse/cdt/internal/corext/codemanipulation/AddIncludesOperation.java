@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems
  *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.corext.codemanipulation;
 
 import java.util.ArrayList;
@@ -30,6 +30,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -52,6 +53,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 	private List<ICElement> fExistingUsings;
 	private InsertEdit fIncludesInsert;
 	private InsertEdit fUsingsInsert;
+	private int fIncludesPos= -1;
 
 	/**
 	 * @param tu a translation unit.
@@ -145,8 +147,19 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			}
 		}
 
-		int pos = getOffsetAfterLast(fExistingIncludes);
+		int pos= getIncludeInsertionPosition();
 		return new InsertEdit(pos, buf.toString()); 
+	}
+
+	private int getIncludeInsertionPosition() throws CModelException {
+		if (fIncludesPos < 0) {
+			if (fExistingIncludes.isEmpty()) {
+				fIncludesPos= getOffsetAfterLeadingMacroDefinitions();
+			} else { 
+				fIncludesPos = getOffsetAfterLast(fExistingIncludes);
+			}
+		}
+		return fIncludesPos;
 	}
 
 	private InsertEdit getUsingsInsert() throws CoreException {
@@ -182,7 +195,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		}
 
 		int pos = getOffsetAfterLast(fExistingUsings);
-		int pos2 = getOffsetAfterLast(fExistingIncludes);
+		int pos2 = getIncludeInsertionPosition();
 		if (pos <= pos2) {
 			pos = pos2;
 			buf.insert(0, fNewLine); // Add a blank line between #include and using statements.
@@ -205,6 +218,32 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 			if (end <= fBeforeOffset) {
 				return findNewLine(range.getStartPos() + range.getLength());
 			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Find the last leading macro definition before <code>fBeforeOffset</code>.
+	 * And returns the offset of the line after.
+	 */
+	private int getOffsetAfterLeadingMacroDefinitions() throws CModelException {
+		ISourceRange found= null;
+		for (ICElement child: fTranslationUnit.getChildren()) {
+			if (!(child instanceof IMacro) || !(child instanceof ISourceReference))
+				break;
+			
+			final ISourceReference sourceRef = (ISourceReference) child;
+			if (!sourceRef.isActive())
+				break;
+			
+			ISourceRange range= sourceRef.getSourceRange();
+			if (range.getStartPos() + range.getLength() > fBeforeOffset)
+				break;
+			
+			found= range;
+		}
+		if (found != null) {
+			return findNewLine(found.getStartPos() + found.getLength());
 		}
 		return 0;
 	}

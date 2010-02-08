@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -76,6 +77,7 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 
 /**
  * Context data for IASTName lookup
@@ -677,7 +679,9 @@ public class LookupData {
 				IBinding[] bindings = new IBinding[items.length];
 				int k = 0;
 				for (Object item : items) {
-					if (item instanceof IBinding) {
+					// Exclude using declarations, they have been expanded at this point.
+					if (item instanceof IBinding && !(item instanceof ICPPUsingDeclaration)
+							&& !(item instanceof CPPCompositeBinding)) {
 						bindings[k++] = (IBinding) item;
 					}
 				}

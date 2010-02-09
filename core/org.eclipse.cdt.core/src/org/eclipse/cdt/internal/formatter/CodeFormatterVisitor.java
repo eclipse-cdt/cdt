@@ -2057,10 +2057,12 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			break;
 		case IASTUnaryExpression.op_throw:
 			scribe.printNextToken(Token.t_throw, scribe.printComment());
-			if (peekNextToken() != Token.tLPAREN) {
-				scribe.space();
+			if (operand != null) {
+				if (peekNextToken() != Token.tLPAREN) {
+					scribe.space();
+				}
+				operand.accept(this);
 			}
-			operand.accept(this);
 			break;
 		case IASTUnaryExpression.op_typeid:
 			scribe.printNextToken(Token.t_typeid, scribe.printComment());

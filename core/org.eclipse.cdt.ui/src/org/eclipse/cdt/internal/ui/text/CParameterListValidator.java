@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -158,10 +157,6 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 				return false;
 				
 			IDocument document= fViewer.getDocument();
-			IRegion line= document.getLineInformationOfOffset(fPosition);
-			
-			if (position > line.getOffset() + line.getLength())
-				return false;
 				
 			return (getCharCount(document, fPosition, position, '(', ')', false) >= 0);
 			

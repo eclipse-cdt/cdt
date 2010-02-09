@@ -40,7 +40,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	// Breakpoint types
 	public static enum MIBreakpointNature { UNKNOWN, BREAKPOINT, WATCHPOINT, CATCHPOINT, 
-		                                    /** @since 2.1*/ TRACEPOINT };
+		                                    /** @since 3.0*/ TRACEPOINT };
 	private final MIBreakpointNature fNature;
 
 
@@ -233,14 +233,14 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	}
 
 	/**
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public int getPassCount() {
 		return fBreakpoint.getPassCount();
 	}
 	
 	/**
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public String getCommands() {
 		return fBreakpoint.getCommands();
@@ -298,7 +298,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	}
 	
 	/**
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public void setPassCount(int count) {
 		fBreakpoint.setPassCount(count);

@@ -77,7 +77,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
 	 * This constructor allows to specify if the breakpoint should actually be
 	 * a tracepoint (this will only work starting with GDB 7.1)
 	 * It also includes if a breakpoint should be created disabled (starting GDB 7.0)
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
 			String condition, int ignoreCount, String line, int tid, boolean disabled, boolean isTracepoint) {

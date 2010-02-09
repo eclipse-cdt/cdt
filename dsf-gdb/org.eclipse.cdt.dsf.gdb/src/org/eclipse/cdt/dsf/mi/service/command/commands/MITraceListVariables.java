@@ -27,7 +27,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceListVariablesInfo;
  * 
  * Available with GDB 7.1
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MITraceListVariables extends MICommand<MITraceListVariablesInfo> {
 

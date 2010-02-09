@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.STOP_REASON_ENUM;
  * ^done,supported="1",running="0",stop-reason="request",frames="0",buffer-size="5242880",buffer-free="5242880"
  * ^done,supported="1",running="0",stop-reason="passcount",stopping-tracepoint="7",frames="3",buffer-size="5242880",buffer-free="5242862"
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MITraceStatusInfo extends MIInfo {
 

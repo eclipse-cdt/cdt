@@ -23,7 +23,7 @@ import java.util.List;
  *                        body=[variable={name="$trace_timestamp",initial="0"}
  *                              variable={name="$foo",initial="10",current="15"}]}
  *                          
- * @since 2.1
+ * @since 3.0
  */
 public class MITraceListVariablesInfo extends MIInfo {
 

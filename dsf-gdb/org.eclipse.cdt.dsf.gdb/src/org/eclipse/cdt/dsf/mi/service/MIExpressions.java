@@ -467,7 +467,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 	 * Creates the MI variable manager to be used by this expression service.
 	 * Overriding classes may override to provide a custom services tracker. 
 	 * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	protected MIVariableManager createMIVariableManager() {
 	    return new MIVariableManager(getSession(), getServicesTracker());

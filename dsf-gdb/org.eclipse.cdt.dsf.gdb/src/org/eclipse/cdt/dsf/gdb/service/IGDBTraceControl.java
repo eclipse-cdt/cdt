@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * The TraceControl service provides access to the debugger Tracing functionality.
  * It is used to do such things as start and stop tracing.
  * 
- * @since 2.1
+ * @since 3.0
  */
 public interface IGDBTraceControl extends IDsfService {
 

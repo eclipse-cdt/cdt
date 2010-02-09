@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarChange;
  * -var-update *
  * ^done,changelist=[varobj={name="var1",in_scope="true",type_changed="false"}],time={.....}
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MacOSMIVarUpdateInfo extends MIInfo {
 

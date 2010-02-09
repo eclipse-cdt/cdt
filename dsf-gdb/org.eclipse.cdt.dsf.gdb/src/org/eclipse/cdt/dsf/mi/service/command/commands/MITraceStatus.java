@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStatusInfo;
  * 
  * Available with GDB 7.1
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MITraceStatus extends MICommand<MITraceStatusInfo> {
 	public MITraceStatus(ITraceTargetDMContext ctx) {

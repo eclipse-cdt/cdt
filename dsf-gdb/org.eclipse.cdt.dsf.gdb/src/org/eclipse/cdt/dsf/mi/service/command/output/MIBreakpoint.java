@@ -242,7 +242,7 @@ public class MIBreakpoint  {
      * To know of fast vs slow tracepoint use {@link getType()} and look
      * for "tracepoint" or "fast tracepoint"
      * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
     public boolean isTracepoint() {
         return isTpt;
@@ -252,7 +252,7 @@ public class MIBreakpoint  {
      * Returns the passcount of a tracepoint.  Will return 0 if this
      * breakpoint is not a tracepoint.
      * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
     public int getPassCount() {
         return passcount;
@@ -261,7 +261,7 @@ public class MIBreakpoint  {
     /**
      * Set the passcount of a tracepoint.  Will not do anything if
      * this breakpoint is not a tracepoint.
-	 * @since 2.1
+	 * @since 3.0
 	 */
     public void setPassCount(int count) {
     	if (isTpt == false) return;
@@ -271,7 +271,7 @@ public class MIBreakpoint  {
     /**
      * Return the commands associated with this breakpoint (or tracepoint)
      * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
     public String getCommands() {
         return commands;
@@ -280,7 +280,7 @@ public class MIBreakpoint  {
     /**
      * Sets the commands associated with this breakpoint (or tracepoint)
      * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
     public void setCommands(String cmds) {
         commands = cmds;

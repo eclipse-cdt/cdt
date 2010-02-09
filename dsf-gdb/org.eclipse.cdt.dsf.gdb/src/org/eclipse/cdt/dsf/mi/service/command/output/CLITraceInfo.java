@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * 
  * ~"Tracepoint 2 at 0x4035a9: file /scratch/marc/test/src/main.cxx, line 109"
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class CLITraceInfo extends MIInfo {
 

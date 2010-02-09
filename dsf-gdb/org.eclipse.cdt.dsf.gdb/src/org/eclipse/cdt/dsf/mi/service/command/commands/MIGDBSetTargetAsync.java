@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * -gdb-set target-async [on | off]
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MIGDBSetTargetAsync extends MIGDBSet 
 {

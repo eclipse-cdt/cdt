@@ -917,14 +917,14 @@ public class MIVariableManager implements ICommandControl {
 	/**
 	 * Method to allow to override the MIVariableObject creation
 	 * 
-     * @since 2.1
+     * @since 3.0
      */
 	protected MIVariableObject createVariableObject(VariableObjectId id, MIVariableObject parentObj) {
 	    return new MIVariableObject(id, parentObj);
 	}
 	
 	/**
-     * @since 2.1
+     * @since 3.0
      */
 	public class MIRootVariableObject extends MIVariableObject {
 
@@ -1158,7 +1158,7 @@ public class MIVariableManager implements ICommandControl {
     /**
  	 * Method to allow to override the MIRootVariableObject creation.
 	 *
-     * @since 2.1
+     * @since 3.0
      */
 	protected MIRootVariableObject createRootVariableObject(VariableObjectId id) {
 	    return new MIRootVariableObject(id);
@@ -1175,7 +1175,7 @@ public class MIVariableManager implements ICommandControl {
 	 * Note that if no frameContext is specified (only Execution, or even only Container), which can
 	 * characterize a global variable for example, we will only use the available information.
 	 * 
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public class VariableObjectId {
 		// We don't use the expression context because it is not safe to compare them
@@ -1249,7 +1249,7 @@ public class MIVariableManager implements ICommandControl {
     /**
  	 * Method to allow to override the VariableObjectId creation.
 	 *
-     * @since 2.1
+     * @since 3.0
      */
 	protected VariableObjectId createVariableObjectId() {
 	    return new VariableObjectId();
@@ -1375,28 +1375,28 @@ public class MIVariableManager implements ICommandControl {
 	}
 
     /**
-     * @since 2.1
+     * @since 3.0
      */
 	protected DsfSession getSession() {
 	    return fSession;
 	}
 	
 	/**
-     * @since 2.1
+     * @since 3.0
      */
 	protected ICommandControl getCommandControl() {
 	    return fCommandControl;
 	}
 	
     /**
-     * @since 2.1
+     * @since 3.0
      */
 	protected void rootVariableUpdated(MIRootVariableObject rootObj) {
 	    updatedRootList.add(rootObj);
 	}
 	
     /**
-     * @since 2.1
+     * @since 3.0
      */
 	protected Map<VariableObjectId, MIVariableObject> getLRUCache() {
 		return lruVariableList;

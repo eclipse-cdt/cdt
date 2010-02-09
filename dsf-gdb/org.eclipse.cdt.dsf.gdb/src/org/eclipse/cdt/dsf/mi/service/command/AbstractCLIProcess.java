@@ -313,7 +313,7 @@ public abstract class AbstractCLIProcess extends Process
      * does not send the secondary prompt for, but should.                                                   
      * If so, we'll need to pretend we are receiving the secondary prompt.
      *                                     
-     * @since 2.1
+     * @since 3.0
      */                                                                                                        
     protected boolean isMissingSecondaryPromptCommand(String operation) {
     	return false;
@@ -355,7 +355,7 @@ public abstract class AbstractCLIProcess extends Process
     }
     
     /**
-	 * @since 2.1
+	 * @since 3.0
 	 */
     public boolean inMissingSecondaryPrompt() {
         return fPrompt == PromptType.IN_SECONDARY_PROMPT_MISSING;

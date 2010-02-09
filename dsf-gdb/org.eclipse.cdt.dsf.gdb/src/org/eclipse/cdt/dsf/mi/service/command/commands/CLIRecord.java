@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 /**
  * This command turns on on off the recording of "Process Record and Replay".
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class CLIRecord extends CLICommand<MIInfo> {
 	public CLIRecord(ICommandControlDMContext ctx, boolean enable) {

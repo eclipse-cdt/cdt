@@ -66,7 +66,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     public static final String BREAKPOINT      = "breakpoint";          //$NON-NLS-1$
     public static final String WATCHPOINT      = "watchpoint";          //$NON-NLS-1$
     public static final String CATCHPOINT      = "catchpoint";          //$NON-NLS-1$
-    /** @since 2.1 */
+    /** @since 3.0 */
     public static final String TRACEPOINT      = "tracepoint";          //$NON-NLS-1$
 
     // Basic set of breakpoint attribute markers
@@ -76,10 +76,10 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     public static final String ADDRESS       = PREFIX + ".address";     //$NON-NLS-1$
     public static final String CONDITION     = PREFIX + ".condition";   //$NON-NLS-1$
     public static final String IGNORE_COUNT  = PREFIX + ".ignoreCount"; //$NON-NLS-1$
-    /** @since 2.1 */
+    /** @since 3.0 */
     public static final String PASS_COUNT    = PREFIX + ".passCount"; //$NON-NLS-1$
     public static final String IS_ENABLED    = PREFIX + ".isEnabled";   //$NON-NLS-1$
-    /** @since 2.1 */
+    /** @since 3.0 */
     public static final String COMMANDS      = PREFIX + ".commands";     //$NON-NLS-1$
 
     // Basic set of watchpoint attribute markers

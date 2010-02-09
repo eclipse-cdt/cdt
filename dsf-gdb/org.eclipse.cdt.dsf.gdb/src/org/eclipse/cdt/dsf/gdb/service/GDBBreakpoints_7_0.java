@@ -51,7 +51,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Initial breakpoint service implementation.
  * Implements the IBreakpoints interface.
- * @since 2.1
+ * @since 3.0
  */
 public class GDBBreakpoints_7_0 extends AbstractDsfService implements IBreakpoints
 {

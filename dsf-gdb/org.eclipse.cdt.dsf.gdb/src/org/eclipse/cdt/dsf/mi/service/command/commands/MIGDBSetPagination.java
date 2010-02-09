@@ -16,7 +16,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
  * 
  * -gdb-set pagination [on | off]
  *     
- * @since 2.1
+ * @since 3.0
  */
 public class MIGDBSetPagination extends MIGDBSet 
 {

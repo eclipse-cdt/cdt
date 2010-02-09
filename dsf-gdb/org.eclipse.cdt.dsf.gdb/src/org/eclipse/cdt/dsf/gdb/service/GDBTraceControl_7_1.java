@@ -43,7 +43,7 @@ import org.osgi.framework.BundleContext;
  * This class implements the ITraceControl interface which gives access
  * to the debugger's tracing functionality.
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTraceControl, ICachingService {
 

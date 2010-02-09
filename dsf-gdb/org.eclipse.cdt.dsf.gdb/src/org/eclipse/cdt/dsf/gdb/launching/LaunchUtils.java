@@ -46,7 +46,7 @@ public class LaunchUtils {
 
 	/**
 	 * A prefix that we use to indicate that a GDB version is for MAC OS
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public static final String MACOS_GDB_MARKER = "APPLE"; //$NON-NLS-1$
 	

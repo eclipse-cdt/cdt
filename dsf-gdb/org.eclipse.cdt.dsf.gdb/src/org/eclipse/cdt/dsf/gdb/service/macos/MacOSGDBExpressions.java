@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 /**
  * Specific ExpressionService for MacOS
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MacOSGDBExpressions extends MIExpressions {
 

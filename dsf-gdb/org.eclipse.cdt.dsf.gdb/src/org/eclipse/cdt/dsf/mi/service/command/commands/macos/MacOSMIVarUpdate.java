@@ -33,7 +33,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.macos.MacOSMIVarUpdateInfo;
  *  It seems that for MacOS, we must use the full string for print-values, such as
  *  --all-values.
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MacOSMIVarUpdate extends MICommand<MacOSMIVarUpdateInfo> {
 

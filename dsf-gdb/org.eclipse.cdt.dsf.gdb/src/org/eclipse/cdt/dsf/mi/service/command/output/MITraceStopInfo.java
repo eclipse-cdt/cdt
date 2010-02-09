@@ -19,7 +19,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * The output is therefore a subset of the output of the -trace-status command.  
  * The way MI fields are optional allows us to simply re-use the MITraceStatusInfo class
  * 
- * @since 2.1
+ * @since 3.0
  */
 public class MITraceStopInfo extends MITraceStatusInfo {
 	public MITraceStopInfo(MIOutput out) {

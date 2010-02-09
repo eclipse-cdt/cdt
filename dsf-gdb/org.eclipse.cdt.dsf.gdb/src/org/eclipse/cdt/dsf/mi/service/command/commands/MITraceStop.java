@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStopInfo;
  * 
  * Available with GDB 7.1
  *  
- * @since 2.1
+ * @since 3.0
  */
 public class MITraceStop extends MICommand<MITraceStopInfo> {
 	public MITraceStop(ITraceTargetDMContext ctx) {

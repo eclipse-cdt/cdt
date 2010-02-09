@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * time that tracepoint is hit.  If no passcount is given, the trace experiment will run until stopped 
  * explicitly by the user.
 
- * @since 2.1
+ * @since 3.0
  */
 public class CLIPasscount extends CLICommand<MIInfo> {
     public CLIPasscount(IBreakpointsTargetDMContext ctx, int breakpoint, int passcount) {

@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 /**
  * Specific VariableManager for MacOS
  *   
- * @since 2.1
+ * @since 3.0
  */
 public class MacOSGDBVariableManager extends MIVariableManager {
 

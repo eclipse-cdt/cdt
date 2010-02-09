@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
-/** @since 2.1 */
+/** @since 3.0 */
 public class MacOSGdbDebugServicesFactory extends GdbDebugServicesFactory {
 
 	// Mac OS has it's own version of GDB, which does not follow the standard GDB version

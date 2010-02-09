@@ -160,7 +160,7 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 		return new MIStack(session);
 	}
 	
-	/** @since 2.1 */
+	/** @since 3.0 */
 	protected IGDBTraceControl createTraceControlService(DsfSession session, ILaunchConfiguration config) {
 		// This service is available for GDB 7.1. But until that GDB is itself available
 		// there is a pre-release that has a version of 6.8.50.20090414

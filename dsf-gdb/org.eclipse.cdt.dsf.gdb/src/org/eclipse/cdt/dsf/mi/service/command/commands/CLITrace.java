@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * This command creates a tracepoint.
- * @since 2.1
+ * @since 3.0
  */
 public class CLITrace extends CLICommand<CLITraceInfo> {
 	public CLITrace(IBreakpointsTargetDMContext ctx, String location) {

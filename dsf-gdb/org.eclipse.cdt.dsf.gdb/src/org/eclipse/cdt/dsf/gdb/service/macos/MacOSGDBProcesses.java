@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
-/** @since 2.1 */
+/** @since 3.0 */
 public class MacOSGDBProcesses extends GDBProcesses {
 
 	public MacOSGDBProcesses(DsfSession session) {

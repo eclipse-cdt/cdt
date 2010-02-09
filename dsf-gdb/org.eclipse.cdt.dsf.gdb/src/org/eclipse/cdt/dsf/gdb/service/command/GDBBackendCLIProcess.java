@@ -59,7 +59,7 @@ public class GDBBackendCLIProcess extends MIBackendCLIProcess {
    }
    
    /**
-    * @since 2.1
+    * @since 3.0
     */
    @Override
    protected boolean isMissingSecondaryPromptCommand(String operation) {

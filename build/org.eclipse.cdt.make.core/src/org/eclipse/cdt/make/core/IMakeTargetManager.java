@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Red Hat Inc - Add setTargets method
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
@@ -31,7 +32,8 @@ public interface IMakeTargetManager {
 	void addTarget(IMakeTarget target) throws CoreException;
 	
 	/**
-	 * Adds target to manager on a specific projects folder. 
+	 * Adds target to manager on a specific projects folder. It is assumed
+	 * that the target and container belong to the same project.
 	 * @param container
 	 * @param target
 	 * @throws CoreException
@@ -39,6 +41,21 @@ public interface IMakeTargetManager {
 	void addTarget(IContainer container, IMakeTarget target) throws CoreException;
 	void removeTarget(IMakeTarget target) throws CoreException;
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
+	
+	/**
+	 * Set targets on a specific projects folder.  It is assumed
+	 * all targets and container belong to the same project which
+	 * is determined from the first element of the
+	 * targets array.  If no container is specified, the project is used.
+	 * All previous targets for the container are replaced upon success and if
+	 * failure occurs, an exception is thrown and the previous set of targets
+	 * for the container are unchanged.
+	 * 
+	 * @param container to set targets for or null if project should be used
+	 * @param targets array
+	 * @throws CoreException
+	 */
+	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException;
 	
 	boolean targetExists(IMakeTarget target);
 	

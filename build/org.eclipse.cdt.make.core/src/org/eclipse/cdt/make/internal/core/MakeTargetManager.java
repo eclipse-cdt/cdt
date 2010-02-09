@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Red Hat Inc. - add setTargets method
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
@@ -79,6 +80,28 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			throw e;
 		}
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
+	}
+
+	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException {
+		if (container instanceof IWorkspaceRoot) {
+			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
+		}
+		ProjectTargets projectTargets = projectMap.get(targets[0].getProject());
+		if (projectTargets == null) {
+			projectTargets = readTargets(targets[0].getProject());
+		}
+		if (container == null)
+			container = targets[0].getProject();
+		IMakeTarget[] oldTargets = projectTargets.get(container);
+		projectTargets.set(container, targets);
+		try {
+			writeTargets(projectTargets);
+		} catch (CoreException e) {
+			// we only need to reset the targets if writing of targets fails
+			projectTargets.set(container, oldTargets);
+			throw e;
+		}
+		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, targets[0]));
 	}
 
 	public boolean targetExists(IMakeTarget target) {

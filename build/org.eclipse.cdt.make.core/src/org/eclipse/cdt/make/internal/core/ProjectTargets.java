@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     James Blackburn (Broadcom Corp.) - Use ICStorageElement
+ *     Red Hat Inc. - Add set method
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core;
 
@@ -106,6 +107,20 @@ public class ProjectTargets {
 			return list.toArray(new IMakeTarget[list.size()]);
 		}
 		return new IMakeTarget[0];
+	}
+
+	public void set(IContainer container, IMakeTarget[] targets) throws CoreException {
+		List<IMakeTarget> newList = new ArrayList<IMakeTarget>();
+		for (int i = 0; i < targets.length; ++i) {
+			IMakeTarget target = targets[i];
+			target.setContainer(container);
+			if (newList.contains(target)) {
+				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+						MakeMessages.getString("MakeTargetManager.target_exists"), null)); //$NON-NLS-1$
+			}
+			newList.add(target);
+		}
+		targetMap.put(container, newList);
 	}
 
 	public IMakeTarget findTarget(IContainer container, String name) {

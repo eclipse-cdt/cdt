@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Red Hat Inc. - Allow multiple targets
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
@@ -27,7 +28,7 @@ public class MakeTargetEvent extends EventObject {
 	public static final int PROJECT_ADDED = 4;
 	public static final int PROJECT_REMOVED = 5;
 
-	IMakeTarget target;
+	IMakeTarget[] targets;
 	IProject project;
 	int type;
 
@@ -37,7 +38,21 @@ public class MakeTargetEvent extends EventObject {
 	public MakeTargetEvent(Object source, int type, IMakeTarget target) {
 		super(source);
 		this.type = type;
-		this.target = target;
+		this.targets = new IMakeTarget[] {target};
+	}
+
+	/**
+	 * @param source
+	 * @param type event type (e.g. TARGET_ADD, TARGET_CHANGED)
+	 * @param targets array of MakeTargets
+	 * @since 7.0
+	 * 
+	 */
+	public MakeTargetEvent(Object source, int type, IMakeTarget[] targets) {
+		super(source);
+		this.type = type;
+		this.targets = new IMakeTarget[targets.length];
+		System.arraycopy(targets, 0, this.targets, 0, targets.length);
 	}
 
 	public MakeTargetEvent(Object source, int type, IProject project) {
@@ -50,7 +65,19 @@ public class MakeTargetEvent extends EventObject {
 		return type;
 	}
 
+	/**
+	 * @deprecated
+	 * Use getTargets() instead.
+	 */
+	@Deprecated
 	public IMakeTarget getTarget() {
-		return target;
+		return targets[0];
+	}
+	
+	/**
+	 * @since 7.0
+	 */
+	public IMakeTarget[] getTargets() {
+		return targets;
 	}
 }

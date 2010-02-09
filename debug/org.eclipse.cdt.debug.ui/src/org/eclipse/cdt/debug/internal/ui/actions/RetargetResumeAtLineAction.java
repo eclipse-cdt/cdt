@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,20 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Ericsson             - Updated with the latest platform changes of RetargetAction (302273)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
  
@@ -23,74 +28,86 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Global retargettable resume at line action.
  */
 public class RetargetResumeAtLineAction extends RetargetAction {
-
-	private ISelectionListener fSelectionListener = new DebugSelectionListener();
-
+	
+	private DebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
+	
+	class DebugContextListener implements IDebugContextListener {
 
-	class DebugSelectionListener implements ISelectionListener {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-		 */
-		public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
-			setTargetElement( null );
-			if ( selection instanceof IStructuredSelection ) {
-				IStructuredSelection ss = (IStructuredSelection)selection;
-				if ( ss.size() == 1 ) {
-					Object object = ss.getFirstElement();
-					if ( object instanceof ISuspendResume ) {
-						setTargetElement( (ISuspendResume)object );
-					}
+		protected void contextActivated(ISelection selection) {
+			fTargetElement = null;
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (ss.size() == 1) {
+                    fTargetElement = (ISuspendResume)
+                        DebugPlugin.getAdapter(ss.getFirstElement(), ISuspendResume.class);
 				}
 			}
-			update();
+			IAction action = getAction();
+			if (action != null) {
+				action.setEnabled(fTargetElement != null && hasTargetAdapter());
+			}
+		}
+
+		public void debugContextChanged(DebugContextEvent event) {
+			contextActivated(event.getContext());
 		}
 	}
-
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		fWindow.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
+		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fContextListener);
 		super.dispose();
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init( IWorkbenchWindow window ) {
-		super.init( window );
-		window.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
+	public void init(IWorkbenchWindow window) {
+		super.init(window);
+		IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(window);
+		service.addDebugContextListener(fContextListener);
+		ISelection activeContext = service.getActiveContext();
+		fContextListener.contextActivated(activeContext);
 	}
-
+		
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
-	protected void performAction( Object target, ISelection selection, IWorkbenchPart part ) throws CoreException {
-		((IResumeAtLineTarget)target).resumeAtLine( part, selection, getTargetElement() );
+	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
+		return fTargetElement != null &&
+			((IResumeAtLineTarget)target).canResumeAtLine(part, selection, fTargetElement);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.RetargetAction#getAdapterClass()
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
 	 */
-	protected Class<?> getAdapterClass() {
+	protected Class getAdapterClass() {
 		return IResumeAtLineTarget.class;
 	}
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
-	protected boolean canPerformAction( Object target, ISelection selection, IWorkbenchPart part ) {
-		return getTargetElement() != null && ((IResumeAtLineTarget)target).canResumeAtLine( part, selection, getTargetElement() );
+	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
+		((IResumeAtLineTarget)target).resumeAtLine(part, selection, fTargetElement);
 	}
-
-	protected ISuspendResume getTargetElement() {
-		return fTargetElement;
-	}
-
-	protected void setTargetElement( ISuspendResume targetElement ) {
-		fTargetElement = targetElement;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
+	 */
+	protected String getOperationUnavailableMessage() {
+		return ActionMessages.getString("RetargetResumeAtLineAction.0"); //$NON-NLS-1$
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (fTargetElement == null) {
+			action.setEnabled(false);
+		} else {
+			super.selectionChanged(action, selection);
+		}
 	}
 }

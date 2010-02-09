@@ -54,6 +54,8 @@ public interface IMakeTargetManager {
 	 * @param container to set targets for or null if project should be used
 	 * @param targets array
 	 * @throws CoreException
+	 * 
+	 * @since 7.0
 	 */
 	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException;
 	

@@ -333,8 +333,12 @@ public class IndexerBlock extends AbstractCOptionPage {
 			Arrays.sort(names, collator);
 			fIndexersComboBox.setItems(names);
 		} else {
-			if (!fIndexerConfigMap.isEmpty()) {
-				fTheOneIndexerID= fIndexerConfigMap.keySet().iterator().next();
+			fTheOneIndexerID= IPDOMManager.ID_NO_INDEXER;
+			for (String id : fIndexerConfigMap.keySet()) {
+				if (!IPDOMManager.ID_NO_INDEXER.equals(id)) {
+					fTheOneIndexerID= id;
+					break;
+				}
 			}
 		}
 	}

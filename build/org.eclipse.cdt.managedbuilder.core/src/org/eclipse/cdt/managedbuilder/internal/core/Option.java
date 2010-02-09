@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,9 +14,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,16 +55,16 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private String unusedChildren;
 	private Integer browseType;
 	private String[] browseFilterExtensions;
-	private List builtIns;
+	private List<OptionStringValue> builtIns;
 	private IOptionCategory category;
 	private String categoryId;
 	private String command;
 	private String commandFalse;
 	private String tip;
 	private String contextId;
-	private List enumList;
-	private Map enumCommands;
-	private Map enumNames;
+	private List<String> enumList;
+	private Map<String, String> enumCommands;
+	private Map<String, String> enumNames;
 	private Object value;
 	private Object defaultValue;
 	private Integer valueType;
@@ -198,7 +196,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			categoryId = new String(option.categoryId);
 		}
 		if (option.builtIns != null) {
-			builtIns = new ArrayList(option.builtIns);
+			builtIns = new ArrayList<OptionStringValue>(option.builtIns);
 		}
 		if (option.browseType != null) {
 			browseType = new Integer(option.browseType.intValue());
@@ -210,9 +208,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			resourceFilter = new Integer(option.resourceFilter.intValue());
 		}
 		if (option.enumList != null) {
-			enumList = new ArrayList(option.enumList);
-			enumCommands = new HashMap(option.enumCommands);
-			enumNames = new HashMap(option.enumNames);
+			enumList = new ArrayList<String>(option.enumList);
+			enumCommands = new HashMap<String, String>(option.enumCommands);
+			enumNames = new HashMap<String, String>(option.enumNames);
 		}
 
 		if (option.valueType != null) {
@@ -221,48 +219,46 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		Integer vType = null;
 		try {
 			vType = new Integer(option.getValueType());
-			if (vType != null) {
-				switch (vType.intValue()) {
-					case BOOLEAN:
-						if (option.value != null) {
-							value = new Boolean(((Boolean)option.value).booleanValue());
-						}
-						if (option.defaultValue != null) {
-							defaultValue = new Boolean(((Boolean)option.defaultValue).booleanValue());
-						}
-						break;
-					case STRING:
-					case ENUMERATED:
-						if (option.value != null) {
-							value = new String((String)option.value);
-						}
-						if (option.defaultValue != null) {
-							defaultValue = new String((String)option.defaultValue);
-						}
-						break;
-					case STRING_LIST:
-					case INCLUDE_PATH:
-					case PREPROCESSOR_SYMBOLS:
-					case LIBRARIES:
-					case OBJECTS:
-					case INCLUDE_FILES:
-					case LIBRARY_PATHS:
-					case LIBRARY_FILES:
-					case MACRO_FILES:
-					case UNDEF_INCLUDE_PATH:
-					case UNDEF_PREPROCESSOR_SYMBOLS:
-					case UNDEF_INCLUDE_FILES:
-					case UNDEF_LIBRARY_PATHS:
-					case UNDEF_LIBRARY_FILES:
-					case UNDEF_MACRO_FILES:
-						if (option.value != null) {
-							value = new ArrayList((ArrayList)option.value);
-						}
-						if (option.defaultValue != null) {
-							defaultValue = new ArrayList((ArrayList)option.defaultValue);
-						}
-						break;
-				}
+			switch (vType.intValue()) {
+				case BOOLEAN:
+					if (option.value != null) {
+						value = new Boolean(((Boolean)option.value).booleanValue());
+					}
+					if (option.defaultValue != null) {
+						defaultValue = new Boolean(((Boolean)option.defaultValue).booleanValue());
+					}
+					break;
+				case STRING:
+				case ENUMERATED:
+					if (option.value != null) {
+						value = new String((String)option.value);
+					}
+					if (option.defaultValue != null) {
+						defaultValue = new String((String)option.defaultValue);
+					}
+					break;
+				case STRING_LIST:
+				case INCLUDE_PATH:
+				case PREPROCESSOR_SYMBOLS:
+				case LIBRARIES:
+				case OBJECTS:
+				case INCLUDE_FILES:
+				case LIBRARY_PATHS:
+				case LIBRARY_FILES:
+				case MACRO_FILES:
+				case UNDEF_INCLUDE_PATH:
+				case UNDEF_PREPROCESSOR_SYMBOLS:
+				case UNDEF_INCLUDE_FILES:
+				case UNDEF_LIBRARY_PATHS:
+				case UNDEF_LIBRARY_FILES:
+				case UNDEF_MACRO_FILES:
+					if (option.value != null) {
+						value = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.value);
+					}
+					if (option.defaultValue != null) {
+						defaultValue = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.defaultValue);
+					}
+					break;
 			}
 		} catch (BuildException be) {
 			// TODO: should we ignore this??
@@ -510,7 +506,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 							ICStorageElement configElement = configNode;
 							String optId = configElement.getAttribute(ID);
 							if (i == 0) {
-								enumList = new ArrayList();
+								enumList = new ArrayList<String>();
 								if (defaultValue == null) {
 									defaultValue = optId;		//  Default value to be overridden is default is specified
 								}
@@ -549,14 +545,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					//  Note:  These string-list options do not load either the "value" or 
 					//         "defaultValue" attributes.  Instead, the ListOptionValue children
 					//         are loaded in the value field.
-					List vList = null;
-					List biList = null;
+					List<OptionStringValue> vList = null;
+					List<OptionStringValue> biList = null;
 					configElements = element.getChildren();
 					for (int i = 0; i < configElements.length; ++i) {
-						if (i == 0) {
-							vList = new ArrayList();
-							biList = new ArrayList();
-						}
+						if (vList==null)
+							vList = new ArrayList<OptionStringValue>();
+						if (biList==null)
+							biList = new ArrayList<OptionStringValue>();
+						
 						ICStorageElement veNode = configElements[i];
 						if (veNode.getName().equals(LIST_VALUE)) {
 							OptionStringValue ve = new OptionStringValue(veNode);
@@ -757,21 +754,17 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case UNDEF_LIBRARY_FILES:
 				case UNDEF_MACRO_FILES:
 					if (value != null) {
-						ArrayList stringList = (ArrayList)value;
-						ListIterator iter = stringList.listIterator();
-						while (iter.hasNext()) {
+						ArrayList<OptionStringValue> stringList = (ArrayList<OptionStringValue>)value;
+						for (OptionStringValue optValue : stringList) {
 							ICStorageElement valueElement = element.createChild(LIST_VALUE);
-							OptionStringValue ve = (OptionStringValue)iter.next();
-							ve.serialize(valueElement);
+							optValue.serialize(valueElement);
 						}
 					}
 					// Serialize the built-ins that have been overridden
 					if (builtIns != null) {
-						ListIterator iter = builtIns.listIterator();
-						while (iter.hasNext()) {
+						for (OptionStringValue optionValue : builtIns) {
 							ICStorageElement valueElement = element.createChild(LIST_VALUE);
-							OptionStringValue ve = (OptionStringValue)iter.next();
-							ve.serialize(valueElement);
+							optionValue.serialize(valueElement);
 						}
 					}
 					break;
@@ -965,6 +958,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
@@ -988,7 +982,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			// Return the elements in the order they are specified in the manifest
 			String[] enumNames = new String[enumList.size()];
 			for (int index = 0; index < enumList.size(); ++ index) {
-				enumNames[index] = (String) getEnumNameMap().get(enumList.get(index));
+				enumNames[index] = getEnumNameMap().get(enumList.get(index));
 			}
 			return enumNames;
 		}
@@ -1084,15 +1078,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public String[] getBuiltIns() {
 		// Return the list of built-ins as an array
-		List list = getExactBuiltinsList();
-		List valueList = listValueListToValueList(list);
+		List<OptionStringValue> list = getExactBuiltinsList();
+		List<String> valueList = listValueListToValueList(list);
 		
 		if(valueList == null)
 			return EMPTY_STRING_ARRAY;
-		return (String[])valueList.toArray(new String[valueList.size()]);
+		return valueList.toArray(new String[valueList.size()]);
 	}
 	
-	public List getExactBuiltinsList() {
+	public List<OptionStringValue> getExactBuiltinsList() {
 		// Return the list of built-ins as an array
 		if (builtIns == null) {
 			if (superClass != null) {
@@ -1184,12 +1178,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != PREPROCESSOR_SYMBOLS) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
 			v.trimToSize();
-			return (String[]) v.toArray(new String[v.size()]);
+			return v.toArray(new String[v.size()]);
 		}
 	}
 
@@ -1213,17 +1207,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	
 		// First check for the command in ID->command map
-		String cmd = (String) getEnumCommandMap().get(id);
+		String cmd = getEnumCommandMap().get(id);
 		if (cmd == null) {
 			// This may be a 1.2 project or plugin manifest. If so, the argument is the human readable
 			// name of the enumeration. Search for the ID that maps to the name and use that to find the
 			// command.
-			ListIterator iter = enumList.listIterator();
-			while (iter.hasNext()) {
-				String realID = (String) iter.next();
-				String name = (String) getEnumNameMap().get(realID);
+			for (String realID : enumList) {
+				String name = getEnumNameMap().get(realID);
 				if (id.equals(name)) {
-					cmd = (String) getEnumCommandMap().get(realID);
+					cmd = getEnumCommandMap().get(realID);
 					break;
 				}
 			}
@@ -1251,7 +1243,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		
 		// First check for the command in ID->name map
-		String name = (String) getEnumNameMap().get(id);
+		String name = getEnumNameMap().get(id);
 		if (name == null) {
 			// This may be a 1.2 project or plugin manifest. If so, the argument is the human readable
 			// name of the enumeration.
@@ -1267,9 +1259,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * @return a Map of enumerated option value IDs to actual commands that are passed 
 	 * to a tool on the command line.
 	 */
-	private Map getEnumCommandMap() {
+	private Map<String, String> getEnumCommandMap() {
 		if (enumCommands == null) {
-			enumCommands = new HashMap();
+			enumCommands = new HashMap<String, String>();
 		}
 		return enumCommands;
 	}
@@ -1292,11 +1284,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 
-		Set idSet = getEnumNameMap().keySet();
-		Iterator iter = idSet.iterator();
-		while (iter.hasNext()) {
-			String id = (String) iter.next();
-			String enumName = (String) getEnumNameMap().get(id);
+		Set<String> idSet = getEnumNameMap().keySet();
+		for (String id : idSet) {
+			String enumName = getEnumNameMap().get(id);
 			if (name.equals(enumName)) {
 				return id;
 			}
@@ -1308,9 +1298,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * 
 	 * @return a Map of enumerated option value IDs to the selection displayed to the user.
 	 */
-	private Map getEnumNameMap() {
+	private Map<String, String> getEnumNameMap() {
 		if (enumNames == null) {
-			enumNames = new HashMap();
+			enumNames = new HashMap<String, String>();
 		}
 		return enumNames;
 	}
@@ -1322,12 +1312,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != INCLUDE_PATH) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
 			v.trimToSize();
-			return (String[]) v.toArray(new String[v.size()]);
+			return v.toArray(new String[v.size()]);
 		}
 	}
 
@@ -1338,12 +1328,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != LIBRARIES) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
 			v.trimToSize();
-			return (String[]) v.toArray(new String[v.size()]);
+			return v.toArray(new String[v.size()]);
 		}
 	}
 
@@ -1364,12 +1354,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
 			v.trimToSize();
-			return (String[]) v.toArray(new String[v.size()]);
+			return v.toArray(new String[v.size()]);
 		}
 	}
 
@@ -1391,12 +1381,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		// This is the right puppy, so return its list value
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		} else {
 			v.trimToSize();
-			return (String[]) v.toArray(new String[v.size()]);
+			return v.toArray(new String[v.size()]);
 		}
 	}
 
@@ -1421,11 +1411,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		/*
 		 *  In order to determine the current value of an option, perform the following steps until a value is found:
 		 *   1.	Examine the value attribute of the option.
-		 *   2.	Examine the value attribute of the option�s superClass recursively.
+		 *   2.	Examine the value attribute of the option's superClass recursively.
 		 *   3.	Examine the dynamicDefaultValue attribute of the option and invoke it if specified. (not yet implemented)
 		 *   4.	Examine the defaultValue attribute of the option.
-		 *   5.	Examine the dynamicDefaultValue attribute of the option�s superClass and invoke it if specified. (not yet implemented)
-		 *   6.	Examine the defaultValue attribute of the option�s superClass.
+		 *   5.	Examine the dynamicDefaultValue attribute of the option's superClass and invoke it if specified. (not yet implemented)
+		 *   6.	Examine the defaultValue attribute of the option's superClass.
 		 *   7.	Go to step 5 recursively until no more super classes.
 		 *   8.	Use the default value for the option type.
 		 */
@@ -1466,7 +1456,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case UNDEF_LIBRARY_PATHS:
 					case UNDEF_LIBRARY_FILES:
 					case UNDEF_MACRO_FILES:
-						val = new ArrayList();
+						val = new ArrayList<String>();
 						break;
 					default:
 						val = EMPTY_STRING; 
@@ -1481,11 +1471,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		/*
 		 *  In order to determine the current value of an option, perform the following steps until a value is found:
 		 *   1.	Examine the value attribute of the option.
-		 *   2.	Examine the value attribute of the option�s superClass recursively.
+		 *   2.	Examine the value attribute of the option's superClass recursively.
 		 *   3.	Examine the dynamicDefaultValue attribute of the option and invoke it if specified. (not yet implemented)
 		 *   4.	Examine the defaultValue attribute of the option.
-		 *   5.	Examine the dynamicDefaultValue attribute of the option�s superClass and invoke it if specified. (not yet implemented)
-		 *   6.	Examine the defaultValue attribute of the option�s superClass.
+		 *   5.	Examine the dynamicDefaultValue attribute of the option's superClass and invoke it if specified. (not yet implemented)
+		 *   6.	Examine the defaultValue attribute of the option's superClass.
 		 *   7.	Go to step 5 recursively until no more super classes.
 		 *   8.	Use the default value for the option type.
 		 */
@@ -1526,7 +1516,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case UNDEF_LIBRARY_PATHS:
 					case UNDEF_LIBRARY_FILES:
 					case UNDEF_MACRO_FILES:
-						val = new ArrayList();
+						val = new ArrayList<OptionStringValue>();
 						break;
 					default:
 						val = EMPTY_STRING; 
@@ -1542,8 +1532,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public Object getRawValue() {
 		Object ev = getExactRawValue();
-		if(ev instanceof List)
-			ev = listValueListToValueList((List)ev);
+		if(ev instanceof List<?>) {
+			List<String> evList = listValueListToValueList((List<OptionStringValue>)ev);
+			return evList;
+		}
 		return ev;
 	}
 
@@ -1557,25 +1549,25 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return value;
 	}
 
-	private List listValueListToValueList(List list){
+	private List<String> listValueListToValueList(List<OptionStringValue> list){
 		if(list == null)
 			return null;
 		
-		List valueList = new ArrayList(list.size());
+		List<String> valueList = new ArrayList<String>(list.size());
 		for(int i = 0; i < list.size(); i++){
-			OptionStringValue el = (OptionStringValue)list.get(i);
+			OptionStringValue el = list.get(i);
 			valueList.add(el.getValue());
 		}
 		return valueList;
 	}
 	
-	private List valueListToListValueList(List list, boolean builtIn){
+	private List<OptionStringValue> valueListToListValueList(List<String> list, boolean builtIn){
 		if(list == null)
 			return null;
 		
-		List lvList = new ArrayList(list.size());
+		List<OptionStringValue> lvList = new ArrayList<OptionStringValue>(list.size());
 		for(int i = 0; i < list.size(); i++){
-			String v = (String)list.get(i);
+			String v = list.get(i);
 			lvList.add(new OptionStringValue(v, builtIn));
 		}
 		return lvList;
@@ -1587,8 +1579,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public Object getDefaultValue() {
 		Object ev = getExactDefaultValue();
-		if(ev instanceof List)
-			ev = listValueListToValueList((List)ev);
+		if(ev instanceof List<?>) {
+			List<String> evList = listValueListToValueList((List<OptionStringValue>)ev);
+			return evList;
+		}
 		return ev;
 	}
 	
@@ -1606,9 +1600,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(Object)
 	 */
 	public void setDefaultValue(Object v) {
-		if(v instanceof List)
-			v = valueListToListValueList((List)v, false);
-		defaultValue = v;
+		if(v instanceof List<?>) {
+			List<OptionStringValue> vList = valueListToListValueList((List<String>)v, false);
+			defaultValue = vList;
+		} else {
+			defaultValue = v;
+		}
 		if(!isExtensionElement()){
 			setDirty(true);
 			rebuildState = true;
@@ -1819,7 +1816,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			if(value == null)
 				this.value = null;
 			else
-				this.value = new ArrayList(Arrays.asList(value));
+				this.value = new ArrayList<OptionStringValue>(Arrays.asList(value));
 		}
 		else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1834,9 +1831,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(Object)
 	 */
 	public void setValue(Object v) {
-		if(v instanceof List)
-			v = valueListToListValueList((List)v, false);
-		value = v;
+		if(v instanceof List<?>) {
+			List<OptionStringValue> vList = valueListToListValueList((List<String>)v, false);
+			value = vList;
+		} else {
+			value = v;
+		}
 		if(!isExtensionElement()){
 			setDirty(true);
 			rebuildState = true;
@@ -2051,7 +2051,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						for (int i = 0; i < enumElements.length; ++i) {
 							String optId = enumElements[i].getAttribute(ID);
 							if (i == 0) {
-								enumList = new ArrayList();
+								enumList = new ArrayList<String>();
 								if (defaultValue == null) {
 									defaultValue = optId;		//  Default value to be overridden if default is specified
 								}
@@ -2083,12 +2083,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						//  Note:  These string-list options do not load either the "value" or 
 						//         "defaultValue" attributes.  Instead, the ListOptionValue children
 						//         are loaded in the value field.
-						List vList = null;
+						List<OptionStringValue> vList = null;
 						IManagedConfigElement[] vElements = element.getChildren(LIST_VALUE);
 						for (int i = 0; i < vElements.length; ++i) {
-							if (i == 0) {
-								vList = new ArrayList();
-								builtIns = new ArrayList();
+							if (vList==null) {
+								vList = new ArrayList<OptionStringValue>();
+								builtIns = new ArrayList<OptionStringValue>();
 							}
 							OptionStringValue ve = new OptionStringValue(vElements[i]);
 							if(ve.isBuiltIn()) {
@@ -2112,6 +2112,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/**
 	 * @return Returns the managedBuildRevision.
 	 */
+	@Override
 	public String getManagedBuildRevision() {
 		if ( managedBuildRevision == null) {
 			if ( getParent() != null) {
@@ -2208,6 +2209,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public PluginVersionIdentifier getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
@@ -2217,6 +2219,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return version;
 	}
 	
+	@Override
 	public void setVersion(PluginVersionIdentifier version) {
 		// Do nothing
 	}
@@ -2339,24 +2342,24 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		}
 		
-		return (String[]) v.toArray(new String[v.size()]);
+		return v.toArray(new String[v.size()]);
 	}
 	
 	public OptionStringValue[] getBasicStringListValueElements() throws BuildException {
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getExactValue();
+		ArrayList<OptionStringValue> v = (ArrayList<OptionStringValue>)getExactValue();
 		if (v == null) {
 			return EMPTY_LV_ARRAY;
 		}
 		
-		return (OptionStringValue[]) v.toArray(new OptionStringValue[v.size()]);
+		return v.toArray(new OptionStringValue[v.size()]);
 	}
 
 

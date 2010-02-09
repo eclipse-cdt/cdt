@@ -86,14 +86,12 @@ public class ProjectTargets {
 				}
 			}
 
-			if (rootElement != null) {
-				extractMakeTargetsFromDocument(rootElement, manager);
-				// If write targets then we have converted previous make targets
-				if (writeTargets) {
-					saveTargets();
-					if (targetFile != null) {
-						targetFile.delete(); // removed old
-					}
+			extractMakeTargetsFromDocument(rootElement, manager);
+			// If write targets then we have converted previous make targets
+			if (writeTargets) {
+				saveTargets();
+				if (targetFile != null) {
+					targetFile.delete(); // removed old
 				}
 			}
 		} catch (Exception e) {
@@ -111,8 +109,7 @@ public class ProjectTargets {
 
 	public void set(IContainer container, IMakeTarget[] targets) throws CoreException {
 		List<IMakeTarget> newList = new ArrayList<IMakeTarget>();
-		for (int i = 0; i < targets.length; ++i) {
-			IMakeTarget target = targets[i];
+		for (IMakeTarget target : targets) {
 			target.setContainer(container);
 			if (newList.contains(target)) {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
@@ -248,9 +245,10 @@ public class ProjectTargets {
 	}
 
 	/**
-	 * Extract the make target information which is contained in the XML Document
+	 * Extract the make target information which is contained in the Storage Element
 	 *
-	 * @param document
+	 * @param root - root element
+	 * @param manager - MakeTargetManager
 	 */
 	protected void extractMakeTargetsFromDocument(ICStorageElement root, MakeTargetManager manager) {
 		for (ICStorageElement node : root.getChildren()) {

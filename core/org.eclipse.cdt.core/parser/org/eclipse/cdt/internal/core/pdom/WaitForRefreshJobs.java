@@ -96,6 +96,10 @@ public class WaitForRefreshJobs extends IndexerSetupParticipant {
 			for (Job j : refreshJobs) {
 				if (fRefreshJobs.add(j)) {
 					j.addJobChangeListener(fJobListener);
+					// In case the job has finished in the meantime
+					if (j.getState() == Job.NONE) {
+						fRefreshJobs.remove(j);
+					}
 				}
 			}
 		}

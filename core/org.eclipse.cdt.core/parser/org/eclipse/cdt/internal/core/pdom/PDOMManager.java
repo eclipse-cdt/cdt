@@ -203,6 +203,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 	
 	public Job startup() {
+		fInShutDown= false;
 		Job postStartupJob= new Job(CCorePlugin.getResourceString("CCorePlugin.startupJob")) { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {

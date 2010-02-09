@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -64,15 +63,4 @@ public class IndexTestBase extends BaseTestCase {
     	return TestSourceReader.getContentsForTest(
     			CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
     }
-    
-    protected void waitForIndexer(ICProject project) throws InterruptedException {
-		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		assertTrue(indexManager.joinIndexer(INDEXER_WAIT_TIME, NPM));
-		long waitms= 1;
-		while (waitms < 2000 && indexManager.isIndexerSetupPostponed(project)) {
-			Thread.sleep(waitms);
-			waitms *= 2;
-		}
-		assertTrue(indexManager.joinIndexer(INDEXER_WAIT_TIME, NPM));
-	}
 }

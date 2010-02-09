@@ -29,9 +29,12 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
@@ -85,8 +88,8 @@ public class BaseTestCase extends TestCase {
 		Class superClass= clazz;
 		while (Test.class.isAssignableFrom(superClass) && !TestCase.class.equals(superClass)) {
 			Method[] methods= superClass.getDeclaredMethods();
-			for (int i= 0; i < methods.length; i++) {
-				addFailingMethod(suite, methods[i], names, clazz, prefix);
+			for (Method method : methods) {
+				addFailingMethod(suite, method, names, clazz, prefix);
 			}
 			superClass= superClass.getSuperclass();
 		}
@@ -274,5 +277,16 @@ public class BaseTestCase extends TestCase {
 				changed.notifyAll();
 			}
 		}
+	}
+    
+    protected void waitForIndexer(ICProject project) throws InterruptedException {
+		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
+		assertTrue(indexManager.joinIndexer(10000, NPM));
+		long waitms= 1;
+		while (waitms < 2000 && !indexManager.isProjectRegistered(project)) {
+			Thread.sleep(waitms);
+			waitms *= 2;
+		}
+		assertTrue(indexManager.joinIndexer(10000, NPM));
 	}
 }

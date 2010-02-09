@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Intel Corporation and others.
+ * Copyright (c) 2004, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -396,17 +395,6 @@ public class ManagedBuildTestHelper {
 			desc.saveProjectData();
 		} catch (CoreException e) {
 			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
-	}
-	
-	/**
-	 * @deprecated as of CDT 6.1 - put benchmarks in Benchmarks/ folder and call the other {@link #compareBenchmarks(IProject, IPath, IPath[], IPath)}
-	 */
-	@Deprecated
-	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files) {
-		if (!testDir.isAbsolute()) {
-			testDir = project.getLocation().append(testDir);
-		}
-		return compareBenchmarks(project, testDir, files, project.getLocation());
 	}
 	
 	static public boolean compareBenchmarks(final IProject project, IPath testLocationBase, IPath[] files, IPath benchmarkLocationBase) {

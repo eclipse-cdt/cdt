@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -292,6 +292,10 @@ public class LocationMap implements ILocationResolver {
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
 		fDirectives.add(new ASTPragma(fTranslationUnit, startOffset, condOffset, condEndOffset));
+	}
+
+	public void encounterPragmaOperator(int startNumber, int condNumber, int condEndNumber, int endNumber) {
+		fDirectives.add(new ASTPragmaOperator(fTranslationUnit, startNumber, condNumber, condEndNumber, endNumber));
 	}
 
 	public void encounterPoundIfdef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean taken, IMacroBinding macro) {

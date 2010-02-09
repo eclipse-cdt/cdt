@@ -36,6 +36,10 @@ public interface IToken {
 	int FIRST_RESERVED_SCANNER= -100;
 	int LAST_RESERVED_SCANNER= -1;
 	
+	/** @since 5.2 */ 
+	int t_PRAGMA = 5200;
+
+	
 	int tIDENTIFIER = 1;
 	int tINTEGER = 2;
 	int tCOLONCOLON = 3;
@@ -92,7 +96,7 @@ public interface IToken {
 	 * @see IScanner#setSplitShiftROperator(boolean) 
 	 * @since 5.2 
 	 */
-	int tGT_in_SHIFTR= 5200;
+	int tGT_in_SHIFTR= 5201;
 	
 	/** @deprecated use {@link #tAND} */ @Deprecated int t_and = 54;
 	/** @deprecated use {@link #tAMPERASSIGN} */ @Deprecated int t_and_eq = 55;
@@ -112,7 +116,8 @@ public interface IToken {
 	
 	int t_const_cast = 69;
 	int t_continue = 70;
-	/** @since 5.2 */ int t_decltype= 5201;
+	/** @since 5.2 */ 
+	int t_decltype= 5202;
 	int t_default = 71;
 	int t_delete = 72;
 	int t_do = 73;
@@ -149,7 +154,8 @@ public interface IToken {
 	int t_short = 104;
 	int t_sizeof = 105;
 	int t_static = 106;
-	/** @since 5.2 */ int t_static_assert = 5202;
+	/** @since 5.2 */ 
+	int t_static_assert = 5203;
 	int t_static_cast = 107;
 	int t_signed = 108;
 	int t_struct = 109;

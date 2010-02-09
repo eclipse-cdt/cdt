@@ -58,6 +58,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
@@ -7289,5 +7291,29 @@ public class AST2Tests extends AST2BaseTest {
         bh= new BindingAssertionHelper(code, false);
         bh.assertNonProblem("obj", 3, IParameter.class);
         bh.assertProblem("obj =", 3);
+	}
+	
+	//	#define ONCE() PRAGMA(once)
+	//  #define PRAGMA(x) _Pragma(#x)
+	//	#pragma once
+	//	_Pragma ("once")
+	//  ONCE()
+	public void testPragmaOperator_294730() throws Exception {
+        final String code = getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code, ParserLanguage.C);
+		IASTPreprocessorStatement[] stmts = tu.getAllPreprocessorStatements();
+		assertEquals(5, stmts.length);
+		for (int i = 2; i < stmts.length; i++) {
+			IASTPreprocessorStatement stmt = stmts[i];
+			assertInstance(stmt, IASTPreprocessorPragmaStatement.class);
+			assertEquals(i>2, ((IASTPreprocessorPragmaStatement) stmt).isPragmaOperator());
+		}
+		tu= parseAndCheckBindings(code, ParserLanguage.CPP);
+		assertEquals(5, stmts.length);
+		for (int i = 2; i < stmts.length; i++) {
+			IASTPreprocessorStatement stmt = stmts[i];
+			assertInstance(stmt, IASTPreprocessorPragmaStatement.class);
+			assertEquals(i>2, ((IASTPreprocessorPragmaStatement) stmt).isPragmaOperator());
+		}
 	}
 }

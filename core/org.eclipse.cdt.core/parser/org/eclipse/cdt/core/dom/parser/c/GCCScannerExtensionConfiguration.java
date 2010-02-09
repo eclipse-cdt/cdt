@@ -31,7 +31,6 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	@SuppressWarnings("nls")
 	public GCCScannerExtensionConfiguration() {
 		addMacro("__null", "(void *)0");  
-		addMacro("_Pragma(arg)", "");  
 		addMacro("__builtin_offsetof(T,m)", "((size_t) &((T *)0)->m)");
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 
 
 abstract class ASTDirectiveWithCondition extends ASTPreprocessorNode {
-	private final int fConditionOffset;
+	protected final int fConditionOffset;
     private final boolean fActive;
 	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int endNumber, boolean active) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
@@ -222,6 +222,29 @@ class ASTPragma extends ASTDirectiveWithCondition implements IASTPreprocessorPra
 
 	public char[] getMessage() {
 		return getCondition();
+	}
+
+	public boolean isPragmaOperator() {
+		return false;
+	}
+}
+
+class ASTPragmaOperator extends ASTPragma {
+	private final int fConditionEndOffset;
+
+	public ASTPragmaOperator(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber) {
+		super(parent, startNumber, condNumber, endNumber);
+		fConditionEndOffset= condEndNumber;
+	}
+
+	@Override
+    public String getConditionString() {
+    	return new String(getSource(fConditionOffset, fConditionEndOffset));
+    }
+	
+	@Override
+	public boolean isPragmaOperator() {
+		return true;
 	}
 }
 

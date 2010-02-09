@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -502,6 +502,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     			fHandledCompletion= true;
     		}
     		break;
+    	case IToken.t_PRAGMA:
+    		handlePragmaOperator(t1);
+    		return nextTokenRaw();
     	}
     	if (fLastToken != null) {
     		fLastToken.setNext(t1);
@@ -509,6 +512,39 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	fLastToken= t1;
     	return t1;
     }
+
+	private void handlePragmaOperator(Token t1) throws OffsetLimitReachedException {
+		Token t2= fetchToken();
+		int end;
+		if (t2.getType() == IToken.tLPAREN) {
+			Token t3= fetchToken();
+			end= t3.getEndOffset();
+			final int tt = t3.getType();
+			if (tt == IToken.tSTRING || tt == IToken.tLSTRING || tt == IToken.tUTF16STRING || tt == IToken.tUTF32STRING) {
+				Token t4= fetchToken();
+				end= t4.getEndOffset();
+				if (t4.getType() == IToken.tRPAREN) {
+					fLocationMap.encounterPragmaOperator(t1.getOffset(), t3.getOffset(), t3.getEndOffset(), t4.getEndOffset());
+					return;
+				} else {
+					end= t3.getEndOffset();
+					pushbackToken(t4);
+				}
+			} else {
+				if (t3.getType() == IToken.tRPAREN) {
+					// Consume closing parenthesis
+					end= t3.getEndOffset();
+				} else {
+					end= t2.getEndOffset();
+					pushbackToken(t3);
+				}
+			}
+		} else {
+			end= t1.getEndOffset();
+			pushbackToken(t2);
+		} 
+		fLocationMap.encounterProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, t1.getCharImage(), t1.getOffset(), end);
+	}
 
     /**
      * Returns next token for the parser. String literals are concatenated.
@@ -538,6 +574,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		fHandledCompletion= true;
     		break;
     		
+    	case IToken.t_PRAGMA:
+    		handlePragmaOperator(t1);
+    		return nextToken();
+    		
     	case IToken.tSTRING:
     	case IToken.tLSTRING:
         case IToken.tUTF16STRING:
@@ -565,6 +605,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		    case IToken.tINACTIVE_CODE_START:
     		    	// no support for inactive code after a string literal
     		    	skipInactiveCode();
+    		    	continue loop;
+    		    case IToken.t_PRAGMA:
+    		    	handlePragmaOperator(t2);
     		    	continue loop;
     			default:
     				break loop;

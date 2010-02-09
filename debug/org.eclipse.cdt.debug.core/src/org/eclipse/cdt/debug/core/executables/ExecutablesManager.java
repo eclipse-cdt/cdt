@@ -712,7 +712,7 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 			boolean failed = false;
 			try {
 				Object extObject = element.createExecutableExtension("class"); //$NON-NLS-1$
-				if (extObject instanceof ISourceFileRemapping) {
+				if (extObject instanceof ISourceFileRemappingFactory) {
 					sourceFileRemappingFactories.add((ISourceFileRemappingFactory)extObject);
 				} else {
 					failed = true;

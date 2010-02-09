@@ -73,16 +73,23 @@ public interface IDisassembly extends IDsfService {
             BigInteger endAddress,
             DataRequestMonitor<IMixedInstruction[]> drm);
 
-    /**
-     * Gets the mixed disassembled code from a file location.
-     * If [lines] == -1, the whole function is disassembled.
-     * 
-     * @param context       Context of the disassembly code
-     * @param filename      File to disassemble
-     * @param linenum       Line number within the file
-     * @param lines         Number of lines of disassembled code to produce
-     * @param drm           Disassembled code
-     */
+	/**
+	 * Gets the mixed disassembled code from a file location, starting at the
+	 * beginning of the file. If [lines] == -1, the whole file is disassembled.
+	 * 
+	 * @param context
+	 *            Context of the disassembly code
+	 * @param filename
+	 *            File to disassemble
+	 * @param linenum
+	 *            Line number within the file. If the line does not represent
+	 *            compiled code, disassembly will start at the first subsequent
+	 *            line that does.
+	 * @param lines
+	 *            Number of lines of disassembled code to produce
+	 * @param drm
+	 *            Disassembled code
+	 */
     public void getMixedInstructions(
             IDisassemblyDMContext context,
             String filename, 

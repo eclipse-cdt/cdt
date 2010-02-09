@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
-
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -41,10 +39,8 @@ import org.w3c.dom.NodeList;
  */
 public class OptionReference implements IOption {
 
-	private static final String EMPTY_STRING = new String();
-
 	// List of built-in values a tool defines
-	private List builtIns;
+	private List<String> builtIns;
 	// Used for all option references that override the command
 	// Note: This is not currently used - don't start using it because 
 	//       it is not handled in converting from the CDT 2.0 object model
@@ -127,7 +123,7 @@ public class OptionReference implements IOption {
 			case ENUMERATED:
 				// Pre-2.0 the value was the string for the UI
 				// Post-2.0 it is the ID of the enumerated option
-				value = (String) element.getAttribute(DEFAULT_VALUE);				
+				value = element.getAttribute(DEFAULT_VALUE);				
 				break;
 			case STRING_LIST:
 			case INCLUDE_PATH:
@@ -144,7 +140,7 @@ public class OptionReference implements IOption {
 			case UNDEF_LIBRARY_PATHS:
 			case UNDEF_LIBRARY_FILES:
 			case UNDEF_MACRO_FILES:
-				List valueList = new ArrayList();
+				List<String> valueList = new ArrayList<String>();
 				NodeList nodes = element.getElementsByTagName(LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
 					Node node = nodes.item(i);
@@ -217,7 +213,7 @@ public class OptionReference implements IOption {
 				case UNDEF_LIBRARY_PATHS:
 				case UNDEF_LIBRARY_FILES:
 				case UNDEF_MACRO_FILES:
-					List valueList = new ArrayList();
+					List<String> valueList = new ArrayList<String>();
 					IManagedConfigElement[] valueElements = element.getChildren(LIST_VALUE);
 					for (int i = 0; i < valueElements.length; ++i) {
 						IManagedConfigElement valueElement = valueElements[i];
@@ -276,20 +272,18 @@ public class OptionReference implements IOption {
 			case UNDEF_LIBRARY_PATHS:
 			case UNDEF_LIBRARY_FILES:
 			case UNDEF_MACRO_FILES:
-				ArrayList stringList = (ArrayList)value;
-				ListIterator iter = stringList.listIterator();
-				while (iter.hasNext()) {
+				ArrayList<String> stringList = (ArrayList<String>)value;
+				for (String val : stringList) {
 					Element valueElement = doc.createElement(LIST_VALUE);
-					valueElement.setAttribute(LIST_ITEM_VALUE, (String)iter.next());
+					valueElement.setAttribute(LIST_ITEM_VALUE, val);
 					valueElement.setAttribute(LIST_ITEM_BUILTIN, "false"); //$NON-NLS-1$
 					element.appendChild(valueElement);
 				}
 				// Serialize the built-ins that have been overridden
 				if (builtIns != null) {
-					iter = builtIns.listIterator();
-					while (iter.hasNext()) {
+					for (String builtIn : builtIns) {
 						Element valueElement = doc.createElement(LIST_VALUE);
-						valueElement.setAttribute(LIST_ITEM_VALUE, (String)iter.next());
+						valueElement.setAttribute(LIST_ITEM_VALUE, builtIn);
 						valueElement.setAttribute(LIST_ITEM_BUILTIN, "true"); //$NON-NLS-1$
 						element.appendChild(valueElement);
 					}
@@ -347,8 +341,8 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getDefinedSymbols();
 		else if (getValueType() == PREPROCESSOR_SYMBOLS) {
-			ArrayList list = (ArrayList)value;
-			return (String[]) list.toArray(new String[list.size()]);
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
 		}
 		else
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -425,8 +419,8 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getIncludePaths();
 		else if (getValueType() == INCLUDE_PATH) {
-			ArrayList list = (ArrayList)value;
-			return (String[]) list.toArray(new String[list.size()]);
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
 		}
 		else
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -439,8 +433,8 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getLibraries();
 		else if (getValueType() == LIBRARIES) {
-			ArrayList list = (ArrayList)value;
-			return (String[]) list.toArray(new String[list.size()]);
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
 		}
 		else
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -483,9 +477,9 @@ public class OptionReference implements IOption {
 		return option.getBrowseFilterExtensions();
 	}
 
-	private List getBuiltInList() {
+	private List<String> getBuiltInList() {
 		if (builtIns == null) {
-			builtIns = new ArrayList();
+			builtIns = new ArrayList<String>();
 		}
 		return builtIns;
 	}
@@ -494,7 +488,7 @@ public class OptionReference implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
 	 */
 	public String[] getBuiltIns() {
-		List answer = new ArrayList();
+		List<String> answer = new ArrayList<String>();
 		if (builtIns != null) {
 			answer.addAll(builtIns);
 		}
@@ -508,7 +502,7 @@ public class OptionReference implements IOption {
 				}
 			}
 		}
-		return (String[]) answer.toArray(new String[answer.size()]);
+		return answer.toArray(new String[answer.size()]);
 	}
 
 	/**
@@ -545,8 +539,8 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getStringListValue();
 		else if (getValueType() == STRING_LIST) {
-			ArrayList list = (ArrayList)value;
-			return (String[]) list.toArray(new String[list.size()]);
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
 		}
 		else
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -594,8 +588,8 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getDefinedSymbols();
 		else if (getValueType() == OBJECTS) {
-			ArrayList list = (ArrayList)value;
-			return (String[]) list.toArray(new String[list.size()]);
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
 		}
 		else
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -692,7 +686,7 @@ public class OptionReference implements IOption {
 			|| getValueType() == UNDEF_MACRO_FILES
 			) {
 			// Just replace what the option reference is holding onto 
-			this.value = new ArrayList(Arrays.asList(value));
+			this.value = new ArrayList<String>(Arrays.asList(value));
 		}
 		else
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -701,6 +695,7 @@ public class OptionReference implements IOption {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		String answer = new String();	
 		if (option != null) {
@@ -888,12 +883,12 @@ public class OptionReference implements IOption {
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		ArrayList v = (ArrayList)getValue();
+		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return new String[0];
 		}
 		
-		return (String[]) v.toArray(new String[v.size()]);
+		return v.toArray(new String[v.size()]);
 	}
 
 	public int getBasicValueType() throws BuildException {

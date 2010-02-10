@@ -15,6 +15,9 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup; 
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -42,6 +45,8 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	private static final NoSourceElement gfNoSource = new NoSourceElement();
 
 	private ListenerList fListeners;
+	
+	private Map<Object, Object[]> fCachedResults = Collections.synchronizedMap(new HashMap<Object, Object[]>());
 
 	/** 
 	 * Constructor for CSourceLookupParticipant. 
@@ -73,7 +78,12 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	 */
 	@Override
 	public Object[] findSourceElements( Object object ) throws CoreException {
-
+		
+		// Check the cache
+		Object[] results = fCachedResults.get(object);
+		if (results != null)
+			return results;
+		
 		// Workaround for cases when the stack frame doesn't contain the source file name 
 		String name = null;
 		IBreakpoint breakpoint = null;
@@ -84,9 +94,11 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 				if ( name == null || name.length() == 0 )
 				{
 					if (object instanceof IDebugElement)
-						return new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
+						results = new Object[] { new CSourceNotFoundElement((IDebugElement) object, ((IDebugElement) object).getLaunch().getLaunchConfiguration(), name) };
 					else
-						return new Object[] { gfNoSource };					
+						results = new Object[] { gfNoSource }; 
+					fCachedResults.put(object, results);
+					return results;
 				}
 			}
 			// See if findSourceElements(...) is the result of a Breakpoint Hit Event
@@ -129,7 +141,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 				}
 			}
 		}
-
+		fCachedResults.put(object, foundElements); 
 		return foundElements;
 	}
 
@@ -155,6 +167,9 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 	 */
 	@Override
 	public void sourceContainersChanged( ISourceLookupDirector director ) {
+		// clear the cache
+		fCachedResults.clear();
+		
 		Object[] listeners = fListeners.getListeners();
 		for ( int i = 0; i < listeners.length; ++i )
 			((ISourceLookupChangeListener)listeners[i]).sourceContainersChanged( director );

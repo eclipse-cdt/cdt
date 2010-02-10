@@ -1889,6 +1889,9 @@ public class CPPTemplates {
 			IType argType= arg.getTypeOfNonTypeValue();
 			try {
 				IType pType = ((ICPPTemplateNonTypeParameter) param).getType();
+				if (pType instanceof ICPPParameterPackType) {
+					pType= ((ICPPParameterPackType) pType).getType();
+				}
 				if (map != null && pType != null) {
 					pType= instantiateType(pType, map, -1, null);
 				}

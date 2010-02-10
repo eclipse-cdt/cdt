@@ -4441,6 +4441,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertFalse(tp.isParameterPack());
 	}	
 	
+	//	template <int ...I> struct CTx {};
+	//	void test() {
+	//		CTx<> a;
+	//		CTx<1> b;
+	//		CTx<1,2> c;
+	//	}
+	public void testNonTypeTemplateParameterPack_280909() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 	//	template<typename... Types>
 	//	struct count { static const int value = sizeof...(Types);
 	//	};

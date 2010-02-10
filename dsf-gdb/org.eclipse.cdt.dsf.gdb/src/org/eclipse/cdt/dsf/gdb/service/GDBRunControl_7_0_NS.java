@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -608,7 +608,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Run to line
 	// ------------------------------------------------------------------------
 
-	public void runToLine(IExecutionDMContext context, String fileName, String lineNo, final boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm) {
+	/** @since 3.0 */
+	public void runToLocation(final IExecutionDMContext context, final String location, final boolean skipBreakpoints, final RequestMonitor rm){
 
 		assert context != null;
 
@@ -620,26 +621,25 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		if (!doCanResume(context)) {
+		if (!doCanResume(dmc)) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
 				"Cannot resume context", null)); //$NON-NLS-1$
 			rm.done();
 			return;
 		}
 
-		MIThreadRunState threadState = fThreadRunStates.get(context);
+		MIThreadRunState threadState = fThreadRunStates.get(dmc);
 		if (threadState == null) {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
-				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+				"Given context: " + dmc + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			rm.done();
 			return;
 		}
 
-		final String fileLocation = fileName + ":" + lineNo; //$NON-NLS-1$
     	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
     	fConnection.queueCommand(
     			new MIBreakInsert(bpDmc, true, false, null, 0, 
-    					          fileLocation, dmc.getThreadId()), 
+    					          location, dmc.getThreadId()), 
     		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
     				@Override
     				public void handleSuccess() {
@@ -647,7 +647,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     					// or else we may get the stopped event, before we have set this variable.
        					int bpId = getData().getMIBreakpoints()[0].getNumber();
        					String addr = getData().getMIBreakpoints()[0].getAddress();
-    		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, fileLocation, addr, skipBreakpoints);
+    		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, addr, skipBreakpoints);
 
     					resume(dmc, new RequestMonitor(getExecutor(), rm) {
             				@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -435,10 +435,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     			});
 	}
     
-	/** @since 2.0 */
+	/** @since 3.0 */
 	@Override
-	public void runToLine(final IExecutionDMContext context, String fileName, String lineNo, final boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm){
-	    // Later add support for Address and function.
+	public void runToLocation(final IExecutionDMContext context, final String location, final boolean skipBreakpoints, final RequestMonitor rm){
 	    
     	assert context != null;
 
@@ -449,12 +448,11 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             return;
 		}
 
-        if (doCanResume(context)) {
-    		final String fileLocation = fileName + ":" + lineNo; //$NON-NLS-1$
+        if (doCanResume(dmc)) {
         	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
         	getConnection().queueCommand(
         			new MIBreakInsert(bpDmc, true, false, null, 0, 
-        					          fileLocation, dmc.getThreadId()), 
+        					          location, dmc.getThreadId()), 
         		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
         				@Override
         				public void handleSuccess() {
@@ -462,9 +460,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         					// or else we may get the stopped event, before we have set this variable.
            					int bpId = getData().getMIBreakpoints()[0].getNumber();
            					String addr = getData().getMIBreakpoints()[0].getAddress();
-        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, fileLocation, addr, skipBreakpoints);
+        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, addr, skipBreakpoints);
 
-        					resume(context, new RequestMonitor(getExecutor(), rm) {
+        					resume(dmc, new RequestMonitor(getExecutor(), rm) {
                 				@Override
                 				public void handleFailure() {
                 		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),

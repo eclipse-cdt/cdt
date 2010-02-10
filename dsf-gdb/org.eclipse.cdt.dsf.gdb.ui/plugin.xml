@@ -167,6 +167,13 @@
 	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
          <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
 	  </factory>
+      <factory
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView">
+         <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
+      </factory>	  
    </extension>	
    
    <extension point="org.eclipse.debug.ui.memoryRenderings">

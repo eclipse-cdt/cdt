@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2007, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,22 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -55,10 +59,11 @@ public class MIRunControlTest extends BaseTestCase {
     private DsfServicesTracker fServicesTracker;    
 
     private IGDBControl fGDBCtrl;
-	private MIRunControl fRunCtrl;
+	private IMIRunControl fRunCtrl;
 	private IMIProcesses fProcService;
 
 	private IContainerDMContext fContainerDmc;
+	private IExecutionDMContext fThreadExecDmc;
 	
 	/*
 	 * Path to executable
@@ -80,8 +85,10 @@ public class MIRunControlTest extends BaseTestCase {
 		IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
    		IProcessDMContext procDmc = procService.createProcessContext(fGDBCtrl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
    		fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+   		IThreadDMContext threadDmc = procService.createThreadContext(procDmc, "1");
+   		fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
 
-		fRunCtrl = fServicesTracker.getService(MIRunControl.class);
+		fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
 		fProcService = fServicesTracker.getService(IMIProcesses.class);
 	}
 
@@ -263,7 +270,7 @@ public class MIRunControlTest extends BaseTestCase {
             	String pid = MIProcesses.UNIQUE_GROUP_ID;
             	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
             	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
-            	fRunCtrl.getExecutionData(fRunCtrl.createMIExecutionContext(containerDmc, 1), rm);
+            	fRunCtrl.getExecutionData(((MIRunControl)fRunCtrl).createMIExecutionContext(containerDmc, 1), rm);
             }
         });
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -518,9 +525,6 @@ public class MIRunControlTest extends BaseTestCase {
 
         wait.waitReset();
     }
-    
-    
-    
 
     @Test
     public void resumeContainerContext() throws InterruptedException{
@@ -570,6 +574,53 @@ public class MIRunControlTest extends BaseTestCase {
 
         wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
         Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
+
+        wait.waitReset();
+    }
+    
+    @Test
+    public void runToLine() throws InterruptedException{
+	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+ 
+         fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+           		fRunCtrl.runToLocation(fThreadExecDmc, SOURCE_NAME + ":27", true,
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+        
+        try {
+            new ServiceEventWaitor<ISuspendedDMEvent>(
+            		getGDBLaunch().getSession(),
+            		ISuspendedDMEvent.class).waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
+		} catch (Exception e) {
+			Assert.fail("Exception raised:: " + e.getMessage());
+			e.printStackTrace();
+			return;
+		}
+		
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+            	String pid = MIProcesses.UNIQUE_GROUP_ID;
+            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+
+            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+            	wait.waitFinished();
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
 
         wait.waitReset();
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson                    - Added support for IRunToAddress for DSF DisassemblyView (302324)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -37,7 +40,7 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
  * 
  * @since 2.0
  */
-public class GdbRunToLine implements IRunToLine {
+public class GdbRunToLine implements IRunToLine, IRunToAddress {
 
     private final IExecutionDMContext fContext;
 
@@ -46,14 +49,32 @@ public class GdbRunToLine implements IRunToLine {
     }
     
     public boolean canRunToLine(IFile file, int lineNumber) {
-        return canRunToLine();
+        return canRunToLocation();
     }
 
     public boolean canRunToLine(String fileName, int lineNumber) {
-        return canRunToLine();
+        return canRunToLocation();
     }
 
-    private boolean canRunToLine() {
+    public void runToLine(IFile file, int lineNumber, boolean skipBreakpoints) throws DebugException {
+    	runToLine(file.getLocation().makeAbsolute().toOSString(), lineNumber, skipBreakpoints);
+    }
+    
+    public void runToLine(String fileName, int lineNumber, boolean skipBreakpoints) throws DebugException {
+    	runToLocation(fileName + ":" + lineNumber, skipBreakpoints); //$NON-NLS-1$
+    }
+    
+    /** @since 2.1 */
+	public boolean canRunToAddress(IAddress address) {
+        return canRunToLocation();
+	}
+
+    /** @since 2.1 */
+	public void runToAddress(IAddress address, boolean skipBreakpoints) throws DebugException {
+    	runToLocation("*0x" + address.toString(16), skipBreakpoints); //$NON-NLS-1$
+	}
+	
+    private boolean canRunToLocation() {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
             try {
@@ -83,11 +104,7 @@ public class GdbRunToLine implements IRunToLine {
         return false;
     }
     
-    public void runToLine(IFile file, int lineNumber, boolean skipBreakpoints) throws DebugException {
-        runToLine(file.getLocation().makeAbsolute().toOSString(), lineNumber, skipBreakpoints);
-    }
-
-    public void runToLine(final String fileName, final int lineNumber, final boolean skipBreakpoints) throws DebugException {
+    private void runToLocation(final String location, final boolean skipBreakpoints) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
             Throwable exception = null;
@@ -100,15 +117,9 @@ public class GdbRunToLine implements IRunToLine {
                         
                         IMIRunControl miRunControl = tracker.getService(IMIRunControl.class);
                         if (miRunControl != null) {
-                            miRunControl.runToLine(
-                                fContext, fileName, Integer.toString(lineNumber), skipBreakpoints, 
-                                new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
-                                    @Override
-                                    protected void handleSuccess() {
-                                        rm.setData(new Object());
-                                        rm.done();
-                                    };
-                                });
+                            miRunControl.runToLocation(
+                                fContext, location, skipBreakpoints,
+                                new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
                         } else {
                             rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "MIRunControl service not available", null)); //$NON-NLS-1$
                             rm.done();

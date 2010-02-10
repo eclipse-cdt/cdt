@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -680,12 +680,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         }
         rm.done();
     }
-	
-	/**
-	 * Run selected execution thread to a given line number.
-	 */
-	public void runToLine(IExecutionDMContext context, String fileName, String lineNo, boolean skipBreakpoints, final DataRequestMonitor<MIInfo> rm){
-	    // Later add support for Address and function.
+
+	/** @since 3.0 */
+	public void runToLocation(IExecutionDMContext context, String location, boolean skipBreakpoints, final RequestMonitor rm){
 	    // skipBreakpoints is not used at the moment. Implement later
 	    
     	assert context != null;
@@ -697,10 +694,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             return;
 		}
 
-        if (doCanResume(context)) {
+        if (doCanResume(dmc)) {
             fResumePending = true;
-            fMICommandCache.setContextAvailable(context, false);
-    		fConnection.queueCommand(new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
+            fMICommandCache.setContextAvailable(dmc, false);
+    		fConnection.queueCommand(new MIExecUntil(dmc, location),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,

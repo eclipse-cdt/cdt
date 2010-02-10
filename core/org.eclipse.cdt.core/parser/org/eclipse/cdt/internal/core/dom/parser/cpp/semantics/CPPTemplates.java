@@ -632,7 +632,7 @@ public class CPPTemplates {
 			// class template instance
 			IBinding result= null;
 			IASTName templateName = id.getTemplateName();
-			IBinding template = templateName.resolveBinding();
+			IBinding template = templateName.resolvePreBinding();
 
 			if (template instanceof ICPPConstructor) {
 				template= template.getOwner();

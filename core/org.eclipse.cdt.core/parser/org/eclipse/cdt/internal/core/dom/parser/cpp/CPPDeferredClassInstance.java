@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,9 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	private final ICPPScope fLookupScope;
 
 	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments, ICPPScope lookupScope) throws DOMException {
-		super(template.getOwner(), template.getNameCharArray());
+		// With template template parameters the owner must not be calculated, it'd lead to an infinite loop.
+		// Rather than that we override getOwner().
+		super(null, template.getNameCharArray());
 		fArguments= arguments;
 		fClassTemplate= template;
 		fLookupScope= lookupScope;
@@ -46,6 +48,16 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 		this(template, arguments, null);
 	}
 	
+	
+	@Override
+	public IBinding getOwner() {
+		try {
+			return fClassTemplate.getOwner();
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+	}
+
 	public ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) getSpecializedBinding();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -536,8 +537,21 @@ public class TemplateArgumentDeduction {
 			throws DOMException {
 		ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
 		ICPPClassTemplate aTemplate= getPrimaryTemplate(aInst);
-		if (pTemplate == null || aTemplate == null || !aTemplate.isSameType(pTemplate))
+		if (pTemplate == null || aTemplate == null)
 			return false;
+		
+		if (pTemplate instanceof ICPPTemplateTemplateParameter) {
+			final int tparId = ((ICPPTemplateTemplateParameter) pTemplate).getParameterID();
+			ICPPTemplateArgument current= fDeducedArgs.getArgument(tparId, fPackOffset);
+			if (current != null) {
+				if (current.isNonTypeValue() || !current.getTypeValue().isSameType(aTemplate))
+					return false;
+			} else if (!deduce(tparId, new CPPTemplateArgument(aTemplate))) {
+				return false;
+			}
+		} else if (!aTemplate.isSameType(pTemplate)) {
+			return false;
+		}
 		
 		// Check for being a non-deduced context.
 		final ICPPTemplateArgument[] pArgs = pInst.getTemplateArguments();

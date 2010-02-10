@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -682,12 +683,24 @@ public class ASTTypeUtil {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		
-		IBinding owner= binding.getOwner();
-		while (owner instanceof ICPPNamespace || owner instanceof IType) {
-			char[] name= owner.getNameCharArray();
+		IBinding owner= binding;
+		for (;;) {
+			if (owner instanceof ICPPTemplateParameter)
+				break;
+			if (owner instanceof ICPPDeferredClassInstance) {
+				ICPPDeferredClassInstance deferredInst = (ICPPDeferredClassInstance) owner;
+				if (deferredInst.getTemplateDefinition() instanceof ICPPTemplateParameter)
+					break;
+			}
+			
+			owner = owner.getOwner();
+			if (!(owner instanceof ICPPNamespace || owner instanceof IType))
+				break;
+
+			char[] name = owner.getNameCharArray();
 			if (name == null || name.length == 0) {
-				if (!(binding instanceof ICPPNamespace)) {
-					char[] altname= createNameForAnonymous(binding);
+				if (!(owner instanceof ICPPNamespace)) {
+					char[] altname = createNameForAnonymous(owner);
 					if (altname != null) {
 						result.addFirst(new String(altname));
 					}
@@ -699,10 +712,6 @@ public class ASTTypeUtil {
 					result.addFirst(new String(name));
 				}
 			}
-			if (owner instanceof ICPPTemplateParameter)
-				break;
-			
-			owner= owner.getOwner();
 		}
 	    return result.toArray(new String[result.size()]);
 	}

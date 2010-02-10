@@ -4787,4 +4787,41 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPASTExplicitTemplateInstantiation ti= getDeclaration(tu, 1);
 		assertEquals(ICPPASTExplicitTemplateInstantiation.EXTERN, ti.getModifier());
 	}
+	
+	//	template <class T> struct eval;
+	//	template <template <class, class...> class TT, class T1, class... Rest>
+	//	struct eval<TT<T1, Rest...>> { };
+	//	template <class T1> struct A;
+	//	template <class T1, class T2> struct B;
+	//	template <int N> struct C;
+	//	template <class T1, int N> struct D;
+	//	template <class T1, class T2, int N = 17> struct E;
+	//
+	//	eval<A<int>> eA; // OK: matches partial specialization of eval
+	//	eval<B<int, float>> eB; // OK: matches partial specialization of eval
+	//	eval<C<17>> eC; // error: C does not match TT in partial specialization
+	//	eval<D<int, 17>> eD; // error: D does not match TT in partial specialization
+	//	eval<E<int, float>> eE; // error: E does not match TT in partial specialization
+	public void testExtendingVariadicTemplateTemplateParameters_302282() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPClassTemplate ct= bh.assertNonProblem("eval;", -1);
+		ICPPClassTemplatePartialSpecialization pspec= bh.assertNonProblem("eval<TT<T1, Rest...>>", 0);
+		
+		ICPPTemplateInstance inst= bh.assertNonProblem("eval<A<int>>", 0);
+		assertSame(pspec, inst.getSpecializedBinding());
+		
+		inst= bh.assertNonProblem("eval<B<int, float>>", 0);
+		assertSame(pspec, inst.getSpecializedBinding());
+		
+		inst= bh.assertNonProblem("eval<C<17>>", 0);
+		assertSame(ct, inst.getSpecializedBinding());
+		
+		inst= bh.assertNonProblem("eval<D<int, 17>>", 0);
+		assertSame(ct, inst.getSpecializedBinding());
+		
+		inst= bh.assertNonProblem("eval<E<int, float>>", 0);
+		assertSame(ct, inst.getSpecializedBinding());
+	}
+
 }

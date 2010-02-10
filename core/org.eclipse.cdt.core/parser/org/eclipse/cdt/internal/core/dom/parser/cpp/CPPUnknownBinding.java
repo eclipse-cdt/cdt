@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,14 +78,16 @@ public class CPPUnknownBinding extends PlatformObject
     }
 
     public IScope getScope() throws DOMException {
-    	if (fOwner instanceof ICPPUnknownBinding) {
-    		return ((ICPPUnknownBinding) fOwner).asScope();
-    	} else if (fOwner instanceof ICPPClassType) {
-    		return ((ICPPClassType) fOwner).getCompositeScope();
-    	} else if (fOwner instanceof ICPPNamespace) {
-    		return ((ICPPNamespace) fOwner).getNamespaceScope();
-    	} else if (fOwner instanceof ICPPFunction) {
-    		return ((ICPPFunction) fOwner).getFunctionScope();
+    	// Use getOwner(), it is overridden by derived classes.
+    	final IBinding owner = getOwner();
+		if (owner instanceof ICPPUnknownBinding) {
+    		return ((ICPPUnknownBinding) owner).asScope();
+    	} else if (owner instanceof ICPPClassType) {
+    		return ((ICPPClassType) owner).getCompositeScope();
+    	} else if (owner instanceof ICPPNamespace) {
+    		return ((ICPPNamespace) owner).getNamespaceScope();
+    	} else if (owner instanceof ICPPFunction) {
+    		return ((ICPPFunction) owner).getFunctionScope();
     	}
     	return null;
     }

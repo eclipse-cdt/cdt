@@ -71,12 +71,12 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
-		((MakeTarget) target).setContainer(container == null ? target.getProject() : container);
-		projectTargets.add((MakeTarget) target);
+		target.setContainer(container == null ? target.getProject() : container);
+		projectTargets.add(target);
 		try {
 			writeTargets(projectTargets);
 		} catch (CoreException e) {
-			projectTargets.remove((MakeTarget) target);
+			projectTargets.remove(target);
 			throw e;
 		}
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
@@ -109,7 +109,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
-		return projectTargets.contains((MakeTarget) target);
+		return projectTargets.contains(target);
 	}
 
 	public void removeTarget(IMakeTarget target) throws CoreException {
@@ -117,11 +117,11 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		if (projectTargets == null) {
 			projectTargets = readTargets(target.getProject());
 		}
-		if (projectTargets.remove((MakeTarget) target)) {
+		if (projectTargets.remove(target)) {
 			try {
 				writeTargets(projectTargets);
 			} catch (CoreException e) {
-				projectTargets.add((MakeTarget) target);
+				projectTargets.add(target);
 				throw e;
 			}
 			notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_REMOVED, target));
@@ -129,7 +129,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	}
 
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
-		MakeTarget makeTarget = (MakeTarget)target;
+		IMakeTarget makeTarget = target;
 
 		ProjectTargets projectTargets = projectMap.get(makeTarget.getProject());
 		if (projectTargets == null) {
@@ -276,7 +276,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 	}
 
-	protected void updateTarget(MakeTarget target) throws CoreException {
+	protected void updateTarget(IMakeTarget target) throws CoreException {
 	    if  (target.getContainer() != null ) { // target has not been added to manager.
 			ProjectTargets projectTargets = projectMap.get(target.getProject());
 	    	if (projectTargets == null || !projectTargets.contains(target)) {

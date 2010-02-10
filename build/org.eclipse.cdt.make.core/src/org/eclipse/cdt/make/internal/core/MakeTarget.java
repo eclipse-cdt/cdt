@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	private Map<String, String> buildEnvironment = new HashMap<String, String>();
 	private final Map<String, String> targetAttributes = new HashMap<String, String>();
 
-	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
+	public MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
 		this.project = project;
 		this.targetBuilderID = targetBuilderID;
@@ -71,7 +71,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		this.container = container;
 	}
 
-	void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -331,7 +331,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IProject.class)) {

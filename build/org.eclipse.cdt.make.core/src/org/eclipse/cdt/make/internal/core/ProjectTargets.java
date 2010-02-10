@@ -132,7 +132,7 @@ public class ProjectTargets {
 		return null;
 	}
 
-	public void add(MakeTarget target) throws CoreException {
+	public void add(IMakeTarget target) throws CoreException {
 		List<IMakeTarget> list = targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
@@ -145,7 +145,7 @@ public class ProjectTargets {
 		list.add(target);
 	}
 
-	public boolean contains(MakeTarget target) {
+	public boolean contains(IMakeTarget target) {
 		List<IMakeTarget> list = targetMap.get(target.getContainer());
 		if (list != null && list.contains(target)) {
 			return true;
@@ -153,7 +153,7 @@ public class ProjectTargets {
 		return false;
 	}
 
-	public boolean remove(MakeTarget target) {
+	public boolean remove(IMakeTarget target) {
 		List<IMakeTarget> list = targetMap.get(target.getContainer());
 		if (list == null || !list.contains(target)) {
 			return false;
@@ -264,7 +264,7 @@ public class ProjectTargets {
 							container = project;
 						}
 						try {
-							MakeTarget target = new MakeTarget(manager, project, node.getAttribute(TARGET_ATTR_ID),
+							IMakeTarget target = new MakeTarget(manager, project, node.getAttribute(TARGET_ATTR_ID),
 									node.getAttribute(TARGET_ATTR_NAME));
 							target.setContainer(container);
 							ICStorageElement[] option = node.getChildrenByName(TARGET_STOP_ON_ERROR);

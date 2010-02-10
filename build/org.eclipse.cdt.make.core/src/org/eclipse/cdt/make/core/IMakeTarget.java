@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
+import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -25,44 +26,61 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	public final static String BUILD_TARGET = ARGS_PREFIX + ".build.target"; //$NON-NLS-1$
 
-	String getName();
+	public String getName();
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * Do not use this method to change target name, rather use {@link MakeTargetManager#renameTarget(IMakeTarget, String)}.
+	 * This method is for internal use only.
+	 * 
+	 * @param name
+	 * @since 7.0
+	 */
+	public void setName(String name);
 	
-	String getTargetBuilderID();
+	public String getTargetBuilderID();
 	
-	IProject getProject();
+	public IProject getProject();
 	
 	/**
 	 * @deprecated
+	 * 
+	 * @param target
+	 * @throws CoreException
 	 */
-	void setBuildTarget(String target) throws CoreException;
+	@Deprecated
+	public void setBuildTarget(String target) throws CoreException;
 
 	
 	/**
 	 * @deprecated
+	 * 
+	 * @return build target
 	 */
-	String getBuildTarget() ;
+	@Deprecated
+	public String getBuildTarget();
 	
-	void setRunAllBuilders(boolean runAllBuilders) throws CoreException;
+	public void setRunAllBuilders(boolean runAllBuilders) throws CoreException;
 
-	boolean runAllBuilders();
+	public boolean runAllBuilders();
 	
 	/**
 	 * Get the target build container.
 	 * 
 	 * @return IContainer of where target build will be invoked. 
 	 */
-	IContainer getContainer();
+	public IContainer getContainer();
 	
 	/**
 	 * Make this target temporary on the container, this target will not be persisted, 
 	 * and may not be added to the IMakeTargetManager. 
 	 * @param container
 	 */
-	void setContainer(IContainer container);
+	public void setContainer(IContainer container);
 	
-	void setAppendProjectEnvironment(boolean append);
+	public void setAppendProjectEnvironment(boolean append);
 	
-	boolean appendProjectEnvironment();
+	public boolean appendProjectEnvironment();
 	
-	void build(IProgressMonitor monitor) throws CoreException;
+	public void build(IProgressMonitor monitor) throws CoreException;
 }

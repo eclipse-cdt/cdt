@@ -89,15 +89,16 @@ public abstract class AbstractTargetAction
 			} else {
 				fContainer = null;
 			}
-		} else if (selection instanceof ITextSelection)
-		{	// key binding pressed inside active text editor
+		} else if (selection instanceof ITextSelection)	{	
+			// Key binding pressed inside active text editor
+			fContainer= null;
 			IWorkbenchPart part = fPart != null ? fPart : fWindow.getActivePage().getActivePart();
-			if ( part instanceof TextEditor ) {
+			if (part instanceof TextEditor) {
 				IFile file = org.eclipse.ui.ide.ResourceUtil.getFile(((EditorPart) part).getEditorInput());
-				fContainer = file.getParent();
-			} else {
-				fContainer = null;
-			}
+				if (file != null) {
+					fContainer = file.getParent();
+				}
+			} 
 		}
 		if (fContainer != null && MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(fContainer.getProject())) {
 			isEnabled = true;

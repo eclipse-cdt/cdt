@@ -41,18 +41,15 @@ public class CygPath {
 		stdin = new BufferedWriter(new OutputStreamWriter(cygpath.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(cygpath.getInputStream()));
 		try {
-			getFileName("test"); //$NON-NLS-1$ // test for older cygpath
-			
-			// Bug 298615: Test for versions that tread space as a separator
-			getFileName("a b");  //$NON-NLS-1$ 
-			if (stdout.ready()) {
+			String test= getFileName("a b"); //$NON-NLS-1$ 
+			if ("a".equals(test)) { //$NON-NLS-1$
+				// Bug 298615: This version seems to treat space as a separator
 				fSpaceIsSeparator= true;
-				// Read off everything
-				while(stdout.ready()) {
-					stdout.read();
-				}
+				// Read off second part
+				stdout.readLine();
 			}
 		} catch (IOException e) {
+			// older cygwin
 			dispose();
 			useOldCygPath = true;
 		}

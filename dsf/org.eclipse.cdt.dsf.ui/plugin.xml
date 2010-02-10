@@ -63,7 +63,7 @@
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.VariableRefresh"
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
@@ -76,7 +76,7 @@
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.RegisterRefresh"
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
@@ -89,7 +89,7 @@
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.ExpressionRefresh"
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>
@@ -102,7 +102,7 @@
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
                icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.Refresh"
+               id="org.eclipse.cdt.dsf.debug.ui.viewmodel.update.actions.DebugRefresh"
                label="%action.refresh.label"
                toolbarPath="additions">
          </action>

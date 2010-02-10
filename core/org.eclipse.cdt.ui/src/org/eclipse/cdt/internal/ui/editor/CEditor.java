@@ -228,7 +228,9 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, ICReconcilingListener {
 
+	/** Marker used for synchronization from Problems View to the editor on double-click. */
 	private IMarker fSyncProblemsViewMarker = null;
+
 	/**
 	 * A slightly modified implementation of IGotomarker compared to AbstractDecoratedTextEditor.
 	 * 
@@ -244,8 +246,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			if (getSourceViewer() == null)
 				return;
-
-			fSyncProblemsViewMarker = marker;
 
 			int start= MarkerUtilities.getCharStart(marker);
 			int end= MarkerUtilities.getCharEnd(marker);
@@ -297,7 +297,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			int length= document.getLength();
 			if (end - 1 < length && start < length) {
-				fIsUpdatingMarkerViews= true;
+				fSyncProblemsViewMarker = marker;
 				selectAndReveal(start, end - start);
 			}
 		}
@@ -2511,14 +2511,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	protected void updateStatusLine() {
 		ITextSelection selection = (ITextSelection) getSelectionProvider().getSelection();
 		Annotation annotation = getAnnotation(selection.getOffset(), selection.getLength(), fSyncProblemsViewMarker);
-		fSyncProblemsViewMarker = null;
 		setStatusLineErrorMessage(null);
 		setStatusLineMessage(null);
 		if (annotation != null) {
-			updateMarkerViews(annotation);
+			if (fSyncProblemsViewMarker==null) {
+				updateMarkerViews(annotation);
+			}
 			if (annotation instanceof ICAnnotation && ((ICAnnotation) annotation).isProblem())
 				setStatusLineMessage(annotation.getText());
 		}
+		fSyncProblemsViewMarker = null;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,6 +18,7 @@
  * David McKnight (IBM) - [220524] internalSwitchServiceSubSystemConfiguration -> internalSwitchSubSystemConfiguration
  * Martin Oberhuber (Wind River) - [218304] Improve deferred adapter loading
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * David McKnight   (IBM)        - [302478] ProcessServiceSubSystem.getRemoteProcessObject() doesn't check for null
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.servicesubsystem;
@@ -98,8 +99,13 @@ public class ProcessServiceSubSystem extends RemoteProcessSubSystemImpl implemen
 		HostProcessFilterImpl rpfs = new HostProcessFilterImpl();
 		rpfs.setPid("" + pid); //$NON-NLS-1$
 		IRemoteProcessContext context = new RemoteProcessContext(this, null, rpfs);
-		IHostProcess process = getProcessService().getProcess(pid, null);
-		return getHostProcessToRemoteProcessAdapter().convertToRemoteProcess(context, null, process);
+		IHostProcess process = getProcessService().getProcess(pid, new NullProgressMonitor());
+		if (process != null){
+			return getHostProcessToRemoteProcessAdapter().convertToRemoteProcess(context, null, process);
+		}
+		else {
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)

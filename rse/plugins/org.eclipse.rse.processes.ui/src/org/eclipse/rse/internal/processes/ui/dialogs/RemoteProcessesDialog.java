@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [302485] RemoteProcessesDialog doesn't check for null selection on okay
  *******************************************************************************/
 
 package org.eclipse.rse.internal.processes.ui.dialogs;
@@ -123,10 +123,11 @@ public class RemoteProcessesDialog extends SystemPromptDialog implements KeyList
 	protected boolean processOK() 
 	{
 		StructuredSelection sel = (StructuredSelection)_viewer.getSelection();
-		IRemoteProcess proc = (IRemoteProcess)sel.getFirstElement();
-		if (proc != null)
-		{
-			_selected = proc;
+		if (sel.getFirstElement() instanceof IRemoteProcess){
+			IRemoteProcess proc = (IRemoteProcess)sel.getFirstElement();
+			if (proc != null){
+				_selected = proc;
+			}
 		}
 		return true;
 	}

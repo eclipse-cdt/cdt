@@ -38,6 +38,7 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
@@ -668,6 +669,48 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	}
 
+	// ------------------------------------------------------------------------
+	// Resume at location
+	// ------------------------------------------------------------------------
+
+	/** @since 3.0 */
+	public void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
+		assert context != null;
+
+		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (dmc == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+				"Given context: " + context + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		if (!doCanResume(dmc)) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+				"Cannot resume context", null)); //$NON-NLS-1$
+			rm.done();
+			return;
+		}
+
+		final MIThreadRunState threadState = fThreadRunStates.get(dmc);
+		if (threadState == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE,
+				"Given context: " + dmc + " is not an MI execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		threadState.fResumePending = true;
+		fConnection.queueCommand(
+				new CLIJump(dmc, location),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleFailure() {
+						threadState.fResumePending = false;
+						super.handleFailure();
+					}
+				});
+	}
 	// ------------------------------------------------------------------------
 	// Support functions
 	// ------------------------------------------------------------------------

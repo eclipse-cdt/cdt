@@ -163,7 +163,7 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
 	  </factory>         
       <factory 
-	       	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbRunToLineAdapterFactory" 
+	       	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbSuspendResumeAdapterFactory" 
 	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
          <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
 	  </factory>

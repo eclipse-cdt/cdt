@@ -30,5 +30,15 @@ public interface IMIRunControl extends IRunControl
 	 * @since 3.0
 	 */
 	void runToLocation(IExecutionDMContext context, String location, boolean skipBreakpoints, RequestMonitor rm);
+	
+	/** 
+	 * Request to resume the program starting at the specified location.
+	 * The specified location can be anywhere in the program, but proper
+	 * program behavior is not guaranteed after this operation.
+	 * 
+	 * @since 3.0 
+	 */
+	void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm);
+
 }
 

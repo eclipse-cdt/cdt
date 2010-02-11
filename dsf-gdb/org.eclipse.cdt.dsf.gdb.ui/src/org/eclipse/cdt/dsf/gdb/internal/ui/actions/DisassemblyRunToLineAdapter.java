@@ -60,18 +60,13 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 			if (address != null && target instanceof IAdaptable) {
 				final IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter(IRunToAddress.class);
 				if (runToAddress != null && runToAddress.canRunToAddress(address)) {
-//					Runnable r = new Runnable() {
-//						public void run() {
-							try {
-								boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
-								runToAddress.runToAddress(address, skipBreakpoints);								
-							}
-							catch( DebugException e ) {
-								failed( e );
-							}								
-//						}
-//					};
-//					DebugPlugin.getDefault().asyncExec(r);
+					try {
+						boolean skipBreakpoints = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
+						runToAddress.runToAddress(address, skipBreakpoints);								
+					}
+					catch(DebugException e) {
+						failed(e);
+					}								
 				}
 			}
 		}
@@ -108,5 +103,4 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, e.getMessage(), e ) );
 		GdbUIPlugin.log(ms);
 	}
-	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Ericsson             - Update to support DSF-GDB retargetting MoveToLine
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -67,31 +68,30 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 				else {
 					final String fileName = getFileName( input );
 					IDebugTarget debugTarget = null;
-					if (target instanceof CDebugElement) { // should always be, but just in case
+					if (target instanceof CDebugElement) {
 						debugTarget = ((CDebugElement)target).getDebugTarget();
 					}
-					if (debugTarget != null) {
-						ITextSelection textSelection = (ITextSelection)selection;
-						final int lineNumber = textSelection.getStartLine() + 1;
-						if ( target instanceof IAdaptable ) {
-							final IPath path = convertPath( fileName, debugTarget );
-							final IMoveToLine moveToLine = (IMoveToLine)((IAdaptable)target).getAdapter( IMoveToLine.class );
-							if ( moveToLine != null && moveToLine.canMoveToLine( path.toPortableString(), lineNumber ) ) {
-								Runnable r = new Runnable() {
-									public void run() {
-										try {
-											moveToLine.moveToLine(path.toPortableString(), lineNumber );
-										}
-										catch( DebugException e ) {
-											failed( e );
-										}
+
+					ITextSelection textSelection = (ITextSelection)selection;
+					final int lineNumber = textSelection.getStartLine() + 1;
+					if ( target instanceof IAdaptable ) {
+						final IPath path = convertPath( fileName, debugTarget );
+						final IMoveToLine moveToLine = (IMoveToLine)((IAdaptable)target).getAdapter( IMoveToLine.class );
+						if ( moveToLine != null && moveToLine.canMoveToLine( path.toPortableString(), lineNumber ) ) {
+							Runnable r = new Runnable() {
+								public void run() {
+									try {
+										moveToLine.moveToLine(path.toPortableString(), lineNumber );
 									}
-								};
-								runInBackground( r );
-							}
+									catch( DebugException e ) {
+										failed( e );
+									}
+								}
+							};
+							runInBackground( r );
 						}
-						return;
 					}
+					return;
 				}
 			}
 		}
@@ -163,11 +163,8 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 				}
 				
 				IDebugTarget debugTarget = null;
-				if (target instanceof CDebugElement) { // should always be, but just in case
+				if (target instanceof CDebugElement) {
 					debugTarget = ((CDebugElement)target).getDebugTarget();
-				}
-				if (debugTarget == null) {
-					return false;
 				}
 				
 				final IPath path = convertPath( fileName, debugTarget );				

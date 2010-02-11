@@ -137,10 +137,10 @@ public class GdbRunToLine implements IRunToLine, IRunToAddress {
                 exception = e;
             }
             if (exception != null) {
-                new DebugException(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Faild executing run to line", exception)); //$NON-NLS-1$
+                throw new DebugException(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Faild executing run to line", exception)); //$NON-NLS-1$
             }
         } else {
-            new DebugException(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            
+            throw new DebugException(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            
         }
     }
 }

@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
@@ -704,6 +705,38 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             		"Cannot resume given DMC.", null)); //$NON-NLS-1$
             rm.done();
         }
+	}
+
+	/** @since 3.0 */
+	public void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
+		assert context != null;
+
+		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (dmc == null){
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an thread execution context.", null)); //$NON-NLS-1$  //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		if (doCanResume(dmc)) {
+			fResumePending = true;
+			fMICommandCache.setContextAvailable(dmc, false);
+			fConnection.queueCommand(
+					new CLIJump(dmc, location),
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleFailure() {
+							fResumePending = false;
+							fMICommandCache.setContextAvailable(dmc, true);
+
+							super.handleFailure();
+						}
+					});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+					"Cannot resume given DMC.", null)); //$NON-NLS-1$
+					rm.done();
+		}		
 	}
 
 	/**

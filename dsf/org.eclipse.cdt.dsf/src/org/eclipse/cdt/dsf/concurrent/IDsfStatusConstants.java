@@ -14,7 +14,11 @@ package org.eclipse.cdt.dsf.concurrent;
 /**
  * Interface that hold the codes used when reporting status using the DSF 
  * Request Monitor. 
- * 
+ * <p>
+ * The error codes are ordered by severity so that clients can filter error
+ * reporting using these codes.  E.g. <code>getStatus().getCode() > INVALID_HANDLE</code> 
+ * can be used to filter out errors resulting from expected race conditions. 
+ * </p>
  * @since 1.0
  */
 public interface IDsfStatusConstants {

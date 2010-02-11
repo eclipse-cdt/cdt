@@ -29,6 +29,7 @@ Export-Package: org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional,
  org.eclipse.cdt.dsf.debug.ui.sourcelookup,
  org.eclipse.cdt.dsf.debug.ui.viewmodel;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.examples.dsf,org.eclipse.cdt.examples.dsf.pda.ui",
  org.eclipse.cdt.dsf.debug.ui.viewmodel.actions;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.examples.dsf,org.eclipse.cdt.examples.dsf.pda.ui",
+ org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.examples.dsf,org.eclipse.cdt.examples.dsf.pda.ui",
  org.eclipse.cdt.dsf.debug.ui.viewmodel.expression;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.examples.dsf,org.eclipse.cdt.examples.dsf.pda.ui",
  org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
   x-friends:="org.eclipse.cdt.dsf.gdb.ui,

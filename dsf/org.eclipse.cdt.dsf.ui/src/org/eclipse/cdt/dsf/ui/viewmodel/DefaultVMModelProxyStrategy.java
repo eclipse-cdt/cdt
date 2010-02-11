@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -72,10 +73,17 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     }
     
     public boolean isDeltaEvent(Object event) {
+        return getEventDeltaFlags(event) != IModelDelta.NO_CHANGE; 
+    }
+
+    public int getEventDeltaFlags(Object event) {
         IRootVMNode rootNode = getVMProvider().getRootVMNode();
-        return rootNode != null && 
-                rootNode.isDeltaEvent(getRootElement(), event) && 
-                getDeltaFlags(rootNode, null, event) != IModelDelta.NO_CHANGE; 
+        if (rootNode != null && 
+            rootNode.isDeltaEvent(getRootElement(), event)) 
+        {
+            return getDeltaFlags(rootNode, null, event);
+        }
+        return IModelDelta.NO_CHANGE; 
     }
 
     
@@ -346,7 +354,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
                         new RequestMonitor(getVMProvider().getExecutor(), rm) {
                             @Override
                             protected void handleSuccess() {
-                                rm.setData(viewRootDelta);
+                                // Get rid of redundant CONTENT and STATE flags in delta and prune 
+                                // nodes without flags
+                                rm.setData(pruneDelta((VMDelta)viewRootDelta));
                                 rm.done();
                             }
                         });
@@ -354,6 +364,25 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
             });
     }
 
+    protected VMDelta pruneDelta(VMDelta delta) {
+        delta.accept(new IModelDeltaVisitor() {
+            public boolean visit(IModelDelta deltaNode, int depth) {
+                if ((deltaNode.getFlags() & (IModelDelta.CONTENT | IModelDelta.STATE)) != 0) {
+                    VMDelta parent = (VMDelta)deltaNode.getParentDelta();
+                    while (parent != null) {
+                        if ((parent.getFlags() & IModelDelta.CONTENT) != 0) {
+                            ((VMDelta)deltaNode).setFlags(deltaNode.getFlags() & ~(IModelDelta.CONTENT | IModelDelta.STATE));
+                            break;
+                        }
+                        parent = parent.getParentDelta();
+                    }
+                }
+                return true;
+            }
+        });
+        return delta;
+    }
+    
     /** 
      * Base implementation that handles calling child nodes to build 
      * the model delta.  This method delegates to two other methods:

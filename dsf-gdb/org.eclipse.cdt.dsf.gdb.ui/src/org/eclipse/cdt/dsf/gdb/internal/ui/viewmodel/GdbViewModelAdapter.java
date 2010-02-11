@@ -13,13 +13,14 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.AbstractDebugVMAdapter;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.BreakpointVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMProvider;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMProvider;
 import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch.LaunchVMProvider;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -43,7 +44,7 @@ public class GdbViewModelAdapter extends AbstractDebugVMAdapter
     }
     
     @Override
-    protected AbstractDMVMProvider createViewModelProvider(IPresentationContext context) {
+    protected IVMProvider createViewModelProvider(IPresentationContext context) {
         if ( IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId()) ) {
             return new LaunchVMProvider(this, context, getSession()); 
         } else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId()) ) {
@@ -54,6 +55,8 @@ public class GdbViewModelAdapter extends AbstractDebugVMAdapter
             return new ExpressionVMProvider(this, context, getSession());
         } else if (IDebugUIConstants.ID_MODULE_VIEW.equals(context.getId()) ) {
             return new ModulesVMProvider(this, context, getSession());
+        } else if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(context.getId()) ) {
+            return new BreakpointVMProvider(this, context);
         }
         return null;
     }    

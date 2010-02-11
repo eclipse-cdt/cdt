@@ -387,13 +387,12 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
     /**
      * Convenience method which checks whether given layout node is a node that
      * is configured in this ViewModelProvider.
+     * <br>
+     * Note: isOurNode() will also return true if the given node was previously
+     * configured in the VM provider but was later disposed.
      */
     private boolean isOurNode(IVMNode node) {
-        for (IVMNode nodeToSearch : getVMProvider().getAllVMNodes()) {
-            if (nodeToSearch.equals(node))
-                return true;
-        }
-        return false;
+        return node.getVMProvider() == getVMProvider();
     }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
  
 /**
- * Resume at line target adapter for the CDI debugger
+ * Resume at line target adapter for the CDI and DSF-GDB debuggers
  */
 public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 
@@ -68,7 +68,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 				else {
 					final String fileName = getFileName( input ); // actually, absolute path, not just file name
 					IDebugTarget debugTarget = null;
-					if ( target instanceof CDebugElement ) { // should always be, but just in case
+					if ( target instanceof CDebugElement ) {
 						debugTarget = ((CDebugElement)target).getDebugTarget();
 					}
 					final IPath path = convertPath( fileName, debugTarget );					
@@ -161,12 +161,10 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 					return false;
 				}
 				IDebugTarget debugTarget = null;
-				if ( target instanceof CDebugElement ) { // should always be, but just in case
+				if ( target instanceof CDebugElement ) {
 					debugTarget = ((CDebugElement)target).getDebugTarget();
 				}
-				if (debugTarget == null) {
-					return false;
-				}
+
 				final IPath path = convertPath( fileName, debugTarget );									
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;

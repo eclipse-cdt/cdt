@@ -45,7 +45,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Move to line target adapter for the CDI debugger
+ * Move to line target adapter for the CDI and DSF-GDB debuggers
  */
 public class MoveToLineAdapter implements IMoveToLineTarget {
 

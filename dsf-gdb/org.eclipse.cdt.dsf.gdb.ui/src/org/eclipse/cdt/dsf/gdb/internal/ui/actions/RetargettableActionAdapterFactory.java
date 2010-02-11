@@ -29,12 +29,12 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 		if (adapterType == IRunToLineTarget.class) {
 			return new DisassemblyRunToLineAdapter();
 		} 
-//		if (adapterType == IResumeAtLineTarget.class) {
-//			return new DisassemblyResumeAtLineAdapter();
-//		}
 		if (adapterType == IMoveToLineTarget.class) {
 			return new DisassemblyMoveToLineAdapter();
 		} 
+		if (adapterType == IResumeAtLineTarget.class) {
+			return new DisassemblyResumeAtLineAdapter();
+		}
 		return null;
 	}
 

@@ -15,6 +15,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbMoveToLine;
+import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbResumeAtLine;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRunToLine;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IAdaptable;
@@ -23,9 +24,10 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISuspendResume;
 
 /**
- * Adapter factory for Run-To-Line and Move-To-Line
+ * Adapter factory for Run-To-Line, Move-To-Line
+ * and Resume-At-Line
  * 
- * @since 3.0
+ * @since 2.1
  */
 public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
 
@@ -33,10 +35,12 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
 
         private final GdbRunToLine fRunToLine;
         private final GdbMoveToLine fMoveToLine;
+        private final GdbResumeAtLine fResumeAtLine;
         
         GdbSuspendResume(IExecutionDMContext execCtx) {
             fRunToLine = new GdbRunToLine(execCtx);
             fMoveToLine = new GdbMoveToLine(execCtx);
+            fResumeAtLine = new GdbResumeAtLine(execCtx);
         }
         
         public Object getAdapter(Class adapter) {
@@ -45,6 +49,9 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
             }
             if (adapter.isInstance(fMoveToLine)) {
                 return fMoveToLine;
+            }
+            if (adapter.isInstance(fResumeAtLine)) {
+                return fResumeAtLine;
             }
             return null;
         }
@@ -62,8 +69,8 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
                 IExecutionDMContext execDmc = DMContexts.getAncestorOfType(
                     ((IDMVMContext)adaptableObject).getDMContext(),
                     IExecutionDMContext.class);
-            	// It only makes sense to RunToLine or MoveToLine
-                // if we are dealing with a thread, not a container
+            	// It only makes sense to RunToLine, MoveToLine or
+                // ResumeAtLine if we are dealing with a thread, not a container
                 if (execDmc != null && !(execDmc instanceof IContainerDMContext)) {
                     return new GdbSuspendResume(execDmc);
                 }

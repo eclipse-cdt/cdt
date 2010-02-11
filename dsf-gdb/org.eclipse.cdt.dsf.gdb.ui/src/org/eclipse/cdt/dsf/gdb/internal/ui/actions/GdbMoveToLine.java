@@ -41,7 +41,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * Implements the CDT's move to line interface.
  * 
- * @since 3.0
+ * @since 2.1
  */
 public class GdbMoveToLine implements IMoveToLine, IMoveToAddress {
 
@@ -105,13 +105,13 @@ public class GdbMoveToLine implements IMoveToLine, IMoveToAddress {
                             new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fContext.getSessionId());
                         
                         IRunControl runControl = tracker.getService(IRunControl.class);
+                        tracker.dispose();
                         if (runControl != null) {
                             runControl.canResume(fContext, rm);
                         } else {
                             rm.setData(false);
                             rm.done();
                         }
-                        tracker.dispose();
                     }
                 };
                 session.getExecutor().execute(query);

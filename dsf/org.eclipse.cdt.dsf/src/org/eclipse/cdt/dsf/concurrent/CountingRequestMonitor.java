@@ -14,6 +14,7 @@ import java.util.concurrent.Executor;
 
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * A request monitor that is used for multiple activities. We are told the
@@ -114,8 +115,8 @@ public class CountingRequestMonitor extends RequestMonitor {
     
     @Override
     public synchronized void setStatus(IStatus status) {
-        if ((getStatus() instanceof DsfMultiStatus)) {
-            ((DsfMultiStatus)getStatus()).add(status);
+        if ((getStatus() instanceof MultiStatus)) {
+            ((MultiStatus)getStatus()).add(status);
         }
     };
 }

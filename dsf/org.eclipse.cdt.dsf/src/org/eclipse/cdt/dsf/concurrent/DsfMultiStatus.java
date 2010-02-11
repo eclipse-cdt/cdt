@@ -50,18 +50,12 @@ public class DsfMultiStatus extends MultiStatus {
     }
     
     @Override
-    public int getCode() {
-        IStatus[] children = getChildren();
-        if (children.length != 0) {
-            int maxCode = Integer.MIN_VALUE;
-            for (IStatus status : children) {
-                if (status.getCode() > maxCode) {
-                    maxCode = status.getCode();
-                }
-            }
-            return maxCode;
-        } else {
-            return super.getCode();
+    public void add(IStatus status) {
+        super.add(status);
+        int newCode = status.getCode();
+        if (newCode > getCode()) {
+            setCode(newCode);
         }
+
     }
 }

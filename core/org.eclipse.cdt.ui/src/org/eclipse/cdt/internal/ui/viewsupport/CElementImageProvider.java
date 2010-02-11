@@ -14,8 +14,10 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -23,12 +25,14 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.IBinaryModule;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IContributedCElement;
@@ -45,6 +49,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.model.CModelManager;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
@@ -120,6 +126,10 @@ public class CElementImageProvider {
 	public Image getImageLabel(Object element, int flags) {
 		ImageDescriptor descriptor= null;
 		if (element instanceof ICElement) {
+			if (!CCorePlugin.showSourceRootsAtTopOfProject() &&
+				element instanceof ICContainer && isParentOfSourceRoot(element))
+				descriptor = CPluginImages.DESC_OBJS_SOURCE2_ROOT;
+			else
 			descriptor= getCImageDescriptor((ICElement) element, flags);
 		} else if (element instanceof IFile) {
 			// Check for Non Translation Unit.
@@ -138,6 +148,9 @@ public class CElementImageProvider {
 				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
 				descriptor = new CElementImageDescriptor(descriptor, 0, size);
 			}
+		} else if (!CCorePlugin.showSourceRootsAtTopOfProject() &&
+				element instanceof IFolder && isParentOfSourceRoot(element)) {
+			descriptor = CPluginImages.DESC_OBJS_SOURCE2_ROOT;
 		}
 		if (descriptor == null && element instanceof IAdaptable) {
 			descriptor= getWorkbenchImageDescriptor((IAdaptable) element, flags);
@@ -146,6 +159,34 @@ public class CElementImageProvider {
 			return CUIPlugin.getImageDescriptorRegistry().get(descriptor);
 		}
 		return null;
+	}
+
+	private boolean isParentOfSourceRoot(Object element) {
+		// we want to return true for parents of source roots which are not themselves source roots
+		// so we can distinguish the two and return the source root icon or the parent of source root icon
+		IFolder folder = null;
+		if (element instanceof ICContainer && !(element instanceof ISourceRoot))
+			folder = (IFolder) ((ICContainer) element).getResource();
+		else if (element instanceof IFolder)
+			folder = (IFolder) element;
+		if (folder == null)
+			return false;
+		
+		ICProject cproject = CModelManager.getDefault().getCModel().findCProject(folder.getProject());
+		if (cproject != null) {
+			try {
+				IPath folderPath = folder.getFullPath();
+				for (ICElement sourceRoot : cproject.getSourceRoots()) {
+					IPath sourceRootPath = sourceRoot.getPath();
+					if (folderPath.isPrefixOf(sourceRootPath)) {
+						return true;
+					}
+				}
+			} catch (CModelException e) {
+			}
+		}
+		
+		return false;
 	}
 
 	public static ImageDescriptor getImageDescriptor(int type) {

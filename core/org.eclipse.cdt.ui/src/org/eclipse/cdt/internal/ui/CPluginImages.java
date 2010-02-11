@@ -98,6 +98,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_TUNIT_RESOURCE_H= NAME_PREFIX + "ch_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_RESOURCE_A= NAME_PREFIX + "asm_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE_ROOT=  NAME_PREFIX + "sroot_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
+	public static final String IMG_OBJS_SOURCE2_ROOT=  NAME_PREFIX + "sroot2_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_FOLDER=  NAME_PREFIX + "fldr_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_CFOLDER=  NAME_PREFIX + "cfolder_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_CONFIG =  NAME_PREFIX + "config.gif"; // $NON-NLS-1$  //$NON-NLS-1$
@@ -184,6 +185,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_TUNIT_RESOURCE_H= createManaged(T_OBJ, IMG_OBJS_TUNIT_RESOURCE_H);
 	public static final ImageDescriptor DESC_OBJS_TUNIT_RESOURCE_A= createManaged(T_OBJ, IMG_OBJS_TUNIT_RESOURCE_A);
 	public static final ImageDescriptor DESC_OBJS_SOURCE_ROOT= createManaged(T_OBJ, IMG_OBJS_SOURCE_ROOT);
+	public static final ImageDescriptor DESC_OBJS_SOURCE2_ROOT= createManaged(T_OBJ, IMG_OBJS_SOURCE2_ROOT);
 	public static final ImageDescriptor DESC_OBJS_FOLDER= createManaged(T_OBJ, IMG_OBJS_FOLDER);
 	public static final ImageDescriptor DESC_OBJS_CFOLDER= createManaged(T_OBJ, IMG_OBJS_CFOLDER);
 	public static final ImageDescriptor DESC_OBJS_CONFIG = createManaged(T_OBJ, IMG_OBJS_CONFIG);

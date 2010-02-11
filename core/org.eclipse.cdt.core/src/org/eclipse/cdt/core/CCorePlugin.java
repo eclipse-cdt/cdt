@@ -1269,4 +1269,14 @@ public class CCorePlugin extends Plugin {
 	public static IPDOMManager getPDOMManager() {
 		return getDefault().pdomManager;
 	}
+
+	/**
+	 * Returns preference controlling whether source roots are shown at the top of projects
+	 * or embedded within the resource tree of projects when they are not top level folders.
+	 * 
+	 * @return boolean preference value
+	 */
+	public static boolean showSourceRootsAtTopOfProject() {
+		return getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT);
+	}
 }

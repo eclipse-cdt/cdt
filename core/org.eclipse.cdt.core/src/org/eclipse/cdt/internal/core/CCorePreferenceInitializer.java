@@ -60,6 +60,7 @@ public class CCorePreferenceInitializer extends AbstractPreferenceInitializer {
 		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, true);
 		defaultPreferences.putBoolean(CCorePlugin.PREF_USE_STRUCTURAL_PARSE_MODE, false);
 		defaultPreferences.putBoolean(CCorePreferenceConstants.FILE_PATH_CANONICALIZATION, true);
+		defaultPreferences.putBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
 		
 		// indexer defaults
 		IndexerPreferences.initializeDefaultPreferences(defaultPreferences);

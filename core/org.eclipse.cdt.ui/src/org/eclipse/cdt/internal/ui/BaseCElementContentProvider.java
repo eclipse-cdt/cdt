@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -333,6 +335,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		Object parent = null;
 		if (element instanceof ICElement) {
+			if (element instanceof ICContainer && !CCorePlugin.showSourceRootsAtTopOfProject()) {
+				parent = ((ICContainer) element).getResource().getParent();
+			}
+			else
 			parent = ((ICElement)element).getParent();
 			// translate working copy parent to original TU,
 			// because working copies are never returned by getChildren
@@ -415,8 +421,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				ICElement[] c2 = ((ISourceRoot)child).getChildren();
 				for (int k = 0; k < c2.length; ++k)
 					list.add(c2[k]);
-			} else
+			} else if (CCorePlugin.showSourceRootsAtTopOfProject()) {
 				list.add(child);
+			} else if (child instanceof ISourceRoot && 
+						child.getResource().getParent().equals(cproject.getProject())) {	
+				list.add(child);
+		}
 		}
 
 		Object[] objects = list.toArray();
@@ -554,7 +564,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected Object[] getCResources(ICContainer container) throws CModelException {
 		Object[] objects = null;
-		Object[] children = container.getChildren();
+		ICElement[] children = container.getChildren();
+		List<ICElement> missingElements = Collections.emptyList();
+		if (!CCorePlugin.showSourceRootsAtTopOfProject()) {
+			missingElements = getMissingElements(container, children);
+		}
 		try {
 			objects = container.getNonCResources();
 			if (objects.length > 0) {
@@ -562,10 +576,47 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 		} catch (CModelException e) {
 		}
-		if (objects == null || objects.length == 0) {
-			return children;
+		
+		Object[] result = children;
+		if (missingElements.size() > 0) {
+            result = concatenate(result, missingElements.toArray());
 		}
-		return concatenate(children, objects);
+
+		if (objects != null && objects.length > 0) {
+			result = concatenate(result, objects);
+		}
+
+		return result;
+	}
+
+	private List<ICElement> getMissingElements(ICContainer container, ICElement[] elements) {
+		// nested source roots may be filtered out below the project root, 
+		// we need to find them to add them back in
+		List<ICElement> missingElements = new ArrayList<ICElement>();
+		try {
+			List<IResource> missingContainers = new ArrayList<IResource>();
+			IResource[] allChildren = ((IContainer) container.getResource()).members();
+			for (IResource child : allChildren) {
+				if (!(child instanceof IContainer))
+					continue;
+				boolean found = false;
+				for (ICElement element : elements) {
+					if (element.getResource().equals(child)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					missingContainers.add(child);
+			}
+			for (IResource resource : missingContainers) {
+				ICElement element = container.getCProject().findElement(resource.getFullPath());
+				if (element != null)
+					missingElements.add(element);
+			}
+		} catch (CoreException e1) {
+		}
+		return missingElements;
 	}
 
 	protected Object[] getResources(IProject project) {
@@ -617,16 +668,19 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			// folder we have to exclude it as a normal child.
 			if (o instanceof IFolder) {
 				IFolder folder = (IFolder)o;
-				boolean found = false;
-				for (ISourceRoot root : roots) {
-					if (root.getPath().equals(folder.getFullPath())) {
-						found = true;
+				ISourceRoot root = null;
+				for (int j = 0; j < roots.length; j++) {
+					if (roots[j].getPath().equals(folder.getFullPath())) {
+						root = roots[j];
 						break;
 					}
 				}
 				// it is a sourceRoot skip it.
-				if (found) {
+				if (root != null) {
+					if (CCorePlugin.showSourceRootsAtTopOfProject())
 					continue;
+					else
+						o = root;
 				}
 			} else if (o instanceof IFile){
 				boolean found = false;

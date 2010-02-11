@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -28,6 +30,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.prefs.BackingStoreException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
@@ -49,6 +53,8 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	private SelectionButtonDialogField fCViewGroupMacros;
 	private SelectionButtonDialogField fOutlineGroupMembers;
 	private SelectionButtonDialogField fOutlineGroupMacros;
+	private SelectionButtonDialogField fShowSourceRootsAtTopOfProject;
+
 	
 	public AppearancePreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -83,6 +89,10 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fCViewSeparateHeaderAndSource= new SelectionButtonDialogField(SWT.CHECK);
 		fCViewSeparateHeaderAndSource.setDialogFieldListener(listener);
 		fCViewSeparateHeaderAndSource.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewSeparateHeaderAndSource_label); 
+
+		fShowSourceRootsAtTopOfProject= new SelectionButtonDialogField(SWT.CHECK);
+		fShowSourceRootsAtTopOfProject.setDialogFieldListener(listener);
+		fShowSourceRootsAtTopOfProject.setLabelText(PreferencesMessages.AppearancePreferencePage_showSourceRootsAtTopOfProject_label); 
 		
 		fOutlineGroupMacros= new SelectionButtonDialogField(SWT.CHECK);
 		fOutlineGroupMacros.setDialogFieldListener(listener);
@@ -103,6 +113,8 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		fOutlineGroupMacros.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
+		boolean showSourceRootsAtTopOfProject = CCorePlugin.showSourceRootsAtTopOfProject();
+		fShowSourceRootsAtTopOfProject.setSelection(showSourceRootsAtTopOfProject);
 	}
 	
 	/*
@@ -148,6 +160,10 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		gd.horizontalSpan= 2;
 		noteControl.setLayoutData(gd);
 		
+		
+		new Separator().doFillIntoGrid(result, nColumns);
+		fShowSourceRootsAtTopOfProject.doFillIntoGrid(result, nColumns);
+		
 		initFields();
 		
 		Dialog.applyDialogFont(result);
@@ -189,6 +205,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_MACROS, fOutlineGroupMacros.isSelected());
 		try {
 			new InstanceScope().getNode(CUIPlugin.PLUGIN_ID).flush();
+			IEclipsePreferences corePluginNode = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+			corePluginNode.putBoolean(
+					CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, 
+					fShowSourceRootsAtTopOfProject.isSelected());
+			corePluginNode.flush();
 		} catch (BackingStoreException exc) {
 			CUIPlugin.log(exc);
 		}
@@ -209,6 +230,8 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		fOutlineGroupMembers.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS));
 		fOutlineGroupMacros.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_MACROS));
+		boolean showSourceRootsPref = new DefaultScope().getNode(CCorePlugin.PLUGIN_ID).getBoolean(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT, true);
+		fShowSourceRootsAtTopOfProject.setSelection(showSourceRootsPref);
 		super.performDefaults();
 	}
 }

@@ -140,6 +140,7 @@ public final class PreferencesMessages extends NLS {
 	public static String AppearancePreferencePage_outlineGroupMacros_label;
 	public static String AppearancePreferencePage_note;
 	public static String AppearancePreferencePage_preferenceOnlyForNewViews;
+	public static String AppearancePreferencePage_showSourceRootsAtTopOfProject_label;
 	public static String CEditorPreferencePage_folding_title;
 	public static String FoldingConfigurationBlock_enable;
 	public static String FoldingConfigurationBlock_combo_caption;

@@ -142,4 +142,9 @@ public class CCorePreferenceConstants {
 	 * Attempt to show source files for executable binaries.
 	 */
 	public static final String SHOW_SOURCE_FILES_IN_BINARIES = CCorePlugin.PLUGIN_ID + ".showSourceFilesInBinaries"; //$NON-NLS-1$
+	
+	/**
+	 * Show source roots at the top level of projects.
+	 */
+	public static final String SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT = CCorePlugin.PLUGIN_ID + ".showSourceRootsAtTopLevelOfProject"; //$NON-NLS-1$
 }

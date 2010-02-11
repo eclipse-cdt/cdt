@@ -43,7 +43,7 @@ public class InvalidExpressionVMContext extends AbstractVMContext implements IEl
     }
 
     @Override
-    @SuppressWarnings("unchecked") 
+    @SuppressWarnings({ "rawtypes", "unchecked" }) 
     public Object getAdapter(Class adapter) {
         if (adapter.isAssignableFrom(fExpression.getClass())) {
             return fExpression;

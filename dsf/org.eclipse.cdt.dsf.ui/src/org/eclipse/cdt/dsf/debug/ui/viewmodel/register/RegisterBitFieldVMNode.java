@@ -107,7 +107,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         }
         
         @Override
-        @SuppressWarnings("unchecked") 
+        @SuppressWarnings({ "rawtypes", "unchecked" }) 
         public Object getAdapter(Class adapter) {
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;

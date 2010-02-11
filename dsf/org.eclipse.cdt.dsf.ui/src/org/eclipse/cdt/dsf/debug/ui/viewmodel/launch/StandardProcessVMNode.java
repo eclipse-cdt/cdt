@@ -56,7 +56,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         @Override
         public IVMNode getVMNode() { return StandardProcessVMNode.this; }        
         @Override
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         public Object getAdapter(Class adapter) { 
             Object vmcAdapter = super.getAdapter(adapter);
             if (vmcAdapter != null) {

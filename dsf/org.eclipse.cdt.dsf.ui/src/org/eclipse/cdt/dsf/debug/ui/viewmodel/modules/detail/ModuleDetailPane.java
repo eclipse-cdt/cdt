@@ -175,7 +175,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         return false;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
         if (ITextViewer.class.equals(adapter)) {
             return fSourceViewer;

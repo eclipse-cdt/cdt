@@ -40,7 +40,7 @@ abstract public class AbstractVMContext implements IVMContext {
     
     public IVMNode getVMNode() { return fNode; }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         // If the context implements the given adapter directly, it always takes
         // precedence.

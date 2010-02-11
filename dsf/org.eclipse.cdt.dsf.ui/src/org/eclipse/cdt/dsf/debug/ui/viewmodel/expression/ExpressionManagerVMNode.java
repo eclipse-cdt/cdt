@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Composite;
  * to configure the nodes that this node will delegate to when processing expressions.
  * </p> 
  */
-@SuppressWarnings("restriction")
 public class ExpressionManagerVMNode extends AbstractVMNode
     implements IElementLabelProvider, IElementEditor
 {
@@ -71,7 +70,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         }
 
         @Override
-        @SuppressWarnings("unchecked") 
+        @SuppressWarnings("rawtypes") 
         public Object getAdapter(Class adapter) {
             return super.getAdapter(adapter);
         }

@@ -218,7 +218,7 @@ public class RegisterVMProvider extends AbstractDMVMProvider
          * return the context, otherwise delegate to IDMContext.getAdapter().
          */
         @Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
         public Object getAdapter(Class adapter) {
             Object superAdapter = super.getAdapter(adapter);
             if (superAdapter != null) {

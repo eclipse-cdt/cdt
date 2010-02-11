@@ -71,7 +71,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME+ "locateFileButton"; //$NON-NLS-1$
 	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME+ "editLookupButton"; //$NON-NLS-1$
 		
-	private String missingFile;
+	private String missingFile = ""; //$NON-NLS-1$
 	private ILaunchConfiguration launch;
 	private IAdaptable context;
 	private ITranslationUnit tunit;

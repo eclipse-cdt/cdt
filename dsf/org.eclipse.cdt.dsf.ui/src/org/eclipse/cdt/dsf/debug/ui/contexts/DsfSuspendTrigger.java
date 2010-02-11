@@ -86,7 +86,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
         getIsLaunchSuspended(new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
             @Override
             protected void handleSuccess() {
-                if (isSuccess() && !fDisposed && getData().booleanValue()) {
+                if (!fDisposed && getData().booleanValue()) {
                     listener.suspended(fLaunch, null);
                 }
             }

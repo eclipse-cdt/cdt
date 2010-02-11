@@ -74,6 +74,7 @@ import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -83,6 +84,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
@@ -3328,6 +3330,16 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				sourceElement = new LocalFileStorage((File)sourceElement);
 			}
 			if (sourceElement instanceof IStorage) {
+				if (!(sourceElement instanceof IFile)) {
+					// try to resolve as resource
+					final IPath location= ((IStorage) sourceElement).getFullPath();
+					if (location != null) {
+						IFile iFile = ResourceLookup.selectFileForLocation(location, null);
+						if (iFile != null) {
+							sourceElement = iFile;
+						}
+					}
+				}
 				fFile2Storage.put(file, sourceElement);
 			} else {
 				fFile2Storage.put(file, null);

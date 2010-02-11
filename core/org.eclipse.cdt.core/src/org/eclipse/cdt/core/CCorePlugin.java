@@ -1275,6 +1275,7 @@ public class CCorePlugin extends Plugin {
 	 * or embedded within the resource tree of projects when they are not top level folders.
 	 * 
 	 * @return boolean preference value
+	 * @since 5.2
 	 */
 	public static boolean showSourceRootsAtTopOfProject() {
 		return getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT);

@@ -145,6 +145,7 @@ public class CCorePreferenceConstants {
 	
 	/**
 	 * Show source roots at the top level of projects.
+	 * @since 5.2
 	 */
 	public static final String SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT = CCorePlugin.PLUGIN_ID + ".showSourceRootsAtTopLevelOfProject"; //$NON-NLS-1$
 }

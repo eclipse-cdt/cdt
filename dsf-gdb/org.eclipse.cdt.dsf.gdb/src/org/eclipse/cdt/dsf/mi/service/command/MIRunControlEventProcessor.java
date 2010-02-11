@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.mi.service.command;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerStartedDMEvent;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
@@ -283,7 +285,25 @@ public class MIRunControlEventProcessor
                 	}
                 }            	
             } else if ("error".equals(state)) { //$NON-NLS-1$
-            } 
+            } else if ("done".equals(state)) { //$NON-NLS-1$
+            	// For GDBs older than 7.0, GDB does not trigger a *stopped event
+            	// when it stops due to a CLI command.  We have to trigger the 
+            	// MIStoppedEvent ourselves
+            	if (cmd instanceof CLICommand<?>) {
+                	IRunControl runControl = fServicesTracker.getService(IRunControl.class);
+                	IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+                	if (runControl != null && procService != null) {
+                		String groupId = MIProcesses.UNIQUE_GROUP_ID;
+                		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+                		IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+                		
+                		if (runControl.isSuspended(processContainerDmc) == false) {
+                			MIEvent<?> event = MIStoppedEvent.parse(processContainerDmc, id, rr.getMIResults());
+                			fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+            			}
+            		}
+            	}
+            }
         }
     }
 }

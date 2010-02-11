@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 QNX Software Systems and others.
+ * Copyright (c) 2008, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -183,7 +183,7 @@ public class CLIEventProcessor_7_0
 
     private static int getSteppingOperationKind(String operation) {
         int type = -1;
-        /* execution commands: n, next, s, step, si, stepi, u, until, finish,
+        /* execution commands: n, next, s, step, si, stepi, u, until, finish, rerurn,
            c, continue, fg */
         if (operation.equals("n") || operation.equals("next")) { //$NON-NLS-1$ //$NON-NLS-2$
             type = MIRunningEvent.NEXT;
@@ -198,6 +198,8 @@ public class CLIEventProcessor_7_0
                 type = MIRunningEvent.UNTIL;
         } else if (operation.startsWith("fin") && "finish".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
             type = MIRunningEvent.FINISH;
+		} else if (operation.startsWith("ret") && "return".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
+			type = MIRunningEvent.RETURN;
         } else if (operation.equals("c") || operation.equals("fg") || //$NON-NLS-1$ //$NON-NLS-2$
                (operation.startsWith("cont") && "continue".indexOf(operation) != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
             type = MIRunningEvent.CONTINUE;

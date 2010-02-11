@@ -38,20 +38,23 @@ public class MinGWDebuggerPage extends StandardGDBDebuggerPage {
 	protected String defaultGdbCommand(ILaunchConfiguration configuration) {
 		// Lets look it up in the project
 		try {
-			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
+			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (projectName.length() > 0) {
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 	        	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
 	        	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
 	        	IEnvironmentVariableManager envVarMgr = CCorePlugin.getDefault().getBuildEnvironmentManager();
-	        	IEnvironmentVariable pathvar = envVarMgr.getVariable("PATH", configDesc, true);
-	        	String path = pathvar.getValue();
-	        	String[] dirs = path.split(pathvar.getDelimiter());
-	        	for (int i = 0; i < dirs.length; ++i) {
-	        		IPath gdbPath = new Path(dirs[i]).append("gdb.exe"); //$NON-NLS-1$
-        			File gdbFile = gdbPath.toFile();
-        			if (gdbFile.exists())
-        				return gdbPath.toOSString();
+	        	IEnvironmentVariable pathvar = envVarMgr.getVariable("PATH", configDesc, true); //$NON-NLS-1$
+	        	if(pathvar != null)
+	        	{
+		        	String path = pathvar.getValue();
+		        	String[] dirs = path.split(pathvar.getDelimiter());
+		        	for (int i = 0; i < dirs.length; ++i) {
+		        		IPath gdbPath = new Path(dirs[i]).append("gdb.exe"); //$NON-NLS-1$
+	        			File gdbFile = gdbPath.toFile();
+	        			if (gdbFile.exists())
+	        				return gdbPath.toOSString();
+		        	}	
 	        	}
 			}
 		} catch (CoreException e) {

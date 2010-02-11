@@ -47,7 +47,7 @@ abstract public class AbstractDsfService
     private DsfServicesTracker fTracker;
     
     /** Properties that this service was registered with */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private Dictionary fProperties;
 
     /** Properties that this service was registered with */
@@ -74,7 +74,7 @@ abstract public class AbstractDsfService
 	 * 
 	 * @see org.eclipse.cdt.dsf.service.IDsfService#getProperties()
 	 */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Dictionary getProperties() { return fProperties; }
     
     public String getServiceFilter() { return fFilter; }
@@ -135,7 +135,7 @@ abstract public class AbstractDsfService
 	 *            (we modify the caller's object), to record the id of the dsf
 	 *            session associated with the service.
 	 */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void register(String[] classes, Dictionary properties) {
     	
     	/*
@@ -212,7 +212,7 @@ abstract public class AbstractDsfService
     /**
      * Generates an LDAP filter to uniquely identify this service.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     private String generateFilter(Dictionary properties) {
         StringBuffer filter = new StringBuffer();
         filter.append("(&"); //$NON-NLS-1$

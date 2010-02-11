@@ -163,7 +163,7 @@ public class DsfServicesTracker {
      * session-ID 
      * @return OSGI service reference object to the desired service, null if not found
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public ServiceReference getServiceReference(Class serviceClass, String filter) {
         if (fDisposed) {
             return null;

@@ -60,7 +60,7 @@ public interface IDsfService {
     /**
      * Returns the map of properties that this service was registered with.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Dictionary getProperties();
     
     /**

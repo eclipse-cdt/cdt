@@ -38,13 +38,13 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecJump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNextInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
@@ -702,7 +702,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 		threadState.fResumePending = true;
 		fConnection.queueCommand(
-				new CLIJump(dmc, location),
+				new MIExecJump(dmc, location),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleFailure() {

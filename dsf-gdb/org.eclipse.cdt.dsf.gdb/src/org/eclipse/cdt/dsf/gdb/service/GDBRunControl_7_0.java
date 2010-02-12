@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecJump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNextInstruction;
@@ -485,6 +486,39 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         }
 	}
 
+	/** @since 3.0 */
+	@Override
+	public void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
+		assert context != null;
+
+		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (dmc == null){
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given context: " + context + " is not an thread execution context.", null)); //$NON-NLS-1$  //$NON-NLS-2$
+			rm.done();
+			return;
+		}
+
+		if (doCanResume(dmc)) {
+			setResumePending(true);
+			getCache().setContextAvailable(dmc, false);
+			getConnection().queueCommand(
+					new MIExecJump(dmc, location),
+					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleFailure() {
+							setResumePending(false);
+							getCache().setContextAvailable(dmc, true);
+
+							super.handleFailure();
+						}
+					});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
+					"Cannot resume given DMC.", null)); //$NON-NLS-1$
+					rm.done();
+		}		
+	}
+	
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.

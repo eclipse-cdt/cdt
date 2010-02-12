@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [230285] [shells] Remote shells should be restored on quit and re-start of RSE
  * David McKnight   (IBM)        - [252708] Saving Profile Job happens when not changing Property Values on Connections
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * David McKnight     (IBM)   [302724] problems with environment variable substitution
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -302,7 +303,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		{
 			for (int i = userVars.length - 1; i >= 0; i--)
 			{
-				String userVar = userVars[i];
+				String userVar = userVars[i]; 
 				String varName = null;
 				int assignIndex = userVar.indexOf('=');
 				if (assignIndex > 0)
@@ -310,7 +311,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 					varName = userVar.substring(0, assignIndex + 1);
 					if (isUniqueVariable(combinedVars, varName))
 					{
-						combinedVars.add(userVar);
+						combinedVars.add(0,userVar);
 					}
 				}
 			}

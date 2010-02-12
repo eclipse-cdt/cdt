@@ -26,6 +26,7 @@
  *  David McKnight     (IBM)   [287305] [dstore] Need to set proper uid for commands when using SecuredThread and single server for multiple clients[
  *  Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
  *  David McKnight     (IBM)   [302174] [dstore] shell init command can potentially get called too late
+ *  David McKnight     (IBM)   [302724] problems with environment variable substitution
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -753,9 +754,9 @@ public class CommandMinerThread extends MinerThread
 		DataElement projectEnv = null;
 		if (projectEnvReference != null && (projectEnvReference.size() > 0))
 			projectEnv = (DataElement) projectEnvReference.get(0);
-		
 
 		String[] theEnv = mergeEnvironments(systemEnv, projectEnv);
+				
 		return theEnv;
 	}
 	
@@ -791,6 +792,7 @@ public class CommandMinerThread extends MinerThread
 			String theKey = getKey(theVariable);
 			String theValue = getValue(theVariable);
 			theValue = calculateValue(theValue, varTable);
+
 			varTable.put(theKey, theValue);
 		}
 		
@@ -872,12 +874,17 @@ public class CommandMinerThread extends MinerThread
 						{
 							if (Character.isJavaIdentifierStart(c))
 							{
+
 								while (nextIndex + 1 < theValue.length() && (Character.isJavaIdentifierPart(c)))
 								{
 									nextIndex++;
-									c = theValue.charAt(nextIndex);							
+									c = theValue.charAt(nextIndex);					
+									
+									if (nextIndex + 1 == theValue.length()){
+										nextIndex++;
+									}
 								}
-				
+												
 								String v = theValue.substring(index + 1, nextIndex);
 								String replacementValue = findValue(v, theTable, true);
 								theValue.replace(index, nextIndex, replacementValue);
@@ -885,6 +892,7 @@ public class CommandMinerThread extends MinerThread
 							}
 						}
 					}
+					
 				} //If the current char is a %, then simply look for a matching %
 				else if (c == '%' && _isWindows)
 				{

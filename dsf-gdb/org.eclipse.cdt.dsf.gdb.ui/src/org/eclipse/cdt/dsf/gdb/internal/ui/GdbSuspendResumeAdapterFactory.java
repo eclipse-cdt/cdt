@@ -43,6 +43,7 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
             fResumeAtLine = new GdbResumeAtLine(execCtx);
         }
         
+        @SuppressWarnings("rawtypes")
         public Object getAdapter(Class adapter) {
             if (adapter.isInstance(fRunToLine)) {
                 return fRunToLine;
@@ -63,6 +64,7 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
         public void suspend() throws DebugException {}
     }
     
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (ISuspendResume.class.equals(adapterType)) {
             if (adaptableObject instanceof IDMVMContext) {
@@ -79,6 +81,7 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
         return null;
     }
 
+    @SuppressWarnings("rawtypes")
     public Class[] getAdapterList() {
         return new Class[] { ISuspendResume.class };
     }

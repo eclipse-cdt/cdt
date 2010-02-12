@@ -635,7 +635,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (!toAllCfgs && !(curRcDes.equals(rcDes)))
 				continue;
 			for (ICLanguageSetting l : getLangSetting(rcDes)) {
-				if (id == l.getName() || toAllLang) {
+				if (toAllLang || id == l.getName() || (id != null && id.equals(l.getName()))) {
 					List<ICLanguageSettingEntry> lst = l.getSettingEntriesList(getKind());
 					lst.add(ent);
 					l.setSettingEntries(getKind(), lst);

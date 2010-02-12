@@ -95,7 +95,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 
 	@Override
 	public void dispose() {
-		getSite().getPage().removeSelectionListener(fDebugViewListener);
+		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener);
 		super.dispose();
 	}
 }

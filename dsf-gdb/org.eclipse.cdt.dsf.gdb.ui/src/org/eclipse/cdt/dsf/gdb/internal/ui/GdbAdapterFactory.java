@@ -282,7 +282,7 @@ public class GdbAdapterFactory
     /**
      * This method only actually returns adapters for the launch object.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (!(adaptableObject instanceof GdbLaunch)) return null;
 
@@ -321,7 +321,7 @@ public class GdbAdapterFactory
         else return null;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public Class[] getAdapterList() {
         return new Class[] {
             IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class,

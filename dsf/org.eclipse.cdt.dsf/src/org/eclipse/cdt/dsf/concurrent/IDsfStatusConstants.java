@@ -33,6 +33,10 @@ public interface IDsfStatusConstants {
      * Error code indicating that client supplied an invalid handle to the service.
      * A handle could become invalid after an object it represents is removed from 
      * the system.
+     * <p>
+     * Note this code should not be used when a handle is of a wrong type.  
+     * That would be an incorrect use of an interface, i.e. an {@link #INTERNAL_ERROR}. 
+     * </p>
      */
     final static int INVALID_HANDLE = 10002;
     

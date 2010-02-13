@@ -873,13 +873,16 @@ public class PathEntryTranslator {
 			}
 
 			PathSettingsContainer newContainer = fStorage.getChildContainer(path, true, true);
+			@SuppressWarnings("unchecked")
 			KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>> cloneStore =
 				(KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>)fStore.clone();
 			IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> info[] = cloneStore.getContents();
 			for (IKindBasedInfo<LinkedHashMap<ICSettingEntry, PathEntryComposer>> kindInfo : info) {
 				LinkedHashMap<ICSettingEntry, PathEntryComposer> map = kindInfo.getInfo();
 				if(map != null){
-					kindInfo.setInfo((LinkedHashMap<ICSettingEntry, PathEntryComposer>)map.clone());
+					@SuppressWarnings("unchecked")
+					LinkedHashMap<ICSettingEntry, PathEntryComposer> clone = (LinkedHashMap<ICSettingEntry, PathEntryComposer>)map.clone();
+					kindInfo.setInfo(clone);
 				}
 			}
 			PathEntryCollector newCr = new PathEntryCollector(newContainer, cloneStore, fProject/*, fCfg*/);
@@ -894,6 +897,7 @@ public class PathEntryTranslator {
 		public void setEntries(int kind, ICLanguageSettingEntry entries[], Set<ICSettingEntry> exportedEntries){
 			IPath path = getPath();
 			HashSet<ICSettingEntry> parentSet = getEntriesSetCopy(kind);
+			@SuppressWarnings("unchecked")
 			HashSet<ICSettingEntry> removedParentSet = (HashSet<ICSettingEntry>)parentSet.clone();
 			HashSet<ICLanguageSettingEntry> addedThisSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(entries));
 			removedParentSet.removeAll(addedThisSet);
@@ -1286,7 +1290,7 @@ public class PathEntryTranslator {
 
 	private static ICSettingEntry[] replaceUserEntries(ICSettingEntry[] oldEntries, ICSettingEntry[] newUsrEntries){
 		Set<ICSettingEntry> set = new LinkedHashSet<ICSettingEntry>();
-		Class componentType = null;
+		Class<?> componentType = null;
 
 		if(newUsrEntries != null){
 			for (ICSettingEntry entry : newUsrEntries) {

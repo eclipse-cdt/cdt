@@ -55,6 +55,8 @@ public class GdbUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
+		EvaluationContextManager.startup();
+
 		fTracingConsoleManager = new TracingConsoleManager();
 		fTracingConsoleManager.startup();
 	}

@@ -59,7 +59,10 @@ public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
 
         public boolean canResume() { return false; }
         public boolean canSuspend() { return false; }
-        public boolean isSuspended() { return false; }
+        // This must return true because the platform
+        // RunToLineActionDelegate will only enable the
+        // action if we are suspended
+        public boolean isSuspended() { return true; }
         public void resume() throws DebugException {}
         public void suspend() throws DebugException {}
     }

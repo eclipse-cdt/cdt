@@ -65,6 +65,23 @@ import org.osgi.framework.BundleContext;
  */
 public class MIExpressions extends AbstractDsfService implements IExpressions, ICachingService {
 
+    /**
+     * A format that gives more details about an expression and supports pretty-printing
+     * provided by the backend.
+     * 
+     * @since 3.0
+     */
+   	public static final String DETAILS_FORMAT = "Details";
+   	
+   	/* The order given here is the order that will be used by DSF in the Details Pane */
+   	private static final String[] FORMATS_SUPPORTED = new String[] { 
+			DETAILS_FORMAT,
+			IFormattedValues.NATURAL_FORMAT,
+			IFormattedValues.DECIMAL_FORMAT,
+			IFormattedValues.HEX_FORMAT,
+			IFormattedValues.BINARY_FORMAT,
+			IFormattedValues.OCTAL_FORMAT };
+   	
 	/**
 	 * This class represents the two expressions that characterize an Expression Context.
 	 */
@@ -566,9 +583,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 
 	public void getAvailableFormats(IFormattedDataDMContext dmc,
 			final DataRequestMonitor<String[]> rm) {
-		rm.setData(new String[] { IFormattedValues.BINARY_FORMAT,
-				IFormattedValues.NATURAL_FORMAT, IFormattedValues.HEX_FORMAT,
-				IFormattedValues.OCTAL_FORMAT, IFormattedValues.DECIMAL_FORMAT });
+		rm.setData(FORMATS_SUPPORTED);
 		rm.done();
 	}
 
@@ -680,19 +695,36 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 		// Note that we look for MIExpressionDMC and not IExpressionDMC, because getting
 		// looking for IExpressionDMC could yield InvalidContextExpressionDMC which is still
 		// not what we need to have.
-        if (DMContexts.getAncestorOfType(dmc, MIExpressionDMC.class) == null ) {
+		MIExpressionDMC exprDmc = DMContexts.getAncestorOfType(dmc, MIExpressionDMC.class);
+        if (exprDmc == null ) {
         	rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context for evaluating expressions.", null)); //$NON-NLS-1$
         	rm.done();
         } else {
-        	fExpressionCache.execute(
-        			new ExprMetaGetValue(dmc),
-        			new DataRequestMonitor<ExprMetaGetValueInfo>(getExecutor(), rm) {
-        				@Override
-        				protected void handleSuccess() {
-        					rm.setData(new FormattedValueDMData(getData().getValue()));
-        					rm.done();
-        				}
-        			});
+        	if (DETAILS_FORMAT.equals(dmc.getFormatID())) {
+        		// This format is obtained through a different GDB command.
+        		// It yields more details than the variableObject output.
+        		// Starting with GDB 7.0, this format automatically supports pretty-printing, as long as
+        		// GDB has been configured to support it.
+				fExpressionCache.execute(
+						new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(exprDmc), 
+						new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								rm.setData(new FormattedValueDMData(getData().getValue()));
+	        					rm.done();
+							}
+						});
+        	} else {
+        		fExpressionCache.execute(
+        				new ExprMetaGetValue(dmc),
+        				new DataRequestMonitor<ExprMetaGetValueInfo>(getExecutor(), rm) {
+        					@Override
+        					protected void handleSuccess() {
+        						rm.setData(new FormattedValueDMData(getData().getValue()));
+        						rm.done();
+        					}
+        				});
+        	}
         }
 	}
 

@@ -49,7 +49,14 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
      */
     abstract protected String getModelId();
     
-	private static class GetExpressionValueQuery extends Query<FormattedValueDMData> {
+    /**
+     * Returns the type of format that should be used for the hover.
+     */
+    protected String getHoverFormat() {
+    	return  IFormattedValues.NATURAL_FORMAT;
+    }
+    
+	private class GetExpressionValueQuery extends Query<FormattedValueDMData> {
     	private final IFrameDMContext frame;
     	private final String expression;
 		private DsfServicesTracker dsfServicesTracker;
@@ -65,7 +72,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
             DsfSession session = DsfSession.getSession(frame.getSessionId());
 			IExpressions expressions = dsfServicesTracker.getService(IExpressions.class);
     		IExpressionDMContext expressionDMC = expressions.createExpression(frame, expression);
-    		FormattedValueDMContext formattedValueContext = expressions.getFormattedValueContext(expressionDMC, IFormattedValues.NATURAL_FORMAT);
+    		FormattedValueDMContext formattedValueContext = expressions.getFormattedValueContext(expressionDMC, getHoverFormat());
         	expressions.getFormattedExpressionValue(formattedValueContext,
         			new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
                 @Override

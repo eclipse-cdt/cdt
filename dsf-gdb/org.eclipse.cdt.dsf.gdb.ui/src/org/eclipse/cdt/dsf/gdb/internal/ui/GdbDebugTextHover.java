@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson                    - Updated hover to use the new Details format
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import org.eclipse.cdt.dsf.debug.ui.AbstractDsfDebugTextHover;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 
 /**
  * Debug editor text hover for GDB.
@@ -25,4 +27,8 @@ public class GdbDebugTextHover extends AbstractDsfDebugTextHover {
         return GdbLaunchDelegate.GDB_DEBUG_MODEL_ID;
     }
 
+    @Override
+	protected String getHoverFormat() {
+    	return  MIExpressions.DETAILS_FORMAT;
+    }
 }

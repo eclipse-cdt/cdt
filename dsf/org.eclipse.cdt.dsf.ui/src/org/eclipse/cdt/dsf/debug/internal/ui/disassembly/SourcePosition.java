@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,12 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
+package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
 import java.math.BigInteger;
+
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
 
 /**
  * SourcePosition
@@ -45,6 +48,14 @@ public class SourcePosition extends AddressRangePosition {
 		super(offset, length, addressOffset, BigInteger.ZERO, valid);
 		fFileInfo = fileInfo;
 		fLine = line;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition#toString()
+	 */
+	@Override
+	public String toString() {
+		return super.toString() + "->["+fFileInfo.fFileKey + ':' + fLine + ']';  //$NON-NLS-1$
 	}
 
 }

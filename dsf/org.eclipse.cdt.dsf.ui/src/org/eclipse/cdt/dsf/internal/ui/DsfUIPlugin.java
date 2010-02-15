@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.cdt.dsf.internal.ui;
 
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyBackendDsfFactory;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceDocumentProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -55,6 +57,10 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 	    DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 
         fSourceDocumentProvider = new SourceDocumentProvider();
+        
+		// Register the DSF backend for our disassembly view (the CDT debug UI
+		// plugin registers the CDI one)
+        Platform.getAdapterManager().registerAdapters(new DisassemblyBackendDsfFactory(), IDMVMContext.class);
 	}
 
 	/*

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.debug.internal.ui.CDebuggerPageAdapter;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyBackendCdiFactory;
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditorManager;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
@@ -288,6 +290,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
         fDisassemblyEditorManager = new DisassemblyEditorManager();
 		EvaluationContextManager.startup();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
+		
+		// Register the CDI backend for DSF's disassembly view
+		Platform.getAdapterManager().registerAdapters(new DisassemblyBackendCdiFactory(), ICDebugElement.class);
 		
 		// We contribute actions to the platform's Variables view with a
 		// criteria to enable only when this plugin is loaded. This can lead to

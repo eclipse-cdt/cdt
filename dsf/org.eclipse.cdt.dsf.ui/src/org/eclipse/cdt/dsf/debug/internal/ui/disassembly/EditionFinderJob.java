@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
 
 /**
  * A job to find a suitable edition from the local history
@@ -69,7 +70,7 @@ class EditionFinderJob extends Job {
 					token.wait(1000);
 				}
 			} catch (InterruptedException e) {
-				DisassemblyPart.internalError(e);
+				internalError(e);
 			}
 			token = fDisassemblyPart.retrieveModuleTimestamp(fAddress);
 		}

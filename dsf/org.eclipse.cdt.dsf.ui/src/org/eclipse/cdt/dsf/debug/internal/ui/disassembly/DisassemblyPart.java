@@ -19,16 +19,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.core.IAddress;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AbstractDisassemblyAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoAddress;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoProgramCounter;
@@ -37,43 +35,14 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionOpenPrefe
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AddressBarContributionItem;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.JumpToAddressAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.TextOperationAction;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.BreakpointsAnnotationModel;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyPosition;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.ErrorPosition;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.DisassemblyIPAnnotation;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.util.HSL;
-import org.eclipse.cdt.dsf.debug.service.IDisassembly;
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IInstruction;
-import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
-import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
-import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
-import org.eclipse.cdt.dsf.service.DsfServicesTracker;
-import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.ui.dnd.TextViewerDragAdapter;
 import org.eclipse.core.commands.NotEnabledException;
@@ -104,7 +73,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -189,14 +157,15 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.getAddressText;
 /**
  * DisassemblyPart
  */
 @SuppressWarnings("restriction")
-public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener, SessionEndedListener {
+public abstract class DisassemblyPart extends WorkbenchPart implements IDisassemblyPart, IViewportListener, ITextPresentationListener, IDisassemblyPartCallback  {
 
-	private final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$//$NON-NLS-2$
+	final static boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug/disassembly"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/**
 	 * Annotation model attachment key for breakpoint annotations.
@@ -278,7 +247,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private BigInteger fGotoAddressPending= PC_UNKNOWN;
 	private BigInteger fFocusAddress= PC_UNKNOWN;
 	private int fBufferZone;
-	private volatile IExecutionDMContext fTargetContext;
 	private String fDebugSessionId;
 	private int fTargetFrame;
 	private DisassemblyIPAnnotation fPCAnnotation;
@@ -344,14 +312,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	private ArrayList<IHandlerActivation> fHandlerActivations;
 	private IContextActivation fContextActivation;
-
-	private DsfServicesTracker fServicesTracker;
-	private IFrameDMContext fTargetFrameContext;
-	protected IFrameDMData fTargetFrameData;
+	
+	private IDisassemblyBackend fBackend; 
 	
 	private AddressBarContributionItem fAddressBar = null;
 	private Action fJumpToAddressAction = new JumpToAddressAction(this);
-	
+
 	private final class ActionRefreshView extends AbstractDisassemblyAction {
 		public ActionRefreshView() {
 			super(DisassemblyPart.this);
@@ -722,7 +688,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else {
 			updateDebugContext();
 		}
-		DsfSession.addSessionEndedListener(this);
 	}
 
 	/*
@@ -756,9 +721,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		deactivateDisassemblyContext();
 		
 		fViewer = null;
-		setDebugContext(null);
-		DsfSession.removeSessionEndedListener(this);
-
+		if (fBackend != null) {
+			fBackend.clearDebugContext();
+			fBackend.dispose();
+			fBackend = null;
+		}
+		
 		fAnnotationAccess = null;
 		fAnnotationPreferences = null;
 		fAnnotationRulerColumn = null;
@@ -1369,18 +1337,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fHandlerActivations.add(handlerService.activateHandler(action.getActionDefinitionId(), new ActionHandler(action)));
 	}
 
-	private void gotoFrame(IFrameDMContext frame) {
-		if (fActive) {
-			gotoFrame(frame.getLevel(), PC_UNKNOWN);
-		}
-	}
-
-	private void gotoFrame(int frame) {
-		if (fActive) {
-			gotoFrame(frame, PC_UNKNOWN);
-		}
-	}
-
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoProgramCounter()
 	 */
@@ -1434,40 +1390,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoSymbol(java.lang.String)
 	 */
 	public final void gotoSymbol(final String symbol) {
-		if (!fActive || fTargetFrameContext == null) {
+		if (!fActive || fBackend == null || !fBackend.hasFrameContext()) {
 			return;
 		}
-		final DsfExecutor executor= getSession().getExecutor();
-		executor.execute(new DsfRunnable() {
-			public void run() {
-				final IExpressions expressions= getService(IExpressions.class);
-				if (expressions == null) {
-					return;
-				}
-				IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, '&'+symbol);
-				final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
-				expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(executor, null) {
-					@Override
-					protected void handleSuccess() {
-						FormattedValueDMData data= getData();
-						final String value= data.getFormattedValue();
-						final BigInteger address= decodeAddress(value);
-						if (address != null) {
-							asyncExec(new Runnable() {
-								public void run() {
-									gotoAddress(address);
-								}});
-						}
-					}
-					@Override
-					protected void handleError() {
-						asyncExec(new Runnable() {
-							public void run() {
-				                ErrorDialog.openError(getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-							}});
-					}
-				});
-			}});
+		fBackend.gotoSymbol(symbol);
 	}
 
 	private void gotoPosition(Position pos, boolean select) {
@@ -1527,12 +1453,15 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	/**
 	 * Update lines of currently visible area + one page buffer zone below.
+	 * 
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#updateVisibleArea()
 	 */
-	private void updateVisibleArea() {
+	public void updateVisibleArea() {
+		assert isGuiThread();
 		if (!fActive || fUpdatePending || fViewer == null || fDebugSessionId == null) {
 			return;
 		}
-		if (fTargetContext == null || !isSuspended(fTargetContext) || fFrameAddress == PC_UNKNOWN) {
+		if (fBackend == null || !fBackend.hasDebugContext() || !fBackend.isSuspended() || fFrameAddress == PC_UNKNOWN) {
 			return;
 		}
 		StyledText styledText = fViewer.getTextWidget();
@@ -1568,9 +1497,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		AddressRangePosition bestPosition = null;
 		int bestLine = -1;
 		BigInteger bestDistance = null;
-		Iterator<AddressRangePosition> it = fDocument.getInvalidAddressRanges().iterator();
-		while (it.hasNext()) {
-			AddressRangePosition p = it.next();
+		if (DEBUG) System.out.println("DisassemblyPart.updateVisibleArea() called. There are " + fDocument.getInvalidAddressRanges().length + " invalid ranges to consider updating"); //$NON-NLS-1$ //$NON-NLS-2$
+		for (AddressRangePosition p : fDocument.getInvalidAddressRanges()) {
 			try {
 				int line = fDocument.getLineOfOffset(p.offset);
 				if (line >= topIndex && line <= bottomIndex) {
@@ -1596,6 +1524,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		}
 		if (bestPosition != null) {
+			if (DEBUG) System.out.println("...and the best candidate is: " + bestPosition); //$NON-NLS-1$
 			int lines = fBufferZone+3;
 			BigInteger startAddress = bestPosition.fAddressOffset;
 			BigInteger endAddress = bestPosition.fAddressOffset.add(bestPosition.fAddressLength);
@@ -1625,10 +1554,22 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 			retrieveDisassembly(startAddress, endAddress, lines);
 		}
+		else {
+			if (DEBUG) {
+				System.out.println("...but alas we didn't deem any of them worth updating. They are:"); //$NON-NLS-1$
+				int i = 0;
+				for (AddressRangePosition p : fDocument.getInvalidAddressRanges()) {
+					System.out.println("[" + i++ + "] " + p); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+		}
 		scheduleDoPending();
 	}
 
-	private void asyncExec(Runnable runnable) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#asyncExec(java.lang.Runnable)
+	 */
+	public void asyncExec(Runnable runnable) {
 		if (fViewer != null) {
 			fViewer.getControl().getDisplay().asyncExec(runnable);
 		}
@@ -1643,9 +1584,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	/**
-	 * Insert sourcelines if available.
+	 * Insert source lines if available.
+	 * 
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#updateInvalidSource()
 	 */
-	/*default*/ void updateInvalidSource() {
+	public void updateInvalidSource() {
+		assert isGuiThread();
 		if (fViewer == null) {
 			return;
 		}
@@ -1661,14 +1605,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				fUpdatePending = true;
 				lockScroller();
 			}
-			ArrayList<SourcePosition> copy = new ArrayList<SourcePosition>(fDocument.getInvalidSource());
-			Iterator<SourcePosition> it = copy.iterator();
-			while (it.hasNext()) {
-				SourcePosition p = it.next();
+			SourcePosition[] invalidSources = fDocument.getInvalidSourcePositions();
+			for (SourcePosition p : invalidSources) {
 				if (!p.fValid) {
 					insertSource(p);
-				} else if (DEBUG && fDocument.getInvalidSource().remove(p)) {
-					System.err.println("!!! valid source position in invalid source list at "+getAddressText(p.fAddressOffset)); //$NON-NLS-1$
+				} else if (DEBUG && fDocument.removeInvalidSourcePosition(p)) {
+					System.err.println("!!! valid source position in invalid source list at "+ getAddressText(p.fAddressOffset)); //$NON-NLS-1$
 				}
 			}
 		} finally {
@@ -1681,7 +1623,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	/**
-	 * Show disassembly for given (source) file.
+	 * Show disassembly for given (source) file. Retrieves disassembly starting
+	 * at the beginning of the file, for as many lines as are specified. If
+	 * [lines] == -1, the entire file is disassembled.
 	 * 
 	 * @param file
 	 * @param lines
@@ -1698,74 +1642,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return;
 		}
 		if (DEBUG) System.out.println("retrieveDisassembly "+file); //$NON-NLS-1$
-		String debuggerPath= file;
-
-		// try reverse lookup
-		final ISourceLookupDMContext ctx= DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
-		final DsfExecutor executor= getSession().getExecutor();
-		Query<String> query= new Query<String>() {
-			@Override
-			protected void execute(final DataRequestMonitor<String> rm) {
-				final DataRequestMonitor<String> request= new DataRequestMonitor<String>(executor, rm) {
-					@Override
-					protected void handleSuccess() {
-						rm.setData(getData());
-						rm.done();
-					}
-				};
-				final ISourceLookup lookup= getService(ISourceLookup.class);
-				lookup.getDebuggerPath(ctx, file, request);
-			}
-		};
-		try {
-			getSession().getExecutor().execute(query);
-			debuggerPath= query.get();
-		} catch (InterruptedException exc) {
-			internalError(exc);
-		} catch (ExecutionException exc) {
-			internalError(exc);
-		}
-
-		final IDisassemblyDMContext context= DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
-
-		final String finalFile= debuggerPath;
-		final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest= new DataRequestMonitor<IMixedInstruction[]>(executor, null) {
-			@Override
-			public void handleCompleted() {
-				final IMixedInstruction[] data= getData();
-				if (!isCanceled() && data != null) {
-					asyncExec(new Runnable() {
-						public void run() {
-							if (!insertDisassembly(null, fEndAddress, data)) {
-								// retry in non-mixed mode
-								retrieveDisassembly(file, lines, false);
-							}
-						}});
-				} else {
-					final IStatus status= getStatus();
-					if (status != null && !status.isOK()) {
-						asyncExec(new Runnable() {
-							public void run() {
-				                ErrorDialog.openError(getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-							}
-						});
-					}
-					fUpdatePending= false;
-				}
-			}
-		};
-		assert !fUpdatePending;
-		fUpdatePending = true;
-		executor.execute(new Runnable() {
-			public void run() {
-				final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
-				if (disassembly == null) {
-					disassemblyRequest.cancel();
-					disassemblyRequest.done();
-					return;
-				}
-				disassembly.getMixedInstructions(context, finalFile, 1, lines, disassemblyRequest);
-			}});
+		fBackend.retrieveDisassembly(file, lines, fEndAddress, mixed, fShowSymbols, fShowDisassembly);
 	}
 
 	private void retrieveDisassembly(BigInteger startAddress, BigInteger endAddress, int lines) {
@@ -1776,7 +1653,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		retrieveDisassembly(startAddress, endAddress, lines, fShowSource, false);
 	}
 
-	private void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed, boolean ignoreFile) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, int, boolean, boolean)
+	 */
+	public void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final int linesHint, boolean mixed, boolean ignoreFile) {
+		assert isGuiThread();
 		assert !fUpdatePending;
 		fUpdatePending = true;
 		final int lines= linesHint + 2;
@@ -1787,132 +1668,24 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		boolean insideActiveFrame= startAddress.equals(fFrameAddress);
 		String file= null;
 		int lineNumber= -1;
-		if (!ignoreFile && insideActiveFrame && fTargetFrameData != null) {
-			file= fTargetFrameData.getFile();
+		if (!ignoreFile && insideActiveFrame && fBackend != null) {
+			file= fBackend.getFrameFile();
 			if (file != null && file.trim().length() == 0) {
-				file= null;
+				file = null;
 			}
-			lineNumber= fTargetFrameData.getLine();
-		}
-		final String finalFile= file;
-		final int finalLineNumber= lineNumber;
-		final BigInteger finalEndAddress= endAddress;
-
-		final DsfExecutor executor= getSession().getExecutor();
-		final IDisassemblyDMContext context= DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
-
-		if (mixed) {
-			final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest= new DataRequestMonitor<IMixedInstruction[]>(executor, null) {
-				@Override
-				public void handleCompleted() {
-					final IMixedInstruction[] data= getData();
-					if (!isCanceled() && data != null) {
-						asyncExec(new Runnable() {
-							public void run() {
-								if (!insertDisassembly(startAddress, finalEndAddress, data)) {
-									// retry in non-mixed mode
-									retrieveDisassembly(startAddress, finalEndAddress, linesHint, false, false);
-								}
-							}});
-					} else {
-						final IStatus status= getStatus();
-						if (status != null && !status.isOK()) {
-							if( finalFile != null )	{
-								asyncExec(new Runnable() {
-									public void run() {
-										retrieveDisassembly(startAddress, finalEndAddress, linesHint, true, true);
-									}});
-							}
-							else {
-								asyncExec(new Runnable() {
-									public void run() {
-										doScrollLocked(new Runnable() {
-											public void run() {
-												insertError(startAddress, status.getMessage());
-											}
-										});
-									}});
-							}
-						}
-						fUpdatePending= false;
-					}
-				}
-			};
 			if (file != null) {
-				executor.execute(new Runnable() {
-					public void run() {
-						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
-						if (disassembly == null) {
-							disassemblyRequest.cancel();
-							disassemblyRequest.done();
-							return;
-						}
-						disassembly.getMixedInstructions(context, finalFile, finalLineNumber, lines*2, disassemblyRequest);
-					}});
-			} else {
-				executor.execute(new Runnable() {
-					public void run() {
-						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
-						if (disassembly == null) {
-							disassemblyRequest.cancel();
-							disassemblyRequest.done();
-							return;
-						}
-						disassembly.getMixedInstructions(context, startAddress, finalEndAddress, disassemblyRequest);
-					}});
-			}
-		} else {
-			final DataRequestMonitor<IInstruction[]> disassemblyRequest= new DataRequestMonitor<IInstruction[]>(executor, null) {
-				@Override
-				public void handleCompleted() {
-					if (!isCanceled() && getData() != null) {
-						asyncExec(new Runnable() {
-							public void run() {
-								insertDisassembly(startAddress, finalEndAddress, getData());
-							}});
-					} else {
-						final IStatus status= getStatus();
-						if (status != null && !status.isOK()) {
-							asyncExec(new Runnable() {
-								public void run() {
-									doScrollLocked(new Runnable() {
-										public void run() {
-											insertError(startAddress, status.getMessage());
-										}
-									});
-								}});
-						}
-						fUpdatePending= false;
-					}
-				}
-			};
-			if (file != null) {
-				executor.execute(new Runnable() {
-					public void run() {
-						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
-						if (disassembly == null) {
-							disassemblyRequest.cancel();
-							disassemblyRequest.done();
-							return;
-						}
-						disassembly.getInstructions(context, finalFile, finalLineNumber, lines, disassemblyRequest);
-					}});
-			} else {
-				executor.execute(new Runnable() {
-					public void run() {
-						final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
-						if (disassembly == null) {
-							disassemblyRequest.cancel();
-							disassemblyRequest.done();
-							return;
-						}
-						disassembly.getInstructions(context, startAddress, finalEndAddress, disassemblyRequest);
-					}});
+				lineNumber= fBackend.getFrameLine();
 			}
 		}
+		if (DEBUG) System.out.println("Asking backend to retrieve disassembly: sa=" + startAddress + ",ea=" + endAddress + ",file=" + file + ",lineNumber=" + lineNumber + ",lines=" + lines); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		fBackend.retrieveDisassembly(startAddress, endAddress, file, lineNumber, lines, mixed, fShowSymbols, fShowDisassembly, linesHint);
 	}
 
-	private void insertError(BigInteger address, String message) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#insertError(java.math.BigInteger, java.lang.String)
+	 */
+	public void insertError(BigInteger address, String message) {
+		assert isGuiThread();
 		AddressRangePosition p = null;
 		p = getPositionOfAddress(address);
 		if (p.fValid) {
@@ -1925,278 +1698,27 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private void insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions) {
-		if (fViewer == null || fDebugSessionId == null) {
-			return;
-		}
-		if (DEBUG) System.out.println("insertDisassembly "+getAddressText(startAddress)); //$NON-NLS-1$
-		assert fUpdatePending;
-		if (!fUpdatePending) {
-			// safe-guard in case something weird is going on
-			return;
-		}
-		try {
-			lockScroller();
-			
-			AddressRangePosition p= null;
-			for (int j = 0; j < instructions.length; j++) {
-				IInstruction instruction = instructions[j];
-				BigInteger address= instruction.getAdress();
-				if (startAddress == null || startAddress.compareTo(BigInteger.ZERO) < 0) {
-					fGotoAddressPending = startAddress = address;
-				}
-				if (p == null || !p.containsAddress(address)) {
-					p = getPositionOfAddress(address);
-				}
-				if (p instanceof ErrorPosition && p.fValid) {
-					p.fValid = false;
-					fDocument.getInvalidAddressRanges().add(p);
-				} else if (p == null || p.fValid || address.compareTo(endAddress) > 0) {
-					if (DEBUG) System.out.println("Excess disassembly lines at " + getAddressText(address)); //$NON-NLS-1$
-					return;
-				}
-				boolean hasSource= false;
-				String compilationPath= null;
-				// insert symbol label
-				final String functionName= instruction.getFuntionName();
-				if (functionName != null && functionName.length() > 0 && instruction.getOffset() == 0) {
-					p = fDocument.insertLabel(p, address, functionName, fShowSymbols && (!hasSource || fShowDisassembly));
-				}
-				// determine instruction byte length
-				BigInteger instrLength= null;
-				if (j < instructions.length - 1) {
-					instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-				} else if (instructions.length == 1) {
-					if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
-						instrLength= p.fAddressLength;
-					}
-				}
-				if (instrLength == null) {
-					// cannot determine length of last instruction
-					break;
-				}
-				final String opCode;
-				// insert function name+offset instead of opcode bytes
-				if (functionName != null && functionName.length() > 0) {
-					opCode= functionName + '+' + instruction.getOffset();
-				} else {
-					opCode= ""; //$NON-NLS-1$
-				}
-				p = fDocument.insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), compilationPath, -1);
-				if (p == null) {
-					break;
-				}
-			}
-			
-		} catch (BadLocationException e) {
-			// should not happen
-			internalError(e);
-		} finally {
-			fUpdatePending = false;
-			updateInvalidSource();
-			unlockScroller();
-			doPending();
-			updateVisibleArea();
-		}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getAddressSize()
+	 */
+	public int getAddressSize() {
+		assert isGuiThread();
+		return fAddressSize;
 	}
-
-	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions) {
-		if (fViewer == null || fDebugSessionId == null) {
-			return true;
-		}
-		if (DEBUG) System.out.println("insertDisassembly "+getAddressText(startAddress)); //$NON-NLS-1$
-		assert fUpdatePending;
-		if (!fUpdatePending) {
-			// safe-guard in case something weird is going on
-			return true;
-		}
-		// indicates whether disassembly for the start address was inserted
-		boolean success= false;
-		try {
-			lockScroller();
-			
-			AddressRangePosition p= null;
-			for (int i = 0; i < mixedInstructions.length; ++i) {
-				IMixedInstruction mixedInstruction= mixedInstructions[i];
-				final String file= mixedInstruction.getFileName();
-				int lineNumber= mixedInstruction.getLineNumber() - 1;
-				IInstruction[] instructions= mixedInstruction.getInstructions();
-				for (int j = 0; j < instructions.length; ++j) {
-					IInstruction instruction = instructions[j];
-					BigInteger address= instruction.getAdress();
-					if (startAddress == null || startAddress.compareTo(BigInteger.ZERO) < 0) {
-						fGotoAddressPending = startAddress = address;
-					}
-					if (p == null || !p.containsAddress(address)) {
-						p = getPositionOfAddress(address);
-					}
-					if (p instanceof ErrorPosition && p.fValid) {
-						p.fValid = false;
-						fDocument.getInvalidAddressRanges().add(p);
-					} else if (p == null || address.compareTo(endAddress) > 0) {
-						if (DEBUG) System.out.println("Excess disassembly lines at " + getAddressText(address)); //$NON-NLS-1$
-						return success;
-					} else if (p.fValid) {
-						if (DEBUG) System.out.println("Excess disassembly lines at " + getAddressText(address)); //$NON-NLS-1$
-						if (file != null && lineNumber >= 0 || p.fAddressLength == BigInteger.ONE) {
-							// override probably unaligned disassembly
-							p.fValid = false;
-							fDocument.getInvalidAddressRanges().add(p);
-						} else {
-							return success;
-						}
-					}
-					boolean hasSource= false;
-					if (file != null && lineNumber >= 0) {
-						p = insertSource(p, address, file, lineNumber);
-						hasSource = fFile2Storage.get(file) != null;
-					}
-					// insert symbol label
-					final String functionName= instruction.getFuntionName();
-					if (functionName != null && functionName.length() > 0 && instruction.getOffset() == 0) {
-						p = fDocument.insertLabel(p, address, functionName, fShowSymbols && (!hasSource || fShowDisassembly));
-					}
-					// determine instruction byte length
-					BigInteger instrLength= null;
-					if (j < instructions.length - 1) {
-						instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-					} else if (i < mixedInstructions.length - 1) {
-						int nextSrcLineIdx= i+1;
-						while (nextSrcLineIdx < mixedInstructions.length) {
-							IInstruction[] nextInstrs= mixedInstructions[nextSrcLineIdx].getInstructions();
-							if (nextInstrs.length > 0) {
-								instrLength= nextInstrs[0].getAdress().subtract(instruction.getAdress()).abs();
-								break;
-							}
-							++nextSrcLineIdx;
-						}
-						if (nextSrcLineIdx >= mixedInstructions.length) {
-							break;
-						}
-					} else if (instructions.length == 1) {
-						if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
-							instrLength= p.fAddressLength;
-						}
-					}
-					if (instrLength == null) {
-						// cannot determine length of last instruction
-						break;
-					}
-					final String opCode;
-					// insert function name+offset instead of opcode bytes
-					if (functionName != null && functionName.length() > 0) {
-						opCode= functionName + '+' + instruction.getOffset();
-					} else {
-						opCode= ""; //$NON-NLS-1$
-					}
-					success= success || address.compareTo(startAddress) == 0;
-					p = fDocument.insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstruction(), file, lineNumber);
-					if (p == null && success) {
-						break;
-					}
-				}
-			}
-			
-		} catch (BadLocationException e) {
-			// should not happen
-			internalError(e);
-		} finally {
-			fUpdatePending = false;
-			if (success) {
-				updateInvalidSource();
-				unlockScroller();
-				doPending();
-				updateVisibleArea();
-			} else {
-				unlockScroller();
-			}
-		}
-		return success;
-	}
-
-	private void retrieveFrameAddress(final IExecutionDMContext targetContext, final int frame) {
-		if (targetContext != null && isSuspended(targetContext)) {
-			if (fUpdatePending) {
-				gotoFrame(frame);
-				return;
-			}
-			if (DEBUG) System.out.println("retrieveFrameAddress "+frame); //$NON-NLS-1$
-			fUpdatePending = true;
-			final DsfExecutor executor= getSession().getExecutor();
-			executor.execute(new DsfRunnable() {
-				public void run() {
-					retrieveFrameAddressInSessionThread(targetContext, frame);
-				}});
-		}
-	}
-
-	private void retrieveFrameAddressInSessionThread(final IExecutionDMContext targetContext, final int frame) {
-		final IStack stack= fServicesTracker.getService(IStack.class);
-		final DsfExecutor executor= getSession().getExecutor();
-		if (fTargetFrameContext == null) {
-			if (frame == 0) {
-				stack.getTopFrame(targetContext, new DataRequestMonitor<IFrameDMContext>(executor, null) {
-					@Override
-					protected void handleCompleted() {
-						fUpdatePending= false;
-						fTargetFrameContext= getData();
-						if (fTargetFrameContext != null) {
-							retrieveFrameAddressInSessionThread(targetContext, frame);
-						}
-					}
-				});
-			} else {
-				// TODO retrieve other stack frame
-			}
-			return;
-		}
-		stack.getFrameData(fTargetFrameContext, new DataRequestMonitor<IFrameDMData>(executor, null) {
-			@Override
-			protected void handleCompleted() {
-				fUpdatePending= false;
-				IFrameDMData frameData= getData();
-				fTargetFrameData= frameData;
-				if (!isCanceled() && frameData != null) {
-					final IAddress address= frameData.getAddress();
-					final BigInteger addressValue= address.getValue();
-					if (DEBUG) System.out.println("retrieveFrameAddress done "+getAddressText(addressValue)); //$NON-NLS-1$
-					asyncExec(new Runnable() {
-						public void run() {
-							if (address.getSize() * 4 > fAddressSize) {
-								addressSizeChanged(address.getSize() * 4);
-							}
-							if (frame == 0) {
-								updatePC(addressValue);
-							} else {
-								gotoFrame(frame, addressValue);
-							}
-						}
-
-					});
-				} else {
-					final IStatus status= getStatus();
-					if (status != null && !status.isOK()) {
-						asyncExec(new Runnable() {
-							public void run() {
-				                ErrorDialog.openError(getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-							}
-						});
-					}
-				}
-			}
-		});
-	}
-
-	private void addressSizeChanged(int addressSize) {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#addressSizeChanged(int)
+	 */
+	public void addressSizeChanged(int addressSize) {
+		assert isGuiThread();
 		BigInteger oldEndAddress= fEndAddress;
 		fEndAddress= BigInteger.ONE.shiftLeft(addressSize);
 		int oldAddressSize= fAddressSize;
 		fAddressSize= addressSize;
 		if (addressSize < oldAddressSize) {
 			fDocument.deleteDisassemblyRange(fEndAddress, oldEndAddress, true, true);
-			List<AddressRangePosition> positions= fDocument.getInvalidAddressRanges();
 			List<AddressRangePosition> toRemove= new ArrayList<AddressRangePosition>();
-			for (AddressRangePosition position : positions) {
+			for (AddressRangePosition position : fDocument.getInvalidAddressRanges()) {
 				if (position.fAddressOffset.compareTo(fEndAddress) >= 0) {
 					try {
 						fDocument.replace(position, position.length, ""); //$NON-NLS-1$
@@ -2209,7 +1731,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					position.fAddressLength= fEndAddress.subtract(position.fAddressOffset);
 				}
 			}
-			positions.removeAll(toRemove);
+			fDocument.removeInvalidAddressRanges(toRemove);
 		} else if (addressSize > oldAddressSize) {
 			fDocument.insertInvalidAddressRange(fDocument.getLength(), 0, oldEndAddress, fEndAddress);
 		} else {
@@ -2223,7 +1745,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 	
-	private AddressRangePosition getPositionOfAddress(BigInteger address) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getPositionOfAddress(java.math.BigInteger)
+	 */
+	public AddressRangePosition getPositionOfAddress(BigInteger address) {
+		assert isGuiThread();
 		if (address == null || address.compareTo(BigInteger.ZERO) < 0) {
 			return null;
 		}
@@ -2254,13 +1780,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				refreshView(0);
 			} else {
 				doPendingPCUpdates();
-				if (fTargetContext != null) {
+				if (fBackend != null && fBackend.hasDebugContext()) {
 					int frame = getActiveStackFrame();
-					if (frame < 0 && isSuspended(fTargetContext)) {
+					if (frame < 0 && isSuspended()) {
 						frame= 0;
 					}
 					if (frame != fTargetFrame) {
-						gotoFrame(frame);
+						gotoFrameIfActive(frame);
 					}
 				}
 			}
@@ -2271,101 +1797,38 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	}
 
 	private int getActiveStackFrame() {
-		if (fTargetFrameContext != null) {
-			return fTargetFrameContext.getLevel();
+		if (fBackend != null) {
+			return fBackend.getFrameLevel();
 		}
 		return -1;
 	}
 
-	/**
-	 * 
-	 */
 	protected void updateDebugContext() {
-		IAdaptable debugContext= DebugUITools.getDebugContext();
-		if (debugContext instanceof IDMVMContext) {
-			setDebugContext((IDMVMContext)debugContext);
-		}
-	}
-
-	protected void setDebugContext(IDMVMContext vmContext) {
-		if (vmContext != null) {
-			IDMContext dmContext= vmContext.getDMContext();
-			String sessionId= dmContext.getSessionId();
-			if (!sessionId.equals(fDebugSessionId)) {
-				// switch to different session or initiate session
-				if (DEBUG) System.out.println("DisassemblyPart.setDebugContext() " + sessionId); //$NON-NLS-1$
-				fTargetContext= null;
-				if (dmContext instanceof IFrameDMContext) {
-					IFrameDMContext frame= (IFrameDMContext) dmContext;
-					IExecutionDMContext executionContext= DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
-					if (executionContext != null) {
-						fTargetContext= executionContext;
-						fTargetFrameContext= frame;
-						fTargetFrame= frame.getLevel();
-					}
+		IAdaptable context = DebugUITools.getDebugContext();
+		final IDisassemblyBackend prevBackend = fBackend;
+		fDebugSessionId = null;
+		if (context != null) {
+			if (fBackend == null || !fBackend.supportsDebugContext(context)) {
+				if (fBackend != null) {
+					fBackend.dispose();
 				}
-				if (fTargetContext != null) {
-			        if (fDebugSessionId != null) {
-			        	if (getSession() != null) {
-			        		try {
-								// Don't call getSession() from executor; may
-								// return different session by the time it runs
-			        			final DsfSession session = getSession();
-			        			session.getExecutor().execute(new DsfRunnable() {
-			        				public void run() {
-			        					session.removeServiceEventListener(DisassemblyPart.this);
-			        				}
-			        			});
-			        		} catch (RejectedExecutionException e) {
-			                    // Session is shut down.
-			        		}
-						}
-			        }
-					fDebugSessionId= sessionId;
-					if (fServicesTracker != null) {
-						fServicesTracker.dispose();
-					}
-			        fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), sessionId);
-			        if (fViewer != null) {
+				fBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
+				if (fBackend != null) {
+					fBackend.init(this);
+				}
+			}
+			
+			if (fBackend != null) {
+				IDisassemblyBackend.SetDebugContextResult result = fBackend.setDebugContext(context);
+				if (result != null) {
+					fDebugSessionId = result.sessionId;
+			        if (result.contextChanged && fViewer != null) {
 						debugContextChanged();
-					}
-				}
-			} else if (dmContext instanceof IFrameDMContext) {
-				// switch to different frame
-				IFrameDMContext frame= (IFrameDMContext) dmContext;
-				final IDMContext[] parents= frame.getParents();
-				for (IDMContext context : parents) {
-					if (context instanceof IExecutionDMContext) {
-						fTargetContext= (IExecutionDMContext) context;
-						fTargetFrameContext= frame;
-						gotoFrame(frame);
-						break;
-					}
-				}
-			}
-		} else if (fDebugSessionId != null) {
-			if (getSession() != null) {
-				try {
-					// Don't call getSession() from executor; may return
-					// different session by the time it runs
-					final DsfSession session = getSession();
-					session.getExecutor().execute(new DsfRunnable() {
-						public void run() {
-							session.removeServiceEventListener(DisassemblyPart.this);
+						if (prevBackend != null && fBackend != prevBackend) {
+							prevBackend.clearDebugContext();
 						}
-					});
-        		} catch (RejectedExecutionException e) {
-                    // Session is shut down.
-        		}
-			}
-			fDebugSessionId= null;
-			fTargetContext= null;
-			if (fServicesTracker != null) {
-				fServicesTracker.dispose();				
-				fServicesTracker= null;
-			}
-			if (fViewer != null) {
-				debugContextChanged();
+					}
+				}
 			}
 		}
 	}
@@ -2378,16 +1841,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fDebugSessionId != null) {
 			fJumpToAddressAction.setEnabled(true);
 			fAddressBar.enableAddressBox(true);
-			try {
-				final DsfSession session= getSession();
-				session.getExecutor().execute(new DsfRunnable() {
-					public void run() {
-						session.addServiceEventListener(DisassemblyPart.this, null);
-					}
-				});
-    		} catch (RejectedExecutionException e) {
-                // Session is shut down.
-    		}
 
 			updatePC(PC_UNKNOWN);
 
@@ -2414,66 +1867,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		firePropertyChange(PROP_SUSPENDED);
 	}
 
-	/*
-	 * @see org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener#sessionEnded(org.eclipse.cdt.dsf.service.DsfSession)
-	 */
-	public void sessionEnded(DsfSession endedSsession) {
-		if (endedSsession.getId().equals(fDebugSessionId)) {
-			asyncExec(new Runnable() {
-				public void run() {
-					setDebugContext(null);
-				}});
-		}
-	}
 
-	@DsfServiceEventHandler
-	public void handleEvent(IExitedDMEvent event) {
-		if (fTargetContext == null) {
-			return;
-		}
-		final IExecutionDMContext context= event.getDMContext();
-		if (context.equals(fTargetContext)
-				|| DMContexts.isAncestorOf(fTargetContext, context)) {
-			asyncExec(new Runnable() {
-				public void run() {
-					setDebugContext(null);
-				}});
-		}
-	}
-
-	@DsfServiceEventHandler
-	public void handleEvent(ISuspendedDMEvent event) {
-		if (fTargetContext == null) {
-			return;
-		}
-		final IExecutionDMContext context= event.getDMContext();
-		if (context.equals(fTargetContext)
-				|| DMContexts.isAncestorOf(fTargetContext, context)) {
-			asyncExec(new Runnable() {
-				public void run() {
-					updatePC(PC_UNKNOWN);
-					firePropertyChange(PROP_SUSPENDED);
-				}
-			});
-		}
-	}
-
-	@DsfServiceEventHandler
-	public void handleEvent(IResumedDMEvent event) {
-		if (fTargetContext == null) {
-			return;
-		}
-		final IExecutionDMContext context= event.getDMContext();
-		if (context.equals(fTargetContext)
-				|| DMContexts.isAncestorOf(fTargetContext, context)) {
-			asyncExec(new Runnable() {
-				public void run() {
-					updatePC(PC_RUNNING);
-					firePropertyChange(PROP_SUSPENDED);
-				}
-			});
-		}
-	}
 
 	private void attachBreakpointsAnnotationModel() {
 		IAnnotationModel annotationModel = fViewer.getAnnotationModel();
@@ -2502,7 +1896,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					if (fScrollPos != null) {
 						fScrollPos.isDeleted = true;
 					}
-					gotoFrame(targetFrame);
+					gotoFrameIfActive(targetFrame);
 				} else {
 					refreshView((int)(refreshViewScheduled - now));
 				}
@@ -2588,6 +1982,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @return a position which denotes the documents position
 	 */
 	private AddressRangePosition updateAddressAnnotation(Annotation annotation, BigInteger address) {
+		if (fViewer == null) {
+			return null;	// can happen during session shutdown
+		}
 		IAnnotationModel annotationModel = fViewer.getAnnotationModel();
 		annotationModel.removeAnnotation(annotation);
 		AddressRangePosition pos = getPCPosition(address);
@@ -2631,13 +2028,35 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		return null;
 	}
 
-	private void gotoFrame(int frame, BigInteger address) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoFrame(int)
+	 */
+	public void gotoFrame(int frame) {
+		assert isGuiThread();
+		gotoFrame(frame, PC_UNKNOWN);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoFrameIfActive(int)
+	 */
+	public void gotoFrameIfActive(int frame) {
+		assert isGuiThread();
+		if (fActive) {
+			gotoFrame(frame);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoFrame(int, java.math.BigInteger)
+	 */
+	public void gotoFrame(int frame, BigInteger address) {
+		assert isGuiThread();
 		if (DEBUG) System.out.println("gotoFrame " + frame + " " + getAddressText(address)); //$NON-NLS-1$ //$NON-NLS-2$
 		fTargetFrame = frame;
 		fFrameAddress = address;
 		if (fTargetFrame == -1) {
 			fTargetFrame = getActiveStackFrame();
-			if (fTargetFrame < 0 && isSuspended(fTargetContext)) {
+			if (fTargetFrame < 0 && fBackend != null && fBackend.isSuspended()) {
 				fTargetFrame= 0;
 			}
 			if (fTargetFrame == -1) {
@@ -2652,7 +2071,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (fFrameAddress.compareTo(PC_UNKNOWN) == 0) {
 			if (!fUpdatePending) {
 				fGotoFramePending = false;
-				retrieveFrameAddress(fTargetContext, fTargetFrame);
+				if (fBackend != null && fBackend.hasDebugContext() && fBackend.isSuspended()) {
+					if (DEBUG) System.out.println("retrieveFrameAddress "+frame); //$NON-NLS-1$
+					fUpdatePending = true;
+					fBackend.retrieveFrameAddress(fTargetFrame);
+				}
 			}
 			return;
 		}
@@ -2694,14 +2117,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#isConnected()
 	 */
 	public final boolean isConnected() {
-		return fDebugSessionId != null && fTargetContext != null;
+		if (fDebugSessionId == null) {
+			return false;
+		}
+		
+		return (fBackend != null) ? fBackend.hasDebugContext() : false; 
 	}
 
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#isSuspended()
 	 */
 	public final boolean isSuspended() {
-		return isConnected() && isSuspended(fTargetContext);
+		return isConnected() && fBackend.isSuspended();
 	}
 
 	/*
@@ -2709,6 +2136,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	public final ISourceViewer getTextViewer() {
 		return fViewer;
+	}
+	
+	public final boolean hasViewer() {
+		return fViewer != null;
 	}
 
 	/*
@@ -2723,62 +2154,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 */
 	public final void removeRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.remove(listener);
-	}
-
-	private boolean isSuspended(final IExecutionDMContext targetContext) {
-		DsfSession session = getSession();
-		if (session == null || !session.isActive()) {
-			return false;
-		}
-		if (session.getExecutor().isInExecutorThread()) {
-			IRunControl runControl = getRunControl();
-			if (runControl == null) {
-				return false;
-			} else {
-				return runControl.isSuspended(targetContext);
-			}
-		}
-		Query<Boolean> query = new Query<Boolean>() {
-			@Override
-			protected void execute(DataRequestMonitor<Boolean> rm) {
-				try {
-					IRunControl runControl = getRunControl();
-					if (runControl == null) {
-						rm.setData(false);
-					} else {
-						rm.setData(runControl.isSuspended(targetContext));
-					}
-				} finally {
-					rm.done();
-				}
-			}
-		};
-		session.getExecutor().execute(query);
-		try {
-			return query.get();
-		} catch (InterruptedException exc) {
-		} catch (ExecutionException exc) {
-		}
-		return false;
-	}
-
-	private IRunControl getRunControl() {
-		return getService(IRunControl.class);
-	}
-
-	/*default*/ DsfSession getSession() {
-		return DsfSession.getSession(fDebugSessionId);
-	}
-
-	/*default*/ <V> V getService(Class<V> serviceClass) {
-		if (fServicesTracker != null) {
-			return fServicesTracker.getService(serviceClass);
-		}
-		return null;
-	}
-
-	/*default*/ IFrameDMContext getTargetFrameContext() {
-		return fTargetFrameContext;
 	}
 
 	/**
@@ -2812,6 +2187,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
+	/**
+	 * Act on the first PC in the pending list that is not a special value
+	 * (UNKNOWN, RUNNING), discarding all special value entries leading up to
+	 * it. If the list only has special values, act on the last one and clear
+	 * the list.
+	 */
 	private void doPendingPCUpdates() {
 		if (fPendingPCUpdates.isEmpty()) {
 			return;
@@ -2870,8 +2251,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 *
 	 * @param pc  Current pc address. -1 means retrieve pc from top frame, -2
 	 *            means target resumed
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#updatePC(java.math.BigInteger)
 	 */
-	private void updatePC(BigInteger pc) {
+	public void updatePC(BigInteger pc) {
+		assert isGuiThread();
 		if (!fPendingPCUpdates.isEmpty()) {
 			BigInteger last = fPendingPCUpdates.get(fPendingPCUpdates.size()-1);
 			if (last.compareTo(BigInteger.ZERO) < 0) {
@@ -2933,14 +2316,18 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private void doPending() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#doPending()
+	 */
+	public void doPending() {
+		assert isGuiThread();
 		if (fViewer == null || fDocument == null) {
 			return;
 		}
 		if (fUpdateSourcePending) {
 			updateInvalidSource();
 		}
-		boolean sourceValid= fDocument.getInvalidSource().isEmpty();
+		boolean sourceValid= !fDocument.hasInvalidSourcePositions();
 		if (sourceValid || fShowDisassembly) {
 			if (fGotoFramePending) {
 				gotoFrame(fTargetFrame, fFrameAddress);
@@ -2965,8 +2352,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * Safely run given runnable in a state when no update is pending.
 	 * Delays execution by 10 ms if update is currently pending.
 	 * @param doit
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#doScrollLocked(java.lang.Runnable)
 	 */
-	private void doScrollLocked(final Runnable doit) {
+	public void doScrollLocked(final Runnable doit) {
+		assert isGuiThread();
 		if (fViewer == null || fDebugSessionId == null) {
 			// disposed
 			return;
@@ -3011,7 +2400,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private void lockScroller() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#lockScroller()
+	 */
+	public void lockScroller() {
+		assert isGuiThread();
 		assert fScrollPos == null;
 		if (isOpcodeRulerVisible()) {
 			fRedrawControl = fViewer.getControl();
@@ -3051,7 +2444,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private void unlockScroller() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#unlockScroller()
+	 */
+	public void unlockScroller() {
+		assert isGuiThread();
 		try {
 			if (fScrollPos == null) {
 				return;
@@ -3099,7 +2496,19 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-    private void insertSource(SourcePosition pos) {
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#insertSource(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition)
+     */
+    public void insertSource(AddressRangePosition _pos) {
+    	assert isGuiThread();
+		// IDisassemblyPartCallback does not have visibility to the
+		// SourcePosition type, which is DSF-specific, so it uses the base type
+    	if (!(_pos instanceof SourcePosition)) {
+    		assert false : "Caller should have passed in a SourcePosition";  //$NON-NLS-1$
+    		return;
+    	}
+    	SourcePosition pos = (SourcePosition)_pos;
+    	
     	if (!fShowSource) {
     		fDocument.insertSource(pos, "", pos.fLine, true); //$NON-NLS-1$
     		return;
@@ -3213,8 +2622,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		try {
 			// make sure we start with first overlapping position
 			AddressRangePosition pos = fDocument.getModelPosition(startOffset);
-			assert pos != null;
 			if (pos == null) {
+				assert false;
 				return;
 			}
 			it = fDocument.getPositionIterator(DisassemblyDocument.CATEGORY_MODEL, pos.offset);
@@ -3296,56 +2705,37 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-
-	private AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNr) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#insertSource(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, java.lang.String, int)
+	 */
+	public AddressRangePosition insertSource(AddressRangePosition pos, BigInteger address, final String file, int lineNumber) {
+		assert isGuiThread();
 		Object sourceElement = null;
 		if (fFile2Storage.containsKey(file)) {
 			sourceElement = fFile2Storage.get(file);
 		} else {
-			final ISourceLookupDMContext ctx= DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
-			final DsfExecutor executor= getSession().getExecutor();
-			Query<Object> query= new Query<Object>() {
-				@Override
-				protected void execute(final DataRequestMonitor<Object> rm) {
-					final DataRequestMonitor<Object> request= new DataRequestMonitor<Object>(executor, rm) {
-						@Override
-						protected void handleSuccess() {
-							rm.setData(getData());
-							rm.done();
-						}
-					};
-					final ISourceLookup lookup= getService(ISourceLookup.class);
-					lookup.getSource(ctx, file, request);
-				}
-			};
-			try {
-				getSession().getExecutor().execute(query);
-				sourceElement= query.get();
-			} catch (InterruptedException exc) {
-				internalError(exc);
-			} catch (ExecutionException exc) {
-				internalError(exc);
-			}
-			if (sourceElement instanceof File) {
-				sourceElement = new LocalFileStorage((File)sourceElement);
-			}
-			if (sourceElement instanceof IStorage) {
-				if (!(sourceElement instanceof IFile)) {
-					// try to resolve as resource
-					final IPath location= ((IStorage) sourceElement).getFullPath();
-					if (location != null) {
-						IFile iFile = ResourceLookup.selectFileForLocation(location, null);
-						if (iFile != null) {
-							sourceElement = iFile;
-						}
+			sourceElement = fBackend.insertSource(pos, address, file, lineNumber);
+		}
+		if (sourceElement instanceof File) {
+			sourceElement = new LocalFileStorage((File)sourceElement);
+		}
+		if (sourceElement instanceof IStorage) {
+			if (!(sourceElement instanceof IFile)) {
+				// try to resolve as resource
+				final IPath location= ((IStorage) sourceElement).getFullPath();
+				if (location != null) {
+					IFile iFile = ResourceLookup.selectFileForLocation(location, null);
+					if (iFile != null) {
+						sourceElement = iFile;
 					}
 				}
-				fFile2Storage.put(file, sourceElement);
-			} else {
-				fFile2Storage.put(file, null);
-				logWarning(DisassemblyMessages.Disassembly_log_error_locateFile+file, null);
 			}
+			fFile2Storage.put(file, sourceElement);
+		} else {
+			fFile2Storage.put(file, null);
+			logWarning(DisassemblyMessages.Disassembly_log_error_locateFile+file, null);
 		}
+		
 		if (sourceElement instanceof IStorage) {
 			SourceFileInfo fi = fDocument.getSourceInfo((IStorage)sourceElement);
 			if (fi == null) {
@@ -3360,8 +2750,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 				fi.fReadingJob.schedule();
 			}
-			pos = fDocument.insertInvalidSource(pos, address, fi, lineNr);
+			pos = fDocument.insertInvalidSource(pos, address, fi, lineNumber);
 		}
+		
 		return pos;
 	}
 
@@ -3412,31 +2803,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			}
 		}
 	}
-
-	public static BigInteger decodeAddress(String string) {
-		if (string.startsWith("0x")) { //$NON-NLS-1$
-			return new BigInteger(string.substring(2), 16);
-		}
-		return new BigInteger(string);
-	}
-
-	private static String getAddressText(BigInteger address) {
-		if (address == null) {
-			return "<null>"; //$NON-NLS-1$
-		}
-		if (address.compareTo(BigInteger.ZERO) < 0) {
-			return address.toString();
-		}
-		String hex = address.toString(16);
-		return "0x" + "0000000000000000".substring(hex.length() + (address.bitLength() <= 32 ? 8 : 0)) + hex; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	static void internalError(Throwable e) {
-		if (DEBUG) {
-			System.err.println("Disassembly: Internal error"); //$NON-NLS-1$
-			e.printStackTrace();
-		}
-	}
 	
 	public AddressBarContributionItem getAddressBar() {
 		return fAddressBar;
@@ -3458,5 +2824,106 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			IContextService ctxService = (IContextService)getSite().getService(IContextService.class);
 			ctxService.deactivateContext(fContextActivation);
 		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#handleTargetSuspended()
+	 */
+	public void handleTargetSuspended() {
+		asyncExec(new Runnable() {
+			public void run() {
+				updatePC(PC_UNKNOWN);
+				firePropertyChange(PROP_SUSPENDED);
+			}
+		});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#handleTargetResumed()
+	 */
+	public void handleTargetResumed() {
+		asyncExec(new Runnable() {
+			public void run() {
+				updatePC(PC_RUNNING);
+				firePropertyChange(PROP_SUSPENDED);
+			}
+		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#handleTargetEnded()
+	 */
+	public void handleTargetEnded() {
+		asyncExec(new Runnable() {
+			public void run() {
+				fDebugSessionId = null;
+				debugContextChanged();				
+			}
+		});		
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#setUpdatePending(boolean)
+	 */
+	public void setUpdatePending(boolean pending) { 
+		fUpdatePending = pending;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getUpdatePending()
+	 */
+	public boolean getUpdatePending() { 
+		assert isGuiThread();
+		return fUpdatePending;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#setGotoAddressPending(java.math.BigInteger)
+	 */
+	public void setGotoAddressPending(BigInteger address) {
+		assert isGuiThread();
+		fGotoAddressPending = address;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getGotoAddressPending()
+	 */
+	public BigInteger getGotoAddressPending() {
+		assert isGuiThread();
+		return fGotoAddressPending;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getDocument()
+	 */
+	public IDisassemblyDocument getDocument() {
+		assert isGuiThread();
+		return fDocument;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#getStorageForFile(java.lang.String)
+	 */
+	public Object getStorageForFile(String file) {
+		assert isGuiThread();
+		return fFile2Storage.get(file);
+	}
+
+	/**
+	 * A passthru from the text hover code to the backend.
+	 */
+	public String evaluateExpression(String expr) {
+		if (fBackend != null) {
+			return fBackend.evaluateExpression(expr);
+		}
+		return ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Most methods in IDisassemblyPartCallback require execution on the GUI thread.
+	 */
+	private static boolean isGuiThread() {
+		return Display.getCurrent() != null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.decodeAddress;
+
 import java.math.BigInteger;
 
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -34,7 +35,7 @@ public final class ActionGotoAddress extends AbstractDisassemblyAction {
 				if (input == null || input.length() == 0)
 					return " "; //$NON-NLS-1$
 				try {
-					BigInteger address= DisassemblyPart.decodeAddress(input);
+					BigInteger address= decodeAddress(input);
 					if (address.compareTo(BigInteger.ZERO) < 0) {
 						return DisassemblyMessages.Disassembly_GotoAddressDialog_error_invalid_address;
 					}
@@ -57,7 +58,7 @@ public final class ActionGotoAddress extends AbstractDisassemblyAction {
 		InputDialog dlg = new InputDialog(shell, dlgTitle, dlgLabel, defaultValue, validator);
 		if (dlg.open() == IDialogConstants.OK_ID) {
 			String value = dlg.getValue();
-			BigInteger address= DisassemblyPart.decodeAddress(value);
+			BigInteger address= decodeAddress(value);
 			DsfUIPlugin.getDefault().getDialogSettings().put("gotoAddress", value); //$NON-NLS-1$
 			getDisassemblyPart().gotoAddress(address);
 		}

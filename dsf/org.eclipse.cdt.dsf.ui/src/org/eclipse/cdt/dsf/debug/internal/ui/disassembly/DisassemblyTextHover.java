@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,25 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
-import java.util.concurrent.ExecutionException;
-
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyPosition;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.LabelPosition;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourcePosition;
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.core.runtime.IStatus;
@@ -112,48 +97,7 @@ public class DisassemblyTextHover implements ITextHover {
 	 * @return expression value or <code>null</code>
 	 */
 	private String evaluateExpression(final String expr) {
-		final IFrameDMContext frameDmc= fDisassemblyPart.getTargetFrameContext();
-		if (frameDmc == null) {
-			return null;
-		}
-		final DsfExecutor executor= fDisassemblyPart.getSession().getExecutor();
-		Query<FormattedValueDMData> query= new Query<FormattedValueDMData>() {
-			@Override
-			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
-				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(frameDmc, IExecutionDMContext.class);
-				final IRunControl rc= fDisassemblyPart.getService(IRunControl.class);
-				if (rc == null || !rc.isSuspended(exeCtx)) {
-					rm.done();
-					return;
-				}
-				final IExpressions expressions= fDisassemblyPart.getService(IExpressions.class);
-				if (expressions == null) {
-					rm.done();
-					return;
-				}
-				IExpressionDMContext exprDmc= expressions.createExpression(frameDmc, expr);
-				final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT);
-				expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(executor, rm) {
-					@Override
-					protected void handleSuccess() {
-						FormattedValueDMData data= getData();
-						rm.setData(data);
-						rm.done();
-					}
-				});
-			}};
-		
-		executor.execute(query);
-		FormattedValueDMData data= null;
-		try {
-			data= query.get();
-		} catch (InterruptedException exc) {
-		} catch (ExecutionException exc) {
-		}
-		if (data != null) {
-			return data.getFormattedValue();
-		}
-		return null;
+		return fDisassemblyPart.evaluateExpression(expr);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Texas Instruments, Inc. and others.
+ * Copyright (c) 2009, 2010 Texas Instruments, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart;
 import org.eclipse.jface.action.Action;
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.decodeAddress;
 
 public class JumpToAddressAction extends Action {
 
@@ -37,7 +38,7 @@ public class JumpToAddressAction extends Action {
         	location = location.trim();        	        	
         	BigInteger address = null; 
         	try {
-        		address = DisassemblyPart.decodeAddress(location);
+        		address = decodeAddress(location);
 				if (address.compareTo(BigInteger.ZERO) < 0) {
 					address = null;
 					addressBar.setWarningIconVisible(true);

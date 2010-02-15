@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
 
 import java.math.BigInteger;
+
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 
 /**
  * DisassemblyWithSourcePosition
@@ -41,6 +43,14 @@ public class DisassemblyWithSourcePosition extends DisassemblyPosition {
 	@Override
 	public int getLine() {
 		return fLine;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyPosition#toString()
+	 */
+	@Override
+	public String toString() {
+		return super.toString() + "->["+fFile + ':' + fLine + ']';  //$NON-NLS-1$
 	}
 	
 }

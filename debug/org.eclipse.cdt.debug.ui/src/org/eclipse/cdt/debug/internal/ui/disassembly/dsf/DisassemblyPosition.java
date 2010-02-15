@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
+package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
 
@@ -45,5 +45,12 @@ public class DisassemblyPosition extends AddressRangePosition {
 	public int getLine() {
 		return -1;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.AddressRangePosition#toString()
+	 */
+	@Override
+	public String toString() {
+		return super.toString() + "->[" + new String(fFunction) + ']'; //$NON-NLS-1$
+	}
 }

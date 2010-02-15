@@ -10,6 +10,7 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.actions;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.dialogfields;x-internal:=true,
+ org.eclipse.cdt.debug.internal.ui.disassembly.dsf;x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.debug.internal.ui.editors;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.preferences;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.propertypages;x-internal:=true,

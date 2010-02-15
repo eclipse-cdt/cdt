@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 import java.math.BigInteger;
 import java.net.URI;
 
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyPosition;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourcePosition;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;

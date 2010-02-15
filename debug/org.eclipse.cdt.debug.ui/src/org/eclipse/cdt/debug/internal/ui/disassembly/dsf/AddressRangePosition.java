@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model;
+package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
 
@@ -62,5 +62,16 @@ public class AddressRangePosition extends Position {
 	public boolean equals(Object other) {
 		// identity comparison
 		return this == other;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.Position#toString()
+	 */
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + '@' + Integer.toHexString(System.identityHashCode(this)) 
+			+ (fValid ? "" : "[INVALID]") //$NON-NLS-1$ //$NON-NLS-2$
+			+ '[' + offset + ':' + length + "]->[" + fAddressOffset //$NON-NLS-1$
+			+ ':' + fAddressLength + ']';
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,12 +84,17 @@ public class BinaryRunner {
 	}
 	
 	private final ICProject cproject;
-	private final Job runnerJob;		// final fields don't need syncronization
-	private boolean isStopped= false;   // access to isStopped must be syncronized.
+	private final Job runnerJob;		// final fields don't need synchronization
+	private IOutputEntry[] entries = new IOutputEntry[0];
+	private boolean isStopped= false;   // access to isStopped must be synchronized.
 
 	public BinaryRunner(IProject prj) {
 		cproject = CModelManager.getDefault().create(prj);
 		runnerJob= createRunnerJob();
+		try {
+			entries = cproject.getOutputEntries();
+		} catch (CModelException e) {
+		}
 	}
 
 	private Job createRunnerJob() {
@@ -100,7 +105,7 @@ public class BinaryRunner {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status = Status.OK_STATUS;
 				try {
-					if (cproject == null || monitor.isCanceled()) {
+					if (cproject == null || entries.length == 0 || monitor.isCanceled()) {
 						status = Status.CANCEL_STATUS;
 					} else {
 						monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
@@ -168,16 +173,11 @@ public class BinaryRunner {
 	private class Visitor implements IResourceProxyVisitor {
 		private IProgressMonitor vMonitor;
 		private IProject project;
-		private IOutputEntry[] entries = new IOutputEntry[0];
 		private IContentType textContentType;
 
 		public Visitor(IProgressMonitor monitor) {
 			vMonitor = monitor;
 			this.project = cproject.getProject();
-			try {
-				entries = cproject.getOutputEntries();
-			} catch (CModelException e) {
-			}
 			IContentTypeManager mgr = Platform.getContentTypeManager();
 			textContentType = mgr.getContentType("org.eclipse.core.runtime.text"); //$NON-NLS-1$
 		}

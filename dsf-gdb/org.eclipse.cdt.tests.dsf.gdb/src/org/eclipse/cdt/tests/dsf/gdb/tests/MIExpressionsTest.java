@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -127,15 +128,15 @@ public class MIExpressionsTest extends BaseTestCase {
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
-        tests.put("0 + 0 - 0", new String[] { "0x0", "0", "0", "0", "0" });
-        tests.put("3 + 4", new String[] { "0x7", "07", "111", "7", "7" });
-        tests.put("3 + 4 * 5", new String[] { "0x17", "027", "10111", "23", "23" });
-        tests.put("5 * 3 + 4", new String[] { "0x13", "023", "10011", "19", "19" });
-        tests.put("5 * (3 + 4)", new String[] { "0x23", "043", "100011", "35", "35" });
+        tests.put("0 + 0 - 0", new String[] { "0x0", "0", "0", "0", "0", "0" });
+        tests.put("3 + 4", new String[] { "0x7", "07", "111", "7", "7", "7" });
+        tests.put("3 + 4 * 5", new String[] { "0x17", "027", "10111", "23", "23", "23" });
+        tests.put("5 * 3 + 4", new String[] { "0x13", "023", "10011", "19", "19", "19" });
+        tests.put("5 * (3 + 4)", new String[] { "0x23", "043", "100011", "35", "35", "35" });
         tests.put("10 - 15", new String[] { "0xFFFFFFFB", "037777777773", "11111111111111111111111111111011", "-5",
-            "-5" });
+            "-5", "-5" });
         tests.put("10 + -15", new String[] { "0xFFFFFFFB", "037777777773", "11111111111111111111111111111011", "-5",
-            "-5" });
+            "-5", "-5" });
 
         executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
     }
@@ -150,12 +151,12 @@ public class MIExpressionsTest extends BaseTestCase {
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
-        tests.put("3.1415 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526000000000002" });
-        tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336" });
+        tests.put("3.1415 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526000000000002", "4.2526000000000002" });
+        tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336", "33.333333333333336" });
         tests.put("-100.0 / 3.0", new String[] { "0xffffffffffffffdf", "01777777777777777777737",
-            "1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.333333333333336" });
-        tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336" });
-        tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200" });
+            "1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.333333333333336", "-33.333333333333336" });
+        tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336", "33.333333333333336" });
+        tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
 
         executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
     }
@@ -173,27 +174,27 @@ public class MIExpressionsTest extends BaseTestCase {
         // Create a map of expressions to expected values.
         Map<String, String[]> tests1 = new HashMap<String, String[]>();
 
-        tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345" });
-        tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999" });
-        tests1.put("lCharVar", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'" });
-        tests1.put("lBoolVar", new String[] { "0x0", "0", "0", "0", "false" });
+        tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
+        tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999", "12345.123449999999" });
+        tests1.put("lCharVar", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
+        tests1.put("lBoolVar", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
-        tests1.put("lIntArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345" });
-        tests1.put("lDoubleArray[1]",  new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999" });
-        tests1.put("lCharArray[1]", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'" });
-        tests1.put("lBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false" });
+        tests1.put("lIntArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
+        tests1.put("lDoubleArray[1]",  new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999", "12345.123449999999" });
+        tests1.put("lCharArray[1]", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
+        tests1.put("lBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
-        tests1.put("*lIntPtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345" });
-        tests1.put("*lDoublePtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999" });
-        tests1.put("*lCharPtr", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'" });
-        tests1.put("*lBoolPtr", new String[] { "0x0", "0", "0", "0", "false" });
+        tests1.put("*lIntPtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
+        tests1.put("*lDoublePtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999", "12345.123449999999" });
+        tests1.put("*lCharPtr", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
+        tests1.put("*lBoolPtr", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
-        tests1.put("lIntPtr2", new String[] { "0x1", "01", "1", "1", "0x1" });
-        tests1.put("lDoublePtr2", new String[] { "0x2345", "021505", "10001101000101", "9029", "0x2345" });
+        tests1.put("lIntPtr2", new String[] { "0x1", "01", "1", "1", "0x1", "0x1" });
+        tests1.put("lDoublePtr2", new String[] { "0x2345", "021505", "10001101000101", "9029", "0x2345", "0x2345" });
         // GDB says a char* is out of bounds, but not the other pointers???
         // tests1.put("CharPtr2", new String[] { "0x1234", "011064",
         // "1001000110100", "4660", "0x1234" });
-        tests1.put("lBoolPtr2", new String[] { "0x123ABCDE", "02216536336", "10010001110101011110011011110", "305839326", "0x123ABCDE" });
+        tests1.put("lBoolPtr2", new String[] { "0x123ABCDE", "02216536336", "10010001110101011110011011110", "305839326", "0x123ABCDE", "0x123ABCDE" });
 
         executeExpressionSubTests(tests1, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
 
@@ -205,13 +206,13 @@ public class MIExpressionsTest extends BaseTestCase {
         // Create a map of expressions to expected values.
         Map<String, String[]> tests2 = new HashMap<String, String[]>();
 
-        tests2.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789" });
+        tests2.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789", "6789" });
         tests2.put("lDoubleArray[1]",
-            new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789.6788999999999" });
-        tests2.put("lCharVar", new String[] { "0x69", "0151", "1101001", "105", "105 'i'" });
-        tests2.put("*lCharPtr", new String[] { "0x69", "0151", "1101001", "105", "105 'i'" });
+            new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789.6788999999999", "6789.6788999999999" });
+        tests2.put("lCharVar", new String[] { "0x69", "0151", "1101001", "105", "105 'i'", "105 'i'" });
+        tests2.put("*lCharPtr", new String[] { "0x69", "0151", "1101001", "105", "105 'i'", "105 'i'" });
         tests2.put("lBoolPtr2", new String[] { "0xABCDE123", "025363360443", "10101011110011011110000100100011",
-            "2882396451", "0xABCDE123" });
+            "2882396451", "0xABCDE123","0xABCDE123" });
 
         // check variables at current stack frame
         executeExpressionSubTests(tests2, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
@@ -219,8 +220,8 @@ public class MIExpressionsTest extends BaseTestCase {
         executeExpressionSubTests(tests1, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 1));
 
         // Now return from the method and check that we see the
-        // original variables
-        stoppedEvent = SyncUtil.SyncStep(StepType.STEP_RETURN);
+        // original variables.  We must use the right context to restore the right stack frame
+        stoppedEvent = SyncUtil.SyncStep(stoppedEvent.getDMContext(), StepType.STEP_RETURN);
 
         executeExpressionSubTests(tests1, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
     }
@@ -238,8 +239,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
-        tests.put("a", new String[] { "0x8", "010", "1000", "8", "8" });
-        tests.put("b", new String[] { "0x1", "01", "1", "1", "1" });
+        tests.put("a", new String[] { "0x8", "010", "1000", "8", "8", "8" });
+        tests.put("b", new String[] { "0x1", "01", "1", "1", "1", "1" });
 
         executeExpressionSubTests(tests, frameDmc);
 
@@ -248,8 +249,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         tests = new HashMap<String, String[]>();
 
-        tests.put("a", new String[] { "0xc", "014", "1100", "12", "12" });
-        tests.put("b", new String[] { "0x1", "01", "1", "1", "1" });
+        tests.put("a", new String[] { "0xc", "014", "1100", "12", "12", "12" });
+        tests.put("b", new String[] { "0x1", "01", "1", "1", "1", "1" });
 
         executeExpressionSubTests(tests, frameDmc);
 
@@ -258,8 +259,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         tests = new HashMap<String, String[]>();
 
-        tests.put("a", new String[] { "0xc", "014", "1100", "12", "12" });
-        tests.put("b", new String[] { "0xc", "014", "1100", "12", "12" });
+        tests.put("a", new String[] { "0xc", "014", "1100", "12", "12", "12" });
+        tests.put("b", new String[] { "0xc", "014", "1100", "12", "12", "12" });
 
         executeExpressionSubTests(tests, frameDmc);
 
@@ -269,8 +270,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         tests = new HashMap<String, String[]>();
 
-        tests.put("a", new String[] { "0x8", "010", "1000", "8", "8" });
-        tests.put("b", new String[] { "0xc", "014", "1100", "12", "12" });
+        tests.put("a", new String[] { "0x8", "010", "1000", "8", "8", "8" });
+        tests.put("b", new String[] { "0xc", "014", "1100", "12", "12", "12" });
 
         executeExpressionSubTests(tests, frameDmc);
     }
@@ -1171,28 +1172,28 @@ public class MIExpressionsTest extends BaseTestCase {
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
         // Global variables
-        tests.put("gIntVar", new String[] { "0x21F", "01037", "1000011111", "543", "543" });
-        tests.put("gDoubleVar", new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001" });
-        tests.put("gCharVar", new String[] { "0x67", "0147", "1100111", "103", "103 'g'" });
-        tests.put("gBoolVar", new String[] { "0x0", "0", "0", "0", "false" });
+        tests.put("gIntVar", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
+        tests.put("gDoubleVar", new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+        tests.put("gCharVar", new String[] { "0x67", "0147", "1100111", "103", "103 'g'", "103 'g'" });
+        tests.put("gBoolVar", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
-        tests.put("gIntArray[1]", new String[] { "0x28E", "01216", "1010001110", "654", "654" });
-        tests.put("gDoubleArray[1]", new String[] { "0x28E", "01216", "1010001110", "654", "654.32100000000003" });
-        tests.put("gCharArray[1]", new String[] { "0x64", "0144", "1100100", "100", "100 'd'" });
-        tests.put("gBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false" });
+        tests.put("gIntArray[1]", new String[] { "0x28E", "01216", "1010001110", "654", "654", "654" });
+        tests.put("gDoubleArray[1]", new String[] { "0x28E", "01216", "1010001110", "654", "654.32100000000003", "654.32100000000003" });
+        tests.put("gCharArray[1]", new String[] { "0x64", "0144", "1100100", "100", "100 'd'", "100 'd'" });
+        tests.put("gBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
-        tests.put("*gIntPtr", new String[] { "0x21F", "01037", "1000011111", "543", "543" });
-        tests.put("*gDoublePtr", new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001" });
-        tests.put("*gCharPtr", new String[] { "0x67", "0147", "1100111", "103", "103 'g'" });
-        tests.put("*gBoolPtr", new String[] { "0x0", "0", "0", "0", "false" });
+        tests.put("*gIntPtr", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
+        tests.put("*gDoublePtr", new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+        tests.put("*gCharPtr", new String[] { "0x67", "0147", "1100111", "103", "103 'g'", "103 'g'" });
+        tests.put("*gBoolPtr", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
-        tests.put("gIntPtr2", new String[] { "0x8", "010", "1000", "8", "0x8" });
-        tests.put("gDoublePtr2", new String[] { "0x5432", "052062", "101010000110010", "21554", "0x5432" });
+        tests.put("gIntPtr2", new String[] { "0x8", "010", "1000", "8", "0x8" , "0x8" });
+        tests.put("gDoublePtr2", new String[] { "0x5432", "052062", "101010000110010", "21554", "0x5432", "0x5432" });
         // GDB says a char* is out of bounds, but not the other pointers???
         // tests.put("gCharPtr2", new String[] { "0x4321", "041441",
         // "100001100100001", "17185", "0x4321" });
         tests.put("gBoolPtr2", new String[] { "0x12ABCDEF", "02252746757", "10010101010111100110111101111",
-            "313249263", "0x12ABCDEF" });
+            "313249263", "0x12ABCDEF", "0x12ABCDEF" });
 
         // Try different stack frames
         executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0));
@@ -1212,21 +1213,21 @@ public class MIExpressionsTest extends BaseTestCase {
     	IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
     	Map<String, String[]> tests = new HashMap<String, String[]>();
-    	tests.put("a", new String[] { "0x1", "01", "1", "1", "1" });
+    	tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
     	executeExpressionSubTests(tests, frameDmc);
 
     	SyncUtil.SyncRunToLocation("testName2");
     	stoppedEvent = SyncUtil.SyncStep(StepType.STEP_INTO, 1);
     	frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
     	tests = new HashMap<String, String[]>();
-    	tests.put("a", new String[] { "0x2", "02", "10", "2", "2" });
+    	tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
     	executeExpressionSubTests(tests, frameDmc);
 
     	SyncUtil.SyncRunToLocation("testName1");
     	stoppedEvent = SyncUtil.SyncStep(StepType.STEP_INTO, 1);
     	frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
     	tests = new HashMap<String, String[]>();
-    	tests.put("a", new String[] { "0x3", "03", "11", "3", "3" });
+    	tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
     	executeExpressionSubTests(tests, frameDmc);
     }
     
@@ -1241,21 +1242,21 @@ public class MIExpressionsTest extends BaseTestCase {
     	IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
     	Map<String, String[]> tests = new HashMap<String, String[]>();
-    	tests.put("a", new String[] { "0x1", "01", "1", "1", "1" });
+    	tests.put("a", new String[] { "0x1", "01", "1", "1", "1" , "1" });
     	executeExpressionSubTests(tests, frameDmc);
 
     	SyncUtil.SyncStep(StepType.STEP_RETURN);
     	stoppedEvent = SyncUtil.SyncStep(StepType.STEP_INTO, 2);
     	frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
     	tests = new HashMap<String, String[]>();
-    	tests.put("a", new String[] { "0x2", "02", "10", "2", "2" });
+    	tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2"  });
     	executeExpressionSubTests(tests, frameDmc);
 
     	SyncUtil.SyncStep(StepType.STEP_RETURN);
     	stoppedEvent = SyncUtil.SyncStep(StepType.STEP_INTO, 2);
     	frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
     	tests = new HashMap<String, String[]>();
-    	tests.put("a", new String[] { "0x3", "03", "11", "3", "3" });
+    	tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3"  });
     	executeExpressionSubTests(tests, frameDmc);
     }
 
@@ -1275,12 +1276,12 @@ public class MIExpressionsTest extends BaseTestCase {
 
         // First make sure we have a different value on the other stack frame and that we select
         // a frame that is not the top frame
-        tests.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345" });
+        tests.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
         executeExpressionSubTests(tests, SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 1));
         
         // Now check that we get the same values as the top stack when selecting the thread only
         tests = new HashMap<String, String[]>();
-        tests.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789" });
+        tests.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789" , "6789" });
         executeExpressionSubTests(tests, stoppedEvent.getDMContext());
     }
 
@@ -2792,9 +2793,7 @@ public class MIExpressionsTest extends BaseTestCase {
 
                                                     final String[] expectedValues = tests.get(expressionToEvaluate);
 
-                                                    // Check the value of the
-                                                    // expression for
-                                                    // correctness.
+                                                    // Check the value of the expression for correctness.
                                                     String actualValue = exprValueDMData.getFormattedValue();
                                                     String expectedValue;
 
@@ -2808,6 +2807,8 @@ public class MIExpressionsTest extends BaseTestCase {
                                                         expectedValue = expectedValues[3];
                                                     else if (formatId.equals(IFormattedValues.NATURAL_FORMAT))
                                                         expectedValue = expectedValues[4];
+                                                    else if (formatId.equals(MIExpressions.DETAILS_FORMAT))
+                                                    	expectedValue = expectedValues[5];
                                                     else
                                                         expectedValue = "[Unrecognized format ID: " + formatId + "]";
 

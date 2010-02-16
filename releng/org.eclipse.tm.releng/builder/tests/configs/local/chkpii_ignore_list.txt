@@ -1,2 +1,0 @@
-references/javadoc/*.html
-**/epl-v10.html

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -417,9 +417,9 @@ public class RenameRegressionTests extends RenameTests {
         IFile file = importFile( "t.cpp", contents ); //$NON-NLS-1$
         int offset =  contents.indexOf( "v/*vp1*/" ) ; //$NON-NLS-1$
         Change changes = getRefactorChanges(file, offset, "ooga" ); //$NON-NLS-1$
-        //dervied method is not renamed; only a warning to rename derived or base class methods
-        assertTotalChanges( 1, changes );
+        assertTotalChanges( 2, changes );
         assertChange( changes, file, contents.indexOf("v/*vp1*/"), 1, "ooga" );  //$NON-NLS-1$//$NON-NLS-2$
+        assertChange( changes, file, contents.indexOf("v(){}"), 1, "ooga" );  //$NON-NLS-1$//$NON-NLS-2$
         
     }
     // defect is input for new name is not allowed
@@ -605,10 +605,11 @@ public class RenameRegressionTests extends RenameTests {
     //vp1 implicit virtual method
     int offset =  contents.indexOf( "v/*vp1*/" ) ; //$NON-NLS-1$
     Change changes = getRefactorChanges(file, offset, "v1" ); //$NON-NLS-1$
-    assertTotalChanges( 3, changes );
-    assertChange( changes, file, contents.indexOf("v()"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+    assertTotalChanges( 4, changes );
+    assertChange( changes, file, contents.indexOf("v();"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
+    assertChange( changes, file, contents.indexOf("v(){}"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
     assertChange( changes, file, contents.indexOf("v/*vp1*/"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$
-    assertChange( changes, file, contents.indexOf("v(){"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$       
+    assertChange( changes, file, contents.indexOf("v(){i++;}"), 1, "v1" );  //$NON-NLS-1$//$NON-NLS-2$       
 }
    public void testMethod_45() throws Exception {
         StringWriter writer = new StringWriter();

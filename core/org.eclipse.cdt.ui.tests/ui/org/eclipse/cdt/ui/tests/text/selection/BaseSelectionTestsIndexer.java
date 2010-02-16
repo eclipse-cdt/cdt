@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -82,8 +82,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		OpenDeclarationsAction.sIsJUnitTest= true;
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] refs= page.getViewReferences();
-		for (int i = 0; i < refs.length; i++) {
-			IViewReference viewReference = refs[i];
+		for (IViewReference viewReference : refs) {
 			page.setPartState(viewReference, IWorkbenchPage.STATE_RESTORED);
 		}
 	}
@@ -97,8 +96,8 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
 		message.append(status.getMessage());
 		if (status.isMultiStatus()) {
 			IStatus children[] = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				message.append(getMessage(children[i]));
+			for (IStatus element : children) {
+				message.append(getMessage(element));
 			}
 		}
 		message.append("]"); //$NON-NLS-1$
@@ -112,9 +111,9 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
         //Create file input stream
         if (file.exists())
-            file.setContents(stream, false, false, monitor);
+            file.setContents(stream, true, false, monitor);
         else
-            file.create(stream, false, monitor);
+            file.create(stream, true, monitor);
         
         fileManager.addFile(file);
         
@@ -140,12 +139,12 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         //Create file input stream
         if (file.exists()) {
 			long timestamp= file.getLocalTimeStamp();
-        	file.setContents(stream, false, false, monitor);
+        	file.setContents(stream, true, false, monitor);
         	if (file.getLocalTimeStamp() == timestamp) {
         		file.setLocalTimeStamp(timestamp+1000);
         	}
         } else {
-            file.create(stream, false, monitor);
+            file.create(stream, true, monitor);
         }
         
         fileManager.addFile(file);
@@ -170,9 +169,9 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         InputStream stream = new ByteArrayInputStream(contents.getBytes()); 
         //Create file input stream
         if (file.exists())
-            file.setContents(stream, false, false, monitor);
+            file.setContents(stream, true, false, monitor);
         else
-            file.create(stream, false, monitor);
+            file.create(stream, true, monitor);
             	
         fileManager.addFile(file);
     	
@@ -204,7 +203,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), getEditorID(), true); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), getEditorID(), true); 
         } catch (PartInitException e) {
             assertFalse(true);
         }
@@ -255,7 +254,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), getEditorID()); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), getEditorID()); 
         } catch (PartInitException e) {
             assertFalse(true);
         }
@@ -289,7 +288,7 @@ public class BaseSelectionTestsIndexer extends BaseUITestCase {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IEditorPart part = null;
         try {
-            part = page.openEditor(new FileEditorInput(file), getEditorID()); //$NON-NLS-1$
+            part = page.openEditor(new FileEditorInput(file), getEditorID()); 
         } catch (PartInitException e) {
             assertFalse(true);
         }

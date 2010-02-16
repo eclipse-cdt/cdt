@@ -19,6 +19,7 @@
  * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
  * David McKnight     (IBM)   [287305] [dstore] Need to set proper uid for commands when using SecuredThread and single server for multiple clients[
  * Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
+ * David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -159,15 +160,18 @@ public class OutputHandler extends Handler {
 		}
 	}
 
-
-	private int checkAvailable() {
+	private int checkAvailable(){
+		return checkAvailable(100);
+	}
+	
+	private int checkAvailable(int time) {
 		try
 		{
 			int available = _reader.available();
 
 			// if there's none, wait a bit and return true to continue
-			if (available <= 0) {
-				sleep(1500);
+			if (available <= 0){
+				sleep(time);
 				available = _reader.available();
 			}
 			return available;
@@ -192,7 +196,7 @@ public class OutputHandler extends Handler {
 			int lookahead = 0;
 
 			// re-determine available if none available now
-			if (available == 0) {	
+			if (available == 0) {
 				try {
 					lookahead = _reader.read();
 				}
@@ -200,7 +204,6 @@ public class OutputHandler extends Handler {
 					// pipe closed
 					return null;
 				}
-				
 				if (lookahead == -1) {
 					return null;
 				} else {
@@ -260,25 +263,43 @@ public class OutputHandler extends Handler {
 						int index = 0;
 						while (tokenizer.hasMoreTokens()) {
 							output[index] = tokenizer.nextToken();
+							
+						
 							index++;
 						}
 
 						String lastLine = output[index - 1];
-	
+
+						boolean endLine = fullOutput.endsWith("\n") || fullOutput.endsWith("\r") || fullOutput.endsWith(">");
 						
-						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
+						if (!_endOfStream && !endLine)
 						{
 							// our last line may be cut off		
 							byte[] lastBytes = new byte[MAX_OFFSET];
 							
 							int lastIndex = 0;
-									
 							available = checkAvailable();
+					
+							if (available == 0){
+								try {
+									lookahead = _reader.read();
+								}
+								catch  (IOException e){
+									// pipe closed
+									// allow to fall through
+								}
+								if (lookahead == -1) {
+									// allow to fall through
+								} else {
+									available = _reader.available() + 1;
+								}
+							}
+				
 							if (available > 0)
 							{
 								while (!_endOfStream && lastIndex < MAX_OFFSET)
 								{
-									available = _reader.available();
+									
 									if (available == 0)
 									{
 										String suffix = new String(lastBytes, 0, lastIndex, encoding);
@@ -296,26 +317,22 @@ public class OutputHandler extends Handler {
 									else
 									{
 										lastBytes[lastIndex] = (byte)c;
-																	
-										// check for end of line
-										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
-										int rBreak = suffix.indexOf("\r"); //$NON-NLS-1$
-										int nBreak = suffix.indexOf("\n"); //$NON-NLS-1$
-										if (nBreak != -1 || rBreak != -1) 
-										{
+										if (lastBytes[lastIndex] == '\r' || lastBytes[lastIndex] == '\n'){
 											// we've hit the end of line;
+											String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
 											output[index - 1] = lastLine + suffix.substring(0, suffix.length() - 1);
 											return output;
 										}
 									
 										lastIndex++;
+										available = checkAvailable();
 									}
 								
 								}
 							}
 							
 						}
-						
+
 						return output;
 					}
 				} catch (Exception e) {
@@ -327,7 +344,6 @@ public class OutputHandler extends Handler {
 		}
 		return output;
 	}
-	
 	public synchronized void waitForInput() {
 		try {
 			Thread.sleep(100);

@@ -27,6 +27,7 @@
  *  Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
  *  David McKnight     (IBM)   [302174] [dstore] shell init command can potentially get called too late
  *  David McKnight     (IBM)   [302724] problems with environment variable substitution
+ *  David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -1028,7 +1029,7 @@ public class CommandMinerThread extends MinerThread
 	        {
 	        	
 	        }
-	        if (_stdOutputHandler.isAlive())
+	        if (_stdOutputHandler.isAlive() &&  _theProcess != null)
 	        {
 	        	_theProcess.destroy();
 	        }
@@ -1092,7 +1093,7 @@ public class CommandMinerThread extends MinerThread
 		// clean up the associated environment
 		List projectEnvReference = _subject.getAssociated("inhabits"); //$NON-NLS-1$
 
-		if (projectEnvReference != null)
+		if (projectEnvReference != null && projectEnvReference.size() > 0)
 		{
 			DataElement env = (DataElement)projectEnvReference.get(0);
 			DataElement envParent = env.getParent();			

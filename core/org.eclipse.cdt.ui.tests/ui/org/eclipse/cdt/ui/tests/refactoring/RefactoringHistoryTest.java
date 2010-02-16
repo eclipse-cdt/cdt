@@ -12,9 +12,11 @@
 package org.eclipse.cdt.ui.tests.refactoring;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -49,7 +51,8 @@ public class RefactoringHistoryTest extends
 	@Override
 	protected void runTest() throws Throwable {
 		String xmlSource = scriptFile.getSource();
-		xmlSource = xmlSource.replaceAll("\\$\\$projectPath\\$\\$", project.getLocation().toOSString());
+		URI uri= URIUtil.toURI(project.getLocation());
+		xmlSource = xmlSource.replaceAll("\\$\\$projectPath\\$\\$", uri.getPath());
 		RefactoringHistory refHist = RefactoringHistoryService.getInstance()
 				.readRefactoringHistory(
 						new ByteArrayInputStream(xmlSource

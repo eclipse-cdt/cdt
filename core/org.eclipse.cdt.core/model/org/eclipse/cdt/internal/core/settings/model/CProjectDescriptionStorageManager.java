@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2010 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,6 +113,10 @@ public class CProjectDescriptionStorageManager {
 	 * @return project description storage or null
 	 */
 	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(IProject project) {
+		if (!project.isAccessible()) {
+			assert(!fDescriptionStorageMap.contains(project));
+			return null;
+		}
 		AbstractCProjectDescriptionStorage projStorage = fDescriptionStorageMap.get(project);
 		if (projStorage == null) {
 			projStorage = loadProjectStorage(project);
@@ -137,7 +141,7 @@ public class CProjectDescriptionStorageManager {
 	public void setProjectDescription(IProject project, ICProjectDescription description, int flags, IProgressMonitor monitor) throws CoreException {
 		AbstractCProjectDescriptionStorage storage = fDescriptionStorageMap.get(project);
 		if (storage == null)
-			throw ExceptionFactory.createCoreException("Can't set ProjectDescription before getProjectDescriptionStorage!");
+			throw ExceptionFactory.createCoreException("Can't set ProjectDescription before getProjectDescriptionStorage!"); //$NON-NLS-1$
 		if (!storage.type.createsCProjectXMLFile())
 			writeProjectStorageType(project, storage.type);
 		storage.setProjectDescription(description, flags, monitor);
@@ -256,7 +260,7 @@ public class CProjectDescriptionStorageManager {
 		}
 
 		// No type found!
-		CCorePlugin.log("CProjectDescriptionStorageType: " + storageTypeID + "  for version: " + version + " not found!");
+		CCorePlugin.log("CProjectDescriptionStorageType: " + storageTypeID + "  for version: " + version + " not found!");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
 
@@ -278,7 +282,7 @@ public class CProjectDescriptionStorageManager {
 				}
 			}
 		}
-		throw ExceptionFactory.createCoreException("No project des file found...");
+		throw ExceptionFactory.createCoreException("No project des file found..."); //$NON-NLS-1$
 	}
 
 
@@ -314,8 +318,6 @@ public class CProjectDescriptionStorageManager {
 		// Remove from ICDescriptorManager as well
 		CConfigBasedDescriptorManager.getInstance().projectClosedRemove(project);
 	}
-
-
 
 	/**
 	 * Cleanup state
@@ -358,11 +360,11 @@ public class CProjectDescriptionStorageManager {
 		try {
 			type = new CProjectDescriptionStorageTypeProxy(el);
 		} catch (CoreException e) {
-			CCorePlugin.log("Couldn't instantiate CProjectDescriptionStorageType " +
-					el.getDeclaringExtension().getNamespaceIdentifier() + " " + e.getMessage());
+			CCorePlugin.log("Couldn't instantiate CProjectDescriptionStorageType " + //$NON-NLS-1$
+					el.getDeclaringExtension().getNamespaceIdentifier() + " " + e.getMessage()); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
-			CCorePlugin.log("Failed to load CProjectDescriptionStorageType " +
-					el.getDeclaringExtension().getNamespaceIdentifier() + " " + e.getMessage());
+			CCorePlugin.log("Failed to load CProjectDescriptionStorageType " + //$NON-NLS-1$
+					el.getDeclaringExtension().getNamespaceIdentifier() + " " + e.getMessage()); //$NON-NLS-1$
 		}
 		return type;
 	}

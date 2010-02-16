@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			AbstractCExtension cExtension = null;
 			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(fCfgExtRef, CEXTENSION_NAME, false);
 			cExtension = (AbstractCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
-			cExtension.setExtensionReference(this);
+			cExtension.setExtensionReference(fCfgExtRef);
 			cExtension.setProject(getProject());
 			return cExtension;
 		}

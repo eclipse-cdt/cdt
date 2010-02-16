@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCExtensionProxy;
 import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
@@ -87,6 +88,10 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 
 	public ICExtensionReference getExtensionReference() {
 		//TODO: calculate
+		return null;
+	}
+
+	public ICConfigExtensionReference getConfigExtensionReference() {
 		return null;
 	}
 

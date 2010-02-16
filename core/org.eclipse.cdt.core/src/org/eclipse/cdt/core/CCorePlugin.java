@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
@@ -527,6 +528,10 @@ public class CCorePlugin extends Plugin {
 		return getConsole(consoleID);
 	}
 
+	/**
+	 * @deprecated Use {@link #getDefaultBinaryParserExtensions(IProject)} instead.
+	 */
+	@Deprecated
 	public ICExtensionReference[] getBinaryParserExtensions(IProject project) throws CoreException {
 		ICExtensionReference ext[] = new ICExtensionReference[0];
 		if (project != null) {
@@ -539,6 +544,24 @@ public class CCorePlugin extends Plugin {
 					ext = cextensions;
 			} catch (CoreException e) {
 				log(e);
+			}
+		}
+		return ext;
+	}
+
+	/**
+	 * Returns the binary parser extensions for the default settings configuration.
+	 * @since 5.2
+	 */
+	public ICConfigExtensionReference[] getDefaultBinaryParserExtensions(IProject project) throws CoreException {
+		ICConfigExtensionReference ext[] = new ICConfigExtensionReference[0];
+		if (project != null) {
+			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project, false);
+			if (desc != null) {
+				ICConfigurationDescription cfgDesc = desc.getDefaultSettingConfiguration();
+				if (cfgDesc != null) {
+					ext = cfgDesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				}
 			}
 		}
 		return ext;

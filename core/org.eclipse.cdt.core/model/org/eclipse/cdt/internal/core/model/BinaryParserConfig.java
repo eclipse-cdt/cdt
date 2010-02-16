@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.core.settings.model.util.CExtensionUtil;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 
 /*
  * BinaryParserConfig 
@@ -20,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 public class BinaryParserConfig {
 	private IBinaryParser parser;
 	private final String id;
-	private final ICExtensionReference ref;
+	private final ICConfigExtensionReference ref;
 
 	public BinaryParserConfig(IBinaryParser parser, String id) {
 		this.parser = parser;
@@ -28,7 +31,7 @@ public class BinaryParserConfig {
 		this.ref = null;
 	}
 	
-	public BinaryParserConfig(ICExtensionReference ref) {
+	public BinaryParserConfig(ICConfigExtensionReference ref) {
 		this.ref = ref;
 		this.id = ref.getID();
 	}
@@ -39,7 +42,12 @@ public class BinaryParserConfig {
 
 	public IBinaryParser getBinaryParser() throws CoreException {
 		if (parser == null) {
-			parser = (IBinaryParser)ref.createExtension();
+			AbstractCExtension cExtension = null;
+			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(ref, "cextension", false); //$NON-NLS-1$
+			cExtension = (AbstractCExtension)el.createExecutableExtension("run"); //$NON-NLS-1$
+			cExtension.setExtensionReference(ref);
+			cExtension.setProject(ref.getConfiguration().getProjectDescription().getProject());
+			parser = (IBinaryParser) cExtension;
 		}
 		return parser;
 	}

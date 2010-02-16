@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,12 +30,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorListener;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -54,9 +50,18 @@ import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -82,7 +87,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
-public class CModelManager implements IResourceChangeListener, ICDescriptorListener, IContentTypeChangeListener {
+public class CModelManager implements IResourceChangeListener, IContentTypeChangeListener, ICProjectDescriptionListener {
 
 	public static boolean VERBOSE = false;
 
@@ -149,12 +154,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * The list of started BinaryRunners on projects.
 	 */
-	private HashMap<IProject, BinaryRunner> binaryRunners = new HashMap<IProject, BinaryRunner>();
+	private final Map<IProject, BinaryRunner> binaryRunners = new HashMap<IProject, BinaryRunner>();
 
 	/**
 	 * Map of the binary parser for each project.
 	 */
-	private HashMap<IProject, BinaryParserConfig[]> binaryParsersMap = new HashMap<IProject, BinaryParserConfig[]>();
+	private final Map<IProject, BinaryParserConfig[]> binaryParsersMap = Collections.synchronizedMap(new HashMap<IProject, BinaryParserConfig[]>());
 
 	/**
 	 * The lis of the SourceMappers on projects.
@@ -178,13 +183,18 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 				// Register to the workspace;
 				ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
-																			IResourceChangeEvent.POST_CHANGE
-																					| IResourceChangeEvent.PRE_DELETE
-																					| IResourceChangeEvent.PRE_CLOSE);
+						IResourceChangeEvent.POST_CHANGE
+						| IResourceChangeEvent.PRE_DELETE
+						| IResourceChangeEvent.PRE_CLOSE);
 
 				// Register the Core Model on the Descriptor
 				// Manager, it needs to know about changes.
-				CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
+//				CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(factory);
+
+				// Register as project description listener
+				CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(factory,
+						CProjectDescriptionEvent.APPLIED);
+
 				// Register the Core Model on the ContentTypeManager
 				// it needs to know about changes.
 				Platform.getContentTypeManager().addContentTypeChangeListener(factory);
@@ -588,14 +598,15 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public BinaryParserConfig[] getBinaryParser(IProject project) {
 		BinaryParserConfig[] parsers = binaryParsersMap.get(project);
 		if (parsers == null) {
-			try {
-				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
-				if (cdesc != null) {
-					ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID, true);
-					if (cextensions.length > 0) {
-						ArrayList<BinaryParserConfig> list = new ArrayList<BinaryParserConfig>(cextensions.length);
-						for (ICExtensionReference cextension : cextensions) {
-							BinaryParserConfig config = new BinaryParserConfig(cextension);
+			ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project, false);
+			if (desc != null) {
+				ICConfigurationDescription cfgDesc = desc.getDefaultSettingConfiguration();
+				if (cfgDesc != null) {
+					ICConfigExtensionReference[] refs = cfgDesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+					if (refs.length > 0) {
+						ArrayList<BinaryParserConfig> list = new ArrayList<BinaryParserConfig>(refs.length);
+						for (ICConfigExtensionReference ref : refs) {
+							BinaryParserConfig config = new BinaryParserConfig(ref);
 							list.add(config);
 						}
 						parsers = new BinaryParserConfig[list.size()];
@@ -605,7 +616,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						parsers = new BinaryParserConfig[0];
 					}
 				}
-			} catch (CoreException e) {
 			}
 			if (parsers == null) {
 				try {
@@ -774,7 +784,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public void removeBinaryRunner(IProject project) {
-		BinaryRunner runner = binaryRunners.remove(project);
+		BinaryRunner runner;
+		synchronized (binaryRunners) {
+			runner = binaryRunners.remove(project);
+		}
 		if (runner != null) {
 			runner.stop();
 		}
@@ -879,34 +892,63 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
-	 */
-	public void descriptorChanged(CDescriptorEvent event) {
-		int flags = event.getFlags();
-		if ( (flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
-			ICDescriptor cdesc = event.getDescriptor();
-			if (cdesc != null) {
-				IProject project = cdesc.getProject();
-				try {
-					ICExtensionReference[] newExts = CCorePlugin.getDefault().getBinaryParserExtensions(project);
-					BinaryParserConfig[] currentConfigs = getBinaryParser(project);
-					// anything added/removed
-					if (newExts.length != currentConfigs.length) {
-						resetBinaryParser(project);
-					} else { // may reorder
-						for (int i = 0; i < newExts.length; i++) {
-							if (!newExts[i].getID().equals(currentConfigs[i].getId())) {
+	public void handleEvent(CProjectDescriptionEvent event) {
+		switch(event.getEventType()) {
+		case CProjectDescriptionEvent.APPLIED:
+			CProjectDescription newDes = (CProjectDescription)event.getNewCProjectDescription();
+			CProjectDescription oldDes = (CProjectDescription)event.getOldCProjectDescription();
+			if(oldDes != null && newDes != null) {
+				ICConfigurationDescription newCfg = newDes.getDefaultSettingConfiguration();
+				ICConfigurationDescription oldCfg = oldDes.getDefaultSettingConfiguration();
+				int flags = 0;
+				if(oldCfg != null && newCfg != null){
+					if(newCfg.getId().equals(oldCfg.getId())){
+						ICDescriptionDelta cfgDelta = findCfgDelta(event.getProjectDelta(), newCfg.getId());
+						if(cfgDelta != null){
+							flags = cfgDelta.getChangeFlags() & (ICDescriptionDelta.EXT_REF | ICDescriptionDelta.OWNER);
+						}
+					} else {
+						flags = CProjectDescriptionManager.getInstance().calculateDescriptorFlags(newCfg, oldCfg);
+					}
+				}
+				if ((flags & ICDescriptionDelta.EXT_REF) != 0) {
+					// update binary parsers
+					IProject project = newDes.getProject();
+					try {
+						ICConfigExtensionReference[] newExts = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(project);
+						BinaryParserConfig[] currentConfigs = binaryParsersMap.get(project);
+						// anything added/removed
+						if (currentConfigs != null) {
+							if (newExts.length != currentConfigs.length) {
 								resetBinaryParser(project);
-								break;
+							} else { // may reorder
+								for (int i = 0; i < newExts.length; i++) {
+									if (!newExts[i].getID().equals(currentConfigs[i].getId())) {
+										resetBinaryParser(project);
+										break;
+									}
+								}
 							}
 						}
+					} catch (CoreException e) {
+						resetBinaryParser(project);
 					}
-				} catch (CoreException e) {
-					resetBinaryParser(project);
 				}
 			}
+			break;
 		}
+	}
+
+	private ICDescriptionDelta findCfgDelta(ICDescriptionDelta delta, String id){
+		if(delta == null)
+			return null;
+		ICDescriptionDelta children[] = delta.getChildren();
+		for(int i = 0; i < children.length; i++){
+			ICSettingObject s = children[i].getNewSetting();
+			if(s != null && id.equals(s.getId()))
+				return children[i];
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -1234,14 +1276,18 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	public void shutdown() {
 		// Remove ourself from the DescriptorManager.
-		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(factory);
+		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
+//		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(factory);
 		// Remove ourself from the ContentTypeManager
 		Platform.getContentTypeManager().removeContentTypeChangeListener(factory);
 
 		// Do any shutdown of services.
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);
 
-		BinaryRunner[] runners = binaryRunners.values().toArray(new BinaryRunner[0]);
+		BinaryRunner[] runners;
+		synchronized (binaryRunners) {
+			runners = binaryRunners.values().toArray(new BinaryRunner[0]);
+		}
 		for (BinaryRunner runner : runners) {
 			runner.stop();
 		}

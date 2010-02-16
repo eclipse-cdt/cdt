@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -97,6 +98,10 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 
 	public ICExtensionReference getExtensionReference() {
+		return null;
+	}
+
+	public ICConfigExtensionReference getConfigExtensionReference() {
 		return null;
 	}
 

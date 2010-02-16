@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse  License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.gdb.service.command;
 
 import java.io.OutputStream;
+import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -40,4 +41,16 @@ public interface IGDBControl extends ICommandControlService {
 	 * @since 2.0
 	 */
 	void setTracingStream(OutputStream tracingStream);
+	
+	/** 
+	 * Sets any user-defined environment variables for the inferior.
+	 * 
+	 * If the 'clear' flag is true, all existing environment variables
+	 * will be removed and replaced with the new specified ones. 
+	 * If 'clear' is false, the new variables are added to the existing
+	 * environment.
+	 * 
+	 * @since 3.0 
+	 */
+	void setEnvironment(Properties props, boolean clear, RequestMonitor requestMonitor);
 }

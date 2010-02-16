@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.cdt.dsf.gdb.launching;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
@@ -201,6 +202,28 @@ public class FinalLaunchSequence extends Sequence {
         		fCommandControl.queueCommand(
         				new MIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
         				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        	} else {
+        		requestMonitor.done();
+        	}
+        }},
+    	/*
+    	 * Specify environment variables if needed
+    	 */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+        	boolean clear = false;
+   			Properties properties = new Properties();
+       		try {
+       			clear = fGDBBackend.getClearEnvironment();
+       			properties = fGDBBackend.getEnvironmentVariables();
+       		} catch (CoreException e) {
+       			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get environment information", e)); //$NON-NLS-1$
+       			requestMonitor.done();
+       			return;
+      		}
+
+        	if (clear == true || properties.size() > 0) {
+        		fCommandControl.setEnvironment(properties, clear, requestMonitor);
         	} else {
         		requestMonitor.done();
         	}

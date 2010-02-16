@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,13 @@ package org.eclipse.cdt.dsf.gdb.service.command;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
@@ -51,11 +54,13 @@ import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor_7_0;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecRun;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
@@ -531,6 +536,31 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 	 */
 	public void setTracingStream(OutputStream tracingStream) {
 		setMITracingStream(tracingStream);
+	}
+	
+	/** @since 3.0 */
+	public void setEnvironment(Properties props, boolean clear, RequestMonitor rm) {
+		int count = 0;
+		CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
+
+		// First clear the environment if requested.
+		if (clear) {
+			count++;
+			queueCommand(
+					new CLIUnsetEnv(getContext()),
+					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));	
+		}
+		
+		// Now set the new variables
+		for (Entry<Object,Object> property : props.entrySet()) {
+			count++;
+			String name = (String)property.getKey();
+			String value = (String)property.getValue();
+			queueCommand(
+					new MIGDBSetEnv(getContext(), name, value),
+					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));	
+		}
+		countingRm.setDoneCount(count);		
 	}
 	
     @DsfServiceEventHandler 

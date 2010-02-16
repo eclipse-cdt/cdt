@@ -19,13 +19,21 @@
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
       </tab>
+      <tab 
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.environment.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.debuggerTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.debugger.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
-        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
       </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.sourceLookupTab"
@@ -143,16 +151,6 @@
          <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
    </extension>
-   
-    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteRunLaunchConfigurationTabGroup"
-            id="org.eclipse.cdt.dsf.gdb.launch.remoteRunLaunchTabGroup"
-            type="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch">
-      </launchConfigurationTabGroup>
-   </extension>
-   
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
         	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory" 

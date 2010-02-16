@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Nokia and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -52,7 +53,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -77,6 +81,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	private List<String> fSharedLibPaths;
 	private String fProgramArguments;
 	
+	private Properties fEnvVariables;
 	private SessionType fSessionType;
     private Boolean fAttach;
 
@@ -265,6 +270,54 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 		return fSharedLibPaths;
 	}
 
+	/** @since 3.0 */
+	public Properties getEnvironmentVariables() throws CoreException {
+		if (fEnvVariables == null) {
+			fEnvVariables = new Properties();
+			
+			// if the attribute ATTR_APPEND_ENVIRONMENT_VARIABLES is set,
+			// the LaunchManager will return both the new variables and the existing ones.
+			// That would force us to delete all the variables in GDB, and then re-create then all
+			// that is not very efficient.  So, let's fool the LaunchManager into returning just the
+			// list of new variables.
+			
+			boolean append = fLaunchConfiguration.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+
+			String[] properties;
+			if (append) {
+				ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.copy(""); //$NON-NLS-1$
+				// Don't save this change, it is just temporary, and in just a copy of our launchConfig.
+				wc.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+				properties = DebugPlugin.getDefault().getLaunchManager().getEnvironment(wc);
+			} else {
+				// We're getting rid of the environment anyway, so this call will only yield the new variables.
+				properties = DebugPlugin.getDefault().getLaunchManager().getEnvironment(fLaunchConfiguration);
+			}
+			
+			if (properties == null) {
+				properties = new String[0];
+			}
+			
+			for (String property : properties) {
+				int idx = property.indexOf('=');
+				if (idx != -1) {
+					String key = property.substring(0, idx);
+					String value = property.substring(idx + 1);
+					fEnvVariables.setProperty(key, value);
+				} else {
+					fEnvVariables.setProperty(property, ""); //$NON-NLS-1$
+				}
+			}
+		}
+		
+		return fEnvVariables;
+	}
+	
+	/** @since 3.0 */
+	public boolean getClearEnvironment() throws CoreException {
+		return !fLaunchConfiguration.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+	}
+	
 	/*
 	 * Launch GDB process. 
 	 * Allow subclass to override.

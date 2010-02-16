@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Nokia Corporation.
+ * Copyright (c) 2008, 2010 Nokia Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.core.runtime.CoreException;
@@ -79,6 +80,21 @@ public interface IGDBBackend extends IMIBackend {
 	 */
 	public List<String> getSharedLibraryPaths() throws CoreException;
 
+	/**
+	 * Returns the list of user-specified variables.
+	 * If no variables are specified, should return an empty list.
+	 * Should not return null.
+	 * 
+	 *  @since 3.0 
+	 */
+	public Properties getEnvironmentVariables() throws CoreException;
+	
+	/** 
+	 * Returns whether the native environment should be cleared before
+	 * setting the user-specified environment variables.
+	 * 
+	 * @since 3.0 */
+	public boolean getClearEnvironment() throws CoreException;
 	
 	/**
 	 * Sends an interrupt signal to the GDB process.

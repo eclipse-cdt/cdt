@@ -51,7 +51,6 @@ public class AllCoreTests {
 		suite.addTest(MacroTests.suite());
 //		suite.addTest(FailedMacroTests.suite());
 		suite.addTest(CPathEntryTest.suite());
-//		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
 		//the CProjectDescriptionTests now groups all New Project Model related tests
 		//which includes the CConfigurationDescriptionReferenceTests
 		suite.addTest(AllCProjectDescriptionTests.suite());

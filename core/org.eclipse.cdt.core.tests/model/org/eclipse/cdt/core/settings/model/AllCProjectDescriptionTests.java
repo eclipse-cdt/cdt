@@ -24,6 +24,7 @@ public class AllCProjectDescriptionTests {
         // Just add more test cases here as you create them for
         // each class being tested
 		suite.addTest(CConfigurationDescriptionReferenceTests.suite());
+		suite.addTest(CConfigurationDescriptionExportSettings.suite());
 		suite.addTest(ExternalSettingsProviderTests.suite());
 		suite.addTest(CfgSettingsTests.suite());
 		suite.addTest(CProjectDescriptionDeltaTests.suite());

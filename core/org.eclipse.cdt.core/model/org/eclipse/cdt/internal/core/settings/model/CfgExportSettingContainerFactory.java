@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CContainerRef;
-import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.NullContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -67,18 +66,24 @@ public class CfgExportSettingContainerFactory extends
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
+	/**
+	 * An ExternalSettingsContainer which returns the settings as
+	 * exported by a referenced configuration in another project.
+	 */
 	private static class CfgRefContainer extends CExternalSettingsContainer {
-		private String fProjName, fCfgId;
+		final private String fProjName, fCfgId;
+		final private CExternalSetting[] prevSettings;
 		
-		CfgRefContainer(String projName, String cfgId){
+		CfgRefContainer(String projName, String cfgId, CExternalSetting[] previousSettings){
 			fProjName = projName;
 			fCfgId = cfgId;
+			prevSettings = previousSettings;
 		}
 
 		@Override
 		public CExternalSetting[] getExternalSettings() {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(fProjName);
-			if(project.exists() && project.isOpen()){
+			if (project.isAccessible()) {
 				ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
 				if(des != null){
 					ICConfigurationDescription cfg = fCfgId.length() != 0 ? 
@@ -93,24 +98,22 @@ public class CfgExportSettingContainerFactory extends
 						return es;
 					}
 				}
+			} else {
+				// If project doesn't not open in this workspace, just return the previous settings
+				// for the moment. We'll update again when the referenced project reappears
+				return prevSettings;
 			}
 			return new CExternalSetting[0];
 		}
-		
 	}
-	
+
 	@Override
 	public CExternalSettingsContainer createContainer(String id,
-			IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) {
-		try {
-			String[] r = parseId(id);
-			return new CfgRefContainer(r[0], r[1]);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return new NullContainer();
+			IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException {
+		String[] r = parseId(id);
+		return new CfgRefContainer(r[0], r[1], previousSettings);
 	}
-	
+
 	private static void createReference(ICConfigurationDescription cfg, String projName, String cfgId){
 		CContainerRef cr = createContainerRef(projName, cfgId);
 		CExternalSettingsManager.getInstance().addContainer(cfg, cr);
@@ -178,6 +181,12 @@ public class CfgExportSettingContainerFactory extends
 	private static String createId(String projName, String cfgId){
 		return projName + DELIMITER + cfgId;
 	}
+	/**
+	 * Return a 2-element array String[]{projName, cfgId}
+	 * @param id id to parse, must not be null
+	 * @return String[]{projName, cfgId}
+	 * @throws CoreException if prjName not valid
+	 */
 	private static String[] parseId(String id) throws CoreException {
 		if(id == null)
 			throw new NullPointerException();

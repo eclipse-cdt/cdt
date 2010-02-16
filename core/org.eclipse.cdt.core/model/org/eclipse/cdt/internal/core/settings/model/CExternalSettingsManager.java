@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,6 +156,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			try {
 				fContainer = fFactoryDr.getFactory().createContainer(containerId, project, cfgDes, previousSettings);
 			} catch (CoreException e) {
+				CCorePlugin.log(e);
 			}
 			if(fContainer == null)
 				fContainer = NullContainer.INSTANCE;
@@ -183,7 +184,10 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 //			return fContainer;
 //		}
 	}
-	
+
+	/**
+	 * A dummy SettingsContainer with 0 CExternalSettings
+	 */
 	static class NullContainer extends CExternalSettingsContainer {
 		static final NullContainer INSTANCE = new NullContainer();
 		
@@ -515,7 +519,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 				
 			};
 
-			CProjectDescriptionManager.getInstance().runWspModification(r, new NullProgressMonitor());
+			CProjectDescriptionManager.runWspModification(r, new NullProgressMonitor());
 		}
 	}
 	
@@ -696,7 +700,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 					}
 					
 				};
-				CProjectDescriptionManager.getInstance().runWspModification(r, null);
+				CProjectDescriptionManager.runWspModification(r, null);
 			}
 			break;
 		}
@@ -786,12 +790,12 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return deltas;
 	}
 	
-	private ExtSettingsDelta[] reconsile(IProject proj, ICConfigurationDescription cfgDes, boolean add, HolderContainer hCr, CContainerRef cr){
+	private ExtSettingsDelta[] reconsile(IProject proj, ICConfigurationDescription cfgDes, boolean addOrChange, HolderContainer hCr, CContainerRef cr){
 //		if(holder.isReconsiled())
 //			return;
 		CExternalSetting[] newSettings = null;
 		CExternalSetting[] oldSettings = hCr.getHolder(false).getExternalSettings();
-		if(add){
+		if (addOrChange) {
 			ContainerDescriptor cdr = createDescriptor(cr.getFactoryId(), cr.getContainerId(), proj, cfgDes, oldSettings);
 			newSettings = cdr.getExternalSettings();
 		}

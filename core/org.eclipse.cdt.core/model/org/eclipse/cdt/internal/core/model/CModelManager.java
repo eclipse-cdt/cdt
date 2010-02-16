@@ -80,6 +80,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentType;
@@ -641,25 +642,30 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		// Only if file has no extension, has an extension that is an integer
 		// or is a binary file content type
 		String ext = file.getFileExtension();
-		if (ext != null) {
+		if (ext != null && ext.length() > 0) {
 			// shared libraries often have a version number
-			boolean isNumber = true;
-			for (int i = 0; i < ext.length(); ++i)
-				if (!Character.isDigit(ext.charAt(i))) {
-					isNumber = false;
-					break;
+			// strip version extension: libc.so.3.2.1 -> libc.so
+			IPath baseFileName = new Path(file.getName());
+			outer: do {
+				for (int i = 0; i < ext.length(); ++i) {
+					if (!Character.isDigit(ext.charAt(i))) {
+						break outer;
+					}
 				}
-			if (!isNumber) {
-				boolean isBinary= false;
-				final IContentTypeManager ctm = Platform.getContentTypeManager();
-				final IContentType ctbin = ctm.getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
-				final IContentType[] cts= ctm.findContentTypesFor(file.getName());
-				for (int i=0; !isBinary && i < cts.length; i++) {
-					isBinary= cts[i].isKindOf(ctbin);
-				}
-				if (!isBinary) {
-					return null;
-				}
+				// extension is a number -> remove it
+				baseFileName = baseFileName.removeFileExtension();
+				ext = baseFileName.getFileExtension();
+			} while (ext != null && ext.length() > 0);
+			
+			boolean isBinary= false;
+			final IContentTypeManager ctm = Platform.getContentTypeManager();
+			final IContentType ctbin = ctm.getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
+			final IContentType[] cts= ctm.findContentTypesFor(baseFileName.toString());
+			for (int i=0; !isBinary && i < cts.length; i++) {
+				isBinary= cts[i].isKindOf(ctbin);
+			}
+			if (!isBinary) {
+				return null;
 			}
 		}
 		

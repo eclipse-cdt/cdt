@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,5 +27,10 @@ public class MIStackSelectFrame extends MICommand<MIInfo> {
 	
 	public MIStackSelectFrame(IDMContext ctx, int frameNum) {
 		super(ctx, "-stack-select-frame", new String[]{Integer.toString(frameNum)}, new String[0]); //$NON-NLS-1$
+	}
+	
+	@Override
+	public boolean supportsThreadAndFrameOptions() {
+		return false;
 	}
 }

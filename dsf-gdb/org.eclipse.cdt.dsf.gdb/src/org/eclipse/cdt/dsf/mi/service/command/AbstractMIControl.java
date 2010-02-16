@@ -758,7 +758,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
         void processMIOutput(String line) {
             MIParser.RecordType recordType = fMiParser.getRecordType(line);
             
-            if (recordType == MIParser.RecordType.ResultRecord) { 
+            if (recordType == MIParser.RecordType.ResultRecord) {
                 final MIResultRecord rr = fMiParser.parseMIResultRecord(line);
            
             	
@@ -859,11 +859,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	} else if (recordType == MIParser.RecordType.OOBRecord) {
 				// Process OOBs
         		final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);
-       	        fAccumulatedOOBRecords.add(oob);
+        		if (!fRxCommands.isEmpty()) {
+        			// This is for CLI commands, so only store if we are actually
+        			// waiting for a command reply
+        		    fAccumulatedOOBRecords.add(oob);
+        		}
        	        final MIOutput response = new MIOutput(oob);
 
-
-				
             	/*
             	 *   OOBS are events. So we pass them to any event listeners who want to see them. Again this must
             	 *   be done on the DSF thread for integrity.

@@ -12,9 +12,7 @@ package org.eclipse.cdt.projectmodel.tests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -29,7 +27,6 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
@@ -647,74 +644,6 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		assertTrue(found);
 	}
 	
-	public void testReferences() throws Exception{
-		final String projectName4 = "test4";
-		final String projectName5 = "test5";
-		CoreModel coreModel = CoreModel.getDefault();
-
-		IProject project4 = createProject(projectName4, "cdt.managedbuild.target.gnu30.exe");
-		IProject project5 = createProject(projectName5, "cdt.managedbuild.target.gnu30.exe");
-		
-		ICProjectDescription des4 = coreModel.getProjectDescription(project4);
-		ICProjectDescription des5 = coreModel.getProjectDescription(project5);
-		ICConfigurationDescription dess[] = des5.getConfigurations();
-		
-		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[]{
-				new CMacroEntry("a", "b", 0),
-				new CMacroEntry("c", "d", 0),
-				new CIncludePathEntry("a/b/c", 0),
-				new CIncludePathEntry("d/e/f", 0),
-		};
-		dess[0].createExternalSetting(null, null, null, entries);
-		dess[0].setActive();
-		
-		ICExternalSetting extSettings[] = dess[0].getExternalSettings();
-		assertEquals(extSettings.length, 1);
-		
-		checkArrays(extSettings[0].getEntries(), entries);
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
-		list.remove(3);
-		list.remove(2);
-		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.MACRO), list.toArray());
-		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
-		list.remove(0);
-		list.remove(0);
-		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.INCLUDE_PATH), list.toArray());
-		coreModel.setProjectDescription(project5, des5);
-		
-		extSettings = coreModel.getProjectDescription(project5).getActiveConfiguration().getExternalSettings();
-		assertEquals(extSettings.length, 1);
-		
-		checkArrays(extSettings[0].getEntries(), entries);
-		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
-		list.remove(3);
-		list.remove(2);
-		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.MACRO), list.toArray());
-		list = new ArrayList<ICLanguageSettingEntry>(Arrays.asList(entries));
-		list.remove(0);
-		list.remove(0);
-		checkArrays(extSettings[0].getEntries(ICLanguageSettingEntry.INCLUDE_PATH), list.toArray());
-		
-		dess = des4.getConfigurations();
-		ICLanguageSetting ls = dess[0].getRootFolderDescription().getLanguageSettingForFile("a.c");
-		ICLanguageSettingEntry macros[] = ls.getSettingEntries(ICLanguageSettingEntry.MACRO);
-		ICLanguageSettingEntry includes[] = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
-		assertFalse(arrayContains(entries[0], macros));
-		assertFalse(arrayContains(entries[1], macros));
-		assertFalse(arrayContains(entries[2], includes));
-		assertFalse(arrayContains(entries[3], includes));
-		Map<String, String> map = new HashMap<String, String>();
-		map.put(projectName5, "");
-		dess[0].setReferenceInfo(map);
-		ICLanguageSettingEntry updatedMacros[] = ls.getSettingEntries(ICLanguageSettingEntry.MACRO);
-		ICLanguageSettingEntry udatedIncludes[] = ls.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
-		assertTrue(arrayContains(entries[0], updatedMacros));
-		assertTrue(arrayContains(entries[1], updatedMacros));
-		assertTrue(arrayContains(entries[2], udatedIncludes));
-		assertTrue(arrayContains(entries[3], udatedIncludes));
-
-	}
-	
 	public void testActiveCfg() throws Exception{
 		final String projectName = "test8";
 		
@@ -755,14 +684,6 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		
 	}
 
-	private boolean arrayContains(Object el, Object[] a){
-		for(int i = 0; i < a.length; i++){
-			if(el.equals(a[i]))
-				return true;
-		}
-		return false;
-	}
-	
 	private void checkArrays(Object[] a1, Object[] a2){
 		if(a1 == null){
 			assertTrue(a2 == null);

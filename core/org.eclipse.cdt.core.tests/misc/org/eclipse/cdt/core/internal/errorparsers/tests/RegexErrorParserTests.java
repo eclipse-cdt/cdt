@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.internal.errorparsers.GASErrorParser;
 import org.eclipse.core.resources.IMarker;

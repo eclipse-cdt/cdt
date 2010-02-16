@@ -10,7 +10,7 @@
  *     James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 
-package org.eclipse.cdt.core.internal.errorparsers.tests;
+package org.eclipse.cdt.core.testplugin;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

@@ -2493,7 +2493,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					parent = parent.getParentContainer()) {
 					// no body, this loop is to find the parent
 				}
-				if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData)){
+				if(!settingsCustomized(project, (CFolderData)parentRcData, (CFolderData)childRcData, parent.isRoot())){
 					try {
 						data.removeResourceData(childRcData);
 						child.remove();
@@ -2519,35 +2519,33 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return modified;
 	}
 
-	static boolean settingsCustomized(IProject project, CFolderData parent, CFolderData child){
+	static private boolean settingsCustomized(IProject project, CFolderData parent, CFolderData child, boolean isParentRoot){
 		if(baseSettingsCustomized(parent, child))
 			return true;
 
 		CLanguageData[] childLDatas = child.getLanguageDatas();
 		CLanguageData[] parentLDatas = parent.getLanguageDatas();
 
-		if(childLDatas.length != parentLDatas.length)
+		// Note that parent-root can define more languages than regular folder where tools are filtered
+		if(!isParentRoot && childLDatas.length != parentLDatas.length)
 			return true;
 
-		if(childLDatas.length != 0){
-			HashMap<HashSet<String>, CLanguageData> parentMap = createExtSetToLDataMap(project, parentLDatas);
-			HashMap<HashSet<String>, CLanguageData> childMap = createExtSetToLDataMap(project, childLDatas);
-			CLanguageData parentLData, childLData;
-			for (Map.Entry<HashSet<String>, CLanguageData> entry : parentMap.entrySet()) {
-				childLData = childMap.get(entry.getKey());
-				if(childLData == null)
-					return true;
+		HashMap<HashSet<String>, CLanguageData> parentMap = createExtSetToLDataMap(project, parentLDatas);
+		HashMap<HashSet<String>, CLanguageData> childMap = createExtSetToLDataMap(project, childLDatas);
+		for (Map.Entry<HashSet<String>, CLanguageData> childEntry : childMap.entrySet()) {
+			CLanguageData parentLData = parentMap.get(childEntry.getKey());
+			if(parentLData == null)
+				return true;
 
-				parentLData = entry.getValue();
-				if(!langDatasEqual(parentLData, childLData))
-					return true;
-			}
+			CLanguageData childLData = childEntry.getValue();
+			if(!langDatasEqual(parentLData, childLData))
+				return true;
 		}
-
+		
 		return false;
 	}
 
-	static boolean settingsCustomized(IProject project, CResourceData parent, CFileData child){
+	static private boolean settingsCustomized(IProject project, CResourceData parent, CFileData child){
 		if(baseSettingsCustomized(parent, child))
 			return true;
 

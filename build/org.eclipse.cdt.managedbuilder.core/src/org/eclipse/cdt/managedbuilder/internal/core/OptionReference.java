@@ -272,6 +272,7 @@ public class OptionReference implements IOption {
 			case UNDEF_LIBRARY_PATHS:
 			case UNDEF_LIBRARY_FILES:
 			case UNDEF_MACRO_FILES:
+				@SuppressWarnings("unchecked")
 				ArrayList<String> stringList = (ArrayList<String>)value;
 				for (String val : stringList) {
 					Element valueElement = doc.createElement(LIST_VALUE);
@@ -341,6 +342,7 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getDefinedSymbols();
 		else if (getValueType() == PREPROCESSOR_SYMBOLS) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
@@ -419,6 +421,7 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getIncludePaths();
 		else if (getValueType() == INCLUDE_PATH) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
@@ -433,6 +436,7 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getLibraries();
 		else if (getValueType() == LIBRARIES) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
@@ -447,6 +451,7 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getLibraryFiles();
 		else if (getValueType() == LIBRARY_FILES) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
@@ -553,6 +558,7 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getStringListValue();
 		else if (getValueType() == STRING_LIST) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
@@ -602,6 +608,7 @@ public class OptionReference implements IOption {
 		if (value == null)
 			return option.getDefinedSymbols();
 		else if (getValueType() == OBJECTS) {
+			@SuppressWarnings("unchecked")
 			ArrayList<String> list = (ArrayList<String>)value;
 			return list.toArray(new String[list.size()]);
 		}
@@ -897,6 +904,7 @@ public class OptionReference implements IOption {
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return new String[0];

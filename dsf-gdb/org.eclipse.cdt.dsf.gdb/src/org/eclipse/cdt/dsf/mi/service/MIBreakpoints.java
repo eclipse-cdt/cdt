@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Ericsson - Initial API and implementation
+ *     Ericsson - Initial API and implementation 
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;

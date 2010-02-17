@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
+ *     QNX Software Systems - Initial API and implementation 
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *******************************************************************************/
 

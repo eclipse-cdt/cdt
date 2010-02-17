@@ -70,7 +70,7 @@ public class BuilderFactory {
 
 	private static class BuildArgsStorageElement extends MapStorageElement{
 
-		public BuildArgsStorageElement(Map map, MapStorageElement parent) {
+		public BuildArgsStorageElement(Map<String, String> map, MapStorageElement parent) {
 			super(map, parent);
 		}
 
@@ -78,6 +78,7 @@ public class BuilderFactory {
 			super(name, parent);
 		}
 
+		@Override
 		public String getAttribute(String name) {
 			String value = super.getAttribute(name);
 			if(value == null){
@@ -97,6 +98,7 @@ public class BuilderFactory {
 //			return super.getMapKey(name);
 //		}
 
+		@Override
 		public void setAttribute(String name, String value) {
 			String[] names = Builder.toBuildAttributes(name);
 			String attrName = names.length != 0 ? names[names.length - 1] : null; 
@@ -108,10 +110,12 @@ public class BuilderFactory {
 				super.setAttribute(attrName, value);
 		}
 
-		protected MapStorageElement createChildElement(Map childMap) {
+		@Override
+		protected MapStorageElement createChildElement(Map<String, String> childMap) {
 			return new BuildArgsStorageElement(childMap, this);
 		}
 
+		@Override
 		protected MapStorageElement createChildElement(String name) {
 			return new BuildArgsStorageElement(name, this);
 		}
@@ -145,35 +149,35 @@ public class BuilderFactory {
 	}
 */
 	
-	public static Map createBuildArgs(IConfiguration cfgs[], IBuilder builder){
-		Map map = builderToMap(builder);
+	public static Map<String, String> createBuildArgs(IConfiguration cfgs[], IBuilder builder){
+		Map<String, String> map = builderToMap(builder);
 		cfgsToMap(cfgs, map);
 		map.put(CONTENTS, /*CONTENTS_BUILDER_CUSTOMIZATION*/CONTENTS_BUILDER);
 		return map;
 	}
 
-	public static Map createBuildArgs(IConfiguration cfgs[]){
-		Map map = new HashMap();
+	public static Map<String, String> createBuildArgs(IConfiguration cfgs[]){
+		Map<String, String> map = new HashMap<String, String>();
 		cfgsToMap(cfgs, map);
 		map.put(CONTENTS, CONTENTS_CONFIGURATION_IDS);
 		return map;
 	}
 	
-	private static Map cfgIdsToMap(String ids[], Map map){
+	private static Map<String, String> cfgIdsToMap(String ids[], Map<String, String> map){
 		map.put(CONFIGURATION_IDS, MapStorageElement.encodeList(Arrays.asList(ids)));
 		return map;
 	}
 	
-	private static String[] cfgIdsFromMap(Map map){
-		String idsString = (String)map.get(CONFIGURATION_IDS);
+	private static String[] cfgIdsFromMap(Map<String, String> map){
+		String idsString = map.get(CONFIGURATION_IDS);
 		if(idsString != null){
-			List list = MapStorageElement.decodeList(idsString);
-			return (String[])list.toArray(new String[list.size()]);
+			List<String> list = MapStorageElement.decodeList(idsString);
+			return list.toArray(new String[list.size()]);
 		}
 		return EMPTY_STRING_ARRAY;
 	}
 	
-	private static IConfiguration[] configsFromMap(Map map, IManagedBuildInfo info){
+	private static IConfiguration[] configsFromMap(Map<String, String> map, IManagedBuildInfo info){
 		String ids[] = cfgIdsFromMap(map);
 		if(ids.length == 0){
 			IConfiguration cfg = info.getDefaultConfiguration();
@@ -188,7 +192,7 @@ public class BuilderFactory {
 	}
 	
 	private static IConfiguration[] idsToConfigurations(String ids[], IConfiguration allCfgs[]){
-		List list = new ArrayList(ids.length);
+		List<IConfiguration> list = new ArrayList<IConfiguration>(ids.length);
 		for(int i = 0; i < ids.length; i++){
 			String id = ids[i];
 			for(int j = 0; j < allCfgs.length; j++){
@@ -198,10 +202,10 @@ public class BuilderFactory {
 				}
 			}
 		}
-		return (IConfiguration[])list.toArray(new IConfiguration[list.size()]);
+		return list.toArray(new IConfiguration[list.size()]);
 	}
 
-	private static Map cfgsToMap(IConfiguration cfgs[], Map map){
+	private static Map<String, String> cfgsToMap(IConfiguration cfgs[], Map<String, String> map){
 		String ids[] = getCfgIds(cfgs);
 		return cfgIdsToMap(ids, map);
 	}
@@ -214,21 +218,21 @@ public class BuilderFactory {
 		return ids;
 	}
 	
-	private static Map builderToMap(IBuilder builder){
+	private static Map<String, String> builderToMap(IBuilder builder){
 		MapStorageElement el = new MapStorageElement("", null); //$NON-NLS-1$
 		((Builder)builder).serialize(el, false);
 		
 		return el.toStringMap();
 	}
 
-	private static Map builderBuildArgsMap(IBuilder builder){
+	private static Map<String, String> builderBuildArgsMap(IBuilder builder){
 		MapStorageElement el = new BuildArgsStorageElement("", null);  //$NON-NLS-1$
 		((Builder)builder).serializeRawData(el);
 		
 		Boolean d = Boolean.valueOf(builder.isDefaultBuildCmd());
 		el.setAttribute(BuilderFactory.USE_DEFAULT_BUILD_CMD, d.toString());
 		
-		Map map = el.toStringMap();
+		Map<String, String> map = el.toStringMap();
 		map.put(CONTENTS, CONTENTS_ACTIVE_CFG_SETTINGS);
 		
 		return map;
@@ -262,8 +266,9 @@ public class BuilderFactory {
 		return new Builder(cfg.getToolChain(), subId, subName, (Builder)base);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static IBuilder createBuilderFromCommand(IConfiguration cfg, ICommand command){
-		Map args = command.getArguments();
+		Map<String, String> args = command.getArguments();
 		if(!args.containsKey(IBuilder.ID)){
 			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(command.getBuilderName(), null));
 		}
@@ -299,9 +304,8 @@ public class BuilderFactory {
 		return null;
 	}
 
-
-
-	private static IBuilder createBuilder(IConfiguration cfg, Map args, boolean customization){
+	@SuppressWarnings("deprecation")
+	private static IBuilder createBuilder(IConfiguration cfg, Map<String, String> args, boolean customization){
 		IToolChain tCh = cfg.getToolChain();
 		IBuilder cfgBuilder = cfg.getEditableBuilder();
 
@@ -310,11 +314,11 @@ public class BuilderFactory {
 			builder = (Builder)createCustomBuilder(cfg, cfgBuilder);
 
 			//adjusting settings
-			String tmp = (String)args.get(ErrorParserManager.PREF_ERROR_PARSER);
+			String tmp = args.get(ErrorParserManager.PREF_ERROR_PARSER);
 			if(tmp != null && tmp.length() == 0)
 				args.remove(ErrorParserManager.PREF_ERROR_PARSER);
 			
-			tmp = (String)args.get(USE_DEFAULT_BUILD_CMD);
+			tmp = args.get(USE_DEFAULT_BUILD_CMD);
 			if(tmp != null){
 				if(Boolean.valueOf(tmp).equals(Boolean.TRUE)){
 					args.remove(IMakeCommonBuildInfo.BUILD_COMMAND);
@@ -339,7 +343,7 @@ public class BuilderFactory {
 		return builder;
 	}
 
-	public static IBuilder[] createBuilders(IProject project, Map args){
+	public static IBuilder[] createBuilders(IProject project, Map<String, String> args){
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IBuilder[] builders = null;
 		if(info != null){
@@ -348,7 +352,7 @@ public class BuilderFactory {
 				IBuilder builder = cfg.getEditableBuilder();
 				builders = new IBuilder[]{builder};
 			} else {
-				String type = (String)args.get(CONTENTS);
+				String type = args.get(CONTENTS);
 				if(type == null || CONTENTS_BUILDER_CUSTOMIZATION.equals(type)){
 					IConfiguration cfg = info.getDefaultConfiguration();
 					IBuilder builder;
@@ -368,22 +372,22 @@ public class BuilderFactory {
 				} else if (CONTENTS_BUILDER.equals(type)){
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if(cfgs.length != 0){
-						List list = new ArrayList(cfgs.length);
+						List<IBuilder> list = new ArrayList<IBuilder>(cfgs.length);
 						for(int i = 0; i < cfgs.length; i++){
 							IBuilder builder = createBuilder(cfgs[i], args, false);
 							if(builder != null)
 								list.add(builder);
 						}
-						builders = (IBuilder[])list.toArray(new IBuilder[list.size()]);
+						builders = list.toArray(new IBuilder[list.size()]);
 					}
 				} else if (CONTENTS_CONFIGURATION_IDS.equals(type)){
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if(cfgs.length != 0){
-						List list = new ArrayList(cfgs.length);
+						List<IBuilder> list = new ArrayList<IBuilder>(cfgs.length);
 						for(int i = 0; i < cfgs.length; i++){
 							list.add(cfgs[i].getEditableBuilder());
 						}
-						builders = (IBuilder[])list.toArray(new IBuilder[list.size()]);
+						builders = list.toArray(new IBuilder[list.size()]);
 					}
 				} /*else if (CONTENTS_BUILDER_CUSTOMIZATION.equals(type)){
 					String idsString = (String)args.get(CONFIGURATION_IDS);
@@ -432,9 +436,10 @@ public class BuilderFactory {
 		return NO_CHANGES;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static boolean applyBuilder(ICommand cmd, IBuilder builder) {
-		Map oldMap = cmd.getArguments();
-		Map map = builderBuildArgsMap(builder);
+		Map<String, String> oldMap = cmd.getArguments();
+		Map<String, String> map = builderBuildArgsMap(builder);
 		
 		if(oldMap.equals(map))
 			return false;

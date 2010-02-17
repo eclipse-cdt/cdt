@@ -1,4 +1,4 @@
-org.eclipse.cdt.ui/debug=true
+org.eclipse.cdt.ui/debug=false
 
 # Reports contentAssist activity
 org.eclipse.cdt.ui/debug/contentassist=false

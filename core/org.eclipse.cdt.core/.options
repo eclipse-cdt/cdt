@@ -1,4 +1,4 @@
-org.eclipse.cdt.core/debug=true
+org.eclipse.cdt.core/debug=false
 
 # Reports model builder activity
 org.eclipse.cdt.core/debug/model=false

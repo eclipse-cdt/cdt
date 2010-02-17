@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
@@ -30,35 +31,44 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
  */
 public interface ICNodeFactory extends INodeFactory {
 
-	public ICASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
-
-	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
-	
-	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier();
-	
-	public ICASTPointer newPointer();
-	
-	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name);
-
-	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
+	public ICASTArrayDesignator newArrayDesignator(IASTExpression exp);
 
 	public ICASTArrayModifier newArrayModifier(IASTExpression expr);
 	
-	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
-
-	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations);
-
+	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling);
+	
+	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
+	
+	/**
+	 * @deprecated Replaced by {@link #newDesignatedInitializer(IASTInitializerClause)}.
+	 */
+	@Deprecated
 	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer rhs);
 
-	public ICASTArrayDesignator newArrayDesignator(IASTExpression exp);
+	/**
+	 * @since 5.2
+	 */
+	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializerClause initializer);
+
+	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
+	
+	public ICASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
 
 	public ICASTFieldDesignator newFieldDesignator(IASTName name);
 
-	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling);
+	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations);
+
+	public ICASTPointer newPointer();
+
+	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
 	/**
 	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
 	 */
 	@Deprecated
-	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression);	
+	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression);
+
+	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name);
+
+	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
 }

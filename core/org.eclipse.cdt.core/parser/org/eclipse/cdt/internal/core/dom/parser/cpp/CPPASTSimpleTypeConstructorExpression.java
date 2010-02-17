@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,56 +13,76 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
-        ICPPASTSimpleTypeConstructorExpression, IASTAmbiguityParent {
+        ICPPASTSimpleTypeConstructorExpression {
 
-    private int st;
-    private IASTExpression init;
+	private ICPPASTDeclSpecifier fDeclSpec;
+	private IASTInitializer fInitializer;
+	private IType fType;
 
     public CPPASTSimpleTypeConstructorExpression() {
 	}
 
-	public CPPASTSimpleTypeConstructorExpression(int st, IASTExpression init) {
-		this.st = st;
-		setInitialValue(init);
+	public CPPASTSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec, IASTInitializer init) {
+		setDeclSpecifier(declSpec);
+		setInitializer(init);
 	}
 
 	public CPPASTSimpleTypeConstructorExpression copy() {
 		CPPASTSimpleTypeConstructorExpression copy = new CPPASTSimpleTypeConstructorExpression();
-		copy.st = st;
-		copy.setInitialValue(init == null ? null : init.copy());
+		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy());
+		copy.setInitializer(fInitializer == null ? null : fInitializer.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
 	
-	public int getSimpleType() {
-        return st;
+	public ICPPASTDeclSpecifier getDeclSpecifier() {
+		return fDeclSpec;
+	}
+
+	public IASTInitializer getInitializer() {
+		return fInitializer;
+	}
+
+	public void setDeclSpecifier(ICPPASTDeclSpecifier declSpec) {
+    	assertNotFrozen();
+    	fDeclSpec = declSpec;
+    	if (declSpec != null) {
+    		declSpec.setParent(this);
+    		declSpec.setPropertyInParent(TYPE_SPECIFIER);
+    	}
     }
 
-    public void setSimpleType(int value) {
-        assertNotFrozen();
-        st = value;
+	public void setInitializer(IASTInitializer initializer) {
+    	assertNotFrozen();
+    	fInitializer = initializer;
+    	if (initializer != null) {
+    		initializer.setParent(this);
+    		initializer.setPropertyInParent(INITIALIZER);
+    	}
     }
 
-    public IASTExpression getInitialValue() {
-        return init;
-    }
-
-    public void setInitialValue(IASTExpression expression) {
-        assertNotFrozen();
-        init = expression;
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(INITIALIZER_VALUE);
+    public IType getExpressionType() {
+		if (fType == null) {
+			fType= CPPVisitor.createType(fDeclSpec);
 		}
-    }
+		return fType;
+	}
 
+	public boolean isLValue() {
+		return false;
+	}
+	
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -72,8 +92,12 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 	            default : break;
 	        }
 		}
-        
-        if( init != null ) if( !init.accept( action ) ) return false;
+
+		if (fDeclSpec != null && !fDeclSpec.accept(action))
+			return false;
+
+		if (fInitializer != null && !fInitializer.accept(action))
+			return false;
         
         if( action.shouldVisitExpressions ){
 		    switch( action.leave( this ) ){
@@ -85,20 +109,102 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
-        if( child == init )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            init  = (IASTExpression) other;
-        }        
+    @Deprecated
+    public int getSimpleType() {
+    	IType type= getExpressionType();
+    	if (type instanceof ICPPBasicType) {
+    		ICPPBasicType bt= (ICPPBasicType) type;
+    		Kind kind = bt.getKind();
+    		switch(kind) {
+			case eBoolean:
+				return t_bool;
+			case eChar:
+				return t_char;
+			case eDouble:
+				return t_double;
+			case eFloat:
+				return t_float;
+			case eInt:
+				if (bt.isShort())
+					return t_short;
+				if (bt.isLong())
+					return t_long;
+				if (bt.isSigned())
+					return t_signed;
+				if (bt.isUnsigned())
+					return t_unsigned;
+				return t_int;
+			case eVoid:
+				return t_void;
+			case eWChar:
+				return t_wchar_t;
+			default:
+				break;
+    		}
+    	}
+		return t_unspecified;
     }
     
-    public IType getExpressionType() {
-    	return new CPPBasicType(CPPBasicType.getKind(st), 0);
+    @Deprecated
+    public void setSimpleType(int value) {
+		CPPASTSimpleDeclSpecifier declspec = new CPPASTSimpleDeclSpecifier();
+    	switch(value) {
+    	case t_bool:
+    		declspec.setType(Kind.eBoolean);
+    		break;
+    	case t_char:
+    		declspec.setType(Kind.eChar);
+    		break;
+    	case t_double:
+    		declspec.setType(Kind.eDouble);
+    		break;
+    	case t_float:
+    		declspec.setType(Kind.eFloat);
+    		break;
+    	case t_int:
+    		declspec.setType(Kind.eInt);
+    		break;
+    	case t_long:
+    		declspec.setType(Kind.eInt);
+    		declspec.setLong(true);
+    		break;
+    	case t_short:
+    		declspec.setType(Kind.eInt);
+    		declspec.setShort(true);
+    		break;
+    	case t_signed:
+    		declspec.setType(Kind.eInt);
+    		declspec.setSigned(true);
+    		break;
+    	case t_unsigned:
+    		declspec.setType(Kind.eInt);
+    		declspec.setUnsigned(true);
+    		break;
+    	case t_void:
+    		declspec.setType(Kind.eVoid);
+    		break;
+    	case t_wchar_t:
+    		declspec.setType(Kind.eWChar);
+    		break;
+    	default:
+    		declspec.setType(Kind.eUnspecified);
+    		break;
+    	}
+    	setDeclSpecifier(declspec);
     }
-
-	public boolean isLValue() {
-		return false;
-	}
+    
+    @Deprecated
+    public IASTExpression getInitialValue() {
+    	if (fInitializer instanceof ICPPASTConstructorInitializer) {
+    		return ((ICPPASTConstructorInitializer) fInitializer).getExpression();
+    	}
+    	return null;
+    }
+    
+    @Deprecated
+    public void setInitialValue(IASTExpression expression) {
+    	ICPPASTConstructorInitializer init= new CPPASTConstructorInitializer();
+    	init.setExpression(expression);
+    	setInitializer(init);
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,38 +13,56 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 
 /**
- * This is an initializer that is a call to the constructor for the declarator.
+ * Represents a potentially empty list of initializers in parenthesis: ( initializer-list? )
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTConstructorInitializer extends ICPPASTInitializer {
+public interface ICPPASTConstructorInitializer extends IASTInitializer {
 
 	/**
-	 * <code>EXPRESSION</code> represents the expression being conusmed in a
-	 * constructor.
+	 * @since 5.2
 	 */
-	public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty(
-			"ICPPASTConstructorInitializer.EXPRESSION - Expression consumed in constructor"); //$NON-NLS-1$
+	public static final ASTNodeProperty ARGUMENT = new ASTNodeProperty(
+			"ICPPASTConstructorInitializer.ARGUMENT - [IASTInitializerClause]"); //$NON-NLS-1$
 
 	/**
-	 * Get the arguments to the constructor.
+	 * Returns the arguments of this initializer, never <code>null</code>.
+	 * An argument can be of type {@link IASTInitializerList}.
 	 * 
-	 * @return IASTExpression
+	 * @since 5.2
 	 */
-	public IASTExpression getExpression();
-
-	/**
-	 * Set the arguments to the constructor.
-	 * 
-	 * @param expression
-	 */
-	public void setExpression(IASTExpression expression);
-
+	public IASTInitializerClause[] getArguments();
+	
 	/**
 	 * @since 5.1
 	 */
 	public ICPPASTConstructorInitializer copy();
+
+
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setArguments(IASTInitializerClause[] args);
+
+	/**
+	 * @deprecated Replaced by {@link #getArguments()}.
+	 */
+	@Deprecated
+	public IASTExpression getExpression();
+
+	/**
+	 * @deprecated Replaced by {@link #setArguments(IASTInitializerClause[])}.
+	 */
+	@Deprecated
+	public void setExpression(IASTExpression expression);
+	
+	@Deprecated
+	public static final ASTNodeProperty EXPRESSION = ARGUMENT;
 }

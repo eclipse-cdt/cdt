@@ -1,26 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-/**
- * @author jcamelon
- */
 public class CASTReturnStatement extends ASTNode implements
         IASTReturnStatement, IASTAmbiguityParent {
 
@@ -43,7 +42,6 @@ public class CASTReturnStatement extends ASTNode implements
         return retValue;
     }
 
-
     public void setReturnValue(IASTExpression returnValue) {
         assertNotFrozen();
         retValue = returnValue;
@@ -53,7 +51,19 @@ public class CASTReturnStatement extends ASTNode implements
 		}
     }
 
-    @Override
+    public IASTInitializerClause getReturnArgument() {
+    	return getReturnValue();
+	}
+
+	public void setReturnArgument(IASTInitializerClause returnValue) {
+		if (returnValue instanceof IASTExpression) {
+			setReturnValue((IASTExpression) returnValue);
+		} else {
+			setReturnValue(null);
+		}
+	}
+
+	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){
 		    switch( action.visit( this ) ){

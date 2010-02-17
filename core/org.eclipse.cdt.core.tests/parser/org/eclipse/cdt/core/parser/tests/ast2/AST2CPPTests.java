@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -1623,9 +1623,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code = "int x = ::ABC::DEF::ghi;"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
 		IASTSimpleDeclaration x = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-		IASTInitializerExpression e = (IASTInitializerExpression) x
-		.getDeclarators()[0].getInitializer();
-		IASTIdExpression id = (IASTIdExpression) e.getExpression();
+		IASTEqualsInitializer e = (IASTEqualsInitializer) x.getDeclarators()[0].getInitializer();
+		IASTIdExpression id = (IASTIdExpression) e.getInitializerClause();
 		ICPPASTQualifiedName name = (ICPPASTQualifiedName) id.getName();
 		assertTrue(name.isFullyQualified());
 		assertEquals(name.getNames().length, 3);
@@ -4435,10 +4434,10 @@ public class AST2CPPTests extends AST2BaseTest {
 	// }
 	public void testBug84466() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
-		ICPPASTCastExpression dynamic_cast = (ICPPASTCastExpression) ((IASTInitializerExpression) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
+		ICPPASTCastExpression dynamic_cast = (ICPPASTCastExpression) ((IASTEqualsInitializer) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
 				.getDeclarations()[2]).getBody()).getStatements()[0])
 				.getDeclaration()).getDeclarators()[0].getInitializer())
-				.getExpression();
+				.getInitializerClause();
 		
 		assertEquals(dynamic_cast.getOperator(),
 				ICPPASTCastExpression.op_dynamic_cast);
@@ -5580,8 +5579,8 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testLongLiteral_225534() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
 		IASTDeclarator decltor= ((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclarators()[0];
-		IASTInitializerExpression init= (IASTInitializerExpression) decltor.getInitializer();
-		ICPPASTLiteralExpression exp= (ICPPASTLiteralExpression) init.getExpression();
+		IASTEqualsInitializer init= (IASTEqualsInitializer) decltor.getInitializer();
+		ICPPASTLiteralExpression exp= (ICPPASTLiteralExpression) init.getInitializerClause();
 		ICPPBasicType type= (ICPPBasicType) exp.getExpressionType();
 		assertTrue(type.isLong());
 	}
@@ -8044,6 +8043,39 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("const double", ASTTypeUtil.getType(f.getType().getReturnType()));
 		f= bh.assertNonProblem("t8", 2);
 		assertEquals("const double", ASTTypeUtil.getType(f.getType().getReturnType()));
+	}
+	
+	//	typedef int TInt;
+	//	void test() {
+	//		int a1= {}, a2{};		// Initializer for declarator
+	//		int b1= {1}, b2{1};
+	//
+	//		TInt c[12];
+	//		c[{1,2}];				// Array subscript
+	//
+	//		a1= int{};				// Functional casts
+	//		a2= TInt{};
+	//		b1= int{1};
+	//		b2= TInt{};
+	//
+	//		new({1}) int {};		// New expression initializer
+	//		new({1}) int {1};
+	//
+	//		a1= b1= {1};			// Assinment expression
+	//		if (int a={2}) {}		// Condition
+	//		return {0,1,2};			// Return statement
+	//	}
+	//
+	//	struct S {
+	//		int f;
+	//		S(int);
+	//	};
+	//
+	//	S::S(int a) : f{a} {}		// Member initializer
+
+	public void testInitSyntax_302412() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -58,7 +58,8 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 					for(ICPPASTConstructorChainInitializer curInitializer : ctorInitializers){		
 						CPPASTIdExpression initExpr = new CPPASTIdExpression(new CPPASTName("a".toCharArray())); //$NON-NLS-1$
 						CPPASTName initName = new CPPASTName("alpha".toCharArray()); //$NON-NLS-1$
-						ICPPASTConstructorChainInitializer newInitializer = new CPPASTConstructorChainInitializer(initName, initExpr);
+						ICPPASTConstructorChainInitializer newInitializer = new CPPASTConstructorChainInitializer(initName, null);
+						newInitializer.setInitializerValue(initExpr);
 						ASTModification modification = new ASTModification(ModificationKind.REPLACE, curInitializer, newInitializer, null);
 						modStore.storeModification(null, modification);
 					}

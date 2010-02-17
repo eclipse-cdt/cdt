@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,24 +13,29 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
  * e.g.: int a[]= {1,2,3};
  */
-public class CASTInitializerList extends ASTNode implements IASTInitializerList {
+public class CASTInitializerList extends ASTNode implements IASTInitializerList, IASTAmbiguityParent {
     
-    private IASTInitializer [] initializers = null;
+    private IASTInitializerClause[] initializers = null;
     private int initializersPos=-1;
     private int actualSize;
 
 	public CASTInitializerList copy() {
 		CASTInitializerList copy = new CASTInitializerList();
-		for(IASTInitializer initializer : getInitializers())
-			copy.addInitializer(initializer == null ? null : initializer.copy());
+		for(IASTInitializerClause initializer : getClauses())
+			copy.addClause(initializer == null ? null : initializer.copy());
 		copy.setOffsetAndLength(this);
 		copy.actualSize= getSize();
 		return copy;
@@ -41,24 +46,56 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList 
 		return actualSize;
 	}
 
-	public IASTInitializer[] getInitializers() {
+	public IASTInitializerClause[] getClauses() {
 		if (initializers == null)
-			return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
-		initializers = ArrayUtil.trimAt(IASTInitializer.class, initializers, initializersPos);
+			return IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		initializers = ArrayUtil.trimAt(IASTInitializerClause.class, initializers, initializersPos);
 		return initializers;
 	}
-    
-    public void addInitializer( IASTInitializer d ) {
+
+	@Deprecated
+	public IASTInitializer[] getInitializers() {
+		IASTInitializerClause[] clauses= getClauses();
+		if (clauses.length == 0)
+			return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
+		
+		IASTInitializer[] inits= new IASTInitializer[clauses.length];
+		for (int i = 0; i < inits.length; i++) {
+			IASTInitializerClause clause= clauses[i]; 
+			if (clause instanceof IASTInitializer) {
+				inits[i]= (IASTInitializer) clause;
+			} else if (clause instanceof IASTExpression) {
+				final CASTEqualsInitializer initExpr = new CASTEqualsInitializer(((IASTExpression) clause).copy());
+				initExpr.setParent(this);
+				initExpr.setPropertyInParent(NESTED_INITIALIZER);
+				inits[i]= initExpr;
+			}
+		}
+		return inits;
+	}
+
+	public void addClause(IASTInitializerClause d) {
         assertNotFrozen();
     	if (d != null) {
-    		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, ++initializersPos, d );
+    		initializers = (IASTInitializerClause[]) ArrayUtil.append( IASTInitializerClause.class, initializers, ++initializersPos, d );
     		d.setParent(this);
 			d.setPropertyInParent(NESTED_INITIALIZER);
     	}
     	actualSize++;
     }
-    
 
+	@Deprecated
+	public void addInitializer(IASTInitializer d) {
+        assertNotFrozen();
+        if (d instanceof IASTInitializerClause) {
+        	addClause((IASTInitializerClause) d);
+        } else if (d instanceof IASTEqualsInitializer) {
+        	addClause(((IASTEqualsInitializer) d).getInitializerClause());
+        } else {
+        	addClause(null);
+        }
+    }
+    
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitInitializers ){
@@ -68,10 +105,11 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList 
 	            default : break;
 	        }
 		}
-        IASTInitializer [] list = getInitializers();
-        for ( int i = 0; i < list.length; i++ ) {
-            if( !list[i].accept( action ) ) return false;
-        }
+		IASTInitializerClause[] list = getClauses();
+		for (IASTInitializerClause clause : list) {
+			if (!clause.accept(action))
+				return false;
+		}
         if( action.shouldVisitInitializers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -82,4 +120,15 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList 
         return true;
     }
 
+	public void replace(IASTNode child, IASTNode other) {
+		if (initializers != null) {
+			for (int i = 0; i < initializers.length; ++i) {
+				if (child == initializers[i]) {
+					other.setPropertyInParent(child.getPropertyInParent());
+					other.setParent(child.getParent());
+					initializers[i] = (IASTInitializerClause) other;
+				}
+			}
+		}
+	}
 }

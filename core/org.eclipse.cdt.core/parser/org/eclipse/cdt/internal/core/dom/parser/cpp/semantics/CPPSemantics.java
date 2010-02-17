@@ -41,15 +41,15 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -83,6 +83,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
@@ -554,8 +555,8 @@ public class CPPSemantics {
 			}
 		    if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 		        parent = parent.getParent();
-				IASTExpression exp = ((IASTFunctionCallExpression)parent).getParameterExpression();
-				data.setFunctionArguments(exp);
+				IASTInitializerClause[] args = ((IASTFunctionCallExpression)parent).getArguments();
+				data.setFunctionArguments(args);
 			}
 		} else if (parent instanceof ICPPASTFieldReference) {
 			IASTNode grand= parent.getParent();
@@ -565,20 +566,30 @@ public class CPPSemantics {
 				grand = grand.getParent();
 			}
 			if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-				IASTExpression exp = ((IASTFunctionCallExpression)parent.getParent()).getParameterExpression();
+				IASTInitializerClause[] exp = ((IASTFunctionCallExpression)parent.getParent()).getArguments();
 				data.setFunctionArguments(exp);
 			}
 		} else if (parent instanceof ICPPASTNamedTypeSpecifier && parent.getParent() instanceof IASTTypeId) {
 	        IASTTypeId typeId = (IASTTypeId) parent.getParent();
 	        if (typeId.getParent() instanceof ICPPASTNewExpression) {
 	            ICPPASTNewExpression newExp = (ICPPASTNewExpression) typeId.getParent();
-	            IASTExpression init = newExp.getNewInitializer();
-				data.setFunctionArguments(init);
+	            IASTInitializer init = newExp.getInitializer();
+	            if (init == null) {
+	            	data.setFunctionArguments();
+	            } else if (init instanceof ICPPASTConstructorInitializer) {
+					data.setFunctionArguments(((ICPPASTConstructorInitializer) init).getArguments());
+	            } else {
+	            	// mstodo handle braced init list
+	            }
 	        }
 		} else if (parent instanceof ICPPASTConstructorChainInitializer) {
 			ICPPASTConstructorChainInitializer ctorinit = (ICPPASTConstructorChainInitializer) parent;
-			IASTExpression val = ctorinit.getInitializerValue();
-			data.setFunctionArguments(val);
+			IASTInitializer init = ctorinit.getInitializer();
+            if (init instanceof ICPPASTConstructorInitializer) {
+				data.setFunctionArguments(((ICPPASTConstructorInitializer) init).getArguments());
+            } else {
+            	// mstodo handle braced init list
+            }
 		}
 		
 		return data;
@@ -2350,8 +2361,8 @@ public class CPPSemantics {
 	            // target is an object or reference being initialized
 				IASTDeclarator dtor = (IASTDeclarator) node.getParent();
 				return CPPVisitor.createType(dtor);
-			} else if (prop == IASTInitializerExpression.INITIALIZER_EXPRESSION) {
-                IASTInitializerExpression initExp = (IASTInitializerExpression) node.getParent();
+			} else if (prop == IASTEqualsInitializer.INITIALIZER) {
+				IASTEqualsInitializer initExp = (IASTEqualsInitializer) node.getParent();
                 if (initExp.getParent() instanceof IASTDeclarator) {
 	                IASTDeclarator dtor = (IASTDeclarator) initExp.getParent();
 	                return CPPVisitor.createType(dtor);
@@ -2363,30 +2374,24 @@ public class CPPSemantics {
                 IASTBinaryExpression binaryExp = (IASTBinaryExpression) node.getParent();
                 IASTExpression exp = binaryExp.getOperand1();
                 return exp.getExpressionType();
-            } else if (prop == IASTFunctionCallExpression.PARAMETERS ||
-            		(prop == IASTExpressionList.NESTED_EXPRESSION &&
-                    node.getParent().getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS)) {
+            } else if (prop == IASTFunctionCallExpression.ARGUMENT) {
                 // target is a parameter of a function
                 // if this function call refers to an overloaded function, there is more than one possibility
                 // for the target type
-                IASTFunctionCallExpression fnCall = null;
-                int idx = -1;
-                if (prop == IASTFunctionCallExpression.PARAMETERS) {
-                    fnCall = (IASTFunctionCallExpression) node.getParent();
-                    idx = 0;
-                } else {
-                    IASTExpressionList list = (IASTExpressionList) node.getParent();
-                    fnCall = (IASTFunctionCallExpression) list.getParent();
-                    IASTExpression[] exps = list.getExpressions();
-                    for (int i = 0; i < exps.length; i++) {
-                        if (exps[i] == node) {
-                            idx = i;
-                            break;
-                        }
-                    }
-                }
+                IASTFunctionCallExpression fnCall = (IASTFunctionCallExpression) node.getParent();
+                int idx = 0;
+                final IASTInitializerClause[] arguments = fnCall.getArguments();
+				for (IASTInitializerClause arg : arguments) {
+					if (arg == node)
+						break;
+					idx++;
+				}
+				if (idx >= arguments.length)
+					return null;
+				
                 IFunctionType[] types = getPossibleFunctions(fnCall);
-                if (types == null) return null;
+                if (types == null) 
+                	return null;
                 IType[] result = null;
                 for (int i = 0; i < types.length && types[i] != null; i++) {
                     IType[] pts = null;
@@ -2596,21 +2601,13 @@ public class CPPSemantics {
     
     public static ICPPFunction findOverloadedOperator(IASTFunctionCallExpression exp, ICPPClassType type) {
     	char[] name = OverloadableOperator.PAREN.toCharArray();
-    	IASTExpression param = exp.getParameterExpression();
-    	IASTExpression[] args;
-    	if (param instanceof IASTExpressionList) {
-    		IASTExpression[] actualArgs = ((IASTExpressionList)param).getExpressions();
-    		ArrayList<IASTExpression> argsToPass = new ArrayList<IASTExpression>(actualArgs.length + 1);
-    		argsToPass.add(exp.getFunctionNameExpression());
-    		for (IASTExpression e : actualArgs) {
-				argsToPass.add(e);
-    		}
-    		args = argsToPass.toArray(new IASTExpression[argsToPass.size()]);
-    	} else if (param != null) {
-    		args = new IASTExpression[] { exp.getFunctionNameExpression(), param };
-    	} else {
-    		args = new IASTExpression[] { exp.getFunctionNameExpression() };
+    	IASTInitializerClause[] args = exp.getArguments();
+    	ArrayList<IASTInitializerClause> argsToPass = new ArrayList<IASTInitializerClause>(args.length + 1);
+    	argsToPass.add(exp.getFunctionNameExpression());
+    	for (IASTInitializerClause e : args) {
+    		argsToPass.add(e);
     	}
+    	args = argsToPass.toArray(new IASTInitializerClause[argsToPass.size()]);
     	
     	return findOverloadedOperator(exp, args, type, name, NonMemberMode.none);
     }
@@ -2627,17 +2624,15 @@ public class CPPSemantics {
     	IASTExpression sizeExpression = new CPPASTTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
     	sizeExpression.setParent(exp);
     	
-    	IASTExpression placement = exp.getNewPlacement();
-    	List<IASTExpression> args = new ArrayList<IASTExpression>();
+    	IASTInitializerClause[] placement = exp.getPlacementArguments();
+    	List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
     	args.add(sizeExpression);
-    	if (placement instanceof IASTExpressionList) { 
-    		for (IASTExpression p : ((IASTExpressionList) placement).getExpressions())
+    	if (placement != null) {
+    		for (IASTInitializerClause p : placement) {
     			args.add(p);
-    	} else if (placement != null) {
-    		args.add(placement);
-    	}
-
-		IASTExpression[] argArray = args.toArray(new IASTExpression[args.size()]);
+    		} 
+    	} 
+    	IASTInitializerClause[] argArray = args.toArray(new IASTInitializerClause[args.size()]);
 		return findOverloadedOperator(exp, argArray, type, op.toCharArray(), NonMemberMode.all);
     }
 
@@ -2758,7 +2753,7 @@ public class CPPSemantics {
     }
 
     enum NonMemberMode {none, limited, all}
-    private static ICPPFunction findOverloadedOperator(IASTExpression parent, IASTExpression[] args, IType methodLookupType, 
+    private static ICPPFunction findOverloadedOperator(IASTExpression parent, IASTInitializerClause[] args, IType methodLookupType, 
     		char[] operatorName, NonMemberMode mode) {
     	ICPPClassType callToObjectOfClassType= null;
     	
@@ -2820,7 +2815,10 @@ public class CPPSemantics {
 			// 13.3.1.2.3
 			// However, if no operand type has class type, only those non-member functions ...
 			if (mode == NonMemberMode.limited) {
-				IType type2= args.length < 2 ? null : getUltimateTypeUptoPointers(args[1].getExpressionType());
+				IType type2= null;
+				if (args.length >= 2 && args[1] instanceof IASTExpression) {
+					type2= getUltimateTypeUptoPointers(((IASTExpression) args[1]).getExpressionType());
+				}
 				if (funcData.foundItems != null && !(methodLookupType instanceof ICPPClassType) && !(type2 instanceof ICPPClassType)) {
 					IEnumeration enum1= null;
 					IEnumeration enum2= null;

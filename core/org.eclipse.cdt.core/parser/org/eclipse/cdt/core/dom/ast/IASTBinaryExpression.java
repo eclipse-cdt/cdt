@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -253,6 +254,13 @@ public interface IASTBinaryExpression extends IASTExpression {
 	 * @return <code>IASTExpression</code> representing operand 2.
 	 */
 	public IASTExpression getOperand2();
+
+	/**
+	 * Returns the second operand of the expression. For c++ assignment expressions this can be
+	 * a braced list initializer.
+	 * @since 5.2
+	 */
+    public IASTInitializerClause getInitOperand2();
 
 	/**
 	 * @param expression

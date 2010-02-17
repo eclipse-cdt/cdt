@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -51,16 +51,16 @@ public class AST2UtilTests extends AST2BaseTest {
 	    IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C);
 		IASTDeclaration[] d = tu.getDeclarations();
 		
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[2].getInitializer()).getExpression(), "0"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[1]).getDeclarators()[0].getInitializer()).getExpression(), "l ? m : n"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getInitializer()).getExpression(), "l ^ m"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[3]).getDeclarators()[0].getInitializer()).getExpression(), "i <<= j"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[4]).getDeclarators()[0].getInitializer()).getExpression(), "sizeof (int)"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[5]).getDeclarators()[0].getInitializer()).getExpression(), "~f"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getExpression(), "++e"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[7]).getDeclarators()[0].getInitializer()).getExpression(), "d++"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[8]).getDeclarators()[0].getInitializer()).getExpression(), "sizeof b"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTInitializerExpression)((IASTSimpleDeclaration)d[9]).getDeclarators()[0].getInitializer()).getExpression(), "b + c"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[2].getInitializer()).getInitializerClause(), "0"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[1]).getDeclarators()[0].getInitializer()).getInitializerClause(), "l ? m : n"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getInitializer()).getInitializerClause(), "l ^ m"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[3]).getDeclarators()[0].getInitializer()).getInitializerClause(), "i <<= j"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[4]).getDeclarators()[0].getInitializer()).getInitializerClause(), "sizeof (int)"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[5]).getDeclarators()[0].getInitializer()).getInitializerClause(), "~f"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getInitializerClause(), "++e"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[7]).getDeclarators()[0].getInitializer()).getInitializerClause(), "d++"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[8]).getDeclarators()[0].getInitializer()).getInitializerClause(), "sizeof b"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[9]).getDeclarators()[0].getInitializer()).getInitializerClause(), "b + c"); //$NON-NLS-1$
 	}
 	
 	public void testSimpleParameter() throws Exception {
@@ -141,14 +141,14 @@ public class AST2UtilTests extends AST2BaseTest {
 		IASTDeclaration[] d = tu.getDeclarations();
 		
 		// verify signatures
-		isSignatureEqual( ((IASTTypeIdExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId(), "int"); //$NON-NLS-1$
+		isSignatureEqual( ((IASTTypeIdExpression)((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause()).getTypeId(), "int"); //$NON-NLS-1$
 		isSignatureEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "Squaw"); //$NON-NLS-1$
-		isSignatureEqual( ((IASTCastExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId() , "jc"); //$NON-NLS-1$
+		isSignatureEqual( ((IASTCastExpression)((IASTEqualsInitializer)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getInitializerClause()).getTypeId() , "jc"); //$NON-NLS-1$
 		
 		// verify types
-		isTypeEqual( ((IASTTypeIdExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId(), "int"); //$NON-NLS-1$
+		isTypeEqual( ((IASTTypeIdExpression)((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause()).getTypeId(), "int"); //$NON-NLS-1$
 		isTypeEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "Squaw"); //$NON-NLS-1$
-		isTypeEqual( ((IASTCastExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId() , "short int"); //$NON-NLS-1$
+		isTypeEqual( ((IASTCastExpression)((IASTEqualsInitializer)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getInitializerClause()).getTypeId() , "short int"); //$NON-NLS-1$
 	}
 	
 	public void testKnRC() throws Exception {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -186,10 +187,11 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		IASTDeclarator dtor= findDeclarator(name);
 		if (dtor != null) {
 			IASTInitializer init= dtor.getInitializer();
-			if (init instanceof IASTInitializerExpression) {
-				IASTExpression expr= ((IASTInitializerExpression) init).getExpression();
-				if (expr != null)
-					return Value.create(expr, maxDepth);
+			if (init instanceof IASTEqualsInitializer) {
+				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init).getInitializerClause();
+				if (initClause instanceof IASTExpression) {
+					return Value.create((IASTExpression) initClause, maxDepth);
+				}
 			} 
 			if (init != null)
 				return Value.UNKNOWN;

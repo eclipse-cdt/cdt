@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -396,20 +397,25 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		IASTDeclarator dtor= findDeclarator(name);
 		if (dtor != null) {
 			IASTInitializer init= dtor.getInitializer();
-			if (init instanceof IASTInitializerExpression) {
-				IASTExpression expr= ((IASTInitializerExpression) init).getExpression();
-				if (expr != null)
-					return Value.create(expr, maxDepth);
-			} else if (init instanceof ICPPASTConstructorInitializer) {
-				IType type= SemanticUtil.getUltimateTypeUptoPointers(getType());
-				if (type instanceof IPointerType || type instanceof IBasicType) {
-					IASTExpression expr= ((ICPPASTConstructorInitializer) init).getExpression();
-					if (expr != null)
-						return Value.create(expr, maxDepth);
+			if (init != null) {
+				IASTInitializerClause clause= null;
+				if (init instanceof IASTEqualsInitializer) {
+					clause= ((IASTEqualsInitializer) init).getInitializerClause();
+				} else if (init instanceof ICPPASTConstructorInitializer) {
+					IASTInitializerClause[] args= ((ICPPASTConstructorInitializer) init).getArguments();
+					if (args.length == 1 && args[0] instanceof IASTExpression) {
+						IType type= SemanticUtil.getUltimateTypeUptoPointers(getType());
+						if (type instanceof IPointerType || type instanceof IBasicType) {
+							clause= args[0];
+						}
+					}
 				}
-			}
-			if (init != null)
+				if (clause instanceof IASTExpression) {
+					return Value.create((IASTExpression) clause, maxDepth);
+				}
+				// mstodo handle braced init list
 				return Value.UNKNOWN;
+			}
 		}
 		return null;
 	}

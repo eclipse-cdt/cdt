@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -12,7 +12,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
@@ -177,7 +178,9 @@ public class DOMPreprocessorInformationTest extends AST2BaseTest {
 		assertTrue(st[0] instanceof IASTPreprocessorFunctionStyleMacroDefinition);
 		
 		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-		IASTInitializer init = decl.getDeclarators()[0].getInitializer();
+		IASTEqualsInitializer einit = (IASTEqualsInitializer) decl.getDeclarators()[0].getInitializer();
+		IASTInitializerClause init= einit.getInitializerClause();
+		
 		
 		IASTNodeLocation[] nodeLocations = init.getNodeLocations();
 		assertEquals(1, nodeLocations.length);

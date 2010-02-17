@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -43,7 +45,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
         ICPPASTFunctionCallExpression, IASTAmbiguityParent {
 	
     private IASTExpression functionName;
-    private IASTExpression parameter;
+    private IASTInitializerClause[] fArguments;
 
     private IASTImplicitName[] implicitNames = null;
     private IType type; // cached type of expression
@@ -51,21 +53,33 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     
     
     public CPPASTFunctionCallExpression() {
+    	setArguments(null);
 	}
 
-	public CPPASTFunctionCallExpression(IASTExpression functionName, IASTExpression parameter) {
+	public CPPASTFunctionCallExpression(IASTExpression functionName, IASTInitializerClause[] args) {
 		setFunctionNameExpression(functionName);
-		setParameterExpression(parameter);
+		setArguments(args);
 	}
 
 	public CPPASTFunctionCallExpression copy() {
-		CPPASTFunctionCallExpression copy = new CPPASTFunctionCallExpression();
+		IASTInitializerClause[] args = null;
+		if (fArguments.length > 0) {
+			args= new IASTExpression[fArguments.length];
+			for (int i=0; i<fArguments.length; i++) {
+				args[i]= fArguments[i].copy();
+			}
+		}
+
+		CPPASTFunctionCallExpression copy = new CPPASTFunctionCallExpression(null, args);
 		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy());
-		copy.setParameterExpression(parameter == null ? null : parameter.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
 	
+    public IASTExpression getFunctionNameExpression() {
+        return functionName;
+    }
+
 	public void setFunctionNameExpression(IASTExpression expression) {
         assertNotFrozen();
         this.functionName = expression;
@@ -74,24 +88,23 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 			expression.setPropertyInParent(FUNCTION_NAME);
 		}
     }
-
-    public IASTExpression getFunctionNameExpression() {
-        return functionName;
+	
+	public IASTInitializerClause[] getArguments() {
+        return fArguments;
     }
 
-    public void setParameterExpression(IASTExpression expression) {
+    public void setArguments(IASTInitializerClause[] arguments) {
         assertNotFrozen();
-        this.parameter = expression;
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(PARAMETERS);
+        if (arguments == null) {
+        	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
+        } else {
+            fArguments= arguments;
+        	for (IASTInitializerClause arg : arguments) {
+				arg.setParent(this);
+				arg.setPropertyInParent(ARGUMENT);
+			}
 		}
     }
-
-    public IASTExpression getParameterExpression() {
-        return parameter;
-    }
-
 
     public IASTImplicitName[] getImplicitNames() {
     	if(implicitNames == null) {
@@ -107,7 +120,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 			n2.setBinding(overload);
 			n2.setAlternate(true);
 			
-			if(parameter == null) {
+			if (fArguments.length == 0) {
 				int idEndOffset = ((ASTNode)functionName).getOffset() + ((ASTNode)functionName).getLength();
 				try {
 					IToken lparen = functionName.getTrailingSyntax();
@@ -126,10 +139,9 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 					n1.setOffsetAndLength(idEndOffset, 0);
 					n2.setOffsetAndLength(idEndOffset, 0);
 				}
-			}
-			else {
+			} else {
 				n1.computeOperatorOffsets(functionName, true);
-				n2.computeOperatorOffsets(parameter, true);
+				n2.computeOperatorOffsets(fArguments[fArguments.length-1], true);
 			}
 			
 			implicitNames = new IASTImplicitName[] { n1, n2 };
@@ -147,43 +159,44 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 	        }
 		}
       
-        if( functionName != null ) if( !functionName.accept( action ) ) return false;
-        
+		if (functionName != null && !functionName.accept(action))
+			return false;        
         
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
         
-        if(implicits != null && implicits.length > 0)
-        	if(!implicits[0].accept(action)) return false;
+		if (implicits != null && implicits.length > 0)
+			if (!implicits[0].accept(action))
+				return false;
         
-        if( parameter != null )  if( !parameter.accept( action ) ) return false;
-
-        if(implicits != null && implicits.length > 0)
-        	if(!implicits[1].accept(action)) return false;
-        
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		for (IASTInitializerClause arg : fArguments) {
+			if (!arg.accept(action))
+				return false;
 		}
+
+		if (implicits != null && implicits.length > 0)
+			if (!implicits[1].accept(action))
+				return false;
+        
+		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+		
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
-        if( child == functionName )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            functionName  = (IASTExpression) other;
-        }    
-        if( child == parameter )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            parameter  = (IASTExpression) other;
-        }    
-    }
+	public void replace(IASTNode child, IASTNode other) {
+		if (child == functionName) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			functionName = (IASTExpression) other;
+		}
+		for (int i = 0; i < fArguments.length; ++i) {
+			if (child == fArguments[i]) {
+				other.setPropertyInParent(child.getPropertyInParent());
+				other.setParent(child.getParent());
+				fArguments[i] = (IASTExpression) other;
+			}
+		}
+	}
     
     public ICPPFunction getOperator() {
     	if (overload == UNINITIALIZED_FUNCTION) {
@@ -253,5 +266,39 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 			return e.getProblem();
 		} 
 		return null;
+    }
+	
+	@Deprecated
+    public IASTExpression getParameterExpression() {
+    	if (fArguments.length == 0)
+    		return null;
+    	if (fArguments.length == 1) {
+    		IASTInitializerClause arg = fArguments[0];
+    		if (arg instanceof IASTExpression)
+    			return (IASTExpression) arg;
+    		return null;
+    	}
+    		
+    	CPPASTExpressionList result= new CPPASTExpressionList();
+    	for (IASTInitializerClause arg : fArguments) {
+    		if (arg instanceof IASTExpression) {
+    			result.addExpression(((IASTExpression) arg).copy());
+    		}
+    	}
+    	result.setParent(this);
+    	result.setPropertyInParent(ARGUMENT);
+        return result;
+    }
+
+	@Deprecated
+    public void setParameterExpression(IASTExpression expression) {
+        assertNotFrozen();
+        if (expression == null) {
+        	setArguments(null);
+        } else if (expression instanceof ICPPASTExpressionList) {
+        	setArguments(((ICPPASTExpressionList) expression).getExpressions());
+        } else {
+        	setArguments(new IASTExpression[] {expression});
+        }
     }
 }

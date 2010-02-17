@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -53,7 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -408,8 +409,8 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 		if (!startNode(node)) { return PROCESS_SKIP; }
 		try {
-			if (node instanceof IASTInitializerExpression) {
-				visit((IASTInitializerExpression)node);
+			if (node instanceof IASTEqualsInitializer) {
+				visit((IASTEqualsInitializer) node);
 			} else if (node instanceof IASTInitializerList) {
 				visit((IASTInitializerList)node);
 			} else if (node instanceof ICASTDesignatedInitializer) {
@@ -956,7 +957,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (!startNode(node)) { return PROCESS_SKIP; }
 		try {
 			// format like a function call
-			formatFunctionCallArguments(node.getExpression());
+			formatFunctionCallArguments(node.getArguments());
 		} finally {
 			endOfNode(node);
 		}
@@ -965,10 +966,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(ICPPASTConstructorChainInitializer node) {
 		final IASTName member= node.getMemberInitializerId();
-		if (member!= null) {
+		final IASTInitializer init= node.getInitializer();
+		if (member!= null && init != null) {
 			member.accept(this);
-			// format like a function call
-			formatFunctionCallArguments(node.getInitializerValue());
+			init.accept(this);
 		} else {
 			formatRaw(node);
 		}
@@ -1825,9 +1826,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTFunctionCallExpression node) {
 		node.getFunctionNameExpression().accept(this);
-		IASTExpression paramExpr= node.getParameterExpression();
+		IASTInitializerClause[] paramExpr= node.getArguments();
 		if (peekNextToken() == Token.tIDENTIFIER) {
-			skipNode(paramExpr);
+			skipNode(node);
 		} else {
 			formatFunctionCallArguments(paramExpr);
 		}
@@ -1839,17 +1840,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * 
 	 * @param argumentExpr  the argument expression, may be <code>null</code>
 	 */
-	private void formatFunctionCallArguments(IASTExpression argumentExpr) {
-		final List<IASTExpression> expressions;
-		if (argumentExpr != null) {
-			if (argumentExpr instanceof IASTExpressionList) {
-				// argument list
-				final IASTExpressionList exprList= (IASTExpressionList)argumentExpr;
-				expressions= Arrays.asList(exprList.getExpressions());
-			} else {
-				// single argument
-				expressions= Collections.singletonList(argumentExpr);
-			}
+	private void formatFunctionCallArguments(IASTInitializerClause[] args) {
+		final List<IASTInitializerClause> expressions;
+		if (args != null) {
+			expressions= Arrays.asList(args);
 		} else {
 			// no arguments
 			expressions= Collections.emptyList();
@@ -1941,10 +1935,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     	return PROCESS_SKIP;
 	}
 
-	private int visit(IASTInitializerExpression node) {
+	private int visit(IASTEqualsInitializer node) {
 		if (node.getPropertyInParent() == IASTInitializerList.NESTED_INITIALIZER) {
+			assert false;
 			// nested initializer expression, no need to apply extra alignment
-			node.getExpression().accept(this);
+			//			node.getExpression().accept(this);
 		} else {
 			// declaration initializer
 	    	Alignment expressionAlignment= scribe.createAlignment(
@@ -1960,7 +1955,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	    		try {
 	    			scribe.alignFragment(expressionAlignment, 0);
 	
-	   				node.getExpression().accept(this);
+	   				node.getInitializerClause().accept(this);
 	
 	    			ok = true;
 	    		} catch (AlignmentException e) {
@@ -1975,7 +1970,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(IASTInitializerList node) {
 		scribe.printComment();
 
-		final List<IASTInitializer> initializers = Arrays.asList(node.getInitializers());
+		final List<IASTInitializerClause> initializers = Arrays.asList(node.getClauses());
 		if (initializers.isEmpty() && preferences.keep_empty_initializer_list_on_one_line) {
 			scribe.printNextToken(Token.tLBRACE, preferences.insert_space_before_opening_brace_in_initializer_list);
 			scribe.printNextToken(Token.tRBRACE, preferences.insert_space_between_empty_braces_in_initializer_list);
@@ -2071,7 +2066,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			operand.accept(this);
 			break;
-		case IASTUnaryExpression.op_typeof:
 		case IASTUnaryExpression.op_alignOf:
 		default:
 			int operatorToken= peekNextToken();
@@ -2277,9 +2271,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		scribe.space();
 		
 		// placement
-		final IASTExpression newPlacement= node.getNewPlacement();
+		final IASTInitializerClause[] newPlacement= node.getPlacementArguments();
 		if (newPlacement != null) {
-			formatParenthesizedExpression(newPlacement);
+			formatFunctionCallArguments(newPlacement);
 		}
 
 		// type-id
@@ -2295,9 +2289,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 
 		// initializer
-		final IASTExpression newInitializer= node.getNewInitializer();
-		if (newInitializer != null || peekNextToken() == Token.tLPAREN) {
-			formatFunctionCallArguments(newInitializer);
+		final IASTInitializer newInitializer= node.getInitializer();
+		if (newInitializer != null) {
+			visit(newInitializer);
 		}
 		return PROCESS_SKIP;
 	}
@@ -2324,6 +2318,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(ICPPASTSimpleTypeConstructorExpression node) {
+		// tletodo The first part of the expression can consist of multiple tokens
 		scribe.printNextToken(peekNextToken());
 		final IASTExpression operand= node.getInitialValue();
 		formatParenthesizedExpression(operand);

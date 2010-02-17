@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -62,7 +63,11 @@ public class CASTBinaryExpression extends ASTNode implements
         return operand2;
     }
 
-    /**
+    public IASTInitializerClause getInitOperand2() {
+        return operand2;
+	}
+
+	/**
      * @param op An op_X field from {@link IASTBinaryExpression}
      */
     public void setOperator(int op) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -29,21 +31,29 @@ public class CASTFunctionCallExpression extends ASTNode implements
         IASTFunctionCallExpression, IASTAmbiguityParent {
 
     private IASTExpression functionName;
-    private IASTExpression parameter;
+    private IASTInitializerClause[] fArguments;
 
     
     public CASTFunctionCallExpression() {
+    	setArguments(null);
 	}
 
-	public CASTFunctionCallExpression(IASTExpression functionName, IASTExpression parameter) {
+	public CASTFunctionCallExpression(IASTExpression functionName, IASTInitializerClause[] args) {
 		setFunctionNameExpression(functionName);
-		setParameterExpression(parameter);
+		setArguments(args);
 	}
 
 	public CASTFunctionCallExpression copy() {
-		CASTFunctionCallExpression copy = new CASTFunctionCallExpression();
+		IASTInitializerClause[] args = null;
+		if (fArguments.length > 0) {
+			args= new IASTInitializerClause[fArguments.length];
+			for (int i=0; i<fArguments.length; i++) {
+				args[i]= fArguments[i].copy();
+			}
+		}
+
+		CASTFunctionCallExpression copy = new CASTFunctionCallExpression(null, args);
 		copy.setFunctionNameExpression(functionName == null ? null : functionName.copy());
-		copy.setParameterExpression(parameter == null ? null : parameter.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -61,17 +71,21 @@ public class CASTFunctionCallExpression extends ASTNode implements
         return functionName;
     }
 
-    public void setParameterExpression(IASTExpression expression) {
-        assertNotFrozen();
-        this.parameter = expression;
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(PARAMETERS);
-		}
+	public IASTInitializerClause[] getArguments() {
+        return fArguments;
     }
 
-    public IASTExpression getParameterExpression() {
-        return parameter;
+    public void setArguments(IASTInitializerClause[] arguments) {
+        assertNotFrozen();
+        if (arguments == null) {
+        	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
+        } else {
+            fArguments= arguments;
+        	for (IASTInitializerClause arg : arguments) {
+				arg.setParent(this);
+				arg.setPropertyInParent(ARGUMENT);
+			}
+		}
     }
 
     @Override
@@ -84,33 +98,34 @@ public class CASTFunctionCallExpression extends ASTNode implements
 	        }
 		}
       
-        if( functionName != null ) if( !functionName.accept( action ) ) return false;
-        if( parameter != null )  if( !parameter.accept( action ) ) return false;
+		if (functionName != null && !functionName.accept(action))
+			return false;        
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		for (IASTInitializerClause arg : fArguments) {
+			if (!arg.accept(action))
+				return false;
 		}
-        return true;
+
+		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+
+		return true;
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == functionName )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            functionName  = (IASTExpression) other;
-        }
-        if( child == parameter)
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
-            parameter = (IASTExpression) other;
-        }
-    }
+		if (child == functionName) {
+			other.setPropertyInParent(child.getPropertyInParent());
+			other.setParent(child.getParent());
+			functionName = (IASTExpression) other;
+		}
+		for (int i = 0; i < fArguments.length; ++i) {
+			if (child == fArguments[i]) {
+				other.setPropertyInParent(child.getPropertyInParent());
+				other.setParent(child.getParent());
+				fArguments[i] = (IASTInitializerClause) other;
+			}
+		}
+	}
 
 	public IType getExpressionType() {
 		IType type = getFunctionNameExpression().getExpressionType();
@@ -124,4 +139,38 @@ public class CASTFunctionCallExpression extends ASTNode implements
 	public boolean isLValue() {
 		return false;
 	}
+	
+	@Deprecated
+    public IASTExpression getParameterExpression() {
+    	if (fArguments.length == 0)
+    		return null;
+    	if (fArguments.length == 1) {
+    		IASTInitializerClause arg = fArguments[0];
+    		if (arg instanceof IASTExpression)
+    			return (IASTExpression) arg;
+    		return null;
+    	}
+    		
+    	CASTExpressionList result= new CASTExpressionList();
+    	for (IASTInitializerClause arg : fArguments) {
+    		if (arg instanceof IASTExpression) {
+    			result.addExpression(((IASTExpression) arg).copy());
+    		}
+    	}
+    	result.setParent(this);
+    	result.setPropertyInParent(ARGUMENT);
+        return result;
+    }
+
+	@Deprecated
+    public void setParameterExpression(IASTExpression expression) {
+        assertNotFrozen();
+        if (expression == null) {
+        	setArguments(null);
+        } else if (expression instanceof IASTExpressionList) {
+        	setArguments(((IASTExpressionList) expression).getExpressions());
+        } else {
+        	setArguments(new IASTExpression[] {expression});
+        }
+    }
 }

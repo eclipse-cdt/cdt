@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -28,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
@@ -65,7 +65,7 @@ public abstract class VariableReadWriteFlags {
 		else if (parent instanceof IASTStatement) {
 			return rwInStatement(node, (IASTStatement) parent, indirection);
 		}
-		else if (parent instanceof IASTInitializerExpression) {
+		else if (parent instanceof IASTEqualsInitializer) {
 			return rwInInitializerExpression(indirection, parent);
 		}
 		else if (parent instanceof IASTArrayModifier) {
@@ -113,7 +113,7 @@ public abstract class VariableReadWriteFlags {
 		if (expr instanceof IASTExpressionList) {
 			final IASTExpressionList exprList = (IASTExpressionList)expr;
 			final IASTNode grand= expr.getParent();
-			if (grand instanceof IASTFunctionCallExpression && expr.getPropertyInParent() == IASTFunctionCallExpression.PARAMETERS) {
+			if (grand instanceof IASTFunctionCallExpression && expr.getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
 				final IASTFunctionCallExpression funcCall = (IASTFunctionCallExpression) grand;
 				return rwArgumentForFunctionCall(node, exprList, funcCall, indirection);
 			}

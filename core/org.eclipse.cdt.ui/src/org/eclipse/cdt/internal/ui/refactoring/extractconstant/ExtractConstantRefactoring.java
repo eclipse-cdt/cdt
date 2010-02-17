@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -33,9 +33,9 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -52,8 +52,8 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
@@ -373,12 +373,12 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			declSpec.setType(IASTSimpleDeclSpecifier.t_int);
 			break;
 		case IASTLiteralExpression.lk_string_literal:
-			declSpec.setType(ICPPASTSimpleDeclSpecifier.t_wchar_t);
+			declSpec.setType(IASTSimpleDeclSpecifier.t_wchar_t);
 			break;
 		case IASTLiteralExpression.lk_false: 
 			//Like lk_true a boolean type
 		case IASTLiteralExpression.lk_true:
-			declSpec.setType(ICPPASTSimpleDeclSpecifier.t_bool);
+			declSpec.setType(IASTSimpleDeclSpecifier.t_bool);
 			break;
 		case IASTLiteralExpression.lk_this:
 			break;
@@ -390,13 +390,13 @@ public class ExtractConstantRefactoring extends CRefactoring {
 		IASTDeclarator decl = new CPPASTDeclarator();
 		IASTName name = new CPPASTName(newName.toCharArray());
 		decl.setName(name);
-		IASTInitializerExpression init = new CPPASTInitializerExpression(); 
+		IASTEqualsInitializer init = new CPPASTEqualsInitializer(); 
 		if (target.getParent() instanceof IASTUnaryExpression) {
 			IASTUnaryExpression unary = (IASTUnaryExpression) target.getParent();
-			init.setExpression(unary);
+			init.setInitializerClause(unary);
 		} else {
 			CPPASTLiteralExpression expression = new CPPASTLiteralExpression(target.getKind(), target.getValue());
-			init.setExpression(expression);
+			init.setInitializerClause(expression);
 		}
 		decl.setInitializer(init);
 		simple.addDeclarator(decl);

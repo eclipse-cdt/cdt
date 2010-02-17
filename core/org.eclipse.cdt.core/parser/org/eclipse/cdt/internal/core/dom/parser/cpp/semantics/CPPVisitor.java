@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -39,7 +40,6 @@ import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -56,7 +56,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -106,7 +105,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
@@ -817,26 +815,37 @@ public class CPPVisitor extends ASTQueries {
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);
 			    }
-			} else if (node instanceof IASTInitializerExpression) {
-			    IASTNode parent = node.getParent();
-			    while (!(parent instanceof IASTDeclarator || parent instanceof IASTTypeIdInitializerExpression))
-			        parent = parent.getParent();
-			    if(parent instanceof IASTDeclarator) {
-		    	    IASTDeclarator dtor = (IASTDeclarator) parent;
-		    	    IASTName name = dtor.getName();
-		    	    if (name instanceof ICPPASTQualifiedName) {
-		    	        IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-		    	        return getContainingScope(ns[ns.length - 1]);
-		    	    }
+			} else if (node instanceof IASTInitializer) {
+				if (node instanceof ICPPASTConstructorChainInitializer) {
+					// The name of the member initializer is resolved in the scope of the
+					// owner of the ctor.
+					ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) node;
+					IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
+					IBinding binding = fdef.getDeclarator().getName().resolveBinding();
+					try {
+						return binding.getScope();
+					} catch (DOMException e) {
+					}
+			    } else {	
+			    	IASTNode parent = node.getParent();
+			    	if (parent instanceof IASTDeclarator) {
+			    		IASTDeclarator dtor = (IASTDeclarator) parent;
+			    		IASTName name = dtor.getName();
+			    		if (name instanceof ICPPASTQualifiedName) {
+			    			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+			    			return getContainingScope(ns[ns.length - 1]);
+			    		}
+			    	} else if (parent instanceof ICPPASTConstructorChainInitializer) {
+			    		// The initializer for the member initializer is resolved in
+			    		// the body of the ctor.
+				    	IASTNode temp = getContainingBlockItem(node);
+				    	if (temp instanceof IASTFunctionDefinition) {
+				    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)temp).getBody();
+				    		return body.getScope();
+				    	}
+				    	node= parent;
+			    	}
 			    }
-			} else if (node instanceof ICPPASTConstructorChainInitializer) {
-		    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) node;
-		    	IASTFunctionDefinition fdef= (IASTFunctionDefinition) initializer.getParent();
-		    	IBinding binding = fdef.getDeclarator().getName().resolveBinding();
-		    	try {
-		    		return binding.getScope();
-		    	} catch (DOMException e) {
-		    	}
 		    } else if (node instanceof IASTExpression) {
 		    	IASTNode parent = node.getParent();
 			    if (parent instanceof IASTForStatement) {
@@ -849,27 +858,21 @@ public class CPPVisitor extends ASTQueries {
 			    	return ((ICPPASTWhileStatement) parent).getScope();
 			    } else if (parent instanceof IASTCompoundStatement) {
 			        return ((IASTCompoundStatement) parent).getScope();
-			    } else if (parent instanceof ICPPASTConstructorChainInitializer) {
-			    	IASTNode temp = getContainingBlockItem(parent);
-			    	if (temp instanceof IASTFunctionDefinition) {
-			    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)temp).getBody();
-			    		return body.getScope();
-			    	}
-			    } else if (parent instanceof IASTArrayModifier || parent instanceof IASTInitializer) {
+			    } else if (parent instanceof IASTArrayModifier) {
 			        IASTNode d = parent.getParent();
-			        while (!(d instanceof IASTDeclarator || d instanceof IASTTypeIdInitializerExpression)) {
+					while (!(d instanceof IASTDeclarator || d instanceof IASTExpression)) {
 			            d = d.getParent();
 			        }
-			        if(d instanceof IASTDeclarator) {
-				        IASTDeclarator dtor = (IASTDeclarator) d;
-				        while (dtor.getNestedDeclarator() != null)
-				            dtor = dtor.getNestedDeclarator();
-				        IASTName name = dtor.getName();
-				        if (name instanceof ICPPASTQualifiedName) {
-				            IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-				            return getContainingScope(ns[ns.length - 1]);
-				        }
-			        }
+					if (d instanceof IASTDeclarator) {
+						IASTDeclarator dtor = (IASTDeclarator) d;
+						while (dtor.getNestedDeclarator() != null)
+							dtor = dtor.getNestedDeclarator();
+						IASTName name = dtor.getName();
+						if (name instanceof ICPPASTQualifiedName) {
+							IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+							return getContainingScope(ns[ns.length - 1]);
+						}
+					}
 			    } else if (parent instanceof ICPPASTTemplateId &&
 			    		node.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT) {
 					node= parent; // template-id
@@ -1433,7 +1436,6 @@ public class CPPVisitor extends ASTQueries {
 				case KIND_COMPOSITE:
 					if (prop == IASTNamedTypeSpecifier.NAME || 
 							prop == ICPPASTPointerToMember.NAME ||
-							prop == ICPPASTTypenameExpression.TYPENAME ||
 							prop == ICPPASTUsingDeclaration.NAME ||
 							prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME ||
 							prop == ICPPASTTemplateId.TEMPLATE_NAME ||
@@ -1707,13 +1709,16 @@ public class CPPVisitor extends ASTQueries {
 		type = createType(type, declarator);
 		
 		// C++ specification 8.3.4.3 and 8.5.1.4
-		IASTInitializer initializer= declarator.getInitializer();
-		if (initializer instanceof IASTInitializerList) {
+		IASTNode initClause= declarator.getInitializer();
+		if (initClause instanceof IASTEqualsInitializer) {
+			initClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
+		}
+		if (initClause instanceof IASTInitializerList) {
 			IType t= SemanticUtil.getNestedType(type, TDEF);
 			if (t instanceof IArrayType) {
 				IArrayType at= (IArrayType) t;
 				if (at.getSize() == null) {
-					type= new CPPArrayType(at.getType(), Value.create(((IASTInitializerList) initializer).getSize()));
+					type= new CPPArrayType(at.getType(), Value.create(((IASTInitializerList) initClause).getSize()));
 				}
 			}
 		}

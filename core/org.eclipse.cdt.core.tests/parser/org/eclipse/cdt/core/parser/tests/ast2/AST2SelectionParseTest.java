@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ import java.io.Writer;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -186,17 +186,17 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		int length = "argc".length(); //$NON-NLS-1$
 		IASTNode node = parse( code, ParserLanguage.C, offset1, length ).getParent().getParent();
 		assertNotNull(node);
-		assertTrue( node instanceof IASTInitializerExpression );
-		assertEquals( ((IASTIdExpression)((IASTInitializerExpression)node).getExpression()).getName().toString(), "argc" ); //$NON-NLS-1$
-		IASTName name = ((IASTIdExpression)((IASTInitializerExpression)node).getExpression()).getName();
+		assertTrue( node instanceof IASTEqualsInitializer );
+		assertEquals( ((IASTIdExpression)((IASTEqualsInitializer)node).getInitializerClause()).getName().toString(), "argc" ); //$NON-NLS-1$
+		IASTName name = ((IASTIdExpression)((IASTEqualsInitializer)node).getInitializerClause()).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
 		assertEquals(((IParameter)name.resolveBinding()).getName(), "argc"); //$NON-NLS-1$
 		node = parse( code, ParserLanguage.CPP, offset1, length ).getParent().getParent();
 		assertNotNull(node);
-		assertTrue( node instanceof IASTInitializerExpression );
-		assertEquals( ((IASTIdExpression)((IASTInitializerExpression)node).getExpression()).getName().toString(), "argc" ); //$NON-NLS-1$
-		name = ((IASTIdExpression)((IASTInitializerExpression)node).getExpression()).getName();
+		assertTrue( node instanceof IASTEqualsInitializer );
+		assertEquals( ((IASTIdExpression)((IASTEqualsInitializer)node).getInitializerClause()).getName().toString(), "argc" ); //$NON-NLS-1$
+		name = ((IASTIdExpression)((IASTEqualsInitializer)node).getInitializerClause()).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
 		assertEquals(((IParameter)name.resolveBinding()).getName(), "argc"); //$NON-NLS-1$

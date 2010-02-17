@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,8 +17,9 @@ import java.io.Writer;
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -89,12 +90,12 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
     public void testBug39698A() throws Exception
     {
         IASTDeclaration[] decls = parseGPP("int a=0; \n int b=1; \n int c = a <? b;").getDeclarations(); //$NON-NLS-1$
-        assertEquals( ASTSignatureUtil.getExpressionString( ((IASTInitializerExpression)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getExpression() ), "a <? b" ); //$NON-NLS-1$
+        assertEquals( ASTSignatureUtil.getExpressionString( (IASTExpression) ((IASTEqualsInitializer)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getInitializerClause() ), "a <? b" ); //$NON-NLS-1$
     }
     public void testBug39698B() throws Exception
     {
     	IASTDeclaration[] decls = parseGPP("int a=0; \n int b=1; \n int c = a >? b;").getDeclarations(); //$NON-NLS-1$
-        assertEquals( ASTSignatureUtil.getExpressionString( ((IASTInitializerExpression)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getExpression() ), "a >? b" ); //$NON-NLS-1$
+        assertEquals( ASTSignatureUtil.getExpressionString( (IASTExpression) ((IASTEqualsInitializer)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getInitializerClause() ), "a >? b" ); //$NON-NLS-1$
     }
 
 	public void testPredefinedSymbol_bug69791() throws Exception {

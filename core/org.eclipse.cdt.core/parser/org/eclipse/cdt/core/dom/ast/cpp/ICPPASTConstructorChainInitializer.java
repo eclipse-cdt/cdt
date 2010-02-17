@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,70 +13,67 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
+ * Represents a member initializer:
  * <pre> class X {
  *     int a;
  *     X();
  * };
- * X::X : a(0) {}  // a(0) is a constructor chain initializer.
+ * X::X : a(0) {}  // a(0) is a member initializer.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTConstructorChainInitializer extends ICPPASTInitializer, IASTNameOwner {
-	/**
-	 * Constant.
-	 */
+public interface ICPPASTConstructorChainInitializer extends IASTInitializer, ICPPASTPackExpandable,
+		IASTNameOwner {
 	public static final ICPPASTConstructorChainInitializer[] EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY = new ICPPASTConstructorChainInitializer[0];
 
-	/**
-	 * <code>MEMBER_ID</code> represents the class field name being
-	 * initialized.
-	 */
 	public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty(
-			"ICPPASTConstructorChainInitializer.MEMBER_ID - Class field name initialized"); //$NON-NLS-1$
+			"ICPPASTConstructorChainInitializer.MEMBER_ID [IASTName]"); //$NON-NLS-1$
+
+	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
+			"ICPPASTConstructorChainInitializer.INITIALIZER [IASTInitializer]"); //$NON-NLS-1$
 
 	/**
-	 * Get the field name.
-	 * 
-	 * @return <code>IASTName</code>
+	 * Returns the name of the member.
 	 */
 	public IASTName getMemberInitializerId();
 
 	/**
-	 * Set the field name.
-	 * 
-	 * @param name
-	 *            <code>IASTName</code>
+	 * Returns the initializer for the member
+	 * @since 5.2
 	 */
-	public void setMemberInitializerId(IASTName name);
-
-	/**
-	 * <code>Expression field is being initialized to.</code>
-	 */
-	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
-			"ICPPASTConstructorChainInitializer.INITIALIZER - Expression Field Initializer"); //$NON-NLS-1$
-
-	/**
-	 * Get the initializer value.
-	 * 
-	 * @return <code>IASTExpression</code>
-	 */
-	public IASTExpression getInitializerValue();
-
-	/**
-	 * Set the initializer value.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code>
-	 */
-	public void setInitializerValue(IASTExpression expression);
+	public IASTInitializer getInitializer();
 
 	/**
 	 * @since 5.1
 	 */
 	public ICPPASTConstructorChainInitializer copy();
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setMemberInitializerId(IASTName name);
+
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setInitializer(IASTInitializer initializer);
+	
+	/**
+	 * @deprecated Replaced by {@link #getInitializer()}.
+	 */
+	@Deprecated
+	public IASTExpression getInitializerValue();
+
+	/**
+	 * @deprecated Replaced by {@link #setInitializer(IASTInitializer)}.
+	 */
+	@Deprecated
+	public void setInitializerValue(IASTExpression expression);
 }

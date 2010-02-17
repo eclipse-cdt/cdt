@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -297,9 +297,9 @@ public class DOMLocationTests extends AST2BaseTest {
                 }
                 assertSoleLocation(decl, start, length);
             }
-            IASTInitializerExpression initializer = (IASTInitializerExpression) ((IASTSimpleDeclaration) declarations[2])
+            IASTEqualsInitializer initializer = (IASTEqualsInitializer) ((IASTSimpleDeclaration) declarations[2])
                     .getDeclarators()[0].getInitializer();
-            IASTCastExpression castExpression = (IASTCastExpression) initializer.getExpression();
+            IASTCastExpression castExpression = (IASTCastExpression) initializer.getInitializerClause();
             IASTTypeId typeId = castExpression.getTypeId();
             assertSoleLocation(typeId, code.indexOf("(jc)") + 1, "jc".length()); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -326,9 +326,9 @@ public class DOMLocationTests extends AST2BaseTest {
         IASTCompoundStatement statement = (IASTCompoundStatement) main.getBody();
         IASTDeclarationStatement decl = (IASTDeclarationStatement) statement.getStatements()[0];
         IASTSimpleDeclaration b = (IASTSimpleDeclaration) decl.getDeclaration();
-        IASTInitializerExpression initializerExpression = (IASTInitializerExpression) b.getDeclarators()[0].getInitializer();
-        assertSoleLocation(initializerExpression,code.indexOf("new B()"), "new B()".length()); //$NON-NLS-1$ //$NON-NLS-2$
-        ICPPASTNewExpression newExpression = (ICPPASTNewExpression) initializerExpression.getExpression();
+        IASTEqualsInitializer initializerExpression = (IASTEqualsInitializer) b.getDeclarators()[0].getInitializer();
+        assertSoleLocation(initializerExpression.getInitializerClause(),code.indexOf("new B()"), "new B()".length()); //$NON-NLS-1$ //$NON-NLS-2$
+        ICPPASTNewExpression newExpression = (ICPPASTNewExpression) initializerExpression.getInitializerClause();
         assertSoleLocation(newExpression, code.indexOf("new B()"), "new B()".length()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -620,8 +620,8 @@ public class DOMLocationTests extends AST2BaseTest {
         IASTDeclarator[] declarators= simpleDecl.getDeclarators();
         assertEquals(1, declarators.length);
         IASTInitializer initializer= declarators[0].getInitializer();
-        assertTrue(initializer instanceof IASTInitializerExpression);
-        IASTExpression expr= ((IASTInitializerExpression)initializer).getExpression();
+        assertTrue(initializer instanceof IASTEqualsInitializer);
+        IASTInitializerClause expr= ((IASTEqualsInitializer)initializer).getInitializerClause();
         assertTrue(expr instanceof IASTTypeIdExpression);
         assertSoleLocation(expr, buffer.indexOf("sizeof"), "sizeof(int)".length());
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,10 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * This interface represents a new expression.
@@ -25,78 +27,37 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  */
 public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOwner {
 
+	public static final ASTNodeProperty NEW_PLACEMENT = new ASTNodeProperty(
+			"ICPPASTNewExpression.NEW_PLACEMENT [IASTExpression]"); //$NON-NLS-1$
+
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty(
+			"ICPPASTNewExpression.TYPE_ID - [IASTTypeId]"); //$NON-NLS-1$
+
+	public static final ASTNodeProperty NEW_INITIALIZER = new ASTNodeProperty(
+		"ICPPASTNewExpression.NEW_INITIALIZER - [IASTInitializer]"); //$NON-NLS-1$
+
 	/**
 	 * Is this a ::new expression?
-	 * 
-	 * @return boolean
 	 */
 	public boolean isGlobal();
 
 	/**
-	 * Set this expression to bea global ::new expression (or not).
-	 * 
-	 * @param value
-	 *            boolean
+	 * Returns true if this expression is allocating an array.
+	 * @since 5.1
 	 */
-	public void setIsGlobal(boolean value);
+	public boolean isArrayAllocation();
 
 	/**
-	 * NEW_PLACEMENT is a role for an expression to represent the location of
-	 * where the memory should be allocated.
+	 * Returns the additional arguments for the new placement, or <code>null</code>.
+	 * A placement argument can be of type {@link ICPPASTInitializerList}.
+	 * @since 5.2
 	 */
-	public static final ASTNodeProperty NEW_PLACEMENT = new ASTNodeProperty(
-			"ICPPASTNewExpression.NEW_PLACEMENT - Location where memory should be allocated"); //$NON-NLS-1$
-
-	/**
-	 * Get the new placement (optional).
-	 * 
-	 * @return <code>IASTExpression</code>
-	 */
-	public IASTExpression getNewPlacement();
-
-	/**
-	 * Set the new placement expression.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code>
-	 */
-	public void setNewPlacement(IASTExpression expression);
-
-	/**
-	 * <code>NEW_INITIALIZER</code>
-	 */
-	public static final ASTNodeProperty NEW_INITIALIZER = new ASTNodeProperty(
-			"ICPPASTNewExpression.NEW_INITIALIZER - New Initializer"); //$NON-NLS-1$
-
-	/**
-	 * @return <code>IASTExpression</code>
-	 */
-	public IASTExpression getNewInitializer();
-
-	/**
-	 * @param expression
-	 *            <code>IASTExpression</code>
-	 */
-	public void setNewInitializer(IASTExpression expression);
-
-	/**
-	 * TYPE_ID is the type being 'newed'.
-	 */
-	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("ICPPASTNewExpression.TYPE_ID - The type being 'newed'"); //$NON-NLS-1$
-
+	public IASTInitializerClause[] getPlacementArguments();
+	
 	/**
 	 * Get the type Id. The type-id includes the optional array modifications.
-	 * @return <code>IASTTypeId</code>
 	 */
 	public IASTTypeId getTypeId();
-
-	/**
-	 * Set the type Id.
-	 * 
-	 * @param typeId
-	 *            <code>IASTTypeId</code>
-	 */
-	public void setTypeId(IASTTypeId typeId);
 
 	/**
 	 * Returns whether the the typeID a new type ID, which is the case when
@@ -105,24 +66,49 @@ public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOw
 	public boolean isNewTypeId();
 
 	/**
-	 * Set the type ID to be a new type ID.
-	 * 
-	 * @param value
-	 *            boolean
+	 * Returns the initializer or <code>null</code>.
+	 * @since 5.2
 	 */
-	public void setIsNewTypeId(boolean value);
+	public IASTInitializer getInitializer();
+
+	/**
+	 * @since 5.1
+	 */
+	public ICPPASTNewExpression copy();
 
 	
 	/**
-	 * Returns true if this expression is allocating an array.
-	 * @since 5.1
+	 * Not allowed on frozen ast.
 	 */
-	public boolean isArrayAllocation();
-	
-	
+	public void setIsGlobal(boolean value);
+
 	/**
-	 * Expressions that go inside array brackets.
+	 * Not allowed on frozen ast.
+	 * @since 5.2
 	 */
+	public void setPlacementArguments(IASTInitializerClause[] expression);
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setTypeId(IASTTypeId typeId);
+
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setIsNewTypeId(boolean value);
+
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setInitializer(IASTInitializer init);
+
+
+	/**
+	 * @deprecated the id-expressions are part of the type-id.
+	 */
+	@Deprecated
 	public static final ASTNodeProperty NEW_TYPEID_ARRAY_EXPRESSION = new ASTNodeProperty(
 			"ICPPASTNewExpression.NEW_TYPEID_ARRAY_EXPRESSION - Expressions inside array brackets"); //$NON-NLS-1$
 
@@ -138,10 +124,27 @@ public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOw
 	@Deprecated
 	public void addNewTypeIdArrayExpression(IASTExpression expression);
 	
+	/**
+	 * @deprecated Replaced by {@link #getPlacementArguments()}
+	 */
+	@Deprecated
+	public IASTExpression getNewPlacement();
 	
 	/**
-	 * @since 5.1
+	 * @deprecated Replaced by {@link #setPlacementArguments(IASTInitializerClause[])}
 	 */
-	public ICPPASTNewExpression copy();
+	@Deprecated
+	public void setNewPlacement(IASTExpression expression);
 
+	/**
+	 * @deprecated Replaced by {@link #getInitializer()}
+	 */
+	@Deprecated
+	public IASTExpression getNewInitializer();
+
+	/**
+	 * @deprecated Replaced by {@link #setInitializer(IASTInitializer)}
+	 */
+	@Deprecated
+	public void setNewInitializer(IASTExpression expression);
 }

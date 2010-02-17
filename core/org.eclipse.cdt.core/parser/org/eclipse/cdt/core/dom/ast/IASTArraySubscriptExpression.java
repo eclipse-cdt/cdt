@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,15 +19,18 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTArraySubscriptExpression extends IASTExpression {
 
-	/**
-	 * Node property that describes the relationship between an
-	 * <code>IASTArraySubscriptExpression</code> and an
-	 * <code>IASTExpression</code> representing the subscript.
-	 */
-	public static final ASTNodeProperty ARRAY = new ASTNodeProperty("IASTArraySubscriptExpression.ARRAY - IASTExpression representing the Array"); //$NON-NLS-1$
+	public static final ASTNodeProperty ARRAY = new ASTNodeProperty(
+			"IASTArraySubscriptExpression.ARRAY [IASTExpression]"); //$NON-NLS-1$
+	public static final ASTNodeProperty SUBSCRIPT = new ASTNodeProperty(
+			"IASTArraySubscriptExpression.SUBSCRIPT - [IASTFunctionArgument]"); //$NON-NLS-1$
 
 	/**
-	 * Get the expression that represents the array.
+	 * @since 5.1
+	 */
+	IASTArraySubscriptExpression copy();
+	
+	/**
+	 * Get the expression that represents the array
 	 * 
 	 * @return <code>IASTExpression</code> that represents the array.
 	 */
@@ -42,30 +45,24 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	public void setArrayExpression(IASTExpression expression);
 
 	/**
-	 * Node property that describes the relationship between an
-	 * <code>IASTArraySubscriptExpression</code> and an
-	 * <code>IASTExpression</code> representing the array.
+	 * Returns the operand of this expression. In c++ the operand can be a braced initializer list.
+	 * @since 5.2
 	 */
-	public static final ASTNodeProperty SUBSCRIPT = new ASTNodeProperty(
-			"IASTArraySubscriptExpression.SUBSCRIPT - IASTExpression representing the Subscript"); //$NON-NLS-1$
+	public IASTInitializerClause getArgument();
 
 	/**
-	 * Get the subscript expression.
-	 * 
-	 * @return <code>IASTExpression</code> that represents the subscript.
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setArgument(IASTInitializerClause expression);
+
+	/**
+	 * Returns the subscript expression, or <code>null</code>. Consider using {@link #getArgument()}.
 	 */
 	public IASTExpression getSubscriptExpression();
 
 	/**
-	 * Set the subscript expression.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code> to be set.
+	 * Not allowed on frozen ast.
 	 */
 	public void setSubscriptExpression(IASTExpression expression);
-
-	/**
-	 * @since 5.1
-	 */
-	public IASTArraySubscriptExpression copy();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -31,8 +32,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
 
-    private IASTExpression subscriptExp;
     private IASTExpression arrayExpression;
+    private IASTInitializerClause subscriptExp;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
 
     private IASTImplicitName[] implicitNames = null;
@@ -40,15 +41,15 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     public CPPASTArraySubscriptExpression() {
 	}
 
-	public CPPASTArraySubscriptExpression(IASTExpression arrayExpression, IASTExpression subscriptExp) {
+	public CPPASTArraySubscriptExpression(IASTExpression arrayExpression, IASTInitializerClause operand) {
 		setArrayExpression(arrayExpression);
-		setSubscriptExpression(subscriptExp);
+		setArgument(operand);
 	}
 	
 	public CPPASTArraySubscriptExpression copy() {
 		CPPASTArraySubscriptExpression copy = new CPPASTArraySubscriptExpression();
 		copy.setArrayExpression(arrayExpression == null ? null : arrayExpression.copy());
-		copy.setSubscriptExpression(subscriptExp == null ? null : subscriptExp.copy());
+		copy.setArgument(subscriptExp == null ? null : subscriptExp.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -67,17 +68,29 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		}
     }
 
-    public IASTExpression getSubscriptExpression() {
+    public IASTInitializerClause getArgument() {
         return subscriptExp;
     }
 
-    public void setSubscriptExpression(IASTExpression expression) {
+    public void setArgument(IASTInitializerClause arg) {
         assertNotFrozen();
-        subscriptExp = expression;
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(SUBSCRIPT);
+        subscriptExp = arg;
+        if (arg != null) {
+        	arg.setParent(this);
+        	arg.setPropertyInParent(SUBSCRIPT);
 		}
+    }
+
+    @Deprecated
+    public IASTExpression getSubscriptExpression() {
+    	if (subscriptExp instanceof IASTExpression)
+    		return (IASTExpression) subscriptExp;
+    	return null;
+    }
+
+    @Deprecated
+    public void setSubscriptExpression(IASTExpression expression) {
+    	setArgument(expression);
     }
     
     public IASTImplicitName[] getImplicitNames() {

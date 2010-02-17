@@ -9,27 +9,25 @@
  *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTEqualsInitializer;
 
-@Deprecated
-public class CPPASTInitializerExpression extends CPPASTEqualsInitializer implements IASTInitializerExpression {
-
-    public CPPASTInitializerExpression() {
+/**
+ * Initializer with equals sign (copy initialization)
+ */
+public class CASTEqualsInitializer extends ASTEqualsInitializer {
+    public CASTEqualsInitializer() {
 	}
 
-	public CPPASTInitializerExpression(IASTExpression expression) {
-		setExpression(expression);
+	public CASTEqualsInitializer(IASTInitializerClause arg) {
+		super(arg);
 	}
 
-	@Override
-	public CPPASTInitializerExpression copy() {
-		CPPASTInitializerExpression copy= new CPPASTInitializerExpression();
-		IASTInitializerClause init= getInitializerClause();
-		copy.setInitializerClause(init == null ? null : init.copy());
+	public CASTEqualsInitializer copy() {
+		IASTInitializerClause arg = getInitializerClause();
+		CASTEqualsInitializer copy = new CASTEqualsInitializer(arg == null ? null : arg.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}

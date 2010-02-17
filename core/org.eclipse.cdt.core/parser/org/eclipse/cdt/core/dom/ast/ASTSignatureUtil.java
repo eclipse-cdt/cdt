@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
@@ -324,16 +323,12 @@ public class ASTSignatureUtil {
 	public static String getInitializerString(IASTInitializer init) {
 		StringBuffer result = new StringBuffer();
 
-		if (init instanceof IASTInitializerExpression) {
-			result.append(getExpressionString(((IASTInitializerExpression) init).getExpression()));
+		if (init instanceof IASTEqualsInitializer) {
+			result.append(Keywords.cpASSIGN);
+			result.append(getInitializerClauseString(((IASTEqualsInitializer) init).getInitializerClause()));
 		} else if (init instanceof IASTInitializerList) {
 			result.append(Keywords.cpLBRACE);
-			IASTInitializer[] inits = ((IASTInitializerList) init).getInitializers();
-			for (int i = 0; i < inits.length; i++) {
-				result.append(getInitializerString(inits[i]));
-				if (i < inits.length - 1)
-					result.append(COMMA_SPACE);
-			}
+			appendExpressionList(result, ((IASTInitializerList) init).getClauses());
 			result.append(Keywords.cpRBRACE);
 		} else if (init instanceof ICASTDesignatedInitializer) {
 			ICASTDesignator[] designators = ((ICASTDesignatedInitializer) init).getDesignators();
@@ -343,14 +338,32 @@ public class ASTSignatureUtil {
 					result.append(COMMA_SPACE);
 			}
 			result.append(Keywords.cpASSIGN);
-			result.append(getInitializerString(((ICASTDesignatedInitializer) init).getOperandInitializer()));
+			result.append(getInitializerClauseString(((ICASTDesignatedInitializer) init).getOperand()));
 		} else if (init instanceof ICPPASTConstructorInitializer) {
 			result.append("("); //$NON-NLS-1$
-			result.append(getExpressionString(((ICPPASTConstructorInitializer) init).getExpression()));
+			appendExpressionList(result, ((ICPPASTConstructorInitializer) init).getArguments());
 			result.append(")"); //$NON-NLS-1$
 		}
 
 		return result.toString();
+	}
+
+	private static void appendExpressionList(StringBuffer result, IASTInitializerClause[] inits) {
+		for (int i = 0; i < inits.length; i++) {
+			result.append(getInitializerClauseString(inits[i]));
+			if (i < inits.length - 1)
+				result.append(COMMA_SPACE);
+		}
+	}
+
+	private static String getInitializerClauseString(IASTInitializerClause initializerClause) {
+		if (initializerClause instanceof IASTExpression) {
+			return getExpressionString((IASTExpression) initializerClause);
+		}
+		if (initializerClause instanceof IASTInitializer) {
+			return getInitializerString((IASTInitializer) initializerClause);
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	private static String getDesignatorSignature(ICASTDesignator designator) {
@@ -796,8 +809,6 @@ public class ASTSignatureUtil {
 			return getNewExpression((ICPPASTNewExpression)expression);
 		else if (expression instanceof ICPPASTSimpleTypeConstructorExpression)
 			return getSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression)expression);
-		else if (expression instanceof ICPPASTTypenameExpression)
-			return getTypenameExpression((ICPPASTTypenameExpression)expression);			
 		else if (expression instanceof IGNUASTCompoundStatementExpression)
 			return getCompoundStatementExpression((IGNUASTCompoundStatementExpression)expression);
 		else if (expression instanceof ICPPASTPackExpansionExpression)
@@ -856,7 +867,13 @@ public class ASTSignatureUtil {
 		StringBuffer result = new StringBuffer();
 		result.append(getExpressionString(expression.getFunctionNameExpression()));
 		result.append(Keywords.cpLPAREN);
-		result.append(getExpressionString(expression.getParameterExpression()));
+		IASTInitializerClause[] clauses = expression.getArguments();
+		for (int i= 0; i < clauses.length; i++) {
+			if (i > 0) {
+				result.append(COMMA_SPACE);
+			}
+			result.append(getInitializerClauseString(clauses[i]));
+		}
 		result.append(Keywords.cpRPAREN);
 		return result.toString();
 	}
@@ -881,58 +898,8 @@ public class ASTSignatureUtil {
 
 	private static String getSimpleTypeConstructorExpression(ICPPASTSimpleTypeConstructorExpression expression) {
 		StringBuffer result = new StringBuffer();
-		switch (expression.getSimpleType()) {
-		case ICPPASTSimpleTypeConstructorExpression.t_bool:
-			result.append(Keywords.BOOL);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_char:
-			result.append(Keywords.CHAR);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_double:
-			result.append(Keywords.DOUBLE);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_float:
-			result.append(Keywords.FLOAT);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_int:
-			result.append(Keywords.INT);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_long:
-			result.append(Keywords.LONG);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_short:
-			result.append(Keywords.SHORT);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_signed:
-			result.append(Keywords.SIGNED);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_unsigned:
-			result.append(Keywords.UNSIGNED);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_void:
-			result.append(Keywords.VOID);
-			break;
-		case ICPPASTSimpleTypeConstructorExpression.t_wchar_t:
-			result.append(Keywords.WCHAR_T);
-			break;
-		}
-		result.append(Keywords.cpLPAREN);
-		result.append(expression.getInitialValue());
-		result.append(Keywords.cpRPAREN);
-		return result.toString();
-	}
-
-	private static String getTypenameExpression(ICPPASTTypenameExpression expression) {
-		StringBuffer result = new StringBuffer();
-		result.append(Keywords.TYPENAME);
-		result.append(SPACE);
-		result.append(expression.getName().toString());
-		IASTExpression initValue = expression.getInitialValue();
-		result.append(Keywords.cpLPAREN);
-		if (initValue != null) {
-			result.append(getExpressionString(initValue));
-		}
-		result.append(Keywords.cpRPAREN);
+		result.append(getSignature(expression.getDeclSpecifier()));
+		result.append(getInitializerString(expression.getInitializer()));
 		return result.toString();
 	}
 
@@ -1004,13 +971,16 @@ public class ASTSignatureUtil {
 		StringBuffer result = new StringBuffer();
 		result.append(Keywords.NEW);
 		result.append(SPACE);
-		if (expression.getNewPlacement() != null) {
-			result.append(getExpressionString(expression.getNewPlacement()));
+		final IASTInitializerClause[] args = expression.getPlacementArguments();
+		if (args != null) {
+			result.append("("); //$NON-NLS-1$
+			appendExpressionList(result, args);
+			result.append(")"); //$NON-NLS-1$
 		}
 		result.append(getSignature(expression.getTypeId()));
-		result.append(Keywords.cpLPAREN);
-		result.append(getExpressionString(expression.getNewInitializer()));
-		result.append(Keywords.cpRPAREN);
+		final IASTInitializer initializer = expression.getInitializer();
+		if (initializer != null)
+			result.append(getInitializerString(initializer));
 		return result.toString();
 	}
 

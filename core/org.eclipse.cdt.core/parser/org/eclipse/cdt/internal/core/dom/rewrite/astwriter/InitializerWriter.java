@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -12,8 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
@@ -43,8 +44,8 @@ public class InitializerWriter extends NodeWriter{
 	}
 	
 	protected void writeInitializer(IASTInitializer initializer) {
-		if (initializer instanceof IASTInitializerExpression) {
-			((IASTInitializerExpression) initializer).getExpression().accept(visitor);
+		if (initializer instanceof IASTEqualsInitializer) {
+			writeEqualsInitializer((IASTEqualsInitializer) initializer);
 		}else if (initializer instanceof IASTInitializerList) {
 			writeInitializerList((IASTInitializerList) initializer);
 		}else if (initializer instanceof ICPPASTConstructorInitializer) {
@@ -59,23 +60,29 @@ public class InitializerWriter extends NodeWriter{
 	}
 
 	
+	private void writeEqualsInitializer(IASTEqualsInitializer initializer) {
+		scribe.print(EQUALS);
+		IASTInitializerClause init = initializer.getInitializerClause();
+		if (init != null) {
+			init.accept(visitor);
+		}
+	}
+
 	private void writeConstructorChainInitializer(ICPPASTConstructorChainInitializer initializer) {
 		initializer.getMemberInitializerId().accept(visitor);
-		scribe.print('(');
-		initializer.getInitializerValue().accept(visitor);
-		scribe.print(')');
+		initializer.getInitializer().accept(visitor);
 	}
 
 	private void writeInitializerList(IASTInitializerList initList) {
 		scribe.printLBrace();
-		IASTInitializer[] inits = initList.getInitializers();
+		IASTInitializerClause[] inits = initList.getClauses();
 		writeNodeList(inits);
 		scribe.printRBrace();
 	}
 
 	private void writeConstructorInitializer(ICPPASTConstructorInitializer ctorInit) {
 		scribe.print('(');
-		ctorInit.getExpression().accept(visitor);
+		writeNodeList(ctorInit.getArguments());
 		scribe.print(')');		
 	}
 
@@ -85,7 +92,7 @@ public class InitializerWriter extends NodeWriter{
 			writeDesignator(designator);
 		}
 		scribe.print(EQUALS);
-		desigInit.getOperandInitializer().accept(visitor);
+		desigInit.getOperand().accept(visitor);
 	}
 
 	private void writeDesignator(ICASTDesignator designator) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -14,7 +14,9 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.remove;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
@@ -49,7 +51,8 @@ public class NewInitializerExpressionTest extends ChangeGeneratorTest {
 			public int visit(IASTExpression expression) {
 				if (expression instanceof ICPPASTNewExpression) {
 					ICPPASTNewExpression newExpression = (ICPPASTNewExpression) expression;
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, newExpression.getNewInitializer(), null, null);
+					final IASTNode lit = ((ICPPASTConstructorInitializer) newExpression.getInitializer()).getArguments()[0];
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, lit, null, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

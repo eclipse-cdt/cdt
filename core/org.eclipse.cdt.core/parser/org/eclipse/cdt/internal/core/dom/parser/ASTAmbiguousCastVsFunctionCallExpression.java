@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,10 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -104,7 +106,15 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 		if (!hasIssue) 
 			return nodeToReplace;
 
-		fFunctionCallExpression.setParameterExpression(primaryWithParenthesis.getOperand());
+		final IASTExpression operand = primaryWithParenthesis.getOperand();
+		if (operand instanceof IASTExpressionList) {
+			final IASTExpressionList list= (IASTExpressionList) operand;
+			fFunctionCallExpression.setArguments(list.getExpressions());
+		} else if (operand != null) {
+			fFunctionCallExpression.setArguments(new IASTInitializerClause[] {operand});
+		} else {
+			fFunctionCallExpression.setArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
+		}
 		setRange(fFunctionCallExpression, fCastExpression, primaryWithParenthesis);
 		
 		IASTExpression result= fFunctionCallExpression;

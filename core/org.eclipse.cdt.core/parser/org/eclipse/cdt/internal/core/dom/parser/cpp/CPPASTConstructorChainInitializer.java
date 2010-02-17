@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,18 +16,19 @@ import java.util.Arrays;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
@@ -39,25 +40,25 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * {@code Base()} and {@code field()} are the constructor chain initializers.<br>
  */
 public class CPPASTConstructorChainInitializer extends ASTNode implements
-        ICPPASTConstructorChainInitializer, IASTAmbiguityParent, IASTCompletionContext {
+        ICPPASTConstructorChainInitializer, IASTCompletionContext {
 
     private IASTName name;
-    private IASTExpression value;
+    private IASTInitializer initializer;
 	private boolean fIsPackExpansion;
 
     
     public CPPASTConstructorChainInitializer() {
 	}
 
-	public CPPASTConstructorChainInitializer(IASTName memberInitializerid, IASTExpression initializerValue) {
-		setMemberInitializerId(memberInitializerid);
-		setInitializerValue(initializerValue);
+	public CPPASTConstructorChainInitializer(IASTName id, IASTInitializer initializer) {
+		setMemberInitializerId(id);
+		setInitializer(initializer);
 	}
 
 	public CPPASTConstructorChainInitializer copy() {
 		CPPASTConstructorChainInitializer copy = new CPPASTConstructorChainInitializer();
 		copy.setMemberInitializerId(name == null ? null : name.copy());
-		copy.setInitializerValue(value == null ? null : value.copy());
+		copy.setInitializer(initializer == null ? null : initializer.copy());
 		copy.setOffsetAndLength(this);
 		copy.fIsPackExpansion= fIsPackExpansion;
 		return copy;
@@ -76,17 +77,16 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		}
     }
 
-    public IASTExpression getInitializerValue() {
-        return value;
+    public IASTInitializer getInitializer() {
+        return initializer;
     }
 
-
-    public void setInitializerValue(IASTExpression expression) {
+    public void setInitializer(IASTInitializer init) {
         assertNotFrozen();
-        value = expression;
-        if(expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(INITIALIZER);
+        initializer = init;
+        if(init != null) {
+        	init.setParent(this);
+        	init.setPropertyInParent(INITIALIZER);
 		}
     }
 
@@ -100,17 +100,15 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     			return true;
     		}
     	}
-        if (name != null)
-            if (!name.accept(action))
-                return false;
-        if (value != null)
-            if (!value.accept(action))
-                return false;
+        if (name != null && !name.accept(action))
+        	return false;
         
-    	if (action.shouldVisitInitializers) {
-    		if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
-    			return false;
-    	}
+        if (initializer != null && !initializer.accept(action))
+        	return false;
+        
+		if (action.shouldVisitInitializers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+		
         return true;
     }
 
@@ -120,21 +118,12 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
         return r_unclear;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
-        if (child == value) {
-            other.setPropertyInParent(child.getPropertyInParent());
-            other.setParent(child.getParent());
-            value = (IASTExpression) other;
-        }
-    }
-
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 
 		ICPPASTBaseSpecifier[] baseClasses = null;
 
 		for (int i = 0; i < bindings.length; i++) {
-
 			if ((bindings[i] instanceof ICPPField) || (bindings[i] instanceof ICPPNamespace)) {
 				continue;
 			} else if (bindings[i] instanceof ICPPConstructor) {
@@ -184,4 +173,36 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		assertNotFrozen();
 		fIsPackExpansion= val;
 	}
+	
+	@Deprecated
+    public IASTExpression getInitializerValue() {
+        if (initializer == null || initializer instanceof IASTExpression) {
+        	return (IASTExpression) initializer;
+        }
+        if (initializer instanceof ICPPASTConstructorInitializer) {
+       		IASTExpression expr= ((ICPPASTConstructorInitializer) initializer).getExpression();
+       		if (expr != null) {
+       			expr= expr.copy();
+       			expr.setParent(this);
+       			expr.setPropertyInParent(INITIALIZER);
+       		}
+       		return expr;
+        }
+        return null;
+    }
+
+	@Deprecated
+    public void setInitializerValue(IASTExpression expression) {
+        assertNotFrozen();
+        if (expression == null) {
+        	setInitializer(null);
+        } else if (expression instanceof IASTInitializer) {
+        	setInitializer((IASTInitializer) expression);
+        } else {
+        	CPPASTConstructorInitializer ctorInit= new CPPASTConstructorInitializer();
+        	ctorInit.setExpression(expression);
+        	ctorInit.setOffsetAndLength((ASTNode) expression);
+        	setInitializer(ctorInit);
+        }
+    }
 }

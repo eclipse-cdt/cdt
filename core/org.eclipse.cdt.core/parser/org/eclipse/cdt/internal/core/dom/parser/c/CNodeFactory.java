@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -40,7 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -93,10 +94,251 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		return DEFAULT_INSTANCE;
 	}
 	
+	public IASTArrayDeclarator newArrayDeclarator(IASTName name) {
+		return new CASTArrayDeclarator(name);
+	}
+	
+	public ICASTArrayDesignator newArrayDesignator(IASTExpression exp) {
+		return new CASTArrayDesignator(exp);
+	}
+	
+	public ICASTArrayModifier newArrayModifier(IASTExpression expr) {
+		return new CASTArrayModifier(expr);
+	}
+	
+	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling) {
+		return new CASTArrayRangeDesignator(floor, ceiling);
+	}
+	
+	public IASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript) {
+		return new CASTArraySubscriptExpression(arrayExpr, subscript);
+	}
+	
+	public IASTASMDeclaration newASMDeclaration(String assembly) {
+		return new CASTASMDeclaration(assembly);
+	}
+	
+	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2) {
+		return new CASTBinaryExpression(op, expr1, expr2);
+	}
+	
+	public IASTBreakStatement newBreakStatement() {
+		return new CASTBreakStatement();
+	}
+	
+	public IASTCaseStatement newCaseStatement(IASTExpression expression) {
+		return new CASTCaseStatement(expression);
+	}
+		
+	/**
+	 * @param operator  
+	 */
+	public IASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
+		return new CASTCastExpression(typeId, operand);
+	}
+
+	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name) {
+		return new CASTCompositeTypeSpecifier(key, name);
+	}
+	
+	public IASTCompoundStatement newCompoundStatement() {
+		return new CASTCompoundStatement();
+	}
+	
+	public IASTConditionalExpression newConditionalExpession(IASTExpression expr1, IASTExpression expr2, IASTExpression expr3) {
+		return new CASTConditionalExpression(expr1, expr2, expr3);
+	}
+	
+	public IASTContinueStatement newContinueStatement() {
+		return new CASTContinueStatement();
+	}
+	
+	public IASTDeclarationStatement newDeclarationStatement(IASTDeclaration declaration) {
+		return new CASTDeclarationStatement(declaration);
+	}
+	
+	public IASTDeclarator newDeclarator(IASTName name) {
+		return new CASTDeclarator(name);
+	}
+	
+	public IASTDefaultStatement newDefaultStatement() {
+		return new CASTDefaultStatement();
+	}
+	
+	@Deprecated
+	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer operandInitializer) {
+		CASTDesignatedInitializer result = new CASTDesignatedInitializer();
+		result.setOperandInitializer(operandInitializer);
+		return result;
+	}
+	
+	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializerClause clause) {
+		return new CASTDesignatedInitializer(clause);
+	}
+	
+	public IASTDoStatement newDoStatement(IASTStatement body, IASTExpression condition) {
+		return new CASTDoStatement(body, condition);
+	}
+	
+	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name) {
+		return new CASTElaboratedTypeSpecifier(kind, name);
+	}
+	
+	public ICASTEnumerationSpecifier newEnumerationSpecifier(IASTName name) {
+		return new CASTEnumerationSpecifier(name);
+	}
+	
+	public IASTEnumerator newEnumerator(IASTName name, IASTExpression value) {
+		return new CASTEnumerator(name, value);
+	}
+	
+	public IASTEqualsInitializer newEqualsInitializer(IASTInitializerClause initClause) {
+		return new CASTEqualsInitializer(initClause);
+	}
+	
+	public IASTExpressionList newExpressionList() {
+		return new CASTExpressionList();
+	}
+	
+	public IASTExpressionStatement newExpressionStatement(IASTExpression expr) {
+		return new CASTExpressionStatement(expr);
+	}
+
+	public IASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
+		return new CASTFieldDeclarator(name, bitFieldSize);
+	}
+
+	public ICASTFieldDesignator newFieldDesignator(IASTName name) {
+		return new CASTFieldDesignator(name);
+	}
+
+	public IASTFieldReference newFieldReference(IASTName name, IASTExpression owner) {
+		return new CASTFieldReference(name, owner);
+	}
+	
+	public IASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
+			IASTExpression iterationExpression, IASTStatement body) {
+		return new CASTForStatement(init, condition, iterationExpression, body);
+	}
+	
+	@Deprecated
+	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
+		CASTFunctionCallExpression result = new CASTFunctionCallExpression(idExpr, null);
+		result.setParameterExpression(argList);
+		return result;
+	}
+	
+	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments) {
+		return new CASTFunctionCallExpression(idExpr, arguments);
+	}
+	
+	public IASTStandardFunctionDeclarator newFunctionDeclarator(IASTName name) {
+		return new CASTFunctionDeclarator(name);
+	}
+	
+	public IASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
+			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
+		return new CASTFunctionDefinition(declSpecifier, declarator, bodyStatement);
+	}
+	
+	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
+		return new CASTCompoundStatementExpression(compoundStatement);
+	}
+	
+	public IASTGotoStatement newGotoStatement(IASTName name) {
+		return new CASTGotoStatement(name);
+	}
+	
+	public IASTIdExpression newIdExpression(IASTName name) {
+		return new CASTIdExpression(name);
+	}
+	
+	public IASTIfStatement newIfStatement(IASTExpression expr, IASTStatement thenStat, IASTStatement elseClause) {
+		return new CASTIfStatement(expr, thenStat, elseClause);
+	}
+	
+	@Deprecated
+	public  org.eclipse.cdt.core.dom.ast.IASTInitializerExpression newInitializerExpression(IASTExpression expression) {
+		return new CASTInitializerExpression(expression);
+	}
+	
+	public IASTInitializerList newInitializerList() {
+		return new CASTInitializerList();
+	}
+	
+	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations) {
+		return new CASTKnRFunctionDeclarator(parameterNames, parameterDeclarations);
+	}
+	
+	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement) {
+		return new CASTLabelStatement(name, nestedStatement);
+	}
+	
+	public IASTLiteralExpression newLiteralExpression(int kind, String rep) {
+		return new CASTLiteralExpression(kind, rep.toCharArray());
+	}
+	
+	public IASTName newName() {
+		return new CASTName();
+	}
+	
+	public IASTName newName(char[] name) {
+		return new CASTName(name);
+	}
+	
+	public IASTNullStatement newNullStatement() {
+		return new CASTNullStatement();
+	}
+	
+	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+		return new CASTParameterDeclaration(declSpec, declarator);
+	}
+	
+	public ICASTPointer newPointer() {
+		return new CASTPointer();
+	}
+	
+	public IASTProblem newProblem(int id, char[] arg, boolean error) {
+		return new CASTProblem(id, arg, error);
+	}
+	
+	public IASTProblemDeclaration newProblemDeclaration(IASTProblem problem) {
+		return new CASTProblemDeclaration(problem);
+	}
+	
+	public IASTProblemExpression newProblemExpression(IASTProblem problem) {
+		return new CASTProblemExpression(problem);
+	}
+	
+	public IASTProblemStatement newProblemStatement(IASTProblem problem) {
+		return new CASTProblemStatement(problem);
+	}
+	
+	public IASTReturnStatement newReturnStatement(IASTExpression retValue) {
+		return new CASTReturnStatement(retValue);
+	}
+	
+	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
+		return new CASTSimpleDeclaration(declSpecifier);
+	}
+	
+	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier() {
+		return new CASTSimpleDeclSpecifier();
+	}
+	
+	@Deprecated 
+	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression) {
+		return new GCCASTSimpleDeclSpecifier(typeofExpression);
+	}
+	
+	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body) {
+		return new CASTSwitchStatement(controller, body);
+	}
+	
 	public IASTTranslationUnit newTranslationUnit() {
 		return newTranslationUnit(null);
 	}
-	
+
 	public IASTTranslationUnit newTranslationUnit(IScanner scanner) {
 		CASTTranslationUnit tu = new CASTTranslationUnit();
 		
@@ -106,251 +348,29 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		tu.setASTNodeFactory(this);
 		return tu;
 	}
-	
-	public IASTName newName(char[] name) {
-		return new CASTName(name);
-	}
-	
-	public IASTName newName() {
-		return new CASTName();
-	}
-	
-	public IASTLiteralExpression newLiteralExpression(int kind, String rep) {
-		return new CASTLiteralExpression(kind, rep.toCharArray());
-	}
-	
-	public IASTIdExpression newIdExpression(IASTName name) {
-		return new CASTIdExpression(name);
-	}
-	
-	public IASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2) {
-		return new CASTBinaryExpression(op, expr1, expr2);
-	}
-	
-	public IASTConditionalExpression newConditionalExpession(IASTExpression expr1, IASTExpression expr2, IASTExpression expr3) {
-		return new CASTConditionalExpression(expr1, expr2, expr3);
-	}
-	
-	public IASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript) {
-		return new CASTArraySubscriptExpression(arrayExpr, subscript);
-	}
-	
-	public IASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
-		return new CASTFunctionCallExpression(idExpr, argList);
-	}
-	
-	public IASTExpressionList newExpressionList() {
-		return new CASTExpressionList();
-	}
-	
-	public IASTFieldReference newFieldReference(IASTName name, IASTExpression owner) {
-		return new CASTFieldReference(name, owner);
-	}
-	
-	public IASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
-		return new CASTUnaryExpression(operator, operand);
-	}
-	
-	public IASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
-		return new CASTTypeIdExpression(operator, typeId);
-	}
-	
-	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
-		return new CASTTypeIdInitializerExpression(typeId, initializer);
-	}
-	
-	/**
-	 * @param operator  
-	 */
-	public IASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
-		return new CASTCastExpression(typeId, operand);
-	}
-	
-	public IASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
-		return new CASTTypeId(declSpecifier, declarator);
-	}
-	
-	public IASTDeclarator newDeclarator(IASTName name) {
-		return new CASTDeclarator(name);
-	}
-	
-	public IASTArrayDeclarator newArrayDeclarator(IASTName name) {
-		return new CASTArrayDeclarator(name);
-	}
-	
-	public ICASTArrayModifier newArrayModifier(IASTExpression expr) {
-		return new CASTArrayModifier(expr);
-	}
-	
-	public IASTStandardFunctionDeclarator newFunctionDeclarator(IASTName name) {
-		return new CASTFunctionDeclarator(name);
-	}
-	
-	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations) {
-		return new CASTKnRFunctionDeclarator(parameterNames, parameterDeclarations);
-	}
-	
-	public ICASTPointer newPointer() {
-		return new CASTPointer();
-	}
-	
-	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
-		return new CASTParameterDeclaration(declSpec, declarator);
-	}
-	
-	public IASTInitializerExpression newInitializerExpression(IASTExpression expression) {
-		return new CASTInitializerExpression(expression);
-	}
-	
-	public IASTInitializerList newInitializerList() {
-		return new CASTInitializerList();
-	}
-	
-	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializer operandInitializer) {
-		return new CASTDesignatedInitializer(operandInitializer);
-	}
-	
-	public ICASTArrayDesignator newArrayDesignator(IASTExpression exp) {
-		return new CASTArrayDesignator(exp);
-	}
-	
-	public ICASTFieldDesignator newFieldDesignator(IASTName name) {
-		return new CASTFieldDesignator(name);
-	}
-	
+
 	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name) {
 		return new CASTTypedefNameSpecifier(name);
 	}
-	
-	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
-		return new CASTSimpleDeclaration(declSpecifier);
+
+	public IASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
+		return new CASTTypeId(declSpecifier, declarator);
 	}
-	
-	public IASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
-		return new CASTFieldDeclarator(name, bitFieldSize);
+
+	public IASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
+		return new CASTTypeIdExpression(operator, typeId);
 	}
-	
-	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name) {
-		return new CASTCompositeTypeSpecifier(key, name);
+
+	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
+		return new CASTTypeIdInitializerExpression(typeId, initializer);
 	}
-	
-	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name) {
-		return new CASTElaboratedTypeSpecifier(kind, name);
+
+	public IASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
+		return new CASTUnaryExpression(operator, operand);
 	}
-	
-	public IASTEnumerator newEnumerator(IASTName name, IASTExpression value) {
-		return new CASTEnumerator(name, value);
-	}
-	
-	public IASTCompoundStatement newCompoundStatement() {
-		return new CASTCompoundStatement();
-	}
-	
-	public IASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
-			IASTExpression iterationExpression, IASTStatement body) {
-		return new CASTForStatement(init, condition, iterationExpression, body);
-	}
-	
-	public IASTExpressionStatement newExpressionStatement(IASTExpression expr) {
-		return new CASTExpressionStatement(expr);
-	}
-	
-	public IASTDeclarationStatement newDeclarationStatement(IASTDeclaration declaration) {
-		return new CASTDeclarationStatement(declaration);
-	}
-	
-	public IASTNullStatement newNullStatement() {
-		return new CASTNullStatement();
-	}
-	
+
 	public IASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body) {
 		return new CASTWhileStatement(condition, body);
-	}
-	
-	public IASTDoStatement newDoStatement(IASTStatement body, IASTExpression condition) {
-		return new CASTDoStatement(body, condition);
-	}
-	
-	public IASTGotoStatement newGotoStatement(IASTName name) {
-		return new CASTGotoStatement(name);
-	}
-	
-	public IASTContinueStatement newContinueStatement() {
-		return new CASTContinueStatement();
-	}
-	
-	public IASTBreakStatement newBreakStatement() {
-		return new CASTBreakStatement();
-	}
-	
-	public IASTReturnStatement newReturnStatement(IASTExpression retValue) {
-		return new CASTReturnStatement(retValue);
-	}
-	
-	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement) {
-		return new CASTLabelStatement(name, nestedStatement);
-	}
-	
-	public IASTCaseStatement newCaseStatement(IASTExpression expression) {
-		return new CASTCaseStatement(expression);
-	}
-	
-	public IASTDefaultStatement newDefaultStatement() {
-		return new CASTDefaultStatement();
-	}
-	
-	public IASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body) {
-		return new CASTSwitchStatement(controller, body);
-	}
-	
-	public IASTIfStatement newIfStatement(IASTExpression expr, IASTStatement thenStat, IASTStatement elseClause) {
-		return new CASTIfStatement(expr, thenStat, elseClause);
-	}
-	
-	public IASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
-			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
-		return new CASTFunctionDefinition(declSpecifier, declarator, bodyStatement);
-	}
-	
-	public IASTProblemDeclaration newProblemDeclaration(IASTProblem problem) {
-		return new CASTProblemDeclaration(problem);
-	}
-	
-	public IASTProblemStatement newProblemStatement(IASTProblem problem) {
-		return new CASTProblemStatement(problem);
-	}
-	
-	public IASTProblemExpression newProblemExpression(IASTProblem problem) {
-		return new CASTProblemExpression(problem);
-	}
-	
-	public IASTProblem newProblem(int id, char[] arg, boolean error) {
-		return new CASTProblem(id, arg, error);
-	}
-
-	public IASTASMDeclaration newASMDeclaration(String assembly) {
-		return new CASTASMDeclaration(assembly);
-	}
-
-	public ICASTEnumerationSpecifier newEnumerationSpecifier(IASTName name) {
-		return new CASTEnumerationSpecifier(name);
-	}
-
-	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier() {
-		return new CASTSimpleDeclSpecifier();
-	}
-
-	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
-		return new CASTCompoundStatementExpression(compoundStatement);
-	}
-
-	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling) {
-		return new CASTArrayRangeDesignator(floor, ceiling);
-	}
-
-	@Deprecated 
-	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression) {
-		return new GCCASTSimpleDeclSpecifier(typeofExpression);
 	}
 } 
 

@@ -50,13 +50,18 @@ int fun3(int i, const char *a, ...);
 //!CPPFunctionDeclaratorTest
 //%CPP
 char & operator [](unsigned int);
+class TestClass
+{
+    int alpha;
+    TestClass(int a);
+    virtual void pure() =0;
+};
 TestClass::TestClass(int a)
 :alpha(a)
 {
 }
 
 void undefPar(const char *c) throw (int);
-virtual void pure() = 0;
 int getV() const;
 int vol() volatile;
 

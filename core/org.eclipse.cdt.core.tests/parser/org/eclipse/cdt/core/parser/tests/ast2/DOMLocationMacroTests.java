@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -51,8 +51,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         StringBuffer buffer = new StringBuffer( "#define ABC D\n" ); //$NON-NLS-1$
         buffer.append( "int ABC;"); //$NON-NLS-1$
         String code = buffer.toString();
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTPreprocessorObjectStyleMacroDefinition ABC = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
             IASTSimpleDeclaration var = (IASTSimpleDeclaration) tu.getDeclarations()[0];
             IASTDeclarator d = var.getDeclarators()[0];
@@ -77,8 +77,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         StringBuffer buffer = new StringBuffer( "#define ABC * D\n" ); //$NON-NLS-1$
         buffer.append( "int ABC;"); //$NON-NLS-1$
         String code = buffer.toString();
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTPreprocessorObjectStyleMacroDefinition ABC = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
             IASTSimpleDeclaration var = (IASTSimpleDeclaration) tu.getDeclarations()[0];
             IASTDeclarator d = var.getDeclarators()[0];
@@ -124,8 +124,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         StringBuffer buffer = new StringBuffer( "#define XYZ const\n"); //$NON-NLS-1$
         buffer.append( "XYZ int var;"); //$NON-NLS-1$
         String code = buffer.toString();
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTPreprocessorObjectStyleMacroDefinition defXYZ = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
             IASTSimpleDeclaration var = (IASTSimpleDeclaration) tu.getDeclarations()[0];
             IASTSimpleDeclSpecifier declSpec = (IASTSimpleDeclSpecifier) var.getDeclSpecifier();
@@ -154,8 +154,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         buffer.append( "int C_PO var;"); //$NON-NLS-1$
         String code = buffer.toString();
         
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             final IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
             IASTPreprocessorMacroDefinition XYZ = macroDefinitions[0];
             IASTPreprocessorMacroDefinition PO = macroDefinitions[1];
@@ -188,8 +188,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         buffer.append( "XYZ IT C_PO C_PO V;"); //$NON-NLS-1$
         String code = buffer.toString();
         
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTPreprocessorObjectStyleMacroDefinition XYZ = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
 //            IASTPreprocessorObjectStyleMacroDefinition PO = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[1];
             IASTPreprocessorObjectStyleMacroDefinition C_PO = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[2];
@@ -238,8 +238,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         buffer.append( "_PTR     _EXFUN(memchr,(const _PTR, int, size_t));\n"); //$NON-NLS-1$
         String code = buffer.toString();
         
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i], true, true);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language, true, true);
             final IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
             IASTPreprocessorObjectStyleMacroDefinition _PTR = (IASTPreprocessorObjectStyleMacroDefinition) macroDefinitions[0];
             IASTPreprocessorFunctionStyleMacroDefinition _EXFUN = (IASTPreprocessorFunctionStyleMacroDefinition) macroDefinitions[2];
@@ -280,8 +280,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         buffer.append( "#define ABC ghi\n"); //$NON-NLS-1$
         buffer.append( "int ABC;\n"); //$NON-NLS-1$
         String code = buffer.toString();
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTPreprocessorMacroDefinition [] macros = tu.getMacroDefinitions();
             assertEquals( macros.length, 2 );
             IASTPreprocessorObjectStyleMacroDefinition ABC1 = (IASTPreprocessorObjectStyleMacroDefinition) macros[0];
@@ -314,8 +314,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         StringBuffer buffer = new StringBuffer( "#define MACRO mm\n"); //$NON-NLS-1$
         buffer.append( "int MACRO;\n"); //$NON-NLS-1$
         String code = buffer.toString();
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTPreprocessorObjectStyleMacroDefinition MACRO = (IASTPreprocessorObjectStyleMacroDefinition) tu.getMacroDefinitions()[0];
             IASTName macro_name = MACRO.getName();
             IMacroBinding binding = (IMacroBinding) macro_name.resolveBinding();
@@ -336,8 +336,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         buffer.append( "#define MYAPI API\n"); //$NON-NLS-1$
         buffer.append( "MYAPI void func() {}" ); //$NON-NLS-1$
         String code = buffer.toString();
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
             assertNotNull( f.getFileLocation() ); 
         }
@@ -350,11 +350,11 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         buffer.append( "int var= FUNCTION(1);"); //$NON-NLS-1$
         String code = buffer.toString();
         
-        for(int i = 0; i < languages.length; i++) {
-            IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+            IASTTranslationUnit tu = parse(code, language);
             IASTSimpleDeclaration var = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-            IASTInitializerExpression initializer= (IASTInitializerExpression)var.getDeclarators()[0].getInitializer();
-            IASTExpression expr= initializer.getExpression();
+            IASTEqualsInitializer initializer= (IASTEqualsInitializer)var.getDeclarators()[0].getInitializer();
+            IASTInitializerClause expr= initializer.getInitializerClause();
             assertNotNull(expr.getFileLocation()); 
             IASTNodeLocation [] locations = expr.getNodeLocations();
             assertEquals(1, locations.length);
@@ -369,8 +369,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     
     private void assertMacroLocation(IASTDeclaration decl, int index, int length) {
     	IASTSimpleDeclaration var = (IASTSimpleDeclaration) decl;
-        IASTInitializerExpression initializer= (IASTInitializerExpression)var.getDeclarators()[0].getInitializer();
-        IASTExpression expr= initializer.getExpression();
+        IASTEqualsInitializer initializer= (IASTEqualsInitializer)var.getDeclarators()[0].getInitializer();
+        IASTInitializerClause expr= initializer.getInitializerClause();
         assertNotNull(expr.getFileLocation()); 
         IASTNodeLocation [] locations = expr.getNodeLocations();
         assertEquals(1, locations.length);
@@ -384,8 +384,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     
     private void assertExpressionLocation(IASTDeclaration decl, int index, int length) {
     	IASTSimpleDeclaration var = (IASTSimpleDeclaration) decl;
-    	IASTInitializerExpression initializer= (IASTInitializerExpression)var.getDeclarators()[0].getInitializer();
-        IASTExpression expr= initializer.getExpression();
+    	IASTEqualsInitializer initializer= (IASTEqualsInitializer)var.getDeclarators()[0].getInitializer();
+        IASTInitializerClause expr= initializer.getInitializerClause();
         IASTFileLocation fileLocation = expr.getFileLocation();
         assertNotNull(fileLocation); 
         assertEquals(index, fileLocation.getNodeOffset());
@@ -402,8 +402,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
         sb.append("int y = whatever; \n"); //$NON-NLS-1$
         String code = sb.toString();
 
-        for(int i = 0; i < languages.length; i++) {
-	        IASTTranslationUnit tu = parse(code, languages[i]);
+        for (ParserLanguage language : languages) {
+	        IASTTranslationUnit tu = parse(code, language);
 	        IASTDeclaration[] decls = tu.getDeclarations();
 	        assertMacroLocation(decls[1], code.indexOf("Nullstr;"), "Nullstr".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	        assertExpressionLocation(decls[2], code.indexOf("whatever;"), "whatever".length()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -421,8 +421,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     	sb.append("int y = whatever; \n"); //$NON-NLS-1$
     	String code = sb.toString();
     	
-    	for(int i = 0; i < languages.length; i++) {
-	    	IASTTranslationUnit tu = parse(code, languages[i]);
+    	for (ParserLanguage language : languages) {
+	    	IASTTranslationUnit tu = parse(code, language);
 	        IASTDeclaration[] decls = tu.getDeclarations();
 	        assertMacroLocation(decls[0], code.indexOf("ADD(ONEYONENOE,TWO,  THREE)"), "ADD(ONEYONENOE,TWO,  THREE)".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	        assertExpressionLocation(decls[1], code.indexOf("whatever;"), "whatever".length()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -438,8 +438,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     	sb.append("int y = whatever; \n"); //$NON-NLS-1$
     	String code = sb.toString();
     	
-    	for(int i = 0; i < languages.length; i++) {
-	    	IASTTranslationUnit tu = parse(code, languages[i]);
+    	for (ParserLanguage language : languages) {
+	    	IASTTranslationUnit tu = parse(code, language);
 	        IASTDeclaration[] decls = tu.getDeclarations();
 	        assertMacroLocation(decls[0], code.indexOf("add2 z);"), "add2 z)".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	        assertExpressionLocation(decls[1], code.indexOf("whatever;"), "whatever".length()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -455,8 +455,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     	sb.append("int y = whatever; \n"); //$NON-NLS-1$
     	String code = sb.toString();
     	
-    	for(int i = 0; i < languages.length; i++) {
-	    	IASTTranslationUnit tu = parse(code, languages[i]);
+    	for (ParserLanguage language : languages) {
+	    	IASTTranslationUnit tu = parse(code, language);
 	        IASTDeclaration[] decls = tu.getDeclarations();
 	        assertMacroLocation(decls[0], code.indexOf("YO;"), "YO".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	        assertExpressionLocation(decls[1], code.indexOf("whatever;"), "whatever".length()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -472,8 +472,8 @@ public class DOMLocationMacroTests extends AST2BaseTest {
     	sb.append("int y = whatever; \n"); //$NON-NLS-1$
     	String code = sb.toString();
     	
-    	for(int i = 0; i < languages.length; i++) {
-	    	IASTTranslationUnit tu = parse(code, languages[i]);
+    	for (ParserLanguage language : languages) {
+	    	IASTTranslationUnit tu = parse(code, language);
 	        IASTDeclaration[] decls = tu.getDeclarations();
 	        assertMacroLocation(decls[0], code.indexOf("MAKEFUN(1)(z);"), "MAKEFUN(1)(z)".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	        assertExpressionLocation(decls[1], code.indexOf("whatever;"), "whatever".length()); //$NON-NLS-1$ //$NON-NLS-2$

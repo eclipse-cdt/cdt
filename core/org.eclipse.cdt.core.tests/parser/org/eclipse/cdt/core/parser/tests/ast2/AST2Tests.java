@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -47,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -240,10 +240,9 @@ public class AST2Tests extends AST2BaseTest {
 			assertEquals("z", name_z.toString()); //$NON-NLS-1$
 			
 			// = x + y
-			IASTInitializerExpression initializer = (IASTInitializerExpression) declor_z
+			IASTEqualsInitializer initializer = (IASTEqualsInitializer) declor_z
 			.getInitializer();
-			IASTBinaryExpression init_z = (IASTBinaryExpression) initializer
-			.getExpression();
+			IASTBinaryExpression init_z = (IASTBinaryExpression) initializer.getInitializerClause();
 			assertEquals(IASTBinaryExpression.op_plus, init_z.getOperator());
 			IASTIdExpression ref_x = (IASTIdExpression) init_z.getOperand1();
 			IASTName name_ref_x = ref_x.getName();
@@ -2038,8 +2037,8 @@ public class AST2Tests extends AST2BaseTest {
 			.getName();
 			IASTName name_xy = xy.getDeclarators()[0].getName();
 			IASTDeclarator declarator_xy = xy.getDeclarators()[0];
-			IASTInitializer[] initializers1 = ((IASTInitializerList) declarator_xy
-					.getInitializer()).getInitializers();
+			IASTInitializer[] initializers1 = ((IASTInitializerList) ((IASTEqualsInitializer) declarator_xy.getInitializer())
+					.getInitializerClause()).getInitializers();
 			IASTName name_y2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers1[0])
 					.getDesignators()[0]).getName();
 			
@@ -2056,14 +2055,14 @@ public class AST2Tests extends AST2BaseTest {
 					.getDeclSpecifier()).getName();
 			IASTName name_point = point.getDeclarators()[0].getName();
 			IASTDeclarator declarator_point = point.getDeclarators()[0];
-			IASTInitializer[] initializers2 = ((IASTInitializerList) declarator_point
-					.getInitializer()).getInitializers();
+			IASTInitializer[] initializers2 = ((IASTInitializerList) ((IASTEqualsInitializer) declarator_point
+					.getInitializer()).getInitializerClause()).getInitializers();
 			IASTName name_width2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers2[0])
 					.getDesignators()[0]).getName();
 			IASTName name_pos2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers2[1])
 					.getDesignators()[0]).getName();
-			IASTName name_xy2 = ((IASTIdExpression) ((IASTUnaryExpression) ((IASTInitializerExpression) ((ICASTDesignatedInitializer) initializers2[1])
-					.getOperandInitializer()).getExpression()).getOperand())
+			IASTName name_xy2 = ((IASTIdExpression) ((IASTUnaryExpression) ((IASTEqualsInitializer) ((ICASTDesignatedInitializer) initializers2[1])
+					.getOperandInitializer()).getInitializerClause()).getOperand())
 					.getName();
 			
 			for (int j = 0; j < 2; ++j) {
@@ -2136,13 +2135,12 @@ public class AST2Tests extends AST2BaseTest {
 			IASTName b1 = ((IASTSimpleDeclaration) ((IASTCompositeTypeSpecifier) S_decl
 					.getDeclSpecifier()).getMembers()[1]).getDeclarators()[0]
 					                                                       .getName();
-			IASTName a2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) f_def
-					.getBody()).getStatements()[0]).getDeclaration())
-					.getDeclarators()[0].getInitializer()).getInitializers()[0])
+			final IASTDeclarator dtor = ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) f_def
+					.getBody()).getStatements()[0]).getDeclaration()).getDeclarators()[0];
+			final IASTInitializerList initializerList = (IASTInitializerList) ((IASTEqualsInitializer)dtor.getInitializer()).getInitializerClause();
+			IASTName a2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializerList.getInitializers()[0])
 					.getDesignators()[0]).getName();
-			IASTName b2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) f_def
-					.getBody()).getStatements()[0]).getDeclaration())
-					.getDeclarators()[0].getInitializer()).getInitializers()[1])
+			IASTName b2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializerList.getInitializers()[1])
 					.getDesignators()[0]).getName();
 			
 			assertEquals(a1.resolveBinding(), a2.resolveBinding());
@@ -2177,11 +2175,11 @@ public class AST2Tests extends AST2BaseTest {
 			IASTName b1 = ((IASTSimpleDeclaration) ((IASTCompositeTypeSpecifier) S_decl
 					.getDeclSpecifier()).getMembers()[1]).getDeclarators()[0]
 					                                                       .getName();
-			IASTName a2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) S_decl
-					.getDeclarators()[0].getInitializer()).getInitializers()[0])
+			final IASTInitializer[] initializers = ((IASTInitializerList) ((IASTEqualsInitializer) S_decl
+					.getDeclarators()[0].getInitializer()).getInitializerClause()).getInitializers();
+			IASTName a2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers[0])
 					.getDesignators()[0]).getName();
-			IASTName b2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) S_decl
-					.getDeclarators()[0].getInitializer()).getInitializers()[1])
+			IASTName b2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) initializers[1])
 					.getDesignators()[0]).getName();
 			
 			assertEquals(a1.resolveBinding(), a2.resolveBinding());
@@ -2219,11 +2217,11 @@ public class AST2Tests extends AST2BaseTest {
 			IASTName b1 = ((IASTSimpleDeclaration) ((IASTCompositeTypeSpecifier) S_decl
 					.getDeclSpecifier()).getMembers()[1]).getDeclarators()[0]
 					                                                       .getName();
-			IASTName a2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) x_decl
-					.getDeclarators()[0].getInitializer()).getInitializers()[0])
+			IASTInitializer initializer = x_decl.getDeclarators()[0].getInitializer();
+			initializer= (IASTInitializer) ((IASTEqualsInitializer) initializer).getInitializerClause();
+			IASTName a2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) initializer).getInitializers()[0])
 					.getDesignators()[0]).getName();
-			IASTName b2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) x_decl
-					.getDeclarators()[0].getInitializer()).getInitializers()[1])
+			IASTName b2 = ((ICASTFieldDesignator) ((ICASTDesignatedInitializer) ((IASTInitializerList) initializer).getInitializers()[1])
 					.getDesignators()[0]).getName();
 			
 			assertEquals(a1.resolveBinding(), a2.resolveBinding());
@@ -5483,7 +5481,7 @@ public class AST2Tests extends AST2BaseTest {
 	    		final IASTFunctionDefinition fdef= getDeclaration(tu, 1);
 	    		IASTFunctionDeclarator fdtor= fdef.getDeclarator();
 	    		IASTParameterDeclaration pdecl= (IASTParameterDeclaration) fdtor.getChildren()[1];
-	    		IASTExpression expr= ((IASTInitializerExpression) pdecl.getDeclarator().getInitializer()).getExpression();
+	    		IASTExpression expr= (IASTExpression) ((IASTEqualsInitializer) pdecl.getDeclarator().getInitializer()).getInitializerClause();
 				assertEquals("expr: " + exprStr, io[1].trim(), polnishNotation(expr));
 	    		assertEquals(exprStr, expr.getRawSignature());
 	    		checkOffsets(exprStr, expr);
@@ -6425,7 +6423,7 @@ public class AST2Tests extends AST2BaseTest {
 	 */
 	private IBasicType getTypeForDeclaration(IASTDeclaration[] declarations, int index) {
 		IASTInitializer init = ((IASTSimpleDeclaration)declarations[index]).getDeclarators()[0].getInitializer();
-		return (IBasicType)((IASTInitializerExpression)init).getExpression().getExpressionType();
+		return (IBasicType)((IASTExpression)((IASTEqualsInitializer)init).getInitializerClause()).getExpressionType();
 	}
 	
 	
@@ -7315,5 +7313,15 @@ public class AST2Tests extends AST2BaseTest {
 			assertInstance(stmt, IASTPreprocessorPragmaStatement.class);
 			assertEquals(i>2, ((IASTPreprocessorPragmaStatement) stmt).isPragmaOperator());
 		}
+	}
+	
+	//	int min(int,int);
+	//	void test() {
+	//		int a= (min)(1, 2);
+	//	}
+	public void testFunctionNameExpression() throws Exception {
+        final String code = getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
 	}
 }

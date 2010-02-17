@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -37,7 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
 	private int op;
     private IASTExpression operand1;
-    private IASTExpression operand2;
+    private IASTInitializerClause operand2;
     private IType type;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     private IASTImplicitName[] implicitNames = null;
@@ -46,17 +47,17 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     public CPPASTBinaryExpression() {
 	}
 
-	public CPPASTBinaryExpression(int op, IASTExpression operand1, IASTExpression operand2) {
+	public CPPASTBinaryExpression(int op, IASTExpression operand1, IASTInitializerClause operand2) {
 		this.op = op;
 		setOperand1(operand1);
-		setOperand2(operand2);
+		setInitOperand2(operand2);
 	}
 
 	public CPPASTBinaryExpression copy() {
 		CPPASTBinaryExpression copy = new CPPASTBinaryExpression();
 		copy.op = op;
 		copy.setOperand1(operand1 == null ? null : operand1.copy());
-		copy.setOperand2(operand2 == null ? null : operand2.copy());
+		copy.setInitOperand2(operand2 == null ? null : operand2.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -69,8 +70,14 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         return operand1;
     }
 
+    public IASTInitializerClause getInitOperand2() {
+    	return operand2;
+    }
+
     public IASTExpression getOperand2() {
-        return operand2;
+    	if (operand2 instanceof IASTExpression)
+    		return (IASTExpression) operand2;
+    	return null;
     }
 
     public void setOperator(int op) {
@@ -87,13 +94,17 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		}
     }
 
-    public void setOperand2(IASTExpression expression) {
+    public void setInitOperand2(IASTInitializerClause operand) {
         assertNotFrozen();
-        operand2 = expression;
-        if (expression != null) {
-			expression.setParent(this);
-			expression.setPropertyInParent(OPERAND_TWO);
+        operand2 = operand;
+        if (operand != null) {
+        	operand.setParent(this);
+        	operand.setPropertyInParent(OPERAND_TWO);
 		}
+    }
+
+    public void setOperand2(IASTExpression expression) {
+    	setInitOperand2(expression);
     }
 
 	public IASTImplicitName[] getImplicitNames() {
@@ -219,7 +230,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		if (child == operand2) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
-			operand2 = (IASTExpression) other;
+			operand2 = (IASTInitializerClause) other;
 		}
 	}
 

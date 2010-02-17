@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -252,23 +253,21 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 			IBinding binding = names[namesPos-1].resolveBinding();
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType classType = (ICPPClassType) binding;
-				if (!canBeFieldAccess(classType)) {
-					final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
-					List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
-					if (isDeclaration && nameMatches(classType.getNameCharArray(),
-							n.getLookupKey(), isPrefix)) {
-						try {
-							ICPPConstructor[] constructors = classType.getConstructors();
-							for (int i = 0; i < constructors.length; i++) {
-								if (!constructors[i].isImplicit()) {
-									filtered.add(constructors[i]);
-								}
+				final boolean isDeclaration = getParent().getParent() instanceof IASTSimpleDeclaration;
+				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
+				if (isDeclaration && nameMatches(classType.getNameCharArray(),
+						n.getLookupKey(), isPrefix)) {
+					try {
+						ICPPConstructor[] constructors = classType.getConstructors();
+						for (int i = 0; i < constructors.length; i++) {
+							if (!constructors[i].isImplicit()) {
+								filtered.add(constructors[i]);
 							}
-						} catch (DOMException e) {
 						}
+					} catch (DOMException e) {
 					}
-					return filtered.toArray(new IBinding[filtered.size()]);
 				}
+				return filtered.toArray(new IBinding[filtered.size()]);
 			}
 		}
 
@@ -301,22 +300,24 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	private List<IBinding> filterClassScopeBindings(ICPPClassType classType,
 			IBinding[] bindings, final boolean isDeclaration) {
 		List<IBinding> filtered = new ArrayList<IBinding>();
-		
+		final boolean canBeFieldAccess= canBeFieldAccess(classType);
+
 		try {
 			for (final IBinding binding : bindings) {
 				if (binding instanceof IField) {
 					IField field = (IField) binding;
-					if (!field.isStatic()) 
+					if (!canBeFieldAccess && !field.isStatic()) 
 						continue;
 				} else if (binding instanceof ICPPMethod) {
 					ICPPMethod method = (ICPPMethod) binding;
 					if (method.isImplicit()) 
 						continue;
 					if (!isDeclaration) {
-						if (method.isDestructor() || method instanceof ICPPConstructor || !method.isStatic())
+						if (method.isDestructor() || method instanceof ICPPConstructor
+								|| (!canBeFieldAccess && !method.isStatic()))
 							continue;
 					}
-				} else if (binding instanceof IEnumerator || binding instanceof IEnumerator) {
+				} else if (binding instanceof IEnumerator || binding instanceof IEnumeration) {
 					if (isDeclaration)
 						continue;
 				} else if (binding instanceof IType) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,17 +27,23 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 public class ASTComparer extends Assert {
 
 	private static Set<String> methodsToIgnore = new HashSet<String>(Arrays.asList(
-		// prevent infinite recursion
+		// Prevent infinite recursion
 		"getParent", 
 		"getTranslationUnit",
 		"getLastName",
-		// original is usually frozen but copy must not be
-		"isFrozen", 
-		// these methods are problematic
+
+		// Exponential complexity
+		"getOperand2", // duplicates getInitOperand2()
 		"getChildren",
-		"getProblem",
+
+		// Can be different in copy
+		"isFrozen",
 		"getContainingFilename",
-		// ignore preprocessor nodes
+		
+		// These methods are problematic
+		"getProblem",
+		
+		// Ignore preprocessor nodes
 		"getMacroDefinitions",
 		"getBuiltinMacroDefinitions",
 		"getIncludeDirectives",
@@ -45,7 +51,8 @@ public class ASTComparer extends Assert {
 		"getMacroExpansions",
 		"getPreprocessorProblems",
 		"getComments",
-		// avoid name resolution
+		
+		// Avoid name resolution
 		"isDeclaration",
 		"isDefinition",
 		"isReference",
@@ -86,6 +93,9 @@ public class ASTComparer extends Assert {
 			if(methodsToIgnore.contains(getter.getName()))
 				continue;
 
+			if (getter.getAnnotation(Deprecated.class) != null)
+				continue;
+			
 			try {
 				Class returnType = getter.getReturnType();
 				

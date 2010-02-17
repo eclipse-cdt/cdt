@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,13 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 
 /**
- * Initializer expression for c++.
+ * Braced initializer list. 
  *
+ * @since 5.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @since 5.2
  */
-public interface ICPPASTInitializerList extends IASTInitializerList, ICPPASTInitializer {
+public interface ICPPASTInitializerList extends IASTInitializerList, ICPPASTPackExpandable {
 
+	ICPPASTInitializerList copy();
 }

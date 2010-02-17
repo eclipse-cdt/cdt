@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -19,55 +20,54 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTFunctionCallExpression extends IASTExpression {
 
-	/**
-	 * <code>FUNCTION_NAME</code> represents the relationship between a
-	 * <code>IASTFunctionCallExpression</code> and its
-	 * <code>IASTExpression</code> (function name).
-	 */
 	public static final ASTNodeProperty FUNCTION_NAME = new ASTNodeProperty(
-			"IASTFunctionCallExpression.FUNCTION_Name - IASTExpression (name) for IASTFunctionCallExpression"); //$NON-NLS-1$
+			"IASTFunctionCallExpression.FUNCTION_NAME [IASTExpression]"); //$NON-NLS-1$
 
 	/**
-	 * Set the function name expression.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code> representing the function name
+	 * @since 5.2
 	 */
-	public void setFunctionNameExpression(IASTExpression expression);
+	public static final ASTNodeProperty ARGUMENT = new ASTNodeProperty(
+			"IASTFunctionCallExpression.ARGUMENT [IASTInitializerClause]"); //$NON-NLS-1$
 
 	/**
 	 * Get the function name expression.
-	 * 
-	 * @return <code>IASTExpression</code> representing the function name
 	 */
 	public IASTExpression getFunctionNameExpression();
 
 	/**
-	 * <code>PARAMETERS</code> represents the relationship between a
-	 * <code>IASTFunctionCallExpression</code> and its
-	 * <code>IASTExpression</code> (parameters).
+	 * Returns the arguments for this function call, never <code>null</code>.
+	 * @since 5.2
 	 */
-	public static final ASTNodeProperty PARAMETERS = new ASTNodeProperty(
-			"IASTFunctionCallExpression.PARAMETERS - IASTExpression (parameters) for IASTFunctionCallExpression"); //$NON-NLS-1$
+	public IASTInitializerClause[] getArguments();
 
-	/**
-	 * Set the parameters expression.
-	 * 
-	 * @param expression
-	 *            <code>IASTExpression</code> representing the parameters
-	 */
-	public void setParameterExpression(IASTExpression expression);
-
-	/**
-	 * Get the parameter expression.
-	 * 
-	 * @return <code>IASTExpression</code> representing the parameters
-	 */
-	public IASTExpression getParameterExpression();
-	
 	/**
 	 * @since 5.1
 	 */
 	public IASTFunctionCallExpression copy();
 
+	/**
+	 * Not allowed on frozen ast.
+	 */
+	public void setFunctionNameExpression(IASTExpression expression);
+
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setArguments(IASTInitializerClause[] args);
+
+	@Deprecated
+	public static final ASTNodeProperty PARAMETERS = ARGUMENT;
+
+	/**
+	 * @deprecated Replaced by {@link #setArguments(IASTInitializerClause[])}.
+	 */
+	@Deprecated
+	public void setParameterExpression(IASTExpression expression);
+
+	/**
+	 * @deprecated Replaced by {@link #getArguments()}.
+	 */
+	@Deprecated
+	public IASTExpression getParameterExpression();
 }

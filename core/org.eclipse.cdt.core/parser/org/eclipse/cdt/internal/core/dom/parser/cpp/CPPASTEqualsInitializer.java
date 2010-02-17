@@ -11,25 +11,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.internal.core.dom.parser.ASTEqualsInitializer;
 
-@Deprecated
-public class CPPASTInitializerExpression extends CPPASTEqualsInitializer implements IASTInitializerExpression {
-
-    public CPPASTInitializerExpression() {
+/**
+ * Initializer with equals sign (copy initialization)
+ */
+public class CPPASTEqualsInitializer extends ASTEqualsInitializer {
+    public CPPASTEqualsInitializer() {
 	}
 
-	public CPPASTInitializerExpression(IASTExpression expression) {
-		setExpression(expression);
+	public CPPASTEqualsInitializer(IASTInitializerClause arg) {
+		super(arg);
 	}
 
-	@Override
-	public CPPASTInitializerExpression copy() {
-		CPPASTInitializerExpression copy= new CPPASTInitializerExpression();
-		IASTInitializerClause init= getInitializerClause();
-		copy.setInitializerClause(init == null ? null : init.copy());
+	public CPPASTEqualsInitializer copy() {
+		IASTInitializerClause arg = getInitializerClause();
+		CPPASTEqualsInitializer copy = new CPPASTEqualsInitializer(arg == null ? null : arg.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}

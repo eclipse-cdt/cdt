@@ -1,36 +1,43 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
- * @author jcamelon
+ * Implementation for designated initializers
  */
-public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignatedInitializer {
+public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignatedInitializer, IASTAmbiguityParent {
 
-    private IASTInitializer rhs;
-
-    
+    private IASTInitializerClause rhs;
+    private ICASTDesignator [] designators = null;
+    private int designatorsPos=-1;
+     
     public CASTDesignatedInitializer() {
 	}
 
-	public CASTDesignatedInitializer(IASTInitializer operandInitializer) {
-		setOperandInitializer(operandInitializer);
+	public CASTDesignatedInitializer(IASTInitializerClause init) {
+		setOperand(init);
 	}
 
 	public CASTDesignatedInitializer copy() {
@@ -57,22 +64,44 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
         return designators;
     }
 
-    private ICASTDesignator [] designators = null;
-    int designatorsPos=-1;
     
     
-    public IASTInitializer getOperandInitializer() {
+    public IASTInitializerClause getOperand() {
         return rhs;
-    }
+	}
 
-    
-    public void setOperandInitializer(IASTInitializer rhs) {
+	public void setOperand(IASTInitializerClause operand) {
         assertNotFrozen();
-        this.rhs = rhs;
+        this.rhs = operand;
         if (rhs != null) {
 			rhs.setParent(this);
 			rhs.setPropertyInParent(OPERAND);
 		}
+	}
+
+	@Deprecated
+	public IASTInitializer getOperandInitializer() {
+		if (rhs instanceof IASTInitializer) {
+			return (IASTInitializer) rhs;
+		}
+		if (rhs instanceof IASTExpression) {
+			CASTEqualsInitializer init = new CASTEqualsInitializer(((IASTExpression)rhs).copy());
+			init.setParent(this);
+			init.setPropertyInParent(OPERAND);
+			return init;
+		}
+        return null;
+    }
+
+    @Deprecated
+    public void setOperandInitializer(IASTInitializer rhs) {
+    	if (rhs instanceof IASTEqualsInitializer) {
+    		setOperand(((IASTEqualsInitializer) rhs).getInitializerClause());
+    	} else if (rhs instanceof IASTInitializerClause) {
+    		setOperand((IASTInitializerClause) rhs);
+    	} else {
+    		setOperand(null);
+    	}
     }
 
     @Override
@@ -100,4 +129,11 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
         return true;
     }
 
+    public void replace(IASTNode child, IASTNode other) {
+    	if (child == rhs) {
+    		other.setPropertyInParent(child.getPropertyInParent());
+    		other.setParent(child.getParent());
+    		rhs =  (IASTInitializerClause) other;
+    	}
+    }
 }

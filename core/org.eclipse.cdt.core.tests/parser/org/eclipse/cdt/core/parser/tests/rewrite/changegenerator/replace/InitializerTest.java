@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTInitializerExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
@@ -57,7 +57,7 @@ public class InitializerTest extends ChangeGeneratorTest {
 					IASTInitializer initializer = fieldDeclarator.getInitializer();
 					
 					CPPASTLiteralExpression litEx = new CPPASTLiteralExpression(0, "999"); //$NON-NLS-1$
-					CPPASTInitializerExpression initExpr = new CPPASTInitializerExpression(litEx);
+					CPPASTEqualsInitializer initExpr = new CPPASTEqualsInitializer(litEx);
 					
 					ASTModification modification = new ASTModification(ModificationKind.REPLACE, initializer, initExpr, null);
 					modStore.storeModification(null, modification);

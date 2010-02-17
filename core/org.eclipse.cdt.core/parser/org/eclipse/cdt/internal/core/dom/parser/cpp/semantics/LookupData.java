@@ -27,12 +27,12 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -556,25 +556,7 @@ public class LookupData {
 		return false;
 	}
 	
-	public void setFunctionArguments(IASTExpression args) {
-		IASTExpression[] exprs;
-		if (args instanceof IASTExpressionList) {
-			ASTNodeProperty prop = args.getPropertyInParent();
-			if (prop == IASTFunctionCallExpression.PARAMETERS || prop == ICPPASTNewExpression.NEW_INITIALIZER 
-					|| prop == ICPPASTConstructorChainInitializer.INITIALIZER) {
-				exprs= ((IASTExpressionList) args).getExpressions();
-			} else {
-				exprs= new IASTExpression[] {args};
-			}
-		} else if (args != null) {
-			exprs= new IASTExpression[] { args };
-		} else {
-			exprs = IASTExpression.EMPTY_EXPRESSION_ARRAY;
-		}
-		setFunctionArguments(exprs);
-	}
-	
-	public void setFunctionArguments(IASTExpression... exprs) {
+	public void setFunctionArguments(IASTInitializerClause... exprs) {
 		functionArgs= exprs;
 		if (exprs.length != 0) {
 			IASTNode node= exprs[0];
@@ -607,13 +589,17 @@ public class LookupData {
 					functionArgTypes[i] = SemanticUtil.getSimplifiedType(CPPVisitor.createParameterType(
 							pdecls[i], true));
 				}
-			} else if (functionArgs instanceof IASTExpression[]) {
-				IASTExpression[] exprs= (IASTExpression[]) functionArgs;
+			} else if (functionArgs instanceof IASTInitializerClause[]) {
+				IASTInitializerClause[] exprs= (IASTInitializerClause[]) functionArgs;
 				functionArgTypes= new IType[exprs.length];
 				for (int i = 0; i < exprs.length; i++) {
-					IASTExpression e = exprs[i];
-					IType etype= e.getExpressionType();
-					functionArgTypes[i]= SemanticUtil.getSimplifiedType(etype);
+					IASTInitializerClause e = exprs[i];
+					if (e instanceof IASTExpression) {
+						IType etype= ((IASTExpression) e).getExpressionType();
+						functionArgTypes[i]= SemanticUtil.getSimplifiedType(etype);
+					} else {
+						// mstodo handle braced init list
+					}
 				}
 			}
 		}
@@ -623,12 +609,14 @@ public class LookupData {
 	public BitSet getFunctionArgumentLValues() {
 		if (functionArgLValues == null) {
 			functionArgLValues= new BitSet();
-			IASTExpression[] args= getFunctionArguments();
+			IASTInitializerClause[] args= getFunctionArguments();
 			if (args != null) {
 				for (int i = 0; i < args.length; i++) {
-					final IASTExpression arg = args[i];
-					if (arg != null) {
-						functionArgLValues.set(i, arg.isLValue());
+					final IASTInitializerClause arg = args[i];
+					if (arg instanceof IASTExpression) {
+						functionArgLValues.set(i, ((IASTExpression) arg).isLValue());
+					} else {
+						// mstodo handle braced init list
 					}
 				}
 			} else {
@@ -653,9 +641,9 @@ public class LookupData {
 		functionArgs= parameters;
 	}
 
-	public IASTExpression[] getFunctionArguments() {
-		if (functionArgs instanceof IASTExpression[])
-			return (IASTExpression[]) functionArgs;
+	public IASTInitializerClause[] getFunctionArguments() {
+		if (functionArgs instanceof IASTInitializerClause[])
+			return (IASTInitializerClause[]) functionArgs;
 		
 		return null;
 	}

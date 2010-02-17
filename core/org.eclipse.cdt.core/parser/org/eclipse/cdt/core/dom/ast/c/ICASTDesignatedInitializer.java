@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 
 /**
  * This interface represents a designated initializer. e.g. struct x y = { .z=4,
@@ -20,61 +22,53 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICASTDesignatedInitializer extends IASTInitializer {
+public interface ICASTDesignatedInitializer extends IASTInitializer, IASTInitializerClause {
 
-	/**
-	 * Constant.
-	 */
 	public static final ICASTDesignator[] EMPTY_DESIGNATOR_ARRAY = new ICASTDesignator[0];
 
-	/**
-	 * <code>DESIGNATOR</code> represents the relationship between an
-	 * <code>ICASTDesignatedInitializer</code> and
-	 * <code>ICASTDesignator</code>.
-	 */
 	public static final ASTNodeProperty DESIGNATOR = new ASTNodeProperty(
-			"ICASTDesignatedInitializer.DESIGNATOR - relationship between ICASTDesignatedInitializer and ICASTDesignator"); //$NON-NLS-1$
+			"ICASTDesignatedInitializer.DESIGNATOR [ICASTDesignator]"); //$NON-NLS-1$
+
+	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
+		"ICASTDesignatedInitializer.OPERAND - [IASTInitializerClause]"); //$NON-NLS-1$
 
 	/**
 	 * Add a designator to this initializer.
-	 * 
-	 * @param designator
-	 *            <code>ICASTDesignator</code>
 	 */
 	public void addDesignator(ICASTDesignator designator);
 
 	/**
 	 * Get all of the designators.
-	 * 
-	 * @return <code>ICASTDesignator []</code>
 	 */
 	public ICASTDesignator[] getDesignators();
 
 	/**
-	 * <code>OPERAND</code> represents the relationship between
-	 * <code>ICASTDesignatedInitializer</code> and its
-	 * <code>IASTInitializer</code>.
+	 * Returns the operand initializer.
+	 * @since 5.2
 	 */
-	public static final ASTNodeProperty OPERAND = new ASTNodeProperty(
-			"ICASTDesignatedInitializer.OPERAND - RHS IASTInitializer for ICASTDesignatedInitializer"); //$NON-NLS-1$
+	public IASTInitializerClause getOperand();
 
 	/**
-	 * Get the nested initializer.
-	 * 
-	 * @return <code>IASTInitializer</code>
+	 * Not allowed on frozen ast
+	 * @since 5.2
 	 */
-	public IASTInitializer getOperandInitializer();
+	void setOperand(IASTInitializerClause operand);
 
-	/**
-	 * Set the nested initializer.
-	 * 
-	 * @param rhs
-	 *            <code>IASTInitializer</code>
-	 */
-	public void setOperandInitializer(IASTInitializer rhs);
-	
 	/**
 	 * @since 5.1
 	 */
 	public ICASTDesignatedInitializer copy();
+
+	/**
+	 * @deprecated Replaced by {@link #getOperand()};
+	 */
+	@Deprecated
+	public IASTInitializer getOperandInitializer();
+
+	/**
+	 * @deprecated Replaced by setOperand();
+	 */
+	@Deprecated
+	public void setOperandInitializer(IASTInitializer rhs);
+	
 }

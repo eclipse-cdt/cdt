@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -51,8 +53,14 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 				if (parent instanceof IASTDeclarator) {
 					IASTDeclarator dtor = (IASTDeclarator) parent;
 					IASTInitializer initializer = dtor.getInitializer();
-					if (initializer instanceof IASTInitializerExpression)
-						return ((IASTInitializerExpression) initializer).getExpression();
+					if (initializer instanceof IASTEqualsInitializer) {
+						IASTInitializerClause clause= ((IASTEqualsInitializer) initializer).getInitializerClause();
+						if (clause instanceof IASTExpression)
+							return (IASTExpression) clause;
+						if (clause instanceof IASTInitializerList) {
+							// mstodo handle braced init list
+						}
+					}
 				}
 			}
 		}

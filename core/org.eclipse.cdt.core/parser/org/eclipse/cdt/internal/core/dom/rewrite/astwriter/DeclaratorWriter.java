@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -81,9 +80,6 @@ public class DeclaratorWriter extends NodeWriter {
 		name.accept(visitor);
 		IASTInitializer init = getInitializer(declarator);
 		if(init!= null) {
-			if (! (init instanceof ICPPASTConstructorInitializer)) {
-				scribe.print(EQUALS);
-			}
 			init.accept(visitor);
 		}
 	}
@@ -109,7 +105,6 @@ public class DeclaratorWriter extends NodeWriter {
 	private void writeInitializer(IASTStandardFunctionDeclarator funcDec) {
 		IASTInitializer init = getInitializer(funcDec);
 		if(init != null) {
-			scribe.print(EQUALS);
 			init.accept(visitor);
 		}
 	}
@@ -219,7 +214,6 @@ public class DeclaratorWriter extends NodeWriter {
 		writeArrayModifiers(arrDecl, arrMods);
 		IASTInitializer initializer = getInitializer(arrDecl);
 		if(initializer != null) {
-			scribe.print(EQUALS);			
 			initializer.accept(visitor);
 		}
 	}
@@ -253,7 +247,6 @@ public class DeclaratorWriter extends NodeWriter {
 		fieldDecl.getBitFieldSize().accept(visitor);
 		IASTInitializer initializer = getInitializer(fieldDecl);
 		if(initializer != null) {
-			scribe.print(EQUALS);			
 			initializer.accept(visitor);
 		}
 	}

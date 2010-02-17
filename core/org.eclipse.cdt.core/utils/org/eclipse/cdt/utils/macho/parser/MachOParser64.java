@@ -118,7 +118,6 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 		return cppfilt;
 	}
 
-	@SuppressWarnings("deprecation")
 	protected IPath getCPPFiltPath() {
 		ICConfigExtensionReference ref = getConfigExtensionReference();
 		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$

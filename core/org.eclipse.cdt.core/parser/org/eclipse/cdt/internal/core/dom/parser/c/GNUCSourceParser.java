@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -40,7 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -135,13 +136,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     protected IASTInitializer optionalCInitializer() throws EndOfFileException, BacktrackException {
         if (LTcatchEOF(1) == IToken.tASSIGN) {
-            consume();
-            return cInitializerClause(false);
+            final int offset= consume().getOffset();
+            IASTInitializerClause initClause = initClause(false);
+            IASTEqualsInitializer result= nodeFactory.newEqualsInitializer(initClause);
+            return setRange(result, offset, calculateEndOffset(initClause));
         }
         return null;
     }
 
-    protected IASTInitializer cInitializerClause(boolean inAggregate) throws EndOfFileException, BacktrackException {
+    private IASTInitializerClause initClause(boolean inAggregate) throws EndOfFileException, BacktrackException {
         final int offset = LA(1).getOffset();
         if (LT(1) != IToken.tLBRACE) {
             IASTExpression assignmentExpression= expression(ExprKind.eAssignment);
@@ -149,9 +152,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             	if (!ASTQueries.canContainName(assignmentExpression))
             		return null;
             }
-            IASTInitializerExpression result= nodeFactory.newInitializerExpression(assignmentExpression);
-            setRange(result, assignmentExpression);
-            return result;
+            return assignmentExpression;
         }
         
         // it's an aggregate initializer
@@ -171,22 +172,24 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	// get designator list
         	List<? extends ICASTDesignator> designator= designatorList();
         	if (designator == null) {
-        		IASTInitializer initializer= cInitializerClause(true);
+        		IASTInitializerClause clause= initClause(true);
         		// depending on value of skipTrivialItemsInCompoundInitializers initializer may be null
         		// in any way add the initializer such that the actual size can be tracked.
-        		result.addInitializer(initializer);
+        		result.addClause(clause);
         	} else {
+        		// Gnu extension: the assign operator is optional
         		if (LT(1) == IToken.tASSIGN)
-        			consume();
-        		IASTInitializer initializer= cInitializerClause(false);
-        		ICASTDesignatedInitializer desigInitializer = nodeFactory.newDesignatedInitializer(initializer);
+        			consume(IToken.tASSIGN);
+        		
+        		IASTInitializerClause clause= initClause(false);
+        		ICASTDesignatedInitializer desigInitializer = nodeFactory.newDesignatedInitializer(clause);
         		setRange(desigInitializer, designator.get(0));
-        		adjustLength(desigInitializer, initializer);
+        		adjustLength(desigInitializer, clause);
 
         		for (ICASTDesignator d : designator) {
         			desigInitializer.addDesignator(d);
         		}
-        		result.addInitializer(desigInitializer);
+        		result.addClause(desigInitializer);
         	}
 
         	// can end with ", }" or "}"
@@ -567,6 +570,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	}
     
     @Override
+	protected IASTExpression buildBinaryExpression(int operator, IASTExpression expr1, IASTInitializerClause expr2, int lastOffset) {
+        IASTBinaryExpression result = nodeFactory.newBinaryExpression(operator, expr1, (IASTExpression) expr2);
+        int o = ((ASTNode) expr1).getOffset();
+        ((ASTNode) result).setOffsetAndLength(o, lastOffset - o);
+        return result;
+    }
+
+    @Override
 	protected IASTExpression unaryExpression(CastExprCtx ctx) throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.tSTAR:
@@ -609,7 +620,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         		if (t != null) {
         			consume(IToken.tRPAREN);
                 	if (LT(1) == IToken.tLBRACE) {
-						IASTInitializer i = cInitializerClause(false);
+						IASTInitializer i = (IASTInitializerList) initClause(false);
 						firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
 						setRange(firstExpression, offset, calculateEndOffset(i));
         				break;        

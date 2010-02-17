@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -16,13 +17,8 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTReturnStatement extends IASTStatement {
 
-	/**
-	 * <code>RETURNVALUE</code> represents the relationship between an
-	 * <code>IASTReturnStatement</code> and it's nested
-	 * <code>IASTExpression</code>.
-	 */
 	public static final ASTNodeProperty RETURNVALUE = new ASTNodeProperty(
-			"IASTReturnValue.RETURNVALUE - IASTExpression (returnValue) for IASTReturnStatement"); //$NON-NLS-1$
+			"IASTReturnValue.RETURNVALUE - [IASTInitializerClause]"); //$NON-NLS-1$
 
 	/**
 	 * This is the optional return value for this function.
@@ -32,10 +28,20 @@ public interface IASTReturnStatement extends IASTStatement {
 	public IASTExpression getReturnValue();
 
 	/**
-	 * Set the return value.
-	 * 
-	 * @param returnValue
-	 *            <code>IASTExpression</code>
+	 * Returns the return value as {@link IASTInitializerClause}, or <code>null</code>.
+	 * In c++ this can be an braced initializer list.
+	 * @since 5.2
+	 */
+	public IASTInitializerClause getReturnArgument();
+
+	/**
+	 * Not allowed on frozen ast.
+	 * @since 5.2
+	 */
+	public void setReturnArgument(IASTInitializerClause returnValue);
+
+	/**
+	 * Not allowed on frozen ast.
 	 */
 	public void setReturnValue(IASTExpression returnValue);
 

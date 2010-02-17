@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,6 +23,7 @@
  * Timur Shipilov   (Xored)      - [224538] RSEFileStore.getParent() returns null for element which is not root of filesystem
  * David McKnight   (IBM)        - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  * David McKnight  (IBM)         - [291738] [efs] repeated queries to RSEFileStoreImpl.fetchInfo() in short time-span should be reduced
+ * Szymon Brandys  (IBM)         - [303092] [efs] RSE portion to deal with FileSystemResourceManager makes second call to efs provider on exception due to cancel
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
@@ -315,9 +317,14 @@ public class RSEFileStore extends FileStore
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#openInputStream(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException
-	{
-		return getImpl().openInputStream(options, monitor);
+	public InputStream openInputStream(int options, IProgressMonitor monitor)
+			throws CoreException {
+		try {
+			return getImpl().openInputStream(options, monitor);
+		} catch (OperationCanceledException ex) {
+			monitor.setCanceled(true);
+			return null; //empty input stream
+		}
 	}
 
 	/*

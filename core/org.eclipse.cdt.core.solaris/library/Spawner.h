@@ -26,10 +26,10 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner
  * Method:    exec2
- * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[ILjava/lang/String;I)I
+ * Signature: ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[ILjava/lang/String;IZ)I
  */
 JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec2
-  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jintArray, jstring, jint);
+  (JNIEnv *, jobject, jobjectArray, jobjectArray, jstring, jintArray, jstring, jint, jboolean);
 
 /*
  * Class:     org_eclipse_cdt_utils_spawner_Spawner

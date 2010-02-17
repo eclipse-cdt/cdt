@@ -19,10 +19,10 @@ OBJS_PTY=openpty.o pty.o ptyio.o
 all: $(LIB_NAME_FULL_SPAWNER) $(LIB_NAME_FULL_PTY)
 
 $(LIB_NAME_FULL_SPAWNER): $(OBJS_SPAWNER)
-	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_SPAWNER) -o $(LIB_NAME_FULL_SPAWNER) $(OBJS_SPAWNER) -lc
+	$(CC) -g -shared -static-libgcc -o $(LIB_NAME_FULL_SPAWNER) $(OBJS_SPAWNER) -lc
 
 $(LIB_NAME_FULL_PTY): $(OBJS_PTY)
-	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_PTY) -o $(LIB_NAME_FULL_PTY) $(OBJS_PTY)
+	$(CC) -g -shared -static-libgcc -o $(LIB_NAME_FULL_PTY) $(OBJS_PTY) 
 
 clean :
 	$(RM) $(OBJS_SPAWNER) $(LIB_NAME_FULL_SPAWNER)

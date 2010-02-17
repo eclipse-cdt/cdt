@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@
  */
 
 int ptym_open (char *pts_name);
-int ptys_open (int fdm, char * pts_name);
+int ptys_open (int fdm, const char * pts_name);
 
 int
 openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp)
@@ -86,7 +86,7 @@ ptym_open(char * pts_name)
 }
 
 int
-ptys_open(int fdm, char * pts_name)
+ptys_open(int fdm, const char * pts_name)
 {
 	int gid, fds;
 	struct group *grptr;
@@ -106,6 +106,14 @@ ptys_open(int fdm, char * pts_name)
 		close(fdm);
 		return -1;
 	}
+	
+#if	defined(TIOCSCTTY)
+	/*  TIOCSCTTY is the BSD way to acquire a controlling terminal. */
+	if (ioctl(fds, TIOCSCTTY, (char *)0) < 0) {
+		// ignore error: this is expected in console-mode
+	}
+#endif
+	
 	return fds;
 }
 

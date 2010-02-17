@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems)
+ *     Wind River Systems, Inc. - bug 248071
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
@@ -262,6 +262,7 @@ public class Spawner extends Process {
 
 		final String slaveName = pty.getSlaveName();
 		final int masterFD = pty.getMasterFD().getFD();
+		final boolean console = pty.isConsole();
 		//int fdm = pty.get
 		Reaper reaper = new Reaper(cmdarray, envp, dirpath) {
 			/* (non-Javadoc)
@@ -269,7 +270,7 @@ public class Spawner extends Process {
 			 */
 			@Override
 			int execute(String[] cmd, String[] env, String dir, int[] channels) throws IOException {
-				return exec2(cmd, env, dir, channels, slaveName, masterFD);
+				return exec2(cmd, env, dir, channels, slaveName, masterFD, console);
 			}
 		};
 		reaper.setDaemon(true);
@@ -318,7 +319,7 @@ public class Spawner extends Process {
 	/**
 	 * Native method when executing with a terminal emulation. 
 	 */
-	native int exec2( String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD) throws IOException;
+	native int exec2( String[] cmdarray, String[] envp, String dir, int[] chan, String slaveName, int masterFD, boolean console) throws IOException;
 
 	/**
 	 * Native method to drop a signal on the process with pid.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ char * pfind(const char *name)
 
 	/* For absolute name or name with a path, check if it is an executable.  */
 	if (name[0] == '/' || name[0] == '.') {
-		if (access(name, X_OK | R_OK) == 0) {
+		if (access(name, X_OK) == 0) {
 			return strdup(name);
 		}
 		return NULL;
@@ -59,7 +59,7 @@ char * pfind(const char *name)
 	while (tok != NULL) {
 		snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
 
-		if (access(fullpath, X_OK | R_OK) == 0) {
+		if (access(fullpath, X_OK) == 0) {
 			free(path);
 			return strdup(fullpath);
 		}

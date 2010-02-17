@@ -33,11 +33,11 @@ rebuild: clean all
 
 $(LIB_NAME_FULL_SPAWNER) : $(OBJS_SPAWNER)
 	mkdir -p $(INSTALL_DIR)
-	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_SPAWNER) -o $(LIB_NAME_FULL_SPAWNER) $(OBJS_SPAWNER) -lc
+	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_SPAWNER) $(LDFLAGS) -o $(LIB_NAME_FULL_SPAWNER) $(OBJS_SPAWNER) -lc
 
 $(LIB_NAME_FULL_PTY): $(OBJS_PTY)
 	mkdir -p $(INSTALL_DIR)
-	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_PTY) -o $(LIB_NAME_FULL_PTY) $(OBJS_PTY)
+	$(CC) -g -shared -Wl,-soname,$(LIB_NAME_PTY) $(LDFLAGS) -o $(LIB_NAME_FULL_PTY) $(OBJS_PTY)
 
 clean :
 	$(RM) $(OBJS_SPAWNER) $(LIB_NAME_FULL_SPAWNER)

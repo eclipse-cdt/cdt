@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,9 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.
  *******************************************************************************/
+#include <sys/ioctl.h>
 #include "PTY.h"
 #include "openpty.h"
 
@@ -17,7 +19,7 @@
  * Signature: ()I
  */
 JNIEXPORT jstring JNICALL
-Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj) {
+Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj, jboolean console) {
 	jfieldID fid; /* Store the field ID */
 	jstring jstr = NULL;
 	int master = -1;
@@ -29,7 +31,9 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj) {
 	master = ptym_open(line);
 	if (master >= 0) {
 		// turn off echo
-		set_noecho(master);
+		if (console) {
+			set_noecho(master);
+		}
 
 		/* Get a reference to the obj's class */
 		cls = (*env)->GetObjectClass(env, jobj);
@@ -46,3 +50,21 @@ Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj) {
 	}
 	return jstr;
 }
+
+JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size
+  (JNIEnv *env, jobject jobj, jint fdm, jint width, jint height)
+{
+#ifdef	TIOCGWINSZ
+	struct winsize win;
+
+	win.ws_col = width;
+	win.ws_row = height;
+	win.ws_xpixel = 0;
+	win.ws_ypixel = 0;
+
+	return ioctl(fdm, TIOCSWINSZ, &win);
+#else
+	return 0;
+#endif
+}
+

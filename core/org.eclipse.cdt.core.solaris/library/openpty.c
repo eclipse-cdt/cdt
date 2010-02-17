@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.
  *******************************************************************************/
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -28,7 +29,7 @@
  */
 
 int ptym_open (char *pts_name);
-int ptys_open (int fdm, char * pts_name);
+int ptys_open (int fdm, const char * pts_name);
 
 int
 openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp)
@@ -85,7 +86,7 @@ ptym_open(char * pts_name)
 }
 
 int
-ptys_open(int fdm, char * pts_name)
+ptys_open(int fdm, const char * pts_name)
 {
 	int fds;
 	/* following should allocate controlling terminal */

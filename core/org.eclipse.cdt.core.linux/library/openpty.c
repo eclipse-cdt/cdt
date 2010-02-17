@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002 - 2005 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,13 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Wind River Systems, Inc.
+ *     Mikhail Zabaluev (Nokia) - bug 82744
+ *     Corey Ashford (IBM) - bug 272370, bug 272372
  *******************************************************************************/
+
+/* _XOPEN_SOURCE is needed to bring in the header for ptsname */
+#define _XOPEN_SOURCE
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -20,7 +26,6 @@
 #include <grp.h>
 
 #include <stdlib.h>
-#include <stropts.h>
 
 /**
  * This is taken from R. W. Stevens book.
@@ -28,7 +33,7 @@
  */
 
 int ptym_open (char *pts_name);
-int ptys_open (int fdm, char * pts_name);
+int ptys_open (int fdm, const char * pts_name);
 void set_noecho(int fd);
 
 int
@@ -105,7 +110,7 @@ ptym_open(char * pts_name)
 }
 
 int
-ptys_open(int fdm, char * pts_name)
+ptys_open(int fdm, const char * pts_name)
 {
 	int fds;
 	/* following should allocate controlling terminal */
@@ -114,19 +119,12 @@ ptys_open(int fdm, char * pts_name)
 		close(fdm);
 		return -5;
 	}
-/*
-	if (ioctl(fds, I_PUSH, "ptem") < 0) {
-		printf("pterm:%s\n", strerror(errno));
-		close(fdm);
-		close(fds);
-		return -6;
+
+#if	defined(TIOCSCTTY)
+	/*  TIOCSCTTY is the BSD way to acquire a controlling terminal. */
+	if (ioctl(fds, TIOCSCTTY, (char *)0) < 0) {
+		// ignore error: this is expected in console-mode
 	}
-	if (ioctl(fds, I_PUSH, "ldterm") < 0) {
-		printf("ldterm %s\n", strerror(errno));
-		close(fdm);
-		close(fds);
-		return -7;
-	}
-*/
+#endif
 	return fds;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class RxThread extends Thread {
 
 	final MISession session;
-	List oobList;
+	List<MIStreamRecord> oobList;
 	CLIProcessor cli;
 	int prompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 	boolean fEnableConsole = true;
@@ -75,7 +75,7 @@ public class RxThread extends Thread {
 		super("MI RX Thread"); //$NON-NLS-1$
 		session = s;
 		cli = new CLIProcessor(session);
-		oobList = new ArrayList();
+		oobList = new ArrayList<MIStreamRecord>();
 	}
 
 	/*
@@ -168,7 +168,7 @@ public class RxThread extends Thread {
 	void processMIOutput(String buffer) {
 		MIOutput response = session.parse(buffer);
 		if (response != null) {
-			List list = new ArrayList();
+			List<MIEvent> list = new ArrayList<MIEvent>();
 			CommandQueue rxQueue = session.getRxQueue();
 
 			MIResultRecord rr = response.getMIResultRecord();
@@ -259,9 +259,12 @@ public class RxThread extends Thread {
 				for (int i = 0; i < oobs.length; i++) {
 					processMIOOBRecord(oobs[i], list);
 				}
+				// If not waiting for any command results, don't need the result in the oobList
+				if (rxQueue.isEmpty())
+					oobList.clear();
 			}
 
-			MIEvent[] events = (MIEvent[]) list.toArray(new MIEvent[list.size()]);
+			MIEvent[] events = list.toArray(new MIEvent[list.size()]);
 			session.fireEvents(events);
 		} // if response != null
 	}
@@ -269,7 +272,7 @@ public class RxThread extends Thread {
 	/**
 	 * Dispatch a thread to deal with the listeners.
 	 */
-	void processMIOOBRecord(MIOOBRecord oob, List list) {
+	void processMIOOBRecord(MIOOBRecord oob, List<MIEvent> list) {
 		if (oob instanceof MIAsyncRecord) {
 			processMIOOBRecord((MIAsyncRecord) oob, list);
 			oobList.clear();
@@ -278,7 +281,7 @@ public class RxThread extends Thread {
 		}
 	}
 
-	void processMIOOBRecord(MIAsyncRecord async, List list) {
+	void processMIOOBRecord(MIAsyncRecord async, List<MIEvent> list) {
 		if (async instanceof MIExecAsyncOutput) {
 			MIExecAsyncOutput exec = (MIExecAsyncOutput) async;
 			// Change of state.
@@ -393,7 +396,7 @@ public class RxThread extends Thread {
 	/**
 	 * Check for any info that we can gather form the console.
 	 */
-	void processMIOOBRecord(MIResultRecord rr, List list) {
+	void processMIOOBRecord(MIResultRecord rr, List<MIEvent> list) {
 		MIResult[] results = rr.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
@@ -526,8 +529,8 @@ public class RxThread extends Thread {
 	}
 
 	String[] getStreamRecords() {
-		List streamRecords = new ArrayList();
-		MIOOBRecord[] oobRecords = (MIOOBRecord[]) oobList.toArray(new MIOOBRecord[0]);
+		List<String> streamRecords = new ArrayList<String>();
+		MIOOBRecord[] oobRecords = oobList.toArray(new MIOOBRecord[0]);
 		for (int i = 0; i < oobRecords.length; i++) {
 			if (oobRecords[i] instanceof MIStreamRecord) {
 				String s = ((MIStreamRecord) oobRecords[i]).getString().trim();
@@ -536,7 +539,7 @@ public class RxThread extends Thread {
 				}
 			}
 		}
-		return (String[]) streamRecords.toArray(new String[0]);
+		return streamRecords.toArray(new String[0]);
 	}
 
 }

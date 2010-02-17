@@ -12,8 +12,6 @@
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -326,18 +324,17 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                                         StringBuffer finalResult = new StringBuffer();
                                         finalResult.append(NAME).append(getData().get(IElementPropertiesProvider.PROP_NAME)).append(CRLF);
 
-                                        List<String> formatsList = new ArrayList<String>(Arrays.asList(formats));
-                                        Collections.sort(formatsList);
-
-                                        for (int i = 0; i < formatsList.size(); i++) {
-                                            String formatId = formatsList.get(i);
-                                            finalResult.append(SPACES);
-                                            finalResult.append( FormattedValueVMUtil.getFormatLabel(formatId) );
-                                            finalResult.append(FORMAT_SEPARATOR);
-                                            finalResult.append( getData().get(FormattedValueVMUtil.getPropertyForFormatId(formatId)) );                                            
-                                            if ( i < formatsList.size() + 1 ) {
-                                                finalResult.append(CRLF); 
-                                            }
+                                        if (formats != null) {
+                                        	for (int i = 0; i < formats.length; i++) {
+                                        		String formatId = formats[i];
+                                        		finalResult.append(SPACES);
+                                        		finalResult.append( FormattedValueVMUtil.getFormatLabel(formatId) );
+                                        		finalResult.append(FORMAT_SEPARATOR);
+                                        		finalResult.append( getData().get(FormattedValueVMUtil.getPropertyForFormatId(formatId)) );                                            
+                                        		if ( i < formats.length + 1 ) {
+                                        			finalResult.append(CRLF); 
+                                        		}
+                                        	}
                                         }
                                         detailComputed(null, finalResult.toString());
                                     }

@@ -50,7 +50,6 @@ public class MIBreakInsertInfo extends MIInfo {
                     } else if (var.equals("bkpt")) { //$NON-NLS-1$
                         if (val instanceof MITuple) {
                             bpt = new MIBreakpoint((MITuple)val);
-                            bpt.setEnabled(true);
                         }
                     } else if (var.equals("hw-awpt")) { //$NON-NLS-1$
                         if (val instanceof MITuple) {

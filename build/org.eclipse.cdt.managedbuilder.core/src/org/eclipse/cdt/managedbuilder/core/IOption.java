@@ -39,14 +39,14 @@ public interface IOption extends IBuildObject {
 	/**
 	 * String list of library search paths <br/>
 	 * This option type is persisted / referenced by the name 
-	 * {@link IOption #TYPE_LIB_PATHS}
+	 * {@link IOption#TYPE_LIB_PATHS}
 	 */
 	public static final int LIBRARY_PATHS = 9;
 	/**
 	 * String list of absolute path to libraries.
 	 * Not currently used by the GNU integration <br/>
 	 * This option type is persisted / referenced by the name 'libFiles'
-	 * {@link IOption #TYPE_LIB_FILES}
+	 * {@link IOption#TYPE_LIB_FILES}
 	 */
 	public static final int LIBRARY_FILES = 10;
 	public static final int MACRO_FILES = 11;
@@ -117,61 +117,51 @@ public interface IOption extends IBuildObject {
 	public static final String LIST_ITEM_BUILTIN = "builtIn"; //$NON-NLS-1$
 
 	/**
-	 * Returns the parent of this option. This is an object implementing ITool
+	 * @return the parent of this option. This is an object implementing ITool
 	 * or IToolChain.
 	 *
-	 * @return IBuildObject
 	 * @since 3.0 - changed return type from ITool to IBuildObject. The method returns
 	 * the same object as getOptionHolder().  It is included as a convenience for clients.
 	 */
 	public IBuildObject getParent();
 
 	/**
-	 * Returns the holder (parent) of this option. This may be an object
-	 * implenting ITool or IToolChain, which both extend IHoldsOptions
+	 * @return the holder (parent) of this option. This may be an object
+	 * implementing ITool or IToolChain, which both extend IHoldsOptions
 	 *
-	 * @return IHoldsOptions
 	 * @since 3.0
 	 */
 	public IHoldsOptions getOptionHolder();
 
 	/**
-	 * Returns the <code>IOption</code> that is the superclass of this
+	 * @return the <code>IOption</code> that is the superclass of this
 	 * option, or <code>null</code> if the attribute was not specified.
-	 * 
-	 * @return IOption
 	 */
 	public IOption getSuperClass();
 	
 	/**
-	 * If this option is defined as an enumeration, this function returns
+	 * @return If this option is defined as an enumeration, this function returns
 	 * the list of possible values for that enum.
 	 * 
 	 * If this option is not defined as an enumeration, it returns <code>null</code>.
-	 * 
-	 * @return String []
 	 */
 	public String [] getApplicableValues();
 
 	/**
-	 * Answers the value for a boolean option.
-	 * 
-	 * @return boolean
+	 * @return the value for a boolean option.
 	 * @throws BuildException
 	 */
 	public boolean getBooleanValue() throws BuildException;
 	
 	/**
-	 * Returns the setting of the browseType attribute
-	 * 
-	 * @return int
+	 * @return the setting of the browseType attribute
 	 */
 	public int getBrowseType();
 	
 	/**
 	 * Sets the browseType attribute.
 	 * 
-	 * @param int
+	 * @param type - browseType attribute
 	 */
 	public void setBrowseType(int type);
 	
@@ -190,16 +180,14 @@ public interface IOption extends IBuildObject {
 	public void setBrowseFilterExtensions(String[] extensions);
 	
 	/**
-	 * Returns the setting of the resourceFilter attribute
-	 * 
-	 * @return int
+	 * @return the setting of the resourceFilter attribute
 	 */
 	public int getResourceFilter();
 
 	/**
 	 * Sets the resourceFilter attribute.
 	 * 
-	 * @param int
+	 * @param filter - resourceFilter attribute
 	 */
 	public void setResourceFilter(int filter);
 	
@@ -210,34 +198,27 @@ public interface IOption extends IBuildObject {
 	public IOptionApplicability getApplicabilityCalculator();
 	
 	/**
-	 * Answers an array of strings containing the built-in values 
+	 * @return an array of strings containing the built-in values 
 	 * defined for a stringList, includePaths, definedSymbols, or libs
 	 * option. If none have been defined, the array will be empty but
 	 * never <code>null</code>.
-	 * 
-	 * @return String[]
 	 */
 	public String[] getBuiltIns();
 		
 	/**
-	 * Returns the category for this option.
-	 * 
-	 * @return IOptionCategory
+	 * @return the category for this option.
 	 */
 	public IOptionCategory getCategory();
 	
 	/**
 	 * Sets the category for this option.
-	 * 
-	 * @param IOptionCategory
+	 * @param category
 	 */
 	public void setCategory(IOptionCategory category);
 	
 	/**
-	 * Answers a <code>String</code> containing the actual command line 
+	 * @return a <code>String</code> containing the actual command line 
 	 * option associated with the option
-	 * 
-	 * @return String
 	 */
 	public String getCommand();
 	
@@ -245,101 +226,96 @@ public interface IOption extends IBuildObject {
 	 * Sets a <code>String</code> containing the actual command line 
 	 * option associated with the option
 	 * 
-	 * @param String
+	 * @param command - the actual command line option
 	 */
 	public void setCommand(String command);
 	
 	/**
-	 * Answers a <code>String</code> containing the actual command line
-	 * option associated with a Boolean option when the value is False
-	 * @return String
+	 * @return {@code String} containing the actual command line
+	 * option associated with a Boolean option when the value is {@code false}
 	 */
 	public String getCommandFalse();
 	
 	/**
 	 * Sets a <code>String</code> containing the actual command line
-	 * option associated with a Boolean option when the value is False
+	 * option associated with a Boolean option when the value is {@code false}
 	 * 
-	 * @param String
+	 * @param commandFalse - the actual command line option associated
+	 * with a Boolean option when the value is {@code false}
 	 */
 	public void setCommandFalse(String commandFalse);
 
 	/**
-	 * Answers a <code>String</code> containing the tooltip
+	 * @return a <code>String</code> containing the tooltip
 	 * associated with the option
-	 * @return String
 	 */
 	public String getToolTip();
 	
 	/**
-	 * Sets a <code>String</code> containing the tooltip
-	 * associated with the option
+	 * Sets a <code>String</code> containing the tooltip associated with the option
 	 * 
-	 * @param String
+	 * @param tooltip - the tooltip associated with the option
 	 */
 	public void setToolTip(String tooltip);
 
 	/**
-	 * Answers a <code>String</code> containing the contextId
+	 * @return a <code>String</code> containing the contextId
 	 * associated with the option
-	 * @return String
 	 */
 	public String getContextId();
 
  	/**
-	 * Sets a <code>String</code> containing the contextId
-	 * associated with the option
+	 * Sets a <code>String</code> containing the contextId associated with the option
 	 * 
-	 * @param String
+	 * @param id - the contextId associated with the option
 	 */
 	public void setContextId(String id);
 	
 	/**
-	 * Answers the user-defined preprocessor symbols. 
-	 * 
-	 * @return String[]
+	 * @return the user-defined preprocessor symbols. 
 	 * @throws BuildException
 	 */
 	public String[] getDefinedSymbols() throws BuildException;
 
 	/**
-	 * Answers the command associated with the enumeration id. For
+	 * 
+	 * @param id - enumeration id
+	 * @return the command associated with the enumeration id. For
 	 * example, if the enumeration id was <code>gnu.debug.level.default</code> 
 	 * for the debug level option of the Gnu compiler, and the plugin 
 	 * manifest defined that as -g, then the return value would be the 
-	 * String "-g"  
-	 *  
-	 * @return 
+	 * String "-g"
+	 * 
+	 * @throws BuildException 
 	 */
 	public String getEnumCommand (String id) throws BuildException;
 
 	/**
-	 * Answers the "name" associated with the enumeration id.
-	 *  
-	 * @return 
+	 * @param id - enumeration id
+	 * @return the "name" associated with the enumeration id.
+	 * 
+	 * @throws BuildException 
 	 */
 	public String getEnumName (String id) throws BuildException;
 
 	/**
-	 * @param name
-	 * @return
+	 * @param name - a "name" associated with enumeration id
+	 * @return enumeration id
+	 * 
+	 * @throws BuildException 
 	 */
 	public String getEnumeratedId(String name) throws BuildException;
 
 	/**
-	 * Answers an array of <code>String</code> containing the includes paths
+	 * @return an array of <code>String</code> containing the includes paths
 	 * defined in the build model.
-	 * 
-	 * @return String[]
 	 * @throws BuildException
 	 */
 	public String[] getIncludePaths() throws BuildException;
 		
 	/**
-	 * Answers an array or <code>String</code>s containing the libraries
+	 * @return an array or <code>String</code>s containing the libraries
 	 * that must be linked into the project.
-	 * 
-	 * @return String[]
 	 * @throws BuildException
 	 */
 	public String[] getLibraries() throws BuildException ;
@@ -354,62 +330,52 @@ public interface IOption extends IBuildObject {
 	public String[] getLibraryFiles() throws BuildException ;
 	
 	/**
-	 * Answers a <code>String</code> containing the unique ID of the selected 
+	 * @return a <code>String</code> containing the unique ID of the selected 
 	 * enumeration in an enumerated option. For an option that has not been 
 	 * changed by the user, the receiver will answer with the default defined 
 	 * in the plugin manifest. If the user has modified the selection, the 
 	 * receiver will answer with the overridden selection.
 	 * 
-	 * @return String
 	 * @throws BuildException if the option type is not an enumeration
 	 */
 	public String getSelectedEnum () throws BuildException;	
 
 	/**
-	 * Returns the current value for this option if it is a List of Strings.
-	 * 
-	 * @return String []
+	 * @return the current value for this option if it is a List of Strings.
 	 * @throws BuildException
 	 */
 	public String [] getStringListValue() throws BuildException;
 	
 	/**
-	 * Returns the current value for this option if it is a String
-	 * 
-	 * @return String
+	 * @return the current value for this option if it is a String
 	 * @throws BuildException
 	 */
 	public String getStringValue() throws BuildException;
 		
 	/**
-	 * Answers all of the user-defined object files that must be linked with
+	 * @return all of the user-defined object files that must be linked with
 	 * the final build target. 
 	 * 
-	 * @return
 	 * @throws BuildException
 	 */
 	public String [] getUserObjects() throws BuildException;
 	
 	/**
-	 * Returns the raw value of this option.
-	 * 
-	 * @return Object The Object that contains the raw value of the option.  The type
-	 *          of Object is specific to the option type.
+	 * @return the raw value of this option which is the Object that contains the raw value of the option.
+	 *         The type of Object is specific to the option type.
 	 */
 	public Object getValue();
 	
 	/**
-	 * Returns the raw default value of this option.
-	 * 
-	 * @return Object The Object that contains the raw default value of the option.  The type
-	 *          of Object is specific to the option type.
+	 * @return the raw default value of this option which is the Object that contains the raw default value of the option.
+	 *          The type of Object is specific to the option type.
 	 */
 	public Object getDefaultValue();
 	
 	/**
-	 * Get the type for the value of the option.
+	 * @return the type for the value of the option.
 	 * 
-	 * @return int
+	 * @throws BuildException 
 	 */
 	public int getValueType() throws BuildException;
 
@@ -463,15 +429,13 @@ public interface IOption extends IBuildObject {
 	public void setValueType(int type);
 	
 	/**
-	 * Returns the value handler specified for this tool.
-	 * @return IManagedOptionValueHandler
+	 * @return the value handler specified for this tool.
 	 * @since 3.0
 	 */
 	public IManagedOptionValueHandler getValueHandler();
 	
 	/**
-	 * Returns the value handlers extra argument specified for this tool
-	 * @return String
+	 * @return the value handlers extra argument specified for this tool
 	 * @since 3.0
 	 */
 	public String getValueHandlerExtraArgument();
@@ -484,27 +448,24 @@ public interface IOption extends IBuildObject {
 	public void setValueHandlerExtraArgument(String extraArgument);
 
 	/**
-	 * Returns <code>true</code> if this option was loaded from a manifest file,
+	 * @return <code>true</code> if this option was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
-	 * 
-	 * @return boolean
 	 */
 	public boolean isExtensionElement();
 
 	/**
-	 * Returns <code>true</code> if this option only oveerides the value attribute
+	 * @return <code>true</code> if this option only overrides the value attribute
 	 * of its superclass and <code>false</code> if it overrides other attributes.
 	 * 
-	 * @return boolean
-	 * @deprecated
+	 * @deprecated as of 3.0.1
 	 */
+	@Deprecated
 	public boolean overridesOnlyValue();
 	
 	/**
-	 * Returns <code>true</code> if this option is valid and <code>false</code>
+	 * @return <code>true</code> if this option is valid and <code>false</code>
 	 * if the option cannot be safely used due to an error in the MBS grammar.
 	 * 
-	 * @return boolean
 	 * @since 3.0
 	 * 
 	 * @pre Can only be used after Ids in MBS grammar have been resolved by pointers.
@@ -512,26 +473,28 @@ public interface IOption extends IBuildObject {
 	public boolean isValid();
 	
 	/**
-	 * Returns the type of the option value, i.e. whether it is string, boolean, 
-	 * string list or enumenration. As opposed to the getValueType() method,
+	 * @return the type of the option value, i.e. whether it is string, boolean, 
+	 * string list or enumeration. As opposed to the getValueType() method,
 	 * the returned type does not specifies the "sense" of the value, e.g. whether it represents the list of includes or not.
 	 *
-	 * possible return values:
-	 *  IOption.BOOLEAN
-	 *  IOption.STRING
-	 *  IOption.ENUMERATED
-	 *  IOption.STRING_LIST
-	 *  
-	 *  the STRING_LIST basic value type corresponds to the following option value types:
-	 *  INCLUDE_PATH, PREPROCESSOR_SYMBOLS, LIBRARIES, OBJECTS, INCLUDE_FILES, LIBRARY_PATHS, LIBRARY_FILES, MACRO_FILES  
-	 *   
+	 * <br/> Possible return values:
+	 *  <li/>{@link IOption#BOOLEAN}
+	 *  <li/>{@link IOption#STRING}
+	 *  <li/>{@link IOption#ENUMERATED}
+	 *  <li/>{@link IOption#STRING_LIST} - corresponds to
+	 *    {@link IOption#INCLUDE_PATH}, {@link IOption#PREPROCESSOR_SYMBOLS}, {@link IOption#LIBRARIES},
+	 *    {@link IOption#OBJECTS}, {@link IOption#INCLUDE_FILES}, {@link IOption#LIBRARY_PATHS},
+	 *    {@link IOption#LIBRARY_FILES}, {@link IOption#MACRO_FILES}
+	 *    
+	 * @throws BuildException 
 	 */
 	int getBasicValueType() throws BuildException ;
 	
 	/**
-	 * in case the option basic value type is STRING_LIST, returns the String list value,
+	 * @return in case the option basic value type is STRING_LIST, returns the String list value,
 	 * throws BuildException otherwise 
-	 * @return
+	 * 
+	 * @throws BuildException 
 	 */
 	String[] getBasicStringListValue() throws BuildException;
 	

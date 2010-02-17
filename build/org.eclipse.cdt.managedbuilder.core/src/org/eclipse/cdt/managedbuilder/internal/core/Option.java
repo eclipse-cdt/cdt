@@ -1337,6 +1337,23 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryFiles()
+	 */
+	public String[] getLibraryFiles() throws BuildException {
+		if (getValueType() != LIBRARY_FILES) {
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+		}
+		ArrayList<String> v = (ArrayList<String>)getValue();
+		if (v == null) {
+			return EMPTY_STRING_ARRAY;
+		} else {
+			v.trimToSize();
+			return v.toArray(new String[v.size()]);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefaultEnumValue()
 	 */

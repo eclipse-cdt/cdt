@@ -345,6 +345,15 @@ public interface IOption extends IBuildObject {
 	public String[] getLibraries() throws BuildException ;
 
 	/**
+	 * @return an array or <code>String</code>s containing the library files
+	 * that must be linked into the project.
+	 * 
+	 * @throws BuildException
+	 * @since 7.0
+	 */
+	public String[] getLibraryFiles() throws BuildException ;
+	
+	/**
 	 * Answers a <code>String</code> containing the unique ID of the selected 
 	 * enumeration in an enumerated option. For an option that has not been 
 	 * changed by the user, the receiver will answer with the default defined 

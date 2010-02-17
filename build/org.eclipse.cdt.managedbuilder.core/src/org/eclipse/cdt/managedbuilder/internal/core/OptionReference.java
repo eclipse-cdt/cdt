@@ -441,6 +441,20 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getLibraryFiles()
+	 */
+	public String[] getLibraryFiles() throws BuildException {
+		if (value == null)
+			return option.getLibraryFiles();
+		else if (getValueType() == LIBRARY_FILES) {
+			ArrayList<String> list = (ArrayList<String>)value;
+			return list.toArray(new String[list.size()]);
+		}
+		else
+			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
 	 */
 	public String getName() {

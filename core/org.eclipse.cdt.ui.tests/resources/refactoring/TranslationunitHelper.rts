@@ -2,8 +2,7 @@
 //#org.eclipse.cdt.ui.tests.refactoring.utils.TranslationUnitHelperTest
 //@.config
 filename=A.h
-offset_unix=27
-offset_win=30
+offset=27
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -22,8 +21,7 @@ public:
 //#org.eclipse.cdt.ui.tests.refactoring.utils.TranslationUnitHelperTest
 //@.config
 filename=A.h
-offset_unix=0
-offset_win=0
+offset=0
 //@A.h
 typedef int nummere;
 

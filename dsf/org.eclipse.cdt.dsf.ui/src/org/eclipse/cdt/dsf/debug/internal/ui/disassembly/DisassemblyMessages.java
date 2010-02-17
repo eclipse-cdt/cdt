@@ -109,6 +109,7 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_GotoLocation_warning;
 	public static String Disassembly_Error_Dialog_title;
 	public static String Disassembly_Error_Dialog_ok_button;
+	public static String DisassemblyBackendDsf_error_UnableToRetrieveData;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, DisassemblyMessages.class);

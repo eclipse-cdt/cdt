@@ -1842,7 +1842,12 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fJumpToAddressAction.setEnabled(true);
 			fAddressBar.enableAddressBox(true);
 
-			updatePC(PC_UNKNOWN);
+			int activeFrame = getActiveStackFrame();
+			if (activeFrame > 0) {
+				gotoFrame(activeFrame);
+			} else {
+				updatePC(PC_UNKNOWN);
+			}
 
         	if (fGotoAddressPending != PC_UNKNOWN) {
 	        	gotoAddress(fGotoAddressPending);
@@ -1856,10 +1861,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
         	fAddressBar.enableAddressBox(false);
 			fViewer.removeViewportListener(this);
         	fGotoMarkerPending = null;
-//        	invokeLater(new Runnable() {
-//				public void run() {
-//					closePart();
-//				}});
         }
 		updateTitle();
 		updateStateDependentActions();
@@ -1917,7 +1918,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fGotoFramePending = false;
 		fPCAddress = fFrameAddress = PC_RUNNING;
 		fTargetFrame = -1;
-		fGotoAddressPending = fFocusAddress;
+		fGotoAddressPending = PC_UNKNOWN;
 		fFocusAddress = PC_UNKNOWN;
 		setFocusPosition(null);
 		fPCHistory.clear();

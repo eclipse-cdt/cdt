@@ -60,6 +60,8 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	private String fCdiSessionId;
 	private ICStackFrame fTargetFrameContext;
 	private CDIDisassemblyRetrieval fDisassemblyRetrieval;
+	/* The frame level as the disassembly callback expects it (0 = topmost frame) */
+	private int fFrameLevel;
 
 	public DisassemblyBackendCdi() {
 	}
@@ -120,6 +122,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 				} catch (DebugException e) {
 				}
 			}
+			fFrameLevel = result.frameLevel;
 			
 			if (fTargetContext != null) {
 				result.sessionId = fCdiSessionId = cdiSessionId;
@@ -127,16 +130,22 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			}
 		}
 		else if (context instanceof ICStackFrame) {
-			if (context instanceof ICStackFrame) {
-				fTargetFrameContext = (ICStackFrame)context;
-				fTargetContext = (ICThread)fTargetFrameContext.getThread();
-				try {
-					// CDI frame levels are ordered opposite of DSF. Frame 0 is the
-					// root frame of the thread where in DSF it's the topmost frame
-					// (where the PC is). Do a little math to flip reverse the value
-					result.frameLevel = ((CStackFrame)((fTargetContext.getTopStackFrame()))).getLevel() -  fTargetFrameContext.getLevel();
-				} catch (DebugException e) {
-				}
+			fTargetFrameContext = (ICStackFrame)context;
+			ICThread newTargetContext = (ICThread)fTargetFrameContext.getThread();
+			ICThread oldTargetContext = fTargetContext;
+			fTargetContext = newTargetContext;
+			if (oldTargetContext != null && newTargetContext != null) {
+				result.contextChanged = !oldTargetContext.getDebugTarget().equals(newTargetContext.getDebugTarget());
+			}
+			try {
+				// CDI frame levels are ordered opposite of DSF. Frame 0 is the
+				// root frame of the thread where in DSF it's the topmost frame
+				// (where the PC is). Do a little math to flip reverse the value
+				result.frameLevel = ((CStackFrame)((fTargetContext.getTopStackFrame()))).getLevel() -  fTargetFrameContext.getLevel();
+			} catch (DebugException e) {
+			}
+			fFrameLevel = result.frameLevel;
+			if (!result.contextChanged) {
 				fCallback.gotoFrame(result.frameLevel);
 			}
 		}
@@ -167,6 +176,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		fCdiSessionId = null;
 		fTargetFrameContext = null;
 		fDisassemblyRetrieval = null;
+		fFrameLevel = 0;
 	}
 
 	/* (non-Javadoc)
@@ -174,7 +184,12 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 */
 	public void retrieveFrameAddress(final int targetFrame) {
 		try {
-			IStackFrame stackFrame= fTargetContext.getStackFrames()[targetFrame];
+			final IStackFrame[] stackFrames= fTargetContext.getStackFrames();
+			if (stackFrames.length <= targetFrame) {
+				fCallback.setUpdatePending(false);
+				return;
+			}
+			IStackFrame stackFrame= stackFrames[targetFrame];
 			fDisassemblyRetrieval.asyncGetFrameAddress(stackFrame, new IDisassemblyRetrieval.AddressRequest() {
 				@Override
 				public void done() {
@@ -199,7 +214,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameLevel()
 	 */
 	public int getFrameLevel() {
-		return fTargetFrameContext.getLevel();		
+		return fFrameLevel;
 	}
 
 	/* (non-Javadoc)

@@ -181,18 +181,20 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 		} else if (dmContext instanceof IFrameDMContext) {
 			// switch to different frame
 			IFrameDMContext frame= (IFrameDMContext) dmContext;
-			final IDMContext[] parents= frame.getParents();
-			for (IDMContext parent : parents) {
-				if (parent instanceof IExecutionDMContext) {
-					fTargetContext= (IExecutionDMContext) parent;
-					fTargetFrameContext= frame;
+			IExecutionDMContext newExeDmc = DMContexts.getAncestorOfType(frame, IExecutionDMContext.class);
+			if (newExeDmc != null) {
+				IDisassemblyDMContext newDisDmc = DMContexts.getAncestorOfType(newExeDmc, IDisassemblyDMContext.class);
+				IDisassemblyDMContext oldDisDmc = DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
+				result.contextChanged = !newDisDmc.equals(oldDisDmc);
+				fTargetContext= newExeDmc;
+				fTargetFrameContext= frame;
+				if (!result.contextChanged) {
 					fCallback.gotoFrameIfActive(frame.getLevel());
-					result.frameLevel = getFrameLevel();
-					break;
 				}
+				result.frameLevel = getFrameLevel();
 			}
 		}
-			
+		
 		return result;
 	}
 

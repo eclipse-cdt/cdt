@@ -115,11 +115,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * This constructor is called to create an Option whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param IHoldsOptions The parent of the option, if any
-	 * @param Option The superClass, if any
-	 * @param String The id for the new option 
-	 * @param String The name for the new option
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent - the parent of the option, if any
+	 * @param superClass - the superClass, if any
+	 * @param Id - the id for the new option 
+	 * @param name - the name for the new option
+	 * @param isExtensionElement - indicates whether this is an extension element or a managed project element
 	 */
 	public Option(IHoldsOptions parent, IOption superClass, String Id, String name, boolean isExtensionElement) {
 		this.holder = parent;
@@ -253,10 +253,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case UNDEF_LIBRARY_FILES:
 				case UNDEF_MACRO_FILES:
 					if (option.value != null) {
-						value = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.value);
+						@SuppressWarnings("unchecked")
+						ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.value);
+						value = list;
 					}
 					if (option.defaultValue != null) {
-						defaultValue = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.defaultValue);
+						@SuppressWarnings("unchecked")
+						ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>((ArrayList<OptionStringValue>)option.defaultValue);
+						defaultValue = list;
 					}
 					break;
 			}
@@ -682,10 +686,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/**
-	 * Persist the option to the project file.
+	 * Persist the option to the {@link ICStorageElement}.
 	 * 
-	 * @param doc
-	 * @param element
+	 * @param element - storage element to persist the option
+	 * @throws BuildException 
 	 */
 	public void serialize(ICStorageElement element) throws BuildException {
 		if (superClass != null)
@@ -754,6 +758,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case UNDEF_LIBRARY_FILES:
 				case UNDEF_MACRO_FILES:
 					if (value != null) {
+						@SuppressWarnings("unchecked")
 						ArrayList<OptionStringValue> stringList = (ArrayList<OptionStringValue>)value;
 						for (OptionStringValue optValue : stringList) {
 							ICStorageElement valueElement = element.createChild(LIST_VALUE);
@@ -1178,6 +1183,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != PREPROCESSOR_SYMBOLS) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -1312,6 +1318,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != INCLUDE_PATH) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -1328,6 +1335,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != LIBRARIES) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -1345,6 +1353,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != LIBRARY_FILES) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -1371,6 +1380,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -1398,6 +1408,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		// This is the right puppy, so return its list value
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -1550,6 +1561,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public Object getRawValue() {
 		Object ev = getExactRawValue();
 		if(ev instanceof List<?>) {
+			@SuppressWarnings("unchecked")
 			List<String> evList = listValueListToValueList((List<OptionStringValue>)ev);
 			return evList;
 		}
@@ -1597,6 +1609,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public Object getDefaultValue() {
 		Object ev = getExactDefaultValue();
 		if(ev instanceof List<?>) {
+			@SuppressWarnings("unchecked")
 			List<String> evList = listValueListToValueList((List<OptionStringValue>)ev);
 			return evList;
 		}
@@ -1618,6 +1631,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public void setDefaultValue(Object v) {
 		if(v instanceof List<?>) {
+			@SuppressWarnings("unchecked")
 			List<OptionStringValue> vList = valueListToListValueList((List<String>)v, false);
 			defaultValue = vList;
 		} else {
@@ -1849,6 +1863,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	public void setValue(Object v) {
 		if(v instanceof List<?>) {
+			@SuppressWarnings("unchecked")
 			List<OptionStringValue> vList = valueListToListValueList((List<String>)v, false);
 			value = vList;
 		} else {
@@ -2359,6 +2374,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<String> v = (ArrayList<String>)getValue();
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
@@ -2371,6 +2387,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
+		@SuppressWarnings("unchecked")
 		ArrayList<OptionStringValue> v = (ArrayList<OptionStringValue>)getExactValue();
 		if (v == null) {
 			return EMPTY_LV_ARRAY;

@@ -234,6 +234,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	}
 
 	private static List<IPathEntry>[] createEntriesList(ICConfigurationDescription cfgDes, PathEntryCollector cr){
+		@SuppressWarnings("unchecked")
 		ArrayList<IPathEntry>[] es = new ArrayList[2];
 		es[0] = new ArrayList<IPathEntry>();
 		cr.getEntries(es[0], PathEntryTranslator.INCLUDE_USER, cfgDes);

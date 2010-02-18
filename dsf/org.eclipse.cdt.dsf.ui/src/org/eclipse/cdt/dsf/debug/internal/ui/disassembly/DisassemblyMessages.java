@@ -66,8 +66,6 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_GotoAddressDialog_label;
 	public static String Disassembly_GotoAddressDialog_error_invalid_address;
 	public static String Disassembly_GotoAddressDialog_error_not_a_number;
-	public static String Disassembly_GotoSymbolDialog_title;
-	public static String Disassembly_GotoSymbolDialog_label;
 	public static String Disassembly_message_notConnected;
 	public static String Disassembly_log_error_retrieveFrameAddress;
 	public static String Disassembly_log_error_locateFile;

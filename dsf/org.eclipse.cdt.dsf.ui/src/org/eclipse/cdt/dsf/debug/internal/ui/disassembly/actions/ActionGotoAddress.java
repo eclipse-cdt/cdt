@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions;
 
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.decodeAddress;
-
-import java.math.BigInteger;
-
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.widgets.Shell;
 
+@SuppressWarnings("restriction")
 public final class ActionGotoAddress extends AbstractDisassemblyAction {
 	public ActionGotoAddress(IDisassemblyPart disassemblyPart) {
 		super(disassemblyPart);
@@ -30,37 +30,31 @@ public final class ActionGotoAddress extends AbstractDisassemblyAction {
 	}
 	@Override
 	public void run() {
-		IInputValidator validator = new IInputValidator() {
-			public String isValid(String input) {
-				if (input == null || input.length() == 0)
-					return " "; //$NON-NLS-1$
-				try {
-					BigInteger address= decodeAddress(input);
-					if (address.compareTo(BigInteger.ZERO) < 0) {
-						return DisassemblyMessages.Disassembly_GotoAddressDialog_error_invalid_address;
-					}
-				} catch (NumberFormatException x) {
-					return DisassemblyMessages.Disassembly_GotoAddressDialog_error_not_a_number; //;
-				}
-				return null;
+		ITextViewer viewer = getDisassemblyPart().getTextViewer();
+		IDocument document= viewer.getDocument();
+		IRegion wordRegion = CWordFinder.findWord(document, viewer.getSelectedRange().x);
+		String defaultValue = null;
+		if (wordRegion != null) {
+			try {
+				defaultValue = document.get(wordRegion.getOffset(), wordRegion.getLength());
+			} catch (BadLocationException e) {
+				// safely ignored
 			}
-		};
-		String defaultValue = ((ITextSelection)getDisassemblyPart().getSite().getSelectionProvider().getSelection()).getText();
-		if (validator.isValid(defaultValue) != null) {
+		}
+		if (defaultValue == null) {
 			defaultValue = DsfUIPlugin.getDefault().getDialogSettings().get("gotoAddress"); //$NON-NLS-1$
-			if (validator.isValid(defaultValue) != null) {
+			if (defaultValue == null) {
 				defaultValue = ""; //$NON-NLS-1$
 			}
 		}
 		String dlgTitle = DisassemblyMessages.Disassembly_GotoAddressDialog_title;
 		String dlgLabel = DisassemblyMessages.Disassembly_GotoAddressDialog_label;
 		final Shell shell= getDisassemblyPart().getSite().getShell();
-		InputDialog dlg = new InputDialog(shell, dlgTitle, dlgLabel, defaultValue, validator);
+		InputDialog dlg = new InputDialog(shell, dlgTitle, dlgLabel, defaultValue, null);
 		if (dlg.open() == IDialogConstants.OK_ID) {
 			String value = dlg.getValue();
-			BigInteger address= decodeAddress(value);
 			DsfUIPlugin.getDefault().getDialogSettings().put("gotoAddress", value); //$NON-NLS-1$
-			getDisassemblyPart().gotoAddress(address);
+			getDisassemblyPart().gotoSymbol(value);
 		}
 	}
 }

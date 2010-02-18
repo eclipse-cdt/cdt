@@ -441,11 +441,6 @@
             name="%command.gotoAddress.name"/>
       <command
             categoryId="org.eclipse.debug.ui.category.run"
-            description="%command.gotoSymbol.description"
-            id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoSymbol"
-            name="%command.gotoSymbol.name"/>
-      <command
-            categoryId="org.eclipse.debug.ui.category.run"
             defaultHandler="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerToggleBreakpointHandler"
             description="%command.rulerToggleBreakpoint.description"
             id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
@@ -461,10 +456,6 @@
        <key sequence="M1+G"
             contextId="org.eclipse.cdt.dsf.debug.ui.disassembly.context"
             commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-       <key sequence="M1+M2+G"
-            contextId="org.eclipse.cdt.dsf.debug.ui.disassembly.context"
-            commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoSymbol"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
 

@@ -30,7 +30,6 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AbstractDisassemblyAction;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoAddress;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoProgramCounter;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionGotoSymbol;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.ActionOpenPreferences;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AddressBarContributionItem;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.JumpToAddressAction;
@@ -190,7 +189,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	private static final String COMMAND_ID_GOTO_ADDRESS = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"; //$NON-NLS-1$
 	private static final String COMMAND_ID_GOTO_PC = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoPC"; //$NON-NLS-1$
-	private static final String COMMAND_ID_GOTO_SYMBOL = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoSymbol"; //$NON-NLS-1$
 	private static final String COMMAND_ID_TOGGLE_BREAKPOINT = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"; //$NON-NLS-1$
 //	private static final String COMMAND_ID_RUN_TO_LINE = "org.eclipse.debug.ui.commands.RunToLine"; //$NON-NLS-1$
 //	private static final String COMMAND_ID_TOGGLE_STEPPING_MODE = "org.eclipse.cdt.dsf.debug.ui.debug.ui.menu.showDisassemblyAction"; //$NON-NLS-1$
@@ -201,7 +199,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	protected AbstractDisassemblyAction fActionGotoPC;
 	protected AbstractDisassemblyAction fActionGotoAddress;
-	protected AbstractDisassemblyAction fActionGotoSymbol;
 	protected AbstractDisassemblyAction fActionToggleSource;
 	private AbstractDisassemblyAction fActionToggleFunctionColumn;
 	private AbstractDisassemblyAction fActionToggleSymbols;
@@ -1288,11 +1285,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fActionGotoAddress.setActionDefinitionId(COMMAND_ID_GOTO_ADDRESS);
 		fStateDependentActions.add(fActionGotoAddress);
 		registerWithHandlerService(fActionGotoAddress);
-
-		fActionGotoSymbol = new ActionGotoSymbol(this);
-		fActionGotoSymbol.setActionDefinitionId(COMMAND_ID_GOTO_SYMBOL);
-		fStateDependentActions.add(fActionGotoSymbol);
-		registerWithHandlerService(fActionGotoSymbol);
 
 		fActionToggleSource = new ActionToggleSource();
 		fStateDependentActions.add(fActionToggleSource);

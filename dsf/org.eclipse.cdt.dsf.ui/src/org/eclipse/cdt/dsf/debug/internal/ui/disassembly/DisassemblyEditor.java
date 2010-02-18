@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,6 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 		super.fillContextMenu(manager);
 		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoPC);
 		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoAddress);
-		manager.appendToGroup(IWorkbenchActionConstants.GO_TO, fActionGotoSymbol);
 		manager.appendToGroup("group.bottom", fActionRefreshView); //$NON-NLS-1$
 
 	}

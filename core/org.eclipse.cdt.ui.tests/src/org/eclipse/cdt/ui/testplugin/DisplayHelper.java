@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text;
+package org.eclipse.cdt.ui.testplugin;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -102,6 +102,7 @@ public abstract class DisplayHelper {
 	 */
 	public static void sleep(Display display, long millis) {
 		new DisplayHelper() {
+			@Override
 			public boolean condition() {
 				return false;
 			}
@@ -426,6 +427,7 @@ final class DisplayWaiter {
 			/*
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				try {
 					run2();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.DisplayHelper;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -85,10 +87,12 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		public MarkOccurrenceTestSetup(Test test) {
 			super(test);
 		}
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
 		}
+		@Override
 		protected void tearDown() throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
@@ -105,6 +109,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		return setUpTest(new TestSuite(MarkOccurrenceTest.class));
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
 			fProjectSetup= new MarkOccurrenceTestSetup(this);
@@ -146,6 +151,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fSelWASTListener);
 		EditorTestHelper.closeAllEditors();
@@ -549,6 +555,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 	private void assertOccurrences(final int expected) {
 		DisplayHelper helper= new DisplayHelper() {
+			@Override
 			protected boolean condition() {
 				return fOccurrences == expected;
 			}

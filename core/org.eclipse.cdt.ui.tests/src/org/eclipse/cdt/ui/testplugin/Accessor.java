@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text;
+package org.eclipse.cdt.ui.testplugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,7 +29,7 @@ import junit.framework.Assert;
 public class Accessor extends Assert {
 	
 	/** The class to access. */
-	private Class fClass;
+	private Class<?> fClass;
 	/** The instance to access. */
 	private Object fInstance;
 
@@ -41,7 +41,7 @@ public class Accessor extends Assert {
 	 * @param instance the instance
 	 * @param clazz the class
 	 */
-	public Accessor(Object instance, Class clazz) {
+	public Accessor(Object instance, Class<?> clazz) {
 		assertNotNull(instance);
 		assertNotNull(clazz);
 		fInstance= instance;
@@ -95,7 +95,7 @@ public class Accessor extends Assert {
 	 * @param constructorTypes the types of the constructor arguments
 	 * @param constructorArgs the constructor arguments
 	 */
-	public Accessor(String className, ClassLoader classLoader, Class[] constructorTypes, Object[] constructorArgs) {
+	public Accessor(String className, ClassLoader classLoader, Class<?>[] constructorTypes, Object[] constructorArgs) {
 		try {
 			fClass= Class.forName(className, true, classLoader);
 		} catch (ClassNotFoundException e) {
@@ -103,7 +103,7 @@ public class Accessor extends Assert {
 		} catch (ExceptionInInitializerError e) {
 			fail();
 		}
-		Constructor constructor= null;
+		Constructor<?> constructor= null;
 		try {
 			constructor= fClass.getDeclaredConstructor(constructorTypes);
 		} catch (SecurityException e2) {
@@ -169,7 +169,7 @@ public class Accessor extends Assert {
 	 * @param arguments the method arguments
 	 * @return the method return value
 	 */
-	public Object invoke(String methodName, Class[] types, Object[] arguments) {
+	public Object invoke(String methodName, Class<?>[] types, Object[] arguments) {
 		Method method= null;
 		try {
 			method= fClass.getDeclaredMethod(methodName, types);
@@ -313,12 +313,12 @@ public class Accessor extends Assert {
 		return field;
 	}
 	
-	private static Class[] getTypes(Object[] objects) {
+	private static Class<?>[] getTypes(Object[] objects) {
 		if (objects == null)
 			return null;
 		
 		int length= objects.length;
-		Class[] classes= new Class[length];
+		Class<?>[] classes= new Class[length];
 		for (int i= 0; i < length; i++) {
 			assertNotNull(objects[i]);
 			classes[i]= objects[i].getClass();

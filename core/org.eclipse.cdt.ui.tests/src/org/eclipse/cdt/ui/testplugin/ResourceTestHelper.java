@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.ui.tests.text;
+package org.eclipse.cdt.ui.testplugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,6 +141,7 @@ public class ResourceTestHelper {
 	public static void write(String dest, final String content) throws IOException, CoreException {
 		InputStream stream= new InputStream() {
 			private Reader fReader= new StringReader(content);
+			@Override
 			public int read() throws IOException {
 				return fReader.read();
 			}

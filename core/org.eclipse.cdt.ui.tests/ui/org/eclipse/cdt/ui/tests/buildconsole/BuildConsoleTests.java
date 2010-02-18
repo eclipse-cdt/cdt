@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
+import org.eclipse.cdt.ui.testplugin.DisplayHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.tests.text.DisplayHelper;
 
 /**
  * BuildConsoleTests.
@@ -41,11 +41,13 @@ public class BuildConsoleTests extends BaseUITestCase {
 		return new TestSuite(BuildConsoleTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		CProjectHelper.delete(fCProject);
 		fCProject= null;

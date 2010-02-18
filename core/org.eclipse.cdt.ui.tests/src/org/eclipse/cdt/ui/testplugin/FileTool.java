@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.ui.tests.text;
+package org.eclipse.cdt.ui.testplugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,11 +62,11 @@ public class FileTool {
 	
 	private static void unzip(ZipFile zipFile, File rootDstDir, File dstDir, int depth) throws IOException {
 	
-		Enumeration entries = zipFile.entries();
+		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 	
 		try {
 			while(entries.hasMoreElements()){
-				ZipEntry entry = (ZipEntry)entries.nextElement();
+				ZipEntry entry = entries.nextElement();
 				if(entry.isDirectory()){
 					continue;
 				}

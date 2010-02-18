@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2010 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 public class ResourceHelper {
 	private final static IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
-
+	private static final int MAX_RETRY= 5;
+	
 	private final static Set<String> externalFilesCreated = new HashSet<String>();
 	private final static Set<IResource> resourcesCreated = new HashSet<IResource>();
 
@@ -184,6 +185,74 @@ public class ResourceHelper {
 				new String[] {"org.eclipse.cdt.core.tests.configuration"});
 		resourcesCreated.add(project);
 		return project;
+	}
+
+	/**
+	 * Create a plain Eclipse project.
+	 * 
+	 * @param projectName
+	 * @return  the project handle
+	 * @throws CoreException  if project could not be created
+	 */
+	public static IProject createProject(String projectName) throws CoreException {
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IProject project= root.getProject(projectName);
+		if (!project.exists())
+			project.create(NULL_MONITOR);
+		else
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		
+		if (!project.isOpen())
+			project.open(NULL_MONITOR);
+		
+		return project;
+	}
+	
+	/**
+	 * Delete project by name.
+	 * 
+	 * @param projectName
+	 * @throws CoreException
+	 */
+	public static void deleteProject(String projectName) throws CoreException {
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IProject project= root.getProject(projectName);
+		if (project.exists())
+			delete(project);
+	}
+	
+	/**
+	 * Delete given project with content.
+	 * 
+	 * @param project
+	 * @throws CoreException
+	 */
+	public static void delete(final IProject project) throws CoreException {
+		delete(project, true);
+	}
+	
+	/**
+	 * Delete project.
+	 * 
+	 * @param project
+	 * @param deleteContent  whether to delete project content
+	 * @throws CoreException
+	 */
+	public static void delete(final IProject project, boolean deleteContent) throws CoreException {
+		for (int i= 0; i < MAX_RETRY; i++) {
+			try {
+				project.delete(deleteContent, true, NULL_MONITOR);
+				i= MAX_RETRY;
+			} catch (CoreException x) {
+				if (i == MAX_RETRY - 1) {
+					CTestPlugin.getDefault().getLog().log(x.getStatus());
+				}
+				try {
+					Thread.sleep(1000); // sleep a second
+				} catch (InterruptedException e) {
+				} 
+			}
+		}
 	}
 
 	/**

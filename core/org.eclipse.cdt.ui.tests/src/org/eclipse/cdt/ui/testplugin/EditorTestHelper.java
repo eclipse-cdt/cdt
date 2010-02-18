@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
  *******************************************************************************/
-package org.eclipse.cdt.ui.tests.text;
+package org.eclipse.cdt.ui.testplugin;
 
 
 import java.io.ByteArrayInputStream;
@@ -75,9 +75,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.ui.text.CReconcilingStrategy;
 import org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy;
@@ -280,6 +280,7 @@ public class EditorTestHelper {
 		runEventQueue(minTime);
 		
 		DisplayHelper helper= new DisplayHelper() {
+			@Override
 			public boolean condition() {
 				return allJobsQuiet();
 			}
@@ -361,6 +362,7 @@ public class EditorTestHelper {
 		}
 		final Accessor cReconcilerAccessor= reconcilerAccessor;
 		DisplayHelper helper= new DisplayHelper() {
+			@Override
 			public boolean condition() {
 				return !isRunning(cReconcilerAccessor, backgroundThreadAccessor);
 			}
@@ -443,9 +445,10 @@ public class EditorTestHelper {
 	public static ICProject createCProject(String project, String externalSourceFolder, boolean linkSourceFolder, boolean useIndexer) throws CoreException {
 		ICProject cProject= CProjectHelper.createCCProject(project, "bin", useIndexer ? IIndexManager.ID_FAST_INDEXER : IIndexManager.ID_NO_INDEXER);
 		IFolder folder;
-		if (linkSourceFolder)
-			folder= ResourceHelper.createLinkedFolder((IProject) cProject.getUnderlyingResource(), new Path("src"), CTestPlugin.getDefault(), new Path(externalSourceFolder));
-		else {
+		if (linkSourceFolder) {
+			File file= FileTool.getFileInPlugin(CTestPlugin.getDefault(), new Path(externalSourceFolder));
+			folder= ResourceHelper.createLinkedFolder((IProject) cProject.getUnderlyingResource(), "src", file.getAbsolutePath());
+		} else {
 			folder= ((IProject) cProject.getUnderlyingResource()).getFolder("src");
 			importFilesFromDirectory(FileTool.getFileInPlugin(CTestPlugin.getDefault(), new Path(externalSourceFolder)), folder.getFullPath(), null);
 		}
@@ -481,9 +484,10 @@ public class EditorTestHelper {
 		final IProject project= newProject[0];
 		Assert.assertNotNull(project);
 		final IFolder folder;
-		if (linkSourceFolder)
-			folder= ResourceHelper.createLinkedFolder(project, new Path("src"), CTestPlugin.getDefault(), new Path(externalSourceFolder));
-		else {
+		if (linkSourceFolder) {
+			File file= FileTool.getFileInPlugin(CTestPlugin.getDefault(), new Path(externalSourceFolder));
+			folder= ResourceHelper.createLinkedFolder(project, "src", file.getAbsolutePath());
+		} else {
 			folder= project.getFolder("src");
 			importFilesFromDirectory(FileTool.getFileInPlugin(CTestPlugin.getDefault(), new Path(externalSourceFolder)), folder.getFullPath(), null);
 		}
@@ -506,12 +510,12 @@ public class EditorTestHelper {
     }
     
 	public static IFile[] findFiles(IResource resource) throws CoreException {
-		List files= new ArrayList();
+		List<IResource> files= new ArrayList<IResource>();
 		findFiles(resource, files);
-		return (IFile[]) files.toArray(new IFile[files.size()]);
+		return files.toArray(new IFile[files.size()]);
 	}
 	
-	private static void findFiles(IResource resource, List files) throws CoreException {
+	private static void findFiles(IResource resource, List<IResource> files) throws CoreException {
 		if (resource instanceof IFile) {
 			files.add(resource);
 			return;
@@ -534,7 +538,7 @@ public class EditorTestHelper {
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws CoreException {		
 		try {
 			IImportStructureProvider structureProvider= FileSystemStructureProvider.INSTANCE;
-			List files= new ArrayList(100);
+			List<File> files= new ArrayList<File>(100);
 			addFiles(rootDir, files);
 			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
 			op.setCreateContainerStructure(false);
@@ -548,9 +552,9 @@ public class EditorTestHelper {
 		return new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, -1, "", x));
 	}
 
-	private static void addFiles(File dir, List collection) throws IOException {
+	private static void addFiles(File dir, List<File> collection) throws IOException {
 		File[] files= dir.listFiles();
-		List subDirs= new ArrayList(2);
+		List<File> subDirs= new ArrayList<File>(2);
 		for (int i= 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);
@@ -558,9 +562,9 @@ public class EditorTestHelper {
 				subDirs.add(files[i]);
 			}
 		}
-		Iterator iter= subDirs.iterator();
+		Iterator<File> iter= subDirs.iterator();
 		while (iter.hasNext()) {
-			File subDir= (File)iter.next();
+			File subDir= iter.next();
 			addFiles(subDir, collection);
 		}
 	}

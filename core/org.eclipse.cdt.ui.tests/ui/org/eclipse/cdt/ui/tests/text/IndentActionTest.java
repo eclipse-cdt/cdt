@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -36,6 +38,7 @@ public class IndentActionTest extends TestCase {
 	private static final String PROJECT= "IndentTests";
 
 	private static final class EmptyBundle extends ListResourceBundle {
+		@Override
 		protected Object[][] getContents() {
 			return new Object[0][];
 		}
@@ -49,6 +52,7 @@ public class IndentActionTest extends TestCase {
 			super(test);
 		}
 		
+		@Override
 		protected void setUp() throws Exception {
 			super.setUp();
 			
@@ -56,6 +60,7 @@ public class IndentActionTest extends TestCase {
 			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 		}
 
+		@Override
 		protected void tearDown () throws Exception {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
@@ -75,6 +80,7 @@ public class IndentActionTest extends TestCase {
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		String filename= createFileName("Before");
 		fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(filename), true);
@@ -85,6 +91,7 @@ public class IndentActionTest extends TestCase {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeEditor(fEditor);
 	}

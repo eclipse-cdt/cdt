@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -822,27 +823,45 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				if (expressions == null) {
 					return;
 				}
-				IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, '&'+symbol);
-				final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
-				expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(executor, null) {
+				final IExpressionDMContext exprDmc= expressions.createExpression(fTargetContext, symbol);
+				// first, try to get l-value address
+				expressions.getExpressionAddressData(exprDmc, new DataRequestMonitor<IExpressionDMAddress>(executor, null) {
 					@Override
 					protected void handleSuccess() {
-						FormattedValueDMData data= getData();
-						final String value= data.getFormattedValue();
-						final BigInteger address= DisassemblyUtils.decodeAddress(value);
+						IExpressionDMAddress data = getData();
+						final IAddress address = data.getAddress();
 						if (address != null) {
 							fCallback.asyncExec(new Runnable() {
 								public void run() {
-									fCallback.gotoAddress(address);
+									fCallback.gotoAddress(address.getValue());
 								}});
 						}
 					}
 					@Override
 					protected void handleError() {
-						fCallback.asyncExec(new Runnable() {
-							public void run() {
-				                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-							}});
+						// not an l-value, evaluate expression
+						final FormattedValueDMContext valueDmc= expressions.getFormattedValueContext(exprDmc, IFormattedValues.HEX_FORMAT);
+						expressions.getFormattedExpressionValue(valueDmc, new DataRequestMonitor<FormattedValueDMData>(executor, null) {
+							@Override
+							protected void handleSuccess() {
+								FormattedValueDMData data= getData();
+								final String value= data.getFormattedValue();
+								final BigInteger address= DisassemblyUtils.decodeAddress(value);
+								if (address != null) {
+									fCallback.asyncExec(new Runnable() {
+										public void run() {
+											fCallback.gotoAddress(address);
+										}});
+								}
+							}
+							@Override
+							protected void handleError() {
+								fCallback.asyncExec(new Runnable() {
+									public void run() {
+						                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
+									}});
+							}
+						});
 					}
 				});
 			}});

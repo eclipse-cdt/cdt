@@ -87,6 +87,15 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 //	private CConfigBasedDescriptor fDescriptor;
 //	private Map fExternalSettingsProviderMap;
 
+	private class DeltaSet {
+		public Set<ICConfigExtensionReference> extSet;
+		public Set<String> idSet;
+		public DeltaSet(Set<ICConfigExtensionReference> extSet, Set<String> idSet) {
+			this.extSet = extSet;
+			this.idSet = idSet;
+		}
+	}
+
 	public CConfigurationSpecSettings(ICConfigurationDescription des, ICStorageElement storage) throws CoreException{
 		fCfg = des;
 		fRootStorageElement = storage;
@@ -572,11 +581,10 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 
 	private void checkReconsile(String extensionPointID, boolean toExt){
 		if(toExt){
-			Set[] delta = getReferenceDelta(extensionPointID);
+			DeltaSet delta = getReferenceDelta(extensionPointID);
 			if(delta != null){
-				if(delta[0] != null){
-					Set<ICConfigExtensionReference> extSet = delta[0];
-					for (ICConfigExtensionReference ref : extSet) {
+				if(delta.extSet != null){
+					for (ICConfigExtensionReference ref : delta.extSet) {
 						try {
 							doRemove(ref);
 						} catch (CoreException e) {
@@ -584,9 +592,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 						}
 					}
 				}
-				if(delta[1] != null){
-					Set<String> idSet =delta[1];
-					for (String id : idSet) {
+				if(delta.idSet != null){
+					for (String id : delta.idSet) {
 						try {
 							doCreate(extensionPointID, id);
 						} catch (CoreException e) {
@@ -875,7 +882,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		}
 		return false;
 	}
-	private Set[] getReferenceDelta(String extPointId){
+	private DeltaSet getReferenceDelta(String extPointId){
 		if(!usesCache(fCfg)){
 			if(CCorePlugin.BINARY_PARSER_UNIQ_ID.equals(extPointId)){
 				ICTargetPlatformSetting tp = fCfg.getTargetPlatformSetting();
@@ -895,28 +902,28 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		}
 		return null;
 	}
+	
 
-
-	private Set[] getReferenceDelta(ICConfigExtensionReference refs[], String[] extIds){
+	private DeltaSet getReferenceDelta(ICConfigExtensionReference refs[], String[] extIds){
 		if(refs == null || refs.length == 0){
 			if(extIds == null || extIds.length == 0)
 				return null;
-			return new Set[]{null, new HashSet<String>(Arrays.asList(extIds))};
+			return new DeltaSet(null, new HashSet<String>(Arrays.asList(extIds)));
 		} else if(extIds == null || extIds.length == 0){
 			Map<String, ICConfigExtensionReference> map = createRefMap(refs);
-			return new Set[]{new HashSet<ICConfigExtensionReference>(map.values()), null};
+			return new DeltaSet(new HashSet<ICConfigExtensionReference>(map.values()), null);
 		}
-
+		
 		Set<String> idSet = new HashSet<String>(Arrays.asList(extIds));
 		Set<String> idSetCopy = new HashSet<String>(idSet);
 		Map<String, ICConfigExtensionReference> refsMap = createRefMap(refs);
-
+		
 		idSet.removeAll(refsMap.keySet());
 		refsMap.keySet().removeAll(idSetCopy);
-
+		
 		Set<ICConfigExtensionReference> extSet = new HashSet<ICConfigExtensionReference>(refsMap.values());
-
-		return new Set[]{extSet, idSet};
+		
+		return new DeltaSet(extSet, idSet);
 	}
 
 	private Map<String, ICConfigExtensionReference> createRefMap(ICConfigExtensionReference refs[]){

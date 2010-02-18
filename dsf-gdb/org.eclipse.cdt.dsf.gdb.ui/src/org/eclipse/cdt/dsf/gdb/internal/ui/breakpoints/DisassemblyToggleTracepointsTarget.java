@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblySelection;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection;
-import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -125,7 +124,7 @@ public class DisassemblyToggleTracepointsTarget implements IToggleBreakpointsTar
 		return breakpoints.toArray(breakpointsArray );
 	}
 	private void insertBreakpoint(IDisassemblySelection selection) throws CoreException {
-    	BigInteger address = selection.getStartAddress();
+    	IAddress address = selection.getStartAddress();
     	if (address == null) {
     		return;
     	}
@@ -147,7 +146,7 @@ public class DisassemblyToggleTracepointsTarget implements IToggleBreakpointsTar
             CDIDebugModel.createLineTracepoint(filePath, resource, ICBreakpointType.REGULAR, srcLine + 1, true, 0, "", true); //$NON-NLS-1$
     	} else {
     		IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-    		CDIDebugModel.createAddressTracepoint(null, null, resource, ICBreakpointType.REGULAR, -1, new Addr64(address), true, 0, "", true); //$NON-NLS-1$
+    		CDIDebugModel.createAddressTracepoint(null, null, resource, ICBreakpointType.REGULAR, -1, address, true, 0, "", true); //$NON-NLS-1$
     	}
     }
 }

@@ -13,9 +13,12 @@ package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 import java.math.BigInteger;
 import java.net.URI;
 
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocument;
+import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -35,7 +38,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	private final ITextSelection fTextSelection;
 	private IStorage fSourceFile;
 	private int fSourceLine;
-	private BigInteger fStartAddress;
+	private IAddress fStartAddress;
 
 	/**
 	 * Create a disassembly selection from a normal text selection and a disassembly part.
@@ -56,17 +59,26 @@ public class DisassemblySelection implements IDisassemblySelection {
 		} catch (BadLocationException exc) {
 			sourcePosition = null;
 		}
+		BigInteger docAddress = null;
 		if (sourcePosition != null) {
-			fStartAddress = sourcePosition.fAddressOffset;
+			docAddress = sourcePosition.fAddressOffset;
 			if (sourcePosition.length > 0) {
 				fSourceFile = sourcePosition.fFileInfo.fFile;
-				DisassemblyPosition pos = (DisassemblyPosition) document.getDisassemblyPosition(fStartAddress);
-				if (pos != null) {
-					fSourceLine = pos.getLine();
+				AddressRangePosition pos = document.getDisassemblyPosition(docAddress);
+				if (pos instanceof DisassemblyPosition) {
+					fSourceLine = ((DisassemblyPosition) pos).getLine();
 				}
 			}
 		} else {
-			fStartAddress = document.getAddressOfOffset(offset);
+			docAddress = document.getAddressOfOffset(offset);
+		}
+		if (docAddress != null) {
+			try {
+				fStartAddress = new Addr64(docAddress);
+			} catch (RuntimeException rte) {
+				// not a valid address
+				fStartAddress = null;
+			}
 		}
 	}
 	
@@ -156,7 +168,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection#getStartAddress()
 	 */
-	public BigInteger getStartAddress() {
+	public IAddress getStartAddress() {
 		return fStartAddress;
 	}
 

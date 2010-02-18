@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
-import java.math.BigInteger;
-
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.IWorkbenchPart;
@@ -74,7 +73,7 @@ public interface IDisassemblyPart extends IWorkbenchPart {
 	 * 
 	 * @param address
 	 */
-	void gotoAddress(BigInteger address);
+	void gotoAddress(IAddress address);
 
 	/**
 	 * Navigate to current program counter.

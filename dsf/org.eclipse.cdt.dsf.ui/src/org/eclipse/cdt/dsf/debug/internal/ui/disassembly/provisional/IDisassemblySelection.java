@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
-import java.math.BigInteger;
 import java.net.URI;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.ITextSelection;
 
@@ -28,9 +28,9 @@ import org.eclipse.jface.text.ITextSelection;
 public interface IDisassemblySelection extends ITextSelection {
 
 	/**
-	 * @return the address associated with the start of the selection
+	 * @return the address associated with the start of the selection, may be <code>null</code>
 	 */
-	BigInteger getStartAddress();
+	IAddress getStartAddress();
 	
 	/**
 	 * @return the {@link IFile} associated with the selection, may be <code>null</code>

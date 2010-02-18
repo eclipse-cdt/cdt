@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
@@ -190,8 +191,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private static final String COMMAND_ID_GOTO_ADDRESS = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"; //$NON-NLS-1$
 	private static final String COMMAND_ID_GOTO_PC = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoPC"; //$NON-NLS-1$
 	private static final String COMMAND_ID_TOGGLE_BREAKPOINT = "org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"; //$NON-NLS-1$
-//	private static final String COMMAND_ID_RUN_TO_LINE = "org.eclipse.debug.ui.commands.RunToLine"; //$NON-NLS-1$
-//	private static final String COMMAND_ID_TOGGLE_STEPPING_MODE = "org.eclipse.cdt.dsf.debug.ui.debug.ui.menu.showDisassemblyAction"; //$NON-NLS-1$
 
 	public static final String KEY_BINDING_CONTEXT_DISASSEMBLY = "org.eclipse.cdt.dsf.debug.ui.disassembly.context"; //$NON-NLS-1$
 
@@ -1340,6 +1339,15 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyPart#gotoAddress(java.math.BigInteger)
+	 */
+	public final void gotoAddress(IAddress address) {
+		if (address != null) {
+			gotoAddress(address.getValue());
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyPartCallback#gotoAddress(java.math.BigInteger)
 	 */
 	public final void gotoAddress(BigInteger address) {
 		fFocusAddress = address;

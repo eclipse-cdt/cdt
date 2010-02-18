@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblySelection;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection;
-import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -125,7 +124,7 @@ public class DisassemblyToggleBreakpointsTarget implements IToggleBreakpointsTar
 		return breakpoints.toArray(breakpointsArray );
 	}
 	private void insertBreakpoint(IDisassemblySelection selection) throws CoreException {
-    	BigInteger address = selection.getStartAddress();
+    	IAddress address = selection.getStartAddress();
     	if (address == null) {
     		return;
     	}
@@ -147,7 +146,7 @@ public class DisassemblyToggleBreakpointsTarget implements IToggleBreakpointsTar
             CDIDebugModel.createLineBreakpoint(filePath, resource, ICBreakpointType.REGULAR, srcLine + 1, true, 0, "", true); //$NON-NLS-1$
     	} else {
     		IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-    		CDIDebugModel.createAddressBreakpoint(null, null, resource, ICBreakpointType.REGULAR, new Addr64(address), true, 0, "", true); //$NON-NLS-1$
+    		CDIDebugModel.createAddressBreakpoint(null, null, resource, ICBreakpointType.REGULAR, address, true, 0, "", true); //$NON-NLS-1$
     	}
     }
 }

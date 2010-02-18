@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
-import java.math.BigInteger;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IMoveToAddress;
@@ -21,7 +19,6 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.Disassembly
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -46,12 +43,8 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 				selection = new DisassemblySelection((ITextSelection)selection, (IDisassemblyPart)part);
 			}
 			IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
-	    	BigInteger rawAddress = disassemblySelection.getStartAddress();
-	    	if (rawAddress == null) {
-	    		return;
-	    	}
+			final IAddress address = disassemblySelection.getStartAddress();
 	    	
-	    	final IAddress address = new Addr64(rawAddress);
 	    	if (address != null && target instanceof IAdaptable) {
 	    		final IMoveToAddress moveToAddress = (IMoveToAddress)((IAdaptable)target).getAdapter(IMoveToAddress.class);
 	    		if (moveToAddress != null && moveToAddress.canMoveToAddress(address)) {
@@ -77,12 +70,11 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 				selection = new DisassemblySelection((ITextSelection)selection, (IDisassemblyPart)part);
 			}
 			IDisassemblySelection disassemblySelection = (IDisassemblySelection)selection;
-			BigInteger rawAddress = disassemblySelection.getStartAddress();
-			if (rawAddress == null) {
+			final IAddress address = disassemblySelection.getStartAddress();
+			if (address == null) {
 				return false;
 			}
 
-			final IAddress address = new Addr64(rawAddress);
 			return moveToAddress.canMoveToAddress(address);
 		}
 

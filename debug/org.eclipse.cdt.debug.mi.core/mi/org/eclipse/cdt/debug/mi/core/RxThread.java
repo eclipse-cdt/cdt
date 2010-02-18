@@ -260,8 +260,9 @@ public class RxThread extends Thread {
 					processMIOOBRecord(oobs[i], list);
 				}
 				// If not waiting for any command results, don't need the result in the oobList
-				if (rxQueue.isEmpty())
-					oobList.clear();
+// This breaks detecting shared library event handling.  See bug 302927
+//				if (rxQueue.isEmpty())
+//					oobList.clear();
 			}
 
 			MIEvent[] events = list.toArray(new MIEvent[list.size()]);

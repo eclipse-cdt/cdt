@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		private ICConfigurationDescription fCfg;
 		private QualifiedName fPersistanceName;
 		private boolean fNeedsPersistance;
-		private boolean fIsModified;
+		private boolean fIsCfgModified;
 		
 		CfgIdPair(CfgIdPair base){
 			fId = base.fId;
@@ -111,7 +111,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			
 			fCfg = cfg;
 			fId = cfg.getId();
-			fIsModified = true;
+			fIsCfgModified = true;
 			fNeedsPersistance = true;
 		}
 		
@@ -122,7 +122,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			if(!cfg.getId().equals(getId()))
 				return;
 
-			fIsModified = true;
+			fIsCfgModified = true;
 			fCfg = null;
 			getConfiguration();
 		}
@@ -137,10 +137,10 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 
 		private boolean store(String oldId, boolean force){
-			if(force || fIsModified || fNeedsPersistance || oldId == null || !oldId.equals(fId)){
+			if(force || fIsCfgModified || fNeedsPersistance || oldId == null || !oldId.equals(fId)){
 				try {
 					getProject().setPersistentProperty(fPersistanceName, fId);
-					fIsModified = false;
+					fIsCfgModified = false;
 					fNeedsPersistance = false;
 					return true;
 				} catch (CoreException e) {
@@ -323,7 +323,9 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 		
-		fPropertiesMap = (HashMap<QualifiedName, Object>)base.fPropertiesMap.clone();
+		@SuppressWarnings("unchecked")
+		HashMap<QualifiedName, Object> cloneMap = (HashMap<QualifiedName, Object>)base.fPropertiesMap.clone();
+		fPropertiesMap = cloneMap;
 	}
 	
 	/**
@@ -497,7 +499,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 
 	public ICStorageElement getRootStorageElement() throws CoreException {
 		if (fRootStorageElement == null)
-			throw ExceptionFactory.createCoreException("CProjectDescription ICStorageElement == null");
+			throw ExceptionFactory.createCoreException("CProjectDescription ICStorageElement == null"); //$NON-NLS-1$
 			
 //		if(fRootStorageElement == null){
 //			fRootStorageElement = CProjectDescriptionManager.getInstance().createStorage(fProject, true, true, isReadOnly());
@@ -512,7 +514,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	ICSettingsStorage getStorageBase() throws CoreException{
 		if(fStorage == null)
 //			fStorage = new CStorage((InternalXmlStorageElement)getRootStorageElement());
-			throw ExceptionFactory.createCoreException("CProjectDescription ICSettingsStorage == null");
+			throw ExceptionFactory.createCoreException("CProjectDescription ICSettingsStorage == null"); //$NON-NLS-1$
 		return fStorage;
 	}
 
@@ -536,10 +538,10 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		if(fIsModified)
 			return true;
 		
-		if(fActiveCfgInfo.fIsModified)
+		if(fActiveCfgInfo.fIsCfgModified)
 			return true;
 
-		if(fSettingCfgInfo.fIsModified)
+		if(fSettingCfgInfo.fIsCfgModified)
 			return true;
 
 		if(fPrefs.isModified())
@@ -559,9 +561,9 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		fIsModified = modified;
 		
 		if(!modified){
-			fActiveCfgInfo.fIsModified = false;
+			fActiveCfgInfo.fIsCfgModified = false;
 
-			fSettingCfgInfo.fIsModified = false;
+			fSettingCfgInfo.fIsCfgModified = false;
 
 			fPrefs.setModified(false);
 
@@ -656,11 +658,11 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	}
 
 	boolean needsActiveCfgPersistence(){
-		return fActiveCfgInfo.fIsModified;
+		return fActiveCfgInfo.fIsCfgModified;
 	}
 
 	boolean needsSettingCfgPersistence(){
-		return fSettingCfgInfo.fIsModified;
+		return fSettingCfgInfo.fIsCfgModified;
 	}
 
 	CProjectDescriptionPreferences getPreferences(){

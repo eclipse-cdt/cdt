@@ -61,12 +61,12 @@ public class XmlStorage implements ICSettingsStorage {
 	 */
 	public void sanityCheck(ICStorageElement element) throws CoreException {
 		if (element.getValue() != null && element.getValue().trim().length() > 0)
-			throw ExceptionFactory.createCoreException("XmlStorage '" + element.getName() + "' has unexpected child Value: " + element.getValue());
+			throw ExceptionFactory.createCoreException("XmlStorage '" + element.getName() + "' has unexpected child Value: " + element.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
 		for (ICStorageElement child : element.getChildren()) {
 			if (!MODULE_ELEMENT_NAME.equals(child.getName()))
-				throw ExceptionFactory.createCoreException("XmlStorage '" + element.getName() + "' has unexpected child element: " + child.getName());
+				throw ExceptionFactory.createCoreException("XmlStorage '" + element.getName() + "' has unexpected child element: " + child.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			if (child.getAttribute(MODULE_ID_ATTRIBUTE) == null)
-				throw ExceptionFactory.createCoreException("XmlStorage '" + element.getName() + "' has storageModule child without moduleId");
+				throw ExceptionFactory.createCoreException("XmlStorage '" + element.getName() + "' has storageModule child without moduleId"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -75,7 +75,7 @@ public class XmlStorage implements ICSettingsStorage {
 	}
 
 	/**
-	 * Initialise the set of storageModules of this XmlStorage
+	 * Initialize the set of storageModules of this XmlStorage
 	 */
 	private void initChildren(){
 		if(fChildrenInited)

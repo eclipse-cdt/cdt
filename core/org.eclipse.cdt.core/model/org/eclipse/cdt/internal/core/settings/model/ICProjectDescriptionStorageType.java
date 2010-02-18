@@ -81,11 +81,11 @@ public interface ICProjectDescriptionStorageType {
 			this.min_version = min_version;
 			this.max_version = max_version == Version.emptyVersion ? version : max_version;
 			if (min_version != Version.emptyVersion && version.compareTo(min_version) <= 0)
-				throw new IllegalArgumentException("CProjectDescriptionStorageType Version: " + version +
-						" must be > that min_version: " + min_version);
+				throw new IllegalArgumentException("CProjectDescriptionStorageType Version: " + version + //$NON-NLS-1$
+						" must be > that min_version: " + min_version); //$NON-NLS-1$
 			if (max_version != Version.emptyVersion && version.compareTo(max_version) > 0)
-				throw new IllegalArgumentException("CProjectDescriptionStorageType Version: " + version +
-						" must be < that max_version: " + max_version);
+				throw new IllegalArgumentException("CProjectDescriptionStorageType Version: " + version + //$NON-NLS-1$
+						" must be < that max_version: " + max_version); //$NON-NLS-1$
 		}
 		/** Indicates if this type is compatible with the provided version */
 		public boolean isCompatible(Version version) {
@@ -122,7 +122,7 @@ public interface ICProjectDescriptionStorageType {
 				return val;
 			if (defaultValue != null)
 				return defaultValue;
-			throw new IllegalArgumentException("Couldn't find value for extension attribute " + id);
+			throw new IllegalArgumentException("Couldn't find value for extension attribute " + id); //$NON-NLS-1$
 		}
 	}
 

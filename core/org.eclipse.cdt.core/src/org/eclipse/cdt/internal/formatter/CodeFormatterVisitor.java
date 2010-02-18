@@ -1836,11 +1836,17 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	/**
-	 * Formats given expression as a function call, ie. enclosed in parenthesis.
+	 * Formats given expressions as a function call, ie. enclosed in parenthesis.
 	 * 
-	 * @param argumentExpr  the argument expression, may be <code>null</code>
+	 * @param args  the argument expressions, may be <code>null</code>
 	 */
 	private void formatFunctionCallArguments(IASTInitializerClause[] args) {
+		// check for macro
+		if (peekNextToken() != Token.tLPAREN) {
+			if (args == null || args.length == 0 || enclosedInMacroExpansion(args[0])) {
+				return;
+			}
+		}
 		final List<IASTInitializerClause> expressions;
 		if (args != null) {
 			expressions= Arrays.asList(args);
@@ -2318,10 +2324,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(ICPPASTSimpleTypeConstructorExpression node) {
-		// tletodo The first part of the expression can consist of multiple tokens
-		scribe.printNextToken(peekNextToken());
-		final IASTExpression operand= node.getInitialValue();
-		formatParenthesizedExpression(operand);
+		IASTDeclSpecifier declSpec = node.getDeclSpecifier();
+		declSpec.accept(this);
+		IASTInitializer initializer = node.getInitializer();
+		initializer.accept(this);
 		return PROCESS_SKIP;
 	}
 

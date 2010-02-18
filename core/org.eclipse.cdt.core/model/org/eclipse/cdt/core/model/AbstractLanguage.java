@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
@@ -20,7 +19,6 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.CodeReaderAdapter;
-import org.eclipse.cdt.internal.core.parser.CodeReaderFactoryAdapter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -47,7 +45,7 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	@Deprecated
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader, 
 			IScannerInfo scanInfo,
-			ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log)
+			org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log)
 			throws CoreException {
 		// For backwards compatibility, should be overridden.
 		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, log);
@@ -61,8 +59,9 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 			IncludeFileContentProvider fileCreator, IIndex index, int options, IParserLogService log)
 			throws CoreException {
 		// For backwards compatibility, should be overridden.
-		return getASTTranslationUnit(CodeReaderAdapter.adapt(content), scanInfo, CodeReaderFactoryAdapter
-				.adapt(fileCreator), index, options, log);
+		return getASTTranslationUnit(CodeReaderAdapter.adapt(content), scanInfo,
+				org.eclipse.cdt.internal.core.parser.CodeReaderFactoryAdapter.adapt(fileCreator), index,
+				options, log);
 	}
 
 	/**
@@ -73,7 +72,8 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 			IncludeFileContentProvider fileCreator, IIndex index, IParserLogService log, int offset)
 			throws CoreException {
 		// For backwards compatibility, should be overridden.
-		return getCompletionNode(CodeReaderAdapter.adapt(reader), scanInfo, CodeReaderFactoryAdapter
-				.adapt(fileCreator), index, log, offset);
+		return getCompletionNode(CodeReaderAdapter.adapt(reader), scanInfo,
+				org.eclipse.cdt.internal.core.parser.CodeReaderFactoryAdapter.adapt(fileCreator), index, log,
+				offset);
 	}	
 }

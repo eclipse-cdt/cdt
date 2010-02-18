@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
@@ -21,13 +22,14 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.runtime.CoreException;
 
+@Deprecated
 public class FileContentProviderAdapter extends InternalFileContentProvider {
 
 	/**
 	 * @deprecated avoid using the adapter, its for backwards compatibility, only.
 	 */
 	@Deprecated
-	public static InternalFileContentProvider adapt(org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator) {
+	public static InternalFileContentProvider adapt(ICodeReaderFactory fileCreator) {
 		if (fileCreator == null)
 			return null;
 		
@@ -54,13 +56,11 @@ public class FileContentProviderAdapter extends InternalFileContentProvider {
 		return fDelegate;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public InternalFileContent getContentForInclusion(String path) {
 		return (InternalFileContent) FileContent.adapt(fDelegate.createCodeReaderForInclusion(path));
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
 		try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
@@ -154,22 +153,24 @@ public interface ILanguage extends IAdaptable {
 	 */
 	@Deprecated
 	IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log)
-			throws CoreException;
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
+			IParserLogService log) throws CoreException;
+
 	/**
 	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo, 
 	 * IncludeFileContentProvider, IIndex, int, IParserLogService)}
 	 */
 	@Deprecated
 	IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, int options,
-			IParserLogService log) throws CoreException;
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
+			int options, IParserLogService log) throws CoreException;
+
 	/**
 	 * @deprecated replaced by {@link #getCompletionNode(FileContent, IScannerInfo, 
 	 * IncludeFileContentProvider, IIndex, IParserLogService, int)}.
 	 */
 	@Deprecated
 	IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
-			IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IIndex index, IParserLogService log,
-			int offset) throws CoreException;
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
+			IParserLogService log, int offset) throws CoreException;
 }

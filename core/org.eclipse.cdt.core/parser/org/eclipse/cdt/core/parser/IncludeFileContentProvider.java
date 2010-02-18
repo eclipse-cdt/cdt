@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
-import org.eclipse.cdt.internal.core.parser.FileContentProviderAdapter;
 import org.eclipse.cdt.internal.core.parser.SavedFilesProvider;
 
 
@@ -44,6 +43,6 @@ public abstract class IncludeFileContentProvider {
 	 */
 	@Deprecated
 	public static IncludeFileContentProvider adapt(org.eclipse.cdt.core.dom.ICodeReaderFactory factory) {
-		return FileContentProviderAdapter.adapt(factory);
+		return org.eclipse.cdt.internal.core.parser.FileContentProviderAdapter.adapt(factory);
 	}
 }

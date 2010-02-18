@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
@@ -96,8 +98,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				ICProjectDescription des = getProjectDescription(toProject, true);
 				if(des != null){
 					ICConfigurationDescription cfgDess[] = des.getConfigurations();
-					for(int i = 0; i < cfgDess.length; i++){
-						ICConfigurationDescription cfg = cfgDess[i];
+					for (ICConfigurationDescription cfg : cfgDess) {
 						ICExclusionPatternPathEntry entries[] = cfg.getSourceEntries();
 						entries = checkMove(fromFullPath, toFullPath, entries);
 						if(entries != null){
@@ -134,8 +135,8 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				ICProjectDescription des = getProjectDescription(toProject, true);
 				if(des != null){
 					ICConfigurationDescription cfgDess[] = des.getConfigurations();
-					for(int i = 0; i < cfgDess.length; i++){
-						ICResourceDescription rcDescription = cfgDess[i].getResourceDescription(fromRcProjPath, true);
+					for (ICConfigurationDescription cfgDes : cfgDess) {
+						ICResourceDescription rcDescription = cfgDes.getResourceDescription(fromRcProjPath, true);
 						if(rcDescription != null){
 							try {
 								rcDescription.setPath(toRcProjPath);
@@ -156,9 +157,9 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			IProject project = rc.getProject(); 
 			ICProjectDescription des = fProjDesMap.get(project);
 			if(des == null && !fProjDesMap.containsKey(project)){
-				int flags = load ? 0 : CProjectDescriptionManager.GET_IF_LOADDED;
+				int flags = load ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
 				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
-				flags |= CProjectDescriptionManager.GET_WRITABLE;
+				flags |= ICProjectDescriptionManager.GET_WRITABLE;
 				des = fMngr.getProjectDescription(project, flags);
 				if(des != null)
 					fProjDesMap.put(project, des);
@@ -166,15 +167,15 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			return des;
 		}
 		
-		private void setProjectDescription(IProject project, ICProjectDescription des){
-			fProjDesMap.put(project, des);
-		}
+//		private void setProjectDescription(IProject project, ICProjectDescription des){
+//			fProjDesMap.put(project, des);
+//		}
 		
 		private List<ICExclusionPatternPathEntry> checkRemove(IPath rcFullPath, ICExclusionPatternPathEntry[] entries){
 			List<ICExclusionPatternPathEntry> updatedList = null;
 			int num = 0;
-			for(int k = 0; k < entries.length; k++){
-				if(entries[k].getFullPath().equals(rcFullPath)){
+			for (ICExclusionPatternPathEntry entrie : entries) {
+				if(entrie.getFullPath().equals(rcFullPath)){
 					if(updatedList == null){
 						updatedList = new ArrayList<ICExclusionPatternPathEntry>(Arrays.asList(entries));
 					}
@@ -202,8 +203,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 					if(des != null){
 						IPath rcFullPath = rc.getFullPath();
 						ICConfigurationDescription cfgDess[] = des.getConfigurations();
-						for(int i = 0; i < cfgDess.length; i++){
-							ICConfigurationDescription cfg = cfgDess[i];
+						for (ICConfigurationDescription cfg : cfgDess) {
 							ICExclusionPatternPathEntry[] entries = cfg.getSourceEntries();
 							List<ICExclusionPatternPathEntry> updatedList = checkRemove(rcFullPath, entries);
 							
@@ -235,11 +235,11 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 					if(des != null){
 						IPath rcProjPath = rc.getProjectRelativePath();
 						ICConfigurationDescription cfgDess[] = des.getConfigurations();
-						for(int i = 0; i < cfgDess.length; i++){
-							ICResourceDescription rcDescription = cfgDess[i].getResourceDescription(rcProjPath, true);
+						for (ICConfigurationDescription cfgDes : cfgDess) {
+							ICResourceDescription rcDescription = cfgDes.getResourceDescription(rcProjPath, true);
 							if(rcDescription != null){
 								try {
-									cfgDess[i].removeResourceDescription(rcDescription);
+									cfgDes.removeResourceDescription(rcDescription);
 								} catch (WriteAccessException e) {
 									CCorePlugin.log(e);
 								} catch (CoreException e) {
@@ -271,8 +271,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable(){
 
 					public void run(IProgressMonitor monitor) throws CoreException {
-						for(Iterator<Map.Entry<IProject, ICProjectDescription>> iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
-							Map.Entry<IProject, ICProjectDescription> entry = iter.next();
+						for (Entry<IProject, ICProjectDescription> entry : fProjDesMap.entrySet()) {
 							IProject project = entry.getKey();
 							if(!project.isOpen())
 								continue;
@@ -337,8 +336,8 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			IResourceDelta delta = event.getDelta();
 			if(delta != null){
 				IResourceDelta projs[] = delta.getAffectedChildren();
-				for(int i = 0; i < projs.length; i++){
-					IResourceDelta projDelta = projs[i];
+				for (IResourceDelta proj : projs) {
+					IResourceDelta projDelta = proj;
 					if(!shouldVisit((IProject)projDelta.getResource()))
 						continue;
 					
@@ -346,8 +345,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						continue;
 					
 					IResourceDelta children[] = projDelta.getAffectedChildren();
-					for(int k = 0; k < children.length; k++){
-						IResourceDelta child = children[k];
+					for (IResourceDelta child : children) {
 						IResource rc = child.getResource();
 						if(rc.getType() != IResource.FILE)
 							continue;					

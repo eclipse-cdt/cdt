@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,6 +214,7 @@ public class PathEntryTranslator {
 		};
 //		private static final int INEXISTENT_INDEX = -1;
 
+		@SuppressWarnings("unchecked")
 		private Map<String, IPathEntry>[] fEntryStorage = new Map[STORAGE_SIZE];
 
 		private int kindToIndex(int kind){
@@ -1752,13 +1753,10 @@ public class PathEntryTranslator {
 	private ResourceInfo[] performTranslation(IPath basePath, ResourceInfo[] baseInfos, String seg){
 		IPath filterFullPath = basePath.append(seg);
 		boolean needsParsing = hasSpecChars(seg);
-		ResourceInfo baseInfo;
 		List<ResourceInfo> list = new ArrayList<ResourceInfo>();
 		char[] segChars = seg.toCharArray();
-		IResource baseRc;
-		for(int i = 0; i < baseInfos.length; i++){
-			baseInfo = baseInfos[i];
-			baseRc = baseInfo.fRc;
+		for (ResourceInfo baseInfo : baseInfos) {
+			IResource baseRc = baseInfo.fRc;
 			if(baseRc.getType() == IResource.FILE){
 				continue;
 			} else {
@@ -1773,8 +1771,8 @@ public class PathEntryTranslator {
 						IResource children[] = baseCr.members();
 						ResourceInfo rcInfo;
 						for (IResource child : children) {
-							if(CoreModelUtil.match(segChars, children[i].getName().toCharArray(), true)){
-								rcInfo = new ResourceInfo(children[i], true);
+							if(CoreModelUtil.match(segChars, child.getName().toCharArray(), true)){
+								rcInfo = new ResourceInfo(child, true);
 								addRcInfoToMap(rcInfo);
 								list.add(rcInfo);
 							}

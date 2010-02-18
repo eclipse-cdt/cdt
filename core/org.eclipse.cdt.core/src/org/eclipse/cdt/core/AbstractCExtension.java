@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public abstract class AbstractCExtension extends PlatformObject implements ICExtension {
 	private IProject fProject;
+	@Deprecated
 	private ICExtensionReference extensionRef;
 	private ICConfigExtensionReference fCfgExtensionRef;
 
@@ -74,6 +75,7 @@ public abstract class AbstractCExtension extends PlatformObject implements ICExt
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Deprecated
 	public void setExtensionReference(ICExtensionReference extReference) {
 		extensionRef = extReference;
 	}

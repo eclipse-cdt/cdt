@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,11 @@ package org.eclipse.cdt.core.model;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
@@ -83,16 +81,20 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 	/*
 	 * @see org.eclipse.cdt.core.model.ILanguage#getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader, org.eclipse.cdt.core.parser.IScannerInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.parser.IParserLogService)
 	 */
-	public IASTTranslationUnit getASTTranslationUnit(CodeReader reader, IScannerInfo scanInfo,
-			ICodeReaderFactory fileCreator, IIndex index, IParserLogService log) throws CoreException {
+	@Deprecated
+	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
+			IParserLogService log) throws CoreException {
 		return null;
 	}
 
 	/*
 	 * @see org.eclipse.cdt.core.model.ILanguage#getCompletionNode(org.eclipse.cdt.core.parser.CodeReader, org.eclipse.cdt.core.parser.IScannerInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.parser.IParserLogService, int)
 	 */
-	public IASTCompletionNode getCompletionNode(CodeReader reader, IScannerInfo scanInfo,
-			ICodeReaderFactory fileCreator, IIndex index, IParserLogService log, int offset) throws CoreException {
+	@Deprecated
+	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
+			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
+			IParserLogService log, int offset) throws CoreException {
 		return null;
 	}
 

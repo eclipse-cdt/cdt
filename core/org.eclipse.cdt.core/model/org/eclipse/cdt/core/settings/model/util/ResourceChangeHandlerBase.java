@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,30 +82,32 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 			boolean removed = false;
 			
 			switch (delta.getKind()) {
-				case IResourceDelta.REMOVED :
-					removed = true;
-				case IResourceDelta.CHANGED :
-					int flags = delta.getFlags(); 
-					if ((flags & IResourceDelta.MOVED_TO) != 0) {
-						IPath path = delta.getMovedToPath();
-						if(path != null){
-							IResource toRc = getResource(path, dResource);
-							resume = checkInitHandleResourceMove(dResource, toRc);
-						}
-						break;
-					} else if((flags & IResourceDelta.MOVED_FROM) != 0){
-						IPath path = delta.getMovedFromPath();
-						if(path != null){
-							IResource fromRc = getResource(path, dResource);
-							resume = checkInitHandleResourceMove(fromRc, dResource);
-						}
-						break;
-					} else if (removed){
-						resume = fHandler.handleResourceRemove(dResource);
+			case IResourceDelta.REMOVED:
+				removed = true;
+				//$FALL-THROUGH$
+			case IResourceDelta.CHANGED:
+				int flags = delta.getFlags();
+				if ((flags & IResourceDelta.MOVED_TO) != 0) {
+					IPath path = delta.getMovedToPath();
+					if (path != null) {
+						IResource toRc = getResource(path, dResource);
+						resume = checkInitHandleResourceMove(dResource, toRc);
 					}
-				default:
 					break;
+				} else if ((flags & IResourceDelta.MOVED_FROM) != 0) {
+					IPath path = delta.getMovedFromPath();
+					if (path != null) {
+						IResource fromRc = getResource(path, dResource);
+						resume = checkInitHandleResourceMove(fromRc, dResource);
+					}
+					break;
+				} else if (removed) {
+					resume = fHandler.handleResourceRemove(dResource);
 				}
+				break;
+			default:
+				break;
+			}
 
 			
 			return resume;	//  visit the children

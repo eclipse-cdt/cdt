@@ -149,3 +149,7 @@ plugin@org.eclipse.tm.tcf.debug=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.e
 plugin@org.eclipse.tm.tcf.debug.ui=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.debug.ui
 plugin@org.eclipse.tm.tcf.rse=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.rse
 feature@org.eclipse.tm.tcf.feature=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=features/org.eclipse.tm.tcf.feature
+
+! Berkeley UPC
+plugin@org.eclipse.cdt.managedbuilder.bupc.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.managedbuilder.bupc.ui
+feature@org.eclipse.cdt.bupc=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.bupc-feature

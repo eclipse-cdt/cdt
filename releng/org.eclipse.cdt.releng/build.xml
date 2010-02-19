@@ -648,5 +648,11 @@
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/edc/org.eclipse.cdt.scripting"/>
 		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.managedbuilder.bupc.ui"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.bupc-feature"/>
+		</antcall>
 	</target>
 </project>

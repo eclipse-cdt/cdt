@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Berkeley UPC Tool Chain
+Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.bupc.ui;singleton:=true
+Bundle-Version: 1.0.2.qualifier
+Bundle-ClassPath: org.eclipse.cdt.managedbuilder.bupc.ui
+Bundle-Activator: org.eclipse.cdt.managedbuilder.bupc.ui.UPCWizardsPlugin
+Require-Bundle: org.eclipse.cdt.ui,
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.managedbuilder.core,
+ org.eclipse.cdt.core.parser.upc,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.editors,
+ org.eclipse.core.resources
+Import-Package: org.eclipse.cdt.ui.wizards,
+ org.eclipse.ui.wizards.newresource
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: Eclipse CDT

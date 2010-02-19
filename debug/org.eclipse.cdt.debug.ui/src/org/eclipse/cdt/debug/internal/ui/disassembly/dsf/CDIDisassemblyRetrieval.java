@@ -58,7 +58,7 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 					}
 					else if (startAddress != null) {
 						mixedInstructions= cdiTarget.getMixedInstructions(startAddress, endAddress);
-						if (mixedInstructions.length == 0) {
+						if (mixedInstructions == null || mixedInstructions.length == 0) {
 							mixedInstructions= null;
 							asmInstructions= cdiTarget.getInstructions(startAddress, endAddress);
 						} else if (mixedInstructions.length == 1 && mixedInstructions[0].getInstructions().length == 0) {

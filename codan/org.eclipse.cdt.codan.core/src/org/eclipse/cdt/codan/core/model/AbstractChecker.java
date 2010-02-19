@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.internal.core.CheckersRegisry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
@@ -45,6 +46,14 @@ public abstract class AbstractChecker implements IChecker {
 	public void reportProblem(String id, IFile file, int lineNumber, String arg) {
 		getProblemReporter().reportProblem(id,
 				new ProblemLocation(file, lineNumber), arg);
+	}
+
+	public IProblem getProblemById(String id, IFile file) {
+		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(
+				file).findProblem(id);
+		if (problem == null)
+			throw new IllegalArgumentException("Id is not registered");
+		return problem;
 	}
 
 	/**

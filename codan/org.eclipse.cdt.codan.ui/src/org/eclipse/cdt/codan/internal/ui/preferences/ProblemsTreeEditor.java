@@ -15,6 +15,7 @@ import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -138,8 +139,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
-		if (element instanceof IProblem) {
-			((IProblem) element).setEnabled(event.getChecked());
+		if (element instanceof IProblemWorkingCopy) {
+			((IProblemWorkingCopy) element).setEnabled(event.getChecked());
 		}
 	}
 
@@ -223,7 +224,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			protected void setValue(Object element, Object value) {
 				int index = ((Integer) value).intValue();
 				CodanSeverity val = CodanSeverity.values()[index];
-				((IProblem) element).setSeverity(val);
+				((IProblemWorkingCopy) element).setSeverity(val);
 				getTreeViewer().update(element, null);
 			}
 		});

@@ -18,10 +18,12 @@ import java.util.Iterator;
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.IChecker;
+import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
 import org.eclipse.cdt.codan.internal.core.model.ProblemProfile;
@@ -72,6 +74,21 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement configurationElement = elements[i];
 			processChecker(configurationElement);
+		}
+		// init parameters for checkers with parameters
+		for (Iterator iterator = problemList.keySet().iterator(); iterator
+				.hasNext();) {
+			IChecker c = (IChecker) iterator.next();
+			if (c instanceof ICheckerWithParameters) {
+				Collection<IProblem> list = problemList.get(c);
+				for (Iterator iterator2 = list.iterator(); iterator2.hasNext();) {
+					IProblem p = (IProblem) iterator2.next();
+					if (p instanceof IProblemWorkingCopy) {
+						((ICheckerWithParameters) c)
+								.initParameters((IProblemWorkingCopy) p);
+					}
+				}
+			}
 		}
 	}
 
@@ -256,9 +273,10 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		}
 		plist.add(p);
 	}
-	
+
 	/**
 	 * Returns list of problems registered for given checker
+	 * 
 	 * @return collection of problems or null
 	 */
 	public Collection<IProblem> getRefProblems(IChecker checker) {

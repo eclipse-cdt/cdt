@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import java.util.Collection;
 
 /**
  * Interface representing code analysis problem
- *
+ * 
  */
 public interface IProblem extends IProblemElement {
 	/**
@@ -23,43 +22,41 @@ public interface IProblem extends IProblemElement {
 	String getName();
 
 	/**
-	 * Unique problem id. Should be qualified by plugin name to maintain uniqueness. 
+	 * Unique problem id. Should be qualified by plugin name to maintain
+	 * uniqueness.
+	 * 
 	 * @return
 	 */
 	String getId();
 
 	/**
 	 * Is enabled in current context (usually within profile)
+	 * 
 	 * @return true if enabled
 	 */
 	boolean isEnabled();
 
 	/**
 	 * Get current severity
+	 * 
 	 * @return severity
 	 */
 	CodanSeverity getSeverity();
 
 	/**
 	 * Message pattern, java patter like 'Variable {0} is never used here'
-	 * @return pattern 
+	 * 
+	 * @return pattern
 	 */
 	String getMessagePattern();
 
-	void setSeverity(CodanSeverity sev);
-
-	void setEnabled(boolean checked);
-
-	void setMessagePattern(String message);
-
-	public void setProperty(Object key, Object value);
+	public Object getParameter(Object key);
 
 	/**
-	 * Get custom property
-	 * @param property name
-	 * @return property object
+	 * Get root paramterInfo - contains description of types of all the
+	 * parameters or null if not defined
+	 * 
+	 * @return
 	 */
-	public Object getProperty(Object key);
-
-	public Collection<Object> getPropertyKeys();
+	public IProblemParameterInfo getParameterInfo();
 }

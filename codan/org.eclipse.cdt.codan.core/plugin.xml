@@ -49,8 +49,11 @@
       <category
       id="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
       name="Potential programming problems"
+      />
+            <category
+      id="org.eclipse.cdt.codan.core.categories.CodeStyle"
+      name="Coding Style"
       >
-      
       </category>
    </extension>
    

@@ -60,6 +60,7 @@
          <sequence minOccurs="0" maxOccurs="unbounded">
             <choice>
                <element ref="problem"/>
+               <element ref="problemRef"/>
             </choice>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -143,6 +144,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="defaultEnabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  If problem is enabled in original profile. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -172,6 +180,21 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="problemRef">
+      <complexType>
+         <attribute name="problem" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Reference to a problem
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/checker/problem/@id"/>
                </appinfo>
             </annotation>
          </attribute>

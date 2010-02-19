@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
-import java.util.Collection;
 import java.util.HashMap;
-
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
-import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
+import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 
-public class CodanProblem implements IProblem {
+public class CodanProblem implements IProblemWorkingCopy {
 	private String id;
 	private String name;
 	private String message;
 	private CodanSeverity severity = CodanSeverity.Warning;
 	private boolean enabled = true;
-	private HashMap<Object, Object> properties = new HashMap<Object, Object>(0);
+	private HashMap<Object, Object> parameters = new HashMap<Object, Object>(0);
+	private IProblemParameterInfo parameterInfo;
 
 	public CodanSeverity getSeverity() {
 		return severity;
@@ -76,16 +76,20 @@ public class CodanProblem implements IProblem {
 		return super.clone();
 	}
 
-	public void setProperty(Object key, Object value) {
-		properties.put(key, value);
+	public void setParameter(Object key, Object value) {
+		parameters.put(key, value);
 	}
 
-	public Object getProperty(Object key) {
-		return properties.get(key);
+	public void setParameterInfo(IProblemParameterInfo info) {
+		parameterInfo = info;
+	}
+
+	public Object getParameter(Object key) {
+		return parameters.get(key);
 	};
 
-	public Collection<Object> getPropertyKeys() {
-		return properties.keySet();
+	public IProblemParameterInfo getParameterInfo() {
+		return parameterInfo;
 	}
 
 	/*
@@ -98,7 +102,8 @@ public class CodanProblem implements IProblem {
 	}
 
 	/**
-	 * @param message the message to set
+	 * @param message
+	 *            the message to set
 	 */
 	public void setMessagePattern(String message) {
 		this.message = message;

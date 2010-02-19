@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.cdt.internal.core.lrparser.xlc.ast;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.action.cpp.CPPNodeFactory;
+import org.eclipse.cdt.core.lrparser.xlc.ast.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTModifiedArrayModifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTVectorTypeSpecifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPNodeFactory;
@@ -29,5 +31,10 @@ private static final XlcCPPNodeFactory DEFAULT_INSTANCE = new XlcCPPNodeFactory(
 	
 	public IXlcCPPASTModifiedArrayModifier newModifiedArrayModifier(IASTExpression expr) {
 		return new XlcCPPASTModifiedArrayModifier(expr);
+	}
+	
+	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition,
+			ICPPASTLiteralExpression message) {
+		return new CPPASTStaticAssertionDeclaration(condition, message);
 	}
 }

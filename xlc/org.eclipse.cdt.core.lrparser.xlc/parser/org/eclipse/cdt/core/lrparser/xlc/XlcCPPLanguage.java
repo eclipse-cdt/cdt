@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,8 @@ public class XlcCPPLanguage extends GPPLanguage {
 		boolean supportDecimals = getPref(XlcPref.SUPPORT_DECIMAL_FLOATING_POINT_TYPES, project);
 		boolean supportComplex  = getPref(XlcPref.SUPPORT_COMPLEX_IN_CPP, project);
 		boolean supportRestrict = getPref(XlcPref.SUPPORT_RESTRICT_IN_CPP, project);
-		IDOMTokenMap tokenMap = new XlcCPPTokenMap(supportVectors, supportDecimals, supportComplex, supportRestrict);
+		boolean supportStaticAssert = getPref(XlcPref.SUPPORT_STATIC_ASSERT, project);
+		IDOMTokenMap tokenMap = new XlcCPPTokenMap(supportVectors, supportDecimals, supportComplex, supportRestrict, supportStaticAssert);
 		
 		XlcCPPParser parser = new XlcCPPParser(scanner, tokenMap, getBuiltinBindingsProvider(), index, properties);
 		return parser;

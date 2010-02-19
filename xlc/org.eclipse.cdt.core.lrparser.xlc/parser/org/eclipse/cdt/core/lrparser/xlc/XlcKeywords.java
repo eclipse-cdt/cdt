@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.lrparser.xlc.cpp.XlcCPPParsersym;
 public class XlcKeywords extends CLanguageKeywords {
 	
 	public static final XlcKeywords ALL_C_KEYWORDS = createC(true, true);
-	public static final XlcKeywords ALL_CPP_KEYWORDS = createCPP(true, true, true, true);
+	public static final XlcKeywords ALL_CPP_KEYWORDS = createCPP(true, true, true, true, true);
 	
 	
 	private final CharArrayMap<Integer> map = new CharArrayMap<Integer>();
@@ -51,7 +51,7 @@ public class XlcKeywords extends CLanguageKeywords {
 		return keywords;
 	}
 	
-	public static XlcKeywords createCPP(boolean supportVectors, boolean supportDecimalFloatingPoint, boolean supportComplex, boolean supportRestrict) {
+	public static XlcKeywords createCPP(boolean supportVectors, boolean supportDecimalFloatingPoint, boolean supportComplex, boolean supportRestrict, boolean supportStaticAssert) {
 		XlcKeywords keywords = new XlcKeywords(ParserLanguage.CPP);
 		CharArrayMap<Integer> map = keywords.map;
 		if(supportVectors) {
@@ -72,6 +72,10 @@ public class XlcKeywords extends CLanguageKeywords {
 			map.put("restrict".toCharArray(), XlcCPPParsersym.TK_restrict);
 			map.put("__restrict".toCharArray(), XlcCPPParsersym.TK_restrict);
 			map.put("__restrict__".toCharArray(), XlcCPPParsersym.TK_restrict);
+		}
+		
+		if(supportStaticAssert) {
+			map.put("__static_assert".toCharArray(), XlcCPPParsersym.TK___static_assert);
 		}
 		
 		return keywords;

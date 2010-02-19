@@ -63,5 +63,16 @@
             name="Suggested parenthesis around expression">
       </problem>
       </checker>
+            <checker
+            class="org.eclipse.cdt.codan.checkers.sample.NamingConventionFunctionChecker"
+            id="org.eclipse.cdt.codan.checkers.sample.NamingConventionFunctionChecker"
+            name="NamingConventionFunctionChecker">
+      <problem
+            category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+            defaultSeverity="Warning"
+            id="org.eclipse.cdt.codan.checkers.sample.NamingConventionFunctionProblem"
+            name="Name convention for function">
+      </problem>
+      </checker>
    </extension>
 </plugin>

@@ -36,7 +36,8 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 	 */
 	public ICLanguageSetting createLanguageSettingForContentTypes(
 			String languageId, String[] typeIds) throws CoreException {
-		System.out.println("Bad multi access: MultiFolderDescription.createLanguageSettingForContentType()");
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiFolderDescription.createLanguageSettingForContentType()"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -45,7 +46,8 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 	 */
 	public ICLanguageSetting createLanguageSettingForExtensions(
 			String languageId, String[] extensions) throws CoreException {
-		System.out.println("Bad multi access: MultiFolderDescription.createLanguageSettingForExt()");
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiFolderDescription.createLanguageSettingForExt()"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -85,7 +87,8 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 	 */
 	public ICResourceDescription getNestedResourceDescription(IPath relPath,
 			boolean exactPath) {
-		System.out.println("Bad multi access: MultiFolderDescription.getNestedResourceDescription(path, exact)");
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiFolderDescription.getNestedResourceDescription(path, exact)"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -93,7 +96,8 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getNestedResourceDescriptions(int)
 	 */
 	public ICResourceDescription[] getNestedResourceDescriptions(int kind) {
-		System.out.println("Bad multi access: MultiFolderDescription.getNestedResourceDescriptions(kind)");
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiFolderDescription.getNestedResourceDescriptions(kind)"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -101,7 +105,8 @@ public class MultiFolderDescription extends MultiResourceDescription implements
 	 * @see org.eclipse.cdt.core.settings.model.ICFolderDescription#getNestedResourceDescriptions()
 	 */
 	public ICResourceDescription[] getNestedResourceDescriptions() {
-		System.out.println("Bad multi access: MultiFolderDescription.getNestedResourceDescriptions()");
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiFolderDescription.getNestedResourceDescriptions()"); //$NON-NLS-1$
 		return null;
 	}
 

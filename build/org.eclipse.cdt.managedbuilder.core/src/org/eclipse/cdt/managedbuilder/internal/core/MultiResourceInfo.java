@@ -99,7 +99,8 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getResourceData()
 	 */
 	public CResourceData getResourceData() {
-		System.out.println("Strange call: MultiResourceInfo.getResourceData()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("Strange call: MultiResourceInfo.getResourceData()"); //$NON-NLS-1$
 		return fRis[curr].getResourceData();
 	}
 
@@ -363,6 +364,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 			fRis[i].setVersion(version);
 	}
 
+	@Override
 	public Object[] getItems() {
 		return fRis;
 	}

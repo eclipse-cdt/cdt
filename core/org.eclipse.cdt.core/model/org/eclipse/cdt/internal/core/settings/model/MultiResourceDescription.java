@@ -52,7 +52,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getParentFolderDescription()
 	 */
 	public ICFolderDescription getParentFolderDescription() {
-		System.out.println("Bad multi access: MultiResourceDescription.getParentFolderDescription()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiResourceDescription.getParentFolderDescription()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 
@@ -101,7 +102,8 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingContainer#getChildSettings()
 	 */
 	public ICSettingObject[] getChildSettings() {
-		System.out.println("Bad multi access: MultiResourceDescription.getChildSettings()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiResourceDescription.getChildSettings()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 

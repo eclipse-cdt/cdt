@@ -19,6 +19,9 @@ import org.eclipse.cdt.internal.core.settings.model.MultiFolderDescription;
  *
  */
 public abstract class MultiItemsHolder implements ICMultiItemsHolder {
+	/** @since 5.2 */
+	protected static final boolean DEBUG = false;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#getItems()
 	 */

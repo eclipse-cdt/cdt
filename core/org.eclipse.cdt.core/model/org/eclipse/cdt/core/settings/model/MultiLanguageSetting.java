@@ -133,7 +133,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getConfiguration()
 	 */
 	public ICConfigurationDescription getConfiguration() {
-		System.out.println("Bad multi access: MultiLanguageSetting.getConfiguration()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiLanguageSetting.getConfiguration()"); //$NON-NLS-1$
 		return null; // CFGs are different
 	}
 
@@ -141,7 +142,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getId()
 	 */
 	public String getId() { // IDs are different
-		System.out.println("Bad multi access: MultiLanguageSetting.getId()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiLanguageSetting.getId()"); //$NON-NLS-1$
 		return null;
 	}
 
@@ -156,7 +158,8 @@ public class MultiLanguageSetting extends MultiItemsHolder implements ICLanguage
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getParent()
 	 */
 	public ICSettingContainer getParent() {
-		System.out.println("Bad multi access: MultiLanguageSetting.getParent()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("Bad multi access: MultiLanguageSetting.getParent()"); //$NON-NLS-1$
 		return null; // Parents are different
 	}
 

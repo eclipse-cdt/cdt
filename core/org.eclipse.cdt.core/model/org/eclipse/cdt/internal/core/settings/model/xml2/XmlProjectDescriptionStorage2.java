@@ -103,7 +103,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		} catch (CoreException e) {
 			// STORAGE_FOLDER_NAME doesn't exist... or something went wrong during reload
 			if (project.getFolder(STORAGE_FOLDER_NAME).exists())
-				CCorePlugin.log("XmlProjectDescriptionStorage2: Problem checking for external modification: " + e.getMessage());
+				CCorePlugin.log("XmlProjectDescriptionStorage2: Problem checking for external modification: " + e.getMessage()); //$NON-NLS-1$
 		}
 		return needReload[0];
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -377,19 +377,17 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 	 * to be adorned or 0 otherwise.
 	 */
 	private int getTicks (IResource rc) {
-		if (rc == null || rc instanceof IProject) return 0;
-		IPath path = rc.getProjectRelativePath();
-		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(rc.getProject(), false);
+		if (rc == null || rc instanceof IProject)
+			return 0;
+
 		int result = 0;
-		if (prjDescription != null) { 
-			ICConfigurationDescription [] cfgDescriptions = prjDescription.getConfigurations();
-			if (cfgDescriptions == null) return 0;
-			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-				if (cfgDescription.isActive()) {
-					ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
-					if (rcDescription != null) result |= TICK_CONFIGURATION;
-				}
-			}
+		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(rc.getProject(), false);
+		if (prjDescription != null) {
+			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
+			IPath path = rc.getProjectRelativePath();
+			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
+			if (rcDescription != null)
+				result |= TICK_CONFIGURATION;
 		}
 		return result;
 	}

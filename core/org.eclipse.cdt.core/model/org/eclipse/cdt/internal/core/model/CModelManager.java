@@ -473,8 +473,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		try {
 			fileStore = EFS.getStore(locationURI);
 		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			CCorePlugin.log(e1);
 			return null;
 		}
 		
@@ -758,7 +757,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 				try {
 					cproject.close();
 				} catch (CModelException e) {
-					e.printStackTrace();
+					CCorePlugin.log(e);
 				}
 				binaryParsersMap.remove(project);
 
@@ -773,13 +772,21 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 
 	public BinaryRunner getBinaryRunner(ICProject cproject) {
 		BinaryRunner runner = null;
+		IProject project = cproject.getProject();
 		synchronized (binaryRunners) {
-			IProject project = cproject.getProject();
 			runner = binaryRunners.get(project);
-			if (runner == null) {
-				runner = new BinaryRunner(project);
+		}
+		// creation of BinaryRunner must occur outside the synchronized block
+		if (runner == null) {
+			runner = new BinaryRunner(project);
+		}
+		synchronized (binaryRunners) {
+			if (binaryRunners.get(project) == null) {
 				binaryRunners.put(project, runner);
 				runner.start();
+			} else {
+				// another thread was faster
+				runner = binaryRunners.get(project);
 			}
 		}
 		return runner;
@@ -891,7 +898,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 							fire(ElementChangedEvent.POST_CHANGE);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						CCorePlugin.log(e);
 					}
 					break;
 			}

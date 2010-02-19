@@ -27,13 +27,17 @@ public interface IDisassembly extends IDsfService {
     public interface IDisassemblyDMContext extends IDMContext {}
 
     /**
-     * Gets the disassembled code from an address range.
-     * If [startAddress] == null, disassemble from the instruction pointer.
-     * 
-     * @param context       Context of the disassembly code
-     * @param startAddress  Beginning address
-     * @param endAddress    End address
-     * @param drm           Disassembled code
+	 * Gets a block of disassembled code given an address range.
+	 * 
+	 * @param context
+	 *            Context of the disassembly code
+	 * @param startAddress
+	 *            Beginning address, inclusive. If null, disassemble from the
+	 *            instruction pointer.
+	 * @param endAddress
+	 *            End address, exclusive.
+	 * @param drm
+	 *            Disassembled code
      */
     public void getInstructions(
             IDisassemblyDMContext context,
@@ -41,16 +45,24 @@ public interface IDisassembly extends IDsfService {
             BigInteger endAddress,
             DataRequestMonitor<IInstruction[]> drm);
 
-    /**
-     * Gets the disassembled code from a file location.
-     * If [lines] == -1, the whole function is disassembled.
-     * 
-     * @param context       Context of the disassembly code
-     * @param filename      File to disassemble
-     * @param linenum       Line number within the file
-     * @param lines         Number of lines of disassembled code to produce
-     * @param drm           Disassembled code
-     */
+	/**
+	 * Gets a block of disassembled code given a filename, line number, and line
+	 * count.
+	 * 
+	 * @param context
+	 *            Context of the disassembly code
+	 * @param filename
+	 *            File to disassemble
+	 * @param linenum
+	 *            Starting point. 1-based line number within the file. If the
+	 *            line does not represent compiled code, disassembly will start
+	 *            at the first subsequent line that does.
+	 * @param lines
+	 *            Number of lines of disassembled code to produce. -1 means all.
+	 *            
+	 * @param drm
+	 *            Disassembled code
+	 */
     public void getInstructions(
             IDisassemblyDMContext context,
             String filename, 
@@ -58,15 +70,19 @@ public interface IDisassembly extends IDsfService {
             int    lines,
             DataRequestMonitor<IInstruction[]> drm);
 
-    /**
-     * Gets the mixed disassembled code from an address range.
-     * If [startAddress] == null, disassemble from the instruction pointer.
-     * 
-     * @param context       Context of the disassembly code
-     * @param startAddress  Beginning address
-     * @param endAddress    End address
-     * @param drm           Disassembled code
-     */
+	/**
+	 * Gets a block of mixed disassembled code given an address range.
+	 * 
+	 * @param context
+	 *            Context of the disassembly code
+	 * @param startAddress
+	 *            Beginning address, inclusive. If null, disassemble from the
+	 *            instruction pointer.
+	 * @param endAddress
+	 *            End address, exclusive.
+	 * @param drm
+	 *            Disassembled code
+	 */
     public void getMixedInstructions(
             IDisassemblyDMContext context,
             BigInteger startAddress, 
@@ -74,19 +90,18 @@ public interface IDisassembly extends IDsfService {
             DataRequestMonitor<IMixedInstruction[]> drm);
 
 	/**
-	 * Gets the mixed disassembled code from a file location, starting at the
-	 * beginning of the file. If [lines] == -1, the whole file is disassembled.
+	 * Gets a block of mixed disassembled code given a filename, line number, and line count.
 	 * 
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param filename
 	 *            File to disassemble
 	 * @param linenum
-	 *            Line number within the file. If the line does not represent
-	 *            compiled code, disassembly will start at the first subsequent
-	 *            line that does.
+	 *            Starting point. 1-based line number within the file. If the
+	 *            line does not represent compiled code, disassembly will start
+	 *            at the first subsequent line that does.
 	 * @param lines
-	 *            Number of lines of disassembled code to produce
+	 *            Number of lines of disassembled code to produce. -1 means all.
 	 * @param drm
 	 *            Disassembled code
 	 */

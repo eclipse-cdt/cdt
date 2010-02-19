@@ -146,8 +146,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
             fExpression = expression;
         }
         
-        @Override
-        @SuppressWarnings("rawtype") 
+        @SuppressWarnings("rawtypes")
+		@Override
         public Object getAdapter(Class adapter) {
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
@@ -750,7 +750,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         IExpressionDMContext expressionDMC = expressionService.createExpression(
                             createCompositeDMVMContext(update), 
                             update.getExpression().getExpressionText());
-                        VariableExpressionVMC variableVmc = new VariableExpressionVMC(expressionDMC);
+                        VariableExpressionVMC variableVmc = (VariableExpressionVMC)createVMContext(expressionDMC);
                         variableVmc.setExpression(update.getExpression());
                         
                         update.setExpressionElement(variableVmc);

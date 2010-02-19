@@ -69,33 +69,38 @@ public class VariableVMProvider extends AbstractDMVMProvider
         store.addPropertyChangeListener(fPreferencesListener);
         setDelayEventHandleForViewUpdate(store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
 
-        /*
-         *  Create the variable data access routines.
-         */
-        SyncVariableDataAccess varAccess = new SyncVariableDataAccess(session) ;
-
-        /*
-         *  Create the top level node to deal with the root selection.
-         */
-        IRootVMNode rootNode = new RootDMVMNode(this);
-        setRootNode(rootNode);
-        
-        /*
-         * Create the next level which represents members of structs/unions/enums and elements of arrays.
-         */
-        IVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
-        addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
-
-        // Configure the sub-expression node to be a child of itself.  This way the content
-        // provider will recursively drill-down the variable hierarchy.
-        addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
-    }
+        configureLayout();
+	}
 	
     @Override
     public void dispose() {
         DsfDebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferencesListener);
         getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
         super.dispose();
+    }
+    
+    /**
+     * Configures the nodes of this provider.  This method may be over-ridden by
+     * sub classes to create an alternate configuration in this provider.
+     * 
+     * @since 2.1
+     */
+    protected void configureLayout() {
+
+        // Create the variable data access routines.
+        SyncVariableDataAccess varAccess = new SyncVariableDataAccess(getSession()) ;
+
+        // Create the top level node to deal with the root selection.
+        IRootVMNode rootNode = new RootDMVMNode(this);
+        setRootNode(rootNode);
+        
+        // Create the next level which represents members of structs/unions/enums and elements of arrays.
+        IVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
+        addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
+
+        // Configure the sub-expression node to be a child of itself.  This way the content
+        // provider will recursively drill-down the variable hierarchy.
+        addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
     }
 
     @Override

@@ -11,84 +11,142 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 
-import org.eclipse.cdt.debug.internal.core.model.CVariable;
-import org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointDialog;
+import org.eclipse.cdt.debug.internal.core.CRequest;
+import org.eclipse.cdt.debug.internal.core.ICWatchpointTarget;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.progress.WorkbenchJob;
 
-
-public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDelegate {
+/**
+ * Invoked when user right clicks on an element in the Variables or Expressions
+ * view and selects 'Add Watchpoint (C/C++)'
+ */
+public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDelegate implements IObjectActionDelegate {
 
 	/**
-	 * Constructor for Action1.
+	 * The target variable/expression
+	 */
+	private ICWatchpointTarget fVar;
+	
+	/**
+	 * Constructor
 	 */
 	public AddWatchpointOnVariableActionDelegate() {
 		super();
 	}
 
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		// Don't care. Our logic is agnostic to the view we're invoked from.
+	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	private static class GetSizeRequest extends CRequest implements ICWatchpointTarget.GetSizeRequest {
+		int fSize;
+		public int getSize() {
+			return fSize;
+		}
+		public void setSize(int size) {
+			fSize = size;
+		}
+	};
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IStructuredSelection selection = getSelection();
-		
-		if (selection == null || selection.isEmpty()) {
+		if (fVar == null) {
 			return;
 		}
 		
-		Object obj = ((TreeSelection)selection).getFirstElement();
-		if (obj != null && obj instanceof CVariable) {
-			CVariable var = (CVariable)obj;
-
-			String expr = "";
-			 
-			try {
-				expr = var.getExpressionString();
-			} catch (DebugException e) {}
-			 
-			AddWatchpointDialog dlg = new AddWatchpointDialog(CDebugUIPlugin.getActiveWorkbenchShell(), 
-					getMemorySpaceManagement()); //$NON-NLS-1$
-			dlg.setExpression(expr);
-			dlg.initializeRange(false, Integer.toString(var.sizeof()));
-			if (dlg.open() == Window.OK) {
-				addWatchpoint(dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression(), dlg.getMemorySpace(), dlg.getRange());
-			}
+		final String expr = fVar.getExpression();
+		if (expr == null) {
+			assert false : "how are we getting an empty expression?"; //$NON-NLS-1$
+			return;
 		}
+
+		// Getting the size of the variable/expression is an asynchronous
+		// operation...or at least the API is (the CDI implementation reacts
+		// synchronously)
+		final ICWatchpointTarget.GetSizeRequest request = new GetSizeRequest() {
+			public void done() {
+				// Now that we have the size, put up a dialog to create the watchpoint
+				final int size = getSize();
+				assert size > 0 : "unexpected variale/expression size"; //$NON-NLS-1$
+				WorkbenchJob job = new WorkbenchJob("open watchpoint dialog") { //$NON-NLS-1$
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						AddWatchpointDialog dlg = new AddWatchpointDialog(CDebugUIPlugin.getActiveWorkbenchShell(), 
+								getMemorySpaceManagement());
+						dlg.setExpression(expr);
+						dlg.initializeRange(false, Integer.toString(size));
+						if (dlg.open() == Window.OK) {
+							addWatchpoint(dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression(), dlg.getMemorySpace(), dlg.getRange());
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
+
+		};
+		fVar.getSize(request);
 	}
 	
+	private class CanCreateWatchpointRequest extends CRequest implements ICWatchpointTarget.CanCreateWatchpointRequest {
+		boolean fCanCreate;
+		public boolean getCanCreate() {
+			return fCanCreate;
+		}
+		public void setCanCreate(boolean value) {
+			fCanCreate = value;
+		}
+	};
+
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * Record the target variable/expression
+	 * 
+	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 *      org.eclipse.jface.viewers.ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(final IAction action, ISelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			action.setEnabled(false);
 			return;
 		}
 		if (selection instanceof TreeSelection) {
 			Object obj = ((TreeSelection)selection).getFirstElement();
-			if (obj != null && obj instanceof CVariable) {
-				action.setEnabled(true);
-			} else {
-				action.setEnabled(false);
+			fVar = (ICWatchpointTarget)DebugPlugin.getAdapter(obj, ICWatchpointTarget.class);
+			if (fVar != null) {
+				final ICWatchpointTarget.CanCreateWatchpointRequest request = new CanCreateWatchpointRequest() {
+					public void done() {
+						action.setEnabled(getCanCreate());
+					}
+				};
+				fVar.canSetWatchpoint(request);
+				return;
 			}
+			assert false : "action should not have been available for object " + obj; //$NON-NLS-1$
 		}
+		else if (selection instanceof StructuredSelection) {
+			// Not sure why, but sometimes we get an extraneous empty StructuredSelection. Seems harmless enough
+			assert ((StructuredSelection)selection).getFirstElement() == null : "action installed in unexpected type of view/part"; //$NON-NLS-1$
+		}
+		else {
+			assert false : "action installed in unexpected type of view/part"; //$NON-NLS-1$
+		}
+		action.setEnabled(false);
 	}
-
-	private IStructuredSelection getSelection() {
-		return (IStructuredSelection)getView().getViewSite().getSelectionProvider().getSelection();
-	}
-
 }

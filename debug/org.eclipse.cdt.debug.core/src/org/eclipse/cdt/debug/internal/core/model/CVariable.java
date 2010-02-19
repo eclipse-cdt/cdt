@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.internal.core.CSettingsManager;
+import org.eclipse.cdt.debug.internal.core.ICWatchpointTarget;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -72,7 +73,7 @@ class VariableEventListener implements ICDIEventListener {
 /**
  * Represents a variable in the CDI model.
  */
-public abstract class CVariable extends AbstractCVariable implements ICDIEventListener {
+public abstract class CVariable extends AbstractCVariable implements ICDIEventListener, ICWatchpointTarget {
 
 	interface IInternalVariable {
 		IInternalVariable createShadow( int start, int length ) throws DebugException;
@@ -877,5 +878,34 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 			// we drop (and log) the exception here.
 			// even if the initial setup fails, we still want the complete creation to be successful
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getExpression()
+	 */
+	public String getExpression() {
+		try {
+			return getExpressionString();
+		} catch (DebugException e) {
+			return ""; //$NON-NLS-1$
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getSize()
+	 */
+	public void getSize(ICWatchpointTarget.GetSizeRequest request) {
+		// CDI has synchronous APIs, so this is easy...
+		request.setSize(sizeof());
+		request.done();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#canCreateWatchpoint(org.eclipse.cdt.debug.internal.core.IWatchpointTarget.CanCreateWatchpointRequest)
+	 */
+	public void canSetWatchpoint(ICWatchpointTarget.CanCreateWatchpointRequest request) {
+		// CDI has synchronous APIs, so this is easy...
+		request.setCanCreate(sizeof() > 0);
+		request.done();
 	}
 }

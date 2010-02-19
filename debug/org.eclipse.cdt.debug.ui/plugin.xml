@@ -724,6 +724,19 @@
          </action>
       </objectContribution>
       <objectContribution
+            objectClass="org.eclipse.cdt.debug.internal.core.ICWatchpointTarget"
+            id="org.eclipse.cdt.debug.ui.WatchpointActions">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
+               enablesFor="1"
+               icon="icons/elcl16/watchpoint_co.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
+               label="%AddWatchpoint.label"
+               menubarPath="additions"
+               tooltip="%AddWatchpoint.tooltip">
+         </action>
+      </objectContribution>
+      <objectContribution
             objectClass="org.eclipse.cdt.core.model.IVariable"
             id="org.eclipse.cdt.debug.ui.WatchpointActions">
          <action
@@ -807,20 +820,6 @@
             <selection
                   class="org.eclipse.cdt.debug.core.model.ICVariable">
             </selection>
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
-               enablesFor="1"
-               icon="icons/elcl16/watchpoint_co.gif"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
-               label="%AddWatchpoint.label"
-               menubarPath="additions"
-               tooltip="%AddWatchpoint.tooltip">
-               <enablement>
-                  <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui"/>
-               </enablement>
          </action>
       </viewerContribution>
       <viewerContribution

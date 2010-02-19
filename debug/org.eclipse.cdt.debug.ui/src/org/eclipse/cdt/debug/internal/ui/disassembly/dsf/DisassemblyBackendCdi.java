@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
+import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CStackFrame;
@@ -179,6 +180,12 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		fFrameLevel = 0;
 	}
 
+	private class AddressRequest extends CRequest implements IDisassemblyRetrieval.AddressRequest {
+		private BigInteger fAddress;
+		public BigInteger getAddress() { return fAddress; }
+		public void setAddress(BigInteger address) { fAddress = address; }
+	};
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#retrieveFrameAddress(int)
 	 */
@@ -190,7 +197,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 				return;
 			}
 			IStackFrame stackFrame= stackFrames[targetFrame];
-			fDisassemblyRetrieval.asyncGetFrameAddress(stackFrame, new IDisassemblyRetrieval.AddressRequest() {
+			fDisassemblyRetrieval.asyncGetFrameAddress(stackFrame, new AddressRequest() {
 				@Override
 				public void done() {
 					fCallback.setUpdatePending(false);
@@ -238,6 +245,12 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		return fTargetFrameContext.getFrameLineNumber();		
 	}
 
+	private class DisassemblyRequest extends CRequest implements IDisassemblyRetrieval.DisassemblyRequest {
+		private IDisassemblyBlock fBlock;
+		public IDisassemblyBlock getDisassemblyBlock() { return fBlock;	}
+		public void setDisassemblyBlock(IDisassemblyBlock block) { fBlock = block; }
+	};
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, boolean, boolean, boolean, int, int, int)
 	 */
@@ -253,7 +266,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			endAddress= startAddress.add(addressLength);
 		}
 		final BigInteger finalEndAddress= endAddress;
-		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new IDisassemblyRetrieval.DisassemblyRequest() {
+		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
 			public void done() {
 				if (!isCanceled() && getDisassemblyBlock() != null) {
@@ -365,7 +378,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	public void retrieveDisassembly(String file, int lines,
 			BigInteger endAddress, final boolean mixed, final boolean showSymbols,
 			final boolean showDisassembly) {
-		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new IDisassemblyRetrieval.DisassemblyRequest() {
+		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
 			public void done() {
 				if (!isCanceled() && getDisassemblyBlock() != null) {

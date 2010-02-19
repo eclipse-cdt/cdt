@@ -454,15 +454,6 @@ public interface IOption extends IBuildObject {
 	public boolean isExtensionElement();
 
 	/**
-	 * @return <code>true</code> if this option only overrides the value attribute
-	 * of its superclass and <code>false</code> if it overrides other attributes.
-	 * 
-	 * @deprecated as of 3.0.1
-	 */
-	@Deprecated
-	public boolean overridesOnlyValue();
-	
-	/**
 	 * @return <code>true</code> if this option is valid and <code>false</code>
 	 * if the option cannot be safely used due to an error in the MBS grammar.
 	 * 

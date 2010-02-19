@@ -1980,32 +1980,6 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#overridesOnlyValue()
-	 * Deprecated since 3.0.1
-	 */
-	public boolean overridesOnlyValue() {
-		if (superClass != null &&
-			unusedChildren == null &&
-		    browseType == null &&
-		    browseFilterExtensions == null &&
-		    (builtIns == null || builtIns.size() == 0) &&
-		    category == null &&
-			categoryId == null &&
-			command == null &&
-			commandFalse == null &&
-			tip == null &&
-			contextId == null &&
-			enumList == null &&
-			enumCommands == null &&
-			enumNames == null &&
-			defaultValue == null) {
-			return true;
-		} else {
-			return false;
-		}			
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isDirty()
 	 */
 	public boolean isDirty() {

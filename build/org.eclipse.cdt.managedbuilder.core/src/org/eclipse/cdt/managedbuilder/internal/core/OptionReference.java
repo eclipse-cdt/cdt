@@ -741,13 +741,7 @@ public class OptionReference implements IOption {
 	public boolean isExtensionElement() {
 		return false;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IOption#overridesOnlyValue()
-	 */
-	public boolean overridesOnlyValue() {
-		return false;
-	}
-	
+
 	/* (non-Javadoc)
 	 * Sets the raw value.
 	 */

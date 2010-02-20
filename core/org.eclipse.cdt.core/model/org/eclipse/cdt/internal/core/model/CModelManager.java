@@ -776,17 +776,17 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 		synchronized (binaryRunners) {
 			runner = binaryRunners.get(project);
 		}
-		// creation of BinaryRunner must occur outside the synchronized block
 		if (runner == null) {
+			// creation of BinaryRunner must occur outside the synchronized block
 			runner = new BinaryRunner(project);
-		}
-		synchronized (binaryRunners) {
-			if (binaryRunners.get(project) == null) {
-				binaryRunners.put(project, runner);
-				runner.start();
-			} else {
-				// another thread was faster
-				runner = binaryRunners.get(project);
+			synchronized (binaryRunners) {
+				if (binaryRunners.get(project) == null) {
+					binaryRunners.put(project, runner);
+					runner.start();
+				} else {
+					// another thread was faster
+					runner = binaryRunners.get(project);
+				}
 			}
 		}
 		return runner;

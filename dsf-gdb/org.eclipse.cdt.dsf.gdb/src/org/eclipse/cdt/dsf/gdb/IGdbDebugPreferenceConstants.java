@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,13 @@ public interface IGdbDebugPreferenceConstants {
 	 * Boolean preference whether to automatically terminate GDB when the inferior exists. Default is <code>true</code>. 
 	 */
 	public static final String PREF_AUTO_TERMINATE_GDB = "autoTerminateGdb"; //$NON-NLS-1$
-	
+
+	/**
+	 * Boolean preference whether to use the advanced Inspect debug text hover. Default is <code>true</code>. 
+	 * @since 3.0
+	 */
+	public static final String PREF_USE_INSPECTOR_HOVER = "useInspectorHover"; //$NON-NLS-1$
+
     /**
      * Help prefixes.
      */

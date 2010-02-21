@@ -12,8 +12,10 @@
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
 import org.eclipse.cdt.dsf.debug.ui.AbstractDsfDebugTextHover;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Debug editor text hover for GDB.
@@ -30,5 +32,15 @@ public class GdbDebugTextHover extends AbstractDsfDebugTextHover {
     @Override
 	protected String getHoverFormat() {
     	return  MIExpressions.DETAILS_FORMAT;
+    }
+
+    @Override
+    protected boolean useExpressionExplorer() {
+    	if (Platform.getPreferencesService().getBoolean(GdbUIPlugin.PLUGIN_ID,
+				IGdbDebugPreferenceConstants.PREF_USE_INSPECTOR_HOVER,
+				true, null)) {
+    		return true;
+    	}
+    	return false;
     }
 }

@@ -72,6 +72,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 
@@ -123,7 +124,8 @@ public class GdbAdapterFactory
             session.registerModelAdapter(SteppingController.class, fSteppingController);
 
             fViewModelAdapter = new GdbViewModelAdapter(session, fSteppingController);
-
+            session.registerModelAdapter(IViewerInputProvider.class, fViewModelAdapter);
+            
             if (launch.getSourceLocator() instanceof ISourceLookupDirector) {
                 fSourceDisplayAdapter = new DsfSourceDisplayAdapter(session, (ISourceLookupDirector)launch.getSourceLocator(), fSteppingController);
             } else {

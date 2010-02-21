@@ -155,7 +155,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 	
 	private class MacroLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider , ITableFontProvider, IColorProvider{
+		@Override
 		public Image getImage(Object element) { return null; }
+		@Override
 		public String getText(Object element) { return getColumnText(element, 0); }
 		public Font getFont(Object element) { return getFont(element, 0); }
 		public Image getColumnImage(Object element, int columnIndex) { return null; }
@@ -220,6 +222,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		updateButtons();
 	}
 	
+	@Override
 	protected void updateButtons() {
 		Object[] obs = ((IStructuredSelection)tv.getSelection()).toArray();
 		boolean canEdit = false;
@@ -240,6 +243,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	/*
 	 * called when a custom button was pressed
 	 */
+	@Override
 	public void buttonPressed(int index){
 		switch(index){
 		case 0:
@@ -353,6 +357,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		if(MessageDialog.openQuestion(usercomp.getShell(),
 				UIMessages.getString(DELETE_ALL_CONFIRM_TITLE),
@@ -374,6 +379,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR});
@@ -387,6 +393,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.setSelection(fShowSysMacros);
 		b.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fShowSysMacros = b.getSelection();
 				updateData(getResDesc());
@@ -397,6 +404,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
 	    lb1.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				CDTPrefUtil.spinDMode();
 				updateData();
@@ -413,6 +421,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
 	    lb2.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				CDTPrefUtil.spinWMode();
 				updateLbs(null, lb2);
@@ -484,6 +493,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		return true; 
 	}
 		
+	@Override
 	public void updateData(ICResourceDescription _cfgd) {
 		if (_cfgd == null) {
 			cfgd = null;
@@ -622,6 +632,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		return value;
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (cfgd != null) {// only for project, not for prefs
 			if (page.isMultiCfg()) {
@@ -650,6 +661,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	 * Unlike other pages, workspace variables 
 	 * should be stored explicitly on "OK".  
 	 */
+	@Override
 	protected void performOK() {
 		if (chkVars()) try {
 			if (fUserSup.setWorkspaceVariables(prefvars))
@@ -660,12 +672,14 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		super.performOK();
 	}
 	
+	@Override
 	protected void performCancel() {
 		prefvars = null;
 		super.performCancel();
 	}
 
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
 	}

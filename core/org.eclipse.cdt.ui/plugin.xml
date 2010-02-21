@@ -656,9 +656,10 @@
           <keywordReference id="org.eclipse.cdt.ui.codestyle"/>
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
+      <!-- Note that build console should be eventually moved to build plugin -->
       <page
             name="%CPluginBuildConsolePreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
           <keywordReference id="org.eclipse.cdt.ui.common"/>

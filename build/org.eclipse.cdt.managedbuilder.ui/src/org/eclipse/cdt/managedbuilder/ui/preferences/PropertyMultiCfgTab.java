@@ -11,12 +11,10 @@
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,17 +32,15 @@ import org.eclipse.swt.widgets.Label;
 public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 
 	private static final int SPACING = 5; // for radio buttons layout
-    private static final Color BLUE = CUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_BLUE);
 
-    private Group dGrp;
-    private Group wGrp;
-    private Button d_1;
-    private Button d_2;
+	private Group dGrp;
+	private Group wGrp;
+	private Button d_1;
+	private Button d_2;
 
-    private Button w_0;
-    private Button w_1;
-    
-    
+	private Button w_0;
+	private Button w_1;
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -52,42 +48,40 @@ public class PropertyMultiCfgTab extends AbstractCPropertyTab {
 		g.verticalSpacing = SPACING;
 		usercomp.setLayout(g);
 
-        dGrp = new Group(usercomp, SWT.NONE);
-        dGrp.setText(UIMessages.getString("PropertyMultiCfgTab.3")); //$NON-NLS-1$
-        dGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        FillLayout fl = new FillLayout(SWT.VERTICAL);
-        fl.spacing = SPACING;
-        fl.marginWidth = SPACING;
-        dGrp.setLayout(fl);
-        
-        Label l = new Label(dGrp, SWT.WRAP | SWT.CENTER);
-        l.setText(
-       		UIMessages.getString("PropertyMultiCfgTab.4") //$NON-NLS-1$
-        );
-        l.setForeground(BLUE);
-        d_1 = new Button(dGrp, SWT.RADIO);
-        d_1.setText(UIMessages.getString("PropertyMultiCfgTab.6")); //$NON-NLS-1$
-        d_2 = new Button(dGrp, SWT.RADIO);
-        d_2.setText(UIMessages.getString("PropertyMultiCfgTab.7")); //$NON-NLS-1$
-        
-        wGrp = new Group(usercomp, SWT.NONE);
-        wGrp.setText(UIMessages.getString("PropertyMultiCfgTab.8")); //$NON-NLS-1$
-        wGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        fl = new FillLayout(SWT.VERTICAL);
-        fl.spacing = SPACING;
-        fl.marginWidth = SPACING;
-        wGrp.setLayout(fl);
+		dGrp = new Group(usercomp, SWT.NONE);
+		dGrp.setText(UIMessages.getString("PropertyMultiCfgTab.3")); //$NON-NLS-1$
+		dGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		FillLayout fl = new FillLayout(SWT.VERTICAL);
+		fl.spacing = SPACING;
+		fl.marginHeight = SPACING;
+		fl.marginWidth = SPACING;
+		dGrp.setLayout(fl);
 
-        l = new Label(wGrp, SWT.WRAP | SWT.CENTER);
-        l.setText(
-           		UIMessages.getString("PropertyMultiCfgTab.9") //$NON-NLS-1$
-            );
-        l.setForeground(BLUE);
-        w_0 = new Button(wGrp, SWT.RADIO);
-        w_0.setText(UIMessages.getString("PropertyMultiCfgTab.10")); //$NON-NLS-1$
-        w_1 = new Button(wGrp, SWT.RADIO);
-        w_1.setText(UIMessages.getString("PropertyMultiCfgTab.11")); //$NON-NLS-1$
-        
+		Label l = new Label(dGrp, SWT.WRAP);
+		l.setText(UIMessages.getString("PropertyMultiCfgTab.4")); //$NON-NLS-1$
+
+		d_1 = new Button(dGrp, SWT.RADIO);
+		d_1.setText(UIMessages.getString("PropertyMultiCfgTab.6")); //$NON-NLS-1$
+		d_2 = new Button(dGrp, SWT.RADIO);
+		d_2.setText(UIMessages.getString("PropertyMultiCfgTab.7")); //$NON-NLS-1$
+
+		wGrp = new Group(usercomp, SWT.NONE);
+		wGrp.setText(UIMessages.getString("PropertyMultiCfgTab.8")); //$NON-NLS-1$
+		wGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fl = new FillLayout(SWT.VERTICAL);
+		fl.spacing = SPACING;
+		fl.marginHeight = SPACING;
+		fl.marginWidth = SPACING;
+		wGrp.setLayout(fl);
+
+		l = new Label(wGrp, SWT.WRAP);
+		l.setText(UIMessages.getString("PropertyMultiCfgTab.9")); //$NON-NLS-1$
+
+		w_0 = new Button(wGrp, SWT.RADIO);
+		w_0.setText(UIMessages.getString("PropertyMultiCfgTab.10")); //$NON-NLS-1$
+		w_1 = new Button(wGrp, SWT.RADIO);
+		w_1.setText(UIMessages.getString("PropertyMultiCfgTab.11")); //$NON-NLS-1$
+
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DMODE)) {
 			case CDTPrefUtil.DMODE_CONJUNCTION: d_1.setSelection(true); break;
 			case CDTPrefUtil.DMODE_DISJUNCTION: d_2.setSelection(true); break;

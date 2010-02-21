@@ -43,7 +43,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
     private Button b_1;
     private Button b_2;
     private Button b_3;
-    private Button b_4;
 
     private Button s_0;
     private Button s_1;
@@ -158,7 +157,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		b_1.setSelection(false);
 		b_2.setSelection(false);
 		b_3.setSelection(false);
-		b_4.setSelection(false);
 		s_0.setSelection(true);
 		s_1.setSelection(false);
 		s_2.setSelection(false);

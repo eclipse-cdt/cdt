@@ -231,14 +231,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		public boolean handlesEvent(int eventType){
 			return (eventType & fEventTypes) != 0;
 		}
-		@Override
-		public int hashCode() {
-			return fListener.hashCode();
-		}
-		@Override
-		public boolean equals(Object obj) {
-			return fListener.equals(obj);
-		}
 	}
 
 	private volatile Map<String, CConfigurationDataProviderDescriptor> fProviderMap;
@@ -2121,7 +2113,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public void removeCProjectDescriptionListener(ICProjectDescriptionListener listener) {
-		fListeners.remove(listener);
+		for (ListenerDescriptor listenerDescriptor : fListeners) {
+			if (listenerDescriptor.fListener.equals(listener)) {
+				fListeners.remove(listenerDescriptor);
+				break;
+			}
+		}
 	}
 
 	public void notifyListeners(CProjectDescriptionEvent event){

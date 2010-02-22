@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 QNX Software Systems and others.
+ * Copyright (c) 2008, 2010 QNX Software Systems and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,21 +12,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.breakpoints;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.Image;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Factory for event breakpoint label provider
@@ -46,7 +44,7 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 
 					if (bscs.length == 0)
 						return null;
-					StringBuffer buffer = new StringBuffer("");
+					StringBuffer buffer = new StringBuffer();
 
 					for (ICBreakpointsUIContribution con : bscs) {
 						Object attValue = breakpoint.getMarker().getAttribute(con.getId());
@@ -56,14 +54,14 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 							continue;
 						}
 						if (attValue != null && attValue.toString().length() > 0) {
-							buffer.append(" [");
+							buffer.append(" ["); //$NON-NLS-1$
 							buffer.append(con.getLabel());
-							buffer.append(": ");
+							buffer.append(": "); //$NON-NLS-1$
 							if (attValue instanceof String)
 								buffer.append(con.getLabelForValue((String) attValue));
 							else
 								buffer.append(attValue);
-							buffer.append("]");
+							buffer.append(']');
 						}
 					}
 					appendIgnoreCount(breakpoint, buffer);
@@ -113,24 +111,12 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		}
 	}
 
-	private static IElementLabelProvider fElementLabelProvider = new DebugElementLabelProvider() {
-
-		protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId)
-				throws CoreException {
-
-			ICEventBreakpoint cp = (ICEventBreakpoint) elementPath.getLastSegment();
-			return fLabelProvider.getText(cp);
-
-		}
-
-	};
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
-	 *      java.lang.Class)
+	private static IElementLabelProvider fElementLabelProvider = new BreakpointLabelProvider();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(IElementLabelProvider.class)) {
 			if (adaptableObject instanceof ICEventBreakpoint) {
@@ -145,11 +131,10 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
 		return new Class[] { IElementLabelProvider.class, ILabelProvider.class };
 	}

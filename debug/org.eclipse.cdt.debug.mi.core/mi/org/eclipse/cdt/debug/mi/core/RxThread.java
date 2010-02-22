@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
@@ -66,7 +67,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class RxThread extends Thread {
 
 	final MISession session;
-	List<MIStreamRecord> oobList;
+	LinkedList<MIStreamRecord> oobList;
 	CLIProcessor cli;
 	int prompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 	boolean fEnableConsole = true;
@@ -75,7 +76,7 @@ public class RxThread extends Thread {
 		super("MI RX Thread"); //$NON-NLS-1$
 		session = s;
 		cli = new CLIProcessor(session);
-		oobList = new ArrayList<MIStreamRecord>();
+		oobList = new LinkedList<MIStreamRecord>();
 	}
 
 	/*
@@ -259,10 +260,10 @@ public class RxThread extends Thread {
 				for (int i = 0; i < oobs.length; i++) {
 					processMIOOBRecord(oobs[i], list);
 				}
-				// If not waiting for any command results, don't need the result in the oobList
-// This breaks detecting shared library event handling.  See bug 302927
-//				if (rxQueue.isEmpty())
-//					oobList.clear();
+				// If not waiting for any command results, ensure the oobList doesn't
+				// get too large. See Bug 302927 for more
+				if (rxQueue.isEmpty() && oobList.size() > 20)
+					oobList.removeFirst();
 			}
 
 			MIEvent[] events = list.toArray(new MIEvent[list.size()]);

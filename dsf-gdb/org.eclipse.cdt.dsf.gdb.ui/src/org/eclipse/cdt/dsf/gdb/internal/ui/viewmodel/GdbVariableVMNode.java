@@ -66,19 +66,23 @@ public class GdbVariableVMNode extends VariableVMNode {
 	                    if (expressionService != null) {
 	                    	final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(getSession().getExecutor(), null) {
                                 @Override
-								public void handleSuccess() {
-                                    request.setSize(getData().getSize());
+								public void handleCompleted() {
+                                	if (isSuccess()) {
+                                		request.setSize(getData().getSize());
+                                	}
                                     request.done();
                                 }
 	                    	};
 	                    	
 	                        expressionService.getExpressionAddressData(exprDmc, drm);
 	                    }
+	        			else {
+	        				request.done();
+	        			}
 	                }
 	            });
 			}
 			else {
-				request.setSize(-1);
 				request.done();
 			}
 		}
@@ -104,24 +108,22 @@ public class GdbVariableVMNode extends VariableVMNode {
 	                                	assert getData().getSize() > 0;
 	                                    request.setCanCreate(true);
                                 	}
-                                	else {
-                                		request.setCanCreate(false);
-                                	}
 	                                request.done();
                                 }
 	                    	};
 	                    	
 	                        expressionService.getExpressionAddressData(exprDmc, drm);
 	                    }
+	        			else {
+	        				request.done();
+	        			}
 	                }
 	            });
 			}
 			else {
-				request.setCanCreate(false);
 				request.done();
 			}
 		}
-		
 	};
 	
 	/**

@@ -25,7 +25,7 @@ public interface ICWatchpointTarget {
 
 	/** IRequest object used in the asynchronous method {@link ICWatchpointTarget#getSize()} */
 	interface GetSizeRequest extends IRequest {
-		int getSize();
+		int getSize(); // returns -1 if size not available
 		void setSize(int size);
 	};
 	

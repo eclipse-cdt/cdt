@@ -53,7 +53,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	}
 
 	private static class GetSizeRequest extends CRequest implements ICWatchpointTarget.GetSizeRequest {
-		int fSize;
+		int fSize = -1;
 		public int getSize() {
 			return fSize;
 		}
@@ -122,6 +122,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(final IAction action, ISelection selection) {
+		fVar = null;
 		if (selection == null || selection.isEmpty()) {
 			action.setEnabled(false);
 			return;

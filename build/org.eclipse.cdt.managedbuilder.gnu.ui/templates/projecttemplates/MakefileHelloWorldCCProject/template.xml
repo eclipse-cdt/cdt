@@ -40,7 +40,16 @@
 			</element>
 		</complex-array>
 	</process>
-	
+
+	<process type="org.eclipse.cdt.ui.OpenFiles">
+		<simple name="projectName" value="$(projectName)"/>
+		<complex-array name="files">
+			<element>
+				<simple name="target" value="$(projectName).cpp"/>
+			</element>
+		</complex-array>
+	</process>
+
 	<process type="org.eclipse.cdt.managedbuilder.gnu.ui.SimpleGNUMakefileGenerator">
 		<simple name="projectName" value="$(projectName)"/>
 	</process>

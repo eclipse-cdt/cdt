@@ -3500,4 +3500,22 @@
          </activeWhen>
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.templateProcessTypes">
+            <processType
+            name="OpenFiles"
+            processRunner="org.eclipse.cdt.ui.templateengine.processes.OpenFiles">
+         <simple
+               name="projectName">
+         </simple>
+         <complexArray
+               name="files">
+            <baseType>
+               <simple
+                     name="target">
+               </simple>
+            </baseType>
+         </complexArray>
+      </processType>
+   </extension>
 </plugin>

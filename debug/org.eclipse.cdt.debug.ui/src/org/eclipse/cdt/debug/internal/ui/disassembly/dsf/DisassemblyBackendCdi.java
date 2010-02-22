@@ -201,7 +201,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 				@Override
 				public void done() {
 					fCallback.setUpdatePending(false);
-					if (!isCanceled()) {
+					if (isSuccess()) {
 						BigInteger address= getAddress();
 						if (targetFrame == 0) {
 							fCallback.updatePC(address);
@@ -269,7 +269,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
 			public void done() {
-				if (!isCanceled() && getDisassemblyBlock() != null) {
+				if (isSuccess() && getDisassemblyBlock() != null) {
 					insertDisassembly(startAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly);
 				} else {
 					final IStatus status= getStatus();
@@ -381,7 +381,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
 			public void done() {
-				if (!isCanceled() && getDisassemblyBlock() != null) {
+				if (isSuccess() && getDisassemblyBlock() != null) {
 					insertDisassembly(null, getDisassemblyBlock(), mixed, showSymbols, showDisassembly);
 				} else {
 					final IStatus status= getStatus();

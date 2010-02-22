@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -33,10 +34,11 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDelegate implements IObjectActionDelegate {
 
-	/**
-	 * The target variable/expression
-	 */
+	/** The target variable/expression */
 	private ICWatchpointTarget fVar;
+	
+	/** The view where fVar was selected */ 
+	private IWorkbenchPart fActivePart;
 	
 	/**
 	 * Constructor
@@ -49,7 +51,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		// Don't care. Our logic is agnostic to the view we're invoked from.
+		fActivePart = targetPart;
 	}
 
 	private static class GetSizeRequest extends CRequest implements ICWatchpointTarget.GetSizeRequest {
@@ -81,26 +83,40 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 		// synchronously)
 		final ICWatchpointTarget.GetSizeRequest request = new GetSizeRequest() {
 			public void done() {
-				// Now that we have the size, put up a dialog to create the watchpoint
-				final int size = getSize();
-				assert size > 0 : "unexpected variale/expression size"; //$NON-NLS-1$
-				WorkbenchJob job = new WorkbenchJob("open watchpoint dialog") { //$NON-NLS-1$
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						AddWatchpointDialog dlg = new AddWatchpointDialog(CDebugUIPlugin.getActiveWorkbenchShell(), 
-								getMemorySpaceManagement());
-						dlg.setExpression(expr);
-						dlg.initializeRange(false, Integer.toString(size));
-						if (dlg.open() == Window.OK) {
-							addWatchpoint(dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression(), dlg.getMemorySpace(), dlg.getRange());
+				if (isSuccess()) {
+					// Now that we have the size, put up a dialog to create the watchpoint
+					final int size = getSize();
+					assert size > 0 : "unexpected variale/expression size"; //$NON-NLS-1$
+					WorkbenchJob job = new WorkbenchJob("open watchpoint dialog") { //$NON-NLS-1$
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							AddWatchpointDialog dlg = new AddWatchpointDialog(CDebugUIPlugin.getActiveWorkbenchShell(), 
+									getMemorySpaceManagement());
+							dlg.setExpression(expr);
+							dlg.initializeRange(false, Integer.toString(size));
+							if (dlg.open() == Window.OK) {
+								addWatchpoint(dlg.getWriteAccess(), dlg.getReadAccess(), dlg.getExpression(), dlg.getMemorySpace(), dlg.getRange());
+							}
+							return Status.OK_STATUS;
 						}
-						return Status.OK_STATUS;
-					}
-				};
-				job.setSystem(true);
-				job.schedule();
+					};
+					job.setSystem(true);
+					job.schedule();
+				}
+				else  {
+					WorkbenchJob job = new WorkbenchJob("watchpoint error") { //$NON-NLS-1$
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							if (fActivePart != null) {
+								ErrorDialog.openError( fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString( "AddWatchpointOnVariableActionDelegate.Error_Dlg_Title" ), ActionMessages.getString( "AddWatchpointOnVariableActionDelegate.No_Element_Size" ), getStatus() ); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setSystem(true);
+					job.schedule();
+				}
 			}
-
 		};
 		fVar.getSize(request);
 	}

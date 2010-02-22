@@ -56,4 +56,16 @@ public class CRequest implements IRequest {
 	public void setStatus(IStatus status) {
 		fStatus= status;
 	}
+
+	/**
+	 * Checks whether the request completed successfully or not. If the request
+	 * monitor was canceled it is considered a failure, regardless of the
+	 * status. If the status has a severity higher than INFO (i.e., WARNING,
+	 * ERROR or CANCEL), it is considered a failure. Note that as per IRequest
+	 * documentation, a null status object is equivalent to IStatu#OK.
+	 */
+    public boolean isSuccess() {
+    	IStatus status = getStatus();
+        return !isCanceled() && (status == null || status.getSeverity() <= IStatus.INFO); 
+    }
 }

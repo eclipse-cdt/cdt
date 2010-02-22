@@ -19,9 +19,11 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
+import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Specialization of DSF's VariableVMNode. See
@@ -70,6 +72,7 @@ public class GdbVariableVMNode extends VariableVMNode {
                                 	if (isSuccess()) {
                                 		request.setSize(getData().getSize());
                                 	}
+                                	request.setStatus(getStatus());
                                     request.done();
                                 }
 	                    	};
@@ -77,12 +80,14 @@ public class GdbVariableVMNode extends VariableVMNode {
 	                        expressionService.getExpressionAddressData(exprDmc, drm);
 	                    }
 	        			else {
+	        				request.setStatus(internalError());
 	        				request.done();
 	        			}
 	                }
 	            });
 			}
 			else {
+				request.setStatus(internalError());
 				request.done();
 			}
 		}
@@ -108,6 +113,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 	                                	assert getData().getSize() > 0;
 	                                    request.setCanCreate(true);
                                 	}
+                                	request.setStatus(getStatus());                                	
 	                                request.done();
                                 }
 	                    	};
@@ -115,17 +121,25 @@ public class GdbVariableVMNode extends VariableVMNode {
 	                        expressionService.getExpressionAddressData(exprDmc, drm);
 	                    }
 	        			else {
+	        				request.setStatus(internalError());
 	        				request.done();
 	        			}
 	                }
 	            });
 			}
 			else {
+				request.setStatus(internalError());
 				request.done();
 			}
 		}
 	};
 	
+	/**
+	 * Utility method to create an IStatus object for an internal error 
+	 */
+	private static Status internalError() {
+		return new Status(Status.ERROR, GdbUIPlugin.getUniqueIdentifier(), Messages.Internal_Error);
+	}
 	/**
 	 * Constructor (passthru)
 	 */

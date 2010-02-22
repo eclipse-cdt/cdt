@@ -3062,7 +3062,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * with the "forceLoad" argument set to true
 	 *
 	 * @param resource The resource to search for managed build information on.
-	 * @return IManagedBuildInfo The build information object for the resource.
+	 * @return IManagedBuildInfo The build information object for the resource, or null if it doesn't exist
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
 		return getBuildInfo(resource, true);

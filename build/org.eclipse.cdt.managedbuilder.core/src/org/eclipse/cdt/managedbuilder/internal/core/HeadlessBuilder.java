@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
@@ -81,6 +82,8 @@ public class HeadlessBuilder implements IApplication {
 
 	/** Set of project URIs / paths to import */
 	private final Set<String> projectsToImport = new HashSet<String>();
+	/** Tree of projects to recursively import */
+	private final Set<String> projectTreeToImport = new HashSet<String>();
 	/** Set of project names to build */
 	private final Set<String> projectRegExToBuild = new HashSet<String>();
 	/** Set of project names to clean */
@@ -121,6 +124,8 @@ public class HeadlessBuilder implements IApplication {
 					projectMatched = true;
 					// Find the configurations that match the regular expression
 					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+					if (info == null)
+						continue;
 					IConfiguration[] cfgs = info.getManagedProject().getConfigurations();
 
 					for(IConfiguration cfg : cfgs) {
@@ -183,6 +188,91 @@ public class HeadlessBuilder implements IApplication {
 		}
 	}
 
+	/**
+	 * Import a project into the workspace
+	 * @param uri base URI string
+	 * @param recurse should we recurse down the URI importing all projects?
+	 * @return int OK / ERROR
+	 */
+	private int importProject(String projURIStr, boolean recurse) throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProgressMonitor monitor = new PrintingProgressMonitor();
+		InputStream in = null;
+		try {
+			URI project_uri = null;
+			try {
+				project_uri = URI.create(projURIStr);
+			} catch (Exception e) {
+				// Will be treated as straightforward path in the case below
+			}
+
+			// Handle local paths as well
+			if (project_uri == null || project_uri.getScheme() == null) {
+				IPath p = new Path(projURIStr).addTrailingSeparator();
+				project_uri = URIUtil.toURI(p);
+			}
+
+			if (recurse) {
+				if (!EFS.getStore(project_uri).fetchInfo().exists()) {
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_Directory + project_uri + HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
+					return ERROR;
+				}
+				for (IFileStore info : EFS.getStore(project_uri).childStores(EFS.NONE, monitor)) {
+					if (!info.fetchInfo().isDirectory())
+						continue;
+					int status = importProject(info.toURI().toString(), recurse);
+					if (status != OK)
+						return status;
+				}
+			}
+
+			// Load the project description
+			IFileStore fstore = EFS.getStore(project_uri).getChild(".project"); //$NON-NLS-1$
+			if (!fstore.fetchInfo().exists()) {
+				if (!recurse) {
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project_uri + HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
+					return ERROR;
+				}
+				// .project not found; OK if we're not recursing
+				return OK;
+			}
+
+			in = fstore.openInputStream(EFS.NONE, monitor);
+			IProjectDescription desc = root.getWorkspace().loadProjectDescription(in);
+
+			// Check that a project with the same name doesn't already exist in the workspace
+			IProject project = root.getProject(desc.getName());
+			if (project.exists()) {
+				// It's ok if the project we're importing is the same as one already in the workspace
+				if (URIUtil.equals(project.getLocationURI(), project_uri)) {
+					project.open(monitor);
+					return OK;
+				}
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + desc.getName() + HeadlessBuildMessages.HeadlessBuilder_already_exists_in_workspace);
+				return ERROR;
+			}
+			// Check the URI is valid for a project in this workspace
+			if (!root.getWorkspace().validateProjectLocationURI(project, project_uri).equals(Status.OK_STATUS)) {
+				System.err.println(HeadlessBuildMessages.HeadlessBuilder_URI + project_uri + HeadlessBuildMessages.HeadlessBuilder_is_not_valid_in_workspace);
+				return ERROR;
+			}
+
+			// Create and open the project
+			// Note that if the project exists directly under the workspace root, we can't #setLocationURI(...)
+			if (!URIUtil.equals(ResourcesPlugin.getWorkspace().getRoot().getLocationURI().resolve(
+								org.eclipse.core.runtime.URIUtil.lastSegment(project_uri)), project_uri))
+				desc.setLocationURI(project_uri);
+			project.create(desc, monitor);
+			project.open(monitor);
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e2) { /* don't care */ }
+		}
+		return OK;
+	}
+
 	public Object start(IApplicationContext context) throws Exception {
 		IProgressMonitor monitor = new PrintingProgressMonitor();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -209,63 +299,19 @@ public class HeadlessBuilder implements IApplication {
 			if (System.getProperty("org.eclipse.cdt.core.console") == null) //$NON-NLS-1$
 				System.setProperty("org.eclipse.cdt.core.console", "org.eclipse.cdt.core.systemConsole"); //$NON-NLS-1$ //$NON-NLS-2$
 
-
 			/*
 			 * Perform the project import
 			 */
 			// Import any projects that need importing
 			for (String projURIStr : projectsToImport) {
-				InputStream in = null;
-				try {
-					URI project_uri = null;
-					try {
-						project_uri = URI.create(projURIStr);
-					} catch (Exception e) {
-						// Will be treated as straightforward path in the case below
-					}
-
-					// Handle local paths as well
-					if (project_uri == null || project_uri.getScheme() == null) {
-						IPath p = new Path(projURIStr).addTrailingSeparator();
-						project_uri = URIUtil.toURI(p);
-					}
-
-					// workaround for bug 274863 -- project URIs must end with a Path separator
-					String uri_string = project_uri.toASCIIString();
-					if (!uri_string.endsWith("/")) { //$NON-NLS-1$
-						uri_string += IPath.SEPARATOR;
-						project_uri = new URI(uri_string);
-					}
-
-					// Load the project description
-					IFileStore fstore = EFS.getStore(project_uri.resolve(".project")); //$NON-NLS-1$
-					if (!fstore.fetchInfo().exists()) {
-						System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project_uri.resolve(".project") + HeadlessBuildMessages.HeadlessBuilder_cant_be_found); //$NON-NLS-1$
-						return ERROR;
-					}
-					in = fstore.openInputStream(EFS.NONE, monitor);
-					IProjectDescription desc = root.getWorkspace().loadProjectDescription(in);
-
-					// Check that a project with the same name doesn't already exist in the workspace
-					IProject project = root.getProject(desc.getName());
-					if (project.exists()) {
-						System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + desc.getName() + HeadlessBuildMessages.HeadlessBuilder_already_exists_in_workspace);
-						return ERROR;
-					}
-					// Check the URI is valid for a project in this workspace
-					if (!root.getWorkspace().validateProjectLocationURI(project, project_uri).equals(Status.OK_STATUS)) {
-						System.err.println(HeadlessBuildMessages.HeadlessBuilder_URI + project_uri + HeadlessBuildMessages.HeadlessBuilder_is_not_valid_in_workspace);
-						return ERROR;
-					}
-
-					// Create and open the project
-					desc.setLocationURI(project_uri);
-					project.create(desc, monitor);
-					project.open(monitor);
-				} finally {
-					if (in != null)
-						in.close();
-				}
+				int status = importProject(projURIStr, false);
+				if (status != OK)
+					return status;
+			}
+			for (String projURIStr : projectTreeToImport) {
+				int status = importProject(projURIStr, true);
+				if (status != OK)
+					return status;
 			}
 
 			IProject[] allProjects = root.getProjects();
@@ -332,6 +378,7 @@ public class HeadlessBuilder implements IApplication {
 	 *
 	 * Arguments
 	 *   -import     {[uri:/]/path/to/project}
+	 *   -importAll  {[uri:/]/path/to/projectTreeURI} Import all projects in the tree
 	 *   -build      {project_name_reg_ex/config_name_reg_ex | all}
 	 *   -cleanBuild {project_name_reg_ex/config_name_reg_ex | all}
 	 *
@@ -346,6 +393,8 @@ public class HeadlessBuilder implements IApplication {
 			for (int i = 0; i < args.length; i++) {
 				if ("-import".equals(args[i])) { //$NON-NLS-1$
 					projectsToImport.add(args[++i]);
+				} else if ("-importAll".equals(args[i])) { //$NON-NLS-1$
+					projectTreeToImport.add(args[++i]);
 				} else if ("-build".equals(args[i])) { //$NON-NLS-1$
 					projectRegExToBuild.add(args[++i]);
 				} else if ("-cleanBuild".equals(args[i])) { //$NON-NLS-1$
@@ -360,6 +409,7 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_Error + e.getMessage());
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_import);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_importAll);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_clean_build);
 			return false;

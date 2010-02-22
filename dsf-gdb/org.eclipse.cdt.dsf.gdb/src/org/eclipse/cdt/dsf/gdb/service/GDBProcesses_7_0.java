@@ -390,7 +390,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// debugging a process, and removed when we stop.
 	// This allows us to make sure that if a pid is re-used, we will not use an
 	// old name for it.  Bug 275497
-    private Map<String, String> fDebuggedProcessNames = new HashMap<String, String>();
+	// This map also serves as a list of processes we are currently debugging.
+	// This is important because we cannot always ask GDB for the list, since it may
+	// be running at the time.  Bug 303503
+    private Map<String, String> fDebuggedProcessesAndNames = new HashMap<String, String>();
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
@@ -547,10 +550,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				// I haven't found a good way to get the pid yet, so let's not show it.
 				id = null;
 			} else {
-				name = fDebuggedProcessNames.get(id);
+				name = fDebuggedProcessesAndNames.get(id);
 				if (name == null) {
 					// We don't have the name in our map.  Should not happen.
 					name = "Unknown name"; //$NON-NLS-1$
+				} else if (name.length() == 0) {
+					// Return the default name of our program.
+					IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+					name = backend.getProgramPath().toOSString();
+					fDebuggedProcessesAndNames.put(id, name);
 				}
 			}
 			rm.setData(new MIThreadDMData(name, id));
@@ -706,15 +714,14 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						}
 					});
 		} else {
-			fContainerCommandCache.execute(
-					new MIListThreadGroups(controlDmc),
-					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
-						@Override
-						protected void handleSuccess() {
-							rm.setData(makeContainerDMCs(controlDmc, getData().getGroupList()));
-							rm.done();
-						}
-					});
+			IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[fDebuggedProcessesAndNames.size()];
+			int i = 0;
+			for (String groupId : fDebuggedProcessesAndNames.keySet()) {
+		    	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
+		    	containerDmcs[i++] = createContainerContext(processDmc, groupId);
+			}
+			rm.setData(containerDmcs);
+			rm.done();
 		}
 	}
 
@@ -739,16 +746,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			}
 			return executionDmcs;
 		}
-	}
-	
-	private IMIContainerDMContext[] makeContainerDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
-		IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[groups.length];
-		for (int i = 0; i < groups.length; i++) {
-			String groupId = groups[i].getGroupId();
-			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
-			containerDmcs[i] = createContainerContext(procDmc, groupId);
-		}
-		return containerDmcs;
 	}
 
     public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
@@ -922,6 +919,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     				if (groupId != null) {
     					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
+    						fDebuggedProcessesAndNames.put(groupId, ""); //$NON-NLS-1$
+    					
     						// GDB is debugging a new process.  Let's fetch its name and remember it.
         					final String finalGroupId = groupId;
     						fListThreadGroupsAvailableCache.execute(
@@ -937,13 +936,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     										if (isSuccess()) {
     											for (IThreadGroupInfo groupInfo : getData().getGroupList()) {
     												if (groupInfo.getPid().equals(finalGroupId)) {
-    													fDebuggedProcessNames.put(groupInfo.getPid(), groupInfo.getName());
+    													fDebuggedProcessesAndNames.put(finalGroupId, groupInfo.getName());
     												}
     											}
     										}
     									}
     								});
     					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
+    						// GDB is no longer debugging this process.  Remove it from our list.
+    						fDebuggedProcessesAndNames.remove(groupId);
+    						
     						// Remove any entries for that group from our thread to group map
     						// When detaching from a group, we won't have received any thread-exited event
     						// but we don't want to keep those entries.
@@ -955,9 +957,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     								}
     							}
     						}
-    						
-    						// GDB is no longer debugging this process.  Remove its name.
-    						fDebuggedProcessNames.remove(groupId);
     					}
     				}
     			}

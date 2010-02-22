@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Broadcom Corporation and others.
+ * Copyright (c) 2009, 2010 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,13 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_is_not_accessible;
 	public static String HeadlessBuilder_is_not_valid_in_workspace;
 	public static String HeadlessBuilder_no_arguments;
+	public static String HeadlessBuilder_NoConfigMatched;
+	public static String HeadlessBuilder_NoProjectMatched;
 	public static String HeadlessBuilder_project;
+	public static String HeadlessBuilder_Quote;
+	public static String HeadlessBuilder_RegExSyntaxError;
+	public static String HeadlessBuilder_Skipping;
+	public static String HeadlessBuilder_Skipping2;
 	public static String HeadlessBuilder_unknown_argument;
 	public static String HeadlessBuilder_URI;
 	public static String HeadlessBuilder_usage;

@@ -15,15 +15,19 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Vector;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
@@ -236,6 +240,15 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
+	/** 
+	 * A counter of MIRunning/MIStopped events that should be kept silent for the specified thread. 
+	 */
+	private class DisableRunningAndStoppedEvents {
+		public IMIExecutionDMContext executionDmc = null;
+		public int count = 0;
+	};
+	private DisableRunningAndStoppedEvents fDisableRunningAndStoppedEvents = new DisableRunningAndStoppedEvents();
+
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
@@ -293,15 +306,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return (threadState == null) ? false : !fTerminated && threadState.fSuspended;
 		}
 
-		// Container case
+		// Container case.  The container is considered suspended as long
+		// as one of its thread is suspended
 		if (context instanceof IContainerDMContext) {
-			boolean isSuspended = false;
 			for (IMIExecutionDMContext threadContext : fThreadRunStates.keySet()) {
 				if (DMContexts.isAncestorOf(threadContext, context)) {
-					isSuspended |= isSuspended(threadContext);
+					if (isSuspended(threadContext)) return true;
 				}
 			}
-			return isSuspended;
 		}
 
 		// Default case
@@ -792,6 +804,142 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		threadState.fStateChangeReason = reason;
 	}
 
+	
+	/**
+	 * @since 3.0
+	 */
+	public void executeWithTargetAvailable(IDMContext ctx, Sequence.Step[] steps, RequestMonitor rm) {
+		Vector<Step> totalStepsVector = new Vector<Step>();
+		totalStepsVector.add(new IsTargetAvailableStep(ctx));
+		totalStepsVector.add(new MakeTargetAvailableStep());
+		for (Step step : steps) {
+			totalStepsVector.add(step);
+		}
+		totalStepsVector.add(new RestoreTargetStateStep());
+		
+		final Step[] totalSteps = totalStepsVector.toArray(new Step[totalStepsVector.size()]);
+		getExecutor().execute(new Sequence(getExecutor(), rm) {
+			@Override public Step[] getSteps() { return totalSteps; }
+		});
+	}
+
+	/* ******************************************************************************
+	 * Section to support making operations even when the target is unavailable.
+	 *
+	 * Although one would expect to be able to make commands all the time when
+	 * in non-stop mode, it turns out that GDB has trouble with some commands
+	 * like breakpoints.  The safe way to do it is to make sure we have at least
+	 * one thread suspended.
+	 * 
+	 * Basically, we must make sure one container is suspended before making
+	 * certain operations (currently breakpoints).  If that is not the case, we must 
+	 * first suspend one thread, then perform the specified operations,
+	 * and finally resume that thread..
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=242943
+	 * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=282273
+	 * 
+	 * ******************************************************************************/
+	private IContainerDMContext fContainerDmcToSuspend  = null;
+	private IMIExecutionDMContext fExecutionDmcToSuspend  = null;
+	private boolean fTargetAvailable = false;
+
+	/**
+	 * @since 3.0
+	 */
+	protected class IsTargetAvailableStep extends Sequence.Step {
+		final IDMContext fCtx;
+		
+		public IsTargetAvailableStep(IDMContext ctx) {
+			fCtx = ctx;
+		}
+		
+		@Override
+		public void execute(final RequestMonitor rm) {
+			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
+			processControl.getProcessesBeingDebugged(
+					fCtx,
+					new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							assert getData() != null;
+							
+							if (getData().length == 0) {
+								// Happens at startup, starting with GDB 7.0
+								// This means the target is available
+								fTargetAvailable = true;
+							} else {
+								fTargetAvailable = false;
+								// Choose the first process as the one to suspend if needed
+								fContainerDmcToSuspend = (IContainerDMContext)(getData()[0]);
+								for (IDMContext containerDmc : getData()) {
+									if (isSuspended((IContainerDMContext)containerDmc)) {
+										fTargetAvailable = true;
+										break;
+									}
+								}
+							}
+							rm.done();
+						}
+					});
+		}
+	};
+
+	/**
+	 * @since 3.0
+	 */
+	protected class MakeTargetAvailableStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			if (!fTargetAvailable) {
+				// Instead of suspending the entire process, let's find its first thread and use that
+				IProcesses processControl = getServicesTracker().getService(IProcesses.class);
+				processControl.getProcessesBeingDebugged(
+						fContainerDmcToSuspend,
+						new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								assert getData() != null;
+								assert getData().length > 0;
+							
+								fExecutionDmcToSuspend = (IMIExecutionDMContext)getData()[0];
+							
+								// Don't broadcast the coming stopped/running events
+								assert fDisableRunningAndStoppedEvents.count == 0;
+								fDisableRunningAndStoppedEvents.count++;
+								fDisableRunningAndStoppedEvents.executionDmc = fExecutionDmcToSuspend;
+								
+								suspend(fExecutionDmcToSuspend, rm);
+							}
+						});
+			} else {
+				rm.done();
+			}
+		}
+	};
+
+	/**
+	 * @since 3.0
+	 */
+	protected class RestoreTargetStateStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			if (!fTargetAvailable) {
+				assert fDisableRunningAndStoppedEvents.count == 0 || fDisableRunningAndStoppedEvents.count == 1;
+				fDisableRunningAndStoppedEvents.count++;
+				fDisableRunningAndStoppedEvents.executionDmc = fExecutionDmcToSuspend;
+				
+				// Can't use the resume() call because we 'silently' stopped
+				// so resume() will not know we are actually stopped
+				fConnection.queueCommand(
+						new MIExecContinue(fExecutionDmcToSuspend),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			} else {
+				// We didn't suspend the thread, so we don't need to resume it
+				rm.done();
+			}
+		}
+	 };
+
 	///////////////////////////////////////////////////////////////////////////
 	// Event handlers
 	///////////////////////////////////////////////////////////////////////////
@@ -802,6 +950,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIRunningEvent e) {
+		if (fDisableRunningAndStoppedEvents.count > 0 &&
+			fDisableRunningAndStoppedEvents.executionDmc.equals(e.getDMContext())) {
+
+			fDisableRunningAndStoppedEvents.count--;
+			
+			// Don't broadcast the running event
+			return;
+		}
         getSession().dispatchEvent(new ResumedEvent(e.getDMContext(), e), getProperties());
 	}
 
@@ -849,6 +1005,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     				} else {
     					// Stopped for any other reasons.  Just remove our temporary one
     					// since we don't want it to hit later
+    					//
+    					// Note that in Non-stop, we don't cancel a run-to-line when a new
+    					// breakpoint is inserted.  This is because the new breakpoint could
+    					// be for another thread altogether and should not affect the current thread.
     					IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     							IBreakpointsTargetDMContext.class);
 
@@ -859,6 +1019,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     			}
     		}
     	}
+		if (fDisableRunningAndStoppedEvents.count > 0 &&
+		    fDisableRunningAndStoppedEvents.executionDmc.equals(e.getDMContext())) {
+			
+			fDisableRunningAndStoppedEvents.count--;
+
+			// Don't broadcast the stopped event
+			return;
+		}
         getSession().dispatchEvent(new SuspendedEvent(e.getDMContext(), e), getProperties());
 	}
 

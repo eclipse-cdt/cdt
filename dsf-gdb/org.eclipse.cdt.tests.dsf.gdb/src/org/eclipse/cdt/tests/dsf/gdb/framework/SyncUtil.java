@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2007, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -277,6 +278,40 @@ public class SyncUtil {
 		return SyncResumeUntilStopped(fGdbContainerDmc);
 	}
 
+	public static MIRunningEvent SyncResume(final IExecutionDMContext dmc) throws Throwable {
+        final ServiceEventWaitor<MIRunningEvent> eventWaitor =
+            new ServiceEventWaitor<MIRunningEvent>(
+                    fSession,
+                    MIRunningEvent.class);
+
+		fRunControl.getExecutor().submit(new Runnable() {
+			public void run() {
+				// No need for a RequestMonitor since we will wait for the
+				// ServiceEvent telling us the program has been resumed
+				fCommandControl.queueCommand(
+						new MIExecContinue(dmc),
+						null);
+			}
+		});
+
+		// Wait for the execution to suspend after the step
+    	return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);			
+	}
+
+	public static MIRunningEvent SyncResume() throws Throwable {
+		return SyncResume(fGdbContainerDmc);
+	}
+
+	public static MIStoppedEvent SyncWaitForStop() throws Throwable {
+        final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
+            new ServiceEventWaitor<MIStoppedEvent>(
+                    fSession,
+                    MIStoppedEvent.class);
+
+		// Wait for the execution to suspend
+    	return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);			
+	}
+	
 	public static MIStoppedEvent SyncRunToLocation(final String location) throws Throwable {
 		// Set a temporary breakpoint and run to it.
 		// Note that if there were other breakpoints set ahead of this one,

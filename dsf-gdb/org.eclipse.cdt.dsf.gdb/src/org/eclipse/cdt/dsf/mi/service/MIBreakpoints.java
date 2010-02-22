@@ -19,11 +19,17 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -88,7 +94,8 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     public static final String WRITE         = PREFIX + ".write";       //$NON-NLS-1$
 
 	// Services
-	ICommandControl fConnection;
+	private ICommandControl fConnection;
+	private IMIRunControl fRunControl;
 
 	// Service breakpoints tracking
 	// The breakpoints are stored per context and keyed on the back-end breakpoint reference
@@ -260,6 +267,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 
     	// Get the services references
 		fConnection = getServicesTracker().getService(ICommandControl.class);
+		fRunControl = getServicesTracker().getService(IMIRunControl.class);
 
         // Register for the useful events
 		getSession().addServiceEventListener(this, null);
@@ -522,82 +530,85 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * 
 	 * @param context
 	 * @param breakpoint
-	 * @param drm
+	 * @param finalRm
 	 * 
  	 * @since 3.0
 	 */
-	protected void addBreakpoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> drm)
+	protected void addBreakpoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> finalRm)
 	{
 		// Select the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
-       		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-       		drm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
 			return;
 		}
 
 		// Extract the relevant parameters (providing default values to avoid potential NPEs)
-		String location = formatLocation(attributes);
+		final String location = formatLocation(attributes);
 		if (location.equals(NULL_STRING)) {
-       		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-       		drm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
 			return;
 		}
 
-		Boolean isTemporary    = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false);
-		Boolean isHardware     = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false);
-		final String condition = (String)  getProperty(attributes, CONDITION,    NULL_STRING);
-		Integer ignoreCount    = (Integer) getProperty(attributes, IGNORE_COUNT,          0 );
-		String  threadId       = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,      "0"); //$NON-NLS-1$
-		int     tid            = Integer.parseInt(threadId);
+		final Boolean isTemporary    = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false);
+		final Boolean isHardware     = (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false);
+		final String  condition      = (String)  getProperty(attributes, CONDITION,    NULL_STRING);
+		final Integer ignoreCount    = (Integer) getProperty(attributes, IGNORE_COUNT,          0 );
+		final String  threadId       = (String)  getProperty(attributes, MIBreakpointDMData.THREAD_ID,      "0"); //$NON-NLS-1$
+		final int     tid            = Integer.parseInt(threadId);
 
-		// The DataRequestMonitor for the add request
-		DataRequestMonitor<MIBreakInsertInfo> addBreakpointDRM =
-			new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), drm) {
-				@Override
-	            protected void handleSuccess() {
+	    final Step insertBreakpointStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    				fConnection.queueCommand(
+						new MIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid), 
+						new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
 
-	            	// With MI, an invalid location won't generate an error
-                	if (getData().getMIBreakpoints().length == 0) {
-                   		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
-                   		drm.done();
-                   		return;
-                    }
+								// With MI, an invalid location won't generate an error
+								if (getData().getMIBreakpoints().length == 0) {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+									rm.done();
+									return;
+								}
 
-                	// Create a breakpoint object and store it in the map
-                	final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
-                	int reference = newBreakpoint.getNumber();
-                	if (reference == -1) {
-                   		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
-                   		drm.done();
-                   		return;
-                	}
-                	contextBreakpoints.put(reference, newBreakpoint);
+								// Create a breakpoint object and store it in the map
+								final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(getData().getMIBreakpoints()[0]);
+								int reference = newBreakpoint.getNumber();
+								if (reference == -1) {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+									rm.done();
+									return;
+								}
+								contextBreakpoints.put(reference, newBreakpoint);
 
-               		// Format the return value
-               		MIBreakpointDMContext dmc = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
-               		drm.setData(dmc);
+								// Format the return value
+								MIBreakpointDMContext dmc = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
+								finalRm.setData(dmc);
 
-               		// Flag the event
-					getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+								// Flag the event
+								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
 
-					// By default the breakpoint is enabled at creation
-                	// If it wasn't supposed to be, then disable it right away
-               		Map<String,Object> delta = new HashMap<String,Object>();
-               		delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
-               		modifyBreakpoint(dmc, delta, drm, false);
-				}
+								// By default the breakpoint is enabled at creation
+								// If it wasn't supposed to be, then disable it right away
+								Map<String,Object> delta = new HashMap<String,Object>();
+								delta.put(IS_ENABLED, getProperty(attributes, IS_ENABLED, true));
+								modifyBreakpoint(dmc, delta, rm, false);
+							}
 
-				@Override
-	            protected void handleError() {
-               		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
-               		drm.done();
-				}
+							@Override
+							protected void handleError() {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, BREAKPOINT_INSERTION_FAILURE, null));
+								rm.done();
+							}
+						});
+    		}
 		};
 
-		// Execute the command
-        fConnection.queueCommand(
-            new MIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid), addBreakpointDRM);
+		fRunControl.executeWithTargetAvailable(context, new Step[] { insertBreakpointStep }, finalRm);
 	}
 
 	/**
@@ -696,12 +707,12 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#removeBreakpoint(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
 	 */
-	public void removeBreakpoint(final IBreakpointDMContext dmc, final RequestMonitor rm) {
+	public void removeBreakpoint(final IBreakpointDMContext dmc, final RequestMonitor finalRm) {
 
 		// Validate the breakpoint context
 		if (dmc == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-			rm.done();
+			finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+			finalRm.done();
 			return;
 		}
 
@@ -711,24 +722,24 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			breakpointCtx = (MIBreakpointDMContext) dmc;
 		}
 		else {
-       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
-       		rm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
+       		finalRm.done();
 			return;
 		}
 		
 		// Validate the target context
-        IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+        final IBreakpointsTargetDMContext context = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
 		if (context == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
-			rm.done();
+			finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_EXECUTION_CONTEXT, null));
+			finalRm.done();
 			return;
 		}
 
 		// Pick the context breakpoints map
 		final Map<Integer,MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-			rm.done();
+			finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+			finalRm.done();
 			return;
 		}
 
@@ -736,24 +747,31 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		final int reference = breakpointCtx.getReference();
 		MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
 		if (breakpoint == null) {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-			rm.done();
+			finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+			finalRm.done();
 			return;
 		}
 
-		// Queue the command
-		fConnection.queueCommand(
-			new MIBreakDelete(context, new int[] { reference }),
-			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-				@Override
-				protected void handleCompleted() {
-					if (isSuccess()) {
-						getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
-						contextBreakpoints.remove(reference);
-					}
-					rm.done();
-				}
-		});
+	    final Step deleteBreakpointStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    			// Queue the command
+    			fConnection.queueCommand(
+    					new MIBreakDelete(context, new int[] { reference }),
+    					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    						@Override
+    						protected void handleCompleted() {
+    							if (isSuccess()) {
+    								getSession().dispatchEvent(new BreakpointRemovedEvent(dmc), getProperties());
+    								contextBreakpoints.remove(reference);
+    							}
+    							rm.done();
+    						}
+    					});
+    		}
+	    };
+		
+		fRunControl.executeWithTargetAvailable(context, new Step[] { deleteBreakpointStep }, finalRm);
 	}
 
 	// -------------------------------------------------------------------------
@@ -895,64 +913,71 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * @param context
 	 * @param dmc
 	 * @param condition
-	 * @param rm
+	 * @param finalRm
 	 * 
 	 * @since 3.0
 	 */
 	protected void changeCondition(final IBreakpointsTargetDMContext context,
-			final int reference, final String condition, final RequestMonitor rm)
+			final int reference, final String condition, final RequestMonitor finalRm)
 	{
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-       		rm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
 			return;
 		}
 
-		// Queue the command
-		fConnection.queueCommand(
-			new MIBreakCondition(context, reference, condition),
-		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-		        @Override
-		        protected void handleSuccess() {
-		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
-		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-                   		rm.done();
-                   		return;
-		        	}
-			        breakpoint.setCondition(condition);
-		            rm.done();
-		        }
+	    final Step changeConditionStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    			// Queue the command
+    			fConnection.queueCommand(
+    					new MIBreakCondition(context, reference, condition),
+    					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    						@Override
+    						protected void handleSuccess() {
+    							MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+    							if (breakpoint == null) {
+    								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+    								rm.done();
+    								return;
+    							}
+    							breakpoint.setCondition(condition);
+    							rm.done();
+    						}
 
-		        // In case of error (new condition could not be installed for whatever reason),
-		        // GDB "offers" different behaviours depending on its version: it can either keep
-		        // the original condition (the right thing to do) or keep the invalid condition.
-		        // Our sole option is to remove the condition in case of error and rely on the
-		        // upper layer to re-install the right condition.
-		        @Override
-		        protected void handleError() {
-		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
-		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-                   		rm.done();
-                   		return;
-		        	}
-		        	// Remove invalid condition from the back-end breakpoint
-			        breakpoint.setCondition(NULL_STRING);
-		    		fConnection.queueCommand(
-		    				new MIBreakCondition(context, reference, NULL_STRING),
-		    			    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-		    			        @Override
-		    			        // The report the initial problem
-		    			        protected void handleCompleted() {
-		    			    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_CONDITION, null));
-		    			            rm.done();
-		    			        }
-		    				});
-		        }
-			});
+    						// In case of error (new condition could not be installed for whatever reason),
+    						// GDB "offers" different behaviours depending on its version: it can either keep
+    						// the original condition (the right thing to do) or keep the invalid condition.
+    						// Our sole option is to remove the condition in case of error and rely on the
+    						// upper layer to re-install the right condition.
+    						@Override
+    						protected void handleError() {
+    							MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+    							if (breakpoint == null) {
+    								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+    								rm.done();
+    								return;
+    							}
+    							// Remove invalid condition from the back-end breakpoint
+    							breakpoint.setCondition(NULL_STRING);
+    							fConnection.queueCommand(
+    									new MIBreakCondition(context, reference, NULL_STRING),
+    									new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    										@Override
+    										// The report the initial problem
+    										protected void handleCompleted() {
+    											rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, INVALID_CONDITION, null));
+    											rm.done();
+    										}
+    									});
+    						}
+    					});
+    		}
+	    };
+	    
+	    fRunControl.executeWithTargetAvailable(context, new Step[] { changeConditionStep }, finalRm);
 	}
 
 
@@ -962,37 +987,44 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * @param context
 	 * @param reference
 	 * @param ignoreCount
-	 * @param rm
+	 * @param finalRm
 	 * 
 	 * @since 3.0
 	 */
-	protected void changeIgnoreCount(IBreakpointsTargetDMContext context,
-			final int reference, final int ignoreCount, final RequestMonitor rm)
+	protected void changeIgnoreCount(final IBreakpointsTargetDMContext context,
+			final int reference, final int ignoreCount, final RequestMonitor finalRm)
 	{
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-       		rm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
 			return;
 		}
 
-		// Queue the command
-		fConnection.queueCommand(
-			new MIBreakAfter(context, reference, ignoreCount),
-		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-		        @Override
-		        protected void handleSuccess() {
-		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
-		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-                   		rm.done();
-                   		return;
-		        	}
-			        breakpoint.setIgnoreCount(ignoreCount);
-		            rm.done();
-		        }
-		});
+		final Step changeIgnoreCountStep = new Step() {
+			@Override
+			public void execute(final RequestMonitor rm) {
+				// Queue the command
+				fConnection.queueCommand(
+						new MIBreakAfter(context, reference, ignoreCount),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+								if (breakpoint == null) {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+									rm.done();
+									return;
+								}
+								breakpoint.setIgnoreCount(ignoreCount);
+								rm.done();
+							}
+						});
+			}
+		};
+
+		fRunControl.executeWithTargetAvailable(context, new Step[] { changeIgnoreCountStep }, finalRm);
 	}
 
 	/**
@@ -1000,37 +1032,44 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * 
 	 * @param context
 	 * @param reference
-	 * @param rm
+	 * @param finalRm
 	 * 
 	 * @since 3.0
 	 */
-	protected void enableBreakpoint(IBreakpointsTargetDMContext context,
-			final int reference, final RequestMonitor rm)
+	protected void enableBreakpoint(final IBreakpointsTargetDMContext context,
+			final int reference, final RequestMonitor finalRm)
 	{
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-       		rm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
 			return;
 		}
 
-		// Queue the command
-		fConnection.queueCommand(
-			new MIBreakEnable(context, new int[] { reference }),
-		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-		        @Override
-		        protected void handleSuccess() {
-		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
-		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-                   		rm.done();
-                   		return;
-		        	}
-			        breakpoint.setEnabled(true);
-		            rm.done();
-		        }
-        });
+	    final Step enableBreakpointStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    			// Queue the command
+    			fConnection.queueCommand(
+    					new MIBreakEnable(context, new int[] { reference }),
+    					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    						@Override
+    						protected void handleSuccess() {
+    							MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+    							if (breakpoint == null) {
+    								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+    								rm.done();
+    								return;
+    							}
+    							breakpoint.setEnabled(true);
+    							rm.done();
+    						}
+    					});
+    		}
+	    };
+	    
+		fRunControl.executeWithTargetAvailable(context, new Step[] { enableBreakpointStep }, finalRm);
 	}
 
 	/**
@@ -1038,37 +1077,168 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	 * 
 	 * @param context
 	 * @param dmc
-	 * @param rm
+	 * @param finalRm
 	 * 
 	 * @since 3.0
 	 */
-	protected void disableBreakpoint(IBreakpointsTargetDMContext context,
-			final int reference, final RequestMonitor rm)
+	protected void disableBreakpoint(final IBreakpointsTargetDMContext context,
+			final int reference, final RequestMonitor finalRm)
 	{
 		// Pick the context breakpoints map
 		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
 		if (contextBreakpoints == null) {
-       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-       		rm.done();
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
 			return;
 		}
 
-		// Queue the command
-		fConnection.queueCommand(
-			new MIBreakDisable(context, new int[] { reference }),
-		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-		        @Override
-		        protected void handleSuccess() {
-		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
-		        	if (breakpoint == null) {
-		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-                   		rm.done();
-                   		return;
-		        	}
-			        breakpoint.setEnabled(false);
-		            rm.done();
-		        }
-        });
+	    final Step disableBreakpointStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    			// Queue the command
+    			fConnection.queueCommand(
+    					new MIBreakDisable(context, new int[] { reference }),
+    					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+    						@Override
+    						protected void handleSuccess() {
+    							MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+    							if (breakpoint == null) {
+    								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+    								rm.done();
+    								return;
+    							}
+    							breakpoint.setEnabled(false);
+    							rm.done();
+    						}
+    					});
+    		}
+	    };
+	    
+		fRunControl.executeWithTargetAvailable(context, new Step[] { disableBreakpointStep }, finalRm);
 	}
 
+	/* ******************************************************************************
+	 * Section to support making breakpoint operations while the target is running.
+	 *
+	 * Basically, we must make sure we have one thread suspended before making
+	 * a breakpoint operation.  If we don't we must suspend a thread, do the 
+	 * breakpoint operation and then resume the thread.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=242943
+	 * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=282273
+	 * 
+	 * ******************************************************************************/
+	/** The top level context describing our target **/
+	private IDMContext fTargetDmc = null;
+	/** The container context used to determine if the target is suspended **/
+	private IContainerDMContext fContainerDmc  = null;
+	/** Must we suspend the target **/
+	private boolean fMustSuspend = false;
+	
+	/**
+	 * Returns the context of our target.  It will be used to find the container we need
+	 * to use to check to see if the target is suspended.
+	 * @since 3.0
+	 */
+	protected IDMContext getTargetDmc() {
+		return fTargetDmc;
+	}
+
+	/**
+	 * Returns the container context that should be used to determine if target is suspended.
+	 * This container will also be the one suspended if needed.
+	 * @since 3.0
+	 */
+	protected IContainerDMContext getContainerDmc() {
+		return fContainerDmc;
+	}
+	
+	/**
+	 * Returns whether the target must be suspended before performing the breakpoint operation
+	 * @since 3.0
+	 */
+	protected boolean getMustSuspended() {
+		return fMustSuspend;
+	}
+	
+	/**
+	 * Returns whether the target must be suspended before performing the breakpoint operation
+	 * @since 3.0
+	 */
+	protected IExecutionDMContext getContextToSuspend() {
+		return fContainerDmc;
+	}
+	
+	/**
+	 * Find the context for the container we should use to know
+	 * if the target is already suspended.
+	 * @since 3.0
+	 */
+	protected class FindContainerDmcStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
+	        processControl.getProcessesBeingDebugged(
+	        		getTargetDmc(),
+	        		new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+	        			@Override
+	        			protected void handleSuccess() {
+	        				if (getData() != null && getData().length != 0) {
+	        					fContainerDmc = (IContainerDMContext)(getData()[0]);
+	        				} 
+	        				// else Not debugging any process yet, so no need to suspend target
+        					rm.done();
+	        			}
+	        		});
+		}
+	};
+
+
+	/**
+	 * Check if the container returned by getContainerDmc() is suspended.
+	 * If it is, we can do breakpoint operations.  If it is not, we must first
+	 * suspend it, and then we'll have to resume it.
+	 * 
+	 * @since 3.0
+	 */
+	protected class IsContainerSuspendedStep extends Sequence.Step {
+		@Override
+		public void execute(RequestMonitor rm) {
+			IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+			fMustSuspend = !runControl.isSuspended(getContainerDmc());
+			rm.done();
+		}
+	};
+
+	/**
+	 * If needed, suspend the target that is returned by getContextToSuspend().
+	 * @since 3.0
+	 */
+	protected class SuspendTargetStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			if (getMustSuspended()) {
+				IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+				runControl.suspend(getContextToSuspend(), rm);
+			} else {
+				rm.done();
+			}
+		}
+	};
+	
+	/**
+	 * If needed, resume the thread that is returned by getThreadToSuspend().
+	 * @since 3.0
+	 */
+	protected class ResumeThreadStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			if (getMustSuspended()) {
+				IRunControl runControl = getServicesTracker().getService(IRunControl.class);
+				runControl.resume(getContextToSuspend(), rm);
+			} else {
+				// We didn't suspend the thread, so we don't need to resume it
+				rm.done();
+			}
+		}
+	};
 }

@@ -11,6 +11,8 @@
 package org.eclipse.cdt.dsf.mi.service;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 
 /**
@@ -39,6 +41,19 @@ public interface IMIRunControl extends IRunControl
 	 * @since 3.0 
 	 */
 	void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm);
+
+	/**
+	 * Request that the specified steps be executed by first ensuring the target is available
+	 * to receive commands.  Once the specified steps are executed, the target should be
+	 * returned to its original availability.
+	 * 
+	 * This can is of value for breakpoints commands; e.g., breakpoints need to be inserted
+	 * even when the target is running, so this call would suspend the target, insert the
+	 * breakpoint, and resume the target again.
+	 * 
+	 * @since 3.0
+	 */
+	public void executeWithTargetAvailable(IDMContext ctx, Sequence.Step[] stepsToExecute, RequestMonitor rm);
 
 }
 

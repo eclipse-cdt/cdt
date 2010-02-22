@@ -575,8 +575,14 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     				// Don't send the stop event since we are resuming again.
     				return;
     			} else {
-    				// Stopped at another breakpoint.  Just remove our temporary one
-    				// since we don't want it to hit later
+    				// Stopped at another breakpoint that we should not skip.
+    				// Or got an interrupt signal from a suspend command.
+    				// Or got an interrupt signal because the user set/changed a breakpoint.  This last case is tricky.
+    				// We could let the run-to-line continue its job, however, I'm thinking that if the user creates
+    				// a new breakpoint, she may want to force the program to stop, in a way to abort the run-to-line.
+    				// So, let's cancel the run-to-line in this case.
+    				//
+    				// Just remove our temporary one since we don't want it to hit later
     				IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     						IBreakpointsTargetDMContext.class);
 

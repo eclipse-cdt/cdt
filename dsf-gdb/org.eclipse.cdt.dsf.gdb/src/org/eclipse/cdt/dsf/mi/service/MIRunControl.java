@@ -11,15 +11,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.util.Vector;
+
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -271,6 +276,11 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	
 	private StateChangeReason fStateChangeReason;
 	private IExecutionDMContext fStateChangeTriggeringContext;
+	/** 
+	 * A counter of MIRunning/MIStopped events that should
+	 * be kept silent. 
+	 */
+	private int fDisableRunningAndStoppedEventsCount = 0;
 	
 	private static final int FAKE_THREAD_ID = 0;
 
@@ -338,6 +348,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
      */
     @DsfServiceEventHandler
     public void eventDispatched(final MIRunningEvent e) {
+    	if (fDisableRunningAndStoppedEventsCount > 0) {
+    		fDisableRunningAndStoppedEventsCount--;
+    		// We don't broadcast running events right now
+    		return;
+    	}
+
         IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
         IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
@@ -357,7 +373,13 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
      */
     @DsfServiceEventHandler
     public void eventDispatched(final MIStoppedEvent e) {
-        IDMEvent<?> event = null;
+    	if (fDisableRunningAndStoppedEventsCount > 0) {
+    		fDisableRunningAndStoppedEventsCount--;
+    		// We don't broadcast stopped events right now
+    		return;
+    	}
+
+    	IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
         IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
         if (containerDmc != null) {
@@ -738,6 +760,127 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 					rm.done();
 		}		
 	}
+	
+	/**
+	 * @since 3.0
+	 */
+	public void executeWithTargetAvailable(IDMContext ctx, Sequence.Step[] steps, RequestMonitor rm) {
+		Vector<Step> totalStepsVector = new Vector<Step>();
+		totalStepsVector.add(new IsTargetAvailableStep(ctx));
+		totalStepsVector.add(new MakeTargetAvailableStep());
+		for (Step step : steps) {
+			totalStepsVector.add(step);
+		}
+		totalStepsVector.add(new RestoreTargetStateStep());
+		
+		final Step[] totalSteps = totalStepsVector.toArray(new Step[totalStepsVector.size()]);
+		getExecutor().execute(new Sequence(getExecutor(), rm) {
+			@Override public Step[] getSteps() { return totalSteps; }
+		});
+	}
+
+	/* ******************************************************************************
+	 * Section to support making operations even when the target is unavailable.
+	 *
+	 * Basically, we must make sure the container is suspended before making
+	 * certain operations (currently breakpoints).  If we don't, we must first 
+	 * suspend the container, then perform the specified operations,
+	 * and finally resume the container.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=242943
+	 * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=282273
+	 * 
+	 * ******************************************************************************/
+	private IContainerDMContext fContainerDmc  = null;
+	private boolean fTargetAvailable = false;
+
+	/**
+	 * Returns whether the target is available to perform operations
+	 * @since 3.0
+	 */
+	protected boolean isTargetAvailable() {
+		return fTargetAvailable;
+	}
+
+	/**
+	 * Returns whether the target must be suspended before performing the breakpoint operation
+	 * @since 3.0
+	 */
+	protected IExecutionDMContext getContextToSuspend() {
+		return fContainerDmc;
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	protected class IsTargetAvailableStep extends Sequence.Step {
+		final IDMContext fCtx;
+		
+		public IsTargetAvailableStep(IDMContext ctx) {
+			fCtx = ctx;
+		}
+		
+		@Override
+		public void execute(final RequestMonitor rm) {
+			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
+			processControl.getProcessesBeingDebugged(
+					fCtx,
+					new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							assert getData() != null;
+							
+							if (getData().length == 0) {
+								// Happens at startup, starting with GDB 7.0
+								// This means the target is available
+								fTargetAvailable = true;
+							} else {
+								fContainerDmc = (IContainerDMContext)(getData()[0]);
+								fTargetAvailable = isSuspended(fContainerDmc);
+							}
+							rm.done();
+						}
+					});
+		}
+	};
+
+	/**
+	 * @since 3.0
+	 */
+	protected class MakeTargetAvailableStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			if (!isTargetAvailable()) {
+				// Don't broadcast the coming stopped/running events
+				assert fDisableRunningAndStoppedEventsCount == 0;
+				fDisableRunningAndStoppedEventsCount++;
+				suspend(getContextToSuspend(), rm);
+			} else {
+				rm.done();
+			}
+		}
+	};
+
+	/**
+	 * @since 3.0
+	 */
+	protected class RestoreTargetStateStep extends Sequence.Step {
+		@Override
+		public void execute(final RequestMonitor rm) {
+			if (!isTargetAvailable()) {
+				assert fDisableRunningAndStoppedEventsCount == 0 || fDisableRunningAndStoppedEventsCount == 1;
+				fDisableRunningAndStoppedEventsCount++;
+				
+				// Can't use the resume() call because we 'silently' stopped
+				// so resume() will not know we are actually stopped
+				fConnection.queueCommand(
+						new MIExecContinue(getContextToSuspend()),
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+			} else {
+				// We didn't suspend the container, so we don't need to resume it
+				rm.done();
+			}
+		}
+	 };
 
 	/**
 	 * {@inheritDoc}

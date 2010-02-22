@@ -80,7 +80,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
 	 * @since 3.0
 	 */
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
-			String condition, int ignoreCount, String line, int tid, boolean disabled, boolean isTracepoint) {
+			String condition, int ignoreCount, String location, int tid, boolean disabled, boolean isTracepoint) {
 		super(ctx, "-break-insert"); //$NON-NLS-1$
 
 		// For a tracepoint, force certain parameters to what is allowed
@@ -160,7 +160,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (opts.length > 0) {
             setOptions(opts);
         }
-        setParameters(new Adjustable[]{ new PathAdjustable(line)});
+        setParameters(new Adjustable[]{ new PathAdjustable(location)});
     }
 
     @Override

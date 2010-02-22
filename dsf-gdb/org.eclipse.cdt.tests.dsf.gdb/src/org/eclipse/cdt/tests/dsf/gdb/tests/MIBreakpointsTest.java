@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Ericsson and others.
+ * Copyright (c) 2007, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,6 @@ public class MIBreakpointsTest extends BaseTestCase {
     final int WP_HIT     = Events.WP_HIT.ordinal();
     final int WP_OOS     = Events.WP_OOS.ordinal();
     private int[]   fBreakpointEvents = new int[Events.values().length];
-    private boolean fBreakpointEvent;
     private int     fBreakpointEventCount;
     private int     fBreakpointRef;
 
@@ -132,7 +131,9 @@ public class MIBreakpointsTest extends BaseTestCase {
     private final int    LINE_NUMBER_1   = 20;
     private final int    LINE_NUMBER_2   = 21;
     private final int    LINE_NUMBER_3   = 27;
-    private final int    LINE_NUMBER_4   = 35;
+    private final int    LINE_NUMBER_4   = 36;
+    private final int    LINE_NUMBER_5   = 49;
+    private final int    LINE_NUMBER_6   = 50;
     private final String FUNCTION        = "zeroBlocks";
     private final String SIGNED_FUNCTION = "zeroBlocks(int)";
     private final String NO_CONDITION    = "";
@@ -143,11 +144,14 @@ public class MIBreakpointsTest extends BaseTestCase {
     private final String CONDITION_1     = "i == 128";
     private final String CONDITION_2     = "i == 64";
     private final String CONDITION_3     = "j == 20";
+    private final String CONDITION_4     = "a == 20";
+    private final String CONDITION_5     = "a == 10";
     private final int    IGNORE_COUNT_1  = 128;
     private final int    IGNORE_COUNT_2  = 20;
 
     private final String EXPRESSION_1 = "charBlock[20]";
     private final String EXPRESSION_2 = "j";
+    private final String EXPRESSION_3 = "a";
 
     // Error messages
     final String UNKNOWN_EXECUTION_CONTEXT    = "Unknown execution context";
@@ -221,10 +225,10 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsAddedEvent e) {
   		synchronized (lock) {
+  			System.out.println("Got bp added event");
   			fBreakpointEvents[BP_ADDED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
-  			fBreakpointEvent = true;
   			lock.notifyAll();
   		}
 	}
@@ -232,10 +236,10 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsUpdatedEvent e) {
   		synchronized (lock) {
+  			System.out.println("Got bp updated event");
   			fBreakpointEvents[BP_UPDATED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
-  			fBreakpointEvent = true;
   			lock.notifyAll();
   		}
 	}
@@ -243,10 +247,10 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsRemovedEvent e) {
   		synchronized (lock) {
+  			System.out.println("Got bp removed event");
   			fBreakpointEvents[BP_REMOVED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
-  			fBreakpointEvent = true;
   			lock.notifyAll();
   		}
 	}
@@ -254,10 +258,10 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIBreakpointHitEvent e) {
   		synchronized (lock) {
+  			System.out.println("Got bp hit event");
   			fBreakpointEvents[BP_HIT]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
-  			fBreakpointEvent = true;
   			lock.notifyAll();
   		}
 	}
@@ -265,10 +269,10 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointTriggerEvent e) {
   		synchronized (lock) {
+  			System.out.println("Got wp hit event");
   			fBreakpointEvents[WP_HIT]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
-  			fBreakpointEvent = true;
   			lock.notifyAll();
   		}
 	}
@@ -276,10 +280,10 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointScopeEvent e) {
   		synchronized (lock) {
+  			System.out.println("Got wp scope event");
   			fBreakpointEvents[WP_OOS]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
-  			fBreakpointEvent = true;
   			lock.notifyAll();
   		}
 	}
@@ -290,7 +294,6 @@ public class MIBreakpointsTest extends BaseTestCase {
 			for (int i = 0; i < fBreakpointEvents.length; i++) {
 				fBreakpointEvents[i] = 0;
 			}
-			fBreakpointEvent = false;
 			fBreakpointEventCount = 0;
 		}
 	}
@@ -306,15 +309,17 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 	// Suspends the thread until an event is flagged
 	// NOTE: too simple for real life but good enough for this test suite
-	private void waitForBreakpointEvent() {
+	private void waitForBreakpointEvent(int count) {
 		synchronized (lock) {
-			while (!fBreakpointEvent) {
+			// Make sure we don't wait forever, in case an event never
+			// arrives.  The test will check if everything was received
+			int loopIndex = 0;
+			while (fBreakpointEventCount < count && loopIndex++ < 4) {
 				try {
-					lock.wait();
+					lock.wait(500);
 				} catch (InterruptedException ex) {
 				}
 			}
-			fBreakpointEvent = false;
   		}
 	}
 
@@ -742,7 +747,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -788,7 +793,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -837,7 +842,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -885,7 +890,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -932,7 +937,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -979,7 +984,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1025,7 +1030,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1054,7 +1059,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1111,7 +1116,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1134,7 +1139,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1172,6 +1177,47 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 	}
 
+	// ------------------------------------------------------------------------
+	// insertBreakpoint_WhileTargetRunning
+	// Set breakpoint while the target is running and make sure it eventually
+	// gets hit.
+	// ------------------------------------------------------------------------
+	@Test
+	public void insertBreakpoint_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+
+		// Run the program
+		SyncUtil.SyncResume();
+
+		// Install the breakpoint
+		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Wait for breakpoint to hit
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		
+		// Ensure the correct BreakpointEvent was received
+		waitForBreakpointEvent(2);
+		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		assertTrue("BreakpointService problem: breakpoint mismatch",
+				fBreakpointRef == breakpoint1.getNumber());
+		clearEventCounters();
+		
+		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
+				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == ref.getReference());
+	}
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Add Watchpoint tests
 	///////////////////////////////////////////////////////////////////////////
@@ -1195,7 +1241,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1241,7 +1287,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1288,7 +1334,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1315,6 +1361,65 @@ public class MIBreakpointsTest extends BaseTestCase {
 				watchpoint1.equals(watchpoint2));
 	}
 
+	// ------------------------------------------------------------------------
+	// insertWatchpoint_WhileTargetRunning
+	// Set a write watchpoint while the experiment is running.
+	// ------------------------------------------------------------------------
+	@Ignore("Not supported because the frame where we stop does not contain the expression")
+	@Test
+	public void insertWatchpoint_WhileTargetRunning() throws Throwable {
+
+		// Create a write watchpoint
+		Map<String, Object> watchpoint = new HashMap<String, Object>();
+		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
+		watchpoint.put(EXPRESSION_TAG, EXPRESSION_3);
+		watchpoint.put(WRITE_TAG, true);
+
+		// Run the program
+		SyncUtil.SyncResume();
+
+		// Install watchpoint
+		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Wait for breakpoint to hit
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		clearEventCounters();
+
+		// Ensure that the watchpoint was correctly installed
+		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertTrue("BreakpointService problem: watchpoint mismatch (wrong expression)",
+				watchpoint1.getExpression().equals(EXPRESSION_1));
+		assertTrue("BreakpointService problem: watchpoint mismatch (wrong read state)",
+				!watchpoint1.isReadWatchpoint());
+		assertTrue("BreakpointService problem: watchpoint mismatch (wrong write state)",
+				watchpoint1.isWriteWatchpoint());
+		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
+				!watchpoint1.isAccessWatchpoint());
+
+		// Ensure the BreakpointService holds only the right watchpoints
+		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
+		assertTrue("BreakpointService problem: expected " + 1 + " watchpoints(s), received "
+				+ watchpoints.length, watchpoints.length == 1);
+		MIBreakpointDMData watchpoint2 = (MIBreakpointDMData) getBreakpoint(watchpoints[0]);
+		assertTrue("BreakpointService problem: breakpoint mismatch",
+				watchpoint1.equals(watchpoint2));
+				
+		assertTrue("Did not stop because of watchpoint, but stopped because of: " +
+				event.getClass().getCanonicalName(), event instanceof MIWatchpointTriggerEvent);
+		assertTrue("Did not stop because of the watchpoint",
+				   ((MIWatchpointTriggerEvent)event).getNumber() == watchpoint1.getReference());
+	}
+
 	///////////////////////////////////////////////////////////////////////////
 	// Remove Breakpoint tests
 	///////////////////////////////////////////////////////////////////////////
@@ -1338,7 +1443,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1350,7 +1455,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_REMOVED event(s), received "
@@ -1397,7 +1502,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1414,7 +1519,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_REMOVED event(s), received "
@@ -1447,7 +1552,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1492,7 +1597,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 			// Ensure that right BreakpointEvents were received
 			int expected = i + 1;
-			waitForBreakpointEvent();
+			waitForBreakpointEvent(expected);
 			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT event(s), received "
 					+ fBreakpointEventCount, fBreakpointEventCount ==  expected);
 			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT_ADDED event(s), received "
@@ -1519,7 +1624,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 			// Ensure that right BreakpointEvents were received
 			int expected = i + 1;
-			waitForBreakpointEvent();
+			waitForBreakpointEvent(expected);
 			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT event(s), received "
 					+ fBreakpointEventCount, fBreakpointEventCount == expected);
 			assertTrue("BreakpointEvent problem: expected " + expected + " BREAKPOINT_REMOVED event(s), received "
@@ -1537,6 +1642,54 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 	}
 
+	// ------------------------------------------------------------------------
+	// removeBreakpoint_WhileTargetRunning
+	// Remove breakpoint while the target is running and make sure it is does
+	// not get hit.
+	// ------------------------------------------------------------------------
+	@Test
+	public void removeBreakpoint_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+
+		// Install the breakpoint
+		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Install a second breakpoint
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_6);
+
+		// Install the breakpoint
+		MIBreakpointDMContext ref1 = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Run the program
+		SyncUtil.SyncResume();
+		
+		// Remove the first breakpoint
+		removeBreakpoint(ref);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+
+		// Ensure the correct BreakpointEvent was received
+		waitForBreakpointEvent(4);
+		assertTrue("BreakpointEvent problem: expected " + 4 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 4);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		clearEventCounters();
+		
+		assertTrue("Did not stop on a breakpoint!",
+				event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == ref1.getReference());
+	}
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Breakpoint Update tests
 	///////////////////////////////////////////////////////////////////////////
@@ -1588,7 +1741,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1602,7 +1755,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1635,7 +1788,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1649,7 +1802,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1682,7 +1835,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1696,7 +1849,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1709,6 +1862,66 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint2.getCondition().equals(CONDITION_2));
 	}
 
+	// ------------------------------------------------------------------------
+	// updateBreakpoint_ModifyCondition_WhileTargetRunning
+	// Change the condition of a breakpoint while the target is running and make sure
+	// it does get hit.
+	// ------------------------------------------------------------------------
+	@Test
+	public void updateBreakpoint_ModifyCondition_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(CONDITION_TAG, CONDITION_4);
+
+		// Install the breakpoint
+		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+		clearEventCounters();
+
+		// Prepare to update the condition
+		Map<String, Object> delta = new HashMap<String, Object>();
+		delta.put(CONDITION_TAG, CONDITION_5);
+		
+		// Run the program
+		SyncUtil.SyncResume();
+		//Update the condition
+		updateBreakpoint(ref, delta);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
+				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		clearEventCounters();
+		
+		// Verify the state of the breakpoint
+		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)",
+				breakpoint2.getCondition().equals(CONDITION_5));
+
+		assertTrue("Did not stop on our modified breakpoint!",
+				event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint2.getReference());
+	}
+	
 	// ------------------------------------------------------------------------
 	// updateWatchpoint_AddCondition
 	// Set a watchpoint and then add a condition.
@@ -1737,7 +1950,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1751,7 +1964,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1793,7 +2006,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1807,7 +2020,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1849,10 +2062,10 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+		waitForBreakpointEvent(1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT events, received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
-		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event, received "
 				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
 		clearEventCounters();
 
@@ -1863,7 +2076,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1895,7 +2108,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1909,7 +2122,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1942,7 +2155,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -1956,7 +2169,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -1989,7 +2202,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2003,7 +2216,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2016,6 +2229,67 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint2.getIgnoreCount() == IGNORE_COUNT_2);
 	}
 
+	// ------------------------------------------------------------------------
+	// updateBreakpoint_ModifyCount_WhileTargetRunning
+	// Change the ignore count of a breakpoint while the target is running and make sure
+	// it does get hit.
+	// ------------------------------------------------------------------------
+	@Test
+	public void updateBreakpoint_ModifyCount_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(IGNORE_COUNT_TAG, IGNORE_COUNT_1);
+
+		// Install the breakpoint
+		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+		clearEventCounters();
+
+		// Prepare to update the count
+		Map<String, Object> delta = new HashMap<String, Object>();
+		delta.put(IGNORE_COUNT_TAG, 0);
+		
+		// Run the program
+		SyncUtil.SyncResume();
+
+		//Update the count
+		updateBreakpoint(ref, delta);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
+				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		clearEventCounters();
+		
+		// Verify the state of the breakpoint
+		MIBreakpointDMData breakpoint2 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong count)",
+				breakpoint2.getIgnoreCount() == 0);
+
+		assertTrue("Did not stop on our modified breakpoint!",
+				event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint2.getReference());	
+	}
+	
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_Disable
 	// Set 2 breakpoints and disable the first one.
@@ -2045,7 +2319,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received "
@@ -2065,7 +2339,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2082,7 +2356,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		SyncUtil.SyncResumeUntilStopped();
 
 		// Ensure the BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
@@ -2092,6 +2366,66 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 	}
 
+	// ------------------------------------------------------------------------
+	// updateBreakpoint_Disable_WhileTargetRunning
+	// Disable a breakpoint while the target is running and make sure
+	// it does not get hit.
+	// ------------------------------------------------------------------------
+	@Test
+	public void updateBreakpoint_Disable_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+
+		// Install the breakpoint
+		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Install a second breakpoint
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_6);
+		MIBreakpointDMContext ref1 = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 2);
+		clearEventCounters();
+
+		// Prepare to disable the  breakpoint
+		Map<String, Object> delta = new HashMap<String, Object>();
+		delta.put(IS_ENABLED_TAG, false);
+
+		// Run the program
+		SyncUtil.SyncResume();
+		
+		// Disable the breakpoint
+		updateBreakpoint(ref, delta);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
+				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		clearEventCounters();
+
+		assertTrue("Did not stop on a breakpoint!",
+				event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == ref1.getReference());
+	}
+	
 	// ------------------------------------------------------------------------
 	// updateBreakpoint_Enable
 	// In a loop, set 2 breakpoints and disable the first one. After hitting
@@ -2122,7 +2456,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received "
@@ -2142,7 +2476,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2159,7 +2493,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		SyncUtil.SyncResumeUntilStopped();
 
 		// Ensure the BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
@@ -2175,7 +2509,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2192,7 +2526,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		SyncUtil.SyncResumeUntilStopped();
 
 		// Ensure the BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
@@ -2202,6 +2536,62 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 	}
 
+	// ------------------------------------------------------------------------
+	// updateBreakpoint_Enable_WhileTargetRunning
+	// Enable a disabled breakpoint while the target is running and make sure
+	// it does get hit.
+	// ------------------------------------------------------------------------
+	@Test
+	public void updateBreakpoint_Enable_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+		breakpoint.put(IS_ENABLED_TAG, false);
+
+		// Install the breakpoint
+		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+		clearEventCounters();
+
+		// Prepare to enable the  breakpoint
+		Map<String, Object> delta = new HashMap<String, Object>();
+		delta.put(IS_ENABLED_TAG, true);
+
+		// Run the program
+		SyncUtil.SyncResume();
+		
+		// Enable the breakpoint
+		updateBreakpoint(ref, delta);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(2);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
+				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		clearEventCounters();
+		
+		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertTrue("Did not stop on our enabled breakpoint!",
+				event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == breakpoint1.getReference());	
+	}
 	///////////////////////////////////////////////////////////////////////////
 	// Breakpoint Hit tests
 	///////////////////////////////////////////////////////////////////////////
@@ -2224,7 +2614,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2235,7 +2625,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		SyncUtil.SyncResumeUntilStopped();
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2264,7 +2654,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2275,7 +2665,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		SyncUtil.SyncResumeUntilStopped();
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2307,7 +2697,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2319,7 +2709,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2354,7 +2744,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2368,7 +2758,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2380,7 +2770,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2416,7 +2806,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2428,7 +2818,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2463,7 +2853,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2477,7 +2867,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2489,7 +2879,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2523,7 +2913,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2535,7 +2925,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2569,7 +2959,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2581,7 +2971,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2616,7 +3006,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2628,7 +3018,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2656,7 +3046,6 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_3, true);
 		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
@@ -2672,7 +3061,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2686,7 +3075,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2698,7 +3087,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2709,8 +3098,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int j = evaluateExpression(frameDmc, "j").intValue();
-		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", j == IGNORE_COUNT_2);
+		int j = evaluateExpression(frameDmc, EXPRESSION_2).intValue();
+		assertTrue("Watchpoint problem: " + EXPRESSION_2 +" was " + j + " instead of " + IGNORE_COUNT_2,
+				   j == IGNORE_COUNT_2);
 	}
 
 	// ------------------------------------------------------------------------
@@ -2718,7 +3108,6 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set a write watchpoint, add a condition and go.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	@Ignore
 	@Test
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
 
@@ -2727,7 +3116,6 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_3, true);
 		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
@@ -2743,7 +3131,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2757,7 +3145,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
@@ -2769,7 +3157,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
@@ -2780,8 +3168,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Verify that the condition is met
-		int j = evaluateExpression(frameDmc, "j").intValue();
-		assertTrue("BreakpointEvent problem: breakpoint mismatch (wrong condition)", j == IGNORE_COUNT_2);
+		int j = evaluateExpression(frameDmc, EXPRESSION_2).intValue();
+		assertTrue("Watchpoint problem: " + EXPRESSION_2 +" was " + j + " instead of " + 20,
+				   j == 20);
 	}
 
 	// ------------------------------------------------------------------------
@@ -2789,7 +3178,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// Set an access watchpoint and watch it go out of scope.
 	// Ensure that the correct event is received.
 	// ------------------------------------------------------------------------
-	@Ignore
+	@Ignore("All GDBs seem to have a bug in this situation")
 	@Test
 	public void breakpointHit_WatchpointOutOfScope() throws Throwable {
 
@@ -2798,8 +3187,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_3, true);
+		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.SyncResumeUntilStopped();
 		clearEventCounters();
 
@@ -2809,13 +3197,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 		watchpoint.put(EXPRESSION_TAG, EXPRESSION_2);
 		watchpoint.put(READ_TAG, true);
 		watchpoint.put(WRITE_TAG, true);
+		// Make sure watchpoint is not triggered by the expression actually changing
+		watchpoint.put(IGNORE_COUNT_TAG, 1000);
 
 		// Install the watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
@@ -2826,7 +3216,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		SyncUtil.SyncResumeUntilStopped();
 
 		// Ensure the correct BreakpointEvent was received
-		waitForBreakpointEvent();
+		waitForBreakpointEvent(1);
 		MIBreakpointDMData watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 1);

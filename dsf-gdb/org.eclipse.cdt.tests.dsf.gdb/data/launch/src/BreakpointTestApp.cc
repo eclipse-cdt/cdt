@@ -5,7 +5,7 @@
 // Copyright   : Ericsson AB
 // Description : Breakpoint test application
 //============================================================================
-
+#include <unistd.h>
 #include <iostream>
 using namespace std;
 
@@ -32,16 +32,20 @@ void setBlocks()
 
 void loop()
 {
-	int j;
-	
-	for (int i = 0; i < ARRAY_SIZE; i++)
+	int j = 10;
+    int i = 0;
+	for (i = 0; i < ARRAY_SIZE; i++)
 		j = i;
 }
 
 int main()
 {
+    int a = 10;
+    
 	zeroBlocks(1);
 	loop();
 	setBlocks();
+	sleep(1);
+	a++;
 	return 0;
 }

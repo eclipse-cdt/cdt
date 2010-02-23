@@ -288,11 +288,13 @@ public class CValue extends AbstractCValue {
 			case '\r':
 				return "'\\r'";		//$NON-NLS-1$
 			}
-			
-			if (Character.isISOControl(byteValue) || byteValue < 0)
+
+			if (Character.isISOControl(byteValue))
 				return Byte.toString(byteValue);
-			
-			return new String( new byte[]{ '\'', byteValue, '\'' } ); //$NON-NLS-1$
+			else if (byteValue < 0)
+				return isUnsigned() ? Short.toString(value.shortValue()) : Byte.toString(byteValue);
+
+			return new String( new byte[]{ '\'', byteValue, '\'' } );
 		}
 		else if ( CVariableFormat.DECIMAL.equals( format ) ) {
 			return (isUnsigned()) ? Integer.toString( value.shortValue() ) : Integer.toString( (byte)value.byteValue() );

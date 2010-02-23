@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -7323,5 +7324,22 @@ public class AST2Tests extends AST2BaseTest {
         final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
+	
+	//	#define MACRO
+	//	void funca(){
+	//	}
+	//  MACRO
+	public void testEmptyTrailingMacro_303152() throws Exception {
+        final String code = getAboveComment();
+        for (ParserLanguage lang : ParserLanguage.values()) {
+        	IASTTranslationUnit tu= parseAndCheckBindings(code, lang);
+        	IASTPreprocessorMacroExpansion[] expansions = tu.getMacroExpansions();
+        	assertEquals(1, expansions.length);
+        	IToken t= tu.getSyntax();
+        	while (t.getNext() != null)
+        		t= t.getNext();
+        	assertEquals("MACRO", t.getImage());
+		}
 	}
 }

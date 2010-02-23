@@ -194,6 +194,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     private final INodeFactory nodeFactory;
 	private boolean fActiveCode= true;
+	private int fEndOffset= -1;
 	
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
@@ -268,7 +269,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	return t;
         } catch (OffsetLimitReachedException olre) {
         	if (mode != ParserMode.COMPLETION_PARSE)
-			    throw new EndOfFileException();
+			    throw new EndOfFileException(olre.getEndOffset());
 			createCompletionNode(olre.getFinalToken());
 			throw olre;
         }
@@ -418,7 +419,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	private final void checkForEOI(IToken t) throws EndOfFileException {
 		final int lt= t.getType();
     	if (lt == IToken.tINACTIVE_CODE_SEPARATOR || lt == IToken.tINACTIVE_CODE_END)
-    		throw new EndOfFileException(true);
+    		throw new EndOfFileException(t.getOffset(), true);
 	}
 
     /**
@@ -428,6 +429,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	try {
     		return LA(i);
     	} catch (EndOfFileException e) {
+    		fEndOffset= e.getEndOffset();
     		return null;
     	}
     }
@@ -448,6 +450,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	try {
     		return LT(i);
     	} catch (EndOfFileException e) {
+    		fEndOffset= e.getEndOffset();
     		return 0;
     	}
     }
@@ -679,7 +682,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     			final int lt= t.getType();
 				if (lt == IToken.tINACTIVE_CODE_SEPARATOR || lt == IToken.tINACTIVE_CODE_END || lt == IToken.tINACTIVE_CODE_START) {
 					if (!acceptInactiveCodeBoundary(codeBranchNesting))
-						throw new EndOfFileException(true);
+						throw new EndOfFileException(t.getOffset(), true);
 				} 
             }
 			result = consume();
@@ -691,7 +694,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 ++depth;
                 break;
             case IToken.tEOC:
-                throw new EndOfFileException();
+                throw new EndOfFileException(result.getOffset());
             }
         }
         return result;
@@ -1239,7 +1242,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	protected void parseTranslationUnit() {
 		final IASTTranslationUnit tu= getTranslationUnit();
 		declarationList(tu, DeclarationOptions.GLOBAL, false, 0);
-        ((ASTNode) tu).setLength(getEndOffset());
+		// Bug 3033152: getEndOffset() is computed off the last node and ignores trailing macros.
+		final int length= Math.max(getEndOffset(), fEndOffset);
+        ((ASTNode) tu).setLength(length);
 	}
 
 	protected final void declarationListInBraces(final IASTDeclarationListOwner tu, int offset, DeclarationOptions options) throws EndOfFileException, BacktrackException {
@@ -1312,6 +1317,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				IASTDeclaration declaration= skipProblemDeclaration(offset);
 				addDeclaration(tu, declaration, active);
 				if (!e.endsInactiveCode()) {
+					fEndOffset= e.getEndOffset();
 					break;
 				}
 			} finally {
@@ -1743,7 +1749,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		open--;
         		break;
         	case IToken.tEOC:
-        		throw new EndOfFileException();
+        		throw new EndOfFileException(t.getOffset());
         	
         	default:
         		if (content != null) {

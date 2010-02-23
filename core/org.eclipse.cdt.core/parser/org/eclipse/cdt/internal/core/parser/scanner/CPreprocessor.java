@@ -566,7 +566,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		
     	case IToken.tEND_OF_INPUT:
     		if (fContentAssistLimit < 0) {
-    			throw new EndOfFileException();
+    			throw new EndOfFileException(t1.getOffset());
     		}
     		int useType= fHandledCompletion ? IToken.tEOC : IToken.tCOMPLETION;
     		int sequenceNumber= fLocationMap.getSequenceNumberForOffset(fContentAssistLimit);

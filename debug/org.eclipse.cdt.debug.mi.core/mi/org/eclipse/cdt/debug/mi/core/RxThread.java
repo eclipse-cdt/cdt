@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MICatchpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
@@ -304,13 +305,13 @@ public class RxThread extends Thread {
 					}
 				}
 
-				// GDB does not have reason when stopping on shared, hopefully
-				// this will be fix in newer version meanwhile, we will use a hack
-				// to cope.  On most platform we can detect by looking at the
-				// console stream for phrase:
-				// 	~"Stopped due to shared library event\n"
+				// GDB does not provide reason when stopping on a shared library
+				// event or because of a catchpoint. Hopefully this will be
+				// fixed in a future version. Meanwhile, we will use a hack to
+				// cope. On most platform we can detect by looking at the
+				// console stream for phrase.
 				//
-				// Althought it is a _real_ bad idea to do this, we do not have
+				// Although it is a _real_ bad idea to do this, we do not have
 				// any other alternatives.
 				if (list.isEmpty()) {
 					String[] logs = getStreamRecords();
@@ -318,6 +319,19 @@ public class RxThread extends Thread {
 						if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
 							session.getMIInferior().setSuspended();
 							MIEvent e = new MISharedLibEvent(session, exec);
+							list.add(e);
+						}
+						else if (logs[i].startsWith("Catchpoint ")) { //$NON-NLS-1$
+							// Example: "Catchpoint 1 (exception caught)"
+							session.getMIInferior().setSuspended();
+							String log = logs[i];
+							String catchpointType = "???"; //$NON-NLS-1$
+							int startIndex = log.lastIndexOf('(');
+							int stopIndex = log.lastIndexOf(')');
+							if ((startIndex >= 0) && (stopIndex >= 0) && (stopIndex > startIndex)) {
+								catchpointType = log.substring(startIndex+1, stopIndex);
+							}
+							MIEvent e = new MICatchpointHitEvent(session, exec, catchpointType);
 							list.add(e);
 						}
 					}

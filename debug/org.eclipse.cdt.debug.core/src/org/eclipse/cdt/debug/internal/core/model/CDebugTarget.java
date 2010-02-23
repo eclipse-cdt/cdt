@@ -35,6 +35,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
+import org.eclipse.cdt.debug.core.cdi.ICDIEventBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -1164,6 +1165,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		else if ( reason instanceof ICDISharedLibraryEvent ) {
 			handleSuspendedBySolibEvent( (ICDISharedLibraryEvent)reason );
 		}
+		else if ( reason instanceof ICDIEventBreakpointHit ) {
+			handleEventBreakpointHit( (ICDIEventBreakpointHit)reason );
+		}
 		else { // reason is not specified
 			fireSuspendEvent( DebugEvent.UNSPECIFIED );
 		}
@@ -1204,6 +1208,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	private void handleBreakpointHit( ICDIBreakpointHit breakpointHit ) {
+		fireSuspendEvent( DebugEvent.BREAKPOINT );
+	}
+
+	private void handleEventBreakpointHit( ICDIEventBreakpointHit breakpointHit ) {
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
 

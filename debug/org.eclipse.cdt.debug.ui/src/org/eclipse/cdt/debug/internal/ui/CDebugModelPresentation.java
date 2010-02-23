@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
+import org.eclipse.cdt.debug.core.cdi.ICDIEventBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo;
@@ -705,21 +706,24 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			ICDebugElement element = (ICDebugElement)thread.getAdapter( ICDebugElement.class );
 			if ( element != null ) {
 				Object info = element.getCurrentStateInfo();
-				if ( info != null && info instanceof ICDISignalReceived ) {
+				if ( info instanceof ICDISignalReceived ) {
 					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.13" ), new String[]{ signal.getName(), signal.getDescription() } ); //$NON-NLS-1$
 				}
-				else if ( info != null && info instanceof ICDIWatchpointTrigger ) {
+				else if ( info instanceof ICDIWatchpointTrigger ) {
 					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.14" ), new String[]{ ((ICDIWatchpointTrigger)info).getOldValue(), ((ICDIWatchpointTrigger)info).getNewValue() } ); //$NON-NLS-1$
 				}
-				else if ( info != null && info instanceof ICDIWatchpointScope ) {
+				else if ( info instanceof ICDIWatchpointScope ) {
 					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.15" ); //$NON-NLS-1$
 				}
-				else if ( info != null && info instanceof ICDIBreakpointHit ) {
+				else if ( info instanceof ICDIBreakpointHit ) {
 					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.16" ); //$NON-NLS-1$
 				}
-				else if ( info != null && info instanceof ICDISharedLibraryEvent ) {
+				else if ( info instanceof ICDISharedLibraryEvent ) {
 					reason = CDebugUIMessages.getString( "CDTDebugModelPresentation.17" ); //$NON-NLS-1$
+				}
+				else if ( info instanceof ICDIEventBreakpointHit ) {
+					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.20" ), new String[]{ ((ICDIEventBreakpointHit)info).getEventBreakpointType() } ); //$NON-NLS-1$					
 				}
 			}
 			return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.18" ), new String[] { thread.getName(), reason } ); //$NON-NLS-1$

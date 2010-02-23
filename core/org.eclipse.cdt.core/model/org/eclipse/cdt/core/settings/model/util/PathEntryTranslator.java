@@ -758,14 +758,17 @@ public class PathEntryTranslator {
 						return result;
 					}
 				case ICSettingEntry.LIBRARY_PATH:
+				case ICSettingEntry.LIBRARY_FILE:
+					// Bug 100844 don't contribute library files back to the CModel as a library files, as supplied by the build system,
+					// aren't currently resolved
 					return null;
-				case ICSettingEntry.LIBRARY_FILE:{
-						IPath paths[][] = getEntryPath(fLangEntry, cfg);
-						result = new IPathEntry[paths[0].length];
-						for (int i=0; i<result.length; i++)
-							result[i] = CoreModel.newLibraryEntry(path, paths[0][i], paths[1][i], null, null, null, fIsExported);
-						return result;
-					}
+//				case ICSettingEntry.LIBRARY_FILE:{
+//						IPath paths[][] = getEntryPath(fLangEntry, cfg);
+//						result = new IPathEntry[paths[0].length];
+//						for (int i=0; i<result.length; i++)
+//							result[i] = CoreModel.newLibraryEntry(path, paths[0][i], paths[1][i], null, null, null, fIsExported);
+//						return result;
+//					}
 				case ICSettingEntry.OUTPUT_PATH:
 					result = new IPathEntry[1];
 					result[0] = CoreModel.newOutputEntry(fPath, getExclusionPatterns());

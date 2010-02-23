@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -34,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
@@ -149,11 +150,7 @@ public class ExpressionWriter extends NodeWriter{
 			writeDeleteExpression((ICPPASTDeleteExpression) expression);
 		}else if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
 			writeSimpleTypeConstructorExpression((ICPPASTSimpleTypeConstructorExpression) expression);
-		}else if (expression instanceof ICPPASTTypenameExpression) {
-			//No example found for this Node
-			throw new UnsupportedOperationException("You found a example for a TypenameExpression: " + expression.getRawSignature()); //$NON-NLS-1$
 		}
-	
 	}
 
 	private String getBinaryExpressionOperator(int operator){
@@ -252,7 +249,6 @@ public class ExpressionWriter extends NodeWriter{
 		case ICPPASTUnaryExpression.op_throw:
 		case ICPPASTUnaryExpression.op_typeid:
 		case IASTUnaryExpression.op_alignOf: 
-		case IASTUnaryExpression.op_typeof:
 			return true;
 
 		default:
@@ -268,7 +264,6 @@ public class ExpressionWriter extends NodeWriter{
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case ICPPASTUnaryExpression.op_typeid:
 		case IASTUnaryExpression.op_alignOf:
-		case IASTUnaryExpression.op_typeof:
 			return true;
 
 		default:
@@ -307,8 +302,6 @@ public class ExpressionWriter extends NodeWriter{
 			return TYPEID_OP;
 		case IASTUnaryExpression.op_alignOf:
 			return ALIGNOF_OP;
-		case IASTUnaryExpression.op_typeof:
-			return TYPEOF_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
 		throw new IllegalArgumentException("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$
@@ -326,7 +319,6 @@ public class ExpressionWriter extends NodeWriter{
 			return CLOSING_BRACKET_OP;
 		case IASTUnaryExpression.op_bracketedPrimary:
 		case IASTUnaryExpression.op_alignOf:
-		case IASTUnaryExpression.op_typeof:
 			return CLOSING_BRACKET_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType " + unaryExpressionType); //$NON-NLS-1$
@@ -352,25 +344,36 @@ public class ExpressionWriter extends NodeWriter{
 			scribe.print(COLON_COLON);
 		}
 		scribe.print(NEW);
-		IASTExpression placement = newExp.getNewPlacement();
-		visitNodeIfNotNull(placement);
+		IASTInitializerClause[] placement = newExp.getPlacementArguments();
+		if (placement != null) {
+			writeArgumentList(placement);
+		}
 				
 		IASTTypeId typeId = newExp.getTypeId();
 		visitNodeIfNotNull(typeId);
 		
-		IASTExpression initExp= getNewInitializer(newExp);
+		IASTInitializer initExp= getNewInitializer(newExp);
 		if (initExp != null) {
-			scribe.print('(');
 			initExp.accept(visitor);
-			scribe.print(')');
 		}
 	}
 
-	protected IASTExpression getNewInitializer(ICPPASTNewExpression newExp) {
-		return newExp.getNewInitializer();
+	protected IASTInitializer getNewInitializer(ICPPASTNewExpression newExp) {
+		return newExp.getInitializer();
 	}
-	
-	
+
+	private void writeArgumentList(IASTInitializerClause[] args) {
+		scribe.print(OPEN_BRACKET_OP);
+		boolean needComma= false;
+		for (IASTInitializerClause arg : args) {
+			if (needComma) {
+				scribe.print(COMMA_SPACE);
+			}
+			arg.accept(visitor);
+			needComma= true;
+		}
+		scribe.print(CLOSING_BRACKET_OP);
+	}
 
 	private void writeLiteralExpression(IASTLiteralExpression litExp) {
 		scribe.print(litExp.toString());
@@ -429,11 +432,7 @@ public class ExpressionWriter extends NodeWriter{
 
 	private void writeFunctionCallExpression(IASTFunctionCallExpression funcCallExp) {
 		funcCallExp.getFunctionNameExpression().accept(visitor);
-		scribe.print('(');
-		IASTExpression parameterExpression = funcCallExp.getParameterExpression();
-		visitNodeIfNotNull(parameterExpression);
-		scribe.print(')');
-		
+		writeArgumentList(funcCallExp.getArguments());
 	}
 
 	private void writeCastExpression(IASTCastExpression castExp) {
@@ -523,44 +522,8 @@ public class ExpressionWriter extends NodeWriter{
 	}
 
 	private void writeSimpleTypeConstructorExpression(ICPPASTSimpleTypeConstructorExpression simpTypeCtorExp) {
-		scribe.print(getSimpleTypeString(simpTypeCtorExp.getSimpleType()));
-		scribe.print('(');
-		IASTExpression initalizer = simpTypeCtorExp.getInitialValue();
-		visitNodeIfNotNull(initalizer);
-		scribe.print(')');
+		simpTypeCtorExp.getDeclSpecifier().accept(visitor);
+		visitNodeIfNotNull(simpTypeCtorExp.getInitializer());
 	}
-	
-	private String getSimpleTypeString(int typeId) {
-		switch (typeId) {
-		
-		case ICPPASTSimpleTypeConstructorExpression.t_void:
-			return VOID;
-		case ICPPASTSimpleTypeConstructorExpression.t_char:
-			return CHAR;
-		case ICPPASTSimpleTypeConstructorExpression.t_int:
-			return INT;
-		case ICPPASTSimpleTypeConstructorExpression.t_float:
-			return FLOAT;
-		case ICPPASTSimpleTypeConstructorExpression.t_double:
-			return DOUBLE;
-		case ICPPASTSimpleTypeConstructorExpression.t_bool:
-			return CPP_BOOL;
-		case ICPPASTSimpleTypeConstructorExpression.t_wchar_t:
-			return WCHAR_T;
-		case ICPPASTSimpleTypeConstructorExpression.t_short:
-			return SHORT;
-		case ICPPASTSimpleTypeConstructorExpression.t_long:
-			return LONG;
-		case ICPPASTSimpleTypeConstructorExpression.t_signed:
-			return SIGNED;  
-		case ICPPASTSimpleTypeConstructorExpression.t_unsigned :
-			return UNSIGNED;
-			
-		default:
-			System.err.println("Unknown simpleTypeId: " + typeId); //$NON-NLS-1$
-		throw new IllegalArgumentException("Unknown simpleTypeId: " + typeId); //$NON-NLS-1$
-		}
-	}
-	
 }
 

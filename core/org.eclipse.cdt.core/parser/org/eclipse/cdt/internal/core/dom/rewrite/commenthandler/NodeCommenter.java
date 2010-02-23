@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSwitchStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
@@ -222,8 +221,6 @@ public class NodeCommenter {
 		}else if(node instanceof CPPASTTemplateDeclaration) {
 			return true;
 		}else if(node instanceof CPPASTLinkageSpecification) {
-			return true;
-		}else if(node instanceof GPPASTExplicitTemplateInstantiation) {
 			return true;
 		}else if(node instanceof CPPASTExplicitTemplateInstantiation) {
 			return true;

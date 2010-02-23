@@ -43,34 +43,29 @@ public class ModifiedASTExpressionWriter extends ExpressionWriter {
 	}
 
 	@Override
-	protected IASTExpression getNewInitializer(ICPPASTNewExpression newExp) {
-
-		
-		IASTExpression initializer = newExp.getNewInitializer();
-		
-		if(initializer != null){
-			for(ASTModification childModification : modificationHelper.modificationsForNode(initializer)){
-				switch(childModification.getKind()){
+	protected IASTInitializer getNewInitializer(ICPPASTNewExpression newExp) {
+		IASTInitializer initializer = newExp.getInitializer();
+		if (initializer != null) {
+			for (ASTModification childModification : modificationHelper.modificationsForNode(initializer)) {
+				switch (childModification.getKind()) {
 				case REPLACE:
-					if(childModification.getNewNode() instanceof IASTInitializer){
-						return (IASTExpression)childModification.getNewNode();
+					if (childModification.getNewNode() instanceof IASTInitializer) {
+						return (IASTInitializer) childModification.getNewNode();
 					}
 					break;
 				case INSERT_BEFORE:
 					throw new UnhandledASTModificationException(childModification);
-					
+
 				case APPEND_CHILD:
 					throw new UnhandledASTModificationException(childModification);
 				}
 			}
-		}
-		else
-		{
-			for(ASTModification parentModification : modificationHelper.modificationsForNode(newExp)){
-				if(parentModification.getKind() == ModificationKind.APPEND_CHILD){
+		} else {
+			for (ASTModification parentModification : modificationHelper.modificationsForNode(newExp)) {
+				if (parentModification.getKind() == ModificationKind.APPEND_CHILD) {
 					IASTNode newNode = parentModification.getNewNode();
-					if(newNode instanceof IASTInitializer){
-						return (IASTExpression) newNode;
+					if (newNode instanceof IASTInitializer) {
+						return (IASTInitializer) newNode;
 					}
 				}
 			}

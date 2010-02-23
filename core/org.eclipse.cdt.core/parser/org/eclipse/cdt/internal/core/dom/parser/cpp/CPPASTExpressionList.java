@@ -145,9 +145,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	    		return overloads = NO_FUNCTIONS;
 	    	
 	    	ASTNodeProperty prop = getPropertyInParent();
-	    	if (prop == IASTFunctionCallExpression.PARAMETERS || 
+	    	if (prop == IASTFunctionCallExpression.ARGUMENT || 
 	    			prop == ICPPASTConstructorChainInitializer.INITIALIZER ||
-	    			prop == ICPPASTConstructorInitializer.EXPRESSION ||
+	    			prop == ICPPASTConstructorInitializer.ARGUMENT ||
 	    			prop == ICPPASTNewExpression.NEW_INITIALIZER)
 	    		return overloads = NO_FUNCTIONS;
 	    	

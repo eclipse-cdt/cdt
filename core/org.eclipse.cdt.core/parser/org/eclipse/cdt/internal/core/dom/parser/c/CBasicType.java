@@ -60,7 +60,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	
 	private static Kind getKind(ICASTSimpleDeclSpecifier sds) {
 		switch(sds.getType()) {
-		case ICASTSimpleDeclSpecifier.t_Bool:
+		case IASTSimpleDeclSpecifier.t_bool:
 			return Kind.eBoolean;
 		case IASTSimpleDeclSpecifier.t_char:
 			return Kind.eChar;

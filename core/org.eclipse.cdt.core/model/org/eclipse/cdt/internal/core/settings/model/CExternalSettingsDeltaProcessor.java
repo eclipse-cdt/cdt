@@ -61,8 +61,7 @@ public class CExternalSettingsDeltaProcessor {
 	static boolean applyDelta(ICConfigurationDescription des, ExtSettingsDelta deltas[], int kindMask){
 		ICResourceDescription rcDess[] = des.getResourceDescriptions();
 		boolean changed = false;
-		for(int i = 0; i < rcDess.length; i++){
-			ICResourceDescription rcDes = rcDess[i];
+		for (ICResourceDescription rcDes : rcDess) {
 			if(applyDelta(rcDes, deltas, kindMask))
 				changed = true;
 		}
@@ -147,9 +146,9 @@ public class CExternalSettingsDeltaProcessor {
 			return false;
 		
 		boolean changed = false;
-		for(int i = 0; i < deltas.length; i++){
-			if(isSettingCompatible(setting, deltas[i].fSetting)){
-				if(applyDelta(setting, deltas[i], kindMask))
+		for (ExtSettingsDelta delta : deltas) {
+			if(isSettingCompatible(setting, delta.fSetting)){
+				if(applyDelta(setting, delta, kindMask))
 					changed = true;
 			}
 		}
@@ -161,10 +160,8 @@ public class CExternalSettingsDeltaProcessor {
 		if(settings == null || settings.length == 0)
 			return false;
 		
-		ICLanguageSetting setting;
 		boolean changed = false;
-		for(int k = 0; k < settings.length; k++){
-			setting = settings[k];
+		for (ICLanguageSetting setting : settings) {
 			if(applyDelta(setting, deltas, kindMask))
 				changed = true;
 		}
@@ -173,9 +170,9 @@ public class CExternalSettingsDeltaProcessor {
 	
 	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta[] deltas, int kindMask){
 		boolean changed = false;
-		for(int i = 0; i < deltas.length; i++){
-			if(isSettingCompatible(setting, deltas[i].fSetting)){
-				if(applyDelta(setting, deltas[i], kindMask))
+		for (ExtSettingsDelta delta : deltas) {
+			if(isSettingCompatible(setting, delta.fSetting)){
+				if(applyDelta(setting, delta, kindMask))
 					changed = true;
 			}
 		}
@@ -184,12 +181,10 @@ public class CExternalSettingsDeltaProcessor {
 
 	static boolean applyDelta(ICLanguageSetting setting, ExtSettingsDelta delta, int kindMask){
 		int kinds[] = KindBasedStore.getLanguageEntryKinds();
-		int kind;
 		ICLanguageSettingEntry entries[];
 		ICSettingEntry diff[][];
 		boolean changed = false;
-		for(int i = 0; i < kinds.length; i++){
-			kind = kinds[i];
+		for (int kind : kinds) {
 			if((kind & kindMask) == 0)
 				continue;
 			
@@ -225,8 +220,7 @@ public class CExternalSettingsDeltaProcessor {
 			}
 		}
 		if(removed != null){
-			for(int i = 0; i < removed.length; i++){
-				ICSettingEntry entry = removed[i];
+			for (ICSettingEntry entry : removed) {
 				EntryContentsKey cKey = new EntryContentsKey(entry);
 				ICSettingEntry cur = map.get(cKey);
 				if(cur != null && !cur.isBuiltIn()){
@@ -235,15 +229,15 @@ public class CExternalSettingsDeltaProcessor {
 				}
 			}
 		}
+		@SuppressWarnings("unchecked")
 		Collection<T> values = (Collection<T>) map.values();
 		return changed ? new ArrayList<T>(values) : null;
 	}
 	
 	private static boolean isSettingCompatible(ICLanguageSetting setting, CExternalSetting provider){
 		String ids[] = provider.getCompatibleLanguageIds();
-		String id;
 		if(ids != null && ids.length > 0){
-			id = setting.getLanguageId();
+			String id = setting.getLanguageId();
 			if(id != null){
 				if(contains(ids, id))
 					return true;
@@ -256,8 +250,7 @@ public class CExternalSettingsDeltaProcessor {
 		if(ids != null && ids.length > 0){
 			String[] cTypeIds = setting.getSourceContentTypeIds();
 			if(cTypeIds.length != 0){
-				for(int i = 0; i < cTypeIds.length; i++){
-					id = cTypeIds[i];
+				for (String id : cTypeIds) {
 					if(contains(ids, id))
 						return true;
 				}
@@ -270,8 +263,7 @@ public class CExternalSettingsDeltaProcessor {
 		if(ids != null && ids.length > 0){
 			String [] srcIds = setting.getSourceExtensions();
 			if(srcIds.length != 0){
-				for(int i = 0; i < srcIds.length; i++){
-					id = srcIds[i];
+				for (String id : srcIds) {
 					if(contains(ids, id))
 						return true;
 				}
@@ -283,8 +275,8 @@ public class CExternalSettingsDeltaProcessor {
 	}
 	
 	private static boolean contains(Object array[], Object value){
-		for(int i = 0; i < array.length; i++){
-			if(array[i].equals(value))
+		for (Object element : array) {
+			if(element.equals(value))
 				return true;
 		}
 		return false;

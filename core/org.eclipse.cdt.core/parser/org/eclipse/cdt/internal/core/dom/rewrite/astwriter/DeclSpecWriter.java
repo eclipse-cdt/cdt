@@ -80,62 +80,42 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private String getCPPSimpleDecSpecifier(ICPPASTSimpleDeclSpecifier simpDeclSpec) {
-		int type = simpDeclSpec.getType();
-		if(type <= IASTSimpleDeclSpecifier.t_last) {
-			return getASTSimpleDecSpecifier(type);
-		}
-		switch (type) {
-		case ICPPASTSimpleDeclSpecifier.t_bool:
-			return CPP_BOOL;
-		case ICPPASTSimpleDeclSpecifier.t_wchar_t:
-			return WCHAR_T;
-		default:
-			System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
-		}
+		return getASTSimpleDecSpecifier(simpDeclSpec.getType(), true);
 	}
 	
 	private String getCSimpleDecSpecifier(ICASTSimpleDeclSpecifier simpDeclSpec) {
-		int type = simpDeclSpec.getType();
-		if(type <= IASTSimpleDeclSpecifier.t_last) {
-			return getASTSimpleDecSpecifier(type);
-		}
-		switch (type) {
-		case ICASTSimpleDeclSpecifier.t_Bool:
-			return _BOOL;
-		default:
-			System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
-		}
+		return getASTSimpleDecSpecifier(simpDeclSpec.getType(), false);
 	}
 
 
-	private String getASTSimpleDecSpecifier(int type) {
+	private String getASTSimpleDecSpecifier(int type, boolean isCpp) {
 
-		if(type <= IASTSimpleDeclSpecifier.t_last) {
-			switch (type) {
-			case IASTSimpleDeclSpecifier.t_unspecified:
-				return ""; //$NON-NLS-1$
-			case IASTSimpleDeclSpecifier.t_void:
-				return VOID;
-			case IASTSimpleDeclSpecifier.t_char:
-				return CHAR;
-			case IASTSimpleDeclSpecifier.t_int:
-				return INT;
+		switch (type) {
+		case IASTSimpleDeclSpecifier.t_unspecified:
+			return ""; //$NON-NLS-1$
+		case IASTSimpleDeclSpecifier.t_void:
+			return VOID;
+		case IASTSimpleDeclSpecifier.t_char:
+			return CHAR;
+		case IASTSimpleDeclSpecifier.t_int:
+			return INT;
 
-			case IASTSimpleDeclSpecifier.t_float:
-				return FLOAT;
-
-			case IASTSimpleDeclSpecifier.t_double:
-				return DOUBLE;
-			default:
-				System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unknow Specifiertype: " + type);	 //$NON-NLS-1$
-
-			}
+		case IASTSimpleDeclSpecifier.t_float:
+			return FLOAT;
+		case IASTSimpleDeclSpecifier.t_double:
+			return DOUBLE;
+			
+		case IASTSimpleDeclSpecifier.t_bool:
+			return isCpp ? CPP_BOOL : _BOOL;
+			
+		case IASTSimpleDeclSpecifier.t_wchar_t:
+			if (isCpp)
+				return WCHAR_T;
+			break;
 		}
+
 		System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-		throw new IllegalArgumentException("Unknow Specifiertype: " + type); //$NON-NLS-1$
+		throw new IllegalArgumentException("Unknow Specifiertype: " + type);	 //$NON-NLS-1$
 	}
 
 	private void writeCDeclSpec(ICASTDeclSpecifier cDeclSpec) {
@@ -205,7 +185,7 @@ public class DeclSpecWriter extends NodeWriter {
 		if(cppDelcSpec.isFriend()) {
 			scribe.print(FRIEND);
 		}
-		if(cppDelcSpec.getStorageClass() == ICPPASTDeclSpecifier.sc_mutable) {
+		if(cppDelcSpec.getStorageClass() == IASTDeclSpecifier.sc_mutable) {
 			scribe.print(MUTABLE);
 		}
 		

@@ -255,8 +255,8 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, boolean, boolean, boolean, int, int, int)
 	 */
 	public void retrieveDisassembly(final BigInteger startAddress,
-			BigInteger endAddress, String file, int lineNumber, int lines, final boolean mixed,
-			final boolean showSymbols, final boolean showDisassembly, int linesHint) {
+			BigInteger endAddress, final String file, int lineNumber, final int lines, final boolean mixed,
+			final boolean showSymbols, final boolean showDisassembly, final int linesHint) {
 		
 		if (fTargetContext == null || fTargetContext.isTerminated()) {
 			return;
@@ -265,28 +265,44 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		if (endAddress.subtract(startAddress).compareTo(addressLength) > 0) {
 			endAddress= startAddress.add(addressLength);
 		}
-		final BigInteger finalEndAddress= endAddress;
+		final BigInteger finalEndAddress= startAddress.add(BigInteger.valueOf(32)).max(endAddress);
 		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
 			public void done() {
 				if (isSuccess() && getDisassemblyBlock() != null) {
-					insertDisassembly(startAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly);
-				} else {
-					final IStatus status= getStatus();
-					if (status != null && !status.isOK()) {
-						if (startAddress != null) {
+					if (!insertDisassembly(startAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly)) {
+						// did not get disassembly data for startAddress - try fallbacks
+						if (file != null) {
+							// retry using plain address only
+							fCallback.setUpdatePending(true);
+							retrieveDisassembly(startAddress, finalEndAddress, null, -1, lines, mixed, showSymbols, showDisassembly, linesHint);
+						} else if (mixed) {
+							// retry using non-mixed mode
+							fCallback.setUpdatePending(true);
+							retrieveDisassembly(startAddress, finalEndAddress, null, -1, lines, false, showSymbols, showDisassembly, linesHint);
+						} else {
+							// give up
 							fCallback.doScrollLocked(new Runnable() {
 								public void run() {
-									fCallback.insertError(startAddress, status.getMessage());
+									fCallback.insertError(startAddress, "Unable to retrieve disassembly data from backend."); //$NON-NLS-1$
 								}
 							});
 						}
+					}
+				} else {
+					final IStatus status= getStatus();
+					if (status != null && !status.isOK()) {
+						fCallback.doScrollLocked(new Runnable() {
+							public void run() {
+								fCallback.insertError(startAddress, status.getMessage());
+							}
+						});
 					}
 					fCallback.setUpdatePending(false);
 				}
 			}
 		};
-		fDisassemblyRetrieval.asyncGetDisassembly(startAddress, finalEndAddress, file, lineNumber, lines, disassemblyRequest);
+		fDisassemblyRetrieval.asyncGetDisassembly(startAddress, finalEndAddress, file, lineNumber, lines, mixed, disassemblyRequest);
 		
 	}
 
@@ -399,18 +415,21 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 
 		assert !fCallback.getUpdatePending();
 		fCallback.setUpdatePending(true);
-		fDisassemblyRetrieval.asyncGetDisassembly(null, endAddress, file, 1, lines, disassemblyRequest);
+		fDisassemblyRetrieval.asyncGetDisassembly(null, endAddress, file, 1, lines, true, disassemblyRequest);
 	}
 	
-	private void insertDisassembly(BigInteger startAddress, IDisassemblyBlock disassemblyBlock, boolean mixed, boolean showSymbols, boolean showDisassembly) {
+	private boolean insertDisassembly(BigInteger startAddress, IDisassemblyBlock disassemblyBlock, boolean mixed, boolean showSymbols, boolean showDisassembly) {
 		if (!fCallback.hasViewer() || fCdiSessionId == null) {
-			return;
+			return true;
 		}
 		
 		if (!fCallback.getUpdatePending()) {
 			assert false;
-			return;
+			return true;
 		}
+
+		boolean insertedStartAddress = startAddress == null;
+		
 		try {
 			fCallback.lockScroller();
 			
@@ -440,14 +459,14 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 						p.fValid = false;
 						document.addInvalidAddressRange(p);
 					} else if (p == null) {
-						return;
+						return insertedStartAddress;
 					} else if (p.fValid) {
 						if (srcElement != null && lineNumber >= 0 || p.fAddressLength == BigInteger.ONE) {
 							// override probably unaligned disassembly
 							p.fValid = false;
 							document.addInvalidAddressRange(p);
 						} else {
-							return;
+							return insertedStartAddress;
 						}
 					}
 					boolean hasSource= false;
@@ -493,8 +512,10 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 							break;
 						}
 					} else {
-						if (instructions.length == 1 && srcLines.length == 1) {
-							instrLength= p.fAddressLength;
+						if (instructions.length == 1) {
+							if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
+								instrLength= p.fAddressLength;
+							}
 						}
 					}
 					if (instrLength == null) {
@@ -513,7 +534,8 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 					} else {
 						p = document.insertDisassemblyLine(p, address, instrLength.intValue(), opCode, instruction.getInstructionText(), compilationPath, lineNumber); //$NON-NLS-1
 					}
-					if (p == null) {
+					insertedStartAddress= insertedStartAddress || address.compareTo(startAddress) == 0;
+					if (p == null && insertedStartAddress) {
 						break;
 					}
 				}
@@ -525,11 +547,16 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			DisassemblyUtils.internalError(e);
 		} finally {
 			fCallback.setUpdatePending(false);
-			fCallback.updateInvalidSource();
-			fCallback.unlockScroller();
-			fCallback.doPending();
-			fCallback.updateVisibleArea();
+			if (insertedStartAddress) {
+				fCallback.updateInvalidSource();
+				fCallback.unlockScroller();
+				fCallback.doPending();
+				fCallback.updateVisibleArea();
+			} else {
+				fCallback.unlockScroller();
+			}
 		}
+		return insertedStartAddress;
 	}
 
 	/* (non-Javadoc)

@@ -42,10 +42,11 @@ public interface IDisassemblyRetrieval {
 	 * @param endAddress
 	 * @param file
 	 * @param lines
+	 * @param mixed  whether mixed assembly is preferred
 	 * @param disassemblyRequest
 	 */
 	void asyncGetDisassembly(BigInteger startAddress, BigInteger endAddress, String file, int fileNumber, int lines,
-			DisassemblyRequest disassemblyRequest);
+			boolean mixed, DisassemblyRequest disassemblyRequest);
 
 }
 

@@ -46,7 +46,7 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 	/*
 	 * @see org.eclipse.cdt.debug.ui.infinitedisassembly.views.IDisassemblyRetrieval#asyncGetDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, int, org.eclipse.cdt.debug.ui.infinitedisassembly.views.IDisassemblyRetrieval.DisassemblyRequest)
 	 */
-	public void asyncGetDisassembly(final BigInteger startAddress, final BigInteger endAddress, final String file, final int lineNumber, final int lines, final DisassemblyRequest disassemblyRequest) {
+	public void asyncGetDisassembly(final BigInteger startAddress, final BigInteger endAddress, final String file, final int lineNumber, final int lines, final boolean mixed, final DisassemblyRequest disassemblyRequest) {
 		Runnable op= new Runnable() {
 			public void run() {
 				ICDITarget cdiTarget= (ICDITarget) fDebugTarget.getAdapter(ICDITarget.class);
@@ -54,10 +54,16 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 					ICDIMixedInstruction[] mixedInstructions= null;
 					ICDIInstruction[] asmInstructions= null;
 					if (file != null) {
-						mixedInstructions= cdiTarget.getMixedInstructions(file, lineNumber, lines);
+						if (mixed) {
+							mixedInstructions= cdiTarget.getMixedInstructions(file, lineNumber, lines);
+						} else {
+							asmInstructions= cdiTarget.getInstructions(file, lineNumber, lines);
+						}
 					}
 					else if (startAddress != null) {
-						mixedInstructions= cdiTarget.getMixedInstructions(startAddress, endAddress);
+						if (mixed) {
+							mixedInstructions= cdiTarget.getMixedInstructions(startAddress, endAddress);
+						}
 						if (mixedInstructions == null || mixedInstructions.length == 0) {
 							mixedInstructions= null;
 							asmInstructions= cdiTarget.getInstructions(startAddress, endAddress);

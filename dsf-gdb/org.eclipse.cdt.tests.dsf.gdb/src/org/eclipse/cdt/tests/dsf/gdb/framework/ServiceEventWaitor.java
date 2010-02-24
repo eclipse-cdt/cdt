@@ -68,10 +68,12 @@ public class ServiceEventWaitor<V> {
 		if (fEventTypeClass != null) fSession.removeServiceEventListener(this);
 	}
 
-	/* Block until 'timeout' or the previously specified event has been
-	 * received.  The reason we don's specify the event as a parameter
-	 * is that we must be ready for the event to occur event before
-	 * this method is called.
+	/*
+	 * Block until 'timeout' or the previously specified event has been
+	 * received. The reason we don's specify the event as a parameter is that we
+	 * must be ready for the event to occur even before this method is called.
+	 * 
+	 * @param timeout the maximum time to wait in milliseconds.
 	 */
 	public synchronized V waitForEvent(int timeout) throws Exception {
 		if (fEventTypeClass == null) {

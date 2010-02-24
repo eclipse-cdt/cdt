@@ -201,12 +201,18 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 						IASTName name= ast.getNodeSelector(null).findEnclosingName(offset, length);
 						if (name != null) {
 							computeExpressionExtent(name, expressionPosition);
+						} else {
+							// not a name, but might still be an expression (e.g. this)
+							IASTNode node = ast.getNodeSelector(null).findFirstContainedNode(offset, length);
+							if (node instanceof IASTExpression) {
+								computeExpressionExtent(node, expressionPosition);
+							}
 						}
 					}
 					return Status.OK_STATUS;
 				}
-				private void computeExpressionExtent(IASTName name, Position pos) {
-					IASTNode node = name;
+				private void computeExpressionExtent(IASTNode node0, Position pos) {
+					IASTNode node = node0;
 					while (node != null && !(node instanceof IASTExpression) && !(node instanceof IASTDeclaration)) {
 						node = node.getParent();
 					}
@@ -217,9 +223,9 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 							pos.offset = loc.getNodeOffset();
 							pos.length = loc.getNodeLength();
 						}
-					} else {
+					} else if (node0 instanceof IASTName) {
 						// fallback: use simple name
-						IASTNodeLocation loc = name.getFileLocation();
+						IASTNodeLocation loc = node0.getFileLocation();
 						pos.offset = loc.getNodeOffset();
 						pos.length = loc.getNodeLength();
 					}

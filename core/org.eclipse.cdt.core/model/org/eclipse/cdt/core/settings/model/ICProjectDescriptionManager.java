@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public interface ICProjectDescriptionManager {
 	 * and returns a writable project description which is either empty or a copy of the previous configuration description
 	 * if loadIfExists == true.
 	 * @see #createProjectDescription(IProject, boolean, boolean)
+ 	 * @throws CoreException if the Project doesn't exist, or the storage couldn't be found
 	 */
 	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists) throws CoreException;
 
@@ -89,7 +90,7 @@ public interface ICProjectDescriptionManager {
 	 *
 	 * NOTE: changes made to the returned project description will not be applied until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
 	 * @return {@link ICProjectDescription}
-	 * @throws CoreException
+	 * @throws CoreException if the Project doesn't exist, or the storage couldn't be found
 	 */
 	ICProjectDescription createProjectDescription(IProject project, boolean loadIfExists, boolean creating) throws CoreException;
 

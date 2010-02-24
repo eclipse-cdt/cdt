@@ -390,18 +390,27 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	public ICProjectDescription getProjectDescription(IProject project, int flags) {
-		AbstractCProjectDescriptionStorage storage = getProjectDescriptionStorage(project);
-		if (storage != null) {
-			try {
-				return storage.getProjectDescription(flags, new NullProgressMonitor());
-			} catch (CoreException e) {
-				// FIXME Currently the resource change handler ResourceChangeHandler.getProjectDescription(...)
-				// Does this when the project is closed. Don't log an error or the tests will fail
+		try {
+			return getProjectDescriptionInternal(project, flags);
+		} catch (CoreException e) {
+			// FIXME Currently the resource change handler ResourceChangeHandler.getProjectDescription(...)
+			// Does this when the project is closed. Don't log an error or the tests will fail
 //				CCorePlugin.log(e);
-			}
 		}
 		return null;
 	}
+
+	/**
+	 * Base method for getting a Project's Description 
+	 * @param project
+	 * @param flags
+	 * @return ICProjectDescription
+	 * @throws CoreException if project description isn't available
+	 */
+	private ICProjectDescription getProjectDescriptionInternal(IProject project, int flags) throws CoreException {
+		AbstractCProjectDescriptionStorage storage = getProjectDescriptionStorage(project);
+		return storage.getProjectDescription(flags, new NullProgressMonitor());
+	}	
 
 	/**
 	 * Run the workspace modification in the current thread using the workspace scheduling rule
@@ -587,7 +596,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		flags |= loadIfExists ? 0 : ICProjectDescriptionManager.GET_EMPTY_PROJECT_DESCRIPTION;
 		flags |= creating ? ICProjectDescriptionManager.PROJECT_CREATING : 0;
 
-		return getProjectDescription(project, flags);
+		return getProjectDescriptionInternal(project, flags);
 	}
 
 	public ScannerInfoProviderProxy getScannerInfoProviderProxy(IProject project){
@@ -816,8 +825,19 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return settingProjectDescription.get();
 	}
 
-	private AbstractCProjectDescriptionStorage getProjectDescriptionStorage(IProject project) {
-		return CProjectDescriptionStorageManager.getInstance().getProjectDescriptionStorage(project);
+	/**
+	 * Base for getting a project desc's storage. project must be accessible.
+	 * @param project
+	 * @return ProjectDescription storage
+	 * @throws CoreException if Project isn't accessible
+	 */
+	private AbstractCProjectDescriptionStorage getProjectDescriptionStorage(IProject project) throws CoreException {
+		if (project == null || !project.isAccessible())
+			throw ExceptionFactory.createCoreException(MessageFormat.format(CCorePlugin.getResourceString("ProjectDescription.ProjectNotAccessible"), new Object[] {project != null ? project.getName() : "<null>"})); //$NON-NLS-1$ //$NON-NLS-2$
+		AbstractCProjectDescriptionStorage storage = CProjectDescriptionStorageManager.getInstance().getProjectDescriptionStorage(project);
+		if (storage == null)
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.FailedToGetStorage") + project.getName()); //$NON-NLS-1$
+		return storage;
 	}
 
 	/**

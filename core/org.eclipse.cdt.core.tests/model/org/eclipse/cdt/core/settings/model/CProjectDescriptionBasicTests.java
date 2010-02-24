@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,6 +125,28 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		assertEquals(EL_NAME, child.getName());
 		assertEquals(ATTR2_VALUE, child.getAttribute(ATTR2));
 
+	}
+
+	public void testCreateProjectDescriptionInvalidProject() throws Exception {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("someProject");
+		assertTrue(!project.isAccessible());
+
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		boolean exception = false;
+		try {
+			mngr.createProjectDescription(null, false, true);
+		} catch (CoreException e) {
+			exception = true;
+		}
+		assertTrue(exception);
+
+		exception = false;
+		try {
+			mngr.createProjectDescription(project, false, true);
+		} catch (CoreException e) {
+			exception = true;
+		}
+		assertTrue(exception);
 	}
 
 	public void testSetInvalidCreatingDescription() throws Exception {

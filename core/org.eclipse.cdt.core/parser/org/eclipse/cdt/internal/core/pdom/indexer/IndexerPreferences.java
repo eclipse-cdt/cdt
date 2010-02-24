@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class IndexerPreferences {
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_MACRO_REFERENCES= "skipMacroReferences"; //$NON-NLS-1$
 	public static final String KEY_UPDATE_POLICY= "updatePolicy"; //$NON-NLS-1$
+	public static final String KEY_SKIP_FILES_LARGER_THAN_MB = "skipFilesLargerThanMB"; //$NON-NLS-1$
 
 	private static final String KEY_INDEXER_PREFS_SCOPE = "preferenceScope"; //$NON-NLS-1$
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
@@ -72,6 +73,7 @@ public class IndexerPreferences {
 		"signal.h, " +         // configures bits/signum.h									//$NON-NLS-1$
 		"cstdio";              // configures stdio.h for c++ !! fragments bits/signum.h !!	//$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0; 
+	public static final int DEFAULT_FILE_SIZE_LIMIT = 8;
 
 	private static final String QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String INDEXER_NODE = "indexer"; //$NON-NLS-1$
@@ -329,6 +331,7 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, false);
 		prefs.putBoolean(KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG, false);
 		prefs.putBoolean(KEY_INCLUDE_HEURISTICS, true);
+		prefs.putInt(KEY_SKIP_FILES_LARGER_THAN_MB, DEFAULT_FILE_SIZE_LIMIT);
 		prefs.putBoolean(KEY_SKIP_ALL_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_IMPLICIT_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);

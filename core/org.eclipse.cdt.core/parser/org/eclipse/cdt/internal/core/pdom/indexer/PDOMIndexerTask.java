@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,8 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		setShowScannerProblems(checkDebugOption(TRACE_SCANNER_PROBLEMS, TRUE));
 		setShowSyntaxProblems(checkDebugOption(TRACE_SYNTAX_PROBLEMS, TRUE));
 		setShowProblems(checkDebugOption(TRACE_PROBLEMS, TRUE));
+		final long limit = getIntProperty(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, 0);
+		setFileSizeLimit(limit * 1024 * 1024);
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			setSkipReferences(SKIP_ALL_REFERENCES);
 		} else {
@@ -140,7 +142,18 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 	private boolean checkProperty(String key) {
 		return TRUE.equals(getIndexer().getProperty(key));
 	}
-	
+
+	private int getIntProperty(String key, int defaultValue) {
+		final String value = getIndexer().getProperty(key);
+		if (value != null) {
+			try {
+				return Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return defaultValue;
+	}
+
 	@Override
 	protected String getASTPathForParsingUpFront() {
 		final IProject project = getProject().getProject();

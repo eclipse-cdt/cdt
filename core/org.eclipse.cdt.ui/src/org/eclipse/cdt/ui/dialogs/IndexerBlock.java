@@ -96,6 +96,23 @@ public class IndexerBlock extends AbstractCOptionPage {
 		initializeIndexerConfigMap();
     }
 
+    
+	@Override
+	public boolean isValid() {
+		return super.isValid() && (fCurrentPage == null || fCurrentPage.isValid());
+	}
+
+	
+	@Override
+	public String getErrorMessage() {
+		String msg = super.getErrorMessage();
+		if (msg == null && fCurrentPage != null) {
+			msg= fCurrentPage.getErrorMessage();
+		}
+		return msg;
+	}
+
+
 	/**
      * Create a profile page only on request
      */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	private boolean fSupportFillGapFromContextToHeader= false;
+	private long fFileSizeLimit= 0;
 	
 	public IndexBasedFileContentProvider(IIndex index,
 			ASTFilePathResolver pathResolver, int linkage, IncludeFileContentProvider fallbackFactory) {
@@ -71,6 +72,10 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		fSupportFillGapFromContextToHeader= val;
 	}
 	
+	public void setFileSizeLimit(long limit) {
+		fFileSizeLimit= limit;
+	}
+
 	public void setLinkage(int linkageID) {
 		fLinkage= linkageID;
 	}
@@ -104,7 +109,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		path= fPathResolver.getASTPath(ifl);
 		
-		// include files once, only.
+		// Include files once, only.
 		if (!fIncludedFiles.add(ifl)) {
 			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
 		}
@@ -127,6 +132,11 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		catch (CoreException e) {
 			CCorePlugin.log(e);
+		}
+		
+		// Skip large files
+		if (fFileSizeLimit > 0 && fPathResolver.getFileSize(path) > fFileSizeLimit) {
+			return new InternalFileContent(path, InclusionKind.SKIP_FILE);
 		}
 
 		if (fFallBackFactory != null) {

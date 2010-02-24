@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,6 +179,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected IWritableIndex fIndex;
 	private ITodoTaskUpdater fTodoTaskUpdater;
 	private final boolean fIsFastIndexer;
+	private long fFileSizeLimit= 0;
 	private InternalFileContentProvider fCodeReaderFactory;
 
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove, IndexerInputAdapter resolver, boolean fastIndexer) {
@@ -209,6 +210,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	public final void setForceFirstFiles(int number) {
 		fForceNumberFiles= number;
+	}
+	public final void setFileSizeLimit(long limit) {
+		fFileSizeLimit= limit;
 	}
 
 	protected abstract IWritableIndex createIndex();
@@ -255,12 +259,19 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private final IASTTranslationUnit createAST(AbstractLanguage language, FileContent codeReader,
 			IScannerInfo scanInfo, int options, boolean inContext, IProgressMonitor pm) throws CoreException {
+		if (fFileSizeLimit > 0 && fResolver.getFileSize(codeReader.getFileLocation()) > fFileSizeLimit) {
+			if (fShowActivity) {
+				trace("Indexer: Skipping large file " + codeReader.getFileLocation());  //$NON-NLS-1$ 
+			}
+			return null;
+		}
 		if (fCodeReaderFactory == null) {
 			InternalFileContentProvider fileContentProvider = createInternalFileContentProvider();
 			if (fIsFastIndexer) {
 				IndexBasedFileContentProvider ibfcp = new IndexBasedFileContentProvider(fIndex, fResolver,
 						language.getLinkageID(), fileContentProvider, this);
 				ibfcp.setSupportFillGapFromContextToHeader(inContext);
+				ibfcp.setFileSizeLimit(fFileSizeLimit);
 				fCodeReaderFactory= ibfcp;
 			} else {
 				fCodeReaderFactory= fileContentProvider;

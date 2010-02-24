@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 
 /**
  * Abstract class for resolving paths as computed by the parser.
- * @since 5.0
  */
 public abstract class ASTFilePathResolver {
 
@@ -45,4 +44,9 @@ public abstract class ASTFilePathResolver {
 	 * Answers whether this file is considered to be a source file (vs. a header file).
 	 */
 	public abstract boolean isSource(String astFilePath);
+	
+	/**
+	 * Returns the size of the file in bytes, or -1 if it cannot be determined
+	 */
+	public abstract long getFileSize(String astFilePath);
 }

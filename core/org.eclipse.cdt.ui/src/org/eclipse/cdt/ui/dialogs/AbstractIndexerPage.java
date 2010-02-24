@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    Bogdan Gheorghe (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
@@ -15,9 +15,15 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -29,7 +35,7 @@ import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 /**
- * @author Bogdan Gheorghe
+ * Configuration for indexer.
  */
 public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	protected static final String INDEX_ALL_FILES = DialogsMessages.AbstractIndexerPage_indexAllFiles;
@@ -39,11 +45,19 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fAllHeadersDefault;
 	private Button fAllHeadersAlt;
 	private Button fIncludeHeuristics;
+	private IntegerFieldEditor fFileSizeLimit;
 	private Text fFilesToParseUpFront;
 	private Button fSkipReferences;
-	private Button fSkipTypeReferences;
 	private Button fSkipImplicitReferences;
-	private Button fSkipMacroReferences;
+	private Button fSkipMacroAndTypeReferences;
+
+    private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				updateValidState();
+			}
+        }
+    };
 
 	protected AbstractIndexerPage() {
 		super();
@@ -59,20 +73,35 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	@Override
 	public void createControl(Composite parent) {
+		GridLayout gl;
 		Composite page = ControlFactory.createComposite(parent, 1);
-		fAllSources= createAllFilesButton(page);
+		Composite group= new Composite(page, SWT.NONE);
+		
+		fAllSources= createAllFilesButton(group);
 		IProject prj= getCurrentProject();
 		if (prj == null || !CProject.hasCCNature(prj)) {
-			fAllHeadersDefault= createAllHeadersButton(page);
+			fAllHeadersDefault= createAllHeadersButton(group);
 		} else {
-			fAllHeadersDefault= createAllCppHeadersButton(page);
-			fAllHeadersAlt= createAllCHeadersButton(page);
+			fAllHeadersDefault= createAllCppHeadersButton(group);
+			fAllHeadersAlt= createAllCHeadersButton(group);
 		}
-		fIncludeHeuristics= createIncludeHeuristicsButton(page);
-		fSkipReferences= createSkipReferencesButton(page);
-		fSkipImplicitReferences= createSkipImplicitReferencesButton(page);
-		fSkipTypeReferences= createSkipTypeReferencesButton(page);
-		fSkipMacroReferences= createSkipMacroReferencesButton(page);
+
+		fIncludeHeuristics= createIncludeHeuristicsButton(group);
+		fFileSizeLimit= createFileSizeLimit(group);
+
+		group.setLayout(gl= new GridLayout(3, false));
+		gl.marginWidth= 0;
+		group.setLayoutData(new GridData());
+		
+
+		group= new Composite(page, SWT.NONE);
+		group.setLayout(gl= new GridLayout(1, false));
+		gl.marginWidth= 0;
+		group.setLayoutData(new GridData());
+		fSkipReferences= createSkipReferencesButton(group);
+		fSkipImplicitReferences= createSkipImplicitReferencesButton(group);
+		fSkipMacroAndTypeReferences= createSkipMacroAndTypeReferencesButton(group);
+		
 		fFilesToParseUpFront= createParseUpFrontTextField(page);
 		
 		final SelectionAdapter selectionListener = new SelectionAdapter() {
@@ -109,6 +138,20 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean use= prop == null || TRUE.equals(prop);
 			fIncludeHeuristics.setSelection(use);
 		}
+		if (fFileSizeLimit != null) {
+			Object prop= properties.get(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB);
+			int size= 0;
+			if (prop != null) {
+				try {
+					size= Integer.parseInt(prop.toString());
+				} catch (NumberFormatException e) {
+				}
+			}
+			if (size <= 0) {
+				size= IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT;
+			}
+			fFileSizeLimit.setStringValue(String.valueOf(size));
+		}
 		if (fSkipReferences != null) {
 			boolean skipReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_ALL_REFERENCES));
 			fSkipReferences.setSelection(skipReferences);
@@ -117,13 +160,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean skipImplicitReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES));
 			fSkipImplicitReferences.setSelection(skipImplicitReferences);
 		}		
-		if (fSkipTypeReferences != null) {
+		if (fSkipMacroAndTypeReferences != null) {
 			boolean skipTypeReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES));
-			fSkipTypeReferences.setSelection(skipTypeReferences);
-		}		
-		if (fSkipMacroReferences != null) {
 			boolean skipMacroReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES));
-			fSkipMacroReferences.setSelection(skipMacroReferences);
+			fSkipMacroAndTypeReferences.setSelection(skipTypeReferences && skipMacroReferences);
 		}		
 		if (fFilesToParseUpFront != null) {
 			String files = getNotNull(properties, IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
@@ -150,6 +190,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		if (fIncludeHeuristics != null) {
 			props.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(fIncludeHeuristics.getSelection()));
 		}
+		if (fFileSizeLimit != null) {
+			props.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(fFileSizeLimit.getIntValue()));
+		}
 		if (fFilesToParseUpFront != null) {
 			props.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, fFilesToParseUpFront.getText());
 		}
@@ -159,11 +202,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		if (fSkipImplicitReferences != null) {
 			props.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(fSkipImplicitReferences.getSelection()));
 		}
-		if (fSkipTypeReferences != null) {
-			props.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(fSkipTypeReferences.getSelection()));
-		}
-		if (fSkipMacroReferences != null) {
-			props.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, String.valueOf(fSkipMacroReferences.getSelection()));
+		if (fSkipMacroAndTypeReferences != null) {
+			final String value = String.valueOf(fSkipMacroAndTypeReferences.getSelection());
+			props.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, value);
+			props.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, value);
 		}
 		return props;
 	}
@@ -190,15 +232,25 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			if (fSkipImplicitReferences != null) {
 				fSkipImplicitReferences.setEnabled(!skipReferences);
 			}
-			if (fSkipTypeReferences != null) {
-				fSkipTypeReferences.setEnabled(!skipReferences);
-			}
-			if (fSkipMacroReferences != null) {
-				fSkipMacroReferences.setEnabled(!skipReferences);
+			if (fSkipMacroAndTypeReferences != null) {
+				fSkipMacroAndTypeReferences.setEnabled(!skipReferences);
 			}
 		}
 	}
 	
+    private void updateValidState() {
+    	if (!fFileSizeLimit.isValid()) {
+    		setErrorMessage(fFileSizeLimit.getErrorMessage());
+    		setValid(false);
+		} else {
+    		setValid(true);
+    	}
+        final ICOptionContainer container = getContainer();
+        if (container != null) {
+        	container.updateContainer();
+        }
+    }
+    
 	private String getNotNull(Properties properties, String key) {
 		String files= (String) properties.get(key);
 		if (files == null) {
@@ -214,23 +266,45 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	} 
 
 	private Button createAllFilesButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllFiles);
+		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllFiles);
+		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		return result;
 	}
 
 	private Button createAllHeadersButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeaders);
+		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeaders);
+		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		return result;
 	}
 
 	private Button createAllCHeadersButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersC);
+		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersC);
+		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		return result;
 	}
 
 	private Button createAllCppHeadersButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersCpp);
+		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllHeadersCpp);
+		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		return result;
 	}
 
 	private Button createIncludeHeuristicsButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_heuristicIncludes);
+		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_heuristicIncludes);
+		((GridData) result.getLayoutData()).horizontalSpan= 3;
+		return result;
+	}
+	
+	private IntegerFieldEditor createFileSizeLimit(Composite group) {
+		IntegerFieldEditor result= new IntegerFieldEditor(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, DialogsMessages.AbstractIndexerPage_fileSizeLimit, group, 5);
+		result.setValidRange(1, 100000);
+		ControlFactory.createLabel(group, DialogsMessages.CacheSizeBlock_MB); 
+		GridData gd = new GridData();
+		gd.grabExcessHorizontalSpace= true;
+		gd.horizontalAlignment= GridData.FILL;
+		result.getLabelControl(group).setLayoutData(gd);
+		result.setPropertyChangeListener(validityChangeListener);
+		return result;
 	}
 
 	private Button createSkipReferencesButton(Composite page) {
@@ -241,11 +315,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipImplicitReferences);
 	}
 
-	private Button createSkipTypeReferencesButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeReferences);
-	}
-
-	private Button createSkipMacroReferencesButton(Composite page) {
-		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipMacroReferences);
+	private Button createSkipMacroAndTypeReferencesButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeAndMacroReferences);
 	}
 }

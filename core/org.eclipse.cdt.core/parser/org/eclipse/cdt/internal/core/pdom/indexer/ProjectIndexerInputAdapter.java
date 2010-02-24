@@ -119,6 +119,11 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		}
 		return new File(includePath).isFile();
 	}
+	
+	@Override
+	public long getFileSize(String astFilePath) {
+		return new File(astFilePath).length();
+	}
 
 	@Override
 	public String getASTPath(IIndexFileLocation ifl) {

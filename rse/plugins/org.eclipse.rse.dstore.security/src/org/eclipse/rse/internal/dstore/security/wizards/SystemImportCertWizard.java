@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal  (IBM)        - [303717] [dstore][ssl] problem accepting certificate chain
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.security.wizards;
@@ -115,7 +116,7 @@ public class SystemImportCertWizard
 				if (cert != null)
 				{
 					String alias = _aliasPage.getAlias();
-					
+					alias = alias + "." + Integer.toString(i + 1); // NEW LINE //$NON-NLS-1$
 					try
 					{
 						KeyStore ks = DStoreKeyStore.getKeyStore(_provider.getKeyStorePath(), _provider.getKeyStorePassword());

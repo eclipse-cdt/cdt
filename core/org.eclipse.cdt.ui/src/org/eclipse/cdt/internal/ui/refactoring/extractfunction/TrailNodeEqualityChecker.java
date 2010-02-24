@@ -58,7 +58,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -331,12 +330,7 @@ public class TrailNodeEqualityChecker implements EqualityChecker<IASTNode> {
 			ICPPASTSimpleTypeConstructorExpression trailConsExpr = (ICPPASTSimpleTypeConstructorExpression) trailNode;
 			ICPPASTSimpleTypeConstructorExpression consExpr = (ICPPASTSimpleTypeConstructorExpression) node;
 			
-			return trailConsExpr.getSimpleType() == consExpr.getSimpleType();
-		} else if (trailNode instanceof ICPPASTTypenameExpression) {
-			ICPPASTTypenameExpression trailTypenameExpr = (ICPPASTTypenameExpression) trailNode;
-			ICPPASTTypenameExpression typenameExpr = (ICPPASTTypenameExpression) node;
-			
-			return trailTypenameExpr.isTemplate() == typenameExpr.isTemplate();
+			return isDeclSpecifierEquals(trailConsExpr.getDeclSpecifier(), consExpr.getDeclSpecifier());
 		} else {
 //			same type
 			return true;

@@ -831,7 +831,7 @@ public class IBViewPart extends ViewPart
     public String[] getShowInTargetIds() {
         return new String[] {
         		ProjectExplorer.VIEW_ID, 
-        		IPageLayout.ID_RES_NAV
+        		IPageLayout.ID_PROJECT_EXPLORER
         };
     }
 

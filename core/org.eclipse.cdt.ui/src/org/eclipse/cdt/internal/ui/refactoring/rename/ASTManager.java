@@ -100,7 +100,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
@@ -827,8 +826,6 @@ public class ASTManager {
         if( fArgument.getSourceFile() == null )
             return;
         
-        SavedCodeReaderFactory.getInstance().getCodeReaderCache().flush();
-        
         pm.beginTask(Messages.getString("ASTManager.task.analyze"), 2); //$NON-NLS-1$
         IASTTranslationUnit tu= getTranslationUnit(index, fArgument.getSourceFile(), true, status);
         pm.worked(1);
@@ -1338,10 +1335,10 @@ public class ASTManager {
         
         for (int i = 0; i < 3; i++) {
             Collection<?> coll= cflc[i];
-            for (Iterator<?> iter = coll.iterator(); iter.hasNext();) {
+            for (Object name : coll) {
                 boolean warn= false;
                 String msg= errs[i];
-                IBinding conflict = (IBinding) iter.next();
+                IBinding conflict = (IBinding) name;
                 String what= null;
                 if (conflict instanceof IEnumerator) {
                     if (isVarParEnumerator || isFunction || isMacro) {

@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.preferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -88,7 +87,8 @@ public class IndexerPreferencePage extends PreferencePage implements
 		return null;
 	}
 
-	public Preferences getPreferences() {
+	@SuppressWarnings("deprecation")
+	public org.eclipse.core.runtime.Preferences getPreferences() {
 		throw new UnsupportedOperationException();
 	}
 

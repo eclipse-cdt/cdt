@@ -44,12 +44,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -86,7 +86,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExpressionList;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExpressionStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
@@ -732,7 +731,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTFunctionCallExpression callExpression = new CPPASTFunctionCallExpression();
 		IASTIdExpression idExpression = new CPPASTIdExpression();
 		idExpression.setName(astMethodName);
-		IASTExpressionList paramList = new CPPASTExpressionList();
+		List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
 
 		Vector<IASTName> declarations = new Vector<IASTName>();
 		IASTName retName = null;
@@ -758,7 +757,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						.getNames()) {
 					if (orgName.equals(simNameInfo.getDeclaration()
 							.getRawSignature())) {
-						addAParameterIfPossible(paramList, declarations,
+						addAParameterIfPossible(args, declarations,
 								simNameInfo);
 						found = true;
 
@@ -776,7 +775,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					IASTIdExpression expression = new CPPASTIdExpression();
 					CPPASTName fieldName = new CPPASTName(orgName.toCharArray());
 					expression.setName(fieldName);
-					paramList.addExpression(expression);
+					args.add(expression);
 
 					if (theRetName) {
 						theRetName = false;
@@ -786,7 +785,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			}
 		}
 
-		callExpression.setParameterExpression(paramList);
+		callExpression.setArguments(args.toArray(new IASTInitializerClause[args.size()]));
 		callExpression.setFunctionNameExpression(idExpression);
 
 		if (info.getReturnVariable() == null) {
@@ -801,8 +800,8 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTFunctionCallExpression callExpression = new CPPASTFunctionCallExpression();
 		IASTIdExpression idExpression = new CPPASTIdExpression();
 		idExpression.setName(new CPPASTName(astMethodName.toCharArray()));
-		IASTExpressionList paramList = getCallParameters();
-		callExpression.setParameterExpression(paramList);
+		List<IASTInitializerClause> args = getCallParameters();
+		callExpression.setArguments(args.toArray(new IASTInitializerClause[args.size()]));
 		callExpression.setFunctionNameExpression(idExpression);
 
 		if (info.getReturnVariable() == null) {
@@ -913,16 +912,16 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		return container;
 	}
 
-	public IASTExpressionList getCallParameters() {
-		IASTExpressionList paramList = new CPPASTExpressionList();
+	public List<IASTInitializerClause> getCallParameters() {
+		List<IASTInitializerClause> args = new ArrayList<IASTInitializerClause>();
 		Vector<IASTName> declarations = new Vector<IASTName>();
 		for (NameInformation nameInf : container.getNames()) {
-			addAParameterIfPossible(paramList, declarations, nameInf);
+			addAParameterIfPossible(args, declarations, nameInf);
 		}
-		return paramList;
+		return args;
 	}
 
-	private void addAParameterIfPossible(IASTExpressionList paramList,
+	private void addAParameterIfPossible(List<IASTInitializerClause> args,
 			Vector<IASTName> declarations, NameInformation nameInf) {
 		if (!nameInf.isDeclarationInScope()) {
 			IASTName declaration = nameInf.getDeclaration();
@@ -930,7 +929,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				declarations.add(declaration);
 				IASTIdExpression expression = new CPPASTIdExpression();
 				expression.setName(newName(declaration));
-				paramList.addExpression(expression);
+				args.add(expression);
 			}
 		}
 	}

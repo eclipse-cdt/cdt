@@ -161,7 +161,6 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 			String key= (String) text.getData();
 			store.setValue(key, text.getText());
 		}
-		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 

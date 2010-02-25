@@ -13,8 +13,10 @@ package org.eclipse.cdt.tests.dsf.gdb.launching;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -98,4 +100,53 @@ public class TestsPlugin extends Plugin {
     public static String getUniqueIdentifier() {
     	return getDefault().getBundle().getSymbolicName();    
     }
+
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status
+	 *            status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
+
+	/**
+	 * Logs an internal error with the specified throwable
+	 * 
+	 * @param e
+	 *            the exception to be logged
+	 */
+	public static void log( Throwable e ) {
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), "Internal Error", e)); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests should use this utility when specifying a timeout value for a wait
+	 * operation. This method checks for the existence of the property
+	 * "dsf.gdb.tests.timeout.multiplier" and applies it to the specified value.
+	 * The property should be specified as a float, e.g., "1.5". Such a value
+	 * would up the timeout value by 50%. This gives the executor of the tests
+	 * the ability to widen the timeouts across the board for all operations to
+	 * accommodate a slow machine.
+	 * 
+	 * @param timeoutMs
+	 *            the timeout, in milliseconds
+	 * @return the adjusted value
+	 */
+	public static int massageTimeout(int timeoutMs) {
+		String prop = System.getProperty("dsf.gdb.tests.timeout.multiplier");
+		if (prop == null || prop.length() == 0) {
+			return timeoutMs;
+		}
+		
+		try {
+			float multiplier = Float.valueOf(prop);
+			return (int)(timeoutMs * multiplier);
+		}
+		catch (NumberFormatException exc) {
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), "\"dsf.gdb.tests.timeout.multiplier\" property incorrectly specified. Should be a float value (e.g., \"1.5\") or not specified at all.")); //$NON-NLS-1$
+			return timeoutMs;
+		}
+	}
 }

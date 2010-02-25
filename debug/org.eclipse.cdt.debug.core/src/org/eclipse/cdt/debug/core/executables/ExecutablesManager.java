@@ -104,7 +104,10 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 
 					// store the list of executables for this project
 					synchronized (executablesMap) {
-						executablesMap.put(project, provider.getExecutables(project, subMonitor.newChild(1, SubMonitor.SUPPRESS_NONE)));
+						List<Executable> executables = provider.getExecutables(project, subMonitor.newChild(1, SubMonitor.SUPPRESS_NONE));
+						if (!monitor.isCanceled()) {
+							executablesMap.put(project, executables);
+						}
 					}
 				}
 			}

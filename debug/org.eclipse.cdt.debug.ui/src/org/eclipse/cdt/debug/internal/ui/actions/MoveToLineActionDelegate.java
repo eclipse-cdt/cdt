@@ -153,7 +153,7 @@ public class MoveToLineActionDelegate implements IEditorActionDelegate, IActionD
 	}
 	
 	/**
-	 * Binds this action to operate on the given part's run to line adapter.
+	 * Binds this action to operate on the given part's IMoveToLineTarget adapter.
 	 *  
 	 * @param part
 	 */

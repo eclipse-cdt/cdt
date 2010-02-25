@@ -13,6 +13,7 @@ package org.eclipse.cdt.tests.dsf.gdb.launching;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -27,6 +28,9 @@ public class TestsPlugin extends Plugin {
     private static BundleContext bundleContext;
 	
     public static final String PLUGIN_ID = "org.eclipse.cdt.tests.dsf.gdb"; //$NON-NLS-1$
+    
+    /** Base tracing option for this plugin */
+    public static final boolean DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.tests.dsf.gdb/debug"));  //$NON-NLS-1$//$NON-NLS-2$
     
     /**
      * The constructor.

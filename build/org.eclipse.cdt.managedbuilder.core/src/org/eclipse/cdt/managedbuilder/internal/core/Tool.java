@@ -1207,6 +1207,9 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		// Our options take precedence.
 		Vector<InputType> ourTypes = getInputTypeList();
 		if (types != null) {
+			// Avoid replacing a replacement. See bug 303735
+			boolean[] typesWasReplaced = new boolean[types.length];
+			
 			for (int i = 0; i < ourTypes.size(); i++) {
 				IInputType ourType = ourTypes.get(i);
 				int j;
@@ -1216,8 +1219,10 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 						otherTypeToCheck = types[j];
 					
 					if (ourType.getSuperClass() != null &&
-					    ourType.getSuperClass().getId().equals(otherTypeToCheck.getId())) {
+					    ourType.getSuperClass().getId().equals(otherTypeToCheck.getId()) &&
+					    !typesWasReplaced[j]) {
 						types[j] = ourType;
+						typesWasReplaced[j] = true;
 						break;
 					}
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -17,14 +18,26 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.LineBackgroundEvent;
+import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-public class BuildConsoleViewer extends TextViewer implements LineStyleListener {
+import org.eclipse.cdt.ui.CUIPlugin;
+
+public class BuildConsoleViewer extends TextViewer 
+	implements  LineStyleListener, 
+				LineBackgroundListener,
+				MouseTrackListener, 
+				MouseListener {
 
 	protected InternalDocumentListener fInternalDocumentListener = new InternalDocumentListener();
 	/**
@@ -81,13 +94,15 @@ public class BuildConsoleViewer extends TextViewer implements LineStyleListener 
 	 */
 	public BuildConsoleViewer(Composite parent) {
 		super(parent, getSWTStyles());
-		getTextWidget().setDoubleClickEnabled(true);
-		getTextWidget().setFont(parent.getFont());
-		getTextWidget().addLineStyleListener(this);
-		getTextWidget().setEditable(false);
-		getTextWidget().setWordWrap(true);
+		StyledText styledText = getTextWidget();
+		styledText.addLineStyleListener(this);
+		styledText.addLineBackgroundListener(this);
+		styledText.addMouseTrackListener(this);
+		styledText.setFont(parent.getFont());
+		styledText.setDoubleClickEnabled(true);
+		styledText.setEditable(false);
+		styledText.setWordWrap(true);
 	}
-	
 
 	/**
 	 * Returns the SWT style flags used when instantiating this viewer
@@ -121,7 +136,6 @@ public class BuildConsoleViewer extends TextViewer implements LineStyleListener 
 		}
 	}
 	
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -154,21 +168,96 @@ public class BuildConsoleViewer extends TextViewer implements LineStyleListener 
 	 * 
 	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
 	 */
-	public void lineGetStyle(LineStyleEvent event) {
+	public void lineGetStyle(LineStyleEvent event) {				
 		IDocument document = getDocument();
-		if (document != null) {
-			BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
-			if (partitioner != null) {
-				ITypedRegion[] regions = partitioner.computePartitioning(event.lineOffset, event.lineOffset
-						+ event.lineText.length());
-				StyleRange[] styles = new StyleRange[regions.length];
-				for (int i = 0; i < regions.length; i++) {
-					BuildConsolePartition partition = (BuildConsolePartition) regions[i];
-					Color color = partition.getStream().getColor();
-					styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
-				}
-				event.styles = styles;
+		if (document == null) return;		
+		BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
+		if (partitioner == null) return; 
+		
+		BuildConsolePartition p = partitioner.fDocumentMarkerManager.getCurrentPartition();
+		Color problemHighlightedColor =  partitioner.fManager.getProblemHighlightedColor();
+		
+		// Note, computePartitioning actually doesn't change anything in partitioning,
+		// but only computes number of affected regions.
+		ITypedRegion[] regions = partitioner.computePartitioning(event.lineOffset, event.lineText.length());
+		StyleRange[] styles = new StyleRange[regions.length];				
+		for (int i = 0; i < regions.length; i++) {
+			BuildConsolePartition partition = (BuildConsolePartition) regions[i];			
+			Color colorFG = partition.getStream().getColor();
+			Color colorBG = null;
+			
+			// Highlight current partition
+			if ( partition == p ) {
+				colorFG = problemHighlightedColor;
 			}
+			StyleRange styleRange = new StyleRange(partition.getOffset(), partition.getLength(), colorFG, colorBG);					
+			styles[i] = styleRange;
+		}
+		event.styles = styles;				
+	}
+	
+	public void selectPartition(BuildConsolePartitioner partitioner, BuildConsolePartition p) {		
+		try {
+			int start = partitioner.getDocument().getLineOfOffset(p.getOffset());
+			int end = partitioner.getDocument().getLineOfOffset(p.getOffset()+p.getLength()-1);
+			
+			if ( fAutoScroll ) {
+				// Check if area around this line is visible, scroll if needed
+				int top = getTopIndex();
+				int bottom = getBottomIndex();			
+				if ( start < top + 1 ) {
+					setTopIndex(start - 1 > 0 ? start - 1 : 0); 
+				} else if ( end > bottom -1 ) {
+					setTopIndex(top + start - bottom + 1);
+				}
+			}		
+			
+			// Select line
+			StyledText st = getTextWidget();
+			st.redrawRange(0, partitioner.getDocument().getLength(), true);
+			
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);
+		}
+	}
+
+	public void mouseEnter(MouseEvent e) {
+		getTextWidget().addMouseListener(this);	
+	}
+
+	public void mouseExit(MouseEvent e) {
+		getTextWidget().removeMouseListener(this);		
+	}
+
+	public void mouseHover(MouseEvent e) {		
+	}
+
+	public void mouseDoubleClick(MouseEvent e) {
+		int offset = -1;
+		try {			
+			Point p = new Point(e.x, e.y);
+			offset = getTextWidget().getOffsetAtLocation(p);
+			BuildConsole.getPage().moveToError(offset);
+		} catch (IllegalArgumentException ex) {
+		}		
+	}
+
+	public void mouseDown(MouseEvent e) {		
+	}
+
+	public void mouseUp(MouseEvent e) {
+	}
+
+	public void lineGetBackground(LineBackgroundEvent event) {
+		IDocument document = getDocument();
+		if (document == null) return;		
+		BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
+		if (partitioner == null) return; 
+		
+		BuildConsolePartition partition = (BuildConsolePartition) partitioner.getPartition(event.lineOffset);
+		// Set background for error partitions
+		if ( partition != null && partition.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
+			event.lineBackground = partitioner.fManager.getProblemBackgroundColor();
 		}
 	}
 

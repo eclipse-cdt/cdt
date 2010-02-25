@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -40,6 +41,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static final String PREF_BUILDCONSOLE_OUTPUT_COLOR = "buildConsoleOutputStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_ERROR_COLOR = "buildConsoleErrorStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_BACKGROUND_COLOR = "buildConsoleBackgroundColor"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR = "buildConsoleProblemBackgroundColor"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR = "buildConsoleProblemHighlightedColor"; //$NON-NLS-1$
 
 	public BuildConsolePreferencePage() {
 		super(GRID);
@@ -82,6 +85,10 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 				CUIPlugin.getResourceString("ConsolePreferencePage.errorColor.label"), parent)); //$NON-NLS-1$
 		addField(createColorFieldEditor(PREF_BUILDCONSOLE_BACKGROUND_COLOR,
 				CUIPlugin.getResourceString("ConsolePreferencePage.backgroundColor.label"), parent)); //$NON-NLS-1$
+		addField(createColorFieldEditor(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR,
+				CUIPlugin.getResourceString("ConsolePreferencePage.problemBackgroundColor.label"), parent)); //$NON-NLS-1$
+		addField(createColorFieldEditor(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR,
+				CUIPlugin.getResourceString("ConsolePreferencePage.problemHighlightedColor.label"), parent)); //$NON-NLS-1$
 	}
 
 	private Label createLabel(Composite parent, String text) {
@@ -135,6 +142,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_INFO_COLOR, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
+		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR, new RGB(254, 231, 224));
+		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR, new RGB(255, 0, 0));
 	}
 
 }

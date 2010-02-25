@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Red Hat Inc. - multiple build console support
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation     
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -19,9 +20,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -36,6 +40,7 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -59,6 +64,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -66,15 +73,21 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.console.actions.TextViewerGotoLineAction;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
+import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
@@ -86,6 +99,10 @@ public class BuildConsolePage extends Page
 			ITextListener, 
 			IAdaptable {
 
+	static final int POSITION_NEXT = -1;
+	static final int POSITION_PREV = -2;
+	static final int POSITION_FIST = -3;
+	
 	private BuildConsole fConsole;
 	private IConsoleView fConsoleView;
 	private String fContextMenuId;
@@ -109,6 +126,9 @@ public class BuildConsolePage extends Page
 	private Menu fMenu;
 	private ScrollLockAction fScrollLockAction;
 	private boolean fIsLocked;
+	private NextErrorAction fNextErrorAction;
+	private PreviousErrorAction fPreviousErrorAction;
+	private ShowErrorAction fShowErrorAction;
 
 	/**
 	 * @param view
@@ -137,7 +157,13 @@ public class BuildConsolePage extends Page
 	protected IDocument setDocument() {
 		IProject project = getProject();
 		if (project != null) {
-			getViewer().setDocument(getConsole().getConsoleManager().getConsoleDocument(project));
+			IBuildConsoleManager consoleManager = getConsole().getConsoleManager();
+			getViewer().setDocument(consoleManager.getConsoleDocument(project));			
+			IConsole console = consoleManager.getConsole(project);
+			if ( console instanceof BuildConsolePartitioner) {
+				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+				showError(par, fShowErrorAction.isChecked() );
+			}
 		}
 		return null;
 	}
@@ -206,6 +232,7 @@ public class BuildConsolePage extends Page
 		setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 
 		getConsole().addPropertyChangeListener(this);
+		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 
 		fViewer.addTextListener(this);
 		fViewer.getTextWidget().setBackground(getConsole().getBackground());
@@ -238,8 +265,8 @@ public class BuildConsolePage extends Page
 		final Object source = event.getSource();
 		final String property = event.getProperty();
 
-		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStream) {
-			BuildConsoleStream stream = (BuildConsoleStream)source;
+		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStreamDecorator) {
+			BuildConsoleStreamDecorator stream = (BuildConsoleStreamDecorator)source;
 			if (stream.getConsole().equals(getConsole()) && getControl() != null) {
 				Display display = getControl().getDisplay();
 				display.asyncExec(new Runnable() {
@@ -261,6 +288,10 @@ public class BuildConsolePage extends Page
 	protected void createActions() {
 		fClearOutputAction = new ClearOutputAction(getViewer());
 		fScrollLockAction = new ScrollLockAction(getViewer());
+		fNextErrorAction = new NextErrorAction(this);
+		fPreviousErrorAction = new PreviousErrorAction(this);	
+		fShowErrorAction = new ShowErrorAction();
+
 		fScrollLockAction.setChecked(fIsLocked);
 		getViewer().setAutoScroll(!fIsLocked);
 		// In order for the clipboard actions to accessible via their shortcuts
@@ -311,6 +342,11 @@ public class BuildConsolePage extends Page
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.insertBefore(IConsoleConstants.OUTPUT_GROUP, new GroupMarker(BuildConsole.ERROR_GROUP));
+		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fPreviousErrorAction);
+		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fNextErrorAction);
+		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fShowErrorAction);
+
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
 	}
@@ -506,4 +542,88 @@ public class BuildConsolePage extends Page
 			findReplace.update();
 		}
 	}
+
+	/**
+	 * Highlight next/previous error or error by console offset
+	 * @param position POSITION_NEXT (-1), POSITION_PREV (-2), or offset 
+	 */
+	void moveToError(int position) {
+		IProject project = getProject();
+		IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
+		IConsole console = consoleManager.getConsole(project);
+		if ( console instanceof BuildConsolePartitioner) {
+			BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+			// Move to specified line in the model (BuildConsolePartitioner)
+			if ( position == POSITION_NEXT ) {
+				par.fDocumentMarkerManager.moveToNextError();
+			} else if ( position == POSITION_PREV ) {
+				par.fDocumentMarkerManager.moveToPreviousError();
+			} else if ( position == POSITION_FIST ) {
+				par.fDocumentMarkerManager.moveToFirstError();
+			} else if ( position >= 0 ) {
+				if ( ! par.fDocumentMarkerManager.moveToErrorByOffset(position) ) {
+					// we haven't moved, because offset points to non-error partition
+					return;
+				}
+			}
+			showError(par, position > 0 || fShowErrorAction.isChecked() );
+		}		
+	}
+
+	/**
+	 * Highlight current error and show it in editor
+	 */
+	public void showError(BuildConsolePartitioner par, boolean openInEditor) {
+		// Highlight current error
+		BuildConsolePartition p = par.fDocumentMarkerManager.getCurrentPartition();
+		if ( p == null ) return;
+		getViewer().selectPartition(par, p);
+		// Show error in editor if necessary
+		// (always show when absolute positioning, otherwise depends 
+		// on fShowErrorAction state)
+		if ( openInEditor ) {
+			openErrorInEditor(par.fDocumentMarkerManager.getCurrentErrorMarker());
+		}			
+	}
+	
+	/** 
+	 * Open error specified by marker in editor 
+	 */
+	public static void openErrorInEditor(ProblemMarkerInfo marker) {
+		IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
+		
+		if ( marker == null || marker.file == null || window == null )  return;
+		
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) return; 
+		
+		IEditorPart editor = page.getActiveEditor();
+		if (editor != null) {
+			IEditorInput input = editor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null && file.equals(marker.file) && OpenStrategy.activateOnOpen()) {
+				page.activate(editor);
+			}
+		}
+			
+		if ( marker.file instanceof IFile ) {
+			try {
+				// Find IMarker corresponding to ProblemMarkerInfo
+				IMarker mrkrs[] = marker.file.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ONE);
+				for (IMarker m: mrkrs) {
+					if ( marker.lineNumber == ((Integer)m.getAttribute(IMarker.LINE_NUMBER)).intValue() &&
+								marker.description.equals(m.getAttribute(IMarker.MESSAGE)) &&
+								marker.severity == ((Integer)m.getAttribute(IMarker.SEVERITY)).intValue() ) {
+						IDE.openEditor(page, m, OpenStrategy.activateOnOpen());
+						return;
+					}
+				}				
+			} catch (PartInitException e) {
+				CUIPlugin.log(e);
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
+			}
+		}			
+	}
+	
 }

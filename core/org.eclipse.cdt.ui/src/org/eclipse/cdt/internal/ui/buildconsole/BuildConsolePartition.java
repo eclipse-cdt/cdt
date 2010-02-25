@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,27 +7,37 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.TypedRegion;
 
 public class BuildConsolePartition extends TypedRegion {
 
-	/**
-	 * Associated stream
-	 */
-	private BuildConsoleStream fStream;
+	/** Associated stream */
+	private BuildConsoleStreamDecorator fStream;
+	
+	/** Marker associated with this partition if any */
+	private ProblemMarkerInfo fMarker; 
 
-	/**
-	 * Partition type
-	 */
+	/** Partition type */
 	public static final String CONSOLE_PARTITION_TYPE = CUIPlugin.getPluginId() + ".CONSOLE_PARTITION_TYPE"; //$NON-NLS-1$	
-
-	public BuildConsolePartition(BuildConsoleStream stream, int offset, int length) {
-		super(offset, length, CONSOLE_PARTITION_TYPE);
+	
+	/** Partition type to report errors in console */
+	public static final String ERROR_PARTITION_TYPE = CUIPlugin.getPluginId() + ".ERROR_PARTITION_TYPE"; //$NON-NLS-1$  
+	
+	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type) {
+		super(offset, length, type);
 		fStream = stream;
+	}
+
+	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type, ProblemMarkerInfo marker) {
+		super(offset, length, type);
+		fStream = stream;
+		fMarker = marker;
 	}
 
 	/**
@@ -54,7 +64,7 @@ public class BuildConsolePartition extends TypedRegion {
 	 * 
 	 * @return this partition's stream
 	 */
-	public BuildConsoleStream getStream() {
+	public BuildConsoleStreamDecorator getStream() {
 		return fStream;
 	}
 
@@ -66,6 +76,9 @@ public class BuildConsolePartition extends TypedRegion {
 	 * @return boolean
 	 */
 	public boolean canBeCombinedWith(BuildConsolePartition partition) {
+		// Error partitions never can be combined together
+		if ( getType() == ERROR_PARTITION_TYPE ) return false; 
+
 		int start = getOffset();
 		int end = start + getLength();
 		int otherStart = partition.getOffset();
@@ -88,18 +101,20 @@ public class BuildConsolePartition extends TypedRegion {
 		int otherEnd = otherStart + partition.getLength();
 		int theStart = Math.min(start, otherStart);
 		int theEnd = Math.max(end, otherEnd);
-		return createNewPartition(theStart, theEnd - theStart);
+		return createNewPartition(theStart, theEnd - theStart, CONSOLE_PARTITION_TYPE);
 	}
 
 	/**
-	 * Creates a new patition of this type with the given color, offset, and
-	 * length.
-	 * 
+	 * Creates a new partition of this type with the given offset, and length.
 	 * @param offset
 	 * @param length
 	 * @return a new partition with the given range
 	 */
-	public BuildConsolePartition createNewPartition(int offset, int length) {
-		return new BuildConsolePartition(getStream(), offset, length);
+	public BuildConsolePartition createNewPartition(int offset, int length, String type) {
+		return new BuildConsolePartition(getStream(), offset, length, type, getMarker());
+	}
+
+	public ProblemMarkerInfo getMarker() {
+		return fMarker;
 	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
@@ -205,11 +206,11 @@ public class MakeBuilder extends ACBuilder {
 				if (last == null) {
 					last = new Integer(100);
 				}
-				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos, last.intValue());
 				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, info.getErrorParsers());
-				epm.setOutputStream(streamMon);
-				OutputStream stdout = epm.getOutputStream();
-				OutputStream stderr = epm.getOutputStream();
+				epm.setOutputStream(cos);
+				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), epm, last.intValue());
+				OutputStream stdout = streamMon;
+				OutputStream stderr = streamMon;
 				// Sniff console output for scanner info
 				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
 						stdout, stderr, getProject(), workingDirectory, null, this, null);
@@ -256,7 +257,6 @@ public class MakeBuilder extends ACBuilder {
 				monitor.subTask(MakeMessages.getString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				consoleOut.close();
 				consoleErr.close();
-				epm.reportProblems();
 				cos.close();
 			}
 		} catch (Exception e) {

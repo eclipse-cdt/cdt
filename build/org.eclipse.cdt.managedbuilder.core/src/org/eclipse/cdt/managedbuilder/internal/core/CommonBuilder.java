@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -1035,7 +1036,6 @@ public class CommonBuilder extends ACBuilder {
 				monitor.subTask(ManagedMakeMessages
 						.getResourceString(MARKERS));
 //TODO:				addBuilderMarkers(epm);
-				epm.reportProblems();
 
 				bsMngr.setProjectBuildState(currentProject, pBS);
 			} else {
@@ -1912,11 +1912,11 @@ public class CommonBuilder extends ACBuilder {
 				if (last == null) {
 					last = new Integer(100);
 				}
-				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), cos, last.intValue());
 				ErrorParserManager epm = new ErrorParserManager(currProject, workingDirectoryURI, this, builder.getErrorParsers());
-				epm.setOutputStream(streamMon);
-				OutputStream stdout = epm.getOutputStream();
-				OutputStream stderr = epm.getOutputStream();
+				epm.setOutputStream(cos);
+				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), epm, last.intValue());
+				OutputStream stdout = streamMon;
+				OutputStream stderr = streamMon;
 				// Sniff console output for scanner info
 //				ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
 //				CfgInfoContext context = new CfgInfoContext(cfg);
@@ -1980,7 +1980,6 @@ public class CommonBuilder extends ACBuilder {
 				monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Creating_Markers")); //$NON-NLS-1$
 				consoleOut.close();
 				consoleErr.close();
-				epm.reportProblems();
 				cos.close();
 			}
 		} catch (Exception e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,10 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -54,11 +55,13 @@ public class BuildConsolePartitioner
 	/**
 	 * The stream that was last appended to
 	 */
-	BuildConsoleStream fLastStream = null;
+	BuildConsoleStreamDecorator fLastStream = null;
 
 	BuildConsoleDocument fDocument;
+	DocumentMarkerManager fDocumentMarkerManager;
 	boolean killed;
 	BuildConsoleManager fManager;
+	Boolean outputStreamClosed = new Boolean(false);
 
 	/**
 	 * A queue of stream entries written to standard out and standard err.
@@ -72,24 +75,23 @@ public class BuildConsolePartitioner
 
 	class StreamEntry {
 
-		/**
-		 * Identifier of the stream written to.
-		 */
-		private BuildConsoleStream fStream;
-		/**
-		 * The text written
-		 */
-		private StringBuffer fText = null;
+		/** Identifier of the stream written to. */
+		private BuildConsoleStreamDecorator fStream;
+		/** The text written */
+		private StringBuffer fText = null;		
+		/** Problem marker corresponding to the line of text */
+		private ProblemMarkerInfo fMarker;
 
-		StreamEntry(String text, BuildConsoleStream stream) {
+		StreamEntry(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 			fText = new StringBuffer(text);
 			fStream = stream;
+			fMarker = marker;
 		}
 
 		/**
 		 * Returns the stream identifier
 		 */
-		public BuildConsoleStream getStream() {
+		public BuildConsoleStreamDecorator getStream() {
 			return fStream;
 		}
 
@@ -107,6 +109,14 @@ public class BuildConsolePartitioner
 		public String getText() {
 			return fText.toString();
 		}
+
+		/**
+		 * Returns error marker
+		 */
+		public ProblemMarkerInfo getMarker() {
+			return fMarker;
+		}
+
 	}
 
 	public BuildConsolePartitioner(BuildConsoleManager manager) {
@@ -114,6 +124,7 @@ public class BuildConsolePartitioner
 		fMaxLines = BuildConsolePreferencePage.buildConsoleLines();
 		fDocument = new BuildConsoleDocument();
 		fDocument.setDocumentPartitioner(this);
+		fDocumentMarkerManager = new DocumentMarkerManager(fDocument, this);
 		connect(fDocument);
 	}
 
@@ -125,8 +136,7 @@ public class BuildConsolePartitioner
 	 * @param stream
 	 *            the stream to append to
 	 */
-
-	public void appendToDocument(String text, BuildConsoleStream stream) {
+	public void appendToDocument(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 		boolean addToQueue = true;
 		synchronized (fQueue) {
 			int i = fQueue.size();
@@ -134,13 +144,13 @@ public class BuildConsolePartitioner
 				StreamEntry entry = fQueue.get(i - 1);
 				// if last stream is the same and we have not exceeded our
 				// display write limit, append.
-				if (entry.getStream() == stream && entry.size() < 10000) {
+				if (entry.getStream() == stream && entry.size() < 10000 && entry.getMarker() == marker) {
 					entry.appendText(text);
 					addToQueue = false;
 				}
 			}
 			if (addToQueue) {
-				fQueue.add(new StreamEntry(text, stream));
+				fQueue.add(new StreamEntry(text, stream, marker));
 			}
 		}
 		Runnable r = new Runnable() {
@@ -155,12 +165,15 @@ public class BuildConsolePartitioner
 				fLastStream = entry.getStream();
 				try {
 					warnOfContentChange(fLastStream);
-					if (fLastStream == null) {
-						fDocument.set(entry.getText());
-					} else {
-						fDocument.replace(fDocument.getLength(), 0, entry.getText());
-						checkOverflow();
+
+					if ( fLastStream == null ) {
+						// special case to empty document
+						fPartitions.clear();
+						fDocumentMarkerManager.clear();
+						fDocument.set(""); //$NON-NLS-1$
 					}
+					addStreamEntryToDocument(entry);
+					checkOverflow();
 				} catch (BadLocationException e) {
 				}
 			}
@@ -171,7 +184,25 @@ public class BuildConsolePartitioner
 		}
 	}
 
-	void warnOfContentChange(BuildConsoleStream stream) {
+	private void addStreamEntryToDocument(StreamEntry entry) throws BadLocationException {
+		if ( entry.getMarker() == null ) {
+			// It is plain unmarkered console output
+			addPartition(new BuildConsolePartition(fLastStream, 
+					fDocument.getLength(), 
+					entry.getText().length(),
+					BuildConsolePartition.CONSOLE_PARTITION_TYPE));
+		} else {
+			// this text line in entry is markered with ProblemMarkerInfo, 
+			// create special partition for it.
+			addPartition(new BuildConsolePartition(fLastStream, 
+					fDocument.getLength(), 
+					entry.getText().length(),
+					BuildConsolePartition.ERROR_PARTITION_TYPE, entry.getMarker()));
+		}
+		fDocument.replace(fDocument.getLength(), 0, entry.getText());
+	}
+	
+	void warnOfContentChange(BuildConsoleStreamDecorator stream) {
 		if (stream != null) {
 			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
 		}
@@ -237,7 +268,8 @@ public class BuildConsolePartitioner
 			ITypedRegion partition = fPartitions.get(i);
 			int partitionStart = partition.getOffset();
 			int partitionEnd = partitionStart + partition.getLength();
-			if ( (offset >= partitionStart && offset <= partitionEnd) || (offset < partitionStart && end >= partitionStart)) {
+			if ( (offset >= partitionStart && offset <= partitionEnd) || 
+					(offset < partitionStart && end >= partitionStart)) {
 				list.add(partition);
 			}
 		}
@@ -266,7 +298,6 @@ public class BuildConsolePartitioner
 			fPartitions.clear();
 			return new Region(0, 0);
 		}
-		addPartition(new BuildConsolePartition(fLastStream, event.getOffset(), text.length()));
 		ITypedRegion[] affectedRegions = computePartitioning(event.getOffset(), text.length());
 		if (affectedRegions.length == 0) {
 			return null;
@@ -308,17 +339,19 @@ public class BuildConsolePartitioner
 						int offset = region.getOffset();
 						if (offset < overflow) {
 							int endOffset = offset + region.getLength();
-							if (endOffset < overflow) {
-								// remove partition
+							if (endOffset < overflow || 
+									messageConsolePartition.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
+								// remove partition, 
+								// partitions with problem markers can't be split - remove them too
 							} else {
 								// split partition
 								int length = endOffset - overflow;
-								newPartition = messageConsolePartition.createNewPartition(0, length);
+								newPartition = messageConsolePartition.createNewPartition(0, length, messageConsolePartition.getType());
 							}
 						} else {
-							// modify parition offset
+							// modify partition offset
 							newPartition = messageConsolePartition.createNewPartition(messageConsolePartition.getOffset()
-									- overflow, messageConsolePartition.getLength());
+									- overflow, messageConsolePartition.getLength(), messageConsolePartition.getType());
 						}
 						if (newPartition != null) {
 							newParitions.add(newPartition);
@@ -326,6 +359,7 @@ public class BuildConsolePartitioner
 					}
 				}
 				fPartitions = newParitions;
+				fDocumentMarkerManager.moveToFirstError();
 
 				try {
 					fDocument.replace(0, overflow, ""); //$NON-NLS-1$
@@ -336,8 +370,7 @@ public class BuildConsolePartitioner
 	}
 
 	/**
-	 * Adds a new colored input partition, combining with the previous partition
-	 * if possible.
+	 * Adds a new partition, combining with the previous partition if possible.
 	 */
 	private BuildConsolePartition addPartition(BuildConsolePartition partition) {
 		if (fPartitions.isEmpty()) {
@@ -371,7 +404,6 @@ public class BuildConsolePartitioner
 		Display display = CUIPlugin.getStandardDisplay();
 		if (display != null) {
 			display.asyncExec(new Runnable() {
-
 				public void run() {
 					fManager.startConsoleActivity(project);
 				}
@@ -379,43 +411,48 @@ public class BuildConsolePartitioner
 		}
 
 		if (BuildConsolePreferencePage.isClearBuildConsole()) {
-			appendToDocument("", null); //$NON-NLS-1$
-		}
-	}
-
-	public class BuildOutputStream extends ConsoleOutputStream {
-
-		final BuildConsoleStream fStream;
-
-		public BuildOutputStream(BuildConsoleStream stream) {
-			fStream = stream;
-		}
-
-		@Override
-		public void flush() throws IOException {
-		}
-
-		@Override
-		public void close() throws IOException {
-			flush();
-		}
-
-		@Override
-		public void write(byte[] b, int off, int len) throws IOException {
-			appendToDocument(new String(b, off, len), fStream);
+			appendToDocument("", null, null); //$NON-NLS-1$
 		}
 	}
 
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
+		outputStreamClosed = Boolean.FALSE;
+		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
 	}
 
 	public ConsoleOutputStream getInfoStream() throws CoreException {
-		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
+		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
 	}
 
 	public ConsoleOutputStream getErrorStream() throws CoreException {
-		return new BuildOutputStream(fManager.getStream(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
+		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}
-
+	
+	/** This method is useful for future debugging and bugfixing */
+	@SuppressWarnings("unused")
+	private void printDocumentPartitioning() {
+		System.out.println("Document partitioning: "); //$NON-NLS-1$
+		for (ITypedRegion tr : fPartitions) {
+			BuildConsolePartition p = (BuildConsolePartition) tr;
+			int start = p.getOffset();
+			int end = p.getOffset() + p.getLength();
+			String text;
+			String isError = "U"; //$NON-NLS-1$
+			if (p.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE) {
+				isError = "E"; //$NON-NLS-1$
+			} else if (p.getType() == BuildConsolePartition.CONSOLE_PARTITION_TYPE) {
+				isError = "C"; //$NON-NLS-1$
+			}
+			try {
+				text = fDocument.get(p.getOffset(), p.getLength());
+			} catch (BadLocationException e) {
+				text = "N/A"; //$NON-NLS-1$
+			}
+			if (text.endsWith("\n")) { //$NON-NLS-1$
+				text = text.substring(0, text.length() - 1);
+			}
+			System.out.println("    " + isError + " " + start + "-" + end + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+					":[" + text + "]"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		}
+	}
 }

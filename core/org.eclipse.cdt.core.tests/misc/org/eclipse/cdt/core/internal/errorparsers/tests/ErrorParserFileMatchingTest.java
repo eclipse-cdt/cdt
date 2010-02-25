@@ -158,7 +158,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		line = line + '\n';
 		epManager.write(line.getBytes(), 0, line.length());
 		epManager.close();
-		epManager.reportProblems();
+		epManager.getOutputStream().close();
 	}
 
 	/**

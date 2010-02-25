@@ -1146,7 +1146,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					monitor.subTask(ManagedMakeMessages
 							.getResourceString(MARKERS));
 					addBuilderMarkers(epm);
-					epm.reportProblems();
 					consoleOutStream.close();
 				}
 			}                               
@@ -1334,10 +1333,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				epmOutputStream.close();
 				epmOutputStream = null;
 				// Generate any error markers that the build has discovered 
-				monitor.subTask(ManagedMakeMessages
-						.getResourceString(MARKERS));
+				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 				addBuilderMarkers(epm);
-				epm.reportProblems();
 			} else {
 				buf = new StringBuffer();
 				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName()));
@@ -1568,7 +1565,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 			// Generate any error markers that the build has discovered 
 			addBuilderMarkers(epm);
-			epm.reportProblems();
 			consoleOutStream.close();
 		} catch (Exception e) {
 			StringBuffer buf = new StringBuffer();

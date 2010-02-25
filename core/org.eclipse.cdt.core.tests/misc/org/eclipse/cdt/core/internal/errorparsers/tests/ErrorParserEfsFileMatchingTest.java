@@ -156,7 +156,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		line = line + '\n';
 		epManager.write(line.getBytes(), 0, line.length());
 		epManager.close();
-		epManager.reportProblems();
+		epManager.getOutputStream().close();
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		line = line + '\n';
 		epManager.write(line.getBytes(), 0, line.length());
 		epManager.close();
-		epManager.reportProblems();
+		epManager.getOutputStream().close();
 	}
 
 	/**

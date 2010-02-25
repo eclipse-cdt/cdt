@@ -125,7 +125,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 
 		transferInputStreamToOutputStream(inputStream, manager.getOutputStream(), 1024);
 		manager.close();
-		manager.reportProblems();
+		manager.getOutputStream().close();
 
 		if (expectedErrorCount >= 0) {
 			assertEquals(expectedErrorCount, markerGenerator.numErrors);

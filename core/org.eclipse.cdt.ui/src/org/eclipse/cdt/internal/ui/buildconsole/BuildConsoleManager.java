@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Red Hat Inc. - multiple build console support
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -53,8 +54,16 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	ListenerList listeners = new ListenerList();
 	BuildConsole fConsole;
 	private Map<IProject, BuildConsolePartitioner> fConsoleMap = new HashMap<IProject, BuildConsolePartitioner>();
-	Color infoColor, outputColor, errorColor, backgroundColor;
-	BuildConsoleStream infoStream, outputStream, errorStream;
+	Color infoColor, outputColor, errorColor, backgroundColor, problemHighlightedColor, problemBackgroundColor;
+	public Color getProblemHighlightedColor() {
+		return problemHighlightedColor;
+	}
+
+	public Color getProblemBackgroundColor() {
+		return problemBackgroundColor;
+	}
+
+	BuildConsoleStreamDecorator infoStream, outputStream, errorStream;
 	String fName, fContextMenuId;
 
 	static public final int BUILD_STREAM_TYPE_INFO = 0;
@@ -159,6 +168,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			outputColor.dispose();
 			errorColor.dispose();
 			backgroundColor.dispose();
+			problemBackgroundColor.dispose();
+			problemHighlightedColor.dispose();
 		}
 		ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new org.eclipse.ui.console.IConsole[]{fConsole});
 		CUIPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -177,9 +188,9 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	}
 
 	public void startup(String name, String id) {
-		infoStream = new BuildConsoleStream();
-		outputStream = new BuildConsoleStream();
-		errorStream = new BuildConsoleStream();
+		infoStream = new BuildConsoleStreamDecorator();
+		outputStream = new BuildConsoleStreamDecorator();
+		errorStream = new BuildConsoleStreamDecorator();
 		fName = name;
 		fContextMenuId = id;
 
@@ -205,6 +216,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				errorStream.setColor(errorColor);
 				backgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 				fConsole.setBackground(backgroundColor);
+				problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
+				problemBackgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
 			}
 		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
@@ -239,10 +252,33 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			fConsole.setBackground(newColor);
 			backgroundColor.dispose();
 			backgroundColor = newColor;
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR)) {
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
+			problemHighlightedColor.dispose();
+			problemHighlightedColor = newColor;
+			redrawTextViewer();
+		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR)) {
+			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
+			problemBackgroundColor.dispose();
+			problemBackgroundColor = newColor;
+			redrawTextViewer();
 		}
 	}
 
-	public BuildConsoleStream getStream(int type) throws CoreException {
+	private void redrawTextViewer() {
+		final BuildConsolePage p = BuildConsole.getPage(); 
+		if ( p == null ) return;
+		final BuildConsoleViewer v = p.getViewer();
+		if ( v  == null ) return;		
+		Display display = Display.getDefault();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				v.getTextWidget().redraw();
+			}
+		});
+	}
+
+	public BuildConsoleStreamDecorator getStreamDecorator(int type) throws CoreException {
 		switch (type) {
 			case BUILD_STREAM_TYPE_ERROR :
 				return errorStream;

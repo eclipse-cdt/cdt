@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Red Hat Inc. - Multiple build console support
+ * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -22,16 +23,24 @@ import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 public class BuildConsole extends AbstractConsole {
-	
+
+	/**
+	 * Menu group identifier for the console view context menu and toolbar, for actions pertaining to
+	 * error navigation (value <code>"errorGroup"</code>).
+	 */
+	public static final String ERROR_GROUP = "errorGroup"; //$NON-NLS-1$
+		
 	/**
 	 * Property constant indicating the color of a stream has changed. 
 	 */
 	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID  + ".CONSOLE_P_STREAM_COLOR";	 //$NON-NLS-1$
 
+	private static BuildConsolePage fBuildConsolePage;
+	
 	private IBuildConsoleManager fConsoleManager;
 	private String fConsoleName;
 	private String fConsoleId;
-    private Color fBackground;
+	private Color fBackground;
 
 	public BuildConsole(IBuildConsoleManager manager, String name, String id) {
 		super(name, CPluginImages.DESC_BUILD_CONSOLE);
@@ -41,7 +50,12 @@ public class BuildConsole extends AbstractConsole {
 	}
 
 	public IPageBookViewPage createPage(IConsoleView view) {
-		return new BuildConsolePage(view, this, fConsoleId);
+		fBuildConsolePage = new BuildConsolePage(view, this, fConsoleId); 
+		return fBuildConsolePage;
+	}
+	
+	static BuildConsolePage getPage() {
+		return fBuildConsolePage;
 	}
 
 	public void setTitle(IProject project) {
@@ -53,7 +67,7 @@ public class BuildConsole extends AbstractConsole {
 	}
 
 	public IBuildConsoleManager getConsoleManager() {
-	    return fConsoleManager;
+		return fConsoleManager;
 	}
 
 	public void setBackground(Color background) {

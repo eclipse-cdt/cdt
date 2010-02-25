@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Sergey Prigogin (Google)
  *     James Blackburn (Broadcom) - Bug 247838
  *     Andrew Gvozdev (Quoin Inc)
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation  
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -25,6 +26,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.utils.CygPath;
@@ -307,7 +309,6 @@ public class ErrorParserManager extends OutputStream {
 		if (fErrorParsers.size() == 0)
 			return;
 
-
 		String lineTrimmed = line.trim();
 		lineCounter++;
 
@@ -337,6 +338,9 @@ public class ErrorParserManager extends OutputStream {
 				// It should not stop parsing of the rest of output.
 				try {
 					if (curr.processLine(lineToParse, this)) {
+						ProblemMarkerInfo m = fErrors.size() > 0 ? fErrors.get(0): null;
+						outputLine(line, m);
+						fErrors.clear();
 						return;
 					}
 				} catch (Exception e){
@@ -345,8 +349,29 @@ public class ErrorParserManager extends OutputStream {
 				}
 			}
 		}
+		outputLine(line, null);
 	}
 	
+	/** 
+	 * Conditionally output line to outputStream. If stream 
+	 * supports error markers, use it, otherwise use conventional stream
+	 */
+	private void outputLine(String line, ProblemMarkerInfo marker) {
+		String l = line + "\n";  //$NON-NLS-1$
+		if ( outputStream == null ) return; 
+		try {
+			if ( marker != null && outputStream instanceof IErrorMarkeredOutputStream ) {
+				IErrorMarkeredOutputStream s = (IErrorMarkeredOutputStream) outputStream;
+				s.write(l, marker);
+			} else {		
+				byte[] b = l.getBytes();
+				outputStream.write(b, 0, b.length);			
+			}
+		} catch (IOException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
 	/**
 	 * @return counter counting processed lines of output
 	 * @since 5.2
@@ -500,7 +525,6 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Add marker to the list of error markers.
-	 * Markers are actually added in the end of processing in {@link #reportProblems()}.
 	 * 
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
@@ -514,7 +538,6 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Add marker to the list of error markers.
-	 * Markers are actually added in the end of processing in {@link #reportProblems()}.
 	 * 
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
@@ -530,6 +553,7 @@ public class ErrorParserManager extends OutputStream {
 	public void generateExternalMarker(IResource file, int lineNumber, String desc, int severity, String varName, IPath externalPath) {
 		ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, desc, severity, varName, externalPath);
 		fErrors.add(problemMarkerInfo);
+		fMarkerGenerator.addMarker(problemMarkerInfo);
 		if (severity == IMarkerGenerator.SEVERITY_ERROR_RESOURCE)
 			hasErrors = true;
 	}
@@ -544,6 +568,8 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Method setOutputStream.
+	 * Note: you have to close this stream explicitly
+	 * don't rely on ErrorParserManager.close(). 
 	 * @param os - output stream
 	 */
 	public void setOutputStream(OutputStream os) {
@@ -551,8 +577,9 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Method getOutputStream. It has a reference count
-	 * the stream must be close the same number of time this method was call.
+	 * Method getOutputStream. 
+	 * Note: you have to close this stream explicitly
+	 * don't rely on ErrorParserManager.close(). 
 	 * @return OutputStream
 	 */
 	public OutputStream getOutputStream() {
@@ -562,14 +589,14 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * @see java.io.OutputStream#close()
+	 * Note: don't rely on this method to close underlying OutputStream, 
+	 * close it explicitly 
 	 */
 	@Override
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		if (nOpens > 0 && --nOpens == 0) {
 			checkLine(true);
 			fDirectoryStack.removeAllElements();
-			if (outputStream != null)
-				outputStream.close();
 		}
 	}
 
@@ -589,8 +616,6 @@ public class ErrorParserManager extends OutputStream {
 	public synchronized void write(int b) throws IOException {
 		currentLine.append((char) b);
 		checkLine(false);
-		if (outputStream != null)
-			outputStream.write(b);
 	}
 
 	@Override
@@ -604,10 +629,12 @@ public class ErrorParserManager extends OutputStream {
 		}
 		currentLine.append(new String(b, 0, len));
 		checkLine(false);
-		if (outputStream != null)
-			outputStream.write(b, off, len);
 	}
 
+	// This method examines contents of currentLine buffer
+	// if it contains whole line this line is checked by error
+	// parsers (processLine method). 
+	// If flush is true rest of line is checked by error parsers.
 	private void checkLine(boolean flush) {
 		String buffer = currentLine.toString();
 		int i = 0;
@@ -632,7 +659,8 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Create actual markers from the list of collected problems.
+	 * @deprecated as of 5.2. This method is no longer reporting problems.
+	 *  The problem markers are generated after processing each line.
 	 * 
 	 * @return {@code true} if detected a problem indicating that build failed.
 	 *         The semantics of the return code is inconsistent. As far as build is concerned
@@ -640,18 +668,9 @@ public class ErrorParserManager extends OutputStream {
 	 *         {@link IMarkerGenerator#SEVERITY_ERROR_RESOURCE} and
 	 *         {@link IMarkerGenerator#SEVERITY_ERROR_BUILD}
 	 */
+	@Deprecated
 	public boolean reportProblems() {
-		boolean reset = false;
-		if (nOpens == 0) {
-			for (ProblemMarkerInfo problemMarkerInfo : fErrors) {
-				if (problemMarkerInfo.severity == IMarkerGenerator.SEVERITY_ERROR_BUILD) {
-					reset = true;
-				}
-				fMarkerGenerator.addMarker(problemMarkerInfo);
-			}
-			fErrors.clear();
-		}
-		return reset;
+		return false;
 	}
 
 	/**

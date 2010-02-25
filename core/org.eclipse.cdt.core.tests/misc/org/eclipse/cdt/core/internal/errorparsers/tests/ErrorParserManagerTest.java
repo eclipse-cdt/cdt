@@ -153,7 +153,7 @@ public class ErrorParserManagerTest extends TestCase {
 	private void end() throws IOException {
 		epManager.getOutputStream();
 		epManager.close();
-		epManager.reportProblems();
+		epManager.getOutputStream().close();
 	}
 
 	public void testParsersSanity() throws CoreException, IOException {

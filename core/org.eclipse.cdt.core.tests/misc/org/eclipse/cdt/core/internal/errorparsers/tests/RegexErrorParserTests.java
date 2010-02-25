@@ -207,7 +207,6 @@ public class RegexErrorParserTests extends TestCase {
 		regexErrorParser.processLine("Variable!Description!10!"+fileName, epManager);
 
 		errorList.clear();
-		epManager.reportProblems();
 		assertEquals(3, errorList.size());
 
 		// Regular
@@ -704,7 +703,6 @@ public class RegexErrorParserTests extends TestCase {
 		regexErrorParser.processLine("pattern wrong", epManager);
 
 		errorList.clear();
-		epManager.reportProblems();
 		assertEquals(0, errorList.size());
 	}
 

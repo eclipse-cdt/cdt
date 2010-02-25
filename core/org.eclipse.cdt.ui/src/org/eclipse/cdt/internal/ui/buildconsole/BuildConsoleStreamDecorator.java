@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2009, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
 import org.eclipse.swt.graphics.Color;
 
 
-public class BuildConsoleStream {
+public class BuildConsoleStreamDecorator {
 	private BuildConsole fConsole = null;
 	
 	private Color fColor = null;
@@ -22,7 +23,7 @@ public class BuildConsoleStream {
 	 * Constructs a new stream connected to the given console.
 	 * 
 	 */
-	public BuildConsoleStream() {
+	public BuildConsoleStreamDecorator() {
 	}
 
 	public void setConsole(BuildConsole console) {

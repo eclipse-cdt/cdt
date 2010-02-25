@@ -89,19 +89,19 @@ public class SyncUtil {
 		tracker.dispose();
 	}
 
-	public static MIStoppedEvent SyncStep(final StepType stepType, int numSteps) throws Throwable {
+	public static MIStoppedEvent step(final StepType stepType, int numSteps) throws Throwable {
 	    MIStoppedEvent retVal = null;
 		for (int i=0; i<numSteps; i++) {
-		    retVal = SyncStep(stepType);
+		    retVal = step(stepType);
 		}
 		return retVal;
 	}
 
-	public static MIStoppedEvent SyncStep(final StepType stepType) throws Throwable {
-		return SyncStep(fGdbContainerDmc, stepType);
+	public static MIStoppedEvent step(final StepType stepType) throws Throwable {
+		return step(fGdbContainerDmc, stepType);
 	}
 		
-	public static MIStoppedEvent SyncStep(final IExecutionDMContext dmc, final StepType stepType) throws Throwable {
+	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType) throws Throwable {
 		
 		final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
 			new ServiceEventWaitor<MIStoppedEvent>(
@@ -132,7 +132,7 @@ public class SyncUtil {
 		return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
 	}
 	
-	public static MIStoppedEvent SyncRunToLine(final IExecutionDMContext dmc, final String fileName, final String lineNo, 
+	public static MIStoppedEvent runToLine(final IExecutionDMContext dmc, final String fileName, final String lineNo, 
 			                         final boolean skipBreakpoints) throws Throwable {
 		
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
@@ -155,21 +155,21 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);	
 	}
 
-	public static MIStoppedEvent SyncRunToLine(final String fileName, final String lineNo, 
+	public static MIStoppedEvent runToLine(final String fileName, final String lineNo, 
             final boolean skipBreakpoints) throws Throwable {
-		return SyncRunToLine(fGdbContainerDmc, fileName, lineNo, skipBreakpoints);
+		return runToLine(fGdbContainerDmc, fileName, lineNo, skipBreakpoints);
 	}
 	
-	public static MIStoppedEvent SyncRunToLine(final String fileName, final String lineNo) throws Throwable {
-		return SyncRunToLine(fGdbContainerDmc, fileName, lineNo, false);
+	public static MIStoppedEvent runToLine(final String fileName, final String lineNo) throws Throwable {
+		return runToLine(fGdbContainerDmc, fileName, lineNo, false);
 	}
 
 	
-	public static int SyncAddBreakpoint(final String location) throws Throwable {
-		return SyncAddBreakpoint(location, true);
+	public static int addBreakpoint(final String location) throws Throwable {
+		return addBreakpoint(location, true);
 	}
 
-	public static int SyncAddBreakpoint(final String location, boolean temporary)
+	public static int addBreakpoint(final String location, boolean temporary)
 							throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -197,7 +197,7 @@ public class SyncUtil {
 	}
 
 	
-	public static int[] SyncGetBreakpointList() throws Throwable {
+	public static int[] getBreakpointList() throws Throwable {
 
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -225,11 +225,11 @@ public class SyncUtil {
 		return result;
 	}
 	
-	public static void SyncDeleteBreakpoint(int breakpointIndex) throws Throwable {
-		SyncDeleteBreakpoint(new int[] {breakpointIndex});
+	public static void deleteBreakpoint(int breakpointIndex) throws Throwable {
+		deleteBreakpoint(new int[] {breakpointIndex});
 	}
 	
-	public static void SyncDeleteBreakpoint(int[] breakpointIndices) throws Throwable {
+	public static void deleteBreakpoint(int[] breakpointIndices) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
@@ -254,7 +254,7 @@ public class SyncUtil {
 	}
 
 	
-	public static MIStoppedEvent SyncResumeUntilStopped(final IExecutionDMContext dmc) throws Throwable {
+	public static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc) throws Throwable {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
             new ServiceEventWaitor<MIStoppedEvent>(
                     fSession,
@@ -274,11 +274,11 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);			
 	}
 	
-	public static MIStoppedEvent SyncResumeUntilStopped() throws Throwable {
-		return SyncResumeUntilStopped(fGdbContainerDmc);
+	public static MIStoppedEvent resumeUntilStopped() throws Throwable {
+		return resumeUntilStopped(fGdbContainerDmc);
 	}
 
-	public static MIRunningEvent SyncResume(final IExecutionDMContext dmc) throws Throwable {
+	public static MIRunningEvent resume(final IExecutionDMContext dmc) throws Throwable {
         final ServiceEventWaitor<MIRunningEvent> eventWaitor =
             new ServiceEventWaitor<MIRunningEvent>(
                     fSession,
@@ -298,11 +298,11 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);			
 	}
 
-	public static MIRunningEvent SyncResume() throws Throwable {
-		return SyncResume(fGdbContainerDmc);
+	public static MIRunningEvent resume() throws Throwable {
+		return resume(fGdbContainerDmc);
 	}
 
-	public static MIStoppedEvent SyncWaitForStop() throws Throwable {
+	public static MIStoppedEvent waitForStop() throws Throwable {
         final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
             new ServiceEventWaitor<MIStoppedEvent>(
                     fSession,
@@ -312,15 +312,15 @@ public class SyncUtil {
     	return eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);			
 	}
 	
-	public static MIStoppedEvent SyncRunToLocation(final String location) throws Throwable {
+	public static MIStoppedEvent runToLocation(final String location) throws Throwable {
 		// Set a temporary breakpoint and run to it.
 		// Note that if there were other breakpoints set ahead of this one,
 		// they will stop execution earlier than planned
-		SyncAddBreakpoint(location, true);
-		return SyncResumeUntilStopped();
+		addBreakpoint(location, true);
+		return resumeUntilStopped();
 	}
 	
-    public static IFrameDMContext SyncGetStackFrame(final IExecutionDMContext execCtx, final int level) throws Throwable {
+    public static IFrameDMContext getStackFrame(final IExecutionDMContext execCtx, final int level) throws Throwable {
         class StackFrameQuery extends Query<IFrameDMContext> {
             @Override
             protected void execute(final DataRequestMonitor<IFrameDMContext> rm) {
@@ -343,7 +343,7 @@ public class SyncUtil {
         return sfQuery.get();
     }
 
-    public static IExpressionDMContext SyncCreateExpression(final IDMContext parentCtx, final String expression)
+    public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
         throws Throwable {
         Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
             public IExpressionDMContext call() throws Exception {
@@ -353,7 +353,7 @@ public class SyncUtil {
         return fSession.getExecutor().submit(callable).get();
     }
 
-    public static FormattedValueDMContext SyncGetFormattedValue(
+    public static FormattedValueDMContext getFormattedValue(
         final IFormattedValues service, final IFormattedDataDMContext dmc, final String formatId) throws Throwable 
     {
         Callable<FormattedValueDMContext> callable = new Callable<FormattedValueDMContext>() {
@@ -364,7 +364,7 @@ public class SyncUtil {
         return fSession.getExecutor().submit(callable).get();
     }
     
-    public static IMIExecutionDMContext SyncCreateExecutionContext(final IContainerDMContext parentCtx, final int threadId)
+    public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId)
     throws Throwable {
     Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
         public IMIExecutionDMContext call() throws Exception {

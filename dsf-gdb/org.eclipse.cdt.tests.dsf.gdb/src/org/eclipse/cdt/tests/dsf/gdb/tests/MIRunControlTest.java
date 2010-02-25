@@ -190,7 +190,7 @@ public class MIRunControlTest extends BaseTestCase {
         	/*
         	 * Run till line for 2 threads to be created
         	 */
-        	SyncUtil.SyncRunToLine(fContainerDmc, SOURCE_NAME, "22", true);	
+        	SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, "22", true);	
         }
         catch(Throwable t){
         	Assert.fail("Exception in SyncUtil.SyncRunToLine: " + t.getMessage());
@@ -294,7 +294,7 @@ public class MIRunControlTest extends BaseTestCase {
 		/*
 		 * Run till step returns
 		 */
-	    final MIStoppedEvent stoppedEvent = SyncUtil.SyncStep(StepType.STEP_OVER);
+	    final MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
 		
         final DataRequestMonitor<IExecutionDMData> rm = 
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
@@ -338,12 +338,12 @@ public class MIRunControlTest extends BaseTestCase {
 		/* 
 		 * Add a breakpoint
 		 */
-	    SyncUtil.SyncAddBreakpoint(SOURCE_NAME + ":21", false);
+	    SyncUtil.addBreakpoint(SOURCE_NAME + ":21", false);
 		
 		/*
 		 * Resume till the breakpoint is hit
 		 */
-		final MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
+		final MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
 		
         final DataRequestMonitor<IExecutionDMData> rm = 
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
@@ -384,11 +384,11 @@ public class MIRunControlTest extends BaseTestCase {
 		/* 
 		 * Add a breakpoint
 		 */
-	    SyncUtil.SyncAddBreakpoint(SOURCE_NAME + ":21", false);
+	    SyncUtil.addBreakpoint(SOURCE_NAME + ":21", false);
 		/*
 		 * Resume till the breakpoint is hit
 		 */
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 	    final DataRequestMonitor<IExecutionDMData> rm = 
         	new DataRequestMonitor<IExecutionDMData>(fRunCtrl.getExecutor(), null) {
@@ -459,7 +459,7 @@ public class MIRunControlTest extends BaseTestCase {
     	 * Step to fire ContainerSuspendEvent
     	 */
         try {
-			SyncUtil.SyncStep(StepType.STEP_OVER);
+			SyncUtil.step(StepType.STEP_OVER);
 		} catch (Throwable e) {
 			Assert.fail("Exception in SyncUtil.SyncStep: " + e.getMessage());
 		}

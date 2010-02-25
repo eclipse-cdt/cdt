@@ -138,11 +138,11 @@ public class MIDisassemblyTest extends BaseTestCase {
     private IAddress evaluateExpression(String expression) throws Throwable
     {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         // Create the expression and format contexts 
-        final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(frameDmc, expression);
-        final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService, expressionDMC, IFormattedValues.HEX_FORMAT);
+        final IExpressionDMContext expressionDMC = SyncUtil.createExpression(frameDmc, expression);
+        final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService, expressionDMC, IFormattedValues.HEX_FORMAT);
 
         // Create the DataRequestMonitor which will store the operation result in the wait object
         final DataRequestMonitor<FormattedValueDMData> drm =

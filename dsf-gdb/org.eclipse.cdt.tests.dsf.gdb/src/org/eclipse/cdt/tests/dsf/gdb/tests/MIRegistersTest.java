@@ -210,7 +210,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     public void getRegistersLength() throws Throwable {   
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	assertTrue("The number of registers should have been " + NUMBER_OF_REGISTERS +
     		     " instead of " + regDMCs.length,
@@ -221,7 +221,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     public void getRegisters() throws Throwable {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
     	List<String> regNames = Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7");
     	
@@ -295,7 +295,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     public void getModelDataForRegisterDataValueInDifferentNumberFormats() throws Throwable {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	String val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.NATURAL_FORMAT, 0);
     	REGISTER_VALUE = val;
     	assertTrue("Register Value is not in NATURAL format " , Integer.parseInt(val)== Integer.parseInt(REGISTER_VALUE));
@@ -316,12 +316,12 @@ public class MIRegistersTest extends BaseTestCase {
     
     @Test
     public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.SyncRunToLine(SRC_NAME, "22");
+        MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SRC_NAME, "22");
     	IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);
 
     	// Get execution context to thread 2
-        IExecutionDMContext execDmc = SyncUtil.SyncCreateExecutionContext(containerDmc, 2);
-        IFrameDMContext frameDmc2 = SyncUtil.SyncGetStackFrame(execDmc, 0);
+        IExecutionDMContext execDmc = SyncUtil.createExecutionContext(containerDmc, 2);
+        IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(execDmc, 0);
         
     	String thread2RegVal0 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 0);
     	String thread2RegVal1 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 1);
@@ -331,8 +331,8 @@ public class MIRegistersTest extends BaseTestCase {
     	String thread2RegVal5 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 5);
 
     	// Get execution context to thread 1
-        execDmc = SyncUtil.SyncCreateExecutionContext(containerDmc, 2);
-        IFrameDMContext frameDmc1 = SyncUtil.SyncGetStackFrame(execDmc, 0);
+        execDmc = SyncUtil.createExecutionContext(containerDmc, 2);
+        IFrameDMContext frameDmc1 = SyncUtil.getStackFrame(execDmc, 0);
     	getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 0);
 
     	// Re-set the execution context to 2 and Fetch from the Cache
@@ -381,7 +381,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     public void writeRegisterNaturalFormat() throws Throwable{
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	String regValue = "10";
     	int regIndex = 3;
     	writeRegister(frameDmc, 3, regValue, IFormattedValues.NATURAL_FORMAT);
@@ -392,7 +392,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     public void writeRegisterHEXFormat() throws Throwable{
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	String regValue = "0x10";
     	int regIndex = 3;
     	writeRegister(frameDmc, 3, regValue, IFormattedValues.HEX_FORMAT);
@@ -404,7 +404,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Ignore
     public void writeRegisterBinaryFormat() throws Throwable{
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	//String regValue = "0100101001";
     	String regValue = "10";
     	int regIndex = 3;
@@ -416,7 +416,7 @@ public class MIRegistersTest extends BaseTestCase {
     @Test
     public void writeRegisterOctalFormat() throws Throwable{
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	//String regValue = "10";
     	String regValue = "012";
     	int regIndex = 3;

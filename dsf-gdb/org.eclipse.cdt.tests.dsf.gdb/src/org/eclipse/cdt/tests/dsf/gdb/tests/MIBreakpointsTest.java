@@ -130,7 +130,8 @@ public class MIBreakpointsTest extends BaseTestCase {
     // Target application 'special' locations
     private final int    LINE_NUMBER_1   = 20;
     private final int    LINE_NUMBER_2   = 21;
-    private final int    LINE_NUMBER_3   = 27;
+    @SuppressWarnings("unused")
+	private final int    LINE_NUMBER_3   = 27;
     private final int    LINE_NUMBER_4   = 36;
     private final int    LINE_NUMBER_5   = 49;
     private final int    LINE_NUMBER_6   = 50;
@@ -345,8 +346,8 @@ public class MIBreakpointsTest extends BaseTestCase {
         assert (fExpressionService != null);
 
         // Get a stack context (temporary - should be an MIcontainerDMC)
-		final IExpressionDMContext expressionDMC = SyncUtil.SyncCreateExpression(ctx, expression);
-		final FormattedValueDMContext formattedValueDMC = SyncUtil.SyncGetFormattedValue(fExpressionService,
+		final IExpressionDMContext expressionDMC = SyncUtil.createExpression(ctx, expression);
+		final FormattedValueDMContext formattedValueDMC = SyncUtil.getFormattedValue(fExpressionService,
 				expressionDMC, IFormattedValues.DECIMAL_FORMAT);
 
 		// Create the DataRequestMonitor which will store the operation result in the wait object
@@ -1192,14 +1193,14 @@ public class MIBreakpointsTest extends BaseTestCase {
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
 
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 
 		// Install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Wait for breakpoint to hit
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 		
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(2);
@@ -1376,14 +1377,14 @@ public class MIBreakpointsTest extends BaseTestCase {
 		watchpoint.put(WRITE_TAG, true);
 
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 
 		// Install watchpoint
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Wait for breakpoint to hit
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
@@ -1668,13 +1669,13 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 		
 		// Remove the first breakpoint
 		removeBreakpoint(ref);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(4);
@@ -1894,12 +1895,12 @@ public class MIBreakpointsTest extends BaseTestCase {
 		delta.put(CONDITION_TAG, CONDITION_5);
 		
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 		//Update the condition
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
@@ -1935,8 +1936,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
+		SyncUtil.resumeUntilStopped();
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -1990,8 +1991,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
+		SyncUtil.resumeUntilStopped();
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -2046,8 +2047,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
+		SyncUtil.resumeUntilStopped();
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -2261,13 +2262,13 @@ public class MIBreakpointsTest extends BaseTestCase {
 		delta.put(IGNORE_COUNT_TAG, 0);
 		
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 
 		//Update the count
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
@@ -2353,7 +2354,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				!breakpoint1.isEnabled() && breakpoint2.isEnabled());
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 		// Ensure the BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2402,13 +2403,13 @@ public class MIBreakpointsTest extends BaseTestCase {
 		delta.put(IS_ENABLED_TAG, false);
 
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 		
 		// Disable the breakpoint
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
@@ -2490,7 +2491,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				!breakpoint1.isEnabled() && breakpoint2.isEnabled());
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 		// Ensure the BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2523,7 +2524,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.isEnabled() && breakpoint2.isEnabled());
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 		// Ensure the BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2568,13 +2569,13 @@ public class MIBreakpointsTest extends BaseTestCase {
 		delta.put(IS_ENABLED_TAG, true);
 
 		// Run the program
-		SyncUtil.SyncResume();
+		SyncUtil.resume();
 		
 		// Enable the breakpoint
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		MIStoppedEvent event = SyncUtil.SyncWaitForStop();
+		MIStoppedEvent event = SyncUtil.waitForStop();
 
 		// Ensure that right BreakpointEvents were received
 		waitForBreakpointEvent(2);
@@ -2622,7 +2623,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2662,7 +2663,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2705,8 +2706,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2766,8 +2767,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2814,8 +2815,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2875,8 +2876,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2921,8 +2922,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -2967,8 +2968,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -3014,8 +3015,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -3046,8 +3047,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
+		SyncUtil.resumeUntilStopped();
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -3083,8 +3084,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -3116,8 +3117,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
+		SyncUtil.resumeUntilStopped();
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -3153,8 +3154,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		MIStoppedEvent stoppedEvent = SyncUtil.SyncResumeUntilStopped();
-        IFrameDMContext frameDmc = SyncUtil.SyncGetStackFrame(stoppedEvent.getDMContext(), 0);
+		MIStoppedEvent stoppedEvent = SyncUtil.resumeUntilStopped();
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);
@@ -3187,8 +3188,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		if (fileName.contains(" ")) { //$NON-NLS-1$
 			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		SyncUtil.SyncAddBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
+		SyncUtil.resumeUntilStopped();
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -3213,7 +3214,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		clearEventCounters();
 
 		// Run until the breakpoint is hit and the event generated
-		SyncUtil.SyncResumeUntilStopped();
+		SyncUtil.resumeUntilStopped();
 
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(1);

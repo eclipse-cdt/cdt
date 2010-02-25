@@ -48,8 +48,8 @@ import org.junit.runner.RunWith;
 public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	@BeforeClass
 	public static void beforeClassMethod_7_0() {
-		setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb.7.0");
-		setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver.7.0");
+		setGdbProgramNamesLaunchAttributes("7.0");
+		
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
 		
 		// GDB tracepoints are only supported on a remote target (e.g., using gdbserver)

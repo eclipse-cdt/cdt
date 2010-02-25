@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -172,4 +173,24 @@ public class BaseTestCase {
  			}
  		}
 	}
+
+	/**
+	 * Sets the name of the gdb and gdbserver programs into the launch
+	 * configuration used by the test class.
+	 * 
+	 * <p>
+	 * Leaf subclasses are specific to a particular version of GDB and must call
+	 * this from their "@BeforeClass" static method so that we end up invoking
+	 * the appropriate gdb.
+	 * 
+	 * @param version
+	 *            string that contains the major and minor version number, e.g.,
+	 *            "6.8"
+	 */
+ 	protected static void setGdbProgramNamesLaunchAttributes(String version) {
+		// See bugzilla 303811 for why we have to append ".exe" on Windows
+ 		boolean isWindows = Platform.getOS().equals(Platform.OS_WIN32);
+ 		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb." + version + (isWindows ? ".exe" : ""));
+ 		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver." + version + (isWindows ? ".exe" : ""));
+ 	}
 }

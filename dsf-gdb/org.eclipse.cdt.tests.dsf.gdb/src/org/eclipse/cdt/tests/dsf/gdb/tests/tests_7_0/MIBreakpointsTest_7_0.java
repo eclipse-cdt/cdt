@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_0;
 
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
-import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -21,7 +19,6 @@ import org.junit.runner.RunWith;
 public class MIBreakpointsTest_7_0 extends MIBreakpointsTest {
 	@BeforeClass
 	public static void beforeClassMethod_7_0() {
-		BaseTestCase.setLaunchAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb.7.0");
-		BaseTestCase.setLaunchAttribute(ATTR_DEBUG_SERVER_NAME, "gdbserver.7.0");
+		setGdbProgramNamesLaunchAttributes("7.0");		
 	}
 }

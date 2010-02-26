@@ -82,11 +82,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		private IManagedBuildInfo buildInfo;
 		private boolean incrBuildNeeded = false;
 		private boolean fullBuildNeeded = false;
-		private List reservedNames;
+		private List<String> reservedNames;
 		
-		/**
-		 * 
-		 */
 		public ResourceDeltaVisitor(IManagedBuildInfo info) {
 			buildInfo = info;
 			String ext = buildInfo.getBuildArtifactExtension();
@@ -168,10 +165,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						(resource.isDerived() || 
 						(isProjectFile(resource)) ||
 						(isGeneratedResource(resource))))) {
-					     // The resource that changed has attributes which make it uninteresting, 
+						 // The resource that changed has attributes which make it uninteresting, 
 						 // so don't do anything
-					    ;							
-				    } 
+					} 
 					else {
 						//  TODO:  Should we do extra checks here to determine if a build is really needed,
 						//         or do you just do exclusion checks like above?
@@ -314,9 +310,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public static boolean VERBOSE = false;
 	
 	// Local variables
-	protected Vector generationProblems;
+	protected Vector<IStatus> generationProblems;
 	protected IProject[] referencedProjects;
-	protected List resourcesToBuild;
+	protected List<IResource> resourcesToBuild;
 	private IConsole console;
 	private ConsoleOutputStream consoleOutStream;
 	public static void outputTrace(String resourceName, String message) {
@@ -343,9 +339,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	private void addBuilderMarkers(ErrorParserManager epm) {
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
-		Iterator iter = getGenerationProblems().iterator();
+		Iterator<IStatus> iter = getGenerationProblems().iterator();
 		while (iter.hasNext()) {
-			IStatus stat = (IStatus)iter.next();
+			IStatus stat = iter.next();
 			IResource location = root.findMember(stat.getMessage());
 			if (stat.getCode() == IManagedBuilderMakefileGenerator.SPACES_IN_PATH) {
 				epm.generateMarker(location, -1, ManagedMakeMessages.getResourceString("MakefileGenerator.error.spaces"), IMarkerGenerator.SEVERITY_WARNING, null);	//$NON-NLS-1$
@@ -405,6 +401,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		// We should always tell the build system what projects we reference
 		referencedProjects = getProject().getReferencedProjects();
@@ -458,7 +455,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				if(delta == null)
 					fullBuildNeeded = true;
 				if(cfg.needsRebuild() || delta != null){
-					//use a build desacription model to calculate the resources to be cleaned 
+					//use a build description model to calculate the resources to be cleaned 
 					//only in case there are some changes to the project sources or build information
 					try{
 						int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.DEPFILES | BuildDescriptionManager.DEPS;
@@ -568,6 +565,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	/**
 	 * Check whether the build has been canceled. Cancellation requests 
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
+	 * @param monitor 
 	 * 
 	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
 	 */
@@ -582,6 +580,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#clean(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		referencedProjects = getProject().getReferencedProjects();
 		outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
@@ -598,7 +597,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		IWorkspace workspace = CCorePlugin.getWorkspace();
 		IContainer buildDir = workspace.getRoot().getContainerForLocation(buildDirPath);
 		if (buildDir == null || !buildDir.isAccessible()){
-			outputError(buildDir.getName(), "Could not delete the build directory");	//$NON-NLS-1$
+			outputError(buildDir == null ? "null" : buildDir.getName(), "Could not delete the build directory");	//$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		String status;		
@@ -654,7 +653,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		IFile makefile = root.getFileForLocation(makefilePath);
 		
-		if (buildDir != null && makefile != null && makefile.isAccessible()) {		
+		if (makefile != null && makefile.isAccessible()) {		
 			// invoke make with the clean argument
 			String statusMsg = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.starting", getProject().getName());	//$NON-NLS-1$
 			monitor.subTask(statusMsg);
@@ -720,7 +719,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (topBuildDir != null) {
 			invokeMake(FULL_BUILD, topBuildDir, info, generator, monitor);
 		} else {
-			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
+			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	
 			monitor.subTask(statusMsg);
 			return;
 		}
@@ -737,7 +736,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 
 		//  Build finished message
-		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
+		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	
 		monitor.subTask(statusMsg);
 	}
 	
@@ -745,9 +744,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * 
 	 * @return
 	 */
-	private Vector getGenerationProblems() {
+	private Vector<IStatus> getGenerationProblems() {
 		if (generationProblems == null) {
-			generationProblems = new Vector();
+			generationProblems = new Vector<IStatus>();
 		}
 		return generationProblems;
 	}
@@ -760,7 +759,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @return
 	 */
 	protected String[] getMakeTargets(int buildType) {
-		List args = new ArrayList();
+		List<String> args = new ArrayList<String>();
 		switch (buildType) {
 			case CLEAN_BUILD:
 				args.add("clean");	//$NON-NLS-1$
@@ -770,15 +769,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				args.add("all");	//$NON-NLS-1$
 				break;
 		}
-		return (String[])args.toArray(new String[args.size()]);
+		return args.toArray(new String[args.size()]);
 	}
 	
-	/**
-	 * @return
-	 */
-	protected List getResourcesToBuild() {
+	protected List<IResource> getResourcesToBuild() {
 		if (resourcesToBuild == null) {
-			resourcesToBuild = new ArrayList();
+			resourcesToBuild = new ArrayList<IResource>();
 		}
 		return resourcesToBuild;
 	}
@@ -839,7 +835,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (buildDir != null) {
 			invokeMake(INCREMENTAL_BUILD, buildDir, info, generator, monitor);
 		} else {
-			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	//$NON-NLS-1$
+			statusMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, getProject().getName());	
 			monitor.subTask(statusMsg);
 			return;
 		}
@@ -855,7 +851,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		}
 		
 		// Build finished message
-		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	//$NON-NLS-1$
+		statusMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());	
 		monitor.subTask(statusMsg);
 }
 
@@ -958,12 +954,12 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// Set the environmennt
 				IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true,true);
 				String[] env = null;
-				ArrayList envList = new ArrayList();
+				ArrayList<String> envList = new ArrayList<String>();
 				if (variables != null) {
 					for(int i = 0; i < variables.length; i++){
 						envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
 					}
-					env = (String[]) envList.toArray(new String[envList.size()]);
+					env = envList.toArray(new String[envList.size()]);
 				}
 			
 				// Hook up an error parser manager
@@ -974,8 +970,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// until we explicitly close it. See bug#123302.
 				OutputStream epmOutputStream = epm.getOutputStream();
 			
-                // Get the arguments to be passed to make from build model 
-				ArrayList makeArgs = new ArrayList();
+				// Get the arguments to be passed to make from build model 
+				ArrayList<String> makeArgs = new ArrayList<String>();
 				String arg = info.getBuildArguments();
 				if (arg.length() > 0) {
 					String[] args = arg.split("\\s"); //$NON-NLS-1$ 
@@ -1001,7 +997,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				boolean isuptodate = false;
 
 				if (prebuildStepPresent) {
-					ArrayList premakeArgs = (ArrayList) makeArgs.clone();
+					@SuppressWarnings("unchecked")
+					ArrayList<String> premakeArgs = (ArrayList<String>) makeArgs.clone();
 					String[] premakeTargets;
 					switch (buildType) {
 					case INCREMENTAL_BUILD: {
@@ -1013,7 +1010,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						// else: invoke the prebuild step and the main build step 
 						premakeArgs.add("-q"); //$NON-NLS-1$ 
 						premakeArgs.add("main-build"); //$NON-NLS-1$ 
-						premakeTargets = (String[]) premakeArgs.toArray(new String[premakeArgs.size()]);
+						premakeTargets = premakeArgs.toArray(new String[premakeArgs.size()]);
 						proc = launcher.execute(makeCommand, premakeTargets, env, workingDirectory, monitor);
 						if (proc != null) {
 							try {
@@ -1078,7 +1075,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
 				}
 
-				makeTargets = (String[]) makeArgs.toArray(new String[makeArgs.size()]);
+				makeTargets = makeArgs.toArray(new String[makeArgs.size()]);
 
 				// Launch make - main invocation 
 				if (!isuptodate) {
@@ -1148,7 +1145,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 					addBuilderMarkers(epm);
 					consoleOutStream.close();
 				}
-			}                               
+			}
 		} catch (Exception e) {
 			forgetLastBuiltState();
 		} finally {
@@ -1277,7 +1274,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				if (isParallel)
 					status = ParallelBuilder.build(des, null, null, epmOutputStream, epmOutputStream, monitor, resumeOnErr, buildIncrementaly);
 				else
-				    status = builder.build(epmOutputStream, epmOutputStream, monitor);
+					status = builder.build(epmOutputStream, epmOutputStream, monitor);
 				long t2 = System.currentTimeMillis();
 				
 				// Report either the success or failure of our mission 
@@ -1384,7 +1381,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * 
 	 * This method is considered experimental.  Clients implementing this API should expect
 	 * possible changes in the API.
-	 *  
+	 * 
+	 * @param resourcesToBuild resources to be built
 	 * @param cfg configuration to be built
 	 * @param buildIncrementaly if true, incremental build will be performed,
 	 * only files that need rebuild will be built.
@@ -1469,7 +1467,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						.getBuildResource(resourcesToBuild[k]);
 
 //				step collector 
-				Set dependentSteps = new HashSet();
+				Set<IBuildStep> dependentSteps = new HashSet<IBuildStep>();
 
 //				get dependent IO types
 				IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
@@ -1484,11 +1482,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				monitor.subTask(ManagedMakeMessages.getResourceString("GeneratedMakefileBuilder.buildingFile") + resourcesToBuild[k].getProjectRelativePath()); //$NON-NLS-1$
 				
 				// iterate through all build steps
-				Iterator stepIter = dependentSteps.iterator();
+				Iterator<IBuildStep> stepIter = dependentSteps.iterator();
 				
 				while(stepIter.hasNext())
 				{
-					IBuildStep step = (IBuildStep) stepIter.next();
+					IBuildStep step = stepIter.next();
 					
 					StepBuilder stepBuilder = new StepBuilder(step, null);
 					
@@ -1624,9 +1622,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		IConfiguration cfg = info.getDefaultConfiguration();
 
 		// figure out the output file for this file
-		IPath sourcePath = file.getProjectRelativePath();
+//		IPath sourcePath = file.getProjectRelativePath();
 
-		int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;;
+		int flags = BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED;
 		IResourceDelta delta = getDelta(currentProject);
 		
 		try {
@@ -1639,7 +1637,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			if (buildResource != null) {
 
 				// step collector
-				Set dependentSteps = new HashSet();
+				Set<IBuildStep> dependentSteps = new HashSet<IBuildStep>();
 
 				// get dependent IO types
 				IBuildIOType depTypes[] = buildResource.getDependentIOTypes();
@@ -1654,10 +1652,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 
 				// iterate through all build steps
-				Iterator stepIter = dependentSteps.iterator();
+				Iterator<IBuildStep> stepIter = dependentSteps.iterator();
 
 				while (stepIter.hasNext()) {
-					IBuildStep step = (IBuildStep) stepIter.next();
+					IBuildStep step = stepIter.next();
 
 					// Delete the output resources
 					IBuildIOType[] outputIOTypes = step.getOutputIOTypes();
@@ -1687,7 +1685,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 	/**
 	 * @param currentProject
-	 * @return
 	 * @throws CoreException
 	 */
 	private void initNewBuildConsole(IProject currentProject) throws CoreException {

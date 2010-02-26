@@ -114,11 +114,22 @@ public class ServiceEventWaitor<V> {
 			}
 			
 			if (timeout != WAIT_FOREVER) {
-				if (timeout/duration > 7.0) {
-					System.out.println("WARNING: Caller specified a timeout that was more than 7X what was necessary. The timeout is probably too loose.");
+				if (duration == 0) {
+					if (timeout > 1000) {
+						System.out.println("WARNING: Caller specified a timeout over a second but the operation was instantenous. The timeout is probably too loose.");
+					}
+					else if (timeout < 100) {
+						System.out.println("WARNING: Caller specified a timeout less than 100 milliseconds. Even though the operation completed instantaneously, the timeout is probably too tight.");
+					}
 				}
-				else if ((((float)(timeout - duration))/(float)duration) < 0.20) {
-					System.out.println("WARNING: Caller specified a timeout that was less than 20% above actual time. The timeout is probably too tight.");
+				else {
+					if (timeout/duration > 7.0 && timeout > 2000) {
+						// don't bother for timeouts less than 2 seconds
+						System.out.println("WARNING: Caller specified a timeout that was more than 7X what was necessary. The timeout is probably too loose.");
+					}
+					else if ((((float)(timeout - duration))/(float)duration) < 0.20) {
+						System.out.println("WARNING: Caller specified a timeout that was less than 20% above actual time. The timeout is probably too tight.");
+					}
 				}
 			}
 			else {

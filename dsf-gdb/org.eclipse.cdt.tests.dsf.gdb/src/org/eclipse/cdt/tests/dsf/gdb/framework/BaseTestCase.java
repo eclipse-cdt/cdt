@@ -114,7 +114,9 @@ public class BaseTestCase {
 				new ServiceEventWaitor<MIStoppedEvent>(
 						fLaunch.getSession(),
 						MIStoppedEvent.class);
-			fInitialStoppedEvent = eventWaitor.waitForEvent(10000);
+			
+			// In practice, most launches happen within 100-300 milliseconds
+			fInitialStoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
 		} catch (Exception e) {}
 
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.util.Arrays;
+
 /**
  * GDB/MI thread list parsing.
  */
@@ -47,6 +49,8 @@ public class MIThreadListIdsInfo extends MIInfo {
 	public String[] getStrThreadIds() {
 		if (strThreadIds == null) {
 			parse();
+			// Make sure the threads are in order for the debug view
+			Arrays.sort(strThreadIds);
 		}
 		return strThreadIds;
 	}

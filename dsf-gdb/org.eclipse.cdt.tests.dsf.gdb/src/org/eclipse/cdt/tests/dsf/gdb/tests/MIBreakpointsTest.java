@@ -1192,15 +1192,16 @@ public class MIBreakpointsTest extends BaseTestCase {
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
 
-		// Run the program
+		// Run the program. It will make a one second sleep() call, during which time... 
 		SyncUtil.resume();
 
-		// Install the breakpoint
+		// ...we install the breakpoint
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for breakpoint to hit
-		MIStoppedEvent event = SyncUtil.waitForStop();
+		// Wait for breakpoint to hit. The program terminates after the sleep()
+		// call, so waiting four seconds is more than enough
+		MIStoppedEvent event = SyncUtil.waitForStop(4000);
 		
 		// Ensure the correct BreakpointEvent was received
 		waitForBreakpointEvent(2);

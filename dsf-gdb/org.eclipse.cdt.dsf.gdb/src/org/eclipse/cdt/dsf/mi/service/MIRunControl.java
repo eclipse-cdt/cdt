@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
@@ -54,6 +55,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -381,10 +383,29 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 
     	IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
-        IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
+        final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
         if (containerDmc != null) {
-            // Set the triggering context only if it's different than the container context.
+            // Set the triggering context only if it's not the container context, since we are looking for a thread.
             IExecutionDMContext triggeringCtx = !e.getDMContext().equals(containerDmc) ? e.getDMContext() : null;
+            if (triggeringCtx == null) {
+            	// Still no thread.  Let's ask the bakend for one.
+            	// We need a proper thread id for the debug view to select the right thread
+            	// Bug 300096 comment #15 and Bug 302597
+				getConnection().queueCommand(
+						new CLIThread(containerDmc),
+						new DataRequestMonitor<CLIThreadInfo>(getExecutor(), null) {
+							@Override
+							protected void handleCompleted() {
+								IExecutionDMContext triggeringCtx2 = null;
+								if (isSuccess() && getData().getCurrentThread() != null) {
+									triggeringCtx2 = createMIExecutionContext(containerDmc, getData().getCurrentThread());
+								}
+								IDMEvent<?> event2 = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx2);
+								getSession().dispatchEvent(event2, getProperties());
+							}
+						});
+				return;
+            }
             event = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx);
         } else {
             event = new SuspendedEvent(e.getDMContext(), e);

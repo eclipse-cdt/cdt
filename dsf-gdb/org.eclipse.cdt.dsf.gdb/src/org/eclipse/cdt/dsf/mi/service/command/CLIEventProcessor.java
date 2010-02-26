@@ -156,16 +156,7 @@ public class CLIEventProcessor
     }
 
     private void processStateChanges(int token, String operation) {
-        // Get the command name.
-        int indx = operation.indexOf(' ');
-        if (indx != -1) {
-            operation = operation.substring(0, indx).trim();
-        } else {
-            operation = operation.trim();
-        }
-
         // Check the type of command
-
         int type = getSteppingOperationKind(operation);
         if (type != -1) {
             // if it was a step instruction set state running
@@ -237,6 +228,14 @@ public class CLIEventProcessor
     }
 
     private static int getSteppingOperationKind(String operation) {
+        // Get the command name.
+        int indx = operation.indexOf(' ');
+        if (indx != -1) {
+            operation = operation.substring(0, indx).trim();
+        } else {
+            operation = operation.trim();
+        }
+        
         int type = -1;
         /* execution commands: n, next, s, step, si, stepi, u, until, finish, return,
            c, continue, fg */

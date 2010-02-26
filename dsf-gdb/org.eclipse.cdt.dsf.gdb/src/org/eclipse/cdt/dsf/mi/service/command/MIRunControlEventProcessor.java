@@ -14,8 +14,6 @@ package org.eclipse.cdt.dsf.mi.service.command;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -292,24 +290,23 @@ public class MIRunControlEventProcessor
             	// when it stops due to a CLI command.  We have to trigger the 
             	// MIStoppedEvent ourselves
             	if (cmd instanceof CLICommand<?>) {
-                	IRunControl runControl = fServicesTracker.getService(IRunControl.class);
-                	if (runControl != null) {
-                		IDMContext dmc = ((CLICommand<?>)cmd).getContext();
-                		IExecutionDMContext execDmc = 
-                			DMContexts.getAncestorOfType(dmc, IExecutionDMContext.class);
-            		
-                		if (execDmc == null) {
-                			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
-                			if (procService != null) {
-                				String groupId = MIProcesses.UNIQUE_GROUP_ID;
-                				IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
-                				execDmc = procService.createContainerContext(procDmc, groupId);
-                			}
-                		}
-                		if (execDmc != null && runControl.isSuspended(execDmc) == false) {
-                			MIEvent<?> event = MIStoppedEvent.parse(execDmc, id, rr.getMIResults());
-                			fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
-                		}
+            		// It is important to limit this to runControl operations (e.g., 'next', 'continue', 'jump')
+            		// There are other CLI commands that we use that could still be sent when the target is considered
+            		// running, due to timing issues.
+            		if (CLIEventProcessor.isSteppingOperation(((CLICommand<?>)cmd).getOperation())) {
+            			IRunControl runControl = fServicesTracker.getService(IRunControl.class);
+            			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+            			if (runControl != null && procService != null) {
+            				// We don't know which thread stopped so we simply create a container event.
+            				String groupId = MIProcesses.UNIQUE_GROUP_ID;
+            				IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+            				IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+
+            				if (runControl.isSuspended(processContainerDmc) == false) {
+            					MIEvent<?> event = MIStoppedEvent.parse(processContainerDmc, id, rr.getMIResults());
+            					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+            				}
+            			}
             		}
             	}
             }

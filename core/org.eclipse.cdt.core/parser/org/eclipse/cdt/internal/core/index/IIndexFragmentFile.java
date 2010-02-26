@@ -29,6 +29,11 @@ public interface IIndexFragmentFile extends IIndexFile {
 	void setTimestamp(long timestamp) throws CoreException;
 
 	/**
+	 * Sets the hash of the file content. 
+	 */
+	void setContentsHash(long hash) throws CoreException;
+
+	/**
 	 * Sets the hash-code of the scanner configuration.
 	 * @param hashcode a hash-code or <code>0</code> if it is unknown.
 	 * @throws CoreException 

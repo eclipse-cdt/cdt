@@ -80,6 +80,15 @@ public interface IIndexManager extends IPDOMManager {
 	public final static int UPDATE_EXTERNAL_FILES_FOR_PROJECT= 0x8;
 
 	/**
+	 * This flag modifies behavior of UPDATE_CHECK_TIMESTAMPS. Both, the timestamp and the hash
+	 * of the contents of a translation unit, have to change in order to trigger re-indexing.
+	 * Checking for content changes may reduce indexing overhead for projects that use code
+	 * generation since generated files are sometimes recreated with identical contents. 
+	 * @since 5.2
+	 */
+	public final static int UPDATE_CHECK_CONTENTS_HASH= 0x10;
+
+	/**
 	 * Returns the index for the given project.
 	 * @param project the project to get the index for
 	 * @return an index for the project
@@ -192,7 +201,7 @@ public interface IIndexManager extends IPDOMManager {
 	 * nested translation units are considered.
 	 * @param tuSelection the translation units to update.
 	 * @param options one of {@link #UPDATE_ALL} or {@link #UPDATE_CHECK_TIMESTAMPS} optionally
-	 * combined with {@link #UPDATE_EXTERNAL_FILES_FOR_PROJECT}.
+	 * combined with {@link #UPDATE_EXTERNAL_FILES_FOR_PROJECT} and {@link #UPDATE_CHECK_CONTENTS_HASH}.
 	 * @throws CoreException
 	 * @since 4.0
 	 */

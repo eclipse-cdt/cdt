@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser;
 
@@ -22,8 +23,8 @@ import org.eclipse.core.runtime.IPath;
 
 
 /**
- * Abstract class for representing the content of a file. This serves as the
- * input to the preprocessor.
+ * Abstract class for representing the content of a file.
+ * It serves as the input to the preprocessor.
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 5.2
@@ -35,6 +36,10 @@ public abstract class FileContent {
 	 */
 	public abstract String getFileLocation();
 
+	/**
+	 * Returns a 64-bit hash value of the file contents.
+	 */
+	public abstract long getContentsHash();
 
 	/**
 	 * Creates a file content object for a fixed buffer.
@@ -78,7 +83,6 @@ public abstract class FileContent {
 		return InternalParserUtil.createWorkspaceFileContent(file);
 	}
 
-	
 	/**
 	 * Creates a file content object for a file location that is not part of the workspace
 	 */

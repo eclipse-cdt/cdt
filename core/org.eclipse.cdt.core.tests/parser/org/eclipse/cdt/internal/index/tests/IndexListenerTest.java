@@ -91,7 +91,6 @@ public class IndexListenerTest extends BaseTestCase {
 		}
 	}
 		
-
 	public void testChangeListener() throws Exception {
 		final Object mutex= new Object();
 		final List projects= new ArrayList();
@@ -119,8 +118,8 @@ public class IndexListenerTest extends BaseTestCase {
 			projects.clear();
 
 
-			IFile file1= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int a;");
-			IFile file2= TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int b;");
+			IFile file1= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int b;");
+			IFile file2= TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int c;");
 			synchronized (mutex) {
 				mutex.wait(1000);
 				if (projects.size() < 2) {

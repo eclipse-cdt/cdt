@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -113,6 +114,14 @@ public class InternalFileContent extends FileContent {
 	@Override
 	public String getFileLocation() {
 		return fFileLocation;
+	}
+
+	/**
+	 * Returns a 64-bit hash value of the file contents.
+	 */
+	@Override
+	public long getContentsHash() {
+		return fSource != null ? fSource.getContentsHash() : 0;
 	}
 
 	/**

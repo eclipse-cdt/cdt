@@ -16,6 +16,7 @@ public class UpdateIndexWithModifiedFilesAction extends AbstractUpdateIndexActio
 
 	@Override
 	protected int getUpdateOptions() {
-		return IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONFIGURATION | IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT;
+		return IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONFIGURATION |
+		IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT | IIndexManager.UPDATE_CHECK_CONTENTS_HASH;
 	}
 }

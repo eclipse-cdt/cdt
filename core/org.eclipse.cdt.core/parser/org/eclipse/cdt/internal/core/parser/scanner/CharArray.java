@@ -7,9 +7,9 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
-
 
 /**
  * Wrapper around char[] to implement {@link AbstractCharArray}.
@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 public final class CharArray extends AbstractCharArray {
 
 	private final char[] fArray;
+	private long hash64;
 
 	public CharArray(char[] array) {
 		fArray= array;
@@ -48,11 +49,20 @@ public final class CharArray extends AbstractCharArray {
 	@Override
 	public void arraycopy(int offset, char[] destination, int destPos, int length) {
 		System.arraycopy(fArray, offset, destination, destPos, length);
-		
 	}
 
 	@Override
 	public boolean isValidOffset(int offset) {
 		return offset < fArray.length;
+	}
+
+	@Override
+	public long getContentsHash() {
+		if (hash64 == 0 && fArray.length != 0) {
+			StreamHasher hasher = new StreamHasher();
+			hasher.addChunk(fArray);
+			hash64 = hasher.computeHash();
+		}
+		return hash64;
 	}
 }

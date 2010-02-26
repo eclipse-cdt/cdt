@@ -138,15 +138,15 @@ abstract public class PDOMWriter {
 	}
 			
 	/**
-	 * Extracts symbols from the given ast and adds them to the index. 
+	 * Extracts symbols from the given AST and adds them to the index. 
 	 * 
 	 * When flushIndex is set to <code>false</code>, you must make sure to flush the 
 	 * index after your last write operation.
 	 * @since 4.0
 	 */
 	public void addSymbols(IASTTranslationUnit ast, IIndexFileLocation[] ifls, IWritableIndex index, 
-			int readlockCount, boolean flushIndex, int configHash, ITodoTaskUpdater taskUpdater,
-			IProgressMonitor pm) throws InterruptedException, CoreException {
+			int readlockCount, boolean flushIndex, long fileContentsHash, int configHash,
+			ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException, CoreException {
 		if (fShowProblems) {
 			fShowInclusionProblems= true;
 			fShowScannerProblems= true;
@@ -165,8 +165,8 @@ abstract public class PDOMWriter {
 		resolveNames(symbolMap, ifls, stati, pm);
 
 		// index update
-		storeSymbolsInIndex(symbolMap, ifls, ast.getLinkage().getLinkageID(), configHash, contextIncludes,
-				index, readlockCount, flushIndex, stati, pm);
+		storeSymbolsInIndex(symbolMap, ifls, ast.getLinkage().getLinkageID(), fileContentsHash,
+				configHash, contextIncludes, index, readlockCount, flushIndex, stati, pm);
 
 		if (taskUpdater != null) {
 			taskUpdater.updateTasks(ast.getComments(), ifls);
@@ -193,9 +193,10 @@ abstract public class PDOMWriter {
 	}
 
 	private void storeSymbolsInIndex(final Map<IIndexFileLocation, Symbols> symbolMap, IIndexFileLocation[] ifls,
-			int linkageID, int configHash, HashSet<IASTPreprocessorIncludeStatement> contextIncludes,
-			IWritableIndex index, int readlockCount, boolean flushIndex,
-			ArrayList<IStatus> stati, IProgressMonitor pm) throws InterruptedException, CoreException {
+			int linkageID, long fileContentsHash, int configHash,
+			HashSet<IASTPreprocessorIncludeStatement> contextIncludes, IWritableIndex index, int readlockCount,
+			boolean flushIndex, ArrayList<IStatus> stati, IProgressMonitor pm)
+			throws InterruptedException, CoreException {
 		for (int i= 0; i < ifls.length; i++) {
 			if (pm.isCanceled()) 
 				return;
@@ -209,7 +210,8 @@ abstract public class PDOMWriter {
 				YieldableIndexLock lock = new YieldableIndexLock(index, readlockCount, flushIndex);
 				lock.acquire();
 				try {
-					storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes, lock);
+					storeFileInIndex(index, ifl, symbolMap, linkageID, fileContentsHash, configHash,
+							contextIncludes, lock);
 				} catch (RuntimeException e) {
 					th= e; 
 				} catch (PDOMNotImplementedError e) {
@@ -457,9 +459,9 @@ abstract public class PDOMWriter {
 	}
 
 	private IIndexFragmentFile storeFileInIndex(IWritableIndex index, IIndexFileLocation location,
-			Map<IIndexFileLocation, Symbols> symbolMap, int linkageID, int configHash,
-			Set<IASTPreprocessorIncludeStatement> contextIncludes, YieldableIndexLock lock)
-			throws CoreException, InterruptedException {
+			Map<IIndexFileLocation, Symbols> symbolMap, int linkageID, long fileContentsHash,
+			int configHash, Set<IASTPreprocessorIncludeStatement> contextIncludes,
+			YieldableIndexLock lock) throws CoreException, InterruptedException {
 		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
 		IIndexFragmentFile file;
 		long timestamp = fResolver.getLastModified(location);
@@ -518,6 +520,7 @@ abstract public class PDOMWriter {
 			}
 			if (SEMI_TRANSACTIONAL_UPDATES) {
 				file.setTimestamp(timestamp);
+				file.setContentsHash(fileContentsHash);
 				file = index.commitUncommittedFile();
 			}
 		} finally {

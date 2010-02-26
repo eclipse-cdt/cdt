@@ -571,7 +571,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 							pdom.releaseReadLock();
 						}
 						if (resume) {
-							enqueue(new PDOMUpdateTask(indexer, IIndexManager.UPDATE_CHECK_TIMESTAMPS));
+							enqueue(new PDOMUpdateTask(indexer,
+									IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH));
 						}
 					}
 					return;
@@ -592,7 +593,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 				IPDOMIndexerTask task= null;
 				if (operation.wasSuccessful()) {
-					task= new PDOMUpdateTask(indexer, IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+					task= new PDOMUpdateTask(indexer,
+							IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 				}
 				else {
 					task= new PDOMRebuildTask(indexer);

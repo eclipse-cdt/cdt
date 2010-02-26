@@ -61,6 +61,14 @@ public interface IIndexFile {
 	long getTimestamp() throws CoreException;
 
 	/**
+	 * Hash of the file contents when the file was indexed.
+	 * @return 64-bit hash of the file content.
+	 * @throws CoreException
+	 * @since 5.2
+	 */
+	long getContentsHash() throws CoreException;
+
+	/**
 	 * Returns the hash-code of the scanner configuration that was used to parse the file.
 	 * <code>0</code> will be returned in case the hash-code is unknown.
 	 * @return the hash-code of the scanner configuration or <code>0</code>.

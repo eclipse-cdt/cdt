@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -38,8 +39,11 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	
 	private int fLength= -1;
 	private List<Chunk> fChunks= new ArrayList<Chunk>();
+	private StreamHasher hasher;
+	private long hash64;
 
 	protected LazyCharArray() {
+		hasher = new StreamHasher();
 	}
 
 	@Override
@@ -66,8 +70,18 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		return true;
 	}
 
+	@Override
+	public long getContentsHash() {
+		if (hasher != null) {
+			readUpTo(Integer.MAX_VALUE);
+			hash64 = hasher.computeHash();
+			hasher = null;
+		}
+		return hash64;
+	}
+
 	private void readUpTo(int offset) {
-		if (fLength >=0)
+		if (fLength >= 0)
 			return;
 		
 		final int chunkOffset= offset >> CHUNK_BITS;
@@ -78,13 +92,13 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	public final char get(int offset) {
 		int chunkOffset= offset >> CHUNK_BITS;
 		char[] data= getChunkData(chunkOffset);
-		return data[offset & (CHUNK_SIZE-1)];
+		return data[offset & (CHUNK_SIZE - 1)];
 	}
 
 	@Override
 	public final void arraycopy(int offset, char[] destination, int destinationPos, int length) {
 		int chunkOffset= offset >> CHUNK_BITS;
-		int loffset= offset & (CHUNK_SIZE-1);
+		int loffset= offset & (CHUNK_SIZE - 1);
 		char[] data= getChunkData(chunkOffset);
 		final int canCopy = data.length-loffset;
 		if (length <= canCopy) {
@@ -124,7 +138,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	 */
 	protected Chunk createChunk(int chunkOffset) {
 		final int chunkCount = fChunks.size();
-		long fileOffset= chunkCount == 0 ? 0 : fChunks.get(chunkCount-1).fFileEndOffset;
+		long fileOffset= chunkCount == 0 ? 0 : fChunks.get(chunkCount - 1).fFileEndOffset;
 		try {
 			for (int i = chunkCount; i <= chunkOffset; i++) {
 				long[] fileEndOffset= {0};
@@ -133,12 +147,15 @@ public abstract class LazyCharArray extends AbstractCharArray {
 				if (charCount == 0) {
 					fLength= fChunks.size() * CHUNK_SIZE;
 					break;
-				} 
+				}
+				if (hasher != null) {
+					hasher.addChunk(data);
+				}
 				// New chunk
 				Chunk chunk= new Chunk(fileOffset, fileEndOffset[0], data);
 				fChunks.add(chunk);
 				if (charCount < CHUNK_SIZE) {
-					fLength= (fChunks.size()-1) * CHUNK_SIZE + charCount;
+					fLength= (fChunks.size() - 1) * CHUNK_SIZE + charCount;
 					break;
 				} 
 				fileOffset= fileEndOffset[0];
@@ -162,8 +179,8 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	}
 
 	/**
-	 * Read the chunk data at the given source offset and provide the end-offset in the
-	 * source.
+	 * Read the chunk data at the given source offset and provide the end-offset in
+	 * the source.
 	 */
 	protected abstract char[] readChunkData(long sourceOffset, long[] sourceEndOffsetHolder) throws Exception;
 		

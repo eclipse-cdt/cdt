@@ -125,7 +125,10 @@ public class IndexUpdateTests extends IndexTestBase {
 	}
 	
 	private void updateFile() throws Exception {
-		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(), fContents[++fContentUsed].toString());
+		// Append variable comment to the end of the file to change its contents.
+		// Indexer would not reindex the file if its contents remain the same. 
+		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(),
+				fContents[++fContentUsed].toString() + "\n// " + fContentUsed); 
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
 	}
 	

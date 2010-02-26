@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -34,6 +35,13 @@ public abstract class AbstractCharArray {
 	 * that offset is non-negative.
 	 */
 	public abstract boolean isValidOffset(int offset);
+
+	/**
+	 * Computes 64-bit hash value of the character array. This method doesn't cause any I/O if called
+	 * after the array has been traversed.
+	 * @return The hash value of the contents of the array.
+	 */
+	public abstract long getContentsHash();
 
 	/**
 	 * Returns the character at the given position, subclasses do not have to do range checks.

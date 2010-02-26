@@ -75,8 +75,6 @@ public class FileCharArray extends LazyCharArray {
 		fCharSet= charSet;
 	}
 
-	
-	
 	@Override
 	protected Chunk createChunk(int chunkOffset) {
 		FileInputStream fis;
@@ -110,7 +108,7 @@ public class FileCharArray extends LazyCharArray {
 		final CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
 
 		boolean endOfInput= false;
-		while(dest.position() < CHUNK_SIZE && !endOfInput) {
+		while (dest.position() < CHUNK_SIZE && !endOfInput) {
 			fChannel.position(fileOffset);
 			in.clear();
 			int count= fChannel.read(in);
@@ -127,8 +125,7 @@ public class FileCharArray extends LazyCharArray {
 		dest.flip();
 		return extractChars(dest);
 	}
-	
-	
+
 	@Override
 	protected void rereadChunkData(long fileOffset, long fileEndOffset, char[] dest) {
 		FileInputStream fis;
@@ -156,7 +153,7 @@ public class FileCharArray extends LazyCharArray {
 		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
 				.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
-		int needBytes = (int) (fileEndOffset-fileOffset);
+		int needBytes = (int) (fileEndOffset - fileOffset);
 		final ByteBuffer in = ByteBuffer.allocate(needBytes);
 
 		channel.position(fileOffset);

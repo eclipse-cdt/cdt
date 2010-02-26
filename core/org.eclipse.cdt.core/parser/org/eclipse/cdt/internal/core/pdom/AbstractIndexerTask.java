@@ -50,6 +50,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.Assert;
@@ -245,9 +246,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	
 
-	private final IASTTranslationUnit createAST(Object tu, AbstractLanguage language, IScannerInfo scanInfo, int options, 
-			boolean inContext, IProgressMonitor pm) throws CoreException {
-		final FileContent codeReader= fResolver.getCodeReader(tu);
+	private final IASTTranslationUnit createAST(Object tu, AbstractLanguage language, FileContent codeReader,
+			IScannerInfo scanInfo, int options, boolean inContext, IProgressMonitor pm) throws CoreException {
 		if (codeReader == null) {
 			return null;
 		}
@@ -368,6 +368,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			IProgressMonitor monitor) throws CoreException {
 		final boolean forceAll= (fUpdateFlags & IIndexManager.UPDATE_ALL) != 0;
 		final boolean checkTimestamps= (fUpdateFlags & IIndexManager.UPDATE_CHECK_TIMESTAMPS) != 0;
+		final boolean checkFileContentsHash = (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONTENTS_HASH) != 0;
 		final boolean checkConfig= (fUpdateFlags & IIndexManager.UPDATE_CHECK_CONFIGURATION) != 0;
 
 		int count= 0;
@@ -401,7 +402,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						if (checkConfig) {
 							update= isSourceUnit ? isSourceUnitConfigChange(tu, ifile) : isHeaderConfigChange(tu, ifile);
 						}
-						update= update || force || (checkTimestamps && fResolver.getLastModified(ifl) != ifile.getTimestamp());
+						update= update || force || isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
 						if (update) {
 							requestUpdate(linkageID, ifl, ifile);
 							store(tu, linkageID, isSourceUnit, files);
@@ -423,7 +424,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						if (checkConfig) {
 							update= isHeaderConfigChange(tu, ifile);
 						}
-						update= update || force || (checkTimestamps && fResolver.getLastModified(ifl) != ifile.getTimestamp());
+						update= update || force || isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
 						if (update) {
 							final int linkageID = ifile.getLinkageID();
 							requestUpdate(linkageID, ifl, ifile);
@@ -437,7 +438,18 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		updateRequestedFiles(count - fFilesToUpdate.length);
 		fFilesToUpdate= null;
 	}
-	
+
+	private boolean isModified(boolean checkTimestamps, boolean checkFileContentsHash, IIndexFileLocation ifl,
+			Object tu, IIndexFragmentFile file)	throws CoreException {
+		boolean timestampDifferent = checkTimestamps && fResolver.getLastModified(ifl) != file.getTimestamp();
+		if (timestampDifferent) {
+			if (checkFileContentsHash && computeFileContentsHash(tu) == file.getContentsHash()) {
+				return false;
+			}
+		}
+		return timestampDifferent;
+	}
+
 	private void requestUpdate(int linkageID, IIndexFileLocation ifl, IIndexFragmentFile ifile) {
 		FileKey key= new FileKey(linkageID, ifl.getURI());
 		IndexFileContent info= fFileInfos.get(key);
@@ -589,7 +601,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 									}
 								}
 							}
-							writeToIndex(linkageID, ast, computeHashCode(scanInfo), monitor);
+							writeToIndex(linkageID, ast, StreamHasher.hash(code), computeHashCode(scanInfo),
+									monitor);
 							updateFileCount(0, 0, 1);
 						}
 					}
@@ -734,10 +747,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			pm.subTask(getMessage(MessageKind.parsingFileTask,
 					path.lastSegment(), path.removeLastSegments(1).toString()));
 			long start= System.currentTimeMillis();
-			IASTTranslationUnit ast= createAST(tu, lang, scanInfo, fASTOptions, inContext, pm);
+			FileContent codeReader= fResolver.getCodeReader(tu);
+			IASTTranslationUnit ast= createAST(tu, lang, codeReader, scanInfo, fASTOptions, inContext, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
 			if (ast != null) {
-				writeToIndex(linkageID, ast, computeHashCode(scanInfo), pm);
+				writeToIndex(linkageID, ast, codeReader.getContentsHash(), computeHashCode(scanInfo), pm);
 			}
 		} catch (CoreException e) {
 			th= e;
@@ -755,8 +769,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 	
-	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, int configHash,
-			IProgressMonitor pm) throws CoreException, InterruptedException {
+	private void writeToIndex(final int linkageID, IASTTranslationUnit ast, long fileContentsHash,
+			int configHash, IProgressMonitor pm) throws CoreException, InterruptedException {
 		HashSet<IIndexFileLocation> enteredFiles= new HashSet<IIndexFileLocation>();
 		ArrayList<IIndexFileLocation> orderedIFLs= new ArrayList<IIndexFileLocation>();
 		
@@ -775,7 +789,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		
 		IIndexFileLocation[] ifls= orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
 		try {
-			addSymbols(ast, ifls, fIndex, 1, false, configHash, fTodoTaskUpdater, pm);
+			addSymbols(ast, ifls, fIndex, 1, false, fileContentsHash, configHash, fTodoTaskUpdater, pm);
 		} finally {
 			// mark as updated in any case, to avoid parsing files that caused an exception to be thrown.
 			for (IIndexFileLocation ifl : ifls) {
@@ -938,6 +952,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private static int addToHashcode(int result, String key) {
 		return result * 31 + key.hashCode();
+	}
+
+	private long computeFileContentsHash(Object tu) {
+		FileContent codeReader= fResolver.getCodeReader(tu);
+		return codeReader != null ? codeReader.getContentsHash() : 0;
 	}
 
 	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl) throws CoreException {

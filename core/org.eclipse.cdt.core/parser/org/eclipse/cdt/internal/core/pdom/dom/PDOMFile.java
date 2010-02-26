@@ -71,11 +71,12 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int LOCATION_REPRESENTATION = 16;
 	private static final int LINKAGE_ID= 20;
 	private static final int TIME_STAMP = 24;
-	private static final int SCANNER_CONFIG_HASH= 32;
-	private static final int LAST_USING_DIRECTIVE= 36;
-	private static final int FIRST_MACRO_REFERENCE= 40;
+	private static final int CONTENT_HASH= 32;
+	private static final int SCANNER_CONFIG_HASH= 40;
+	private static final int LAST_USING_DIRECTIVE= 44;
+	private static final int FIRST_MACRO_REFERENCE= 48;
 
-	private static final int RECORD_SIZE= 44;
+	private static final int RECORD_SIZE= 52;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -223,6 +224,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 
 		setTimestamp(sourceFile.getTimestamp());
+		setContentsHash(sourceFile.getContentsHash());
 		setScannerConfigurationHashcode(sourceFile.getScannerConfigurationHashcode());
 
 		sourceFile.delete();
@@ -269,6 +271,16 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void setTimestamp(long timestamp) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putLong(record + TIME_STAMP, timestamp);
+	}
+
+	public long getContentsHash() throws CoreException {
+		Database db = fLinkage.getDB();
+		return db.getLong(record + CONTENT_HASH);
+	}
+
+	public void setContentsHash(long hash) throws CoreException {
+		Database db= fLinkage.getDB();
+		db.putLong(record + CONTENT_HASH, hash);
 	}
 
 	public int getScannerConfigurationHashcode() throws CoreException {

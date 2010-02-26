@@ -140,7 +140,8 @@ public class IndexUpdatePolicy {
 		}
 		else if (fIndexer != null) {
 			if (oldPolicy == MANUAL) {
-				task= new PDOMUpdateTask(fIndexer, IIndexManager.UPDATE_CHECK_TIMESTAMPS);
+				task= new PDOMUpdateTask(fIndexer,
+						IIndexManager.UPDATE_CHECK_TIMESTAMPS | IIndexManager.UPDATE_CHECK_CONTENTS_HASH);
 				clearTUs();
 			}
 			else if (fKind == POST_CHANGE) {

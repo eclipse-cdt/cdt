@@ -12,6 +12,7 @@
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * GDB/MI thread list parsing.
@@ -50,7 +51,28 @@ public class MIThreadListIdsInfo extends MIInfo {
 		if (strThreadIds == null) {
 			parse();
 			// Make sure the threads are in order for the debug view
-			Arrays.sort(strThreadIds);
+			// We need our own comparator to treat these strings as integers.
+			Arrays.sort(strThreadIds,
+					new Comparator<String>() {
+						public int compare(String o1, String o2) {
+							int threadInt1;
+							int threadInt2;
+							
+							try {
+								threadInt1 = Integer.parseInt(o1);
+							} catch (NumberFormatException e) {
+								return 1;
+							}
+							
+							try {
+								threadInt2 = Integer.parseInt(o2);
+							} catch (NumberFormatException e) {
+								return -1;
+							}
+							
+							return threadInt1 - threadInt2;
+						}
+					});
 		}
 		return strThreadIds;
 	}

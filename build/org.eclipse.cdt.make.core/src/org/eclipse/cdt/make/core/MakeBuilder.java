@@ -17,9 +17,10 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
@@ -96,7 +97,7 @@ public class MakeBuilder extends ACBuilder {
 		return getProject().getReferencedProjects();
 	}
 
-	
+
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		final IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(getProject(), BUILDER_ID);
@@ -122,17 +123,15 @@ public class MakeBuilder extends ACBuilder {
 					IStatus returnStatus = Status.OK_STATUS;
 					return returnStatus;
 				}
-				
-				
+
+
 			};
-			
+
 			backgroundJob.setRule(rule);
 			backgroundJob.schedule();
 		}
 	}
-	
 
-	
 	protected boolean invokeMake(int kind, IMakeBuilderInfo info, IProgressMonitor monitor) {
 		boolean isClean = false;
 		IProject currProject = getProject();
@@ -167,21 +166,22 @@ public class MakeBuilder extends ACBuilder {
 				launcher.showCommand(true);
 
 				// Set the environment
-				HashMap envMap = new HashMap();
+				HashMap<String, String> envMap = new HashMap<String, String>();
 				if (info.appendEnvironment()) {
-					envMap.putAll(launcher.getEnvironment());
+					@SuppressWarnings({"unchecked", "rawtypes"})
+					Map<String, String> env = (Map)launcher.getEnvironment();
+					envMap.putAll(env);
 				}
 				// Add variables from build info
 				envMap.putAll(info.getExpandedEnvironment());
-				Iterator iter = envMap.entrySet().iterator();
-				List strings= new ArrayList(envMap.size());
-				while (iter.hasNext()) {
-					Map.Entry entry = (Map.Entry) iter.next();
-					StringBuffer buffer= new StringBuffer((String) entry.getKey());
-					buffer.append('=').append((String) entry.getValue());
+				List<String> strings= new ArrayList<String>(envMap.size());
+				Set<Entry<String, String>> entrySet = envMap.entrySet();
+				for (Entry<String, String> entry : entrySet) {
+					StringBuffer buffer= new StringBuffer(entry.getKey());
+					buffer.append('=').append(entry.getValue());
 					strings.add(buffer.toString());
 				}
-				String[] env = (String[]) strings.toArray(new String[strings.size()]);
+				String[] env = strings.toArray(new String[strings.size()]);
 				String[] buildArguments = targets;
 				if (info.isDefaultBuildCmd()) {
 					if (!info.isStopOnError()) {
@@ -238,8 +238,8 @@ public class MakeBuilder extends ACBuilder {
 
 				if (errMsg != null) {
 					StringBuffer buf = new StringBuffer(buildCommand.toString() + " "); //$NON-NLS-1$
-					for (int i = 0; i < buildArguments.length; i++) {
-						buf.append(buildArguments[i]);
+					for (String buildArgument : buildArguments) {
+						buf.append(buildArgument);
 						buf.append(' ');
 					}
 
@@ -260,13 +260,13 @@ public class MakeBuilder extends ACBuilder {
 				cos.close();
 			}
 		} catch (Exception e) {
-			CCorePlugin.log(e);
+			MakeCorePlugin.log(e);
 		} finally {
 			monitor.done();
 		}
 		return (isClean);
 	}
-	
+
 	/**
 	 * Refresh project. Can be overridden to not call actual refresh or to do something else.
 	 * Method is called after build is complete.
@@ -287,6 +287,7 @@ public class MakeBuilder extends ACBuilder {
 
 	/**
 	 * Check whether the build has been canceled.
+	 * @param monitor
 	 */
 	public void checkCancel(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled())

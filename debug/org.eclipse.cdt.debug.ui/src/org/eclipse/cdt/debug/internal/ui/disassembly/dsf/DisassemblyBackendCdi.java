@@ -275,7 +275,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 					if (!insertDisassembly(startAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly)) {
 						// did not get disassembly data for startAddress - try fallbacks
 						if (file != null) {
-							// retry using plain address only
+							// previous attempt used the file; retry using the address
 							fCallback.setUpdatePending(true);
 							retrieveDisassembly(startAddress, finalEndAddress, null, -1, lines, mixed, showSymbols, showDisassembly, linesHint);
 						} else if (mixed) {

@@ -19,38 +19,17 @@
 	</target>
 
 	<target name="getDependencies">	
-		<echo message="Download, then unpack EMF, apache.commons.net and RXTX" />
+		<echo message="Download, then unpack EMF and RXTX" />
 		<ant target="getDependency"
 		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
 			<property name="url" value="${modeling.emf.runtime.url}" />
 			<property name="file" value="${modeling.emf.runtime.file}" />
-		</ant>
-
-		<echo message="Download, then unpack orbit bundles" />
-		<ant target="getDependency"
-		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
-			<property name="url" value="${tools.orbit.org.apache.commons.net_2.0.v200905272248.jar.url}" />
-			<property name="file" value="${tools.orbit.org.apache.commons.net_2.0.v200905272248.jar.file}" />
-			<property name="isUnpackedFile" value="true" />
-		</ant>
-		<ant target="getDependency"
-		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
-			<property name="url" value="${tools.orbit.org.apache.commons.net.source_2.0.v200905272248.jar.url}" />
-			<property name="file" value="${tools.orbit.org.apache.commons.net.source_2.0.v200905272248.jar.file}" />
-			<property name="isUnpackedFile" value="true" />
 		</ant>
 		<ant target="getDependency"
 		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
 			<property name="url" value="${downloads.RXTX.runtime.url}" />
 			<property name="file" value="${downloads.RXTX.runtime.file}" />
 		</ant>
-		<copy todir="${buildDir}/eclipse/plugins">
-			<fileset dir="${buildDir}/../downloads/">	
-				<include name="org.apache.commons.net_*.jar"/>
-				<include name="org.apache.commons.net.source_*.jar"/>
-			</fileset>
-		</copy>
-		<echo message="Done with orbit bundles" />
 	</target>
 
 	<target name="extraPackaging">

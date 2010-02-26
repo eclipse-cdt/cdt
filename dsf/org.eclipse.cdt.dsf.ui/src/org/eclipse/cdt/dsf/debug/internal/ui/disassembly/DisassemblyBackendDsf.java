@@ -441,6 +441,8 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, int, int, boolean, boolean, boolean, int)
 	 */
 	public void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final String file, final int lineNumber, final int lines, boolean mixed, final boolean showSymbols, final boolean showDisassembly, final int linesHint) {
+		// make sure address range is no less than 32 bytes
+		// this is an attempt to get better a response from the backend (bug 302505)
 		final BigInteger finalEndAddress= startAddress.add(BigInteger.valueOf(32)).max(endAddress);
 
 		DsfSession session = getSession();
@@ -609,10 +611,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				BigInteger instrLength= null;
 				if (j < instructions.length - 1) {
 					instrLength= instructions[j+1].getAdress().subtract(instruction.getAdress()).abs();
-				} else if (instructions.length == 1) {
-					if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
-						instrLength= p.fAddressLength;
-					}
 				}
 				if (instrLength == null) {
 					// cannot determine length of last instruction
@@ -738,10 +736,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 						}
 						if (nextSrcLineIdx >= mixedInstructions.length) {
 							break;
-						}
-					} else if (instructions.length == 1) {
-						if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
-							instrLength= p.fAddressLength;
 						}
 					}
 					if (instrLength == null) {

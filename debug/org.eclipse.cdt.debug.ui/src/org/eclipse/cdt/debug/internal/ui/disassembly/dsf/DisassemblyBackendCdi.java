@@ -265,6 +265,8 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		if (endAddress.subtract(startAddress).compareTo(addressLength) > 0) {
 			endAddress= startAddress.add(addressLength);
 		}
+		// make sure address range is no less than 32 bytes
+		// this is an attempt to get better a response from the backend (bug 302925)
 		final BigInteger finalEndAddress= startAddress.add(BigInteger.valueOf(32)).max(endAddress);
 		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
@@ -415,7 +417,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 
 		assert !fCallback.getUpdatePending();
 		fCallback.setUpdatePending(true);
-		fDisassemblyRetrieval.asyncGetDisassembly(null, endAddress, file, 1, lines, true, disassemblyRequest);
+		fDisassemblyRetrieval.asyncGetDisassembly(null, endAddress, file, 1, lines, mixed, disassemblyRequest);
 	}
 	
 	private boolean insertDisassembly(BigInteger startAddress, IDisassemblyBlock disassemblyBlock, boolean mixed, boolean showSymbols, boolean showDisassembly) {
@@ -512,11 +514,11 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 							break;
 						}
 					} else {
-						if (instructions.length == 1) {
-							if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
-								instrLength= p.fAddressLength;
-							}
-						}
+//						if (instructions.length == 1) {
+//							if (p.fAddressLength.compareTo(BigInteger.valueOf(8)) <= 0) {
+//								instrLength= p.fAddressLength;
+//							}
+//						}
 					}
 					if (instrLength == null) {
 						// cannot determine length of last instruction

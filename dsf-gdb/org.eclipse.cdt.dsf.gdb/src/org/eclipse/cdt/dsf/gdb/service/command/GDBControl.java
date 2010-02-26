@@ -165,7 +165,14 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
                 new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
             };
-        Sequence shutdownSequence = new Sequence(getExecutor(), requestMonitor) {
+        Sequence shutdownSequence = 
+        	new Sequence(getExecutor(), 
+        				 new RequestMonitor(getExecutor(), requestMonitor) {
+        					@Override
+        					protected void handleCompleted() {
+        						GDBControl.super.shutdown(requestMonitor);
+        					}
+        				}) {
             @Override public Step[] getSteps() { return shutdownSteps; }
         };
         getExecutor().execute(shutdownSequence);

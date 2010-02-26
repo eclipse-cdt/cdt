@@ -286,7 +286,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	public void shutdown(final RequestMonitor rm) {
 		unregister();
 		getSession().removeServiceEventListener(this);
-		rm.done();
+		super.shutdown(rm);
 	}
 
 	/* (non-Javadoc)

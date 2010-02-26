@@ -75,7 +75,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
     public void shutdown(RequestMonitor rm) {
         unregister();
 //        getSession().removeServiceEventListener(this);
-        rm.done();
+		super.shutdown(rm);
     }
 
     /* (non-Javadoc)

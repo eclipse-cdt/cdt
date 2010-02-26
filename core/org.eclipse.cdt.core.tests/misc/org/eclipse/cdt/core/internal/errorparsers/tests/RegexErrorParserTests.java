@@ -195,8 +195,9 @@ public class RegexErrorParserTests extends TestCase {
 		String fileName = "RegexErrorParser.c";
 		ResourceHelper.createFile(fProject, fileName);
 
+		errorList.clear();
 		ErrorParserManager epManager = new ErrorParserManager(fProject, markerGenerator, new String[0]);
-		boolean result;
+		
 		ProblemMarkerInfo problemMarkerInfo;
 
 		// Regular pattern
@@ -206,7 +207,6 @@ public class RegexErrorParserTests extends TestCase {
 		// Eat-line=false + qualifying next pattern (nulls), i.e. generates 2 problems
 		regexErrorParser.processLine("Variable!Description!10!"+fileName, epManager);
 
-		errorList.clear();
 		assertEquals(3, errorList.size());
 
 		// Regular
@@ -697,12 +697,12 @@ public class RegexErrorParserTests extends TestCase {
 		regexErrorParser.addPattern(new RegexErrorPattern("pattern",
 				"", "", "", "$0", IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
 
+		errorList.clear();
 		ErrorParserManager epManager = new ErrorParserManager(fProject, markerGenerator, new String[0]);
 
 		regexErrorParser.processLine("wrong pattern", epManager);
 		regexErrorParser.processLine("pattern wrong", epManager);
 
-		errorList.clear();
 		assertEquals(0, errorList.size());
 	}
 

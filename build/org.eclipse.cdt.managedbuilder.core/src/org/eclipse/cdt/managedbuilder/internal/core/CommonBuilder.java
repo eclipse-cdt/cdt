@@ -110,12 +110,9 @@ public class CommonBuilder extends ACBuilder {
 	private static final String BUILD_FINISHED = "ManagedMakeBuilder.message.finished";	//$NON-NLS-1$
 	private static final String CONSOLE_HEADER = "ManagedMakeBuilder.message.console.header";	//$NON-NLS-1$
 	private static final String ERROR_HEADER = "GeneratedmakefileBuilder error [";	//$NON-NLS-1$
-	private static final String MAKE = "ManagedMakeBuilder.message.make";	//$NON-NLS-1$
 	private static final String MARKERS = "ManagedMakeBuilder.message.creating.markers";	//$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	private static final String NOTHING_BUILT = "ManagedMakeBuilder.message.no.build";	//$NON-NLS-1$
-	private static final String REFRESH = "ManagedMakeBuilder.message.updating";	//$NON-NLS-1$
-	private static final String REFRESH_ERROR = BUILD_ERROR + ".refresh";	//$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace [";	//$NON-NLS-1$
 	private static final String TYPE_CLEAN = "ManagedMakeBuilder.type.clean";	//$NON-NLS-1$
@@ -189,12 +186,9 @@ public class CommonBuilder extends ACBuilder {
 		private final IConfiguration fCfg;
 		private final IBuilder fBuilder;
 		private IConsole fConsole;
-		private final boolean fIsForeground;
-
 		CfgBuildInfo(IBuilder builder, boolean isForegound){
 			this.fBuilder = builder;
 			this.fCfg = builder.getParent().getParent();
-			this.fIsForeground = isForegound;
 			this.fProject = this.fCfg.getOwner().getProject();
 			this.fBuildInfo = ManagedBuildManager.getBuildInfo(this.fProject);
 		}
@@ -232,20 +226,13 @@ public class CommonBuilder extends ACBuilder {
 	public class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 		private String buildGoalName;
 		private final IProject project;
-		private final IConfiguration cfg;
-		private final IConfiguration allConfigs[];
 		private final IPath buildPaths[];
 		private boolean incrBuildNeeded = false;
 		private boolean fullBuildNeeded = false;
 		private final List<String> reservedNames;
 
-		/**
-		 *
-		 */
 		public ResourceDeltaVisitor(IConfiguration cfg, IConfiguration allConfigs[]) {
-			this.cfg = cfg;
 			this.project = cfg.getOwner().getProject();
-			this.allConfigs = allConfigs;
 			buildPaths = new IPath[allConfigs.length];
 			for(int i = 0; i < buildPaths.length; i++){
 				buildPaths[i] = ManagedBuildManager.getBuildFullPath(allConfigs[i], allConfigs[i].getBuilder());
@@ -371,10 +358,8 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	private static class OtherConfigVerifier implements IResourceDeltaVisitor {
-		IBuilder builders[];
 		IPath buildFullPaths[];
 //		IConfiguration buildConfigs[];
-		IConfiguration allConfigs[];
 		Configuration otherConfigs[];
 		int resourceChangeState;
 
@@ -386,8 +371,6 @@ public class CommonBuilder extends ACBuilder {
 		};
 
 		OtherConfigVerifier(IBuilder builders[], IConfiguration allCfgs[]){
-			this.builders = builders;
-			allConfigs = allCfgs;
 			Set<IConfiguration> buildCfgSet = new HashSet<IConfiguration>();
 			for (IBuilder builder : builders) {
 				buildCfgSet.add(builder.getParent().getParent());
@@ -1649,13 +1632,13 @@ public class CommonBuilder extends ACBuilder {
 			//Throw a core exception indicating that the clean command failed
 			if(result == IBuildModelBuilder.STATUS_ERROR_LAUNCH)
 			{
-			    try
-			    {
-			        consoleOutStream.close();
-			    }
-			    catch(IOException e){}
-			    Status status = new Status(IStatus.INFO, ManagedBuilderCorePlugin.getUniqueIdentifier(), "Failed to exec delete command"); //$NON-NLS-1
-			    throw new CoreException(status);
+				try {
+					consoleOutStream.close();
+				} catch (IOException e) {
+				}
+				Status status = new Status(IStatus.INFO, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						"Failed to exec delete command"); //$NON-NLS-1$
+				throw new CoreException(status);
 			}
 			// Report a successful clean
 			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, curProject.getName());
@@ -1983,7 +1966,7 @@ public class CommonBuilder extends ACBuilder {
 				cos.close();
 			}
 		} catch (Exception e) {
-			CCorePlugin.log(e);
+			ManagedBuilderCorePlugin.log(e);
 			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					e.getLocalizedMessage(),
@@ -1996,6 +1979,7 @@ public class CommonBuilder extends ACBuilder {
 
 	/**
 	 * Check whether the build has been canceled.
+	 * @param monitor
 	 */
 	public void checkCancel(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled())

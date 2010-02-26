@@ -111,6 +111,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * The PDOM Provider. This is likely temporary since I hope
@@ -713,7 +714,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	void addProject(final ICProject cproject) {
 		final IProject project = cproject.getProject();
-		Job addProject= new Job(Messages.PDOMManager_StartJob_name) {
+		Job addProject= new Job(NLS.bind(Messages.PDOMManager_StartJob_name, project.getName())) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("", 100); //$NON-NLS-1$
@@ -760,7 +761,6 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			rule= MultiRule.combine(new ISchedulingRule[] {rule, project, INIT_INDEXER_SCHEDULING_RULE });
 		}
 		addProject.setRule(rule); 
-		addProject.setSystem(true);
 		addProject.schedule();
 	}
 

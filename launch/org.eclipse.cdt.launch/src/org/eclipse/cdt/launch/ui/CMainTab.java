@@ -144,6 +144,24 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 	private final Map<IPath, Boolean> fBinaryExeCache = new HashMap<IPath, Boolean>();
 
+	/**
+	 * Name of most recently checked program; avoid constantly checking binary.
+	 * See bug 277663.
+	 */
+	private String fPreviouslyCheckedProgram;
+
+	/**
+	 * Validity result of most recently checked program; avoid constantly
+	 * checking binary. See bug 277663. N/A if fPreviouslyCheckedProgram = null;
+	 */
+	private boolean fPreviouslyCheckedProgramIsValid;
+
+	/**
+	 * Validity error message of most recently checked program; avoid constantly
+	 * checking binary. See bug 277663. N/A if fPreviouslyCheckedProgram = null.
+	 */
+	private String fPreviouslyCheckedProgramErrorMsg;
+
 	
 	public CMainTab() {
 		this(WANTS_TERMINAL);
@@ -213,6 +231,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProjText.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent evt) {
+				// if project changes, invalidate program name cache
+				fPreviouslyCheckedProgram = null;
+				
 				updateBuildConfigCombo(EMPTY_STRING);
 				updateLaunchConfigurationDialog();
 			}
@@ -841,44 +862,58 @@ public class CMainTab extends CLaunchConfigurationTab {
 				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 				return false;
 			}
-			IPath exePath = new Path(name);
-			if (!exePath.isAbsolute()) {
-				IPath location = project.getLocation();
-				if (location == null) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-					return false;
+			// Avoid constantly checking the binary if nothing relevant has
+			// changed (binary or project name). See bug 277663.
+			if (name.equals(fPreviouslyCheckedProgram)) {
+				if (fPreviouslyCheckedProgramErrorMsg != null) {
+					setErrorMessage(fPreviouslyCheckedProgramErrorMsg);
 				}
-	
-				exePath = location.append(name);
-				if (!exePath.toFile().exists()) {
-					// Try the old way, which is required to support linked resources.
-					IFile projFile = null;					
-					try {
-						projFile = project.getFile(name);
-					}
-					catch (IllegalArgumentException exc) {}	// thrown if relative path that resolves to a root file ("..\somefile")
-					if (projFile == null || !projFile.exists()) {
-						setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-						return false;
-					}
-					else {
-						exePath = projFile.getLocation();
-					}
-				}
-			} 
-			if (!exePath.toFile().exists()) {
-				setErrorMessage(LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
-				return false;
+				return fPreviouslyCheckedProgramIsValid;
 			}
-			try {
-				if (!isBinary(project, exePath)) {
-					setErrorMessage(LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
-					return false;
+			else {
+				fPreviouslyCheckedProgram = name;
+				fPreviouslyCheckedProgramIsValid = true;	// we'll flip this below if not true
+				fPreviouslyCheckedProgramErrorMsg = null;   // we'll set this below if there's an error
+				IPath exePath = new Path(name);
+				if (!exePath.isAbsolute()) {
+					IPath location = project.getLocation();
+					if (location == null) {
+						
+						setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+						return (fPreviouslyCheckedProgramIsValid = false);
+					}
+		
+					exePath = location.append(name);
+					if (!exePath.toFile().exists()) {
+						// Try the old way, which is required to support linked resources.
+						IFile projFile = null;					
+						try {
+							projFile = project.getFile(name);
+						}
+						catch (IllegalArgumentException exc) {}	// thrown if relative path that resolves to a root file ("..\somefile")
+						if (projFile == null || !projFile.exists()) {
+							setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+							return (fPreviouslyCheckedProgramIsValid = false);
+						}
+						else {
+							exePath = projFile.getLocation();
+						}
+					}
+				} 
+				if (!exePath.toFile().exists()) {
+					setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.getString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
+					return (fPreviouslyCheckedProgramIsValid = false);
 				}
-			} catch (CoreException e) {
-				LaunchUIPlugin.log(e);
-				setErrorMessage(e.getLocalizedMessage());
-				return false;
+				try {
+					if (!isBinary(project, exePath)) {
+						setErrorMessage(fPreviouslyCheckedProgramErrorMsg = LaunchMessages.getString("CMainTab.Program_is_not_a_recongnized_executable")); //$NON-NLS-1$
+						return (fPreviouslyCheckedProgramIsValid = false);
+					}
+				} catch (CoreException e) {
+					LaunchUIPlugin.log(e);
+					setErrorMessage(fPreviouslyCheckedProgramErrorMsg = e.getLocalizedMessage());
+					return (fPreviouslyCheckedProgramIsValid = false);
+				}
 			}
 		}
 		

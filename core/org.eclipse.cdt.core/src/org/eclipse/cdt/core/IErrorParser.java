@@ -17,6 +17,12 @@ package org.eclipse.cdt.core;
 public interface IErrorParser {
 	/**
 	 * Finds error or warnings on the given line
+	 * 
+	 * @param line - line to process
+	 * @param eoParser - {@link ErrorParserManager}
+	 * @return {@code true} if the parser found a problem reported in output.
+	 *    More accurately, {@code true} will consume the line (prevent other parsers from seeing it)
+	 *    and {@code false} won't (the line will be handed to the next parser). 
 	 */
 	boolean processLine(String line, ErrorParserManager eoParser);
 

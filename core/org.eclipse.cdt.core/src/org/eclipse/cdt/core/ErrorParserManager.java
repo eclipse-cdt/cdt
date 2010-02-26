@@ -303,7 +303,7 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Parses the input and try to generate error or warning markers
+	 * Parses the input and tries to generate error or warning markers
 	 */
 	private void processLine(String line) {
 		if (fErrorParsers.size() == 0)
@@ -333,20 +333,29 @@ public class ErrorParserManager extends OutputStream {
 					// untrimmed lines
 					lineToParse = line;
 				}
+
+				boolean consume = false;
 				// Protect against rough parsers who may accidentally
 				// throw an exception on a line they can't handle.
 				// It should not stop parsing of the rest of output.
 				try {
-					if (curr.processLine(lineToParse, this)) {
-						ProblemMarkerInfo m = fErrors.size() > 0 ? fErrors.get(0): null;
+					consume = curr.processLine(lineToParse, this);
+				} catch (Exception e){
+					String id = "";  //$NON-NLS-1$
+					if (parser instanceof IErrorParserNamed)
+						id = ((IErrorParserNamed)parser).getId();
+					String message = "Errorparser " + id + " failed parsing line [" + lineToParse + "]";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					CCorePlugin.log(message, e);
+				} finally {
+					if (fErrors.size() > 0) {
+						ProblemMarkerInfo m = fErrors.get(0);
 						outputLine(line, m);
 						fErrors.clear();
-						return;
 					}
-				} catch (Exception e){
-					String message = "Error parsing line [" + lineToParse + "]";  //$NON-NLS-1$//$NON-NLS-2$
-					CCorePlugin.log(message, e);
 				}
+
+				if (consume)
+					return;
 			}
 		}
 		outputLine(line, null);

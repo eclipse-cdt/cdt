@@ -343,8 +343,8 @@ public class BuildConsolePage extends Page
 
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.insertBefore(IConsoleConstants.OUTPUT_GROUP, new GroupMarker(BuildConsole.ERROR_GROUP));
-		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fPreviousErrorAction);
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fNextErrorAction);
+		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fPreviousErrorAction);
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fShowErrorAction);
 
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);

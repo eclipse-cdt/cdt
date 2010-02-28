@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.3"?>
+<!--
+# Copyright (c) 2008 Mirko Raner and others
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+# Mirko Raner - initial API and implementation 
+-->
+<plugin>
+
+ <!-- Terminal connector extension (the primary contribution of this plug-in): -->
+ <!-- -->
+ <extension point="org.eclipse.tm.terminal.terminalConnectors">
+  <connector name="%localConnection"
+   id="org.eclipse.tm.internal.terminal.local.LocalTerminalConnector"
+   class="org.eclipse.tm.internal.terminal.local.LocalTerminalConnector"
+  />
+ </extension>
+
+ <!-- Process factory for terminal processes (necessary for preventing a standard console from -->
+ <!-- being created): -->
+ <!-- -->
+ <extension point="org.eclipse.debug.core.processFactories">
+  <processFactory id="org.eclipse.tm.terminal.localProcess.factory"
+   class="org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessFactory"
+  />
+ </extension>
+
+ <!-- Launch configuration type for terminal launches: -->
+ <!-- -->
+ <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+  <launchConfigurationType name="%terminalLaunch"
+   id="org.eclipse.tm.terminal.local.launch"
+   delegate="org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchDelegate"
+   category="org.eclipse.ui.externaltools"
+   modes="run"
+  />
+ </extension>
+
+ <!-- Launch configuration icon used in the Launch Configuration dialog: -->
+ <!-- -->
+ <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+  <launchConfigurationTypeImage id="org.eclipse.tm.terminal.local.launch.icon"
+   configTypeID="org.eclipse.tm.terminal.local.launch"
+   icon="icons/terminal-launch.gif"
+  />
+ </extension>
+
+ <!-- Launch configuration tab group for configuring workbench launches: -->
+ <!-- -->
+ <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+  <launchConfigurationTabGroup type="org.eclipse.tm.terminal.local.launch"
+   id="org.eclipse.tm.terminal.local.launch.tabs"
+   description="%terminalLaunchDescription"
+   class="org.eclipse.tm.internal.terminal.local.launch.ui.LocalTerminalLaunchTabGroup"
+  />
+ </extension>
+
+</plugin>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+# Copyright (c) 2008 Mirko Raner and others
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+# Mirko Raner - initial implementation for Eclipse Bug 196337
+-->
+<feature id="org.eclipse.tm.terminal.local"
+ label="%featureName"
+ version="1.0.0.qualifier"
+ provider-name="Mirko Raner">
+
+ <description>
+  %description
+ </description>
+
+ <copyright>
+  %copyright
+ </copyright>
+
+ <license url="%licenseURL">
+  %license
+ </license>
+
+ <requires>
+  <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
+  <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
+  <import plugin="org.eclipse.core.runtime"/>
+  <import plugin="org.eclipse.debug.core"/>
+  <import plugin="org.eclipse.debug.ui"/>
+  <import plugin="org.eclipse.jface"/>
+  <import plugin="org.eclipse.ui"/>
+  <import plugin="org.eclipse.ui.externaltools"/>
+ </requires>
+
+ <plugin id="org.eclipse.tm.terminal.local"
+  download-size="0"
+  install-size="0"
+  version="0.0.0"
+  unpack="false"
+ />
+
+</feature>

@@ -162,13 +162,14 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTFEAT}.${CDTVER}.jar ]; then
   unzip ../${CDTNAME}
   cd ..
   #java -jar eclipse/startup.jar \
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+  LAUNCHER=`ls eclipse/plugins/org.eclipse.equinox.launcher*.jar | sort | tail -1`
+  java -jar ${LAUNCHER} \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \
     -featureId org.eclipse.cdt.platform \
     -version ${CDTFEAT}.${CDTVER}
-  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+  java -jar ${LAUNCHER} \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
     -from file://${CDTTMP} \

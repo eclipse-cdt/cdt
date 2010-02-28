@@ -128,7 +128,7 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 	}
 
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
-		return new MachOBinaryArchive(this, path);
+		return new MachOBinaryArchive64(this, path);
 	}
 
 	protected IBinaryObject createBinaryObject(IPath path) throws IOException {

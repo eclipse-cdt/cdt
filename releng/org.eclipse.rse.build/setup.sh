@@ -162,7 +162,7 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTFEAT}.${CDTVER}.jar ]; then
   unzip ../${CDTNAME}
   cd ..
   #java -jar eclipse/startup.jar \
-  LAUNCHER=`ls eclipse/plugins/org.eclipse.equinox.launcher*.jar | sort | tail -1`
+  LAUNCHER=`ls eclipse/plugins/org.eclipse.equinox.launcher_*.jar | sort | tail -1`
   java -jar ${LAUNCHER} \
     -application org.eclipse.update.core.standaloneUpdate \
     -command install \
@@ -198,7 +198,7 @@ if [ ! -f org.eclipse.releng.basebuilder/startup.jar ]; then
   if [ -h ../startup.jar ]; then
     rm ../startup.jar
   fi
-  LAUNCHER=`ls org.eclipse.equinox.launcher*.jar | sort | tail -1`
+  LAUNCHER=`ls org.eclipse.equinox.launcher_*.jar | sort | tail -1`
   if [ "${LAUNCHER}" != "" ]; then
     echo "basebuilder: LAUNCHER=${LAUNCHER}" 
     ln -s plugins/${LAUNCHER} ../startup.jar

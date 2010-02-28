@@ -32,11 +32,6 @@
 	<!-- folder ${target.folder}/${projectName}                                 -->
 	<!-- =====================================================================  -->
 	<target name="gather.bin.parts">	
-		<apitooling.apigeneration
-			projectname="${projectName}"
-			target="${target.folder}"
-			binary="${target.folder}/${projectName}"
-			project="${projectLocation}" />
 	</target>
 
 	
@@ -45,6 +40,34 @@
 	<!-- and features. Results exist as folders and have not yet been jarred.  -->
 	<!-- ===================================================================== -->
 	<target name="post.gather.bin.parts">
+		<!-- <target name="hideServerStuff"> -->
+			<mkdir dir="${buildDirectory}/hidden"/>
+			<move todir="${buildDirectory}/hidden">
+				<fileset dir="${buildDirectory}/plugins">
+					<include name="**/clientserver.jar"/>
+					<include name="**/dstore_core.jar"/>
+					<include name="**/dstore_extra_server.jar"/>
+					<include name="**/dstore_miners.jar"/>
+					<include name="**/clientserversrc.zip"/>
+					<include name="**/dstore_coresrc.zip"/>
+					<include name="**/dstore_extra_serversrc.zip"/>
+					<include name="**/dstore_minerssrc.zip"/>
+				</fileset>
+			</move>
+			<mkdir dir="${buildDirectory}/hidden.tmp"/>
+			<move todir="${buildDirectory}/hidden.tmp">
+				<fileset dir="${buildDirectory}/tmp">
+					<include name="**/clientserver.jar"/>
+					<include name="**/dstore_core.jar"/>
+					<include name="**/dstore_extra_server.jar"/>
+					<include name="**/dstore_miners.jar"/>
+					<include name="**/clientserversrc.zip"/>
+					<include name="**/dstore_coresrc.zip"/>
+					<include name="**/dstore_extra_serversrc.zip"/>
+					<include name="**/dstore_minerssrc.zip"/>
+				</fileset>
+			</move>
+		<!-- </target> -->
 	</target>
 
 	<!-- ===================================================================== -->
@@ -62,6 +85,16 @@
 	<!-- (and potentially signed)                                              -->
 	<!-- ===================================================================== -->
 	<target name="post.jarUp">
+		<!-- <target name="revealServerStuff"> -->
+			<move todir="${buildDirectory}/tmp">
+				<fileset dir="${buildDirectory}/hidden.tmp" includes="**" />
+			</move>
+			<delete dir="${buildDirectory}/hidden.tmp"/>
+			<move todir="${buildDirectory}/plugins">
+				<fileset dir="${buildDirectory}/hidden" includes="**" />
+			</move>
+			<delete dir="${buildDirectory}/hidden"/>
+		<!-- </target> -->
 	</target>
 
 	<!-- ===================================================================== -->

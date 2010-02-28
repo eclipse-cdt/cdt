@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006, 2009 Wind River Systems, Inc.
+# Copyright (c) 2006, 2010 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.6M3
-ep_date="-200910301201"
+ep_ver=3.6M5
+ep_date="-201001291300"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3617.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3631.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -143,11 +143,46 @@ if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   cd ${DROPUP}
 fi
 
+# CDT Runtime
+#CDTREL=6.0.0
+#CDTVER=200902031437
+#CDTNAME=cdt-master-5.0.0.zip
+#CDTLOC=releases/ganymede/dist/${CDTNAME}
+CDTREL=7.0.0
+CDTFEAT=7.0.0
+CDTVER=201002190808
+CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
+CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
+if [ ! -f eclipse/plugins/org.eclipse.cdt.core_${CDTFEAT}.${CDTVER}.jar ]; then
+  echo "Getting CDT Runtime..."
+  wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"
+  CDTTMP=`pwd`/tmp.$$
+  mkdir ${CDTTMP}
+  cd ${CDTTMP}
+  unzip ../${CDTNAME}
+  cd ..
+  #java -jar eclipse/startup.jar \
+  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+    -application org.eclipse.update.core.standaloneUpdate \
+    -command install \
+    -from file://${CDTTMP} \
+    -featureId org.eclipse.cdt.platform \
+    -version ${CDTFEAT}.${CDTVER}
+  java -jar eclipse/plugins/org.eclipse.equinox.launcher_1.0.*.jar \
+    -application org.eclipse.update.core.standaloneUpdate \
+    -command install \
+    -from file://${CDTTMP} \
+    -featureId org.eclipse.cdt \
+    -version ${CDTFEAT}.${CDTVER}
+  rm -rf ${CDTTMP}
+  rm ${CDTNAME}
+fi
+
 # checkout the basebuilder
-baseBuilderTag=R36_M2
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.100.v20090911.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.5.100.v20090911/pdebuild.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.200.v20090831.jar ]; then
+baseBuilderTag=R36_M4
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.100.v20091210.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.6.0.v20091204/pdebuild.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.200.v20091019.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

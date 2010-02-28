@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Anna Dushistova (MontaVista) - [227537] moved actions from terminal.view to terminal plugin
  * Uwe Stieber (Wind River) - [260372] [terminal] Certain terminal actions are enabled if no target terminal control is available
  * Uwe Stieber (Wind River) - [294719] [terminal] SWT Widget disposed in TerminalActionPaste
+ * Martin Oberhuber (Wind River) - [296212] Cannot paste text into terminal on some Linux hosts
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.actions;
 
@@ -53,7 +54,7 @@ public class TerminalActionPaste extends AbstractTerminalAction {
 
 	public void updateAction(boolean aboutToShow) {
 		ITerminalViewControl target = getTarget();
-		boolean bEnabled = aboutToShow && target != null && target.getClipboard() != null && !target.getClipboard().isDisposed();
+		boolean bEnabled = target != null && target.getClipboard() != null && !target.getClipboard().isDisposed();
 		if (bEnabled) {
 			String strText = (String) target.getClipboard().getContents(
 					TextTransfer.getInstance());

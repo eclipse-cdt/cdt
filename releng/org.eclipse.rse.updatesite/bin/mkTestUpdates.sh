@@ -91,7 +91,7 @@ if [ ${TYPE} = test ]; then
       fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
       fold=`grep ${fbase} f2.$$.txt`
       if [ "${fold}" = "" ]; then
-        echo "PROBLEM: MAJOR update : ${f}"
+        echo "PROBLEM: MAJOR update or NEW : ${f}"
       fi
     done
     echo "VERIFYING VERSION CORRECTNESS: Plugins"
@@ -112,7 +112,7 @@ if [ ${TYPE} = test ]; then
       pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
       pold=`grep ${pbase} p2.$$.txt`
       if [ "${pold}" = "" ]; then
-        echo "PROBLEM: MAJOR update : ${p}"
+        echo "PROBLEM: MAJOR update or NEW : ${p}"
       fi
     done
     #rm f_new.txt p_new.txt

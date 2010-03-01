@@ -559,16 +559,18 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IInstruction[] instructions, boolean showSymbols, boolean showDisassembly) {
 		if (!fCallback.hasViewer() || fDsfSessionId == null) {
+			// return true to avoid a retry
 			return true;
 		}
 		if (DEBUG) System.out.println("insertDisassembly "+ DisassemblyUtils.getAddressText(startAddress)); //$NON-NLS-1$
 		assert fCallback.getUpdatePending();
 		if (!fCallback.getUpdatePending()) {
 			// safe-guard in case something weird is going on
+			// return true to avoid a retry
 			return true;
 		}
 		// indicates whether [startAddress] was inserted
-		boolean insertedStartAddress = false;
+		boolean insertedStartAddress = startAddress == null;
 
 		try {
 			fCallback.lockScroller();
@@ -651,8 +653,8 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 *            an address the caller is hoping will be covered by this
 	 *            insertion. I.e., [mixedInstructions] may or may not contain
 	 *            that address; the caller wants to know if it does, and so we
-	 *            indicate that via our return value. Can be null or
-	 *            BigInteger(-1) to indicate n/a, in which case we return true
+	 *            indicate that via our return value. Can be null to indicate n/a, 
+	 *            in which case we return true as long as any instruction was inserted
 	 *            as long as any instruction was inserted
 	 * @param endAddress
 	 *            cut-off address. Any elements in [mixedInstructions] that
@@ -664,6 +666,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	 */
 	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IMixedInstruction[] mixedInstructions, boolean showSymbols, boolean showDisassembly) {
 		if (!fCallback.hasViewer() || fDsfSessionId == null) {
+			// return true to avoid a retry
 			return true;
 		}
 		if (DEBUG) System.out.println("insertDisassembly "+ DisassemblyUtils.getAddressText(startAddress)); //$NON-NLS-1$
@@ -671,10 +674,11 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 		assert updatePending;
 		if (!updatePending) {
 			// safe-guard in case something weird is going on
+			// return true to avoid a retry
 			return true;
 		}
 		// indicates whether [startAddress] was inserted
-		boolean insertedStartAddress = false;
+		boolean insertedStartAddress = startAddress == null;
 		try {
 			fCallback.lockScroller();
 			
@@ -687,7 +691,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				for (int j = 0; j < instructions.length; ++j) {
 					IInstruction instruction = instructions[j];
 					BigInteger address= instruction.getAdress();
-					if (startAddress == null || startAddress.compareTo(BigInteger.ZERO) < 0) {
+					if (startAddress == null) {
 						startAddress = address;
 						fCallback.setGotoAddressPending(address);
 					}

@@ -420,16 +420,36 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		fDisassemblyRetrieval.asyncGetDisassembly(null, endAddress, file, 1, lines, mixed, disassemblyRequest);
 	}
 	
+	/**
+	 * @param startAddress
+	 *            an address the caller is hoping will be covered by this
+	 *            insertion. I.e., [disassemblyBlock] may or may not contain
+	 *            that address; the caller wants to know if it does, and so we
+	 *            indicate that via our return value. Can be null to indicate n/a, 
+	 *            in which case we return true as long as any instruction was inserted
+	 * @param endAddress
+	 *            cut-off address. Any elements in [disassemblyBlock] that
+	 *            extend beyond this address are ignored.
+	 * @param disassemblyBlock
+	 * @param mixed
+	 * @param showSymbols
+	 * @param showDisassembly
+	 * @return whether [startAddress] was inserted
+	 */
 	private boolean insertDisassembly(BigInteger startAddress, IDisassemblyBlock disassemblyBlock, boolean mixed, boolean showSymbols, boolean showDisassembly) {
 		if (!fCallback.hasViewer() || fCdiSessionId == null) {
+			// return true to avoid a retry
 			return true;
 		}
 		
 		if (!fCallback.getUpdatePending()) {
+			// safe-guard in case something weird is going on
 			assert false;
+			// return true to avoid a retry
 			return true;
 		}
 
+		// indicates whether [startAddress] was inserted
 		boolean insertedStartAddress = startAddress == null;
 		
 		try {
@@ -450,7 +470,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 				for (int j = 0; j < instructions.length; j++) {
 					IAsmInstruction instruction = instructions[j];
 					BigInteger address= instruction.getAdress().getValue();
-					if (startAddress == null || startAddress.compareTo(BigInteger.ZERO) < 0) {
+					if (startAddress == null) {
 						startAddress = address;
 						fCallback.setGotoAddressPending(address);
 					}

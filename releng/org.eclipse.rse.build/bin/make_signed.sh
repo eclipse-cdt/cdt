@@ -204,5 +204,4 @@ if [ ! -d ${DROPDIR}.unsigned ]; then
 fi
 echo "cp -f ${OUTPUT}/* ${DROPDIR}"
 echo "rm -rf ${DROPDIR}/signed"
-
-
+echo "rm -rf install-ws eclipse_ext ${OUTPUT} ${RESULT}"

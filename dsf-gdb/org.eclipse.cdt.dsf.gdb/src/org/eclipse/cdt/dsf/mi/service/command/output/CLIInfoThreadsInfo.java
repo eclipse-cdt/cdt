@@ -28,6 +28,11 @@ import java.util.regex.Pattern;
  */
 public class CLIInfoThreadsInfo extends MIInfo {
 
+    private static final Pattern RESULT_PATTERN_LWP = Pattern.compile(
+        "(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)",  Pattern.MULTILINE); //$NON-NLS-1$
+
+    private static final Pattern RESULT_PATTERN = Pattern.compile(
+        "(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(\\S+(\\s*\\(.*?\\))?)",  Pattern.MULTILINE); //$NON-NLS-1$
 	protected List<ThreadInfo> info; 
 	
 	public CLIInfoThreadsInfo(MIOutput out) {
@@ -103,8 +108,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 		// default to the more general algorithm.
 
 		if(str.length() > 0 ){
-			Pattern pattern = Pattern.compile("(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)",  Pattern.MULTILINE); //$NON-NLS-1$
-			Matcher matcher = pattern.matcher(str);
+			Matcher matcher = RESULT_PATTERN_LWP.matcher(str);
 			boolean isCurrentThread = false;
 			if (matcher.find()) {
 				String id = matcher.group(1).trim();
@@ -115,8 +119,7 @@ public class CLIInfoThreadsInfo extends MIInfo {
 				info.add(new ThreadInfo(id, matcher.group(5), "", isCurrentThread)); //$NON-NLS-1$
 			} 
 			else {
-				pattern = Pattern.compile("(^\\*?\\s*\\d+)(\\s*[Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(\\S+(\\s*\\(.*?\\))?)",  Pattern.MULTILINE); //$NON-NLS-1$
-				matcher = pattern.matcher(str);
+				matcher = RESULT_PATTERN_LWP.matcher(str);
 				if (matcher.find()) {
 					String id = matcher.group(1).trim();
 					if (id.charAt(0) == '*') {

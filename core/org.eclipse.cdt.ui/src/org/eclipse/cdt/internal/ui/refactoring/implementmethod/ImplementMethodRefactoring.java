@@ -232,7 +232,7 @@ public class ImplementMethodRefactoring extends CRefactoring {
 			templateDeclaration.setParent(unit);
 			
 			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) declarationParent.getParent().getParent() ).getTemplateParameters()) {
-				templateDeclaration.addTemplateParamter(templateParameter.copy());
+				templateDeclaration.addTemplateParameter(templateParameter.copy());
 			}
 			
 			templateDeclaration.setDeclaration(func);

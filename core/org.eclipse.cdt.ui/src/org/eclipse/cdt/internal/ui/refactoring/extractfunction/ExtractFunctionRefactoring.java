@@ -673,7 +673,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			templateDeclaration.setParent(unit);
 			
 			for(ICPPASTTemplateParameter templateParameter : ((ICPPASTTemplateDeclaration) insertpoint.getParent()).getTemplateParameters()) {
-				templateDeclaration.addTemplateParamter(templateParameter.copy());
+				templateDeclaration.addTemplateParameter(templateParameter.copy());
 			}
 			
 			templateDeclaration.setDeclaration(func);

@@ -32,7 +32,8 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
     private short nestingLevel= -1;
     private IASTDeclaration declaration;
     private ICPPTemplateScope templateScope;
-
+    private ICPPASTTemplateParameter[] parameters = null;
+    private int parametersPos= -1;
     
     public CPPASTTemplateDeclaration() {
 	}
@@ -45,8 +46,8 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
 		CPPASTTemplateDeclaration copy = new CPPASTTemplateDeclaration();
 		copy.setDeclaration(declaration == null ? null : declaration.copy());
 		copy.exported = exported;
-		for(ICPPASTTemplateParameter param : getTemplateParameters()) 
-			copy.addTemplateParamter(param == null ? null : param.copy());
+		for (ICPPASTTemplateParameter param : getTemplateParameters()) 
+			copy.addTemplateParameter(param == null ? null : param.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -73,61 +74,63 @@ public class CPPASTTemplateDeclaration extends ASTNode implements
 		}
     }
 
-    public ICPPASTTemplateParameter [] getTemplateParameters() {
-        if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
-        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.removeNullsAfter( ICPPASTTemplateParameter.class, parameters, parametersPos );
+    public ICPPASTTemplateParameter[] getTemplateParameters() {
+        if (parameters == null) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
+        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.removeNullsAfter(ICPPASTTemplateParameter.class, parameters, parametersPos);
         return parameters;
     }
 
-    public void addTemplateParamter(ICPPASTTemplateParameter parm) {
+    public void addTemplateParameter(ICPPASTTemplateParameter parm) {
         assertNotFrozen();
     	if (parm != null) {
-    		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm );
+    		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append(ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm);
     		parm.setParent(this);
 			parm.setPropertyInParent(PARAMETER);
     	}
     }
 
-    private ICPPASTTemplateParameter [] parameters = null;
-    private int parametersPos=-1;
+	@Deprecated
+	public void addTemplateParamter(ICPPASTTemplateParameter param) {
+		addTemplateParameter(param);
+	}
+
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        ICPPASTTemplateParameter [] params = getTemplateParameters();
-        for ( int i = 0; i < params.length; i++ ) {
-            if( !params[i].accept( action ) ) return false;
+        ICPPASTTemplateParameter[] params = getTemplateParameters();
+        for (int i = 0; i < params.length; i++) {
+            if (!params[i].accept(action)) return false;
         }
         
-        if( declaration != null ) if( !declaration.accept( action ) ) return false;
+        if (declaration != null && !declaration.accept(action)) return false;
         
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
 	public ICPPTemplateScope getScope() {
-		if( templateScope == null )
-			templateScope = new CPPTemplateScope( this );
+		if (templateScope == null)
+			templateScope = new CPPTemplateScope(this);
 		return templateScope;
 	}
     
     public void replace(IASTNode child, IASTNode other) {
-        if( declaration == child )
-        {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
+        if (declaration == child) {
+            other.setParent(child.getParent());
+            other.setPropertyInParent(child.getPropertyInParent());
             declaration = (IASTDeclaration) other;
         }
     }

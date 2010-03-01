@@ -61,22 +61,22 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitDeclarations ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitDeclarations) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( declaration != null ) if( !declaration.accept( action ) ) return false;
+        if (declaration != null && !declaration.accept(action)) return false;
         
-        if( action.shouldVisitDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitDeclarations) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
@@ -94,20 +94,25 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 		return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
 	}
 
-	public void addTemplateParamter(ICPPASTTemplateParameter parm) {
+	public void addTemplateParameter(ICPPASTTemplateParameter param) {
         assertNotFrozen();
 	}
 
+	@Deprecated
+	public void addTemplateParamter(ICPPASTTemplateParameter param) {
+		addTemplateParameter(param);
+	}
+
 	public ICPPTemplateScope getScope() {
-		if( templateScope == null )
-			templateScope = new CPPTemplateScope( this );
+		if (templateScope == null)
+			templateScope = new CPPTemplateScope(this);
 		return templateScope;
 	}
     
     public void replace(IASTNode child, IASTNode other) {
-        if( declaration == child ) {
-            other.setParent( child.getParent() );
-            other.setPropertyInParent( child.getPropertyInParent() );
+        if (declaration == child) {
+            other.setParent(child.getParent());
+            other.setPropertyInParent(child.getPropertyInParent());
             declaration = (IASTDeclaration) other;
         }
     }

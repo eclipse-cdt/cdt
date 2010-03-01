@@ -171,7 +171,7 @@ public class TemplateArgumentDeduction {
 					par= fnPars[j];
 					if (par instanceof ICPPParameterPackType) {
 						// must be the last parameter.
-						if (j != fnParCount-1) 
+						if (j != fnParCount - 1) 
 							return false; 	
 						
 						par= fnParPack= ((ICPPParameterPackType) par).getType();
@@ -193,7 +193,7 @@ public class TemplateArgumentDeduction {
 					// 14.8.2.1-2
 					if (par instanceof ICPPReferenceType) {
 						// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
-						// lvalue, the type A& “lvalue reference to A” is used in place of A for type deduction.
+						// lvalue, the type A& ï¿½lvalue reference to Aï¿½ is used in place of A for type deduction.
 						isReferenceTypeParameter= true;
 						final ICPPReferenceType refPar = (ICPPReferenceType) par;
 						if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && argIsLValue.get(j)) {
@@ -290,7 +290,6 @@ public class TemplateArgumentDeduction {
 		return null;
 	}
 	
-
 	private static ICPPClassTemplate getPrimaryTemplate(ICPPTemplateInstance inst) throws DOMException {
 		ICPPTemplateDefinition template= inst.getTemplateDefinition();
 		if (template instanceof ICPPClassTemplatePartialSpecialization) {
@@ -328,7 +327,6 @@ public class TemplateArgumentDeduction {
 		return result;
 	}
 
-
 	/**
 	 * Deduces the template parameter mapping from pairs of template arguments.
 	 */
@@ -338,14 +336,13 @@ public class TemplateArgumentDeduction {
 		if (p == null || p.length != len) {
 			return false;
 		}
-		for (int j=0; j<len; j++) {
+		for (int j= 0; j < len; j++) {
 			if (!deduct.fromTemplateArgument(p[j], a[j])) {
 				return false;
 			}
 		}
 		return verifyDeduction(pars, map, false);
 	}
-
 
 	private static boolean verifyDeduction(ICPPTemplateParameter[] pars, CPPTemplateParameterMap tpMap, boolean useDefaults) {
 		for (ICPPTemplateParameter tpar : pars) {
@@ -622,7 +619,7 @@ public class TemplateArgumentDeduction {
 				p= pParams[i];
 				if (p instanceof ICPPParameterPackType) {
 					p= parameterPack= ((ICPPParameterPackType) p).getType();
-					deduct= new TemplateArgumentDeduction(this, aParams.length-i);
+					deduct= new TemplateArgumentDeduction(this, aParams.length - i);
 					p= CPPTemplates.instantiateType(p, fExplicitArgs, deduct.fPackOffset, null);
 					if (!CPPTemplates.isValidType(p))
 						return false;

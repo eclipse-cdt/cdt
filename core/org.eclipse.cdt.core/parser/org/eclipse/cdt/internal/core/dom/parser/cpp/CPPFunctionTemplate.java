@@ -163,18 +163,19 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		if (fdecl != null) {
 			IASTParameterDeclaration[] params = fdecl.getParameters();
 			int size = params.length;
+			if (size == 0) {
+				return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
+			}
 			ICPPParameter[] result = new ICPPParameter[size];
-			if (size > 0) {
-				for(int i = 0; i < size; i++) {
-					IASTParameterDeclaration p = params[i];
-					final IASTName pname = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
-					final IBinding binding= pname.resolveBinding();
-					if (binding instanceof ICPPParameter) {
-						result[i]= (ICPPParameter) binding;
-					} else {
-						result[i] = new CPPParameter.CPPParameterProblem(p,
-								IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());
-					}
+			for (int i = 0; i < size; i++) {
+				IASTParameterDeclaration p = params[i];
+				final IASTName pname = ASTQueries.findInnermostDeclarator(p.getDeclarator()).getName();
+				final IBinding binding= pname.resolveBinding();
+				if (binding instanceof ICPPParameter) {
+					result[i]= (ICPPParameter) binding;
+				} else {
+					result[i] = new CPPParameter.CPPParameterProblem(p,
+							IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());
 				}
 			}
 			return result;
@@ -182,7 +183,6 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		return CPPBuiltinParameter.createParameterList(getType());
 	}
 
-	
 	public int getRequiredArgumentCount() throws DOMException {
 		return CPPFunction.getRequiredArgumentCount(getParameters());
 	}
@@ -200,9 +200,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		if (type == null) {
 			IASTName name = getTemplateName();
 			IASTNode parent = name.getParent();
-			while(parent.getParent() instanceof IASTDeclarator)
+			while (parent.getParent() instanceof IASTDeclarator)
 				parent = parent.getParent();
-			
+
 			IType temp = getNestedType(CPPVisitor.createType((IASTDeclarator)parent), TDEF);
 			if (temp instanceof ICPPFunctionType)
 				type = (ICPPFunctionType) temp;

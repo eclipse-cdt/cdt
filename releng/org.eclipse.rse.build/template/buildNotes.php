@@ -32,6 +32,13 @@
 <ul>
   <li>A local terminal connector was added - Thanks to Mirko Raner for this contribution
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196337">196337</a>].</li>
+  <li>API: File types can now be specified as "XML", in addition to the existing "binary"
+      and "text" file types. The special property of XML files is that they are transferred
+      in binary mode, but the local character encoding is determined by looking at the XML
+      magic inside the file. The XML filetype association can be configured by the
+      <tt>remoteFileTypes</tt> extension point, or in the Remote Files Preference Page.
+      This feature required new API to be added, for details see
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283033">283033</a>].</li>
   <li>A regression in the Terminal widget was fixed, which made initial output after login
       invisible above the initial viewport
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=294327">294327</a>].</li>

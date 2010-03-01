@@ -309,20 +309,38 @@ public class MIBreakpointsTest extends BaseTestCase {
 		return count;
 	}
 
-	// Suspends the thread until an event is flagged
-	// NOTE: too simple for real life but good enough for this test suite
-	private void waitForBreakpointEvent(int count) {
+	/**
+	 * Suspends the calling thread until [count] number of breakpoint events
+	 * have been received in the current test. NOTE: too simple for real life
+	 * but good enough for this test suite
+	 * 
+	 * @param count
+	 *            the number breakpoint events to wait for
+	 * @param timeout
+	 *            max wait time, in milliseconds
+	 */
+	private void waitForBreakpointEvent(int count, int timeout) throws Exception {
+		long startMs = System.currentTimeMillis();
 		synchronized (lock) {
 			// Make sure we don't wait forever, in case an event never
 			// arrives.  The test will check if everything was received
-			int loopIndex = 0;
-			while (fBreakpointEventCount < count && loopIndex++ < 4) {
+			while (fBreakpointEventCount < count) {
 				try {
-					lock.wait(500);
+					lock.wait(30);
 				} catch (InterruptedException ex) {
 				}
+				if (System.currentTimeMillis() - startMs > timeout) {
+					throw new Exception("Timed out waiting for " + count + " breakpoint events to occur. Only " + fBreakpointEventCount + " occurred.");
+				}
 			}
-  		}
+		}
+	}
+	
+	/**
+	 * Simplified variant that just waits up to two seconds
+	 */
+	private void waitForBreakpointEvent(int count) throws Exception {
+		waitForBreakpointEvent(count, TestsPlugin.massageTimeout(2000));
 	}
 
     // ========================================================================

@@ -56,36 +56,36 @@
 
    <plugin
          id="org.eclipse.tm.terminal.source"
-         download-size="103"
-         install-size="107"
+         download-size="84"
+         install-size="137"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.terminal.serial.source"
-         download-size="117"
-         install-size="122"
+         download-size="15"
+         install-size="23"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.terminal.ssh.source"
-         download-size="133"
-         install-size="139"
+         download-size="17"
+         install-size="25"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.terminal.telnet.source"
-         download-size="155"
-         install-size="163"
+         download-size="23"
+         install-size="32"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.tm.terminal.view.source"
-         download-size="182"
-         install-size="191"
+         download-size="27"
+         install-size="48"
          version="0.0.0"
          unpack="false"/>
 

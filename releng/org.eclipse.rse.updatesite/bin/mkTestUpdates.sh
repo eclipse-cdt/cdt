@@ -24,6 +24,7 @@ umask 022
 #Use Java5 on build.eclipse.org - need JRE for pack200
 export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/jre/bin:/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
 basebuilder=${HOME}/ws2/org.eclipse.releng.basebuilder
+tgtlauncher=`ls ${HOME}/ws2/eclipse/plugins/org.eclipse.equinox.launcher_* | sort | tail -1`
 
 # patch site.xml
 cd ..
@@ -82,10 +83,15 @@ if [ ${TYPE} = test ]; then
       if [ "${fold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${f}"
       fi
-      fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      #fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      #fold=`grep ${fbase} f2.$$.txt`
+      #if [ "${fold}" = "" ]; then
+      #  echo "PROBLEM: MAJOR or MINOR update : ${f}"
+      #fi
+      fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
       fold=`grep ${fbase} f2.$$.txt`
       if [ "${fold}" = "" ]; then
-        echo "PROBLEM: MAJOR or MINOR update : ${f}"
+        echo "PROBLEM: MAJOR update : ${f}"
       fi
     done
     echo "VERIFYING VERSION CORRECTNESS: Plugins"
@@ -98,10 +104,15 @@ if [ ${TYPE} = test ]; then
       if [ "${pold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${p}"
       fi
-      pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      #pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      #pold=`grep ${pbase} p2.$$.txt`
+      #if [ "${pold}" = "" ]; then
+      #  echo "PROBLEM: MAJOR or MINOR update : ${p}"
+      #fi
+      pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
       pold=`grep ${pbase} p2.$$.txt`
       if [ "${pold}" = "" ]; then
-        echo "PROBLEM: MAJOR or MINOR update : ${p}"
+        echo "PROBLEM: MAJOR update : ${p}"
       fi
     done
     #rm f_new.txt p_new.txt
@@ -128,8 +139,8 @@ if [ ${TYPE} = test ]; then
     echo "Conditioning the site... $SITE"
     #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
     #java -jar $HOME/ws2/eclipse/startup.jar \
-    java \
-        -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+    #java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+    java -jar ${tgtlauncher} \
         -application org.eclipse.update.core.siteOptimizer \
         -jarProcessor -outputDir $SITE \
         -processAll -repack $SITE
@@ -411,7 +422,8 @@ case ${TYPE} in test*)
   # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
   #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
   #java -jar $HOME/ws2/eclipse/startup.jar \
-  java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+  #java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+  java -jar ${tgtlauncher} \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE
@@ -424,7 +436,8 @@ esac
 #Create the digest
 echo "Creating digest..."
 #java -jar $HOME/ws2/eclipse/startup.jar \
-java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+#java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+java -jar ${tgtlauncher} \
     -application org.eclipse.update.core.siteOptimizer \
     -digestBuilder -digestOutputDir=$SITE \
     -siteXML=$SITE/site-europa.xml

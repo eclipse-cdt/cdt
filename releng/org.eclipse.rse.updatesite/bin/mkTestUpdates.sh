@@ -269,7 +269,7 @@ elif [ ${TYPE} = testSigned ]; then
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ ${TYPE} = milestone ]; then
-    echo "Working on milestone update site"
+    echo "Working on ${VERSION} milestone update site"
     TPTYPE="${VERSION} Milestone"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Expect that you copied your features and plugins yourself"
@@ -295,7 +295,7 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5.x).' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ ${TYPE} = interim ]; then
-    echo "Working on interim update site"
+    echo "Working on ${VERSION} interim update site"
     TPTYPE="${VERSION} Interim"
     TPVERSION="${TPVERSION} ${TPTYPE}"
     echo "Expect that you copied your features and plugins yourself"

@@ -61,7 +61,7 @@ public interface IBreakpointAttributeTranslator2 {
 
     /**
 	 * Resolve the breakpoint in given context. A platform BP may be mapped to
-	 * ont or more target BPs, e.g. a breakpoint in an in-line function may be
+	 * one or more target BPs, e.g. a breakpoint in an in-line function may be
 	 * mapped to several target BPs, or a thread-specific BP may be mapped to
 	 * several target BPs each of which is for one thread. This method will get
 	 * the list of attribute maps each of which corresponds to one target BP.
@@ -69,16 +69,16 @@ public interface IBreakpointAttributeTranslator2 {
 	 * This method is and must be called in DSF execution thread.
 	 * 
 	 * @param context
-	 *            - a IBreakpointsTargetDMContext object (which could be a
+	 *            a IBreakpointsTargetDMContext object (which could be a
 	 *            process or a loaded module) in which we locate target BPs for
 	 *            the platform BP. Cannot be null.
 	 * @param breakpoint
-	 *            - platform breakpoint.
+	 *            platform breakpoint.
 	 * @param bpAttributes
-	 *            - all attributes of the breakpoint, usually output from
+	 *            all attributes of the breakpoint, usually output from
 	 *            {@link #getAllBreakpointAttributes(IBreakpoint, boolean)}.
 	 * @param drm
-	 *            - on completion of the request, the DataRequestMonitor
+	 *            on completion of the request, the DataRequestMonitor
 	 *            contains one or more attribute maps each of which
 	 *            corresponding to one target breakpoint.
 	 * @throws CoreException

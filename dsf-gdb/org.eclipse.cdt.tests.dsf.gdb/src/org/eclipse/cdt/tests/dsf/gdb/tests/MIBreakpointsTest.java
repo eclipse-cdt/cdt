@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContex
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
@@ -226,7 +227,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsAddedEvent e) {
   		synchronized (lock) {
-  			System.out.println("Got bp added event");
+  			System.out.println(DsfPlugin.getDebugTime() + " Got bp added event");
   			fBreakpointEvents[BP_ADDED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
@@ -237,7 +238,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsUpdatedEvent e) {
   		synchronized (lock) {
-  			System.out.println("Got bp updated event");
+  			System.out.println(DsfPlugin.getDebugTime() + " Got bp updated event");
   			fBreakpointEvents[BP_UPDATED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
@@ -248,7 +249,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(IBreakpointsRemovedEvent e) {
   		synchronized (lock) {
-  			System.out.println("Got bp removed event");
+  			System.out.println(DsfPlugin.getDebugTime() + " Got bp removed event");
   			fBreakpointEvents[BP_REMOVED]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = ((MIBreakpointDMContext) e.getBreakpoints()[0]).getReference();
@@ -259,7 +260,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIBreakpointHitEvent e) {
   		synchronized (lock) {
-  			System.out.println("Got bp hit event");
+  			System.out.println(DsfPlugin.getDebugTime() + " Got bp hit event");
   			fBreakpointEvents[BP_HIT]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
@@ -270,7 +271,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointTriggerEvent e) {
   		synchronized (lock) {
-  			System.out.println("Got wp hit event");
+  			System.out.println(DsfPlugin.getDebugTime() + " Got wp hit event");
   			fBreakpointEvents[WP_HIT]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
@@ -281,7 +282,7 @@ public class MIBreakpointsTest extends BaseTestCase {
   	@DsfServiceEventHandler
 	public void eventDispatched(MIWatchpointScopeEvent e) {
   		synchronized (lock) {
-  			System.out.println("Got wp scope event");
+  			System.out.println(DsfPlugin.getDebugTime() + " Got wp scope event");
   			fBreakpointEvents[WP_OOS]++;
   			fBreakpointEventCount++;
   			fBreakpointRef = e.getNumber();
@@ -1192,7 +1193,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
 		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
 
-		// Run the program. It will make a one second sleep() call, during which time... 
+		// Run the program. It will make a two second sleep() call, during which time... 
 		SyncUtil.resume();
 
 		// ...we install the breakpoint

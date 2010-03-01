@@ -1865,13 +1865,25 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				long now = System.currentTimeMillis();
 				if (now >= refreshViewScheduled) {
 					if (DEBUG) System.err.println("*** refreshing view ***"); //$NON-NLS-1$
-					fFocusAddress = PC_UNKNOWN;
+					
+					// save viewport position and frame info
+					BigInteger topAddress = getTopAddress();
 					int targetFrame= fTargetFrame;
+					BigInteger frameAddress = fFrameAddress;
+					BigInteger pcAddress = fPCAddress;
+					
+					// clear viewer
 					resetViewer();
 					if (fScrollPos != null) {
 						fScrollPos.isDeleted = true;
 					}
-					gotoFrameIfActive(targetFrame);
+
+					// restore frame info and viewport
+					fPCAnnotationUpdatePending = true;
+					fTargetFrame = targetFrame;
+					fFrameAddress = frameAddress;
+					fPCAddress = pcAddress;
+					gotoAddress(topAddress);
 				} else {
 					refreshView((int)(refreshViewScheduled - now));
 				}
@@ -1884,6 +1896,14 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		} else {
 			doScrollLocked(refresh);
 		}
+	}
+
+	private BigInteger getTopAddress() {
+		BigInteger topAddress = getAddressOfLine(fViewer.getTopIndex());
+		if (topAddress.equals(fStartAddress)) {
+			topAddress = getAddressOfLine(fViewer.getTopIndex() + 1);
+		}
+		return topAddress;
 	}
 
 	private void resetViewer() {

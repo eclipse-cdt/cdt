@@ -33,10 +33,6 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
    </url>
 
-   <includes
-         id="org.eclipse.tm.terminal"
-         version="0.0.0"/>
-
  <requires>
  <!--
   <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
@@ -63,6 +59,13 @@
   install-size="43"
   version="0.0.0"
   unpack="false"/>
+
+  <plugin
+         id="org.eclipse.tm.terminal"
+         download-size="56"
+         install-size="56"
+         version="0.0.0"
+         unpack="false"/>
 
   <plugin
          id="org.eclipse.tm.terminal.source"

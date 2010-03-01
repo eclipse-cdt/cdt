@@ -34,7 +34,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * implementation needs to pay special attention to the synchronization 
  * annotations on each method of the interface.
  * 
- * @see BreakpointMediator
+ * @see BreakpointsMediator2
  * @since 2.1
  */
 public interface IBreakpointAttributeTranslator2 {

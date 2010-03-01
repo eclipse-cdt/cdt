@@ -256,12 +256,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	protected Map<String, Action> fGlobalActions = new HashMap<String, Action>();
 	private List<Action> fSelectionActions = new ArrayList<Action>();
 	private List<AbstractDisassemblyAction> fStateDependentActions = new ArrayList<AbstractDisassemblyAction>();
-	private boolean fSourceOnlyMode;
 	private boolean fShowSource;
 	private boolean fShowOpcodes;
 	private boolean fShowSymbols;
 	private Map<String, Object> fFile2Storage = new HashMap<String, Object>();
-	private boolean fShowDisassembly;
+	private boolean fShowDisassembly = true;
 	private LinkedList<AddressRangePosition> fPCHistory = new LinkedList<AddressRangePosition>();
 	private int fPCHistorySizeMax = 4;
 	private boolean fGotoFramePending;
@@ -351,11 +350,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		@Override
 		public void run() {
 			IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
-			store.setValue(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS, !isOpcodeRulerVisible());
+			store.setValue(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS, !isFunctionOffsetsRulerVisible());
 		}
 		@Override
 		public void update() {
-			setChecked(isOpcodeRulerVisible());
+			setChecked(isFunctionOffsetsRulerVisible());
 		}
 	}
 
@@ -405,12 +404,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		@Override
 		public void run() {
 			IPreferenceStore store = DsfUIPlugin.getDefault().getPreferenceStore();
-			boolean showSourceEnabled = store.getBoolean(DisassemblyPreferenceConstants.SHOW_SOURCE);
-			if (showSourceEnabled == fShowSource) {
-				store.setValue(DisassemblyPreferenceConstants.SHOW_SOURCE, !fShowSource);
-			} else {
-				sourceModeChanged(!fShowSource);
-			}
+			store.setValue(DisassemblyPreferenceConstants.SHOW_SOURCE, !fShowSource);
 		}
 		@Override
 		public void update() {
@@ -472,10 +466,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			fEndAddress = new BigInteger(endAddressString.substring(2), 16);
 		else
 			fEndAddress = new BigInteger(endAddressString, 16);
-		// TLETODO [disassembly[ source only mode
-		fSourceOnlyMode = false; //prefs.getBoolean(DisassemblyPreferenceConstants.USE_SOURCE_ONLY_MODE);
-		fShowSource = fSourceOnlyMode || prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SOURCE);
-		fShowDisassembly = !fSourceOnlyMode || !fShowSource;
+		fShowSource = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SOURCE);
 		fShowOpcodes = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS);
 		fShowSymbols = prefs.getBoolean(DisassemblyPreferenceConstants.SHOW_SYMBOLS);
 		fUpdateBeforeFocus = !prefs.getBoolean(DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC);
@@ -566,45 +557,28 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				showAddressRuler();
 			}
 		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_SOURCE)) {
-			sourceModeChanged(store.getBoolean(property));
-		} else if (property.equals(DisassemblyPreferenceConstants.INSTRUCTION_RADIX)) {
-			Runnable doit = new Runnable() {
-				public void run() {
-					fDocument.invalidateAddressRange(fStartAddress, fEndAddress, true);
-					if (!fShowDisassembly) {
-						fDocument.invalidateDisassemblyWithSource(true);
-					}
-					fDocument.setMaxOpcodeLength(0);
-					fGotoFramePending = true;
-				}};
-			doScrollLocked(doit);
+			boolean showSource = store.getBoolean(property);
+			if (fShowSource == showSource) {
+				return;
+			}
+			fShowSource = showSource;
+			fActionToggleSource.update();
+			refreshView(10);
 		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_SYMBOLS)) {
 			boolean showSymbols = store.getBoolean(property);
 			if (fShowSymbols == showSymbols) {
 				return;
 			}
 			fShowSymbols = showSymbols;
-			Runnable doit = new Runnable() {
-				public void run() {
-					fDocument.invalidateAddressRange(fStartAddress, fEndAddress, true);
-					if (!fShowDisassembly) {
-						fDocument.invalidateDisassemblyWithSource(true);
-					}
-					fGotoFramePending = true;
-				}};
-			doScrollLocked(doit);
-		} else if (property.equals(DisassemblyPreferenceConstants.USE_SOURCE_ONLY_MODE)) {
-			fSourceOnlyMode = store.getBoolean(property);
-			if (fDebugSessionId != null) {
-				disassemblyModeChanged(isDissemblyMixedModeOn());
-			}
+			fActionToggleSymbols.update();
+			refreshView(10);
 		} else if (property.equals(DisassemblyPreferenceConstants.SHOW_FUNCTION_OFFSETS)) {
 			fShowOpcodes = store.getBoolean(property);
 			fActionToggleFunctionColumn.update();
-			if (isOpcodeRulerVisible()) {
-				showOpcodeRuler();
+			if (isFunctionOffsetsRulerVisible()) {
+				showFunctionOffsetsRuler();
 			} else {
-				hideOpcodeRuler();
+				hideFunctionOffsetsRuler();
 			}
 		} else if (property.equals(DisassemblyPreferenceConstants.AVOID_READ_BEFORE_PC)) {
 			fUpdateBeforeFocus = !store.getBoolean(property);
@@ -671,8 +645,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (isAddressRulerVisible()) {
 			showAddressRuler();
 		}
-		if (isOpcodeRulerVisible()) {
-			showOpcodeRuler();
+		if (isFunctionOffsetsRulerVisible()) {
+			showFunctionOffsetsRuler();
 		}
 		initDragAndDrop();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fViewer.getControl(), IDisassemblyHelpContextIds.DISASSEMBLY_VIEW);
@@ -986,9 +960,9 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 *
 	 * @return the created line number column
 	 */
-	protected IVerticalRulerColumn createOpcodeRulerColumn() {
+	protected IVerticalRulerColumn createFunctionOffsetsRulerColumn() {
 		fOpcodeRulerColumn= new FunctionOffsetRulerColumn();
-		initializeRulerColumn(fOpcodeRulerColumn, DisassemblyPreferenceConstants.OPCODE_COLOR);
+		initializeRulerColumn(fOpcodeRulerColumn, DisassemblyPreferenceConstants.FUNCTION_OFFSETS_COLOR);
 		return fOpcodeRulerColumn;
 	}
 
@@ -1071,19 +1045,19 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 	}
 
-	private boolean isOpcodeRulerVisible() {
+	private boolean isFunctionOffsetsRulerVisible() {
 		return fShowOpcodes;
 	}
 
 	/**
 	 * Shows the opcode ruler column.
 	 */
-	private void showOpcodeRuler() {
+	private void showFunctionOffsetsRuler() {
 		if (fOpcodeRulerColumn == null) {
 			IVerticalRuler v= getVerticalRuler();
 			if (v instanceof CompositeRuler) {
 				CompositeRuler c= (CompositeRuler) v;
-				c.addDecorator(2, createOpcodeRulerColumn());
+				c.addDecorator(2, createFunctionOffsetsRulerColumn());
 			}
 		}
 	}
@@ -1091,7 +1065,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	/**
 	 * Hides the opcode ruler column.
 	 */
-	private void hideOpcodeRuler() {
+	private void hideFunctionOffsetsRuler() {
 		if (fOpcodeRulerColumn != null) {
 			IVerticalRuler v= getVerticalRuler();
 			if (v instanceof CompositeRuler) {
@@ -2407,7 +2381,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	public void lockScroller() {
 		assert isGuiThread();
 		assert fScrollPos == null;
-		if (isOpcodeRulerVisible()) {
+		if (isFunctionOffsetsRulerVisible()) {
 			fRedrawControl = fViewer.getControl();
 		} else {
 			fRedrawControl = fViewer.getTextWidget();
@@ -2597,12 +2571,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
         }
     }
 
-    private boolean isDissemblyMixedModeOn() {
-    	// TLETODO [disassembly] mixed mode on/off
-        return true;
-    }
-
-	/**
+    /**
 	 * Close this part
 	 */
 	protected abstract void closePart();
@@ -2755,54 +2724,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 		
 		return pos;
-	}
-
-	private void disassemblyModeChanged(boolean isDisassemblyOn) {
-		if (fShowDisassembly == isDisassemblyOn) {
-			return;
-		}
-		if (fShowDisassembly && !fSourceOnlyMode) {
-			// if not in source-only mode, do not update if disassembly mode is disabled
-			return;
-		}
-		fShowDisassembly = isDisassemblyOn;
-		if (!fShowDisassembly) {
-			sourceModeChanged(true);
-		}
-		fActionToggleSource.update();
-		Runnable doit = new Runnable() {
-			public void run() {
-				fDocument.invalidateDisassemblyWithSource(!fShowDisassembly);
-				fGotoFramePending = true;
-			}};
-		doScrollLocked(doit);
-	}
-
-	/**
-	 * Turn on/off source mode.
-	 * @param isSourceModeOn
-	 */
-	private void sourceModeChanged(boolean isSourceModeOn) {
-		if (fShowSource == isSourceModeOn) {
-			return;
-		}
-		fShowSource = isSourceModeOn;
-		fActionToggleSource.update();
-		fDocument.invalidateSource();
-		if (!fShowSource && !fShowDisassembly) {
-			disassemblyModeChanged(true);
-		} else {
-			fPCAnnotationUpdatePending = true;
-			updateInvalidSource();
-			if (fShowSource) {
-				Runnable doit = new Runnable() {
-					public void run() {
-						fDocument.invalidateAddressRange(fStartAddress, fEndAddress, true);
-						fGotoFramePending = true;
-					}};
-				doScrollLocked(doit);
-			}
-		}
 	}
 	
 	public AddressBarContributionItem getAddressBar() {

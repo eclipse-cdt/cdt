@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,24 +29,20 @@ public class DisassemblyPreferenceConstants {
 	public static final String END_ADDRESS = "disassembly.endAddress"; //$NON-NLS-1$
 	public static final String PC_HISTORY_SIZE = "disassembly.pcHistorySize"; //$NON-NLS-1$
 	public static final String SHOW_SOURCE = "disassembly.showSource"; //$NON-NLS-1$
-	public static final String SHOW_LABELS = "disassembly.showLabels"; //$NON-NLS-1$
 	public static final String SHOW_SYMBOLS = "disassembly.showSymbols"; //$NON-NLS-1$
-	public static final String SIMPLIFIED = "disassembly.simplified"; //$NON-NLS-1$
-	public static final String INSTRUCTION_RADIX = "disassembly.instructionRadix"; //$NON-NLS-1$
 	public static final String ADDRESS_RADIX = "disassembly.addressRadix"; //$NON-NLS-1$
 	public static final String SHOW_ADDRESS_RADIX = "disassembly.showAddressRadix"; //$NON-NLS-1$
 	public static final String SHOW_ADDRESS_RULER = "disassembly.showAddressRuler"; //$NON-NLS-1$
 	public static final String ADDRESS_COLOR = "disassembly.addressColor"; //$NON-NLS-1$
 	public static final String SHOW_FUNCTION_OFFSETS = "disassembly.showFunctionOffsetRuler"; //$NON-NLS-1$
-	public static final String OPCODE_COLOR = "disassembly.opcodeColor"; //$NON-NLS-1$
-	public static final String USE_SOURCE_ONLY_MODE = "disassembly.useSourceOnlyMode"; //$NON-NLS-1$
+	public static final String FUNCTION_OFFSETS_COLOR = "disassembly.functionOffsetsColor"; //$NON-NLS-1$
 	public static final String AVOID_READ_BEFORE_PC = "disassembly.avoidReadBeforePC"; //$NON-NLS-1$
 
 	/**
 	 * 
 	 */
 	private DisassemblyPreferenceConstants() {
-		// not intended to be subclassed or instatiated
+		// not intended to be subclassed or instantiated
 	}
 
 	/**
@@ -60,17 +56,13 @@ public class DisassemblyPreferenceConstants {
 		store.setDefault(PC_HISTORY_SIZE, 4);
 		store.setDefault(SHOW_SOURCE, true);
 		store.setDefault(SHOW_FUNCTION_OFFSETS, false);
-		store.setDefault(SHOW_LABELS, true);
 		store.setDefault(SHOW_SYMBOLS, true);
-		store.setDefault(SIMPLIFIED, true);
-		store.setDefault(INSTRUCTION_RADIX, 16);
 		store.setDefault(ADDRESS_RADIX, 16);
 		store.setDefault(SHOW_ADDRESS_RADIX, false);
 		store.setDefault(SHOW_ADDRESS_RULER, true);
 		store.setDefault(AVOID_READ_BEFORE_PC, false);
-		store.setDefault(USE_SOURCE_ONLY_MODE, false);
 		PreferenceConverter.setDefault(store, ADDRESS_COLOR, new RGB(0, 96, 0));
-		PreferenceConverter.setDefault(store, OPCODE_COLOR, new RGB(96, 0, 0));
+		PreferenceConverter.setDefault(store, FUNCTION_OFFSETS_COLOR, new RGB(96, 0, 0));
 	}
 
 	public static class Initializer extends AbstractPreferenceInitializer {

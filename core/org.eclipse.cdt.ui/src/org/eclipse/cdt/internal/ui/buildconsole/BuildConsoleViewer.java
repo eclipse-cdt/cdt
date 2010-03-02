@@ -33,10 +33,10 @@ import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
-public class BuildConsoleViewer extends TextViewer 
-	implements  LineStyleListener, 
+public class BuildConsoleViewer extends TextViewer
+	implements  LineStyleListener,
 				LineBackgroundListener,
-				MouseTrackListener, 
+				MouseTrackListener,
 				MouseListener {
 
 	protected InternalDocumentListener fInternalDocumentListener = new InternalDocumentListener();
@@ -51,7 +51,7 @@ public class BuildConsoleViewer extends TextViewer
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
@@ -59,18 +59,18 @@ public class BuildConsoleViewer extends TextViewer
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
 			revealEndOfDocument();
 		}
 	}
-	
+
 	/**
 	 * Sets whether this viewer should auto-scroll as output is appended to the
 	 * document.
-	 * 
+	 *
 	 * @param scroll
 	 */
 	public void setAutoScroll(boolean scroll) {
@@ -89,7 +89,7 @@ public class BuildConsoleViewer extends TextViewer
 	 * Creates a new console viewer and adds verification checking to only
 	 * allow text modification if the text is being modified in the editable
 	 * portion of the underlying document.
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.VerifyListener
 	 */
 	public BuildConsoleViewer(Composite parent) {
@@ -135,10 +135,10 @@ public class BuildConsoleViewer extends TextViewer
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	@Override
@@ -165,84 +165,86 @@ public class BuildConsoleViewer extends TextViewer
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
 	 */
-	public void lineGetStyle(LineStyleEvent event) {				
+	public void lineGetStyle(LineStyleEvent event) {
 		IDocument document = getDocument();
-		if (document == null) return;		
+		if (document == null) return;
 		BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
-		if (partitioner == null) return; 
-		
+		if (partitioner == null) return;
+
 		BuildConsolePartition p = partitioner.fDocumentMarkerManager.getCurrentPartition();
 		Color problemHighlightedColor =  partitioner.fManager.getProblemHighlightedColor();
-		
+
 		// Note, computePartitioning actually doesn't change anything in partitioning,
 		// but only computes number of affected regions.
 		ITypedRegion[] regions = partitioner.computePartitioning(event.lineOffset, event.lineText.length());
-		StyleRange[] styles = new StyleRange[regions.length];				
+		StyleRange[] styles = new StyleRange[regions.length];
 		for (int i = 0; i < regions.length; i++) {
-			BuildConsolePartition partition = (BuildConsolePartition) regions[i];			
+			BuildConsolePartition partition = (BuildConsolePartition) regions[i];
+			if (partition.getStream()== null) return;
+
 			Color colorFG = partition.getStream().getColor();
 			Color colorBG = null;
-			
+
 			// Highlight current partition
 			if ( partition == p ) {
 				colorFG = problemHighlightedColor;
 			}
-			StyleRange styleRange = new StyleRange(partition.getOffset(), partition.getLength(), colorFG, colorBG);					
+			StyleRange styleRange = new StyleRange(partition.getOffset(), partition.getLength(), colorFG, colorBG);
 			styles[i] = styleRange;
 		}
-		event.styles = styles;				
+		event.styles = styles;
 	}
-	
-	public void selectPartition(BuildConsolePartitioner partitioner, BuildConsolePartition p) {		
+
+	public void selectPartition(BuildConsolePartitioner partitioner, BuildConsolePartition p) {
 		try {
 			int start = partitioner.getDocument().getLineOfOffset(p.getOffset());
 			int end = partitioner.getDocument().getLineOfOffset(p.getOffset()+p.getLength()-1);
-			
+
 			if ( fAutoScroll ) {
 				// Check if area around this line is visible, scroll if needed
 				int top = getTopIndex();
-				int bottom = getBottomIndex();			
+				int bottom = getBottomIndex();
 				if ( start < top + 1 ) {
-					setTopIndex(start - 1 > 0 ? start - 1 : 0); 
+					setTopIndex(start - 1 > 0 ? start - 1 : 0);
 				} else if ( end > bottom -1 ) {
 					setTopIndex(top + start - bottom + 1);
 				}
-			}		
-			
+			}
+
 			// Select line
 			StyledText st = getTextWidget();
 			st.redrawRange(0, partitioner.getDocument().getLength(), true);
-			
+
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);
 		}
 	}
 
 	public void mouseEnter(MouseEvent e) {
-		getTextWidget().addMouseListener(this);	
+		getTextWidget().addMouseListener(this);
 	}
 
 	public void mouseExit(MouseEvent e) {
-		getTextWidget().removeMouseListener(this);		
+		getTextWidget().removeMouseListener(this);
 	}
 
-	public void mouseHover(MouseEvent e) {		
+	public void mouseHover(MouseEvent e) {
 	}
 
 	public void mouseDoubleClick(MouseEvent e) {
 		int offset = -1;
-		try {			
+		try {
 			Point p = new Point(e.x, e.y);
 			offset = getTextWidget().getOffsetAtLocation(p);
 			BuildConsole.getPage().moveToError(offset);
 		} catch (IllegalArgumentException ex) {
-		}		
+		}
 	}
 
-	public void mouseDown(MouseEvent e) {		
+	public void mouseDown(MouseEvent e) {
 	}
 
 	public void mouseUp(MouseEvent e) {
@@ -250,10 +252,10 @@ public class BuildConsoleViewer extends TextViewer
 
 	public void lineGetBackground(LineBackgroundEvent event) {
 		IDocument document = getDocument();
-		if (document == null) return;		
+		if (document == null) return;
 		BuildConsolePartitioner partitioner = (BuildConsolePartitioner) document.getDocumentPartitioner();
-		if (partitioner == null) return; 
-		
+		if (partitioner == null) return;
+
 		BuildConsolePartition partition = (BuildConsolePartition) partitioner.getPartition(event.lineOffset);
 		// Set background for error partitions
 		if ( partition != null && partition.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {

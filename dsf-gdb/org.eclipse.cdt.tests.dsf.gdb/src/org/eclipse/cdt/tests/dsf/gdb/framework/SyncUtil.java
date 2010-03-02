@@ -473,6 +473,7 @@ public class SyncUtil {
     		sTimeouts.put(ETimeout.resume, 1000);
     		sTimeouts.put(ETimeout.resumeUntilStopped, 10000); // 10 seconds
     		sTimeouts.put(ETimeout.runToLine, 10000);	// 10 seconds
+    		sTimeouts.put(ETimeout.runToLocation, 10000);	// 10 seconds    		
     		sTimeouts.put(ETimeout.step, 1000);
     		sTimeouts.put(ETimeout.waitForStop, 10000);	// 10 seconds
     	}

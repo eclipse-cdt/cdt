@@ -290,7 +290,7 @@ public class BuildConsolePage extends Page
 		fScrollLockAction = new ScrollLockAction(getViewer());
 		fNextErrorAction = new NextErrorAction(this);
 		fPreviousErrorAction = new PreviousErrorAction(this);	
-		fShowErrorAction = new ShowErrorAction();
+		fShowErrorAction = new ShowErrorAction(this);
 
 		fScrollLockAction.setChecked(fIsLocked);
 		getViewer().setAutoScroll(!fIsLocked);

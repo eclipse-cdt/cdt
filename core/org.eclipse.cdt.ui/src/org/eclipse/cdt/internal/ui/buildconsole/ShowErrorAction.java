@@ -11,17 +11,25 @@
 
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 
 /**
  * Set whether to show error in editor when moving to next/prev error in Build Console
  */
 public class ShowErrorAction extends Action {
 
-	public ShowErrorAction() {
+	private BuildConsolePage fConsolePage;
+	
+	public ShowErrorAction(BuildConsolePage page) {
 		super(ConsoleMessages.ShowErrorAction_Tooltip); 
+		fConsolePage = page;
 		setChecked(true);
 		setToolTipText(ConsoleMessages.ShowErrorAction_Tooltip); 
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();		
@@ -29,4 +37,21 @@ public class ShowErrorAction extends Action {
 		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_ELCL_SYNCED_DISABLED));
 	}
 
+	/**
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
+	@Override
+	public void run() {
+		super.run();
+		if ( isChecked() ) {
+			IProject project = fConsolePage.getProject();
+			IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
+			IConsole console = consoleManager.getConsole(project);
+			if ( console instanceof BuildConsolePartitioner) {
+				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
+				fConsolePage.showError(par, true );
+			}
+		}
+	}	
+	
 }

@@ -122,9 +122,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				ICProjectDescriptionManager descriptionManager = CoreModel.getDefault().getProjectDescriptionManager();
 				ICProjectDescription cProjectDescription = descriptionManager.getProjectDescription(project, true /* writable */);
 				ICConfigurationDescription configDes = cProjectDescription.getActiveConfiguration();
-				
-				boolean changedDes = false;
-				
+								
 				IToolChain toolchain = config.getToolChain();
 				for(ITool tool : toolchain.getTools()) {
 					for(IInputType inputType : tool.getInputTypes()) {
@@ -155,8 +153,8 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 								}
 								
 								// update all the scanner config entries on the setting
-								changedDes |= updateIncludeSettings(langSetting);
-								changedDes |= updateMacroSettings(langSetting);
+								updateIncludeSettings(langSetting);
+								updateMacroSettings(langSetting);
 						
 							}
 						}
@@ -164,9 +162,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 					}
 				}
 				
-				if(changedDes) {
-					descriptionManager.setProjectDescription(project, cProjectDescription, true /* force */, monitor);
-				}
+			descriptionManager.setProjectDescription(project, cProjectDescription, true /* force */, monitor);
 				
 			} catch (CoreException e) {
 				Activator.log(e);

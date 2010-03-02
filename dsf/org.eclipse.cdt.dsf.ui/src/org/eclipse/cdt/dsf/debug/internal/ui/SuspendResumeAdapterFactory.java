@@ -9,14 +9,14 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Updated to support Move-To-Line
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui;
+package org.eclipse.cdt.dsf.debug.internal.ui;
 
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.internal.ui.actions.MoveToLine;
+import org.eclipse.cdt.dsf.debug.internal.ui.actions.ResumeAtLine;
+import org.eclipse.cdt.dsf.debug.internal.ui.actions.RunToLine;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
-import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbMoveToLine;
-import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbResumeAtLine;
-import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRunToLine;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -29,18 +29,18 @@ import org.eclipse.debug.core.model.ISuspendResume;
  * 
  * @since 2.1
  */
-public class GdbSuspendResumeAdapterFactory implements IAdapterFactory {
+public class SuspendResumeAdapterFactory implements IAdapterFactory {
 
     static class GdbSuspendResume implements ISuspendResume, IAdaptable {
 
-        private final GdbRunToLine fRunToLine;
-        private final GdbMoveToLine fMoveToLine;
-        private final GdbResumeAtLine fResumeAtLine;
+        private final RunToLine fRunToLine;
+        private final MoveToLine fMoveToLine;
+        private final ResumeAtLine fResumeAtLine;
         
         GdbSuspendResume(IExecutionDMContext execCtx) {
-            fRunToLine = new GdbRunToLine(execCtx);
-            fMoveToLine = new GdbMoveToLine(execCtx);
-            fResumeAtLine = new GdbResumeAtLine(execCtx);
+            fRunToLine = new RunToLine(execCtx);
+            fMoveToLine = new MoveToLine(execCtx);
+            fResumeAtLine = new ResumeAtLine(execCtx);
         }
         
         @SuppressWarnings("rawtypes")

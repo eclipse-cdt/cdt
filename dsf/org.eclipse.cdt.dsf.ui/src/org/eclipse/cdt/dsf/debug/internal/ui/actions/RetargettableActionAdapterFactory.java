@@ -8,7 +8,7 @@
  * Contributors:
  * Ericsson - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget;
 import org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget;

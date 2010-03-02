@@ -8,7 +8,7 @@
  * Contributors:
  * Ericsson - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
+package org.eclipse.cdt.dsf.debug.internal.ui.actions;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblySelection;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection;
-import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -93,6 +93,6 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 	protected void failed( Throwable e ) {
 		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, "RunToLine failed", null ); //$NON-NLS-1$
 		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), IDsfStatusConstants.REQUEST_FAILED, e.getMessage(), e ) );
-		GdbUIPlugin.log(ms);
+		DsfUIPlugin.log(ms);
 	}
 }

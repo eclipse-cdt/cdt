@@ -585,7 +585,7 @@ public class MIRunControlTest extends BaseTestCase {
  
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-           		fRunCtrl.runToLocation(fThreadExecDmc, SOURCE_NAME + ":27", true,
+           		fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, 27, true,
            				new RequestMonitor(fRunCtrl.getExecutor(), null) {
            			@Override
            			protected void handleCompleted() {

@@ -17,7 +17,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
@@ -26,9 +28,11 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -40,6 +44,8 @@ import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
@@ -73,6 +79,7 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -1136,6 +1143,157 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     }
 
 	public void flushCache(IDMContext context) {
+	}
+
+	private void moveToLocation(final IExecutionDMContext context,
+			final String location, final Map<String, Object> bpAttributes,
+			final RequestMonitor rm) {
+
+		// first create a temporary breakpoint to stop the execution at
+		// the location we are about to jump to
+		IBreakpoints bpService = getServicesTracker().getService(IBreakpoints.class);
+		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
+		if (bpService != null && bpDmc != null) {
+			bpService.insertBreakpoint(bpDmc, bpAttributes,
+					new DataRequestMonitor<IBreakpointDMContext>(getExecutor(),rm) {
+						@Override
+						protected void handleSuccess() {
+							// Now resume at the proper location
+							resumeAtLocation(context, location, rm);
+						}
+					});
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+					IDsfStatusConstants.NOT_SUPPORTED,
+					"Unable to set breakpoint", null)); //$NON-NLS-1$
+			rm.done();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#canRunToLine(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, java.lang.String, int, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void canRunToLine(IExecutionDMContext context, String sourceFile,
+			int lineNumber, DataRequestMonitor<Boolean> rm) {
+		canResume(context, rm);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#runToLine(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, java.lang.String, int, boolean, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void runToLine(IExecutionDMContext context, String sourceFile,
+			int lineNumber, boolean skipBreakpoints, RequestMonitor rm) {
+		runToLocation(context, sourceFile + ":" + Integer.toString(lineNumber), skipBreakpoints, rm); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#canRunToAddress(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.cdt.core.IAddress, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void canRunToAddress(IExecutionDMContext context, IAddress address,
+			DataRequestMonitor<Boolean> rm) {
+		canResume(context, rm);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#runToAddress(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.cdt.core.IAddress, boolean, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void runToAddress(IExecutionDMContext context, IAddress address,
+			boolean skipBreakpoints, RequestMonitor rm) {
+		runToLocation(context, "*0x" + address.toHexAddressString(), skipBreakpoints, rm); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#canMoveToLine(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, java.lang.String, int, boolean, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void canMoveToLine(IExecutionDMContext context, String sourceFile,
+			int lineNumber, boolean resume, DataRequestMonitor<Boolean> rm) {
+		canResume(context, rm);	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#moveToLine(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, java.lang.String, int, boolean, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void moveToLine(IExecutionDMContext context, String sourceFile,
+			int lineNumber, boolean resume, RequestMonitor rm) {
+		IMIExecutionDMContext threadExecDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (threadExecDmc == null) {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Invalid thread context", null)); //$NON-NLS-1$
+            rm.done();                        	
+		}
+		else
+		{
+			// Create the breakpoint attributes
+			Map<String,Object> attr = new HashMap<String,Object>();
+	    	attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
+	    	attr.put(MIBreakpoints.FILE_NAME, sourceFile);
+	    	attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
+	    	attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
+	    	attr.put(MIBreakpointDMData.THREAD_ID, Integer.toString(threadExecDmc.getThreadId()));
+	    	
+			// Now do the operation
+			String location = sourceFile + ":" + lineNumber; //$NON-NLS-1$
+			if (resume)
+				resumeAtLocation(context, location, rm);
+			else
+				moveToLocation(context, location, attr, rm);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#canMoveToAddress(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.cdt.core.IAddress, boolean, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+	 */
+	/**
+	 * @since 3.0
+	 */
+	public void canMoveToAddress(IExecutionDMContext context, IAddress address,
+			boolean resume, DataRequestMonitor<Boolean> rm) {
+		canResume(context, rm);
+		}
+
+	/** (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#moveToAddress(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.cdt.core.IAddress, boolean, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
+	 * @since 3.0
+	 */
+	public void moveToAddress(IExecutionDMContext context, IAddress address,
+			boolean resume, RequestMonitor rm) {
+		IMIExecutionDMContext threadExecDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
+		if (threadExecDmc == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Invalid thread context", null)); //$NON-NLS-1$
+			rm.done();                        	
+		}
+		else
+		{
+			// Create the breakpoint attributes
+			Map<String,Object> attr = new HashMap<String,Object>();
+			attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
+			attr.put(MIBreakpoints.ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
+			attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
+			attr.put(MIBreakpointDMData.THREAD_ID,  Integer.toString(threadExecDmc.getThreadId()));
+
+			// Now do the operation
+			String location = "*0x" + address.toString(16); //$NON-NLS-1$
+			if (resume)
+				resumeAtLocation(context, location, rm);
+			else
+				moveToLocation(context, location, attr, rm);
+		}
 	}
 
 }

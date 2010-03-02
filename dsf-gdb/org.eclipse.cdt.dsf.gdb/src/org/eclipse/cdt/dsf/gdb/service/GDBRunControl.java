@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
@@ -102,8 +103,9 @@ public class GDBRunControl extends MIRunControl {
         fProcService = getServicesTracker().getService(IMIProcesses.class);
 
         register(new String[]{IRunControl.class.getName(), 
-        		IMIRunControl.class.getName(),
-        		MIRunControl.class.getName(), 
+           		IRunControl2.class.getName(),
+           		IMIRunControl.class.getName(),
+           		MIRunControl.class.getName(), 
         		GDBRunControl.class.getName()}, new Hashtable<String,String>());
         requestMonitor.done();
     }

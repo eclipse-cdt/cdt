@@ -72,12 +72,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -781,6 +783,73 @@ public class VariableVMNode extends AbstractExpressionVMNode
             ((VariableExpressionVMC)element).setExpression(expression);
         }
     }
+    
+    @Override
+    protected void updateHasElementsInSessionThread(final IHasChildrenUpdate update) {
+        // Get the data model context object for the current node in the hierarchy.
+        
+        final IExpressionDMContext expressionDMC = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressionDMContext.class);
+        
+        if ( expressionDMC != null ) {
+            final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+            
+            if (expressionService == null) {
+                handleFailedUpdate(update);
+                return;
+            }
+
+            expressionService.getSubExpressionCount(
+                expressionDMC, 
+                new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
+                    @Override
+                    public void handleCompleted() {
+                        if (!isSuccess()) {
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        update.setHasChilren(getData() > 0);
+                        update.done();
+                    }
+                });
+        }
+        else {
+            super.updateHasElementsInSessionThread(update);
+        }
+    }
+
+    @Override
+    @ConfinedToDsfExecutor("getSession().getExecutor()")
+    protected void updateElementCountInSessionThread(final IChildrenCountUpdate update) {
+        // Get the data model context object for the current node in the hierarchy.
+        
+        final IExpressionDMContext expressionDMC = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressionDMContext.class);
+        
+        if ( expressionDMC != null ) {
+            final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+            
+            if (expressionService == null) {
+                handleFailedUpdate(update);
+                return;
+            }
+
+            expressionService.getSubExpressionCount(
+                expressionDMC, 
+                new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
+                    @Override
+                    public void handleCompleted() {
+                        if (!isSuccess()) {
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        update.setChildCount(getData());
+                        update.done();
+                    }
+                });
+        }
+        else {
+            super.updateElementCountInSessionThread(update);
+        }
+    }
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
@@ -824,7 +893,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             handleFailedUpdate(update);
                             return;
                         }
-                        fillUpdateWithVMCs(update, getData());
+                        if (update.getOffset() < 0) {
+                            fillUpdateWithVMCs(update, getData());
+                        } else {
+                            fillUpdateWithVMCs(update, getData(), update.getOffset());
+                        }
                         update.done();
                     }
             };
@@ -832,7 +905,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
             // Make the asynchronous call to IExpressions.getSubExpressions().  The results are processed in the
             // DataRequestMonitor.handleCompleted() above.
 
-            expressionService.getSubExpressions(expressionDMC, rm);
+            if (update.getOffset() < 0 || update.getLength() < 0) {
+                // If the range is not specified, get all expressions.
+                expressionService.getSubExpressions(expressionDMC, rm);                
+            } else {
+                expressionService.getSubExpressions(expressionDMC, update.getOffset(), update.getLength(), rm);
+            }
         } else {
             handleFailedUpdate(update);
         }

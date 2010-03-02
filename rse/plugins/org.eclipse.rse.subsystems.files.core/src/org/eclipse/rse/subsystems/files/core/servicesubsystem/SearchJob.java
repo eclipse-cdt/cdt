@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight  (IBM)  - [293914] [dstore] NPE is thrown during the remote search
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -20,6 +21,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -44,9 +49,18 @@ public class SearchJob extends Job
 	protected IStatus run(IProgressMonitor monitor)
 	{
 		_searchService.search(_searchConfig, _fileService, monitor);
-
-		OutputRefresh refresh = new OutputRefresh(_searchConfig);
-		Display.getDefault().asyncExec(refresh);
+		if (!monitor.isCanceled()){
+			OutputRefresh refresh = new OutputRefresh(_searchConfig);
+			Display.getDefault().asyncExec(refresh);
+		}
+		else {
+			Display.getDefault().asyncExec(new Runnable(){
+				public void run(){
+					ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+					registry.fireEvent(new SystemResourceChangeEvent(_searchConfig, ISystemResourceChangeEvents.EVENT_SEARCH_FINISHED, null));
+				}
+			});
+		}
 		monitor.done();
 		return Status.OK_STATUS;
 	}

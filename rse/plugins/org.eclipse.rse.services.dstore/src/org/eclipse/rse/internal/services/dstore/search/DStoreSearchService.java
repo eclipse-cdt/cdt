@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * David McKnight  (IBM)  - [255390] don't assume one update means the search is done
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
+ * David McKnight  (IBM)  - [293914] [dstore] NPE is thrown during the remote search
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -135,6 +136,8 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			catch (Exception e)
 			{				
 				config.setStatus(IHostSearchConstants.CANCELLED);
+				if (monitor != null)
+					monitor.setCanceled(true);
 			}
 		}				
 	}

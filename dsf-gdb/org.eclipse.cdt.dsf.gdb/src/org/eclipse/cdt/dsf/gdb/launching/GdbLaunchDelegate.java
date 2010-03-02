@@ -13,11 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -33,10 +30,7 @@ import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.macos.MacOSGdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.cdt.launch.AbstractCLaunchDelegate2;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,17 +43,14 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
  
 /**
  * The shared launch configuration delegate for the DSF/GDB debugger.
  * This delegate supports all configuration types (local, remote, attach, etc)
  */
 @ThreadSafe
-public class GdbLaunchDelegate extends LaunchConfigurationDelegate 
-    implements ILaunchConfigurationDelegate2
+public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 {
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
@@ -288,100 +279,6 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
         }
         return locator;
     }
-    
-	/**
-	 * Recursively creates a set of projects referenced by the current project
-	 * 
-	 * @param proj
-	 *            The current project
-	 * @param referencedProjSet
-	 *            A set of referenced projects
-	 * @throws CoreException
-	 *             if an error occurs while getting referenced projects from the
-	 *             current project
-	 */
-	private HashSet<IProject> getReferencedProjectSet(IProject proj, HashSet<IProject> referencedProjSet) throws CoreException {
-		// The top project is a reference too and it must be added at the top to avoid cycles
-		referencedProjSet.add(proj);
-
-		IProject[] projects = proj.getReferencedProjects();
-		for (IProject refProject : projects) {
-			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
-				getReferencedProjectSet(refProject, referencedProjSet);
-			}
-		}
-		return referencedProjSet;
-	}
-	
-	/**
-	 * Returns the order list of projects to build before launching.
-	 *  Used in buildForLaunch() 
-	 */
-	@Override
-	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
-		IProject[] orderedProjects = null;
-		ArrayList<IProject> orderedProjList = null;
-
-		ICProject cProject = LaunchUtils.verifyCProject(configuration);
-		if (cProject != null) {
-			HashSet<IProject> projectSet = getReferencedProjectSet(cProject.getProject(), new HashSet<IProject>());
-
-			String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
-			if (orderedNames != null) {
-				//Projects may not be in the build order but should still be built if selected
-				ArrayList<IProject> unorderedProjects = new ArrayList<IProject>(projectSet.size());
-				unorderedProjects.addAll(projectSet);
-				orderedProjList = new ArrayList<IProject>(projectSet.size());
-
-				for (String projectName : orderedNames) {
-					for (IProject proj : unorderedProjects) {
-						if (proj.getName().equals(projectName)) {
-							orderedProjList.add(proj);
-							unorderedProjects.remove(proj);
-							break;
-						}
-					}
-				}
-
-				// Add any remaining projects to the end of the list
-				orderedProjList.addAll(unorderedProjects);
-
-				orderedProjects = orderedProjList.toArray(new IProject[orderedProjList.size()]);
-			} else {
-				// Try the project prerequisite order then
-				IProject[] projects = projectSet.toArray(new IProject[projectSet.size()]);
-				orderedProjects = ResourcesPlugin.getWorkspace().computeProjectOrder(projects).projects;
-			}
-		}
-		return orderedProjects;
-	}
-
-	/* Used in finalLaunchCheck() */
-	@Override
-	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
-		return getBuildOrder(configuration, mode);
-	}
-
-	/**
-	 * Searches for compile errors in the specified project
-	 * Used in finalLaunchCheck() 
-	 * @param proj
-	 *            The project to search
-	 * @return true if compile errors exist, otherwise false
-	 */
-	@Override
-	protected boolean existsProblems(IProject proj) throws CoreException {
-		IMarker[] markers = proj.findMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-		if (markers.length > 0) {
-			for (IMarker marker : markers) {
-				Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-				if (severity != null) {
-					return severity.intValue() >= IMarker.SEVERITY_ERROR;
-				}
-			}
-		}
-		return false;
-	}
 	
 	private boolean isNonStopSupported(String version) {
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
@@ -412,5 +309,10 @@ public class GdbLaunchDelegate extends LaunchConfigurationDelegate
 		}
 
 		return new GdbDebugServicesFactory(version);
+	}
+
+	@Override
+	protected String getPluginID() {
+		return GdbPlugin.PLUGIN_ID;
 	}
 }

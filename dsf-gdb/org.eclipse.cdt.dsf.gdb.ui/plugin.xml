@@ -9,7 +9,7 @@
             id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.mainTab"
             group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
             name="%launchTab.main.name"
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+            class="org.eclipse.cdt.launch.ui.CMainTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
       </tab>
       <tab id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.argumentsTab"

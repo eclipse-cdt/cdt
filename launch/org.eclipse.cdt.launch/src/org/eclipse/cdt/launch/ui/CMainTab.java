@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -971,11 +971,11 @@ public class CMainTab extends CLaunchConfigurationTab {
     	    ILaunchDelegate preferredDelegate = config.getPreferredDelegate(set);
     	    if (preferredDelegate == null) {
     	        if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP)) {
-    	            config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.localCLaunch");
+    	            config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"); //$NON-NLS-1$
     	        } else if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH)) {
-                    config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.localCAttachLaunch");
+                    config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"); //$NON-NLS-1$
     	        } else if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM)) {
-                    config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.coreFileCLaunch");
+                    config.setPreferredLaunchDelegate(set, "org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"); //$NON-NLS-1$
                 } 
     	    }
 	    } catch (CoreException e) {}

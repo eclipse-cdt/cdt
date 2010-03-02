@@ -1901,6 +1901,8 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private BigInteger getTopAddress() {
 		BigInteger topAddress = getAddressOfLine(fViewer.getTopIndex());
 		if (topAddress.equals(fStartAddress)) {
+			// in rare cases, the top line can be '...'
+			// don't use it as reference, take the next line
 			topAddress = getAddressOfLine(fViewer.getTopIndex() + 1);
 		}
 		return topAddress;

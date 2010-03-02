@@ -193,7 +193,12 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
             }};
             fExecutor.execute(query);
             try {
-                return query.get();
+                String result = query.get();
+                if ((result != null) && (result.length() == 0)) {
+                	// interface javadoc says we should return null 
+                	result = null; 
+                }
+                return result;
             } catch (InterruptedException e) { assert false : "Interrupted exception in DSF executor";  //$NON-NLS-1$
             } catch (ExecutionException e) { 
                 if (e.getCause() instanceof CoreException) {

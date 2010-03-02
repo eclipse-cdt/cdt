@@ -143,11 +143,16 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 				return fProgramPath; // return empty path
 			}
 			
-			// get current project
+			// Get current project. Unlike CDI, DSF supports debugging
+			// executables that are not in an Eclipse project, so this may be
+			// null for a DSF session. See bugzilla 304433.
+			ICProject project = null;
 			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-			ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
-			if (project == null || !project.exists()) {
-				return fProgramPath; // return empty path
+			if (projectName != null) {
+				project = CoreModel.getDefault().getCModel().getCProject(projectName);
+				if (project == null || !project.exists()) {
+					return fProgramPath; // return empty path
+				}
 			}
 	
 			// get program name
@@ -159,7 +164,23 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 			// get executable file
 			IFile exeFile = null;
 			try {
-				exeFile = project.getProject().getFile(new Path(programName));
+				if (project != null) {
+					exeFile = project.getProject().getFile(new Path(programName));
+				}
+				else {
+					// A DSF launch config need not reference a project. Try
+					// treating program name as either an absolute path or a
+					// path relative to the working directory
+					IPath path = new Path(programName);
+					if (path.toFile().exists()) {
+						fProgramPath = path;
+						return fProgramPath;
+					}
+					else {
+						return fProgramPath; // return empty path
+					}
+				}
+				
 			}
 			catch (IllegalArgumentException e){
 				return fProgramPath; // return empty path

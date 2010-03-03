@@ -42,6 +42,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.gdb.GDBTypeParser;
+import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
@@ -207,6 +209,7 @@ public class MIVariableManager implements ICommandControl {
 		// The full expression that can be used to characterize this object
 		private String fullExp = null;
 		private String type = null;
+		private GDBType gdbType;
 		private int numChildren = 0;
 		private Boolean editable = null;
 
@@ -254,21 +257,21 @@ public class MIVariableManager implements ICommandControl {
 		
 		public String getExpression() { return fullExp; }
 		public String getType() { return type; }
+
+		/** @since 3.0 */
+		public GDBType getGDBType() { return gdbType; }
 		public int getNumChildren() { return numChildren; }
 		public String getValue(String format) { return valueMap.get(format); }
 		
         public ExpressionInfo[] getChildren() { return children; }
 
         
-        //FIX replace these methods with CDT's GDBTypeParser (see bug 200897 comment #5)
-        // int(*)[5] is a pointer to an array (so it is a pointer but not an array) (e.g., &b where int b[5])
-        // int *[5] is an array of pointers (so it is an array but not a pointer) (e.g., int *b[5])
-		public boolean isArray() { return (getType() == null) ? false : getType().endsWith("]") && !getType().contains("(*)") ; }//$NON-NLS-1$//$NON-NLS-2$
-		public boolean isPointer() { return (getType() == null) ? false : getType().contains("*")&& !isArray(); }//$NON-NLS-1$
-		public boolean isMethod() { return (getType() == null) ? false : getType().contains("()"); }//$NON-NLS-1$
+		public boolean isArray() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.ARRAY; }
+		public boolean isPointer() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.POINTER; }
+		public boolean isMethod() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION; }
 		// A complex variable is one with children.  However, it must not be a pointer since a pointer has one child
 		// according to GDB, but is still a 'simple' variable
-		public boolean isComplex() { return (getType() == null) ? false : getNumChildren() > 0 && !isPointer(); }
+		public boolean isComplex() { return (getGDBType() == null) ? false : getGDBType().getType() != GDBType.POINTER && getNumChildren() > 0; }
 		
 		public void setGdbName(String n) { gdbName = n; }
 		public void setCurrentFormat(String f) { format = f; }
@@ -276,6 +279,7 @@ public class MIVariableManager implements ICommandControl {
 		public void setExpressionData(String fullExpression, String t, int num) {
 			fullExp = fullExpression;
 			type = t;
+			gdbType = fGDBTypeParser.parse(t);
 			numChildren = num;
 		}
 
@@ -1324,6 +1328,11 @@ public class MIVariableManager implements ICommandControl {
 		}
 	}
 
+    /**
+     * @since 3.0
+     */
+    private static final GDBTypeParser fGDBTypeParser = new GDBTypeParser();
+    
 	private final DsfSession fSession;
 	
 	/** Provides access to the GDB/MI back-end */
@@ -1586,6 +1595,7 @@ public class MIVariableManager implements ICommandControl {
             								exprCtx.getRelativeExpression(),
             								getData().getNumChildren(), 
             								getData().getType(),
+            								getData().getGDBType(),
             								!getData().isComplex()));
             				drm.done();
             				processCommandDone(token, drm.getData());

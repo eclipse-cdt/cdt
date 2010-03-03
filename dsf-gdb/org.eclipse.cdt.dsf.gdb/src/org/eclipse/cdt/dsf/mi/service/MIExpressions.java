@@ -33,6 +33,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetAttributes;
@@ -71,7 +72,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
      * 
      * @since 3.0
      */
-   	public static final String DETAILS_FORMAT = "Details";
+   	public static final String DETAILS_FORMAT = "Details"; //$NON-NLS-1$
    	
    	/* The order given here is the order that will be used by DSF in the Details Pane */
    	private static final String[] FORMATS_SUPPORTED = new String[] { 
@@ -322,19 +323,29 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 		private final String exprType;
 		private final int numChildren;
 		private final boolean editable;
+		private final BasicType fBasicType;
 
 		/**
 		 * ExpressionDMData constructor.
 		 */
 		public ExpressionDMData(String expr, String type, int num, boolean edit) {
-			relativeExpression = expr;
-			exprType = type;
-			numChildren = num;
-			editable = edit;
+		    this (expr, type, num, edit, null);
 		}
 
+		/**
+         * ExpressionDMData constructor.
+		 * @since 3.0
+         */
+        public ExpressionDMData(String expr, String type, int num, boolean edit, BasicType basicType) {
+            relativeExpression = expr;
+            exprType = type;
+            numChildren = num;
+            editable = edit;
+            fBasicType = basicType;
+        }
+
 		public BasicType getBasicType() {
-			return null;
+		    return fBasicType;
 		}
 		
 		public String getEncoding() {
@@ -603,16 +614,44 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 			final DataRequestMonitor<IExpressionDMData> rm) 
 	{
 	    if (dmc instanceof MIExpressionDMC) {
-    		fExpressionCache.execute(
-    				new ExprMetaGetVar(dmc), 
-    				new DataRequestMonitor<ExprMetaGetVarInfo>(getExecutor(), rm) {
-    					@Override
-    					protected void handleSuccess() {
-    						rm.setData(new ExpressionDMData(getData().getExpr(), 
-    								getData().getType(), getData().getNumChildren(), getData().getEditable()));
-    						rm.done();
-    					}
-    				});
+            fExpressionCache.execute(
+                new ExprMetaGetVar(dmc), 
+                new DataRequestMonitor<ExprMetaGetVarInfo>(getExecutor(), rm) {
+                    @Override
+                    protected void handleSuccess() {
+                        IExpressionDMData.BasicType basicType = null;
+
+                        GDBType gdbType = getData().getGDBType();
+                        
+                        if (gdbType != null) {
+                            switch (gdbType.getType()) {
+                            case GDBType.ARRAY:
+                                basicType = IExpressionDMData.BasicType.array;
+                                break;
+                            case GDBType.FUNCTION:
+                                basicType = IExpressionDMData.BasicType.function;
+                                break;
+                            case GDBType.POINTER:
+                            case GDBType.REFERENCE:
+                                basicType =  IExpressionDMData.BasicType.pointer;
+                                break;
+                            case GDBType.GENERIC:
+                            default:
+                                if (getData().getNumChildren() > 0) {
+                                    basicType =  IExpressionDMData.BasicType.array;
+                                } else {
+                                    basicType =  IExpressionDMData.BasicType.basic;
+                                }
+                                break;
+                            }
+                        }
+                        
+                        rm.setData(new ExpressionDMData(
+                            getData().getExpr(),getData().getType(), getData().getNumChildren(), 
+                            getData().getEditable(), basicType));
+                        rm.done();
+                    }
+                });	        
 	    } else if (dmc instanceof InvalidContextExpressionDMC) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context for evaluating expressions.", null)); //$NON-NLS-1$
             rm.done();

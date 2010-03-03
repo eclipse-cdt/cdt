@@ -23,9 +23,16 @@ import org.eclipse.jface.wizard.Wizard;
  * This wizard provides a method by which the user can 
  * add a C nature to a project that previously had no nature associated with it.
  * 
+ * This wizard was used for 3.X style projects. It is left here for compatibility
+ * reasons only. The wizard is superseded by MBS Project Conversion Wizard,
+ * class {@code org.eclipse.cdt.managedbuilder.ui.wizards.ConvertToMakeWizard}.
+ * 
+ * @deprecated as of CDT 4.0.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class ConvertToMakeProjectWizard extends ConversionWizard {
 
 	private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$

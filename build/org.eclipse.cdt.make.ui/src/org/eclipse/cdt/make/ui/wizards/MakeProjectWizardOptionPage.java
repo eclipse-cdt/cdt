@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.Preferences;
  * This page may be used by clients as-is; it may be also be subclassed to suit.
  * </p>
  * <p>
- * Example useage:
+ * Example usage:
  * <pre>
  * mainPage = new CProjectWizardPage("basicCProjectPage");
  * mainPage.setTitle("Project");
@@ -43,9 +43,13 @@ import org.eclipse.core.runtime.Preferences;
  * </pre>
  * </p>
  * 
+ * @deprecated as of CDT 4.0. This option page was used for New Project Wizard
+ * for 3.X style projects.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	MakeWizardOptionBlock makeWizardBlock; 
 	
@@ -64,11 +68,11 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 		}
 		
 		public void setupHelpContextIds(){
-			List pages = getOptionPages();
+			List<ICOptionPage> pages = getOptionPages();
 			
-			Iterator iter = pages.iterator();
+			Iterator<ICOptionPage> iter = pages.iterator();
 			for( int i = 0; i < 6 && iter.hasNext(); i++ ) {
-				ICOptionPage page = (ICOptionPage) iter.next();
+				ICOptionPage page = iter.next();
 				
 				String id = null;
 				switch( i ){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+/**
+ * @deprecated as of CDT 4.0. This property page was used to set properties
+ * "C/C++ Make Project" for 3.X style projects.
+ * This page lives dormant as of writing (CDT 7.0) but may get activated for
+ * {@code org.eclipse.cdt.make.core.makeNature} project (3.X style).
+ */
+@Deprecated
 public class MakePropertyPage extends PropertyPage implements ICOptionContainer {
 
 	MakeProjectOptionBlock fOptionBlock;
@@ -40,11 +47,13 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 	    fOptionBlock = new MakeProjectOptionBlock();
 	}
 
+	@Override
 	public void setContainer(IPreferencePageContainer preferencePageContainer) {
 	    super.setContainer(preferencePageContainer);
 	    fOptionBlock.setOptionContainer(this);
 	}	
 	
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout());
@@ -72,6 +81,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		noDefaultAndApplyButton();
 	}
 
+	@Override
 	public boolean performOk() {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -99,6 +109,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		return null;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		fOptionBlock.setVisible(visible);
@@ -110,11 +121,13 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		setErrorMessage(fOptionBlock.getErrorMessage());
 	}
 
+	@Override
 	protected void performDefaults() {
 		fOptionBlock.performDefaults();
 		super.performDefaults();
 	}
 
+	@Override
 	public boolean isValid() {
 		updateContainer();
 		return super.isValid();

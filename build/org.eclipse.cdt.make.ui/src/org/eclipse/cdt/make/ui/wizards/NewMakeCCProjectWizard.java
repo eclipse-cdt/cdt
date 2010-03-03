@@ -19,9 +19,16 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
+ * This wizard was used for 3.X style projects. It is left here for compatibility
+ * reasons only. The wizard is superseded by MBS C++ Project Wizard,
+ * class {@link org.eclipse.cdt.ui.wizards.CCProjectWizard}.
+ * 
+ * @deprecated as of CDT 4.0.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class NewMakeCCProjectWizard extends NewMakeProjectWizard {
 
 	private static final String WZ_TITLE = "MakeCCWizard.title"; //$NON-NLS-1$

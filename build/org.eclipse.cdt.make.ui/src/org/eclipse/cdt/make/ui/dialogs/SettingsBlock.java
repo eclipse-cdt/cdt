@@ -53,9 +53,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 /**
+ * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
+ * for 3.X style projects.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class SettingsBlock extends AbstractCOptionPage {
 
 	private static final String PREFIX = "SettingsBlock"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 
+/**
+ * @deprecated as of CDT 4.0. This option block was used to set preferences/properties
+ * for 3.X style projects.
+ */
+@Deprecated
 public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 	private ICOptionContainer optionContainer;
 	public MakeProjectOptionBlock() {
@@ -38,6 +43,7 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 		optionContainer = parent;
 	}
 
+	@Override
 	protected void addTabs() {
 		addTab(new SettingsBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
 		addTab(new MakeEnvironmentBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
@@ -46,17 +52,19 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 		addTab(new DiscoveryOptionsBlock());
 	}
 
+	@Override
 	public void setOptionContainer(ICOptionContainer parent) {
 		super.setOptionContainer( parent );
 		optionContainer = parent;
 	}
+	@Override
 	public Control createContents(Composite parent) {
 		Control control = super.createContents( parent );
 		
-		List optionPages = getOptionPages();
-		Iterator iter = optionPages.iterator();
+		List<ICOptionPage> optionPages = getOptionPages();
+		Iterator<ICOptionPage> iter = optionPages.iterator();
 		for( int i = 0; i < 4 && iter.hasNext(); i++ ){
-			ICOptionPage page = (ICOptionPage) iter.next();
+			ICOptionPage page = iter.next();
 			IWorkbenchHelpSystem helpSystem = MakeUIPlugin.getDefault().getWorkbench().getHelpSystem();
 			if( optionContainer != null && optionContainer instanceof MakePropertyPage )
 				switch( i ){

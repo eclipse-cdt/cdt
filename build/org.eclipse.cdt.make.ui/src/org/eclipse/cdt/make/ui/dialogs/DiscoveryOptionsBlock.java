@@ -32,6 +32,7 @@ import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -50,12 +51,16 @@ import org.eclipse.swt.widgets.Label;
 /**
  *  A dialog to set scanner config discovery options.
  * 
+ * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
+ * for 3.X style projects.
+ * 
  * @author vhirsl
  * @since 3.0
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation"; //$NON-NLS-1$
 
@@ -208,8 +213,8 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
             }
         });
         // fill the combobox and set the initial value
-        for (Iterator items = getDiscoveryProfileIdList().iterator(); items.hasNext();) {
-            String profileId = (String)items.next();
+        for (Iterator<String> items = getDiscoveryProfileIdList().iterator(); items.hasNext();) {
+            String profileId = items.next();
             String pageName = getDiscoveryProfileName(profileId);
             if (pageName != null) {
                 profileComboBox.add(pageName);
@@ -330,10 +335,10 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         ICProject cProject = CoreModel.getDefault().create(project);
         if (cProject != null) {
             IPathEntry[] entries = cProject.getRawPathEntries();
-            List newEntries = new ArrayList(Arrays.asList(entries));
+            List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
             if (!newEntries.contains(container)) {
                 newEntries.add(container);
-                cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
+                cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
             }
         }
         // create a new discovered scanner config store
@@ -347,7 +352,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         String profileId = getBuildInfo().getSelectedProfileId();
         ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
                 getSCProfileConfiguration(profileId).getProfileScope();
-        List changedResources = new ArrayList();
+        List<IResource> changedResources = new ArrayList<IResource>();
 //        changedResources.add(project.getFullPath());
         changedResources.add(project);
         MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(

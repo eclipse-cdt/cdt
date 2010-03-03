@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
+ * for 3.X style projects.
+ */
+@Deprecated
 public class ErrorParserBlock extends AbstractErrorParserBlock {
 
 	// make builder enabled

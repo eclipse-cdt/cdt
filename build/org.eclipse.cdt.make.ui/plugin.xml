@@ -1,52 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
      <extension-point id="DiscoveryProfilePage" name="%discoveryProfilePage.name" schema="schema/DiscoveryProfilePage.exsd"/>
 
-
-   <!--extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            name="%WizardNewCMakeProject.name"
-            icon="icons/etool16/newc_app.gif"
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.make.ui.wizards.NewMakeCProjectWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.NewMakeCProjectWizard">
-         <description>
-            %WizardNewCMakeProject.description
-         </description>
-      </wizard>
-      <wizard
-            name="%WizardConvertMakeProject.name"
-            icon="icons/etool16/convert-normal.gif"
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.make.ui.wizards.ConvertToMakeProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
-         <description>
-            %WizardConvertMakeProject.description
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IProject">
-         </selection>
-      </wizard-->
-<!-- For C++ Wizards -->
-      <!--wizard
-            name="%WizardNewCCMakeProject.name"
-            icon="icons/etool16/newcc_app.gif"
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.make.ui.wizards.NewMakeCCProjectWizard">
-         <description>
-            %WizardNewCCMakeProject.description
-         </description>
-      </wizard>
-   </extension-->
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -211,6 +167,12 @@
             category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
+      </page>
+      <page
+            name="%PreferenceMakeProject.name"
+            category="org.eclipse.cdt.make.ui.preferences.MakePreferencePage"
+            class="org.eclipse.cdt.make.internal.ui.preferences.NewMakeProjectPreferencePage"
+            id="org.eclipse.cdt.make.ui.preferences.MakeProjectPreferencePage">
       </page>
       <page
             name="%PreferenceMakefileEditor.name"

@@ -686,6 +686,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			th= e;
 		} catch (StackOverflowError e) {
 			th= e;
+		} catch (OutOfMemoryError e) {
+			th= e;
 		} catch (Error e) {
 			try {
 				swallowError(path, e);
@@ -792,23 +794,25 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		 */
 		if (e instanceof CoreException) {
 			s=((CoreException)e).getStatus();
-			if (s != null && s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE) {
+			if (s.getCode() == CCorePlugin.STATUS_PDOM_TOO_LARGE) {
 				if (CCorePlugin.PLUGIN_ID.equals(s.getPlugin()))
 					throw (CoreException) e;
 			}
-		}
-		if (e instanceof CoreException) {
-			s= ((CoreException) e).getStatus();
+
+			// mask errors in order to avoid dialog from platform
 			Throwable exception = s.getException();
-			if (exception instanceof OutOfMemoryError || exception instanceof StackOverflowError) {
-				// mask errors in order to avoid dialog from platform
-				e= new InvocationTargetException(exception);
-				exception= null;
-			}
+			if (exception != null) {
+				Throwable masked= getMaskedException(exception);
+				if (masked != exception) {
+					e= exception;
+					exception= null;
+				}
+			} 
 			if (exception == null) {
 				s= new Status(s.getSeverity(), s.getPlugin(), s.getCode(), s.getMessage(), e);
 			}
 		} else {
+			e= getMaskedException(e);
 			s= createStatus(getMessage(MessageKind.errorWhileParsing, file), e);
 		}
 		logError(s);
@@ -817,9 +821,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 
-	/**
-	 * @param s
-	 */
+	private Throwable getMaskedException(Throwable e) {
+		if (e instanceof OutOfMemoryError || e instanceof StackOverflowError || e instanceof AssertionError) {
+			return new InvocationTargetException(e);
+		}
+		return e;
+	}
+	
 	protected void logError(IStatus s) {
 		CCorePlugin.log(s);
 	}

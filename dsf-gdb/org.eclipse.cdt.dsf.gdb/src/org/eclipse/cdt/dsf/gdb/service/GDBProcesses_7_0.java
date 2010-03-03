@@ -729,14 +729,27 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						}
 					});
 		} else {
-			IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[fDebuggedProcessesAndNames.size()];
-			int i = 0;
-			for (String groupId : fDebuggedProcessesAndNames.keySet()) {
-		    	IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
-		    	containerDmcs[i++] = createContainerContext(processDmc, groupId);
-			}
-			rm.setData(containerDmcs);
-			rm.done();
+			fContainerCommandCache.execute(
+					fCommandFactory.createMIListThreadGroups(controlDmc),
+					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(makeContainerDMCs(controlDmc, getData().getGroupList()));
+							rm.done();
+						}
+						@Override
+						protected void handleFailure() {
+							// If the target is not available, generate the list ourselves
+							IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[fDebuggedProcessesAndNames.size()];
+							int i = 0;
+							for (String groupId : fDebuggedProcessesAndNames.keySet()) {
+								IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
+								containerDmcs[i++] = createContainerContext(processDmc, groupId);
+							}
+							rm.setData(containerDmcs);
+							rm.done();
+						}
+					});
 		}
 	}
 
@@ -761,6 +774,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			}
 			return executionDmcs;
 		}
+	}
+
+	private IMIContainerDMContext[] makeContainerDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
+		IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[groups.length];
+		for (int i = 0; i < groups.length; i++) {
+			String groupId = groups[i].getGroupId();
+			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
+			containerDmcs[i] = createContainerContext(procDmc, groupId);
+		}
+		return containerDmcs;
 	}
 
     public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {

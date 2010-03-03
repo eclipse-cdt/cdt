@@ -275,4 +275,27 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0); 
 	}
+	
+	// #error // 
+	// #warning // 
+	// #pragma  // not marked as problem
+	// #define //
+	// #include //
+	// #undef //
+	// #if //
+	// #endif
+	// #ifdef //
+	// #endif
+	// #ifndef //
+	// #endif
+	// #if 0
+	// #elif //
+	// #endif
+	// a
+	public void testMissingArgument_Bug303969() throws Exception {
+		initializeScanner();
+		validateIdentifier("a");
+		validateEOF();
+		validateProblemCount(9); 
+	}
 }

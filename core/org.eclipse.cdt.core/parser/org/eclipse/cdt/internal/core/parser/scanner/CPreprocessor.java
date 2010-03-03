@@ -1110,6 +1110,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	case IPreprocessorDirective.ppError:
     		int condOffset= lexer.nextToken().getOffset();
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		// Missing argument
+			if (condEndOffset < condOffset) {
+				condOffset= condEndOffset;
+			}
     		if (fCurrentContext.getCodeState() == CodeState.eActive) {
     			int endOffset= lexer.currentToken().getEndOffset();
     			final char[] warning= lexer.getInputChars(condOffset, condEndOffset);
@@ -1123,6 +1127,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	case IPreprocessorDirective.ppPragma:
     		condOffset= lexer.nextToken().getOffset();
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		// Missing argument
+			if (condEndOffset < condOffset) {
+				condOffset= condEndOffset;
+			}
     		if (fCurrentContext.getCodeState() == CodeState.eActive) {
     			int endOffset= lexer.currentToken().getEndOffset();
     			fLocationMap.encounterPoundPragma(startOffset, condOffset, condEndOffset, endOffset);

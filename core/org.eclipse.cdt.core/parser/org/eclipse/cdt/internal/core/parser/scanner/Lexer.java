@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * In short this class converts line endings (to '\n') and trigraphs 
@@ -1139,6 +1140,9 @@ final public class Lexer implements ITokenSequence {
 	 */
 	public char[] getInputChars(int offset, int endOffset) {
 		final int length= endOffset-offset;
+		if (length <= 0) {
+			return CharArrayUtils.EMPTY;
+		}
 		final char[] result= new char[length];
 		fInput.arraycopy(offset, result, 0, length);
 		return result;

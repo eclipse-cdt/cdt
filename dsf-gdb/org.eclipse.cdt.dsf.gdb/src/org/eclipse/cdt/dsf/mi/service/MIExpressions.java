@@ -638,7 +638,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
                             case GDBType.GENERIC:
                             default:
                                 if (getData().getNumChildren() > 0) {
-                                    basicType =  IExpressionDMData.BasicType.array;
+                                    basicType =  IExpressionDMData.BasicType.composite;
                                 } else {
                                     basicType =  IExpressionDMData.BasicType.basic;
                                 }

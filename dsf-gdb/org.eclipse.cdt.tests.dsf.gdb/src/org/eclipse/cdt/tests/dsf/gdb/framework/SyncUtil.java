@@ -97,6 +97,14 @@ public class SyncUtil {
 		tracker.dispose();
 	}
 
+	public static MIStoppedEvent step(int numSteps, final StepType stepType) throws Throwable {
+	    MIStoppedEvent retVal = null;
+		for (int i=0; i<numSteps; i++) {
+		    retVal = step(stepType, DefaultTimeouts.get(ETimeout.step));
+		}
+		return retVal;
+	}
+
 	public static MIStoppedEvent step(final StepType stepType, int numSteps, int timeout) throws Throwable {
 	    MIStoppedEvent retVal = null;
 		for (int i=0; i<numSteps; i++) {

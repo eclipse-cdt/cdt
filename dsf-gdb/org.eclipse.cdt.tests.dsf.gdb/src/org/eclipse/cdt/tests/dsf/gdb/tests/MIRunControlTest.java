@@ -239,7 +239,7 @@ public class MIRunControlTest extends BaseTestCase {
          	IMIExecutionDMContext dmc1 = (IMIExecutionDMContext)data[0];
           	IMIExecutionDMContext dmc2 = (IMIExecutionDMContext)data[1];
           	// Context ids should be 1 & 2 
-          	Assert.assertTrue(dmc1.getThreadId()==2 && dmc2.getThreadId() == 1);
+          	Assert.assertTrue(dmc1.getThreadId()==1 && dmc2.getThreadId() == 2);
         }
      } 
 

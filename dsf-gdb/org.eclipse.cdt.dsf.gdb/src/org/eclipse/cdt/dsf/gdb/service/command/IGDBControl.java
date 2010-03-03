@@ -14,12 +14,12 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 
-public interface IGDBControl extends ICommandControlService {
+public interface IGDBControl extends IMICommandControl {
 
 	void terminate(final RequestMonitor rm);
 	void initInferiorInputOutput(final RequestMonitor requestMonitor);

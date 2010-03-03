@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataDisassemble;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataDisassembleInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -33,6 +33,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 
     // Services
     ICommandControl fConnection;
+	private CommandFactory fCommandFactory;
 
     ///////////////////////////////////////////////////////////////////////////
     // AbstractDsfService
@@ -62,6 +63,8 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 
     private void doInitialize(final RequestMonitor rm) {
         fConnection = getServicesTracker().getService(ICommandControl.class);
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
 //        getSession().addServiceEventListener(this, null);
         register(new String[] { IDisassembly.class.getName(), MIDisassembly.class.getName() },
                 new Hashtable<String, String>());
@@ -107,7 +110,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         // Go for it
         String start = (startAddress != null) ? startAddress.toString() : "$pc";       //$NON-NLS-1$
         String end   = (endAddress   != null) ? endAddress.toString()   : "$pc + 100"; //$NON-NLS-1$
-        fConnection.queueCommand(new MIDataDisassemble(context, start, end, false),
+        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, false),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
                 protected void handleSuccess() {
@@ -132,7 +135,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         }
 
         // Go for it
-        fConnection.queueCommand(new MIDataDisassemble(context, filename, linenum, lines, false),
+        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, filename, linenum, lines, false),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
                 protected void handleSuccess() {
@@ -160,7 +163,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         // Go for it
         String start = (startAddress != null) ? startAddress.toString() : "$pc";       //$NON-NLS-1$
         String end   = (endAddress   != null) ? endAddress.toString()   : "$pc + 100"; //$NON-NLS-1$
-        fConnection.queueCommand(new MIDataDisassemble(context, start, end, true),
+        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, start, end, true),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
                 protected void handleSuccess() {
@@ -186,7 +189,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
         }
 
         // Go for it
-        fConnection.queueCommand(new MIDataDisassemble(context, filename, linenum, lines, true),
+        fConnection.queueCommand(fCommandFactory.createMIDataDisassemble(context, filename, linenum, lines, true),
             new DataRequestMonitor<MIDataDisassembleInfo>(getExecutor(), drm) {
                 @Override
                 protected void handleSuccess() {

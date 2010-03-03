@@ -37,9 +37,11 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -48,17 +50,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecJump;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNextInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
@@ -239,7 +231,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	///////////////////////////////////////////////////////////////////////////
 
 	private ICommandControlService fConnection;
-
+	private CommandFactory fCommandFactory;
+	
 	private boolean fTerminated = false;
 
 	// ThreadStates indexed by the execution context
@@ -277,6 +270,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	private void doInitialize(final RequestMonitor rm) {
         register(new String[]{IRunControl.class.getName(), IMIRunControl.class.getName()}, new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 		getSession().addServiceEventListener(this, null);
 		rm.done();
 	}
@@ -391,14 +385,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		MIExecInterrupt cmd = new MIExecInterrupt(context);
-		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
 	private void doSuspendContainer(IMIContainerDMContext context, final RequestMonitor rm) {
 		String groupId = context.getGroupId();
-		MIExecInterrupt cmd = new MIExecInterrupt(context, groupId);
-		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		fConnection.queueCommand(fCommandFactory.createMIExecInterrupt(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
 	// ------------------------------------------------------------------------
@@ -478,8 +470,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 		
 		threadState.fResumePending = true;
-		MIExecContinue cmd = new MIExecContinue(context);
-		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context), new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 			@Override
 			protected void handleFailure() {
 				threadState.fResumePending = false;
@@ -490,8 +481,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 	private void doResumeContainer(IMIContainerDMContext context, final RequestMonitor rm) {
 		String groupId = context.getGroupId();
-		MIExecContinue cmd = new MIExecContinue(context, groupId);
-		fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+		fConnection.queueCommand(fCommandFactory.createMIExecContinue(context, groupId), new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
 	// ------------------------------------------------------------------------
@@ -572,13 +562,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 
-		MICommand<MIInfo> cmd = null;
+		ICommand<MIInfo> cmd = null;
 		switch (stepType) {
 		case STEP_INTO:
-			cmd = new MIExecStep(dmc);
+			cmd = fCommandFactory.createMIExecStep(dmc);
 			break;
 		case STEP_OVER:
-			cmd = new MIExecNext(dmc);
+			cmd = fCommandFactory.createMIExecNext(dmc);
 			break;
 		case STEP_RETURN:
 			// The -exec-finish command operates on the selected stack frame, but here we always
@@ -590,7 +580,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			MIStack stackService = getServicesTracker().getService(MIStack.class);
 			if (stackService != null) {
 				IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
-				cmd = new MIExecFinish(topFrameDmc);
+				cmd = fCommandFactory.createMIExecFinish(topFrameDmc);
 			} else {
 				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 						"Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
@@ -599,10 +589,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			}
 			break;
 		case INSTRUCTION_STEP_INTO:
-			cmd = new MIExecStepInstruction(dmc);
+			cmd = fCommandFactory.createMIExecStepInstruction(dmc);
 			break;
 		case INSTRUCTION_STEP_OVER:
-			cmd = new MIExecNextInstruction(dmc);
+			cmd = fCommandFactory.createMIExecNextInstruction(dmc);
 			break;
 		default:
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
@@ -658,7 +648,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
     	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
     	fConnection.queueCommand(
-    			new MIBreakInsert(bpDmc, true, false, null, 0, 
+    			fCommandFactory.createMIBreakInsert(bpDmc, true, false, null, 0, 
     					          location, dmc.getThreadId()), 
     		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
     				@Override
@@ -676,7 +666,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
             		    				IBreakpointsTargetDMContext.class);
             		    		int bpId = fRunToLineActiveOperation.getBreakointId();
 
-            		    		fConnection.queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+            		    		fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
             		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
             		    		fRunToLineActiveOperation = null;
 
@@ -721,7 +711,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 
 		threadState.fResumePending = true;
 		fConnection.queueCommand(
-				new MIExecJump(dmc, location),
+				fCommandFactory.createMIExecJump(dmc, location),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleFailure() {
@@ -938,7 +928,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				// Can't use the resume() call because we 'silently' stopped
 				// so resume() will not know we are actually stopped
 				fConnection.queueCommand(
-						new MIExecContinue(fExecutionDmcToSuspend),
+						fCommandFactory.createMIExecContinue(fExecutionDmcToSuspend),
 						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			} else {
 				// We didn't suspend the thread, so we don't need to resume it
@@ -1004,7 +994,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     				// The right thread stopped but not at the right place yet
     				if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
     					fConnection.queueCommand(
-    							new MIExecContinue(fRunToLineActiveOperation.getThreadContext()),
+    							fCommandFactory.createMIExecContinue(fRunToLineActiveOperation.getThreadContext()),
     							new DataRequestMonitor<MIInfo>(getExecutor(), null));
 
     					// Don't send the stop event since we are resuming again.
@@ -1019,7 +1009,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     					IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     							IBreakpointsTargetDMContext.class);
 
-    					fConnection.queueCommand(new MIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
+    					fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
     							new DataRequestMonitor<MIInfo>(getExecutor(), null));
     					fRunToLineActiveOperation = null;
     				}
@@ -1136,7 +1126,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     				IBreakpointsTargetDMContext.class);
     		int bpId = fRunToLineActiveOperation.getBreakointId();
 
-    		fConnection.queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    		fConnection.queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
     				new DataRequestMonitor<MIInfo>(getExecutor(), null));
     		fRunToLineActiveOperation = null;
     	}

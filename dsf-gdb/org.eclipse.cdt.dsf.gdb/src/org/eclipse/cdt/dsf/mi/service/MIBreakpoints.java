@@ -33,14 +33,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCondition;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDisable;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakEnable;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakWatch;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -96,6 +89,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	// Services
 	private ICommandControl fConnection;
 	private IMIRunControl fRunControl;
+	private CommandFactory fCommandFactory;
 
 	// Service breakpoints tracking
 	// The breakpoints are stored per context and keyed on the back-end breakpoint reference
@@ -269,6 +263,8 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		fConnection = getServicesTracker().getService(ICommandControl.class);
 		fRunControl = getServicesTracker().getService(IMIRunControl.class);
 
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
         // Register for the useful events
 		getSession().addServiceEventListener(this, null);
 
@@ -360,7 +356,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 
 		// Execute the command
-		fConnection.queueCommand(new MIBreakList(context),
+		fConnection.queueCommand(fCommandFactory.createMIBreakList(context),
 			new DataRequestMonitor<MIBreakListInfo>(getExecutor(), drm) {
 				@Override
 				protected void handleSuccess() {
@@ -563,7 +559,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     		@Override
     		public void execute(final RequestMonitor rm) {
     				fConnection.queueCommand(
-						new MIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid), 
+    					fCommandFactory.createMIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid), 
 						new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {
@@ -697,7 +693,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			};
 
 			// Execute the command
-	        fConnection.queueCommand(new MIBreakWatch(context, isRead, isWrite, expression), addWatchpointDRM);
+	        fConnection.queueCommand(fCommandFactory.createMIBreakWatch(context, isRead, isWrite, expression), addWatchpointDRM);
 	}
 
 	//-------------------------------------------------------------------------
@@ -757,7 +753,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     		public void execute(final RequestMonitor rm) {
     			// Queue the command
     			fConnection.queueCommand(
-    					new MIBreakDelete(context, new int[] { reference }),
+    					fCommandFactory.createMIBreakDelete(context, new int[] { reference }),
     					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     						@Override
     						protected void handleCompleted() {
@@ -933,7 +929,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     		public void execute(final RequestMonitor rm) {
     			// Queue the command
     			fConnection.queueCommand(
-    					new MIBreakCondition(context, reference, condition),
+    					fCommandFactory.createMIBreakCondition(context, reference, condition),
     					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     						@Override
     						protected void handleSuccess() {
@@ -963,7 +959,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     							// Remove invalid condition from the back-end breakpoint
     							breakpoint.setCondition(NULL_STRING);
     							fConnection.queueCommand(
-    									new MIBreakCondition(context, reference, NULL_STRING),
+    									fCommandFactory.createMIBreakCondition(context, reference, NULL_STRING),
     									new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     										@Override
     										// The report the initial problem
@@ -1007,7 +1003,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			public void execute(final RequestMonitor rm) {
 				// Queue the command
 				fConnection.queueCommand(
-						new MIBreakAfter(context, reference, ignoreCount),
+						fCommandFactory.createMIBreakAfter(context, reference, ignoreCount),
 						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {
@@ -1052,7 +1048,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     		public void execute(final RequestMonitor rm) {
     			// Queue the command
     			fConnection.queueCommand(
-    					new MIBreakEnable(context, new int[] { reference }),
+    					fCommandFactory.createMIBreakEnable(context, new int[] { reference }),
     					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     						@Override
     						protected void handleSuccess() {
@@ -1097,7 +1093,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     		public void execute(final RequestMonitor rm) {
     			// Queue the command
     			fConnection.queueCommand(
-    					new MIBreakDisable(context, new int[] { reference }),
+    					fCommandFactory.createMIBreakDisable(context, new int[] { reference }),
     					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     						@Override
     						protected void handleSuccess() {

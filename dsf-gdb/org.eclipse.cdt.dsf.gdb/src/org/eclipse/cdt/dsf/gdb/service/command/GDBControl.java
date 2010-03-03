@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
@@ -47,18 +49,11 @@ import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
 import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecRun;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -117,8 +112,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     
     private PTY fPty;
 
-    public GDBControl(DsfSession session, ILaunchConfiguration config) { 
-        super(session, false);
+    /**
+     * @since 3.0
+     */
+    public GDBControl(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
+    	super(session, false, factory);
     }
 
     @Override
@@ -219,7 +217,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             2, TimeUnit.SECONDS);
         
         queueCommand(
-       		new MIGDBExit(fControlDmc),
+       		getCommandFactory().createMIGDBExit(fControlDmc),
             new DataRequestMonitor<MIInfo>(getExecutor(), rm) { 
                 @Override
                 public void handleCompleted() {
@@ -254,7 +252,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     			// Tell GDB to use this PTY
     			queueCommand(
-    					new MIInferiorTTYSet(fControlDmc, fPty.getSlaveName()), 
+    					getCommandFactory().createMIInferiorTTYSet(fControlDmc, fPty.getSlaveName()), 
     					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
     						@Override
     						protected void handleFailure() {
@@ -320,12 +318,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
    		IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
    		final IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 
-    	final MICommand<MIInfo> execCommand;
+    	final ICommand<MIInfo> execCommand;
     	if (fMIBackend.getSessionType() == SessionType.REMOTE) {
     		// When doing remote debugging, we use -exec-continue instead of -exec-run 
-    		execCommand = new MIExecContinue(containerDmc);
+    		execCommand = getCommandFactory().createMIExecContinue(containerDmc);
     	} else {
-    		execCommand = new MIExecRun(containerDmc, new String[0]);	
+    		execCommand = getCommandFactory().createMIExecRun(containerDmc, new String[0]);	
     	}
 
     	boolean stopInMain = false;
@@ -365,7 +363,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     		// Insert a breakpoint at the requested stop symbol.
     		queueCommand(
-    				new MIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
+    				getCommandFactory().createMIBreakInsert(fControlDmc, true, false, null, 0, stopSymbol, 0), 
     				new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), requestMonitor) { 
     					@Override
     					protected void handleSuccess() {
@@ -420,7 +418,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		if (clear) {
 			count++;
 			queueCommand(
-					new CLIUnsetEnv(getContext()),
+					getCommandFactory().createCLIUnsetEnv(getContext()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));	
 		}
 		
@@ -430,7 +428,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			String name = (String)property.getKey();
 			String value = (String)property.getValue();
 			queueCommand(
-					new MIGDBSetEnv(getContext(), name, value),
+					getCommandFactory().createMIGDBSetEnv(getContext(), name, value),
 					new DataRequestMonitor<MIInfo>(getExecutor(), countingRm));	
 		}
 		countingRm.setDoneCount(count);
@@ -564,6 +562,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             register(
                 new String[]{ ICommandControl.class.getName(), 
                               ICommandControlService.class.getName(), 
+                              IMICommandControl.class.getName(),
                               AbstractMIControl.class.getName(),
                               IGDBControl.class.getName() }, 
                 new Hashtable<String,String>());

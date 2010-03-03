@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,12 +33,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackSelectFrame;
@@ -59,6 +58,8 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Base implementation of an MI control service.  It provides basic handling 
  * of input/output channels, and processing of the commands.
@@ -66,7 +67,7 @@ import org.eclipse.core.runtime.Status;
  * Extending classes need to implement the initialize() and shutdown() methods.
  */
 public abstract class AbstractMIControl extends AbstractDsfService
-    implements ICommandControlService
+    implements IMICommandControl
 {
 	private static final String MI_TRACE_IDENTIFIER = " [MI]  "; //$NON-NLS-1$
 	
@@ -120,18 +121,21 @@ public abstract class AbstractMIControl extends AbstractDsfService
      */
     private OutputStream fTracingStream = null;
 
+    private CommandFactory fCommandFactory;
     
     public AbstractMIControl(DsfSession session) {
         super(session);
         fUseThreadAndFrameOptions = false;
+        fCommandFactory = new CommandFactory();
     }
 
     /**
-     * @since 1.1
+     * @since 3.0
      */
-    public AbstractMIControl(DsfSession session, boolean useThreadAndFrameOptions) {
+    public AbstractMIControl(DsfSession session, boolean useThreadAndFrameOptions, CommandFactory factory) {
         super(session);
         fUseThreadAndFrameOptions = useThreadAndFrameOptions;
+        fCommandFactory = factory;
     }
 
     /**
@@ -151,6 +155,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
      */
     private synchronized OutputStream getMITracingStream() {
     	return fTracingStream;
+    }
+    
+    /**
+     * @since 3.0
+     */
+    public CommandFactory getCommandFactory() {
+    	return fCommandFactory;
     }
     
     /**

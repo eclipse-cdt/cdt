@@ -32,16 +32,16 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIExecAbort;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
@@ -83,6 +83,7 @@ public class MIInferiorProcess extends Process
     private final PTY fPty;
 
     private final ICommandControlService fCommandControl;
+    private CommandFactory fCommandFactory;
 
     private IContainerDMContext fContainerDMContext;
     
@@ -145,6 +146,13 @@ public class MIInferiorProcess extends Process
     private MIInferiorProcess(ICommandControlService commandControl, final OutputStream gdbOutputStream, PTY p) {
         fCommandControl = commandControl;
         fSession = commandControl.getSession();
+        
+        if (fCommandControl instanceof IMICommandControl) {
+        	fCommandFactory = ((IMICommandControl)fCommandControl).getCommandFactory();
+        } else {
+        	// Should not happen
+        	fCommandFactory = new CommandFactory();
+        }
         
         commandControl.addEventListener(this);
         commandControl.addCommandListener(this);
@@ -282,7 +290,7 @@ public class MIInferiorProcess extends Process
                         rm.done();
                     } else {
                     	getCommandControlService().queueCommand(
-                            new MIGDBShowExitCode(getCommandControlService().getContext()), 
+                    		fCommandFactory.createMIGDBShowExitCode(getCommandControlService().getContext()), 
                             new DataRequestMonitor<MIGDBShowExitCodeInfo>(fSession.getExecutor(), rm) {
                                 @Override
                                 protected void handleSuccess() {
@@ -355,7 +363,7 @@ public class MIInferiorProcess extends Process
 
         // To avoid a RejectedExecutionException, use an executor that
         // immediately executes in the same dispatch cycle.
-        CLIExecAbort cmd = new CLIExecAbort(getCommandControlService().getContext());
+        ICommand<MIInfo> cmd = fCommandFactory.createCLIExecAbort(getCommandControlService().getContext());
         getCommandControlService().queueCommand(
             cmd,
             new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), null) { 

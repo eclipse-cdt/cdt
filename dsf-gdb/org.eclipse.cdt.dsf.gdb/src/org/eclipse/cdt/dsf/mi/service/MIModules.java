@@ -25,7 +25,7 @@ import org.eclipse.cdt.dsf.debug.service.IModules;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo.DsfMISharedInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -39,7 +39,8 @@ import org.osgi.framework.BundleContext;
  */
 public class MIModules extends AbstractDsfService implements IModules, ICachingService {
 	private CommandCache fModulesCache;
-	
+	private CommandFactory fCommandFactory;
+
     public MIModules(DsfSession session) {
         super(session);
     }
@@ -64,6 +65,9 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     	ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
     	fModulesCache = new CommandCache(getSession(), commandControl);
     	fModulesCache.setContextAvailable(commandControl.getContext(), true);
+
+    	fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
         /*
          * Make ourselves known so clients can use us.
          */
@@ -155,7 +159,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     
     public void getModules(final ISymbolDMContext symCtx, final DataRequestMonitor<IModuleDMContext[]> rm) {
     	if(symCtx != null){
-    		fModulesCache.execute(new CLIInfoSharedLibrary(symCtx),
+    		fModulesCache.execute(fCommandFactory.createCLIInfoSharedLibrary(symCtx),
 					 			  new DataRequestMonitor<CLIInfoSharedLibraryInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -184,7 +188,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     public void getModuleData(final IModuleDMContext dmc, final DataRequestMonitor<IModuleDMData> rm) {
         assert dmc != null; 
         if (dmc instanceof ModuleDMContext) {
-            fModulesCache.execute(new CLIInfoSharedLibrary(dmc),
+            fModulesCache.execute(fCommandFactory.createCLIInfoSharedLibrary(dmc),
                     new DataRequestMonitor<CLIInfoSharedLibraryInfo>(getExecutor(), rm) {
                         @Override
                         protected void handleSuccess() {

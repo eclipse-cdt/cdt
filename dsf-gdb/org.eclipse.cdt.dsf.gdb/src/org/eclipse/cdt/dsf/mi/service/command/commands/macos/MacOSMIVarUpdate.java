@@ -14,8 +14,9 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands.macos;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIVarUpdateInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.macos.MacOSMIVarUpdateInfo;
 
 /**
@@ -35,15 +36,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.macos.MacOSMIVarUpdateInfo;
  * 
  * @since 3.0
  */
-public class MacOSMIVarUpdate extends MICommand<MacOSMIVarUpdateInfo> {
+public class MacOSMIVarUpdate extends MIVarUpdate {
 
 	public MacOSMIVarUpdate(ICommandControlDMContext dmc, String name) {
+		super(dmc, name);
 		// Must use --all-values instead of 1 for Mac OS
-		super(dmc, "-var-update", new String[] { "--all-values", name }); //$NON-NLS-1$//$NON-NLS-2$
+		setOptions(new String[] { "--all-values" }); //$NON-NLS-1$
 	}
 	
     @Override
-    public MacOSMIVarUpdateInfo getResult(MIOutput out) {
+    public MIVarUpdateInfo getResult(MIOutput out) {
         return new MacOSMIVarUpdateInfo(out);
     }
 }

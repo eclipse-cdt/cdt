@@ -20,13 +20,8 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectTFile;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceDefineVariable;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceListVariables;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceSave;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStart;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStatus;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStop;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceListVariablesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStatusInfo;
@@ -318,6 +313,8 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
 
     private CommandCache fTraceCache;
 	private ICommandControlService fConnection;
+	private CommandFactory fCommandFactory;
+
 //	private ITraceRecordDMContext fCurrentRecordDmc = null;
 
 	private boolean fIsTracingActive = false;
@@ -367,6 +364,8 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
         fTraceCache = new CommandCache(getSession(), fConnection);
         fTraceCache.setContextAvailable(fConnection.getContext(), true);
         
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
 		requestMonitor.done();
 	}
 
@@ -420,7 +419,7 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
     			}
     			
     	        fConnection.queueCommand(
-    	        		new MITraceStart(context),
+    	        		fCommandFactory.createMITraceStart(context),
     	        		new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     	        			@Override
     	        			protected void handleSuccess() {
@@ -460,7 +459,7 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
     			}
     			
     	        fConnection.queueCommand(
-    	        		new MITraceStop(context),
+    	        		fCommandFactory.createMITraceStop(context),
     	        		new DataRequestMonitor<MITraceStopInfo>(getExecutor(), rm) {
     	        			@Override
     	        			protected void handleSuccess() {
@@ -517,7 +516,7 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
     	}
 
 	       fConnection.queueCommand(
-	        		new MITraceSave(context, file, remoteSave),
+	    		    fCommandFactory.createMITraceSave(context, file, remoteSave),
 	        		new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 
@@ -540,7 +539,7 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
     	}
 
 		fConnection.queueCommand(
-				new MITargetSelectTFile(context, file), 
+				fCommandFactory.createMITargetSelectTFile(context, file), 
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 	}
 	
@@ -552,7 +551,7 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
     	}
 
         fConnection.queueCommand(
-        		new MITraceStatus(context),
+        		fCommandFactory.createMITraceStatus(context),
         		new DataRequestMonitor<MITraceStatusInfo>(getExecutor(), rm) {
         			@Override
         			protected void handleSuccess() {
@@ -612,11 +611,11 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
 
 		if (varValue == null) {
 			fConnection.queueCommand(
-					new MITraceDefineVariable(context, varName),
+					fCommandFactory.createMITraceDefineVariable(context, varName),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));			
 		} else {
 			fConnection.queueCommand(
-					new MITraceDefineVariable(context, varName, varValue),
+					fCommandFactory.createMITraceDefineVariable(context, varName, varValue),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 		}
 	}
@@ -632,7 +631,7 @@ public class GDBTraceControl_7_1 extends AbstractDsfService implements IGDBTrace
     	// It may be possible to cache this call, if we can figure out that all the cases
     	// where to data can change, to clear the cache in those cases
 		fConnection.queueCommand(
-				new MITraceListVariables(context),
+				fCommandFactory.createMITraceListVariables(context),
 				new DataRequestMonitor<MITraceListVariablesInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleSuccess() {

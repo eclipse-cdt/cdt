@@ -33,12 +33,10 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackInfoDepth;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListArguments;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListFrames;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListLocals;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIArg;
@@ -155,7 +153,8 @@ public class MIStack extends AbstractDsfService
     }
 
 	private CommandCache fMICommandCache;
-	
+	private CommandFactory fCommandFactory;
+
 	// Two commands such as 
 	//  -stack-info-depth 11
 	//  -stack-info-depth 2
@@ -204,6 +203,8 @@ public class MIStack extends AbstractDsfService
         fMICommandCache = new CommandCache(getSession(), bufferedCommandControl);
         fMICommandCache.setContextAvailable(commandControl.getContext(), true);
         fRunControl = getServicesTracker().getService(IRunControl.class);
+
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
         getSession().addServiceEventListener(this, null);
         register(new String[]{IStack.class.getName(), MIStack.class.getName()}, new Hashtable<String,String>());
@@ -274,14 +275,14 @@ public class MIStack extends AbstractDsfService
 	        }
 	    }
 
-	    final MIStackListFrames miStackListCmd;
+	    final ICommand<MIStackListFramesInfo> miStackListCmd;
 	    // firstIndex is the first index retrieved
 	    final int firstIndex;
 	    if (endIndex >= 0) {
-	    	miStackListCmd = new MIStackListFrames(execDmc, startIndex, endIndex);
+	    	miStackListCmd = fCommandFactory.createMIStackListFrames(execDmc, startIndex, endIndex);
 	    	firstIndex = startIndex;
 	    } else {
-	    	miStackListCmd = new MIStackListFrames(execDmc);
+	    	miStackListCmd = fCommandFactory.createMIStackListFrames(execDmc);
 	    	firstIndex = 0;
 	    }
 		fMICommandCache.execute(
@@ -432,7 +433,7 @@ public class MIStack extends AbstractDsfService
         }
 
         fMICommandCache.execute(
-            new MIStackListFrames(execDmc),
+        	fCommandFactory.createMIStackListFrames(execDmc),
             new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
                 @Override
                 protected void handleSuccess() {
@@ -476,7 +477,7 @@ public class MIStack extends AbstractDsfService
 
         // If not, retrieve the full list of frame data.
         fMICommandCache.execute(
-            new MIStackListArguments(execDmc, true),
+        	fCommandFactory.createMIStackListArguments(execDmc, true),
             new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
                 @Override
                 protected void handleSuccess() {
@@ -556,7 +557,7 @@ public class MIStack extends AbstractDsfService
 
         if (miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT){
 	        fMICommandCache.execute(
-	            new MIStackListArguments(execDmc, true),
+	        	fCommandFactory.createMIStackListArguments(execDmc, true),
 	            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
 	                @Override
 	                protected void handleSuccess() {
@@ -576,7 +577,7 @@ public class MIStack extends AbstractDsfService
         }//if
         if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
             fMICommandCache.execute(
-                    new MIStackListLocals(frameDmc, true),
+            		fCommandFactory.createMIStackListLocals(frameDmc, true),
                     new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
                         @Override
                         protected void handleSuccess() {
@@ -638,7 +639,7 @@ public class MIStack extends AbstractDsfService
             }); 
         
 	    fMICommandCache.execute(
-                new MIStackListLocals(frameDmc, true),
+	    		fCommandFactory.createMIStackListLocals(frameDmc, true),
                 new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
                     @Override
                     protected void handleSuccess() {
@@ -670,9 +671,9 @@ public class MIStack extends AbstractDsfService
 	    		}
 	    	}
 	    	
-	    	MIStackInfoDepth depthCommand = null;
-	    	if (maxDepth > 0) depthCommand = new MIStackInfoDepth(execDmc, maxDepth);
-	    	else depthCommand = new MIStackInfoDepth(execDmc);
+	    	ICommand<MIStackInfoDepthInfo> depthCommand = null;
+	    	if (maxDepth > 0) depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc, maxDepth);
+	    	else depthCommand = fCommandFactory.createMIStackInfoDepth(execDmc);
 
 	    	fMICommandCache.execute(
 	    			depthCommand,

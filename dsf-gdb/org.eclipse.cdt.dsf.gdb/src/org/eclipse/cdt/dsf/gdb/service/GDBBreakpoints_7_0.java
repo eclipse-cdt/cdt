@@ -23,13 +23,11 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIPasscount;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -49,6 +47,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 {
 	private ICommandControl fConnection;
 	private IMIRunControl fRunControl;
+	private CommandFactory fCommandFactory;
 
 	public GDBBreakpoints_7_0(DsfSession session) {
 		super(session);
@@ -71,6 +70,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
     	// Get the services references
 		fConnection = getServicesTracker().getService(ICommandControl.class);
 		fRunControl = getServicesTracker().getService(IMIRunControl.class);
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		// Register this service
 		register(new String[] { IBreakpoints.class.getName(),
@@ -130,7 +130,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
     		public void execute(final RequestMonitor rm) {
     			// Execute the command
     			fConnection.queueCommand(
-    					new MIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid, !enabled, false),
+    					fCommandFactory.createMIBreakInsert(context, isTemporary, isHardware, condition, ignoreCount, location, tid, !enabled, false),
     					new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
     						@Override
     						protected void handleSuccess() {
@@ -203,7 +203,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 		final String condition = (String)  getProperty(attributes, MIBreakpoints.CONDITION, NULL_STRING);
 
 		fConnection.queueCommand(
-				new CLITrace(context, location, condition),
+				fCommandFactory.createCLITrace(context, location, condition),
 				new DataRequestMonitor<CLITraceInfo>(getExecutor(), drm) {
 					@Override
 					protected void handleSuccess() {
@@ -217,7 +217,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 						// The simplest way to convert from the CLITraceInfo to a MIBreakInsertInfo
 						// is to list the breakpoints and take the proper output
 						fConnection.queueCommand(
-								new MIBreakList(context),
+								fCommandFactory.createMIBreakList(context),
 								new DataRequestMonitor<MIBreakListInfo>(getExecutor(), drm) {
 									@Override
 									protected void handleSuccess() {
@@ -420,7 +420,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 
 		// Queue the command
 		fConnection.queueCommand(
-			new CLIPasscount(context, reference, ignoreCount),
+			fCommandFactory.createCLIPasscount(context, reference, ignoreCount),
 		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 		        @Override
 		        protected void handleSuccess() {

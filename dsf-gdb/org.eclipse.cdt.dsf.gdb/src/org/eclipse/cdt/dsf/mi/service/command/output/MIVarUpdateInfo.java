@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,9 @@ public class MIVarUpdateInfo extends MIInfo {
 
 	/**
 	 * For MI2 the format is now a MIList.
-	 * @param tuple
-	 * @param aList
+	 * @since 3.0
 	 */
-	void parseChangeList(MIList miList, List<MIVarChange> aList) {
+	protected void parseChangeList(MIList miList, List<MIVarChange> aList) {
 		MIValue[] values = miList.getMIValues();
 		for (int i = 0; i < values.length; ++i) {
 			if (values[i] instanceof MITuple) {
@@ -66,7 +65,10 @@ public class MIVarUpdateInfo extends MIInfo {
 		}
 	} 
 	
-	void parseChangeList(MITuple tuple, List<MIVarChange> aList) {
+	/**
+	 * @since 3.0
+	 */
+	protected void parseChangeList(MITuple tuple, List<MIVarChange> aList) {
 		MIResult[] results = tuple.getMIResults();
 		MIVarChange change = null;
 		for (int i = 0; i < results.length; i++) {

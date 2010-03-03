@@ -12,11 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.macos;
 
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /** @since 3.0 */
 public class MacOSGdbDebugServicesFactory extends GdbDebugServicesFactory {
@@ -25,6 +27,7 @@ public class MacOSGdbDebugServicesFactory extends GdbDebugServicesFactory {
 	// We have to be careful not to compare that specific version number scheme with the 
 	// FSF GDB version scheme.
 	// Use this variable when needing to differentiate between different Mac OS GDBs
+	@SuppressWarnings("unused")
 	private final String fAppleVersion;
 
 	public MacOSGdbDebugServicesFactory(String gdbVersion, String appleVersion) {
@@ -33,8 +36,8 @@ public class MacOSGdbDebugServicesFactory extends GdbDebugServicesFactory {
 	}
 
 	@Override
-	protected IExpressions createExpressionService(DsfSession session) {
-		return new MacOSGDBExpressions(session);
+	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		return new GDBControl(session, config, new MacOSCommandFactory());
 	}
 
 	@Override

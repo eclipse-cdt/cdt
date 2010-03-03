@@ -33,10 +33,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoThreads;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadListIds;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
@@ -307,6 +304,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
     private ICommandControlService fCommandControl;
 	private CommandCache fContainerCommandCache;
+	private CommandFactory fCommandFactory;
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 	// The unique id should be an empty string so that the views know not to display the fake id
@@ -349,6 +347,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 		fCommandControl = getServicesTracker().getService(ICommandControlService.class);
 		BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(fCommandControl, getExecutor(), 2);
+		
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 		
 		// This cache stores the result of a command when received; also, this cache
 		// is manipulated when receiving events.  Currently, events are received after
@@ -426,7 +426,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 				        protected void handleSuccess() {
 				        	if (getData() instanceof IMIContainerDMContext) {
 				        		IMIContainerDMContext contDmc = (IMIContainerDMContext)getData();
-				        		fContainerCommandCache.execute(new CLIInfoThreads(contDmc),
+				        		fContainerCommandCache.execute(fCommandFactory.createCLIInfoThreads(contDmc),
 				        				new DataRequestMonitor<CLIInfoThreadsInfo>(getExecutor(), rm) {
 				        		        	@Override
 				        		        	protected void handleSuccess() {
@@ -480,7 +480,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 			fCommandControl.queueCommand(
-					new CLIAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+					fCommandFactory.createCLIAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -511,7 +511,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     		// This service version cannot use -target-detach because it didn't exist
     		// in versions of GDB up to and including GDB 6.8
     		fCommandControl.queueCommand(
-    				new CLIDetach(controlDmc),
+    				fCommandFactory.createCLIDetach(controlDmc),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     					@Override
     					protected void handleSuccess() {
@@ -550,7 +550,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		if (containerDmc != null) {
 			fContainerCommandCache.execute(
-					new MIThreadListIds(containerDmc),
+					fCommandFactory.createMIThreadListIds(containerDmc),
 					new DataRequestMonitor<MIThreadListIdsInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {

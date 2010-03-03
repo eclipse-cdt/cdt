@@ -34,12 +34,12 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildCount;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildren;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetValue;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetVar;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataEvaluateExpression;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetAttributesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildCountInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.ExprMetaGetChildrenInfo;
@@ -423,7 +423,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 
 	private CommandCache fExpressionCache;
 	private MIVariableManager varManager;
-
+	private CommandFactory fCommandFactory;
 	
 	public MIExpressions(DsfSession session) {
 		super(session);
@@ -477,6 +477,8 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
         ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
         fExpressionCache.setContextAvailable(commandControl.getContext(), true);
         
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
 		requestMonitor.done();
 	}
 
@@ -644,7 +646,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
             rm.done();
     	} else {
         	fExpressionCache.execute(
-    			new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(addressDmc), 
+        		fCommandFactory.createMIDataEvaluateExpression(addressDmc), 
     			new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
     				@Override
     				protected void handleSuccess() {
@@ -657,7 +659,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
     			    	final String addrStr = tmpAddrStr;
     			    	
     					fExpressionCache.execute(
-    						new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(sizeDmc), 
+    						fCommandFactory.createMIDataEvaluateExpression(sizeDmc), 
     						new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
     							@Override
     							protected void handleSuccess() {
@@ -706,7 +708,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
         		// Starting with GDB 7.0, this format automatically supports pretty-printing, as long as
         		// GDB has been configured to support it.
 				fExpressionCache.execute(
-						new MIDataEvaluateExpression<MIDataEvaluateExpressionInfo>(exprDmc), 
+						fCommandFactory.createMIDataEvaluateExpression(exprDmc), 
 						new DataRequestMonitor<MIDataEvaluateExpressionInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {

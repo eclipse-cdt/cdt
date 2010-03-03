@@ -33,19 +33,13 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakList;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
@@ -70,6 +64,8 @@ public class SyncUtil {
     private static IExpressions fExpressions;
     private static DsfSession fSession;
 	
+    private static CommandFactory fCommandFactory;
+
     private static IContainerDMContext fGdbContainerDmc;
     private static IBreakpointsTargetDMContext fBreakpointsDmc;
     
@@ -94,6 +90,8 @@ public class SyncUtil {
 		fStack = tracker.getService(MIStack.class);
 		fExpressions = tracker.getService(IExpressions.class);
 		
+		fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
+
 		tracker.dispose();
 	}
 
@@ -138,13 +136,13 @@ public class SyncUtil {
 				// ServiceEvent telling us the program has been suspended again
 				switch(stepType) {
 				case STEP_INTO:
-					fCommandControl.queueCommand(new MIExecStep(dmc), null);
+					fCommandControl.queueCommand(fCommandFactory.createMIExecStep(dmc), null);
 					break;
 				case STEP_OVER:
-					fCommandControl.queueCommand(new MIExecNext(dmc), null);
+					fCommandControl.queueCommand(fCommandFactory.createMIExecNext(dmc), null);
 					break;
 				case STEP_RETURN:
-					fCommandControl.queueCommand(new MIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
+					fCommandControl.queueCommand(fCommandFactory.createMIExecFinish(fStack.createFrameDMContext(dmc, 0)), null);
 					break;
 				default:
 					Assert.assertTrue("Unsupported step type; " + stepType.toString(), false);
@@ -175,7 +173,7 @@ public class SyncUtil {
 				// ServiceEvent telling us the program has been suspended again
 				
 				fCommandControl.queueCommand(
-						new MIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
+						fCommandFactory.createMIExecUntil(dmc, fileName + ":" + lineNo), //$NON-NLS-1$
 						null);
 			}
 		});
@@ -232,7 +230,7 @@ public class SyncUtil {
 		};
 
 		fCommandControl.queueCommand(
-				new MIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
+				fCommandFactory.createMIBreakInsert(fBreakpointsDmc, temporary, false, null, 0, location, 0),
 			    addBreakDone);
 		
         wait.waitUntilDone(timeout);
@@ -257,7 +255,7 @@ public class SyncUtil {
 			}
 		};
 
-		fCommandControl.queueCommand(new MIBreakList(fBreakpointsDmc), listDRM);
+		fCommandControl.queueCommand(fCommandFactory.createMIBreakList(fBreakpointsDmc), listDRM);
 		
         wait.waitUntilDone(timeout);
         assertTrue(wait.getMessage(), wait.isOK());
@@ -291,7 +289,7 @@ public class SyncUtil {
 		};
 
 		fCommandControl.queueCommand(
-				new MIBreakDelete(fBreakpointsDmc, breakpointIndices), //$NON-NLS-1$
+				fCommandFactory.createMIBreakDelete(fBreakpointsDmc, breakpointIndices), //$NON-NLS-1$
 				deleteBreakDone);
 		
         wait.waitUntilDone(timeout);
@@ -310,7 +308,7 @@ public class SyncUtil {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
 				fCommandControl.queueCommand(
-						new MIExecContinue(dmc),
+						fCommandFactory.createMIExecContinue(dmc),
 						null);
 			}
 		});
@@ -338,7 +336,7 @@ public class SyncUtil {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been resumed
 				fCommandControl.queueCommand(
-						new MIExecContinue(dmc),
+						fCommandFactory.createMIExecContinue(dmc),
 						null);
 			}
 		});

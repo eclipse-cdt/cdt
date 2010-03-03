@@ -29,8 +29,7 @@ import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterNames;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -143,6 +142,8 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      *  Internal control variables.
      */
     
+	private CommandFactory fCommandFactory;
+
     private MIRegisterGroupDMC fGeneralRegistersGroupDMC; 
     private CommandCache fRegisterNameCache;	 // Cache for holding the Register Names in the single Group
     private CommandCache fRegisterValueCache;  // Cache for holding the Register Values
@@ -175,6 +176,8 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     	ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
 		BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(commandControl, getExecutor(), 2);
 		
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
 		// This cache stores the result of a command when received; also, this cache
 		// is manipulated when receiving events.  Currently, events are received after
 		// three scheduling of the executor, while command results after only one.  This
@@ -261,7 +264,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
             
             int[] regnos = {miRegDmc.getRegNo()};
             fRegisterValueCache.execute(
-                new MIDataListRegisterValues(execDmc, MIFormat.HEXADECIMAL, regnos),
+            	fCommandFactory.createMIDataListRegisterValues(execDmc, MIFormat.HEXADECIMAL, regnos),
                 new DataRequestMonitor<MIDataListRegisterValuesInfo>(getExecutor(), rm) {
                     @Override
                     protected void handleSuccess() {
@@ -319,7 +322,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         
         int[] regnos = {regDmc.getRegNo()};
         fRegisterValueCache.execute(
-            new MIDataListRegisterValues(miExecDmc, NumberFormat, regnos),
+        	fCommandFactory.createMIDataListRegisterValues(miExecDmc, NumberFormat, regnos),
             new DataRequestMonitor<MIDataListRegisterValuesInfo>(getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
@@ -476,7 +479,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         if ( groupDmc.getGroupNo() == 0 ) {
         	final IMIExecutionDMContext executionDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
         	fRegisterNameCache.execute(
-                new MIDataListRegisterNames(containerDmc),
+        		fCommandFactory.createMIDataListRegisterNames(containerDmc),
                 new DataRequestMonitor<MIDataListRegisterNamesInfo>(getExecutor(), rm) { 
                     @Override
                     protected void handleSuccess() {

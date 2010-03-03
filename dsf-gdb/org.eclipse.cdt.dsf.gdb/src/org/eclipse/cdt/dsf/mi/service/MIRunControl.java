@@ -35,21 +35,11 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIJump;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecFinish;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecNextInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadListIds;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
@@ -278,6 +268,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 
 	private ICommandControlService fConnection;
 	private CommandCache fMICommandCache;
+	private CommandFactory fCommandFactory;
     
     // State flags
 	private boolean fSuspended = true;
@@ -313,6 +304,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         fConnection = getServicesTracker().getService(ICommandControlService.class);
         BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(fConnection, getExecutor(), 2);
         
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 		// This cache stores the result of a command when received; also, this cache
 		// is manipulated when receiving events.  Currently, events are received after
 		// three scheduling of the executor, while command results after only one.  This
@@ -401,7 +393,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             	// We need a proper thread id for the debug view to select the right thread
             	// Bug 300096 comment #15 and Bug 302597
 				getConnection().queueCommand(
-						new CLIThread(containerDmc),
+						fCommandFactory.createCLIThread(containerDmc),
 						new DataRequestMonitor<CLIThreadInfo>(getExecutor(), null) {
 							@Override
 							protected void handleCompleted() {
@@ -552,9 +544,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		assert context != null;
 
 		if (doCanResume(context)) {
-            MIExecContinue cmd = null;
+            ICommand<MIInfo> cmd = null;
             if(context instanceof IContainerDMContext) {
-            	cmd = new MIExecContinue(context);
+            	cmd = fCommandFactory.createMIExecContinue(context);
             } else {
         		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
     			if (dmc == null) {
@@ -562,7 +554,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     	            rm.done();
     	            return;
     			}
-            	cmd = new MIExecContinue(dmc);//, new String[0]);
+            	cmd = fCommandFactory.createMIExecContinue(dmc);//, new String[0]);
             }
             
             fResumePending = true;
@@ -593,9 +585,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		assert context != null;
 
 		if (doCanSuspend(context)) {
-			MIExecInterrupt cmd = null;
+			ICommand<MIInfo> cmd = null;
 			if(context instanceof IContainerDMContext){
-				cmd = new MIExecInterrupt(context);
+				cmd = fCommandFactory.createMIExecInterrupt(context);
 			}
 			else {
 				IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -604,7 +596,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		            rm.done();
 		            return;
 				}
-				cmd = new MIExecInterrupt(dmc);
+				cmd = fCommandFactory.createMIExecInterrupt(dmc);
 			}
             fConnection.queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
         } else {
@@ -638,13 +630,13 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             return;
         }
 
-        MICommand<MIInfo> cmd = null;
+        ICommand<MIInfo> cmd = null;
         switch(stepType) {
             case STEP_INTO:
-                cmd = new MIExecStep(dmc, 1);
+                cmd = fCommandFactory.createMIExecStep(dmc, 1);
                 break;
             case STEP_OVER:
-                cmd = new MIExecNext(dmc);
+                cmd = fCommandFactory.createMIExecNext(dmc);
                 break;
             case STEP_RETURN:
                 // The -exec-finish command operates on the selected stack frame, but here we always
@@ -656,7 +648,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
                 MIStack stackService = getServicesTracker().getService(MIStack.class);
                 if (stackService != null) {
                     IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
-                    cmd = new MIExecFinish(topFrameDmc);
+                    cmd = fCommandFactory.createMIExecFinish(topFrameDmc);
                 } else {
                     rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
                     rm.done();
@@ -664,10 +656,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
                 }
                 break;
             case INSTRUCTION_STEP_INTO:
-                cmd = new MIExecStepInstruction(dmc, 1);
+                cmd = fCommandFactory.createMIExecStepInstruction(dmc, 1);
                 break;
             case INSTRUCTION_STEP_OVER:
-            	cmd = new MIExecNextInstruction(dmc, 1);
+            	cmd = fCommandFactory.createMIExecNextInstruction(dmc, 1);
                 break;
             default:
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
@@ -694,7 +686,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 
     public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
 		fMICommandCache.execute(
-		    new MIThreadListIds(containerDmc),
+				fCommandFactory.createMIThreadListIds(containerDmc),
 				new DataRequestMonitor<MIThreadListIdsInfo>(
 						getExecutor(), rm) {
 					@Override
@@ -750,7 +742,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         if (doCanResume(dmc)) {
             fResumePending = true;
             fMICommandCache.setContextAvailable(dmc, false);
-    		fConnection.queueCommand(new MIExecUntil(dmc, location),
+    		fConnection.queueCommand(fCommandFactory.createMIExecUntil(dmc, location),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
@@ -774,7 +766,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			fResumePending = true;
 			fMICommandCache.setContextAvailable(dmc, false);
 			fConnection.queueCommand(
-					new CLIJump(dmc, location),
+					fCommandFactory.createCLIJump(dmc, location),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleFailure() {
@@ -903,7 +895,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 				// Can't use the resume() call because we 'silently' stopped
 				// so resume() will not know we are actually stopped
 				fConnection.queueCommand(
-						new MIExecContinue(getContextToSuspend()),
+						fCommandFactory.createMIExecContinue(getContextToSuspend()),
 						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 			} else {
 				// We didn't suspend the container, so we don't need to resume it

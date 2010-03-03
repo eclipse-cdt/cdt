@@ -36,6 +36,7 @@ import org.eclipse.cdt.dsf.mi.service.MIMemory;
 import org.eclipse.cdt.dsf.mi.service.MIModules;
 import org.eclipse.cdt.dsf.mi.service.MIRegisters;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -96,9 +97,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
 		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
-			return new GDBControl_7_0(session, config);
+			return new GDBControl_7_0(session, config, new CommandFactory());
 		}
-		return new GDBControl(session, config);
+		return new GDBControl(session, config, new CommandFactory());
 	}
 
 	protected IMIBackend createBackendGDBService(DsfSession session, ILaunchConfiguration lc) {

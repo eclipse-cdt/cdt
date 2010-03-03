@@ -27,25 +27,16 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
-import org.eclipse.cdt.dsf.mi.service.command.commands.CLIRecord;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecJump;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseContinue;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseNextInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStep;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecReverseStepInstruction;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUncall;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -83,6 +74,8 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 
     private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
+	private CommandFactory fCommandFactory;
+
 	private boolean fReverseSupported = true;
 	private boolean fReverseStepping = false;
 	private boolean fReverseModeEnabled = false;
@@ -107,6 +100,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	
         fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		if (fGdb.getSessionType() == SessionType.CORE) {
 			// No execution for core files, so no support for reverse
@@ -299,9 +293,9 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     /** @since 2.0 */
 	public void reverseResume(final IExecutionDMContext context, final RequestMonitor rm) {
 		if (fReverseModeEnabled && doCanResume(context)) {
-            MIExecReverseContinue cmd = null;
+			ICommand<MIInfo> cmd = null;
             if (context instanceof IContainerDMContext) {
-            	cmd = new MIExecReverseContinue(context);
+            	cmd = fCommandFactory.createMIExecReverseContinue(context);
             } else {
         		IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
     			if (dmc == null){
@@ -309,7 +303,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	            rm.done();
     	            return;
     			}
-            	cmd = new MIExecReverseContinue(dmc);
+            	cmd = fCommandFactory.createMIExecReverseContinue(dmc);
             }
 
             setResumePending(true);
@@ -349,13 +343,13 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
             return;
         }
 
-        MICommand<MIInfo> cmd = null;
+        ICommand<MIInfo> cmd = null;
         switch(stepType) {
             case STEP_INTO:
-            	cmd = new MIExecReverseStep(dmc, 1);
+            	cmd = fCommandFactory.createMIExecReverseStep(dmc, 1);
                 break;
             case STEP_OVER:
-                cmd = new MIExecReverseNext(dmc, 1);
+                cmd = fCommandFactory.createMIExecReverseNext(dmc, 1);
                 break;
             case STEP_RETURN:
                 // The -exec-finish command operates on the selected stack frame, but here we always
@@ -367,7 +361,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
                 MIStack stackService = getServicesTracker().getService(MIStack.class);
                 if (stackService != null) {
                     IFrameDMContext topFrameDmc = stackService.createFrameDMContext(dmc, 0);
-                    cmd = new MIExecUncall(topFrameDmc);
+                    cmd = fCommandFactory.createMIExecUncall(topFrameDmc);
                 } else {
                     rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot create context for command, stack service not available.", null)); //$NON-NLS-1$
                     rm.done();
@@ -375,10 +369,10 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
                 }
                 break;
             case INSTRUCTION_STEP_INTO:
-                cmd = new MIExecReverseStepInstruction(dmc, 1);
+                cmd = fCommandFactory.createMIExecReverseStepInstruction(dmc, 1);
                 break;
             case INSTRUCTION_STEP_OVER:
-                cmd = new MIExecReverseNextInstruction(dmc, 1);
+                cmd = fCommandFactory.createMIExecReverseNextInstruction(dmc, 1);
                 break;
             default:
                 rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Given step type not supported", null)); //$NON-NLS-1$
@@ -426,7 +420,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	}
     	
     	getConnection().queueCommand(
-    			new CLIRecord(context, enable),
+    			fCommandFactory.createCLIRecord(context, enable),
     			new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
     				@Override
     				public void handleSuccess() {
@@ -452,7 +446,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
         if (doCanResume(dmc)) {
         	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
         	getConnection().queueCommand(
-        			new MIBreakInsert(bpDmc, true, false, null, 0, 
+        			fCommandFactory.createMIBreakInsert(bpDmc, true, false, null, 0, 
         					          location, dmc.getThreadId()), 
         		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
         				@Override
@@ -470,7 +464,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
                 		    				IBreakpointsTargetDMContext.class);
                 		    		int bpId = fRunToLineActiveOperation.getBreakointId();
 
-                		    		getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+                		    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
                 		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
                 		    		fRunToLineActiveOperation = null;
 
@@ -502,7 +496,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 			setResumePending(true);
 			getCache().setContextAvailable(dmc, false);
 			getConnection().queueCommand(
-					new MIExecJump(dmc, location),
+					fCommandFactory.createMIExecJump(dmc, location),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleFailure() {
@@ -532,7 +526,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     				IBreakpointsTargetDMContext.class);
     		int bpId = fRunToLineActiveOperation.getBreakointId();
 
-    		getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {bpId}),
+    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
     				new DataRequestMonitor<MIInfo>(getExecutor(), null));
     		fRunToLineActiveOperation = null;
     	}
@@ -569,7 +563,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     			// Didn't stop at the right place yet
     			if (fRunToLineActiveOperation.shouldSkipBreakpoints() && e instanceof MIBreakpointHitEvent) {
     				getConnection().queueCommand(
-    						new MIExecContinue(fRunToLineActiveOperation.getThreadContext()),
+    						fCommandFactory.createMIExecContinue(fRunToLineActiveOperation.getThreadContext()),
     						new DataRequestMonitor<MIInfo>(getExecutor(), null));
 
     				// Don't send the stop event since we are resuming again.
@@ -586,7 +580,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     				IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
     						IBreakpointsTargetDMContext.class);
 
-    				getConnection().queueCommand(new MIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
+    				getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {fRunToLineActiveOperation.getBreakointId()}),
     						new DataRequestMonitor<MIInfo>(getExecutor(), null));
     				fRunToLineActiveOperation = null;
     			}

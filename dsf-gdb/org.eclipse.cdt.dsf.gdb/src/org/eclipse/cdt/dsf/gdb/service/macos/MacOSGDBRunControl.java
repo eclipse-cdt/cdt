@@ -11,13 +11,20 @@
 
 package org.eclipse.cdt.dsf.gdb.service.macos;
 
+import java.util.Hashtable;
+
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GDBRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecInterrupt;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.MIRunControl;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
@@ -26,8 +33,39 @@ import org.eclipse.core.runtime.Status;
 /** @since 3.0 */
 public class MacOSGDBRunControl extends GDBRunControl {
 
+	private CommandFactory fCommandFactory;
+
 	public MacOSGDBRunControl(DsfSession session) {
 		super(session);
+	}
+	
+    @Override
+    public void initialize(final RequestMonitor requestMonitor) {
+    	super.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
+    		@Override
+    		protected void handleSuccess() {
+    			doInitialize(requestMonitor);
+			}
+		});
+	}
+    
+	private void doInitialize(RequestMonitor requestMonitor) {
+		// Register this service.
+		register(new String[]{ IRunControl.class.getName(), 
+                   			   IMIRunControl.class.getName(),
+				               MIRunControl.class.getName(), 
+				               GDBRunControl.class.getName(),
+				               MacOSGDBRunControl.class.getName() }, 
+				 new Hashtable<String,String>());
+
+		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+
+		requestMonitor.done();
+	}
+	
+	@Override
+	public void shutdown(RequestMonitor requestMonitor) {
+		super.shutdown(requestMonitor);
 	}
 
 	// We use the MIControl code since -exec-interrupt works with Apple gdb
@@ -42,9 +80,9 @@ public class MacOSGDBRunControl extends GDBRunControl {
 					@Override
 					protected void handleSuccess() {
 						if (getData()) {
-							MIExecInterrupt cmd = null;
+							ICommand<MIInfo> cmd = null;
 							if (context instanceof IContainerDMContext) {
-								cmd = new MIExecInterrupt(context);
+								cmd = fCommandFactory.createMIExecInterrupt(context);
 							} else {
 								IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
 								if (dmc == null) {
@@ -52,7 +90,7 @@ public class MacOSGDBRunControl extends GDBRunControl {
 									rm.done();
 									return;
 								}
-								cmd = new MIExecInterrupt(dmc);
+								cmd = fCommandFactory.createMIExecInterrupt(dmc);
 							}
 							getConnection().queueCommand(cmd, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
 						} else {

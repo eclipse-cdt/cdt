@@ -42,15 +42,13 @@ import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetAttach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetDetach;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadInfo;
+import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupCreatedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
@@ -374,7 +372,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
     private IGDBControl fCommandControl;
     private IGDBBackend fBackend;
-    
+    private CommandFactory fCommandFactory;
+
     // A cache for commands about the threadGroups
 	private CommandCache fContainerCommandCache;
 
@@ -433,6 +432,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		fCommandControl = getServicesTracker().getService(IGDBControl.class);
     	fBackend = getServicesTracker().getService(IGDBBackend.class);
     	BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(fCommandControl, getExecutor(), 2);
+
+        fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		// These caches store the result of a command when received; also, these caches
 		// are manipulated when receiving events.  Currently, events are received after
@@ -581,7 +582,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			final MIThreadDMC threadDmc = (MIThreadDMC)dmc;
 			
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-	        fThreadCommandCache.execute(new MIThreadInfo(controlDmc, threadDmc.getId()),
+	        fThreadCommandCache.execute(fCommandFactory.createMIThreadInfo(controlDmc, threadDmc.getId()),
 	        		new DataRequestMonitor<MIThreadInfoInfo>(getExecutor(), rm) {
         	        	@Override
         	        	protected void handleSuccess() {
@@ -646,7 +647,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    	
 	    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 			fCommandControl.queueCommand(
-					new MITargetAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
+					fCommandFactory.createMITargetAttach(controlDmc, ((IMIProcessDMContext)procCtx).getProcId()),
 					new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -689,7 +690,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
         	}
 
         	fCommandControl.queueCommand(
-    				new MITargetDetach(controlDmc, procDmc.getProcId()),
+        			fCommandFactory.createMITargetDetach(controlDmc, procDmc.getProcId()),
     				new DataRequestMonitor<MIInfo>(getExecutor(), rm));
     	} else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid context.", null)); //$NON-NLS-1$
@@ -719,7 +720,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		if (containerDmc != null) {
 			fThreadCommandCache.execute(
-					new MIListThreadGroups(controlDmc, containerDmc.getGroupId()),
+					fCommandFactory.createMIListThreadGroups(controlDmc, containerDmc.getGroupId()),
 					new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
@@ -767,7 +768,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 		if (controlDmc != null) {
 			fListThreadGroupsAvailableCache.execute(
-				new MIListThreadGroups(controlDmc, true),
+				fCommandFactory.createMIListThreadGroups(controlDmc, true),
 				new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), rm) {
 					@Override
 					protected void handleCompleted() {
@@ -937,7 +938,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     						// GDB is debugging a new process.  Let's fetch its name and remember it.
         					final String finalGroupId = groupId;
     						fListThreadGroupsAvailableCache.execute(
-    								new MIListThreadGroups(fCommandControl.getContext(), true),
+    								fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), true),
     								new DataRequestMonitor<MIListThreadGroupsInfo>(getExecutor(), null) {
     									@Override
     									protected void handleCompleted() {

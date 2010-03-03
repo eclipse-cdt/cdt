@@ -1175,4 +1175,25 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	getBindingFromASTName("fx(1);", 2, ICPPFunction.class);
     	getBindingFromASTName("fx(1,1);", 2, ICPPFunction.class);
 	}
+	
+	//	struct YetAnotherTest {
+	//	  void test();
+	//	  friend class InnerClass3;
+	//	  class InnerClass3 {
+	//	    void f() {
+	//	      member=0;
+	//	    }
+	//	    int member;
+	//	  };
+	//	  InnerClass3 arr[32];
+	//	};
+
+	//	#include "a.h"
+	//	void YetAnotherTest::test() {
+	//	  arr[0].member=0;
+	//	}
+	public void testXXXX_Bug303739() throws Exception {
+    	getBindingFromASTName("member=0", -2, ICPPField.class);
+	}
+
 }

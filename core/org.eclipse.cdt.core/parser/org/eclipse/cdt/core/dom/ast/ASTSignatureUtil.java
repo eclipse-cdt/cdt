@@ -604,6 +604,10 @@ public class ASTSignatureUtil {
 			// needSpace=true;
 			// break;
 			// }
+			if (needSpace) {
+				result.append(SPACE);
+				needSpace = false;
+			}
 			result.append(((IASTElaboratedTypeSpecifier) declSpec).getName());
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
 			if (needSpace) {

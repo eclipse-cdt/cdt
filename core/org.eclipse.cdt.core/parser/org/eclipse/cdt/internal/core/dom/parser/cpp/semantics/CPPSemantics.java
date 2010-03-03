@@ -1310,18 +1310,7 @@ public class CPPSemantics {
 			IASTSimpleDeclaration simpleDeclaration = (IASTSimpleDeclaration) declaration;
 			ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) simpleDeclaration.getDeclSpecifier();
 			IASTDeclarator[] declarators = simpleDeclaration.getDeclarators();
-			IScope dtorScope= scope;
-			if (declSpec.isFriend()) {
-				// Friends are added to an enclosing scope. Here we have to do that, because when this scope is re-populated 
-				// during ambiguity resolution, the enclosing scope is otherwise left as it is (without the friend).
-				try {
-					while (dtorScope != null && dtorScope.getKind() == EScopeKind.eClassType)
-						dtorScope= dtorScope.getParent();
-				} catch (DOMException e) {
-					dtorScope= null;
-				}
-			}				
-			if (dtorScope != null) {
+			if (!declSpec.isFriend()) {
 				for (IASTDeclarator declarator : declarators) {
 					IASTDeclarator innermost= null;
 					while (declarator != null) {
@@ -1334,16 +1323,21 @@ public class CPPSemantics {
 					}
 					if (innermost != null) {
 						IASTName declaratorName = innermost.getName();
-						ASTInternal.addName(dtorScope, declaratorName);
+						ASTInternal.addName(scope, declaratorName);
 					}
 				}
 			}
-	
-			// declSpec 
+			
+			// Declaration specifiers defining or declaring a type
 			IASTName specName = null;
+			final EScopeKind scopeKind = scope.getKind();
 			if (declSpec instanceof IASTElaboratedTypeSpecifier) {
-				if (declarators.length == 0 || scope.getPhysicalNode() instanceof IASTTranslationUnit) {
-					specName = ((IASTElaboratedTypeSpecifier)declSpec).getName();
+				// 3.3.1.5 Point of declaration
+				if (!declSpec.isFriend()) {
+					if (declarators.length == 0 || scopeKind == EScopeKind.eGlobal
+							|| scopeKind == EScopeKind.eNamespace) {
+						specName = ((IASTElaboratedTypeSpecifier) declSpec).getName();
+					}
 				}
 			} else if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) declSpec;
@@ -1355,18 +1349,7 @@ public class CPPSemantics {
 				    for (IASTDeclaration decl : decls) {
                         populateCache(scope, decl);
                     }
-				} else {
-					// Collect friends enclosed in nested classes
-					switch (scope.getKind()) {
-					case eLocal:
-					case eGlobal:
-					case eNamespace:
-						compSpec.accept(new FriendCollector(scope));
-						break;
-					default:
-						break;
-					}
-				}
+				} 
 			} else if (declSpec instanceof IASTEnumerationSpecifier) {
 			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
 			    specName = enumeration.getName();
@@ -1386,6 +1369,24 @@ public class CPPSemantics {
 					ASTInternal.addName(scope, specName);
 				}
 			}
+			// Collect friends and elaborated type specifiers with declarators 
+			// from nested classes
+			if (declarators.length > 0 || declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+				switch (scopeKind) {
+				case eLocal:
+				case eGlobal:
+				case eNamespace:
+					NamespaceTypeCollector visitor = new NamespaceTypeCollector(scope);
+					declSpec.accept(visitor);
+					for (IASTDeclarator dtor : declarators) {
+						dtor.accept(visitor);
+					}
+					break;
+				case eClassType:
+				case eTemplateDeclaration:
+					break;
+				}
+			}
 		} else if (declaration instanceof ICPPASTUsingDeclaration) {
 			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) declaration;
 			IASTName name = using.getName();
@@ -1400,13 +1401,28 @@ public class CPPSemantics {
 			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
 			ASTInternal.addName(scope, alias);
 		} else if (declaration instanceof IASTFunctionDefinition) {
-			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
-			if (!((ICPPASTDeclSpecifier) functionDef.getDeclSpecifier()).isFriend()) {
-				IASTFunctionDeclarator declarator = functionDef.getDeclarator();
-				
+ 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
+			final IASTDeclSpecifier declSpec = functionDef.getDeclSpecifier();
+			IASTFunctionDeclarator declarator = functionDef.getDeclarator();
+
+			if (!((ICPPASTDeclSpecifier) declSpec).isFriend()) {
 				// check the function itself
 				IASTName declName = ASTQueries.findInnermostDeclarator(declarator).getName();
 				ASTInternal.addName(scope, declName);
+			}
+			// Collect elaborated type specifiers and friends 
+			final EScopeKind scopeKind = scope.getKind();
+			switch (scopeKind) {
+			case eLocal:
+			case eGlobal:
+			case eNamespace:
+				NamespaceTypeCollector visitor = new NamespaceTypeCollector(scope);
+				declSpec.accept(visitor);
+				declarator.accept(visitor);
+				break;
+			case eClassType:
+			case eTemplateDeclaration:
+				break;
 			}
 		}
 	}

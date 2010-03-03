@@ -1121,8 +1121,7 @@ public final class CIndenter {
 			}
 			if (fToken == Symbols.TokenCLASS
 					|| fToken == Symbols.TokenSTRUCT
-					|| fToken == Symbols.TokenUNION
-					|| fToken == Symbols.TokenENUM) {
+					|| fToken == Symbols.TokenUNION) {
 				// inside a type declaration?  Only so if not preceded by '(' or ',' as in
 				// a parameter list.  To be safe, only accept ';' or EOF
 				int pos= fPosition;
@@ -1152,6 +1151,9 @@ public final class CIndenter {
 		case Symbols.TokenIDENT:
 			nextToken();
 			while (skipQualifiers()) {
+				nextToken();
+			}
+			while (fToken == Symbols.TokenMINUS || fToken == Symbols.TokenPLUS) {
 				nextToken();
 			}
 			if (fToken == Symbols.TokenCASE) {
@@ -1243,6 +1245,32 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Test whether the left brace at the current position marks an enum decl.
+	 * 
+	 * @return <code>true</code> if this looks like an enum decl.
+	 */
+	private boolean looksLikeEnumDeclaration() {
+		int pos = fPosition;
+		nextToken();
+		switch (fToken) {
+		case Symbols.TokenIDENT:
+			nextToken();
+			while (skipQualifiers()) {
+				nextToken();
+			}
+			switch (fToken) {
+			case Symbols.TokenENUM:
+				fPosition = pos;
+				return true;
+			}
+			break;
+		}
+		fPosition = pos;
+		return false;
+	}
+
+
+	/**
 	 * Test whether the colon at the current position marks an access specifier.
 	 * 
 	 * @return <code>true</code> if current position marks an access specifier
@@ -1294,7 +1322,6 @@ public final class CIndenter {
 					return fPosition;
 
 				case Symbols.TokenCLASS:
-				case Symbols.TokenENUM:
 				case Symbols.TokenSTRUCT:
 				case Symbols.TokenUNION:
 					isTypeBody= true;
@@ -1445,6 +1472,8 @@ public final class CIndenter {
 				continue;
 			case Symbols.TokenDOUBLECOLON:
 			case Symbols.TokenOTHER:
+			case Symbols.TokenMINUS:
+			case Symbols.TokenPLUS:
 				continue;
 				
 			case Symbols.TokenQUESTIONMARK:
@@ -1589,7 +1618,7 @@ public final class CIndenter {
 					int lineOffset= fDocument.getLineOffset(startLine);
 					int bound= Math.min(fDocument.getLength(), startPosition + 1);
 					if ((fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenRBRACE ||
-							fToken == Symbols.TokenLBRACE && !looksLikeArrayInitializerIntro()) &&
+							fToken == Symbols.TokenLBRACE && !looksLikeArrayInitializerIntro() && !looksLikeEnumDeclaration()) &&
 							(seenEqual || seenShiftLeft || seenRightParen)) {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
@@ -1765,6 +1794,8 @@ public final class CIndenter {
 					fIndent= fPrefs.prefArrayIndent;
 			} else if (isNamespace() || isLinkageSpec()) {
 				fIndent= fPrefs.prefNamespaceBodyIndent;
+			} else if (looksLikeEnumDeclaration()) {
+				fIndent = fPrefs.prefTypeIndent;
 			} else {
 				int typeDeclPos = matchTypeDeclaration();
 				if (typeDeclPos == CHeuristicScanner.NOT_FOUND) {
@@ -1853,6 +1884,7 @@ public final class CIndenter {
 			fPosition= pos;
 			return true;
 		}
+		fPosition= pos;
 		return false;
 	}
 
@@ -1863,18 +1895,19 @@ public final class CIndenter {
 	 * @return <code>true</code> if the next elements look like the start of a namespace declaration.
 	 */
 	private boolean isNamespace() {
+		int pos = fPosition;
+		nextToken();
 		if (fToken == Symbols.TokenNAMESPACE) {
+			fPosition = pos;
 			return true;		// Anonymous namespace
 		} else if (fToken == Symbols.TokenIDENT) {
-			int pos = fPosition;
-			int token = fToken;
 			nextToken();		// Get previous token
 			if (fToken == Symbols.TokenNAMESPACE) {
+				fPosition = pos;
 				return true;	// Named namespace
 			}
-			fToken = token;
-			fPosition = pos;
 		}
+		fPosition = pos;
 		return false;
 	}
 
@@ -1884,9 +1917,13 @@ public final class CIndenter {
 	 * @return <code>true</code> if the next elements look like the start of a linkage spec.
 	 */
 	private boolean isLinkageSpec() {
+		int pos = fPosition;
+		nextToken();
 		if (fToken == Symbols.TokenEXTERN) {
+			fPosition = pos;
 			return true;
 		}
+		fPosition = pos;
 		return false;
 	}
 
@@ -2126,6 +2163,7 @@ public final class CIndenter {
 		case Symbols.TokenGREATERTHAN:
 		case Symbols.TokenLESSTHAN:
 		case Symbols.TokenMINUS:
+		case Symbols.TokenPLUS:
 		case Symbols.TokenSHIFTRIGHT:
 		case Symbols.TokenSHIFTLEFT:
 		case Symbols.TokenDELETE:

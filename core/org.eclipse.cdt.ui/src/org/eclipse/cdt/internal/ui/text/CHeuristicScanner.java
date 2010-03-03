@@ -60,6 +60,7 @@ public final class CHeuristicScanner implements Symbols {
 	private static final char RANGLE= '>';
 	private static final char DOT= '.';
 	private static final char MINUS= '-';
+	private static final char PLUS= '+';
 	private static final char TILDE= '~';
 
 	/**
@@ -385,6 +386,8 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenARROW;
 				}
 				return TokenMINUS;
+			case PLUS:
+				return TokenPLUS;
 			case TILDE:
 				return TokenTILDE;
 		}
@@ -486,6 +489,8 @@ public final class CHeuristicScanner implements Symbols {
 				return TokenDOT;
 			case MINUS:
 				return TokenMINUS;
+			case PLUS:
+				return TokenPLUS;
 			case TILDE:
 				return TokenTILDE;
 		}

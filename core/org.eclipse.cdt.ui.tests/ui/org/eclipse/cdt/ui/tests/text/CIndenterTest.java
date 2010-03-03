@@ -850,4 +850,70 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationOfConstructorBodyWithFieldInitializer_Bug298282() throws Exception {
 		assertIndenterResult();
 	}
+
+	//class A {
+	//	enum E1 {
+	//			a=1,
+	//	b=2,
+	//	c=3
+	//	};
+	//	enum E2 {
+	//	x=1,
+	//			y=2,
+	//	z=3
+	//	};
+	//};
+	
+	//class A {
+	//	enum E1 {
+	//		a=1,
+	//		b=2,
+	//		c=3
+	//	};
+	//	enum E2 {
+	//		x=1,
+	//		y=2,
+	//		z=3
+	//	};
+	//};
+	public void testIndentationOfEnumeratorDeclWithInitializer_Bug303175() throws Exception {
+		assertIndenterResult();
+	}
+
+	//void f() {
+	//switch(i) {
+	//case -2:
+	//f();
+	//break;
+	//case -1:
+	//f();
+	//break;
+	//case 0:
+	//f();
+	//break;
+	//case +1:
+	//f();
+	//break;
+	//}
+	//}
+
+	//void f() {
+	//	switch(i) {
+	//	case -2:
+	//		f();
+	//		break;
+	//	case -1:
+	//		f();
+	//		break;
+	//	case 0:
+	//		f();
+	//		break;
+	//	case +1:
+	//		f();
+	//		break;
+	//	}
+	//}
+	public void testIndentationOfCaseWithSignedConstant_Bug304150() throws Exception {
+		assertIndenterResult();
+	}
 }

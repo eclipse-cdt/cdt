@@ -50,8 +50,8 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
-import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -762,6 +762,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		} catch (StackOverflowError e) {
 			th= e;
 		} catch (AssertionError e) {
+			th= e;
+		} catch (OutOfMemoryError e) {
 			th= e;
 		}
 		if (th != null) {

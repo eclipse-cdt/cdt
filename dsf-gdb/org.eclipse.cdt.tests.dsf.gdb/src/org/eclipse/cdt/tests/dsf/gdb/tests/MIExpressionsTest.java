@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2007, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions;
+import org.eclipse.cdt.dsf.mi.service.ClassAccessor.ExpressionDMDataAccessor;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -289,6 +290,97 @@ public class MIExpressionsTest extends BaseTestCase {
         // Now do a step and get the children again, to test the internal cache
         stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
         doTestChildren(stoppedEvent);
+    }
+    
+    /**
+     * This test makes sure we get the right number of children.
+     */
+    @Test
+    public void testChildrenCount() throws Throwable {
+        // Next we test that we can retrieve children count while reading the
+        // value and vice-versa
+
+        SyncUtil.runToLocation("testChildren");
+        MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        
+    	// First we get the expected value of the array pointer.
+        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "f");
+
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getSubExpressionCount(
+                		exprDmc, 
+                		new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+                				if (!isSuccess()) {
+                					wait.waitFinished(getStatus());
+                				} else {
+                					int count = getData();
+                					if (count != 5) {
+                						wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+                								"Failed getting count for children.  Got " + count + " instead of 5", null));
+                					} else {
+                						wait.waitFinished();
+                					}
+                				}
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+    }
+
+    /**
+     * This test makes sure we get the right number of children.
+     */
+    @Test
+    public void testChildrenCountInExpressionData() throws Throwable {
+        // Next we test that we can retrieve children count while reading the
+        // value and vice-versa
+
+        SyncUtil.runToLocation("testChildren");
+        MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
+
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        
+    	// First we get the expected value of the array pointer.
+        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "f");
+
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getExpressionData(
+                		exprDmc, 
+                		new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+                				if (!isSuccess()) {
+                					wait.waitFinished(getStatus());
+                				} else {
+                					ExpressionDMDataAccessor data = new ExpressionDMDataAccessor(getData());
+                					int count = data.getNumChildren();
+                					if (count != 5) {
+                						wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+                								"Failed getting count for children.  Got " + count + " instead of 5", null));
+                					} else {
+                						wait.waitFinished();
+                					}
+                				}
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
     }
     
     /**

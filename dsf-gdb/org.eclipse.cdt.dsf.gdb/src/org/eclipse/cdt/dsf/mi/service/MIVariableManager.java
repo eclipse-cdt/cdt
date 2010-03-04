@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Monta Vista and others.
+ * Copyright (c) 2008, 2010 Monta Vista and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,7 +210,10 @@ public class MIVariableManager implements ICommandControl {
 		private String fullExp = null;
 		private String type = null;
 		private GDBType gdbType;
-		private int numChildren = 0;
+		// A hint at the number of children.  This value is obtained
+		// from -var-create or -var-list-children.  It may not be right in the case
+		// of C++ structures, where GDB has a level of children for private/public/protected.
+		private int numChildrenHint = 0;
 		private Boolean editable = null;
 
 		// The current values of the expression for each format. (null if not known yet)
@@ -260,7 +263,33 @@ public class MIVariableManager implements ICommandControl {
 
 		/** @since 3.0 */
 		public GDBType getGDBType() { return gdbType; }
-		public int getNumChildren() { return numChildren; }
+		/** 
+		 * Returns a hint to the number of children.  This hint is often correct,
+		 * except when we are dealing with C++ complex structures where
+		 * GDB has 'private/public/protected' as children.
+		 * 
+		 * Use <code>isNumChildrenHintTrustworthy()</code> to know if the
+		 * hint can be trusted.
+		 * 
+		 * Note that a hint of 0 children can always be trusted.
+		 * 
+		 * @since 3.0 */
+		public int getNumChildrenHint() { return numChildrenHint; }
+		/** 
+		 * Returns whether the number of children hint can be 
+		 * trusted for this variable object.
+		 * 
+		 * @since 3.0 
+		 */
+		public boolean isNumChildrenHintTrustworthy() {
+			// For complex structures which are not arrays, we cannot trust the hint.
+			// This is only valid for C++, so we should even check for it using
+			// -var-info-expression.  Do we have to use -var-info-expression for each
+			// variable object, or can we do it one time ony for the whole program?
+			// Right now, we always assume we could be using C++
+			return (!isComplex() || isArray());
+		}
+ 
 		public String getValue(String format) { return valueMap.get(format); }
 		
         public ExpressionInfo[] getChildren() { return children; }
@@ -270,8 +299,9 @@ public class MIVariableManager implements ICommandControl {
 		public boolean isPointer() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.POINTER; }
 		public boolean isMethod() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION; }
 		// A complex variable is one with children.  However, it must not be a pointer since a pointer has one child
-		// according to GDB, but is still a 'simple' variable
-		public boolean isComplex() { return (getGDBType() == null) ? false : getGDBType().getType() != GDBType.POINTER && getNumChildren() > 0; }
+		// according to GDB, but is still a 'simple' variable.  
+		// Note that the numChildrenHint can be trusted when asking if the number of children is 0 or not
+		public boolean isComplex() { return (getGDBType() == null) ? false : getGDBType().getType() != GDBType.POINTER && getNumChildrenHint() > 0; }
 		
 		public void setGdbName(String n) { gdbName = n; }
 		public void setCurrentFormat(String f) { format = f; }
@@ -280,7 +310,7 @@ public class MIVariableManager implements ICommandControl {
 			fullExp = fullExpression;
 			type = t;
 			gdbType = fGDBTypeParser.parse(t);
-			numChildren = num;
+			numChildrenHint = num;
 		}
 
 		public void setValue(String format, String val) { valueMap.put(format, val); }
@@ -591,7 +621,9 @@ public class MIVariableManager implements ICommandControl {
 	        }
 	        
 			// If the variable does not have children, we can return an empty list right away
-			if (getNumChildren() == 0) {
+	        // The numChildrenHint value is trustworthy when wanting to know if there are children
+	        // at all.
+			if (getNumChildrenHint() == 0) {
 	        	// First store the empty list, for the next time
 				setChildren(new ExpressionInfo[0]);
 				rm.setData(getChildren());
@@ -604,7 +636,8 @@ public class MIVariableManager implements ICommandControl {
 	        // never need.  Using -var-list-children will create a variable object for every child
 	        // immediately, that is why won't don't want to use it for arrays.
 	        if (isArray()) {
-	        	ExpressionInfo[] childrenOfArray = new ExpressionInfo[getNumChildren()];
+	        	// We can trust the numChildrenHint value for arrays.
+	        	ExpressionInfo[] childrenOfArray = new ExpressionInfo[getNumChildrenHint()];
 	        	for (int i= 0; i < childrenOfArray.length; i++) {
 	        		String indexStr = "[" + i + "]";//$NON-NLS-1$//$NON-NLS-2$
 	        		String fullExpr = exprDmc.getExpression() + indexStr;
@@ -794,11 +827,22 @@ public class MIVariableManager implements ICommandControl {
 		 * @param rm
 		 *            The data request monitor that will hold the count of children returned
 		 */
-		private void getChildrenCount(final DataRequestMonitor<Integer> rm) {
-			// No need to lock the object or wait for it to be ready since this operation does not
-			// affect other operations
-			rm.setData(getNumChildren());
-			rm.done();
+		private void getChildrenCount(MIExpressionDMC exprDmc, final DataRequestMonitor<Integer> rm) {
+			if (isNumChildrenHintTrustworthy()){
+				rm.setData(getNumChildrenHint());
+				rm.done();
+				return;
+			}
+			
+			getChildren(
+					exprDmc, 
+					new DataRequestMonitor<ExpressionInfo[]>(fSession.getExecutor(), rm) {
+						@Override
+						protected void handleSuccess() {
+							rm.setData(getData().length);
+							rm.done();
+						}
+					});
 		}
 		
 
@@ -1590,15 +1634,36 @@ public class MIVariableManager implements ICommandControl {
             		new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
             			@Override
             			protected void handleSuccess() {
-            				drm.setData(
-            						new ExprMetaGetVarInfo(
-            								exprCtx.getRelativeExpression(),
-            								getData().getNumChildren(), 
-            								getData().getType(),
-            								getData().getGDBType(),
-            								!getData().isComplex()));
-            				drm.done();
-            				processCommandDone(token, drm.getData());
+            				final MIVariableObject varObj = getData();
+            				if (varObj.isNumChildrenHintTrustworthy()) {
+               					drm.setData(
+            							new ExprMetaGetVarInfo(
+            									exprCtx.getRelativeExpression(),
+            									getData().getNumChildrenHint(), 
+            									getData().getType(),
+            									getData().getGDBType(),
+            									!getData().isComplex()));
+            					drm.done();
+            					processCommandDone(token, drm.getData());
+            				} else {
+            					// We have to ask for the children count because the hint could be wrong
+            					varObj.getChildrenCount(
+            							exprCtx, 
+            							new DataRequestMonitor<Integer>(fSession.getExecutor(), drm) {
+            								@Override
+            								protected void handleSuccess() {
+            									drm.setData(
+            											new ExprMetaGetVarInfo(
+            													exprCtx.getRelativeExpression(),
+            													getData(), 
+            													varObj.getType(),
+            													varObj.getGDBType(),
+            													!varObj.isComplex()));
+            									drm.done();
+            									processCommandDone(token, drm.getData());
+            								}
+            							});
+            				}
             			}
             		});
         } else if (command instanceof ExprMetaGetAttributes) {
@@ -1675,7 +1740,7 @@ public class MIVariableManager implements ICommandControl {
     	} else if (command instanceof ExprMetaGetChildCount) {
             @SuppressWarnings("unchecked")            
     		final DataRequestMonitor<ExprMetaGetChildCountInfo> drm = (DataRequestMonitor<ExprMetaGetChildCountInfo>)rm;
-            final IExpressionDMContext exprCtx = (IExpressionDMContext)(command.getContext());
+            final MIExpressionDMC exprCtx = (MIExpressionDMC)(command.getContext());
  
     		getVariable(
     				exprCtx, 
@@ -1683,6 +1748,7 @@ public class MIVariableManager implements ICommandControl {
     					@Override
     					protected void handleSuccess() {
     						getData().getChildrenCount(
+    								exprCtx,
     								new DataRequestMonitor<Integer>(fSession.getExecutor(), drm) {
     									@Override
     									protected void handleSuccess() {

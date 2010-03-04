@@ -2761,7 +2761,6 @@ public class MIExpressionsTest extends BaseTestCase {
      * This test verifies that we properly return if we can write to an expression
      * that is an L-Value or a Constant
      */
-    @Ignore("Only works in versions later than GDB6.7")
     @Test
     public void testCanWriteLValue() throws Throwable {
     	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testCanWrite");  // Re-use test

@@ -209,7 +209,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	        try {
 	            ILaunchDelegate preferredDelegate = wc.getPreferredDelegate(set);
 	            if (preferredDelegate == null) {
-                    wc.setPreferredLaunchDelegate(set, "org.eclipse.cdt.cdi.launch.localCLaunch");
+                    wc.setPreferredLaunchDelegate(set, "org.eclipse.cdt.dsf.gdb.launch.localCLaunch");
 	            }
 	        } catch (CoreException e) {}
 			// End workaround for bug 262840

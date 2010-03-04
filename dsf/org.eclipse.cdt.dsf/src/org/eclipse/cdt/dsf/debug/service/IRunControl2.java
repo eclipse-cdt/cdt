@@ -16,7 +16,7 @@ public interface IRunControl2 extends IRunControl {
 	 * a source file and line number.
 	 * 
 	 * @param context the execution DM context
-	 * @param sourceFile the source file, full path if possible
+	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset (one-based) into the source file
 	 * @param rm the DataRequestMonitor that will return the result
 	 */
@@ -29,7 +29,7 @@ public interface IRunControl2 extends IRunControl {
 	 * other breakpoints and continue until the specified location.
 	 * 
 	 * @param context the execution DM context
-	 * @param sourceFile the source file, full path if possible
+	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset into (one-based) the source file
 	 * @param skipBreakpoints skip breakpoints while performing this operation
 	 * @param rm the Request Monitor
@@ -64,7 +64,7 @@ public interface IRunControl2 extends IRunControl {
 	 * source location.
 	 * 
 	 * @param context the execution DM context
-	 * @param sourceFile the source file, full path if possible
+	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset (one-based) into the source file
 	 * @param resume resume execution after moving the PC
 	 * @param rm the DataRequestMonitor that will return the result
@@ -76,7 +76,7 @@ public interface IRunControl2 extends IRunControl {
 	 * source location.
 	 * 
 	 * @param context the execution DM context
-	 * @param sourceFile the source file, full path if possible
+	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset (one-based) into the source file
 	 * @param resume resume execution after moving the PC
 	 * @param rm the Request Monitor

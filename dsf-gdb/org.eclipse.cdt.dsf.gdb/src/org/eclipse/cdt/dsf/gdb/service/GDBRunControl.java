@@ -41,7 +41,6 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -259,55 +258,6 @@ public class GDBRunControl extends MIRunControl {
     	
     	canResume(context, rm);
     }
-	
-	/** @since 3.0 */
-	@Override
-	public void runToLocation(IExecutionDMContext context, final String location, final boolean skipBreakpoints, final RequestMonitor rm){
-    	assert context != null;
-
-    	final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
-		if (dmc == null){
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Given context: " + context + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
-            rm.done();
-            return;
-		}
-
-        if (doCanResume(dmc)) {
-        	IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
-        	getConnection().queueCommand(
-        			fCommandFactory.createMIBreakInsert(bpDmc, true, false, null, 0, 
-        					          location, dmc.getThreadId()), 
-        		    new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
-        				@Override
-        				public void handleSuccess() {
-        					// We must set are RunToLineActiveOperation *before* we do the resume
-        					// or else we may get the stopped event, before we have set this variable.
-           					int bpId = getData().getMIBreakpoints()[0].getNumber();
-           					String addr = getData().getMIBreakpoints()[0].getAddress();
-        		        	fRunToLineActiveOperation = new RunToLineActiveOperation(dmc, bpId, location, addr, skipBreakpoints);
-
-        					resume(dmc, new RequestMonitor(getExecutor(), rm) {
-                				@Override
-                				public void handleFailure() {
-                		    		IBreakpointsTargetDMContext bpDmc = DMContexts.getAncestorOfType(fRunToLineActiveOperation.getThreadContext(),
-                		    				IBreakpointsTargetDMContext.class);
-                		    		int bpId = fRunToLineActiveOperation.getBreakointId();
-
-                		    		getConnection().queueCommand(fCommandFactory.createMIBreakDelete(bpDmc, new int[] {bpId}),
-                		    				new DataRequestMonitor<MIInfo>(getExecutor(), null));
-                		    		fRunToLineActiveOperation = null;
-
-                		    		super.handleFailure();
-                		    	}
-        					});
-        				}
-        			});
-        } else {
-            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
-            		"Cannot resume given DMC.", null)); //$NON-NLS-1$
-            rm.done();
-        }
-	}
 
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.

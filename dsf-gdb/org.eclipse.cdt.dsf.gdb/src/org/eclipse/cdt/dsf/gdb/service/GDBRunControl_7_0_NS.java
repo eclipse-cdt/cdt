@@ -622,8 +622,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Run to line
 	// ------------------------------------------------------------------------
 
-	/** @since 3.0 */
-	public void runToLocation(final IExecutionDMContext context, final String location, final boolean skipBreakpoints, final RequestMonitor rm){
+	private void runToLocation(final IExecutionDMContext context, final String location, final boolean skipBreakpoints, final RequestMonitor rm){
 
 		assert context != null;
 
@@ -686,8 +685,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Resume at location
 	// ------------------------------------------------------------------------
 
-	/** @since 3.0 */
-	public void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
+	private void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
 		assert context != null;
 
 		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -1205,7 +1203,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 */
 	public void runToAddress(IExecutionDMContext context, IAddress address,
 			boolean skipBreakpoints, RequestMonitor rm) {
-		runToLocation(context, "*0x" + address.toHexAddressString(), skipBreakpoints, rm); //$NON-NLS-1$
+		runToLocation(context, "*0x" + address.toString(16), skipBreakpoints, rm); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -1233,20 +1231,21 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 		else
 		{
-			// Create the breakpoint attributes
-			Map<String,Object> attr = new HashMap<String,Object>();
-	    	attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-	    	attr.put(MIBreakpoints.FILE_NAME, sourceFile);
-	    	attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
-	    	attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
-	    	attr.put(MIBreakpointDMData.THREAD_ID, Integer.toString(threadExecDmc.getThreadId()));
-	    	
-			// Now do the operation
 			String location = sourceFile + ":" + lineNumber; //$NON-NLS-1$
 			if (resume)
 				resumeAtLocation(context, location, rm);
 			else
+			{
+				// Create the breakpoint attributes
+				Map<String,Object> attr = new HashMap<String,Object>();
+		    	attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
+		    	attr.put(MIBreakpoints.FILE_NAME, sourceFile);
+		    	attr.put(MIBreakpoints.LINE_NUMBER, lineNumber);
+		    	attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
+		    	attr.put(MIBreakpointDMData.THREAD_ID, Integer.toString(threadExecDmc.getThreadId()));
+				// Now do the operation
 				moveToLocation(context, location, attr, rm);
+			}
 		}
 	}
 
@@ -1274,19 +1273,21 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 		else
 		{
-			// Create the breakpoint attributes
-			Map<String,Object> attr = new HashMap<String,Object>();
-			attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
-			attr.put(MIBreakpoints.ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
-			attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
-			attr.put(MIBreakpointDMData.THREAD_ID,  Integer.toString(threadExecDmc.getThreadId()));
-
-			// Now do the operation
 			String location = "*0x" + address.toString(16); //$NON-NLS-1$
 			if (resume)
 				resumeAtLocation(context, location, rm);
 			else
+			{
+				// Create the breakpoint attributes
+				Map<String,Object> attr = new HashMap<String,Object>();
+				attr.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
+				attr.put(MIBreakpoints.ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
+				attr.put(MIBreakpointDMData.IS_TEMPORARY, true);
+				attr.put(MIBreakpointDMData.THREAD_ID,  Integer.toString(threadExecDmc.getThreadId()));
+
+				// Now do the operation
 				moveToLocation(context, location, attr, rm);
+			}
 		}
 	}
 

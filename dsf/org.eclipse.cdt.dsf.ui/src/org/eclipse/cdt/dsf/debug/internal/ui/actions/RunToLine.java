@@ -36,7 +36,7 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
  * Implements the CDT's run to line interface.  This interface is called by CDT's
  * {@link IRunToLineTarget} implementation.
  * 
- * @since 2.0
+ * @since 2.1
  */
 public class RunToLine implements IRunToLine, IRunToAddress {
 
@@ -124,7 +124,6 @@ public class RunToLine implements IRunToLine, IRunToAddress {
         }
     }
     
-    /** @since 2.1 */
 	public boolean canRunToAddress(final IAddress address) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -155,7 +154,6 @@ public class RunToLine implements IRunToLine, IRunToAddress {
         return false;
     }
 
-    /** @since 2.1 */
 	public void runToAddress(final IAddress address, final boolean skipBreakpoints) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {

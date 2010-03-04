@@ -726,8 +726,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         rm.done();
     }
 
-	/** @since 3.0 */
-	public void runToLocation(IExecutionDMContext context, String location, boolean skipBreakpoints, final RequestMonitor rm){
+	private void runToLocation(IExecutionDMContext context, String location, boolean skipBreakpoints, final RequestMonitor rm){
 	    // skipBreakpoints is not used at the moment. Implement later
 	    
     	assert context != null;
@@ -751,8 +750,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         }
 	}
 
-	/** @since 3.0 */
-	public void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
+	private void resumeAtLocation(IExecutionDMContext context, String location, RequestMonitor rm) {
 		assert context != null;
 
 		final IMIExecutionDMContext dmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -978,7 +976,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 */
 	public void runToAddress(IExecutionDMContext context, IAddress address,
 			boolean skipBreakpoints, RequestMonitor rm) {
-		runToLocation(context, "*0x" + address.toHexAddressString(), skipBreakpoints, rm); //$NON-NLS-1$
+		runToLocation(context, "*0x" + address.toString(16), skipBreakpoints, rm); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

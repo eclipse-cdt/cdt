@@ -31,13 +31,13 @@ import org.eclipse.debug.core.model.ISuspendResume;
  */
 public class SuspendResumeAdapterFactory implements IAdapterFactory {
 
-    static class GdbSuspendResume implements ISuspendResume, IAdaptable {
+    static class SuspendResume implements ISuspendResume, IAdaptable {
 
         private final RunToLine fRunToLine;
         private final MoveToLine fMoveToLine;
         private final ResumeAtLine fResumeAtLine;
         
-        GdbSuspendResume(IExecutionDMContext execCtx) {
+        SuspendResume(IExecutionDMContext execCtx) {
             fRunToLine = new RunToLine(execCtx);
             fMoveToLine = new MoveToLine(execCtx);
             fResumeAtLine = new ResumeAtLine(execCtx);
@@ -77,7 +77,7 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
             	// It only makes sense to RunToLine, MoveToLine or
                 // ResumeAtLine if we are dealing with a thread, not a container
                 if (execDmc != null && !(execDmc instanceof IContainerDMContext)) {
-                    return new GdbSuspendResume(execDmc);
+                    return new SuspendResume(execDmc);
                 }
             }
         }

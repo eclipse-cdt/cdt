@@ -40,8 +40,9 @@ public class IsGnuCygwinToolChainSupported implements
 	static boolean suppChecked = false;
 	static boolean toolchainIsSupported = false; 
 
-	/*
-	 * returns support status
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported#isSupported(org.eclipse.cdt.managedbuilder.core.IToolChain, org.eclipse.core.runtime.PluginVersionIdentifier, java.lang.String)
 	 */
 	public boolean isSupported(IToolChain toolChain,
 			PluginVersionIdentifier version, String instance) {
@@ -50,30 +51,43 @@ public class IsGnuCygwinToolChainSupported implements
 
 		String etcCygwin = CygwinPathResolver.getEtcPath();
 		if (etcCygwin != null) {
-			File file = new File(etcCygwin + "/setup/installed.db"); //$NON-NLS-1$
-			try {
-				BufferedReader data = new BufferedReader(new FileReader(file));
-
-				// all required package names should be found 
-				boolean[] found = new boolean[CHECKED_NAMES.length];
-				String s;			
-				while ((s = data.readLine()) != null ) {
-					for (int j = 0; j < CHECKED_NAMES.length; j++) {
-						if (s.startsWith(CHECKED_NAMES[j])) {found[j] = true;}
-					}
-				}	
-				toolchainIsSupported = true;
-				for (int j = 0; j < CHECKED_NAMES.length; j++) {
-					toolchainIsSupported &= found[j]; 
-				}
-				data.close();
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {
-			}
+			toolchainIsSupported = arePackagesInstalled(etcCygwin);
 		}
 		
 		suppChecked = true;
 
 		return toolchainIsSupported;
+	}
+
+	/**
+	 * Returns true if all required packages are installed, see CHECKED_NAMES for a list of packages. Cygwin
+	 * maintains a list of packages in /etc/setup/installed.db so we look for packages in this file.
+	 * 
+	 * @param etcCygwin the absolute path of /etc containing /setup/installed.db
+	 * @return true if the packages specified in CHECKED_NAMES are installed
+	 */
+	private boolean arePackagesInstalled(String etcCygwin) {
+		boolean arePackagesInstalled = false;
+		File file = new File(etcCygwin + "/setup/installed.db"); //$NON-NLS-1$
+		try {
+			BufferedReader data = new BufferedReader(new FileReader(file));
+
+			// All required package names should be found
+			boolean[] found = new boolean[CHECKED_NAMES.length];
+			String s;			
+			while ((s = data.readLine()) != null ) {
+				for (int j = 0; j < CHECKED_NAMES.length; j++) {
+					if (s.startsWith(CHECKED_NAMES[j])) {found[j] = true;}
+				}
+			}	
+			arePackagesInstalled = true;
+			for (int j = 0; j < CHECKED_NAMES.length; j++) {
+				arePackagesInstalled &= found[j]; 
+			}
+			data.close();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+		return arePackagesInstalled;
 	}	
 }

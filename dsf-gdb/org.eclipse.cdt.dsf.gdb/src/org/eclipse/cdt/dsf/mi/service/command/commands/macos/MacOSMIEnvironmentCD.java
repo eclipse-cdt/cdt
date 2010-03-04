@@ -16,7 +16,21 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 
 public class MacOSMIEnvironmentCD extends MIEnvironmentCD {
 
+	// We need to send the following format:
+	//	-environment-cd "\"/path/without/any/spaces\"" or -environment-cd /path/without/any/spaces
+	//	-environment-cd "\"/path/with spaces\""
 	public MacOSMIEnvironmentCD(ICommandControlDMContext ctx, String path) {
-		super(ctx, '\"' + path + '\"');
+		super(ctx, (path == null) ? null : "\"\\\"" + path + "\\\"\""); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	@Override
+	protected String parametersToString() {
+		// Apple's GDB is very picky.  We override the parameter formatting
+		// so that we can control exactly what will be sent to GDB.
+		StringBuffer buffer = new StringBuffer();
+		for (String parameter : getParameters()) {
+			buffer.append(' ').append(parameter);
+		}
+		return buffer.toString().trim();	
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackSelectFrame;
-import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadSelect;
 import org.eclipse.cdt.dsf.mi.service.command.commands.RawCommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -315,7 +313,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						if (targetThread != null && !targetThread.equals("0") && !targetThread.equals(fCurrentThreadId)) { //$NON-NLS-1$
 							fCurrentThreadId = targetThread;
 							resetCurrentStackLevel();
-							CommandHandle cmdHandle = new CommandHandle(new MIThreadSelect(targetContext, targetThread), null);
+							CommandHandle cmdHandle = new CommandHandle(
+									(MICommand<MIInfo>)getCommandFactory().createMIThreadSelect(targetContext, targetThread), null);
 							cmdHandle.generateTokenId();
 							fTxCommands.add(cmdHandle);
 						}
@@ -324,7 +323,8 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						// the queue only if the level has been changed. 
 						if (targetFrame >= 0 && targetFrame != fCurrentStackLevel) {
 							fCurrentStackLevel = targetFrame;
-							CommandHandle cmdHandle = new CommandHandle(new MIStackSelectFrame(targetContext, targetFrame), null);
+							CommandHandle cmdHandle = new CommandHandle(
+									(MICommand<MIInfo>)getCommandFactory().createMIStackSelectFrame(targetContext, targetFrame), null);
 							cmdHandle.generateTokenId();
 							fTxCommands.add(cmdHandle);
 						}

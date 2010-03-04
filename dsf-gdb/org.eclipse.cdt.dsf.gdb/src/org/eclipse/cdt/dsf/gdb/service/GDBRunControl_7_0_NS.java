@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
@@ -268,7 +269,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	private void doInitialize(final RequestMonitor rm) {
-        register(new String[]{IRunControl.class.getName(), IMIRunControl.class.getName()}, new Hashtable<String,String>());
+        register(new String[]{ IRunControl.class.getName(), 
+        					   IRunControl2.class.getName(),
+        					   IMIRunControl.class.getName()}, 
+        	     new Hashtable<String,String>());
 		fConnection = getServicesTracker().getService(ICommandControlService.class);
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 		getSession().addServiceEventListener(this, null);

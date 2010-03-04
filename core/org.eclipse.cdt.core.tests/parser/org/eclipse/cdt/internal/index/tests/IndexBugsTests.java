@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2164,6 +2164,46 @@ public class IndexBugsTests extends BaseTestCase {
 			var= (IVariable) sdecl.getDeclarators()[0].getName().resolveBinding();
 			assertFalse(var.getType() instanceof IProblemBinding);
 			assertTrue(var.getType() instanceof ICPPClassType);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
+
+	//  // a.h
+	//	struct Error{};
+	
+	//  // b.h
+	//	void Error(int errCode) {}
+
+	//  // source1.cpp
+	// #include "a.h" 
+	// Error d;
+
+	//  // source2.cpp
+	// Error d;  // Problem, without inclusion we need to prefer the function.
+	public void testDisambiguateObjectVsType_304479() throws Exception {
+		waitForIndexer();
+		String[] testData = getContentsForTest(4);
+		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
+		TestSourceReader.createFile(fCProject.getProject(), "b.h", testData[1]);
+		IFile s1= TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", testData[2]);
+		IFile s2= TestSourceReader.createFile(fCProject.getProject(), "s2.cpp", testData[3]);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndex index= indexManager.getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			IASTTranslationUnit tu = TestSourceReader.createIndexBasedAST(index, fCProject, s1);
+			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) tu.getDeclarations()[0];
+			IVariable var= (IVariable) sdecl.getDeclarators()[0].getName().resolveBinding();
+			assertFalse(var.getType() instanceof IProblemBinding);
+			assertTrue(var.getType() instanceof ICPPClassType);
+
+			tu = TestSourceReader.createIndexBasedAST(index, fCProject, s2);
+			sdecl= (IASTSimpleDeclaration) tu.getDeclarations()[0];
+			var= (IVariable) sdecl.getDeclarators()[0].getName().resolveBinding();
+			assertTrue(var.getType() instanceof IProblemBinding);
 		} finally {
 			index.releaseReadLock();
 		}

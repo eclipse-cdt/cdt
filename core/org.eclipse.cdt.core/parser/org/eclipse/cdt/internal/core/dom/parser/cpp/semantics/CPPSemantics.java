@@ -1765,40 +1765,45 @@ public class CPPSemantics {
 	        ICPPUsingDeclaration composite = new CPPUsingDeclaration(data.astName, bindings);
 	        return composite;	
 	    }
-	        
-	    if (data.typesOnly) {
-	    	if (type != null) {
-		    	if (obj instanceof ICPPNamespace && compareByRelevance(data, type, obj) < 0) {
-		    		return obj;
-		    	}
-	    		return type;
+
+	    if (obj != null && type != null) {
+	    	if (obj instanceof ICPPNamespace) {
+	    		if (compareByRelevance(data, type, obj) >= 0) {
+	    			obj= null;
+	    		}
+	    	} else if (!data.typesOnly && overrulesByRelevance(data, type, obj)) {
+	    		obj= null;
 	    	}
+	    }
+
+	    if (data.typesOnly) {
 	    	if (obj instanceof ICPPNamespace)
 	    		return obj;
 
-	    	return null;
+	    	return type;
 	    }
+	    
 	    
 		if (fns.size() > 0) {
 	    	final IFunction[] fnArray = fns.keyArray(IFunction.class);
+	    	if (type != null && overrulesByRelevance(data, type, fnArray)) {
+	    		return type;
+	    	} 
+	    	
 	    	if (obj != null) {
 	    		int cmp= compareByRelevance(data, obj, fnArray);
 	    		if (cmp == 0) {
 	    			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
 	    					data.getFoundBindings());
 	    		}
-	    		if (cmp > 0)
+	    		if (cmp > 0) {
 	    			return obj;
+	    		}
 	    	}
 			return resolveFunction(data, fnArray, true);
 	    }
 	    
 	    if (obj != null) {
-	    	if (type != null && obj instanceof ICPPNamespace) {
-	    		if (compareByRelevance(data, type, obj) >= 0) {
-	    			return type;
-	    		}
-	    	}
 	    	return obj;
 	    }
 	    return type;
@@ -1833,6 +1838,47 @@ public class CPPSemantics {
 		}
 		return 0;
 	}
+
+	/**
+	 * Compares two bindings for relevance in the context of an AST. Type bindings are
+	 * considered to overrule object bindings when the former is reachable but the 
+	 * latter is not.
+	 */
+	static boolean overrulesByRelevance(LookupData data, IBinding type, IBinding b2) {
+		if (data != null && data.tu != null) {
+			return !isReachableFromAst(data.tu, b2) && isReachableFromAst(data.tu, type);
+		}
+		return false;
+	}
+
+	/**
+	 * Compares a binding with a list of function candidates for relevance in the 
+	 * context of an AST. Types are considered to overrule object bindings when 
+	 * the former is reachable but none of the functions are.
+	 */
+	static boolean overrulesByRelevance(LookupData data, IBinding type, IFunction[] fns) {
+		if (data == null || data.tu == null) {
+			return false;
+		}
+		
+		for (int i = 0; i < fns.length; i++) {
+			if (!isFromIndex(fns[i])) {
+				return false;	// function from ast
+			}
+		}
+		
+		if (!isReachableFromAst(data.tu, type)) {
+			return false;
+		}
+		
+		for (IFunction fn : fns) {
+			if (isReachableFromAst(data.tu, fn)) {
+				return false;	// function from ast
+			}
+		}
+    	return true; 
+	}
+
 
 	/**
 	 * Compares two bindings for relevance in the context of an AST. AST bindings are
@@ -1901,7 +1947,7 @@ public class CPPSemantics {
 		}
     	return 1; // only obj is from ast.
 	}
-	
+
 	private static boolean isFromIndex(IBinding binding) {
 		if (binding instanceof IIndexBinding) {
 			return true;

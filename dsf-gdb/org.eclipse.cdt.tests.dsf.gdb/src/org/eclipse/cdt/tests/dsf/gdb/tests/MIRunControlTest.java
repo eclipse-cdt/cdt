@@ -41,6 +41,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.ServiceEventWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -146,9 +147,17 @@ public class MIRunControlTest extends BaseTestCase {
 		// Context can not be null
 		if (ctxts == null)
 			Assert.fail("Context returned is null. At least one context should have been returned");
-		else { // Only one Context in this case
-			if (ctxts.length > 1)
-				Assert.fail("Context returned can not be more than 1. This test case is for single context application.");
+		else { 
+		    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+				// If the target app was built with cygwin, there will be two
+				// threads--even for the most simple program. Apparently,
+				// something the cygwin runtime/emulation needs.
+		    	Assert.assertTrue("Context returned should not be more than 2. This test case is for single context application.", 1 <= ctxts.length && ctxts.length <= 2);
+		    }
+		    else {
+		    	// Only one Context in this case
+				Assert.assertTrue("Context returned should not be more than 1. This test case is for single context application.", ctxts.length == 1);
+		    }
 
 			IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
 			// Thread id for the main thread should be one

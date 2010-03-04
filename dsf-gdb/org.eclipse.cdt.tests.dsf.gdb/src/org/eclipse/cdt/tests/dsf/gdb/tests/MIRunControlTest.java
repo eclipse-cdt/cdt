@@ -11,6 +11,11 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -57,7 +62,16 @@ import org.junit.runner.RunWith;
 @RunWith(BackgroundRunner.class)
 public class MIRunControlTest extends BaseTestCase {
 
-    private DsfServicesTracker fServicesTracker;    
+	/**
+	 * The cygwin runtime/emulation spawns a thread, so even the most basic
+	 * program has two threads. The tests have to take this into consideration
+	 * since the same is not true in other environments (POSIX, MinGW). We
+	 * examine the test program and set this flag to true if it uses the cygwin
+	 * dll.
+	 */
+    private static boolean sProgramIsCygwin;
+
+	private DsfServicesTracker fServicesTracker;    
 
     private IGDBControl fGDBCtrl;
 	private IMIRunControl fRunCtrl;
@@ -103,6 +117,52 @@ public class MIRunControlTest extends BaseTestCase {
 	public static void beforeClassMethod() {
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, 
 				           EXEC_PATH + EXEC_NAME);
+
+		// This is crude, but effective. We need to determine if the program was
+		// built with cygwin. The easiest way is to scan the binary file looking
+		// for 'cygwin1.dll'. In the real world, this wouldn't cut mustard, but
+		// since this is just testing code, and we control the programs, it's a
+		// no brainer.
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+
+	    	// This is interesting. Our tests rely on the working directory.
+			// That is, we specify a program path in the launch configuration
+			// that is relative to the working directory.
+			File file = new File(EXEC_PATH + EXEC_NAME);
+			
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+			} catch (FileNotFoundException e) {
+				Assert.fail(e.getLocalizedMessage());
+				return;	// needed to avoid warning at fis usage below
+			}
+
+			final String MATCH = "cygwin1.dll";
+			final int MATCH_LEN = MATCH.length();
+			int i = 0;
+			int ch = 0;
+			while (true) {
+				try {
+					ch = fis.read();
+				} catch (IOException e) {
+					Assert.fail("Problem inspecting file to see if it's a cygwin executable : " + e.getLocalizedMessage());
+				}
+				if (ch == -1) {	// EOF
+					break;
+				}
+				if (ch == MATCH.charAt(i)) {
+					if (i == MATCH_LEN - 1) {
+						sProgramIsCygwin = true;
+						break;	// found it!
+					}
+					i++;
+				}
+				else {
+					i = 0;
+				}
+			}
+	    }
 	}
 
 	/*
@@ -145,24 +205,12 @@ public class MIRunControlTest extends BaseTestCase {
         IExecutionDMContext[] ctxts = (IExecutionDMContext[])wait.getReturnInfo();
 
 		// Context can not be null
-		if (ctxts == null)
-			Assert.fail("Context returned is null. At least one context should have been returned");
-		else { 
-		    if (Platform.getOS().equals(Platform.OS_WIN32)) {
-				// If the target app was built with cygwin, there will be two
-				// threads--even for the most simple program. Apparently,
-				// something the cygwin runtime/emulation needs.
-		    	Assert.assertTrue("Context returned should not be more than 2. This test case is for single context application.", 1 <= ctxts.length && ctxts.length <= 2);
-		    }
-		    else {
-		    	// Only one Context in this case
-				Assert.assertTrue("Context returned should not be more than 1. This test case is for single context application.", ctxts.length == 1);
-		    }
+		Assert.assertNotNull(ctxts);
+		Assert.assertEquals("Unexpected number of threads for a simple program", ctxts.length, sProgramIsCygwin ? 2 : 1);
 
-			IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
-			// Thread id for the main thread should be one
-			Assert.assertEquals(1, dmc.getThreadId());
-		}
+		IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
+		// Thread id for the main thread should be one
+		Assert.assertEquals(1, dmc.getThreadId());
 		wait.waitReset();
 	}
 	
@@ -214,9 +262,7 @@ public class MIRunControlTest extends BaseTestCase {
         	return;
         }
 
-		if (((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId() != 2)
-        	Assert.fail("Thread create event has failed expected thread id 2 but got " +
-        			((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
+        Assert.assertEquals("Thread created event is for wrong thread id", ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId(), sProgramIsCygwin ? 3 : 2);
         
         /*
          * Test getExecutionContexts for a valid container DMC
@@ -239,16 +285,18 @@ public class MIRunControlTest extends BaseTestCase {
         /*
          * Contexts returned can not be null
          */
-        if(data == null)
-        	Assert.fail("No context returned. 2 Contexts with id 1 & 2 should have been returned");
-        else{
-        	// 2 Contexts shd be returned 
-        	Assert.assertTrue(data.length==2);
-         	IMIExecutionDMContext dmc1 = (IMIExecutionDMContext)data[0];
-          	IMIExecutionDMContext dmc2 = (IMIExecutionDMContext)data[1];
-          	// Context ids should be 1 & 2 
-          	Assert.assertTrue(dmc1.getThreadId()==1 && dmc2.getThreadId() == 2);
-        }
+       	Assert.assertNotNull(data);
+
+    	Assert.assertEquals("Unexpected number of threads", data.length, sProgramIsCygwin ? 3 : 2);
+     	IMIExecutionDMContext dmc1 = (IMIExecutionDMContext)data[0];
+      	IMIExecutionDMContext dmc2 = (IMIExecutionDMContext)data[1];
+      	// Context ids should be 1 & 2 
+      	Assert.assertTrue(dmc1.getThreadId()==1 && dmc2.getThreadId() == 2);
+      	
+      	if (sProgramIsCygwin) {
+      		IMIExecutionDMContext dmc3 = (IMIExecutionDMContext)data[2];
+      		Assert.assertTrue(dmc3.getThreadId()== 3);
+      	}
      } 
 
 	/*

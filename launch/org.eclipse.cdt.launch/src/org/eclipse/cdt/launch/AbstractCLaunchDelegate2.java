@@ -44,8 +44,19 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelegate {
 
 	private boolean workspaceBuildBeforeLaunch;
+	private boolean requireCProject;
 	private IProject project;
 	private String preLaunchBuildConfiguration;
+
+	public AbstractCLaunchDelegate2() {
+		super();
+		this.requireCProject = true;
+	}
+
+	public AbstractCLaunchDelegate2(boolean requireCProject) {
+		super();
+		this.requireCProject = requireCProject;
+	}
 
 	/**
 	 * Recursively creates a set of projects referenced by the current project
@@ -244,12 +255,12 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = CDebugUtils.getProjectName(config);
-		if (name == null) {
+		if (name == null && requireCProject) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
 					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
 		ICProject cproject = CDebugUtils.getCProject(config);
-		if (cproject == null) {
+		if (cproject == null && requireCProject) {
 			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!proj.exists()) {
 				abort(

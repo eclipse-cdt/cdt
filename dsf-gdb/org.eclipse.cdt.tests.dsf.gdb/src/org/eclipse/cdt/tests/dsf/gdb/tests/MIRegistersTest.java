@@ -12,8 +12,10 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -48,6 +50,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,7 +63,14 @@ import org.junit.runner.RunWith;
 
 public class MIRegistersTest extends BaseTestCase {
 
-	final int NUMBER_OF_REGISTERS = 50;
+	static final List<String> X86_REGS = new LinkedList<String>(Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7"));
+	static {
+		// On Windows, gdb doesn't report "orig_eax" as a register. Apparently it does on Linux
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+    		X86_REGS.remove("orig_eax");
+	    }
+	}
+	
 	/*
 	 * Path to executable
 	 */
@@ -175,9 +185,7 @@ public class MIRegistersTest extends BaseTestCase {
             
         fWait.waitReset();
 
-        assertTrue("The number of registers should have been " + NUMBER_OF_REGISTERS + 
-        		   " instead of " + regContexts.length,
-		           regContexts.length == NUMBER_OF_REGISTERS);
+        assertEquals("Wrong number of registers", regContexts.length, X86_REGS.size()); 
 
         return(regContexts);
     }
@@ -212,10 +220,7 @@ public class MIRegistersTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
-    	assertTrue("The number of registers should have been " + NUMBER_OF_REGISTERS +
-    		     " instead of " + regDMCs.length,
-		         regDMCs.length == NUMBER_OF_REGISTERS);
-
+    	assertEquals("Wrong number of registers", regDMCs.length, X86_REGS.size());
     }
     
     @Test
@@ -223,7 +228,7 @@ public class MIRegistersTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
-    	List<String> regNames = Arrays.asList("eax","ecx","edx","ebx","esp","ebp","esi","edi","eip","eflags","cs","ss","ds","es","fs","gs","st0","st1","st2","st3","st4","st5","st6","st7","fctrl","fstat","ftag","fiseg","fioff","foseg","fooff","fop","xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7","mxcsr","orig_eax","mm0","mm1","mm2","mm3","mm4","mm5","mm6","mm7");
+    	List<String> regNames = X86_REGS; 
     	
         Query<IRegisterDMData[]> query = new Query<IRegisterDMData[]>() {
             @Override

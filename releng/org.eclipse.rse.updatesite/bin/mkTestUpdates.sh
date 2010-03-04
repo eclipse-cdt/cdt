@@ -79,12 +79,12 @@ if [ ${TYPE} = test ]; then
     diff f2.$$.txt f1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > f_new.txt
     for f in `cat f_new.txt`; do
-      fold=`grep ${f} f2.$$.txt`
+      fold=`grep "${f}\." f2.$$.txt`
       if [ "${fold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${f}"
       fi
       #fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
-      #fold=`grep ${fbase} f2.$$.txt`
+      #fold=`grep "${fbase}\." f2.$$.txt`
       #if [ "${fold}" = "" ]; then
       #  echo "PROBLEM: MAJOR or MINOR update : ${f}"
       #fi
@@ -100,12 +100,12 @@ if [ ${TYPE} = test ]; then
     diff p2.$$.txt p1.$$.txt | grep '^[>]' \
        | sed -e 's,[>] \(.*_[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,' > p_new.txt
     for p in `cat p_new.txt`; do
-      pold=`grep ${p} p2.$$.txt`
+      pold=`grep "${p}\." p2.$$.txt`
       if [ "${pold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${p}"
       fi
       #pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
-      #pold=`grep ${pbase} p2.$$.txt`
+      #pold=`grep "${pbase}\." p2.$$.txt`
       #if [ "${pold}" = "" ]; then
       #  echo "PROBLEM: MAJOR or MINOR update : ${p}"
       #fi

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,23 +25,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 public class MIEnvironmentDirectory extends MICommand<MIInfo> {
 	
 	public MIEnvironmentDirectory(IDMContext ctx, String[] paths, boolean reset) {
-		super(ctx, "-environment-directory"); //$NON-NLS-1$
+		super(ctx, "-environment-directory", paths); //$NON-NLS-1$
 
-		String[] options;
 		if (reset) {
-			if (paths == null) {
-				options = new String[] {"-r"}; //$NON-NLS-1$
-			} else {
-				options = new String[paths.length + 1];
-				options[0] = "-r"; //$NON-NLS-1$
-				for (int i = 1; i < options.length; i++) {
-					options[i] = paths[i-1];
-				}
-			}
-		} else {
-			options = paths;
+			setOptions(new String[] {"-r"}); //$NON-NLS-1$
 		}
-		
-		setOptions(options);
 	}
 }

@@ -28,7 +28,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 public class MIThreadSelect extends MICommand<MIInfo>
 {
 	public MIThreadSelect(IDMContext ctx, int threadNum) {
-		super(ctx, "-thread-select", new String[]{Integer.toString(threadNum)}); //$NON-NLS-1$
+		this(ctx, Integer.toString(threadNum));
 	}
 	
 	/**

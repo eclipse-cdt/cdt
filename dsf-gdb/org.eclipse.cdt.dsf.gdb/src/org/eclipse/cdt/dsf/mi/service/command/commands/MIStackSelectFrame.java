@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 public class MIStackSelectFrame extends MICommand<MIInfo> {
 	
 	public MIStackSelectFrame(IDMContext ctx, int frameNum) {
-		super(ctx, "-stack-select-frame", new String[]{Integer.toString(frameNum)}, new String[0]); //$NON-NLS-1$
+		super(ctx, "-stack-select-frame", new String[]{Integer.toString(frameNum)}); //$NON-NLS-1$
 	}
 	
 	@Override

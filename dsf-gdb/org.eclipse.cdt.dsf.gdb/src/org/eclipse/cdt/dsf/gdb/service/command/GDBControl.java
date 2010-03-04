@@ -323,7 +323,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     		// When doing remote debugging, we use -exec-continue instead of -exec-run 
     		execCommand = getCommandFactory().createMIExecContinue(containerDmc);
     	} else {
-    		execCommand = getCommandFactory().createMIExecRun(containerDmc, new String[0]);	
+    		execCommand = getCommandFactory().createMIExecRun(containerDmc);	
     	}
 
     	boolean stopInMain = false;

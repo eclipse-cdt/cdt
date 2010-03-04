@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * 
- *      -exec-run
+ *      -exec-run [ARGS]
  *
  *   Asynchronous command.  Starts execution of the inferior from the
  * beginning.  The inferior executes until either a breakpoint is
  * encountered or the program exits.
+ * 
+ * ARGS will be passed to the inferior.  This option is not documented.
  * 
  */
 public class MIExecRun extends MICommand<MIInfo> 

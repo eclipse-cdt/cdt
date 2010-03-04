@@ -143,19 +143,18 @@ public class MIRunControlTest extends BaseTestCase {
          */
         IExecutionDMContext[] ctxts = (IExecutionDMContext[])wait.getReturnInfo();
 
-        // Context can not be null
-        if(ctxts == null)
-       	 Assert.fail("Context returned is null. At least one context should have been returned");
-        else {
-       	 // Only one Context in this case
-       	 if(ctxts.length > 1)
-       	 	Assert.fail("Context returned can not be more than 1. This test case is for single context application.");
-       	 
-       	 IMIExecutionDMContext dmc = (IMIExecutionDMContext)ctxts[0];
-       	 // Thread id for the main thread should be one
-       	 Assert.assertEquals(1, dmc.getThreadId());
-       } 
-       wait.waitReset();
+		// Context can not be null
+		if (ctxts == null)
+			Assert.fail("Context returned is null. At least one context should have been returned");
+		else { // Only one Context in this case
+			if (ctxts.length > 1)
+				Assert.fail("Context returned can not be more than 1. This test case is for single context application.");
+
+			IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
+			// Thread id for the main thread should be one
+			Assert.assertEquals(1, dmc.getThreadId());
+		}
+		wait.waitReset();
 	}
 	
 	

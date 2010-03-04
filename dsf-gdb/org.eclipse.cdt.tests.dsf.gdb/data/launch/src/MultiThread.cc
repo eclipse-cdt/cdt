@@ -6,9 +6,9 @@
 
 void *PrintHello(void *threadid)
 {
-   int tid;
-   tid = (int)threadid;
+   int tid = (int)threadid;
    printf("Hello World! It's me, thread #%d!\n", tid);
+   sleep(2); // keep this thread around for a bit; the tests will check for its existence while the main thread is stopped at a breakpoint
    pthread_exit(NULL);
 }
 

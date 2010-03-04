@@ -111,8 +111,13 @@ public class CLIEventProcessor
             	// Process Events of type DsfMIConsoleStreamOutput here
             	MIConsoleStreamOutput exec = (MIConsoleStreamOutput) oobr;
 
-            	// Look for events with Pattern ^[New Thread 1077300144 (LWP 7973)
-            	Pattern pattern = Pattern.compile("(^\\[New Thread.*LWP\\s*)(\\d*)", Pattern.MULTILINE); //$NON-NLS-1$
+            	// Look for events that indicate a new thread:
+            	// Examples:
+            	//	[New Thread 1077300144 (LWP 7973)	// POSIX
+            	//	[New thread 4092.0x8c4]				// cygwin and mingw
+				// Since we currently don't use any of the information in the
+				// message, we'll use a simple regex pattern
+            	Pattern pattern = Pattern.compile("^\\[New [Tt]hread\\s+"); //$NON-NLS-1$
             	Matcher matcher = pattern.matcher(exec.getCString());
             	if (matcher.find()) {
             		String threadId = Integer.toString(++fLastThreadId);

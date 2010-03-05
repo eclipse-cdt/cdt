@@ -119,12 +119,9 @@ public class GDBProcessesTest extends BaseTestCase {
             }
         });
         /*
-         * Wait for the operation to get over
+         * Wait for the operation to complete and validate success.
          */
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        /*
-         * Assert false if status is not OK
-         */
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
         Assert.assertTrue(fWait.getMessage(), fWait.isOK());
 
         /*
@@ -161,7 +158,9 @@ public class GDBProcessesTest extends BaseTestCase {
 				fProcService.getExecutionData(threadDmc, rm);
             }
         });
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+
+        // Wait for the operation to complete and validate success.
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
         assertTrue(fWait.getMessage(), fWait.isOK());
         
         IThreadDMData threadData = (IThreadDMData)fWait.getReturnInfo();

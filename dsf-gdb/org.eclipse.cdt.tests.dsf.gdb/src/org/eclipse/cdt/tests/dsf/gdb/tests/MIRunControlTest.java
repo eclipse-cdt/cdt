@@ -211,6 +211,12 @@ public class MIRunControlTest extends BaseTestCase {
 		IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
 		// Thread id for the main thread should be one
 		Assert.assertEquals(1, dmc.getThreadId());
+
+		if (sProgramIsCygwin) {
+			dmc = (IMIExecutionDMContext) ctxts[2];
+			Assert.assertEquals(2, dmc.getThreadId());
+		}
+		
 		wait.waitReset();
 	}
 	

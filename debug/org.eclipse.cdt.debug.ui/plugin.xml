@@ -485,31 +485,9 @@
                id="org.eclipse.cdt.debug.ui.actions.popup.RunToLine">
          </action>
       </viewerContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
-            id="org.eclipse.cdt.debug.ui.CBreakpointActions">
-         <action
-               label="%BreakpointPropertiesAction.label"
-               helpContextId="breakpoint_properties_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesAction">
-         </action>
-      </objectContribution>
       <viewerContribution
             targetID="#ASMEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.AsmEditorRulerActions">
-<!--
-         <action
-               label="%RunToLineAction.label"
-               icon="icons/elcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
-         </action>
--->
          <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
@@ -1833,6 +1811,14 @@
              optional="false">
        </commandParameter>
     </command>
+    <command
+          categoryId="org.eclipse.debug.ui.category.run"
+          defaultHandler="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesHandler"
+          description="%BreakpointPropertiesCommand.description"
+          helpContextId="breakpoint_properties_action_context"
+          id="org.eclipse.cdt.debug.command.breakpointProperties"
+          name="%BreakpointPropertiesCommand.name">
+    </command>
  </extension>
  <extension
        point="org.eclipse.ui.menus">
@@ -1886,7 +1872,19 @@
           </parameter>
        </command>
     </menuContribution>
- </extension>
+    <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.BreakpointView?after=additions">
+       <command
+             commandId="org.eclipse.cdt.debug.command.breakpointProperties"
+             helpContextId="breakpoint_properties_action_context"
+             id="org.eclipse.cdt.debug.menu.command.breakpointProperties"
+             label="%BreakpointProperties.label"
+             tooltip="%BreakpointProperties.label">
+          <visibleWhen checkEnabled="true">
+          </visibleWhen>
+       </command>
+    </menuContribution>    
+   </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
        <factory

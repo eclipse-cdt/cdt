@@ -63,9 +63,11 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -317,7 +319,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			if (project.exists() && project.isOpen()) {
 				fProjectDescription = new SoftReference<ICProjectDescription>(des);
 			} else {
-				CCorePlugin.log(SettingsModelMessages.getString("CProjectDescriptionManager.16")); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, SettingsModelMessages.getString("CProjectDescriptionManager.16"), null); //$NON-NLS-1$
+				CCorePlugin.log(new CoreException(status));
 			}
 		} else {
 			fProjectDescription = new SoftReference<ICProjectDescription>(null);

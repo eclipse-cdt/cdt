@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -26,10 +27,15 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -50,7 +56,7 @@ import org.osgi.framework.BundleContext;
  * Initial breakpoint service implementation.
  * Implements the IBreakpoints interface.
  */
-public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
+public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, IBreakpointsExtension
 {
     /**
      * Breakpoint attributes markers used in the map parameters of insert/updateBreakpoint().
@@ -96,6 +102,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 	private Map<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>> fBreakpoints =
 		new HashMap<IBreakpointsTargetDMContext, Map<Integer, MIBreakpointDMData>>();
 
+	/**
+	 * Map tracking which threads are currently suspended on a breakpoint.
+	 * @since 3.0
+	 */
+	private Map<IExecutionDMContext, IBreakpointDMContext[]> fBreakpointHitMap = 
+	    new HashMap<IExecutionDMContext, IBreakpointDMContext[]>();
+	
 	/**
 	 * Returns a map of existing breakpoints for the specified context
 	 * 
@@ -192,7 +205,18 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
     	 * @param reference     the DsfMIBreakpoint reference
     	 */
     	public MIBreakpointDMContext(MIBreakpoints service, IDMContext[] parents, int reference) {
-            super(service.getSession().getId(), parents);
+            this(service.getSession().getId(), parents, reference);
+        }
+
+        /**
+         * @param sessionId       session ID
+         * @param parents       the parent contexts
+         * @param reference     the DsfMIBreakpoint reference
+         * 
+         * @since 3.0
+         */
+        public MIBreakpointDMContext(String sessionId, IDMContext[] parents, int reference) {
+            super(sessionId, parents);
             fReference = reference;
         }
 
@@ -269,7 +293,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		getSession().addServiceEventListener(this, null);
 
 		// Register this service
-		register(new String[] { IBreakpoints.class.getName(), MIBreakpoints.class.getName() },
+		register(new String[] { IBreakpoints.class.getName(), IBreakpointsExtension.class.getName(), MIBreakpoints.class.getName() },
 				new Hashtable<String, String>());
 
 		rm.done();
@@ -471,6 +495,15 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 		}
 	}
 
+	/**
+     * @since 3.0
+     */
+	public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm) {
+	    IBreakpointDMContext[] bps = fBreakpointHitMap.get(ctx);
+	    rm.setData(bps != null ? bps : new IBreakpointDMContext[0]);
+	    rm.done();
+	}
+	
 	/**
 	 * @param map
 	 * @param key
@@ -1237,4 +1270,57 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints
 			}
 		}
 	};
+	
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(IBreakpointHitDMEvent e) {
+        if (e instanceof IContainerSuspendedDMEvent) {
+            IExecutionDMContext[] triggeringContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
+            for (IExecutionDMContext ctx : triggeringContexts) {
+                fBreakpointHitMap.put(ctx, e.getBreakpoints());
+                
+            }
+        } else {
+            fBreakpointHitMap.put(e.getDMContext(), e.getBreakpoints());
+        }
+    }
+
+    /**
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(IResumedDMEvent e) {
+        if (e instanceof IContainerResumedDMEvent) {
+            clearBreakpointHitForContainer(((IContainerResumedDMEvent)e).getDMContext());
+        } else {
+            fBreakpointHitMap.remove(e.getDMContext());
+        }
+    }
+
+    /**
+     * Event handler when a thread is destroyed
+     * @nooverride This method is not intended to be re-implemented or extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
+     */
+    @DsfServiceEventHandler
+    public void eventDispatched(IExitedDMEvent e) {
+        if (e.getDMContext() instanceof IContainerDMContext) {
+            clearBreakpointHitForContainer(e.getDMContext());
+        } else {
+            fBreakpointHitMap.remove(e.getDMContext());
+        }
+    }
+
+    private void clearBreakpointHitForContainer(IDMContext container) {
+        for (Iterator<Map.Entry<IExecutionDMContext, IBreakpointDMContext[]>> itr = fBreakpointHitMap.entrySet().iterator(); itr.hasNext();) {
+            if (DMContexts.isAncestorOf(itr.next().getKey(), container)) {
+                itr.remove();
+            }
+        }
+    }
+    
 }

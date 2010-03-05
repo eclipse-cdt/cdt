@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
@@ -187,6 +189,28 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		}
 	}
 
+	/**
+     * Indicates that the given thread has been suspended on a breakpoint.
+	 * @since 3.0
+     */
+    @Immutable
+    protected static class BreakpointHitEvent extends SuspendedEvent
+    implements IBreakpointHitDMEvent
+    {
+        final private MIBreakpointDMContext[] fBreakpoints;
+        
+        BreakpointHitEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo, MIBreakpointDMContext bpCtx) {
+            super(ctx, miInfo);
+            
+            fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
+        }
+        
+        public IBreakpointDMContext[] getBreakpoints() {
+            return fBreakpoints;
+        }
+    }
+
+	
 	@Immutable
 	protected static class ContainerSuspendedEvent extends SuspendedEvent
 	implements IContainerSuspendedDMEvent
@@ -202,6 +226,27 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			return triggeringDmcs;
 		}
 	}
+
+   /**
+     * Indicates that the given container has been suspended on a breakpoint.
+     * @since 3.0
+     */
+    @Immutable
+    protected static class ContainerBreakpointHitEvent extends ContainerSuspendedEvent
+    implements IBreakpointHitDMEvent
+    {
+        final private MIBreakpointDMContext[] fBreakpoints;
+        
+        ContainerBreakpointHitEvent(IContainerDMContext containerDmc, MIStoppedEvent miInfo, IExecutionDMContext triggeringDmc, MIBreakpointDMContext bpCtx) {
+            super(containerDmc, miInfo, triggeringDmc);
+            
+            fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
+        }
+        
+        public IBreakpointDMContext[] getBreakpoints() {
+            return fBreakpoints;
+        }
+    }
 
 	@Immutable
 	protected static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
@@ -382,6 +427,15 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     		return;
     	}
 
+    	MIBreakpointDMContext bp = null;
+    	if (e instanceof MIBreakpointHitEvent) {
+    	    int bpId = ((MIBreakpointHitEvent)e).getNumber();
+            IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
+            if (bpsTarget != null && bpId >= 0) {
+                bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
+            }
+    	}
+    	
     	IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
         final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(e.getDMContext(), IContainerDMContext.class);
@@ -407,9 +461,17 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						});
 				return;
             }
-            event = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx);
+            if (bp != null) {
+                event = new ContainerBreakpointHitEvent(containerDmc, e, triggeringCtx, bp);
+            } else {
+                event = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx);
+            }
         } else {
-            event = new SuspendedEvent(e.getDMContext(), e);
+            if (bp != null) {
+                event = new BreakpointHitEvent(e.getDMContext(), e, bp);
+            } else {
+                event = new SuspendedEvent(e.getDMContext(), e);
+            }
         }
         getSession().dispatchEvent(event, getProperties());
     }

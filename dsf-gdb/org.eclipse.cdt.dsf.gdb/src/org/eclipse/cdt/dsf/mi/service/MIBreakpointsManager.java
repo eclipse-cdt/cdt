@@ -1277,6 +1277,18 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         return null;
     }
 
+    /**
+     * Returns a platform breakpoint corresponding to a given target breakpoint. 
+     * 
+     * @since 3.0
+     */
+    public IBreakpoint findPlatformBreakpoint(IBreakpointDMContext bpContext) {
+        if (bpContext instanceof MIBreakpointDMContext) {
+            return findPlatformBreakpoint(((MIBreakpointDMContext)bpContext).getReference());
+        }
+        return null;
+    }
+    
     //-------------------------------------------------------------------------
     // Session exit
     //-------------------------------------------------------------------------

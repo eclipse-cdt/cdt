@@ -35,6 +35,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -51,6 +52,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
@@ -149,6 +151,27 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			}
 		}
 	}
+
+    /**
+     * Indicates that the given thread has been suspended on a breakpoint.
+     * @since 3.0
+     */
+    @Immutable
+    private static class BreakpointHitEvent extends SuspendedEvent
+    implements IBreakpointHitDMEvent
+    {
+        final private MIBreakpointDMContext[] fBreakpoints;
+        
+        BreakpointHitEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo, MIBreakpointDMContext bpCtx) {
+            super(ctx, miInfo);
+            
+            fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
+        }
+        
+        public IBreakpointDMContext[] getBreakpoints() {
+            return fBreakpoints;
+        }
+    }
 
 	@Immutable
 	private static class ResumedEvent extends RunControlEvent<IExecutionDMContext, MIRunningEvent>
@@ -1026,7 +1049,23 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			// Don't broadcast the stopped event
 			return;
 		}
-        getSession().dispatchEvent(new SuspendedEvent(e.getDMContext(), e), getProperties());
+		
+        MIBreakpointDMContext bp = null;
+        if (e instanceof MIBreakpointHitEvent) {
+            int bpId = ((MIBreakpointHitEvent)e).getNumber();
+            IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
+            if (bpsTarget != null && bpId >= 0) {
+                bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
+            }
+        }
+		
+        IDMEvent<?> event = null;
+        if (bp != null) {
+            event = new BreakpointHitEvent(e.getDMContext(), e, bp);
+        } else {
+            event = new SuspendedEvent(e.getDMContext(), e);
+        }
+        getSession().dispatchEvent(event, getProperties());
 	}
 
 

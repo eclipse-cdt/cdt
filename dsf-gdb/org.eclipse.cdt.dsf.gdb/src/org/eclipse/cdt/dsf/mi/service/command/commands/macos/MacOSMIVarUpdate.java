@@ -41,7 +41,7 @@ public class MacOSMIVarUpdate extends MIVarUpdate {
 	public MacOSMIVarUpdate(ICommandControlDMContext dmc, String name) {
 		super(dmc, name);
 		// Must use --all-values instead of 1 for Mac OS
-		setOptions(new String[] { "--all-values" }); //$NON-NLS-1$
+		setParameters(new String[] { "--all-values", name }); //$NON-NLS-1$
 	}
 	
     @Override

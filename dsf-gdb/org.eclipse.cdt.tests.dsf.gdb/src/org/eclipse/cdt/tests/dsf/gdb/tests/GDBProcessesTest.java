@@ -20,12 +20,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
@@ -91,6 +93,7 @@ public class GDBProcessesTest extends BaseTestCase {
      *  Get the process data for the current program. Process is executable name in case of GDB back end
      */
 	public void getProcessData() throws InterruptedException{
+		
 		/*
 		 * Create a request monitor 
 		 */
@@ -109,12 +112,10 @@ public class GDBProcessesTest extends BaseTestCase {
          * Ask the service to get model data for the process. 
          * There is only one process in case of GDB back end. 
          */
+		final IProcessDMContext processContext = getProcessContext();
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
-            	String groupId = MIProcesses.UNIQUE_GROUP_ID;
-
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), groupId);
-            	fProcService.getExecutionData(procDmc, rm);            					
+				fProcService.getExecutionData(processContext, rm);
             }
         });
         /*
@@ -127,18 +128,11 @@ public class GDBProcessesTest extends BaseTestCase {
         Assert.assertTrue(fWait.getMessage(), fWait.isOK());
 
         /*
-         * Get process data 
+         * Get process data. Name of the process is the executable name in case of GDB back-end. 
          */
         IThreadDMData processData = (IThreadDMData)fWait.getReturnInfo();
- 
-        if(processData == null)
-       	  Assert.fail("No process data is returned for Process DMC");
-        else{
-    	/*
-    	 * Name of the process is the executable name in case of GDB back-end. 
-    	 */
-       	 assertEquals("Process data should be executable name " + EXEC_NAME, EXEC_NAME, processData.getName());
-       } 
+        Assert.assertNotNull("No process data is returned for Process DMC", processData);
+        Assert.assertTrue("Process data should be executable name " + EXEC_NAME, processData.getName().contains(EXEC_NAME));
 	}
 	
 	/* 
@@ -146,6 +140,7 @@ public class GDBProcessesTest extends BaseTestCase {
 	 */
 	@Test
 	public void getThreadData() throws InterruptedException{
+		
 		final String THREAD_ID = "1";
         final DataRequestMonitor<IThreadDMData> rm = 
         	new DataRequestMonitor<IThreadDMData>(fSession.getExecutor(), null) {
@@ -158,13 +153,12 @@ public class GDBProcessesTest extends BaseTestCase {
             }
         };
 
-         
+
+		final IProcessDMContext processContext = getProcessContext();
         fProcService.getExecutor().submit(new Runnable() {
             public void run() {
-            	String groupId = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGdbCtrl.getContext(), groupId);
-            	IThreadDMContext threadDmc = fProcService.createThreadContext(procDmc, THREAD_ID);
-            	fProcService.getExecutionData(threadDmc, rm);
+            	IThreadDMContext threadDmc = fProcService.createThreadContext(processContext, THREAD_ID);
+				fProcService.getExecutionData(threadDmc, rm);
             }
         });
         fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
@@ -181,5 +175,42 @@ public class GDBProcessesTest extends BaseTestCase {
     	assertEquals("Thread name is should have been blank for GDB Back end", "", threadData.getName());
     	
     	fWait.waitReset(); 
+	}
+
+	/**
+	 * Utility method to return the process DM context. These tests launch a
+	 * single process, thus only one such context is available.
+	 * 
+	 * <p>
+	 * This must not be called from the DSF executor.
+	 * 
+	 * @return the process context
+	 * @throws InterruptedException
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	private IProcessDMContext getProcessContext() throws InterruptedException {
+		assert !fSession.getExecutor().isInExecutorThread();
+		
+		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
+
+		fProcService.getProcessesBeingDebugged(fGdbCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fSession.getExecutor(), null) {
+            @Override
+            protected void handleCompleted() {
+               if (isSuccess()) {
+            	   IDMContext[] contexts = getData();
+            	   Assert.assertNotNull("invalid return value from service", contexts);
+            	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
+            	   IDMContext context = contexts[0];    
+            	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
+                   Assert.assertNotNull("unexpected process context type ", processContext);
+            	   waitor.setReturnInfo(processContext);
+                }
+            }
+    		
+    	});
+    	
+    	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
+    	Assert.assertTrue(fWait.getMessage(), fWait.isOK());
+    	return (IProcessDMContext) waitor.getReturnInfo();
 	}
 }

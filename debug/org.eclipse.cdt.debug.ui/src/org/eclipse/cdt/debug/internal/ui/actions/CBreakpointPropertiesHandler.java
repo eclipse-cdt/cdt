@@ -64,6 +64,7 @@ public class CBreakpointPropertiesHandler extends AbstractHandler {
                 }
     
                 public void setSelection( ISelection selection ) {
+                    assert false; // Not supported
                 }
             } );
             propertyAction.run();

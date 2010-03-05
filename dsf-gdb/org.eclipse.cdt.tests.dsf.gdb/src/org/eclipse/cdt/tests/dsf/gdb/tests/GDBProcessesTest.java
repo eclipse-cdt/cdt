@@ -14,7 +14,6 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -172,16 +171,15 @@ public class GDBProcessesTest extends BaseTestCase {
         assertTrue(fWait.getMessage(), fWait.isOK());
         
         IThreadDMData threadData = (IThreadDMData)fWait.getReturnInfo();
-        if(threadData == null)
-       	    fail("Thread data not returned for thread id = " + THREAD_ID);
-        else{
-        	// Thread id is only a series of numbers
-        	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
-			Matcher matcher = pattern.matcher(threadData.getId());
-			assertTrue("Thread ID is a series of number", matcher.find());
-        	// Name is blank in case of GDB back end
-        	assertEquals("Thread name is should have been blank for GDB Back end", "", threadData.getName());
-       }
-       fWait.waitReset(); 
+        Assert.assertNotNull("Thread data not returned for thread id = " + THREAD_ID, threadData);
+
+        // Thread id is only a series of numbers
+    	Pattern pattern = Pattern.compile("\\d*",  Pattern.MULTILINE); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher(threadData.getId());
+		assertTrue("Thread ID is a series of number", matcher.find());
+    	// Name is blank in case of GDB back end
+    	assertEquals("Thread name is should have been blank for GDB Back end", "", threadData.getName());
+    	
+    	fWait.waitReset(); 
 	}
 }

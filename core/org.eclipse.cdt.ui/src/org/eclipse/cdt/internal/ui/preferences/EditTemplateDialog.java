@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,14 +73,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -94,8 +93,9 @@ import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
 
 /**
  * Dialog to edit a template.
+ * @since 5.2
  */
-class EditTemplateDialog extends StatusDialog {
+public class EditTemplateDialog extends StatusDialog {
 
 	private static class TextViewerAction extends Action implements IUpdate {
 	
@@ -492,12 +492,12 @@ class EditTemplateDialog extends StatusDialog {
 		TextViewerAction action= new TextViewerAction(fPatternEditor, ITextOperationTarget.UNDO);
 		action.setText(PreferencesMessages.EditTemplateDialog_undo);
 		fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
-		handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.UNDO, new ActionHandler(action), expression));
+		handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_UNDO, new ActionHandler(action), expression));
 
 		action= new TextViewerAction(fPatternEditor, ITextOperationTarget.REDO);
 		action.setText(PreferencesMessages.EditTemplateDialog_redo);
 		fGlobalActions.put(ITextEditorActionConstants.REDO, action);
-		handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.REDO, new ActionHandler(action), expression));
+		handlerActivations.add(handlerService.activateHandler(IWorkbenchCommandConstants.EDIT_REDO, new ActionHandler(action), expression));
 
 		action= new TextViewerAction(fPatternEditor, ITextOperationTarget.CUT);
 		action.setText(PreferencesMessages.EditTemplateDialog_cut);

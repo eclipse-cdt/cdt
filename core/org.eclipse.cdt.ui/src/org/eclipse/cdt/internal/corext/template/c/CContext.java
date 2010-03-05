@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 
 /**
- * A context for C/C++
+ * A context for C/C++.
  */
 public class CContext extends TranslationUnitContext {	
 
@@ -75,7 +75,7 @@ public class CContext extends TranslationUnitContext {
 			int start= getCompletionOffset();
 			int end= getCompletionOffset() + getCompletionLength();
 			
-			while (start != 0 && !Character.isWhitespace(document.getChar(start - 1)))
+			while (start != 0 && Character.isUnicodeIdentifierPart(document.getChar(start - 1)))
 				start--;
 			
 			while (start != end && Character.isWhitespace(document.getChar(start)))

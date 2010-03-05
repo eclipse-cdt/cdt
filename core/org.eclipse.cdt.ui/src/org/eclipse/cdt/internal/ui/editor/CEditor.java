@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,6 +160,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextNavigationAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
+import org.eclipse.ui.texteditor.templates.ITemplatesPage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import com.ibm.icu.text.BreakIterator;
@@ -1306,6 +1307,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 */
 	private volatile boolean fIsReconciling;
 
+	private CTemplatesPage fTemplatesPage;
+
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -1538,6 +1541,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		else if (IGotoMarker.class.equals(required)) {
 			IGotoMarker gotoMarker= new GotoMarkerAdapter();
 			return gotoMarker;
+		}
+		else if (ITemplatesPage.class.equals(required)) {
+			if (fTemplatesPage == null) {
+				fTemplatesPage = new CTemplatesPage(this);
+				return fTemplatesPage;
+			}
 		}
 		return super.getAdapter(required);
 	}

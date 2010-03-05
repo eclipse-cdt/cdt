@@ -81,7 +81,7 @@ public class CBreakpointPropertiesHandler extends AbstractHandler {
 	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 	        if (s instanceof IStructuredSelection) {
 	            IStructuredSelection ss = (IStructuredSelection)s;
-	            if (!ss.isEmpty()) {
+	            if (ss.size() == 1) {
     	            return (ICBreakpoint)DebugPlugin.getAdapter(ss.getFirstElement(), ICBreakpoint.class);
 	            }
 	        }

@@ -18,7 +18,6 @@ import org.eclipse.cdt.debug.core.model.IResumeAtAddress;
 import org.eclipse.cdt.debug.core.model.IResumeAtLine;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -95,8 +94,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
                         IRunControl2 runControl = tracker.getService(IRunControl2.class);
                         if (runControl != null) {
                         	runControl.moveToLine(
-                                fContext, fileName, lineNumber, true,
-                                new DataRequestMonitor<Object>(ImmediateExecutor.getInstance(), rm));
+                                fContext, fileName, lineNumber, true, rm);
                         } else {
                             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
                             rm.done();
@@ -114,7 +112,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
                 exception = e;
             }
             if (exception != null) {
-                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Faild executing move to line", exception)); //$NON-NLS-1$
+                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing move to line", exception)); //$NON-NLS-1$
             }
         } else {
             throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            
@@ -165,8 +163,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
                         IRunControl2 runControl = tracker.getService(IRunControl2.class);
                         if (runControl != null) {
                         	runControl.moveToAddress(
-                                fContext, address, true,
-                                new DataRequestMonitor<Object>(ImmediateExecutor.getInstance(), rm));
+                                fContext, address, true, rm);
                         } else {
                             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
                             rm.done();
@@ -184,7 +181,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
                 exception = e;
             }
             if (exception != null) {
-                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Faild executing move to line", exception)); //$NON-NLS-1$
+                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing move to line", exception)); //$NON-NLS-1$
             }
         } else {
             throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            

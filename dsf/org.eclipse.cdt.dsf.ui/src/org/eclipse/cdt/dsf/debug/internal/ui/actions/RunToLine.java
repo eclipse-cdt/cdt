@@ -19,7 +19,6 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -98,8 +97,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
                         IRunControl2 runControl = tracker.getService(IRunControl2.class);
                         if (runControl != null) {
                         	runControl.runToLine(
-                                fContext, fileName, lineNumber, skipBreakpoints,
-                                new DataRequestMonitor<Object>(ImmediateExecutor.getInstance(), rm));
+                                fContext, fileName, lineNumber, skipBreakpoints, rm);
                         } else {
                             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
                             rm.done();
@@ -117,7 +115,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
                 exception = e;
             }
             if (exception != null) {
-                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Faild executing run to line", exception)); //$NON-NLS-1$
+                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing run to line", exception)); //$NON-NLS-1$
             }
         } else {
             throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            
@@ -167,8 +165,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
                         
                         IRunControl2 runControl = tracker.getService(IRunControl2.class);
                         if (runControl != null) {
-                        	runControl.runToAddress(fContext, address, skipBreakpoints,
-                                new DataRequestMonitor<Object>(ImmediateExecutor.getInstance(), rm));
+                        	runControl.runToAddress(fContext, address, skipBreakpoints, rm);
                         } else {
                             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "IRunControl2 service not available", null)); //$NON-NLS-1$
                             rm.done();
@@ -186,7 +183,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
                 exception = e;
             }
             if (exception != null) {
-                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Faild executing run to line", exception)); //$NON-NLS-1$
+                throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Failed executing run to line", exception)); //$NON-NLS-1$
             }
         } else {
             throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Debug session is not active", null)); //$NON-NLS-1$            

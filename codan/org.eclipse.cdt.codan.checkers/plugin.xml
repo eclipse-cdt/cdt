@@ -69,8 +69,10 @@
             name="NamingConventionFunctionChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.CodeStyle"
-            defaultSeverity="Warning"
+            defaultEnabled="false"
+            defaultSeverity="Info"
             id="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"
+            messagePattern="Bad function name &quot;{0}&quot; (pattern /{1}/)"
             name="Name convention for function">
       </problem>
       </checker>

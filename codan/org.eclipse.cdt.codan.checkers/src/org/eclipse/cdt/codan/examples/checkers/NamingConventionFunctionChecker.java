@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 		implements ICheckerWithParameters {
+	private static final String DEFAULT_PATTERN = "^[a-z]"; 	// name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
 
@@ -49,7 +50,7 @@ public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 						if (!pattern.matcher(name).find()) {
 		
 							reportProblem(ER_ID, getFile(), 1, // TODO: line number 
-									"Bad function name: " + name);
+									name, parameter);
 						}
 						return false;
 					}
@@ -75,7 +76,7 @@ public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 			}
 
 			public String getType() {
-				return "string";
+				return IProblemParameterInfo.TYPE_STRING;
 			}
 
 			public String getLabel() {
@@ -91,7 +92,8 @@ public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 			}
 		};
 		problem.setParameterInfo(info);
-		problem.setParameter(PARAM_KEY, "^[a-z]"); // name starts with english
-													// lower case letter
+	
+		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN); 
+									
 	}
 }

@@ -251,17 +251,20 @@ public class HeadlessBuilder implements IApplication {
 				System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + desc.getName() + HeadlessBuildMessages.HeadlessBuilder_already_exists_in_workspace);
 				return ERROR;
 			}
+			// Create and open the project
+			// Note that if the project exists directly under the workspace root, we can't #setLocationURI(...)
+			if (!URIUtil.equals(org.eclipse.core.runtime.URIUtil.append(
+								ResourcesPlugin.getWorkspace().getRoot().getLocationURI(),
+								org.eclipse.core.runtime.URIUtil.lastSegment(project_uri)), project_uri))
+				desc.setLocationURI(project_uri);
+			else
+				project_uri = null;
 			// Check the URI is valid for a project in this workspace
 			if (!root.getWorkspace().validateProjectLocationURI(project, project_uri).equals(Status.OK_STATUS)) {
 				System.err.println(HeadlessBuildMessages.HeadlessBuilder_URI + project_uri + HeadlessBuildMessages.HeadlessBuilder_is_not_valid_in_workspace);
 				return ERROR;
 			}
 
-			// Create and open the project
-			// Note that if the project exists directly under the workspace root, we can't #setLocationURI(...)
-			if (!URIUtil.equals(ResourcesPlugin.getWorkspace().getRoot().getLocationURI().resolve(
-								org.eclipse.core.runtime.URIUtil.lastSegment(project_uri)), project_uri))
-				desc.setLocationURI(project_uri);
 			project.create(desc, monitor);
 			project.open(monitor);
 		} finally {
@@ -360,14 +363,14 @@ public class HeadlessBuilder implements IApplication {
 				ACBuilder.setAllConfigBuild(buildAllConfigs);
 			}
 		} finally {
+			// Wait for any outstanding jobs to finish
+			while (!Job.getJobManager().isIdle())
+				Thread.sleep(10);
+
 			// Reset workspace auto-build preference
 			IWorkspaceDescription desc = root.getWorkspace().getDescription();
 			desc.setAutoBuilding(isAutoBuilding);
 			root.getWorkspace().setDescription(desc);
-
-			// Wait for any outstanding jobs to finish
-			while (!Job.getJobManager().isIdle())
-				Thread.sleep(10);
 		}
 
 		return OK;

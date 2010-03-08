@@ -95,7 +95,7 @@ public class CodanPreferencesLoader {
 	public String getProperty(String id) {
 		IProblem prob = baseModel.findProblem(id);
 		if (!(prob instanceof CodanProblem)) return null;
-		String enabled = prob.isEnabled() ? "" : "-";
+		String enabled = prob.isEnabled() ? "" : "-"; //$NON-NLS-1$ //$NON-NLS-2$
 		String severity = prob.getSeverity().toString();
 		String res = enabled + severity;
 		return res;

@@ -65,10 +65,10 @@ public class QuickFixAssignmentInCondition implements IMarkerResolution {
 			int line = marker.getAttribute(IMarker.LINE_NUMBER, -1) - 1;
 			FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(doc);
 			try {
-				dad.find(doc.getLineOffset(line), "=", /* forwardSearch */
+				dad.find(doc.getLineOffset(line), "=", /* forwardSearch */ //$NON-NLS-1$
 				true, /* caseSensitive */false,
 				/* wholeWord */false, /* regExSearch */false);
-				dad.replace("==", /* regExReplace */false);
+				dad.replace("==", /* regExReplace */false); //$NON-NLS-1$
 				marker.delete();
 			} catch (BadLocationException e) {
 				// TODO: log the error

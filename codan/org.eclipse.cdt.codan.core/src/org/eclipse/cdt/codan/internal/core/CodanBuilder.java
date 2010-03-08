@@ -41,9 +41,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-public class CodanBuilder extends IncrementalProjectBuilder implements
-		ICodanBuilder, ICodanAstReconciler {
-	public static final String BUILDER_ID = "org.eclipse.cdt.codan.core.codanBuilder";
+public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBuilder, ICodanAstReconciler {
+	public static final String BUILDER_ID = "org.eclipse.cdt.codan.core.codanBuilder"; //$NON-NLS-1$
 
 	public class CodanDeltaVisitor implements IResourceDeltaVisitor {
 		/*
@@ -63,17 +62,17 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
-			case IResourceDelta.ADDED:
-				// handle added resource
-				processResource(resource, new NullProgressMonitor());
-				break;
-			case IResourceDelta.REMOVED:
-				// handle removed resource
-				break;
-			case IResourceDelta.CHANGED:
-				// handle changed resource
-				processResource(resource, new NullProgressMonitor());
-				break;
+				case IResourceDelta.ADDED:
+					// handle added resource
+					processResource(resource, new NullProgressMonitor());
+					break;
+				case IResourceDelta.REMOVED:
+					// handle removed resource
+					break;
+				case IResourceDelta.CHANGED:
+					// handle changed resource
+					processResource(resource, new NullProgressMonitor());
+					break;
 			}
 			// return true to continue visiting children.
 			return true;
@@ -82,8 +81,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 
 	public class CodanResourceVisitor implements IResourceVisitor {
 		public boolean visit(IResource resource) {
-			if (!(resource instanceof IProject))
-				processResource(resource, new NullProgressMonitor());
+			if (!(resource instanceof IProject)) processResource(resource, new NullProgressMonitor());
 			// return true to continue visiting children.
 			return true;
 		}
@@ -95,8 +93,9 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 * java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-			throws CoreException {
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		if (kind == FULL_BUILD) {
 			fullBuild(monitor);
 		} else {
@@ -115,21 +114,16 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		// CodanCorePlugin.PLUGIN_ID, "problems", "", null);
 		// System.err.println("set = " + string);
 		// delete general markers
-		IProblemReporter problemReporter = CodanRuntime.getInstance()
-				.getProblemReporter();
+		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 		if (problemReporter instanceof CodanMarkerProblemReporter) {
-			((CodanMarkerProblemReporter) problemReporter)
-					.deleteMarkers(resource);
+			((CodanMarkerProblemReporter) problemReporter).deleteMarkers(resource);
 		}
 		for (IChecker checker : CheckersRegisry.getInstance()) {
 			try {
 				boolean run = false;
-				if (checker.enabledInContext(resource))
-					run = true;
-				if (areProblemsForCheckerEnabled(checker, resource))
-					run = true;
-				if (run)
-					checker.processResource(resource);
+				if (checker.enabledInContext(resource)) run = true;
+				if (areProblemsForCheckerEnabled(checker, resource)) run = true;
+				if (run) checker.processResource(resource);
 			} catch (Throwable e) {
 				CodanCorePlugin.log(e);
 			}
@@ -144,8 +138,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 	}
 
 	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor) {
-		if (ast == null)
-			return;
+		if (ast == null) return;
 		String filePath = ast.getFilePath();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
@@ -154,24 +147,20 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		resources = root.findFilesForLocationURI(uri);
 		if (resources != null && resources.length > 0) {
 			IFile resource = resources[0];
-			IProblemReporter problemReporter = CodanRuntime.getInstance()
-					.getProblemReporter();
+			IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 			// TODO: this is wrong - should not delete all markers -
 			// only those that contributed by the checker that we run now
 			if (problemReporter instanceof CodanMarkerProblemReporter) {
-				((CodanMarkerProblemReporter) problemReporter)
-						.deleteMarkers(resource);
+				((CodanMarkerProblemReporter) problemReporter).deleteMarkers(resource);
 			}
 			for (IChecker checker : CheckersRegisry.getInstance()) {
 				try {
 					boolean run = false;
-					if (checker.enabledInContext(resource))
-						run = true;
+					if (checker.enabledInContext(resource)) run = true;
 					if (areProblemsForCheckerEnabled(checker, resource)) {
 						run = true;
 					}
-					if (run && checker instanceof ICAstChecker
-							&& checker.runInEditor())
+					if (run && checker instanceof ICAstChecker && checker.runInEditor())
 						((ICAstChecker) checker).processAst(ast);
 				} catch (Throwable e) {
 					CodanCorePlugin.log(e);
@@ -185,35 +174,28 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 	 * @param resource
 	 * @return
 	 */
-	private boolean areProblemsForCheckerEnabled(IChecker checker,
-			IResource resource) {
-		IProblemProfile resourceProfile = CheckersRegisry.getInstance()
-				.getResourceProfile(resource);
-		Collection<IProblem> refProblems = CheckersRegisry.getInstance()
-				.getRefProblems(checker);
-		for (Iterator iterator = refProblems.iterator(); iterator.hasNext();) {
-			IProblem p = (IProblem) iterator.next();
+	private boolean areProblemsForCheckerEnabled(IChecker checker, IResource resource) {
+		IProblemProfile resourceProfile = CheckersRegisry.getInstance().getResourceProfile(resource);
+		Collection<IProblem> refProblems = CheckersRegisry.getInstance().getRefProblems(checker);
+		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator.hasNext();) {
+			IProblem p = iterator.next();
 			// we need to check problem enablement in particular profile
 			IProblem problem = resourceProfile.findProblem(p.getId());
-			if (problem == null)
-				throw new IllegalArgumentException("Id is not registered");
-			if (problem.isEnabled())
-				return true;
+			if (problem == null) throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
+			if (problem.isEnabled()) return true;
 		}
 		// no problem is enabled for this checker, skip the checker
 		return false;
 	}
 
-	protected void fullBuild(final IProgressMonitor monitor)
-			throws CoreException {
+	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		try {
 			getProject().accept(new CodanResourceVisitor());
 		} catch (CoreException e) {
 		}
 	}
 
-	protected void incrementalBuild(IResourceDelta delta,
-			IProgressMonitor monitor) throws CoreException {
+	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
 		delta.accept(new CodanDeltaVisitor());
 	}

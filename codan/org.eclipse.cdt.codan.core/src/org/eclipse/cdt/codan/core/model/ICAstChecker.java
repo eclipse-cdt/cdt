@@ -13,9 +13,16 @@ package org.eclipse.cdt.codan.core.model;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
- * @author Alena
+ * Checker that can/want to process C/C++ AST (Abstract Syntax Tree) of a program
+ * Default implementation {@link AbstractIndexAstChecker}
  * 
+ * Clients may implement and extend this interface.
  */
 public interface ICAstChecker extends IChecker {
+	/**
+	 * Run this checker on a given ast.
+	 * Ast locks would be obtained by the framework before calling this method. 
+	 * @param ast 
+	 */
 	void processAst(IASTTranslationUnit ast);
 }

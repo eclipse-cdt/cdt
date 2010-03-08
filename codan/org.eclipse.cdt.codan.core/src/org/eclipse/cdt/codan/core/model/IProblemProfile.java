@@ -11,15 +11,21 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * Problem Profile contains tree of categories and problems. For user profile is quick way
- * to switch between problems sets depends on task he is doing (i.e. find real bugs, vs doing code style report)
- * User can set different profiles in different projects. 
- * Profiles can have different categories and different problems set, problems with the same id
- * can have different severities/enablement in different profiles. To obtain
- * profile use class {@link CheckersRegisry#getResourceProfile,
+ * Problem Profile contains tree of categories and problems. For the user 
+ * the profile is quick way to switch between problem sets depending on the 
+ * task he is doing (i.e. find real bugs, vs doing code style report)
+ * User can set different profiles for different projects. 
+ * Profiles can have different categories and different problem sets, 
+ * problems with the same id can have different severities/enablement in different profiles.
+ * Category tree can have few reference to a same problem, but only instance of Problem
+ * with the same id can exist in the same profile (i.e. two category can have same problem listed in both, 
+ * but they both should point to the same problem instance). 
+ *  
+ * To obtain read-only profile use method {@link CheckersRegisry#getResourceProfile,
  * CheckersRegisry#getDefaultProfile() or CheckersRegisry#getWorkspaceProfile()}
- * .
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemProfile extends IProblemElement {
 	/**
@@ -28,7 +34,7 @@ public interface IProblemProfile extends IProblemElement {
 	IProblemCategory getRoot();
 
 	/**
-	 * Find and return problem by id
+	 * Find and return problem by id if it contained in this profile
 	 * 
 	 * @param id
 	 *            - problem id
@@ -37,7 +43,7 @@ public interface IProblemProfile extends IProblemElement {
 	IProblem findProblem(String id);
 
 	/**
-	 * Find and return category by id
+	 * Find and return category by id if it is contained in this profile
 	 * 
 	 * @param id
 	 *            - category id
@@ -46,7 +52,7 @@ public interface IProblemProfile extends IProblemElement {
 	IProblemCategory findCategory(String id);
 
 	/**
-	 * Get all defined problems
+	 * Get all problems defined in this profile (if problem duplicated in a category tree, it returns only one instance of each)
 	 * 
 	 * @return array of problems defined in profile
 	 */

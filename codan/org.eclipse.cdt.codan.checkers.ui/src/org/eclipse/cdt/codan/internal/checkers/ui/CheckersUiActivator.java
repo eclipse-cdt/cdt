@@ -1,4 +1,4 @@
-package org.eclipse.cdt.codan.checkers.ui;
+package org.eclipse.cdt.codan.internal.checkers.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

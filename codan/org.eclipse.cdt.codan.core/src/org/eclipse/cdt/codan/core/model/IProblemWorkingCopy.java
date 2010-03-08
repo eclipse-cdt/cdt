@@ -10,22 +10,43 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-
 /**
  * Modifiable problem
- * @author Alena
  * 
+ * Clients may extend and implement this interface
  */
 public interface IProblemWorkingCopy extends IProblem {
+	/**
+	 * Set severity for this this problem instance. Severity can only be changed in profile
+	 * not by checker when printing problems.
+	 * @param sev - codan severity
+	 */
 	void setSeverity(CodanSeverity sev);
 
-	void setEnabled(boolean checked);
+	/**
+	 * Set checker enablement.
+	 * @param enabled - true if problem is enabled in profile
+	 */
+	void setEnabled(boolean enabled);
 
-	void setMessagePattern(String message);
+	/**
+	 * Set default message pattern. UI would call this method if user does not like default
+	 * settings, checker should not use method, default message pattern should be set in 
+	 * checker extension
+	 * @param messagePattern - java style message patter i.e. "Variable {0} is never used"
+	 */
+	void setMessagePattern(String messagePattern);
 
+	/**
+	 * Set value for the checker parameter, checker may set value during initialization only
+	 * @param key - key of the parameter
+	 * @param value - parameter value
+	 */
 	public void setParameter(Object key, Object value);
 
-	public IProblemCategory getCategory();
-
+	/**
+	 * Set parameter info object for the given problem, see {@link IProblemParameterInfo}
+	 * @param info
+	 */
 	public void setParameterInfo(IProblemParameterInfo info);
 }

@@ -13,42 +13,94 @@ package org.eclipse.cdt.codan.core;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.ICodanAstReconciler;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
+import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.internal.core.CheckersRegisry;
 import org.eclipse.cdt.codan.internal.core.CodanBuilder;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
+import org.eclipse.cdt.codan.internal.core.model.ProblemLocationFactory;
 
 /**
  * Runtime singleton class to get access to Codan framework parts
  * 
+ * Clients may extend this class to override default framework parts.
  */
 public class CodanRuntime {
 	private static CodanRuntime instance = new CodanRuntime();
 	private IProblemReporter problemReporter = new CodanMarkerProblemReporter();
 	private CodanBuilder builder = new CodanBuilder();
 	private CheckersRegisry checkers = CheckersRegisry.getInstance();
+	private IProblemLocationFactory locFactory = new ProblemLocationFactory();
 
+	/**
+	 * CodanRuntime - only can be called by subclasses to override default constructor
+	 */
+	protected CodanRuntime() {
+		// nothing here
+	}
+
+	/**
+	 * Get runtime problem reporter. Default reported generated problem markers.
+	 * @return
+	 */
 	public IProblemReporter getProblemReporter() {
 		return problemReporter;
 	}
 
+	/**
+	 * Set different problem reporter.
+	 * @param reporter
+	 */
 	public void setProblemReporter(IProblemReporter reporter) {
 		problemReporter = reporter;
 	}
 
+	/**
+	 * Get instance of of Codan Runtime
+	 * @return
+	 */
 	public static CodanRuntime getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Get builder. Builder can used to run code analysis on given resource using API.
+	 * @return
+	 */
 	public ICodanBuilder getBuilder() {
 		return builder;
 	}
 
+	/**
+	 * Get quick builder. Can be used to run code analysis on given ast.
+	 * @return
+	 */
 	public ICodanAstReconciler getAstQuickBuilder() {
 		return builder;
 	}
 
+	/**
+	 * Get checkers registry. 
+	 * @return
+	 */
 	public ICheckersRegistry getChechersRegistry() {
 		return checkers;
+	}
+
+	/**
+	 * Get problem location factory.
+	 * @return
+	 */
+	public IProblemLocationFactory getProblemLocationFactory() {
+		return locFactory;
+	}
+
+	/**
+	 * Set another problem location factory - only need if default is not sufficient, i.e
+	 * IProblemLocation is implemented differently
+	 * @param factory
+	 */
+	public void setProblemLocationFactory(IProblemLocationFactory factory) {
+		locFactory = factory;
 	}
 }

@@ -54,11 +54,10 @@ public class CodanPreferencesLoader {
 	 */
 	public void setProperty(String id, String s) {
 		IProblem prob = baseModel.findProblem(id);
-		if (!(prob instanceof CodanProblem))
-			return;
+		if (!(prob instanceof CodanProblem)) return;
 		String sevs = s;
 		boolean enabled = true;
-		if (sevs.startsWith("-")) {
+		if (sevs.startsWith("-")) { //$NON-NLS-1$
 			sevs = sevs.substring(1);
 			enabled = false;
 		}
@@ -95,8 +94,7 @@ public class CodanPreferencesLoader {
 	 */
 	public String getProperty(String id) {
 		IProblem prob = baseModel.findProblem(id);
-		if (!(prob instanceof CodanProblem))
-			return null;
+		if (!(prob instanceof CodanProblem)) return null;
 		String enabled = prob.isEnabled() ? "" : "-";
 		String severity = prob.getSeverity().toString();
 		String res = enabled + severity;

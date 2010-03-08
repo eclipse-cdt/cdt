@@ -11,9 +11,17 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * Problem category or problem 
+ * Problem category {@link IProblemCategory} or problem {@link IProblem} 
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemElement extends Cloneable {
+	/**
+	 * clone method should be implemented to support problem cloning
+	 * @see {@link Object#clone}
+	 * @return new object which is copy of this one
+	 * @throws CloneNotSupportedException - it is declared with this exception but it should NOT throw it
+	 */
 	Object clone() throws CloneNotSupportedException;
 }

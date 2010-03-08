@@ -14,9 +14,17 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * @author Alena
+ * Allows to run all checkers that can run on ast via editing using API
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  * 
  */
 public interface ICodanAstReconciler {
+	/**
+	 * Run code analysis on ast
+	 * @param ast - ast to be reconciled 
+	 * @param monitor - progress monitor
+	 */
 	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor);
 }

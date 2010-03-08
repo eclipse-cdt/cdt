@@ -71,7 +71,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 
 
 	protected String getPageId() {
-		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage";
+		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"; //$NON-NLS-1$
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	@Override
 	public boolean performOk() {
-		if (isPropertyPage())
+		//if (isPropertyPage())
 			getRegistry().updateProfile((IResource) getElement(), null);
 		return super.performOk();
 	}

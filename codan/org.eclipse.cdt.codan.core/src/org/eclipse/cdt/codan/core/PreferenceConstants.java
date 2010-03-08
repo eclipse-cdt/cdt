@@ -14,7 +14,7 @@ package org.eclipse.cdt.codan.core;
  * Constant definitions for plug-in preferences
  */
 public class PreferenceConstants {
-	public static final String P_RUN_ON_BUILD = "booleanPreference";
-	public static final String P_PROBLEMS = "problems";
-	public static final String P_USE_PARENT = "useParentScope";
+	public static final String P_RUN_ON_BUILD = "booleanPreference"; //$NON-NLS-1$
+	public static final String P_PROBLEMS = "problems"; //$NON-NLS-1$
+	public static final String P_USE_PARENT = "useParentScope"; //$NON-NLS-1$
 }

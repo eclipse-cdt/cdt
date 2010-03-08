@@ -22,8 +22,7 @@ import org.eclipse.cdt.codan.core.model.IProblemProfile;
  * 
  */
 public class ProblemProfile implements IProblemProfile, Cloneable {
-	private IProblemCategory rootCategory = new CodanProblemCategory("root",
-			"root");
+	private IProblemCategory rootCategory = new CodanProblemCategory("root", "root"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/*
 	 * (non-Javadoc)
@@ -33,7 +32,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * .String)
 	 */
 	public IProblem findProblem(String id) {
-		return getRoot().findProblem(id);
+		return CodanProblemCategory.findProblem(getRoot(), id);
 	}
 
 	/*
@@ -51,8 +50,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * @param root
 	 * @param problems
 	 */
-	protected void collectProblems(IProblemCategory parent,
-			Collection<IProblem> problems) {
+	protected void collectProblems(IProblemCategory parent, Collection<IProblem> problems) {
 		Object[] children = parent.getChildren();
 		for (Object object : children) {
 			if (object instanceof IProblemCategory) {
@@ -69,13 +67,12 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	}
 
 	public void addProblem(IProblem p, IProblemCategory cat) {
-		if (cat == null)
-			cat = getRoot();
+		if (cat == null) cat = getRoot();
 		((CodanProblemCategory) cat).addChild(p);
 	}
 
 	public IProblemCategory findCategory(String id) {
-		return getRoot().findCategory(id);
+		return CodanProblemCategory.findCategory(getRoot(), id);
 	}
 
 	/*
@@ -87,8 +84,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	public Object clone() {
 		try {
 			ProblemProfile clone = (ProblemProfile) super.clone();
-			clone.rootCategory = (IProblemCategory) ((CodanProblemCategory) this.rootCategory)
-					.clone();
+			clone.rootCategory = (IProblemCategory) ((CodanProblemCategory) this.rootCategory).clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			return this;

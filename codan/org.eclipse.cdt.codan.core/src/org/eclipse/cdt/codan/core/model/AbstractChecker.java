@@ -15,6 +15,12 @@ import org.eclipse.cdt.codan.internal.core.CheckersRegisry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
+/**
+ * Convenience implementation of IChecker interface.
+ * Has a default implementation for common methods.
+ *
+ * Clients may extend this class.
+ */
 public abstract class AbstractChecker implements IChecker {
 	protected String name;
 
@@ -44,15 +50,18 @@ public abstract class AbstractChecker implements IChecker {
 	 *            internationalization)
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber, String arg) {
-		getProblemReporter().reportProblem(id,
-				new ProblemLocation(file, lineNumber), arg);
+		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), arg);
 	}
 
+	/**
+	 * Finds an instance of problem by given id, in user profile registered for specific file
+	 * @param id - problem id
+	 * @param file - file in scope
+	 * @return problem instance
+	 */
 	public IProblem getProblemById(String id, IFile file) {
-		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(
-				file).findProblem(id);
-		if (problem == null)
-			throw new IllegalArgumentException("Id is not registered");
+		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(file).findProblem(id);
+		if (problem == null) throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 		return problem;
 	}
 
@@ -68,8 +77,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *            - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id,
-				new ProblemLocation(file, lineNumber), new Object[] {});
+		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), new Object[] {});
 	}
 
 	/**
@@ -77,6 +85,35 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	protected IProblemReporter getProblemReporter() {
 		return CodanRuntime.getInstance().getProblemReporter();
+	}
+
+	/**
+	 * Convenience method to return codan runtime
+	 * @return
+	 */
+	protected CodanRuntime getRuntime() {
+		return CodanRuntime.getInstance();
+	}
+
+	/**
+	 * Convenience method to create and return instance of IProblemLocation
+	 * @param file - file where problem is found
+	 * @param line - line number 1-relative
+	 * @return instance of IProblemLocation
+	 */
+	protected IProblemLocation createProblemLocation(IFile file, int line) {
+		return getRuntime().getProblemLocationFactory().createProblemLocation(file, line);
+	}
+
+	/**
+	 * Convenience method to create and return instance of IProblemLocation
+	 * @param file - file where problem is found
+	 * @param startChar - start char of the problem in the file, is zero-relative
+	 * @param endChar - end char of the problem in the file, is zero-relative and exclusive.
+	 * @return instance of IProblemLocation
+	 */
+	protected IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
+		return getRuntime().getProblemLocationFactory().createProblemLocation(file, startChar, endChar);
 	}
 
 	public boolean runInEditor() {

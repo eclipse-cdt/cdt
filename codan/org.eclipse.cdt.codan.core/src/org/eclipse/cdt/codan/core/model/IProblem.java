@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-
 /**
- * Interface representing code analysis problem
+ * Interface representing code analysis problem type. For example "Null Pointer Dereference"
+ * is a problem. It has user visible Name and Message (translatable), as well as some other
+ * parameters, changeable by user such as enablement, severity and so on. Same problem
+ * cannot have two severities determined by runtime. If it is the case - two Problem should
+ * be created (i.e. one for error and one for warning).
+ *   
+ * Clients may implement and extend this interface.
  * 
  */
 public interface IProblem extends IProblemElement {
@@ -53,8 +58,9 @@ public interface IProblem extends IProblemElement {
 	public Object getParameter(Object key);
 
 	/**
-	 * Get root paramterInfo - contains description of types of all the
-	 * parameters or null if not defined
+	 * Get parameter info root - contains description of types of all the
+	 * parameters or null if not defined (used by ui to generate user controls
+	 * for changing parameters)
 	 * 
 	 * @return
 	 */

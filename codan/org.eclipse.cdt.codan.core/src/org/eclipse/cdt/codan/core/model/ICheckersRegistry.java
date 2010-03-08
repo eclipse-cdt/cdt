@@ -15,52 +15,82 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IResource;
 
 /**
- * @author Alena
+ * This interface an API to add/remove checker and problems programmatically,
+ * get problem profiles and change problem default settings
  * 
  */
-public interface ICheckersRegistry {
+public interface ICheckersRegistry extends Iterable<IChecker> {
+	/**
+	 * Iterator for registered checkers
+	 * @return
+	 */
 	public abstract Iterator<IChecker> iterator();
 
+	/**
+	 * Add another checker
+	 * @param checker
+	 */
 	public abstract void addChecker(IChecker checker);
 
-	public abstract void addProblem(IProblem p, String category);
+	/**
+	 * Add problem p with default category by category id into default profile, category must exists in default profile
+	 * @param p - problem
+	 * @param categoryId - category id
+	 */
+	public abstract void addProblem(IProblem p, String categoryId);
 
-	public abstract void addCategory(IProblemCategory p, String category);
+	/**
+	 * Add subcategory with id categoryId into parent category, 
+	 * if parent does not exist in default, profile - if not will be added to the root
+	 * @param category - new category
+	 * @param parentCategoryId - parent category id
+	 */
+	public abstract void addCategory(IProblemCategory category, String parentCategoryId);
 
+	/**
+	 * Add problem reference to a checker, i.e. claim that checker can produce this problem.
+	 * If checker does not claim any problems it cannot be enabled.
+	 * @param c - checker
+	 * @param p - problem
+	 */
 	public abstract void addRefProblem(IChecker c, IProblem p);
 
 	/**
+	 * Get default profile, default profile is kind of "Installation Default". Always the same, comes from default in checker extensions
 	 * @return
 	 */
 	public abstract IProblemProfile getDefaultProfile();
 
 	/**
-	 * @return
+	 * Get workspace profile. User can change setting for workspace profile.
+	 * @return profile
 	 */
 	public abstract IProblemProfile getWorkspaceProfile();
 
 	/**
-	 * @param element
-	 * @return
+	 * Get resource profile. For example given directory can have different profile
+	 * than parent project.
+	 * 
+	 * @param element - resource
+	 * @return profile
 	 */
 	public abstract IProblemProfile getResourceProfile(IResource element);
 
 	/**
+	 * Returns profile working copy for given resource element. (If profile is not
+	 * specified for given element it will search for parent resource and so on).
 	 * @param element
 	 * @return
 	 */
-	public abstract IProblemProfile getResourceProfileWorkingCopy(
-			IResource element);
+	public abstract IProblemProfile getResourceProfileWorkingCopy(IResource element);
 
 	/**
-	 * Set profile for resource. This method is called by UI, and should not be
-	 * called by clients directly
-	 * 
+	 * Set profile for resource. 
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @param resource
 	 *            - resource
 	 * @param profile
 	 *            - problems profile
 	 */
-	public abstract void updateProfile(IResource resource,
-			IProblemProfile profile);
+	public abstract void updateProfile(IResource resource, IProblemProfile profile);
 }

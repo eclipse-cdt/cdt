@@ -13,36 +13,25 @@ package org.eclipse.cdt.codan.core.model;
 import org.eclipse.core.resources.IFile;
 
 /**
- * Implementation of IProblemLocation
+ * Abstract Implementation of IProblemLocation
  * 
+ * Clients may extend this class.
  */
-public class ProblemLocation implements IProblemLocation {
+public abstract class ProblemLocation implements IProblemLocation {
 	protected IFile file;
 	protected int line;
 	protected int posStart;
 	protected int posEnd;
 	protected Object extra;
 
-	/**
-	 * @param file
-	 * @param line
-	 * @param lineEnd
-	 * @param posStart
-	 * @param posEnd
-	 */
-	public ProblemLocation(IFile file, int line) {
+	protected ProblemLocation(IFile file, int line) {
 		this.file = file;
 		this.line = line;
 		this.posStart = -1;
 		this.posEnd = -1;
 	}
 
-	/**
-	 * @param file
-	 * @param startingLineNumber
-	 * @param endingLineNumber
-	 */
-	public ProblemLocation(IFile file, int startChar, int endChar) {
+	protected ProblemLocation(IFile file, int startChar, int endChar) {
 		this.file = file;
 		this.line = -1;
 		this.posStart = startChar;

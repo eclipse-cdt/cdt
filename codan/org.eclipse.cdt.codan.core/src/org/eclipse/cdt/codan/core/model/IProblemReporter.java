@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-
 /**
  * IProblemReporter - interface to report problems
- *
+ * 
+ * Clients may implement and extend this interface
  */
 public interface IProblemReporter {
-	public static final String GENERIC_CODE_ANALYSIS_MARKER_TYPE = "org.eclipse.cdt.codan.core.codanProblem";
+	public static final String GENERIC_CODE_ANALYSIS_MARKER_TYPE = "org.eclipse.cdt.codan.core.codanProblem"; //$NON-NLS-1$
+
 	/**
-	 * Report a problem with "problemId" id on location determined by "loc", 
-	 * using problem specific error message customised by args.
-	 * @param problemId - id of the problem registers with checker
+	 * Report a problem with "problemId" id on the location determined by "loc", 
+	 * using problem specific error message customized by args.
+	 * @param problemId - id of the problem registered with a checker
 	 * @param loc - location object
-	 * @param args - custom args, can be null, in this case default message is reported
+	 * @param args - custom arguments, can be null, in this case default message is reported
 	 */
-	public void reportProblem(String problemId,  IProblemLocation loc,
-			Object ... args);
+	public void reportProblem(String problemId, IProblemLocation loc, Object... args);
 }

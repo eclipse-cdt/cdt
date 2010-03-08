@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import java.util.HashMap;
+
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
@@ -24,6 +25,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 	private boolean enabled = true;
 	private HashMap<Object, Object> parameters = new HashMap<Object, Object>(0);
 	private IProblemParameterInfo parameterInfo;
+	private boolean frozen;
 
 	public CodanSeverity getSeverity() {
 		return severity;
@@ -32,6 +34,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 	public CodanProblem(String problemId, String name) {
 		this.id = problemId;
 		this.name = name;
+		this.frozen = false;
 	}
 
 	public String getName() {
@@ -57,8 +60,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 	}
 
 	public void setSeverity(CodanSeverity sev) {
-		if (sev == null)
-			throw new NullPointerException();
+		if (sev == null) throw new NullPointerException();
 		this.severity = sev;
 	}
 
@@ -101,11 +103,20 @@ public class CodanProblem implements IProblemWorkingCopy {
 		return message;
 	}
 
+	protected void freeze() {
+		frozen = true;
+	}
+
 	/**
 	 * @param message
 	 *            the message to set
 	 */
 	public void setMessagePattern(String message) {
+		checkSet();
 		this.message = message;
+	}
+
+	protected void checkSet() {
+		if (frozen) throw new IllegalStateException("Object is unmodifieble"); //$NON-NLS-1$
 	}
 }

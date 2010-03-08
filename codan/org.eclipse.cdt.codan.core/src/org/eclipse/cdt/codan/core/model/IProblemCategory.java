@@ -11,8 +11,9 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * Problem category
- *
+ * Problem category.
+ * 
+ * Clients may extend and implement this interface.
  */
 public interface IProblemCategory extends IProblemElement {
 	/**
@@ -32,17 +33,4 @@ public interface IProblemCategory extends IProblemElement {
 	 */
 	IProblemElement[] getChildren();
 
-	/**
-	 * Find problem by id within children recursively
-	 * @param id
-	 * @return
-	 */
-	IProblem findProblem(String id);
-
-	/**
-	 * Find category by id within children recursively
-	 * @param id
-	 * @return
-	 */
-	IProblemCategory findCategory(String id);
 }

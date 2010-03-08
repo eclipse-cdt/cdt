@@ -8,18 +8,23 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.internal.core.model;
+
+import org.eclipse.cdt.codan.core.model.ProblemLocation;
+import org.eclipse.core.resources.IFile;
 
 /**
- * Interface for checker with parameters, if checker implements this
- * interface method would be called on initialization so checker has
- * a chance to set default values for its parameters
- * 
+ * Codan Problem Location, so far same as abstract class
+ *
  */
-public interface ICheckerWithParameters {
-	/**
-	 * Implement this method to set default parameters for checkers with parameters. 
-	 * @param problem - instance of problem working copy
-	 */
-	void initParameters(IProblemWorkingCopy problem);
+public class CodanProblemLocation extends ProblemLocation {
+
+	public CodanProblemLocation(IFile file, int startChar, int endChar) {
+		super(file, startChar, endChar);
+	}
+
+	protected CodanProblemLocation(IFile file, int line) {
+		super(file, line);
+	}
+
 }

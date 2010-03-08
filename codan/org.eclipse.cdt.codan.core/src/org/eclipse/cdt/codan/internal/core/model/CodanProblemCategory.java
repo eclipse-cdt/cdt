@@ -41,40 +41,36 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 	}
 
 	public IProblemElement[] getChildren() {
-		return (IProblemElement[]) list.toArray(new IProblemElement[list.size()]);
+		return list.toArray(new IProblemElement[list.size()]);
 	}
 
 	public void addChild(IProblemElement p) {
 		list.add(p);
 	}
 
-	public IProblem findProblem(String id) {
-		Object[] children = this.getChildren();
+	public static IProblem findProblem(IProblemCategory c, String id) {
+		Object[] children = c.getChildren();
 		for (Object object : children) {
 			if (object instanceof IProblemCategory) {
 				IProblemCategory cat = (IProblemCategory) object;
-				IProblem found = cat.findProblem(id);
-				if (found != null)
-					return found;
+				IProblem found = findProblem(cat, id);
+				if (found != null) return found;
 			} else if (object instanceof IProblem) {
 				IProblem p = (IProblem) object;
-				if (p.getId().equals(id))
-					return p;
+				if (p.getId().equals(id)) return p;
 			}
 		}
 		return null;
 	}
 
-	public IProblemCategory findCategory(String id) {
-		if (getId().equals(id))
-			return this;
-		Object[] children = getChildren();
+	public static IProblemCategory findCategory(IProblemCategory cat, String id) {
+		if (cat.getId().equals(id)) return cat;
+		Object[] children = cat.getChildren();
 		for (Object object : children) {
 			if (object instanceof IProblemCategory) {
-				IProblemCategory cat = (IProblemCategory) object;
-				IProblemCategory found = cat.findCategory(id);
-				if (found != null)
-					return found;
+				IProblemCategory cat2 = (IProblemCategory) object;
+				IProblemCategory found = findCategory(cat2, id);
+				if (found != null) return found;
 			}
 		}
 		return null;
@@ -90,8 +86,7 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 		try {
 			CodanProblemCategory clone = (CodanProblemCategory) super.clone();
 			clone.list = new ArrayList<IProblemElement>();
-			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator
-					.hasNext();) {
+			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
 				IProblemElement child = iterator.next();
 				clone.list.add((IProblemElement) child.clone());
 			}

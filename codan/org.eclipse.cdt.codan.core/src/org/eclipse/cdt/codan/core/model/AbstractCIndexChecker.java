@@ -21,11 +21,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Checker that works with C-Index of a file (but not AST)
+ * Implementation of IChecker that works with C-Index of a file (but not AST)
  * 
+ * Clients may extend this class.
  */
-public abstract class AbstractCIndexChecker extends AbstractChecker implements
-		ICIndexChecker {
+public abstract class AbstractCIndexChecker extends AbstractChecker implements ICIndexChecker {
 	private IFile file;
 	protected IIndex index;
 
@@ -36,11 +36,8 @@ public abstract class AbstractCIndexChecker extends AbstractChecker implements
 	void processFile(IFile file) throws CoreException, InterruptedException {
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit))
-			return;
+		if (!(model instanceof ITranslationUnit)) return; // not a C/C++ file
 		ITranslationUnit tu = (ITranslationUnit) model;
-		if (tu == null)
-			return; // not a C/C++ file
 		index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 		// lock the index for read access
 		index.acquireReadLock();

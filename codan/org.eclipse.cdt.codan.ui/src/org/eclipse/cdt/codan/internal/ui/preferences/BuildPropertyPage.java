@@ -21,7 +21,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 * 
 	 */
 	public BuildPropertyPage() {
-		setPreferenceStore(org.eclipse.cdt.codan.ui.CodanUIActivator.getDefault()
+		setPreferenceStore(org.eclipse.cdt.codan.internal.ui.CodanUIActivator.getDefault()
 				.getPreferenceStore());
 	}
 

@@ -65,7 +65,7 @@
                thread="main"
               visible="true">
            <run
-                 class="org.eclipse.cdt.codan.core.CodanApplication">
+                 class="org.eclipse.cdt.codan.internal.core.CodanApplication">
            </run>
         </application>
      </extension>

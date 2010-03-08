@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IFile;
  * Interface to describe problem location. Usually contains file and linenumber,
  * also supports character positions for sophisticated errors.
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemLocation {
 	/**

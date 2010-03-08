@@ -13,7 +13,7 @@ import org.osgi.framework.BundleContext;
  */
 public class CodanCorePlugin extends Plugin {
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.core";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.core"; //$NON-NLS-1$
 	public static final String NATURE_ID = CodeAnlysisNature.NATURE_ID;
 	// The shared instance
 	private static CodanCorePlugin plugin;
@@ -34,6 +34,7 @@ public class CodanCorePlugin extends Plugin {
 	 * @see
 	 * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -45,6 +46,7 @@ public class CodanCorePlugin extends Plugin {
 	 * @see
 	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);

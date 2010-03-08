@@ -40,7 +40,7 @@ public class CodanCReconciler implements ICReconcilingListener {
 	 * 
 	 */
 	private void initialize() {
-		// TODO Auto-generated method stub
+		// nothing?
 	}
 
 	/*
@@ -51,7 +51,7 @@ public class CodanCReconciler implements ICReconcilingListener {
 	 * ()
 	 */
 	public void aboutToBeReconciled() {
-		// TODO Auto-generated method stub
+		// nothing
 	}
 
 	/*

@@ -1,9 +1,9 @@
-package org.eclipse.cdt.codan.core;
+package org.eclipse.cdt.codan.internal.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.cdt.codan.internal.core.CodanBuilder;
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -12,14 +12,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
+/**
+ * 
+ * Application to support headless build
+ * 
+ * @noextend This class is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
 public class CodanApplication implements IApplication {
 	private Collection<String> projects = new ArrayList<String>();
 	private boolean verbose = false;
 	private boolean all = false;
 
 	public Object start(IApplicationContext context) throws Exception {
-		String[] args = (String[]) context.getArguments().get(
-				"application.args");
+		String[] args = (String[]) context.getArguments().get("application.args"); //$NON-NLS-1$
 		if (args == null || args.length == 0) {
 			help();
 			return EXIT_OK;
@@ -29,10 +35,9 @@ public class CodanApplication implements IApplication {
 		CodanRuntime runtime = CodanRuntime.getInstance();
 		runtime.setProblemReporter(new CodanMarkerProblemReporter() {
 			@Override
-			public void reportProblem(String id, int severity, IFile file,
-					int lineNumber, int startChar, int endChar, String message) {
-				System.out.println(file.getLocation() + ":" + lineNumber + ": "
-						+ message);
+			public void reportProblem(String id, int severity, IFile file, int lineNumber, int startChar, int endChar,
+					String message) {
+				System.out.println(file.getLocation() + ":" + lineNumber + ": " + message);
 			}
 		});
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -44,8 +49,7 @@ public class CodanApplication implements IApplication {
 				log("Launching analysis on project " + project);
 				IProject wProject = root.getProject(project);
 				if (!wProject.exists()) {
-					System.err.println("Error: project " + project
-							+ " does not exist");
+					System.err.println("Error: project " + project + " does not exist");
 					continue;
 				}
 				wProject.accept(codanBuilder.new CodanResourceVisitor());
@@ -58,8 +62,7 @@ public class CodanApplication implements IApplication {
 	 * @param string
 	 */
 	private void log(String string) {
-		if (verbose)
-			System.err.println(string);
+		if (verbose) System.err.println(string);
 	}
 
 	/**

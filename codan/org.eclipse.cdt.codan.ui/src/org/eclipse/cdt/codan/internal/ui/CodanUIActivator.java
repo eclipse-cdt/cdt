@@ -1,4 +1,4 @@
-package org.eclipse.cdt.codan.ui;
+package org.eclipse.cdt.codan.internal.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

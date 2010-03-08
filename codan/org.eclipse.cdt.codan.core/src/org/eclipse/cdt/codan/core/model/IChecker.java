@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Interface that checker must implement. CDT Checker must be able to process a resource.
+ * 
+ * Clients may implement and extend this interface.
  */
 public interface IChecker {
 	/**
@@ -26,7 +28,7 @@ public interface IChecker {
 	/**
 	 * Implement this method to trim down type of resource you are interested in,
 	 * usually it will be c/c++ files only
-	 * @param resource
+	 * @param resource - resource to run on
 	 * @return
 	 */
 	boolean enabledInContext(IResource resource);

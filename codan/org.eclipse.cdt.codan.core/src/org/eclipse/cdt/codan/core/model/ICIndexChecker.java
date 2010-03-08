@@ -13,9 +13,15 @@ package org.eclipse.cdt.codan.core.model;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
- * @author Alena
+ * Extension of IChecker that works with C-Index of a file (but not AST)
+ * Default implementation {@link AbstractCIndexChecker}
  * 
+ * Client may implement this interface.
  */
 public interface ICIndexChecker extends IChecker {
+	/**
+	 * Run checker on translation unit
+	 * @param unit - translation unit
+	 */
 	void processUnit(ITranslationUnit unit);
 }

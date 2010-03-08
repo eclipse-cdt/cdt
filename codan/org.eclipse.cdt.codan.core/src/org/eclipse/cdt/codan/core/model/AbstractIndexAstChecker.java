@@ -27,11 +27,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * @author Alena
+ * Convenience implementation of checker that work on index based ast of a c/c++ program.
  * 
+ * Clients may extend this class.
  */
-public abstract class AbstractIndexAstChecker extends AbstractChecker implements
-		ICAstChecker {
+public abstract class AbstractIndexAstChecker extends AbstractChecker implements ICAstChecker {
 	private IFile file;
 
 	protected IFile getFile() {
@@ -41,18 +41,14 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	void processFile(IFile file) throws CoreException, InterruptedException {
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit))
-			return;
+		if (!(model instanceof ITranslationUnit)) return; // not a C/C++ file
 		ITranslationUnit tu = (ITranslationUnit) model;
-		if (tu == null)
-			return; // not a C/C++ file
 		IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 		// lock the index for read access
 		index.acquireReadLock();
 		try {
 			// create index based ast
-			IASTTranslationUnit ast = tu.getAST(index,
-					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			// traverse the ast using the visitor pattern.
 			this.file = file;
 			processAst(ast);
@@ -80,19 +76,16 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	public void reportProblem(String id, IASTNode astNode, String message) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
-		IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
-				.getFileForLocation(location);
+		IFile astFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
 		if (astFile == null) {
 			astFile = file;
 		}
-		ProblemLocation loc;
-		if (astLocation.getStartingLineNumber() == astLocation
-				.getEndingLineNumber())
-			loc = new ProblemLocation(astFile, astLocation.getNodeOffset(),
-					astLocation.getNodeOffset() + astLocation.getNodeLength());
-		else
-			loc = new ProblemLocation(astFile, astLocation
-					.getStartingLineNumber());
+		IProblemLocation loc;
+		if (astLocation.getStartingLineNumber() == astLocation.getEndingLineNumber()) loc = getRuntime()
+				.getProblemLocationFactory().createProblemLocation(astFile, astLocation.getNodeOffset(),
+						astLocation.getNodeOffset() + astLocation.getNodeLength());
+		else loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile,
+				astLocation.getStartingLineNumber());
 		getProblemReporter().reportProblem(id, loc, message);
 	}
 

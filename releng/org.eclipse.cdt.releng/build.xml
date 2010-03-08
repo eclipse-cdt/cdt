@@ -631,6 +631,9 @@
 			<param name="tagmodule" value="org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.linux.x86"/>
 		</antcall>
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.x86"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.ui"/>
 		</antcall>
 		<antcall target="tagone">

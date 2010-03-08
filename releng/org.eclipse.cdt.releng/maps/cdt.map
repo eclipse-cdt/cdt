@@ -134,6 +134,7 @@ feature@org.eclipse.cdt.p2=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/p2/org.eclip
 ! EDC
 plugin@org.eclipse.cdt.debug.edc=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc
 plugin@org.eclipse.cdt.debug.edc.linux.x86=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.linux.x86
+plugin@org.eclipse.cdt.debug.edc.x86=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.x86
 plugin@org.eclipse.cdt.debug.edc.tcf.extension=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.tcf.extension
 plugin@org.eclipse.cdt.debug.edc.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.ui
 plugin@org.eclipse.cdt.debug.edc.windows=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc.windows

@@ -282,12 +282,17 @@ public class MIVariableManager implements ICommandControl {
 		 * @since 3.0 
 		 */
 		public boolean isNumChildrenHintTrustworthy() {
-			// For complex structures which are not arrays, we cannot trust the hint.
+			// We cannot trust the hint about the number of children when we are
+			// dealing with a complex structure that could have the
+			// 'protected/public/private' children types.
+			// Note that a pointer could have such children, if it points to
+			// a complex structure.
+			//
 			// This is only valid for C++, so we should even check for it using
 			// -var-info-expression.  Do we have to use -var-info-expression for each
-			// variable object, or can we do it one time ony for the whole program?
+			// variable object, or can we do it one time only for the whole program?
 			// Right now, we always assume we could be using C++
-			return (!isComplex() || isArray());
+			return (getNumChildrenHint() == 0 || isArray());
 		}
  
 		public String getValue(String format) { return valueMap.get(format); }
@@ -298,8 +303,8 @@ public class MIVariableManager implements ICommandControl {
 		public boolean isArray() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.ARRAY; }
 		public boolean isPointer() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.POINTER; }
 		public boolean isMethod() { return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION; }
-		// A complex variable is one with children.  However, it must not be a pointer since a pointer has one child
-		// according to GDB, but is still a 'simple' variable.  
+		// A complex variable is one with children.  However, it must not be a pointer since a pointer 
+		// does have children, but is still a 'simple' variable, as it can be modifed.  
 		// Note that the numChildrenHint can be trusted when asking if the number of children is 0 or not
 		public boolean isComplex() { return (getGDBType() == null) ? false : getGDBType().getType() != GDBType.POINTER && getNumChildrenHint() > 0; }
 		

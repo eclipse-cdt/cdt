@@ -22,10 +22,17 @@ package org.eclipse.cdt.codan.core.model;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemParameterInfo {
+	final static String TYPE_STRING = "string"; //$NON-NLS-1$
+	final static String TYPE_INTEGER = "integer"; //$NON-NLS-1$
+	final static String TYPE_BOOLEAN = "boolean"; //$NON-NLS-1$
+	final static String TYPE_FILE = "file"; //$NON-NLS-1$
+	final static String TYPE_LIST = "list"; //$NON-NLS-1$
+	final static String TYPE_HASH = "hash"; //$NON-NLS-1$
+
 	String getKey();
 
 	/**
-	 * type of the parameter, supports boolean, integer, string, file and list.
+	 * type of the parameter, supports boolean, integer, string, file, list and hash.
 	 * If list is the value - it is an array - subparameter can be accessed by number, if
 	 * hash is the value - it is a hash - subparameter can be accesses by name
 	 * 

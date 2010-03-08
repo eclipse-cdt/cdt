@@ -151,6 +151,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="messagePattern" type="string">
+            <annotation>
+               <documentation>
+                  Default error message pattern. Use java pattern notation such as {0} to replace with first argument, and so on.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

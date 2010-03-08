@@ -44,13 +44,13 @@ public abstract class AbstractChecker implements IChecker {
 	 *            - file
 	 * @param lineNumber
 	 *            - line
-	 * @param arg
-	 *            - problem argument, if problem does not define error message
+	 * @param args
+	 *            - problem arguments, if problem does not define error message
 	 *            it will be error message (not recommended because of
 	 *            internationalization)
 	 */
-	public void reportProblem(String id, IFile file, int lineNumber, String arg) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), arg);
+	public void reportProblem(String id, IFile file, int lineNumber, Object... args) {
+		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), args);
 	}
 
 	/**

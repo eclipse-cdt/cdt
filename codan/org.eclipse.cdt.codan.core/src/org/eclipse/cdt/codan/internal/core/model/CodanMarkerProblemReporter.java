@@ -46,7 +46,7 @@ public class CodanMarkerProblemReporter implements IProblemReporter {
 		if (messagePattern == null) {
 			if (args != null && args.length > 0 && args[0] instanceof String) message = (String) args[0];
 		} else {
-			MessageFormat.format(messagePattern, args);
+			message = MessageFormat.format(messagePattern, args);
 		}
 		reportProblem(id, severity, file, lineNumber, loc.getStartingChar(), loc.getEndingChar(), message);
 	}

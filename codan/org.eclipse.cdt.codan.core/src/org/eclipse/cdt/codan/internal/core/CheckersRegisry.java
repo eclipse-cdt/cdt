@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
@@ -166,6 +167,19 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 			CodanProblem p = new CodanProblem(id, name);
 			String category = getAtt(configurationElement, "category", false); //$NON-NLS-1$
 			if (category == null) category = "org.eclipse.cdt.codan.core.categories.ProgrammingProblems"; //$NON-NLS-1$
+			String enab = getAtt(configurationElement, "defaultEnabled", false); //$NON-NLS-1$
+			String sev = getAtt(configurationElement, "defaultSeverity", false); //$NON-NLS-1$
+			String patt = getAtt(configurationElement, "messagePattern", false); //$NON-NLS-1$
+			if (enab != null) {
+				p.setEnabled(Boolean.valueOf(enab));
+			}
+			if (sev != null) {
+				CodanSeverity cSev = CodanSeverity.valueOf(sev);
+				if (cSev != null) p.setSeverity(cSev);
+			}
+			if (patt != null) {
+				p.setMessagePattern(patt);
+			}
 			addProblem(p, category);
 			return p;
 		}

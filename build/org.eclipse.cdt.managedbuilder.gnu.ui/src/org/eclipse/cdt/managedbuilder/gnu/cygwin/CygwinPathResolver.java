@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.gnu.ui.GnuUIPlugin;
 import org.eclipse.cdt.utils.WindowsRegistry;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
+import org.eclipse.core.runtime.Path;
 
 
 /**
@@ -165,20 +166,37 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	private static String findRoot() {
 		String rootValue = null;
 		
-		// 1. Try to find the root dir in SOFTWARE\Cygnus Solutions
-		rootValue = readValueFromRegistry(REGISTRY_KEY_MOUNTS+ROOTPATTERN, PATH_NAME);
+		// 1. Look in PATH values. Look for bin\cygwin1.dll
+		String pathVariable = System.getenv("PATH"); //$NON-NLS-1$
+		String[] paths = pathVariable.split(";"); //$NON-NLS-1$
+		for (String pathStr : paths) {
+			// If there is a trailing / or \, remove it
+			if ((pathStr.endsWith("\\") || pathStr.endsWith("/")) && pathStr.length() > 1) //$NON-NLS-1$ //$NON-NLS-2$
+				pathStr = pathStr.substring(0, pathStr.length() - 1);
+
+			Path pathFile = new Path(pathStr + "\\cygwin1.dll"); //$NON-NLS-1$
+			if (pathFile.toFile().exists()) {
+				rootValue = pathFile.removeLastSegments(2).toOSString();
+				break;
+			}
+		}
 		
-		// 2. Try to find the root dir in SOFTWARE\Cygwin\setup
+		// 2. Try to find the root dir in SOFTWARE\Cygnus Solutions
+		if (rootValue == null) {
+			rootValue = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ROOTPATTERN, PATH_NAME);
+		}
+		
+		// 3. Try to find the root dir in SOFTWARE\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP, "rootdir"); //$NON-NLS-1$
 		}
 		
-		// 3. Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
+		// 4. Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP_WIN64, "rootdir"); //$NON-NLS-1$
 		}
 		
-		// 4. Try the default Cygwin install dir
+		// 5. Try the default Cygwin install dir
 		if(rootValue == null) {
 			File file = new File(DEFAULT_ROOT);
 			if (file.exists() && file.isDirectory())
@@ -203,17 +221,17 @@ public class CygwinPathResolver implements IBuildPathResolver {
 		
 		rootCygwin = findRoot();
 		
-		// 1. Try to find the paths in SOFTWARE\\Cygnus Solutions  
-		etcCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ETCPATTERN, PATH_NAME);
-		binCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + BINPATTERN, PATH_NAME);
-		
-		// 2. Try to find the paths by appending the patterns to the root dir
-		if(etcCygwin == null)
-			etcCygwin = getValueFromRoot(ETCPATTERN);
-		if(binCygwin == null)
-			binCygwin = getValueFromRoot(BINPATTERN);
+		// 1. Try to find the paths by appending the patterns to the root dir
+		etcCygwin = getValueFromRoot(ETCPATTERN);
+		binCygwin = getValueFromRoot(BINPATTERN);
 		if(binCygwin == null)
 			binCygwin = getValueFromRoot(BINPATTERN_ALTERNATE);
+		
+		// 2. Try to find the paths in SOFTWARE\\Cygnus Solutions  
+		if(etcCygwin == null)
+			etcCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ETCPATTERN, PATH_NAME);
+		if(binCygwin == null)
+			binCygwin = readValueFromRegistry(REGISTRY_KEY_MOUNTS + BINPATTERN, PATH_NAME);
 		
 		checked = true;
 	}

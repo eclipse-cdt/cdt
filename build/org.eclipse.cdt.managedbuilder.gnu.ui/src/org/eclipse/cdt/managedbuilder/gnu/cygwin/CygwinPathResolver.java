@@ -40,10 +40,10 @@ public class CygwinPathResolver implements IBuildPathResolver {
 	private static final String PROPERTY_OS_NAME = "os.name"; //$NON-NLS-1$
 	private static final String PROPERTY_OS_VALUE = "windows";//$NON-NLS-1$
 	private static final String SP = " ";         //$NON-NLS-1$
-	// note that in Cygwin 1.7 the mount point storage has been moved out of the registry
-	private static final String REGISTRY_KEY_MOUNTS = "SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\"; //$NON-NLS-1$
 	private static final String REGISTRY_KEY_SETUP = "SOFTWARE\\Cygwin\\setup"; //$NON-NLS-1$
 	private static final String REGISTRY_KEY_SETUP_WIN64 = "SOFTWARE\\Wow6432Node\\Cygwin\\setup"; //$NON-NLS-1$
+	// note that in Cygwin 1.7 the mount point storage has been moved out of the registry
+	private static final String REGISTRY_KEY_MOUNTS = "SOFTWARE\\Cygnus Solutions\\Cygwin\\mounts v2\\"; //$NON-NLS-1$
 	private static final String PATH_NAME = "native";   //$NON-NLS-1$
 	private static final String SSLASH = "/";           //$NON-NLS-1$
 	private static final String BSLASH = "\\\\";        //$NON-NLS-1$
@@ -181,19 +181,19 @@ public class CygwinPathResolver implements IBuildPathResolver {
 			}
 		}
 		
-		// 2. Try to find the root dir in SOFTWARE\Cygnus Solutions
-		if (rootValue == null) {
-			rootValue = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ROOTPATTERN, PATH_NAME);
-		}
-		
-		// 3. Try to find the root dir in SOFTWARE\Cygwin\setup
+		// 2. Try to find the root dir in SOFTWARE\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP, "rootdir"); //$NON-NLS-1$
 		}
 		
-		// 4. Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
+		// 3. Try to find the root dir in SOFTWARE\Wow6432Node\Cygwin\setup
 		if(rootValue == null) {
 			rootValue = readValueFromRegistry(REGISTRY_KEY_SETUP_WIN64, "rootdir"); //$NON-NLS-1$
+		}
+		
+		// 4. Try to find the root dir in SOFTWARE\Cygnus Solutions
+		if (rootValue == null) {
+			rootValue = readValueFromRegistry(REGISTRY_KEY_MOUNTS + ROOTPATTERN, PATH_NAME);
 		}
 		
 		// 5. Try the default Cygwin install dir

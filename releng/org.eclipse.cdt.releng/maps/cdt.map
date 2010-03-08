@@ -160,4 +160,4 @@ plugin@org.eclipse.cdt.codan.checkers.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cd
 plugin@org.eclipse.cdt.codan.core=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.core
 plugin@org.eclipse.cdt.codan.core.test=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.test
 plugin@org.eclipse.cdt.codan.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.ui
-feature@org.eclipse.cdt.codan.feature=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.codan-feature
+feature@org.eclipse.cdt.codan.feature=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan-feature

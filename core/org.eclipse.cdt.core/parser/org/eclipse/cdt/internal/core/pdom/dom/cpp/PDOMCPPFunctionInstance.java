@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,11 +70,18 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		return IIndexCPPBindingConstants.CPP_FUNCTION_INSTANCE;
 	}
 	
-	
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 	
+	public boolean isExplicitSpecialization() {
+		try {
+			return hasDefinition();
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
 			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast.cpp;
@@ -42,7 +43,14 @@ public interface ICPPTemplateInstance extends ICPPSpecialization {
 	public ICPPTemplateArgument[] getTemplateArguments();
 	
 	/**
-	 * @deprecated use {@link #getTemplateArguments()}, instead.
+	 * Explicit specializations are modeled as instances of a template. 
+	 * Returns <code>true</code> if this binding is an explicit specialization.
+	 * @since 5.2
+	 */
+	public boolean isExplicitSpecialization();
+	
+	/**
+	 * @deprecated Replaced by {@link #getTemplateArguments()}.
 	 */
 	@Deprecated
 	public IType[] getArguments();

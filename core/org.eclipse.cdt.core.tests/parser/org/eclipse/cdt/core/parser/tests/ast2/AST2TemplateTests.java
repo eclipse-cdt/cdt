@@ -4835,4 +4835,32 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame(ct, inst.getSpecializedBinding());
 	}
 
+	// template<typename T> class X {};
+	// template<typename T> class Y {};
+	// template<> class Y<int> {};
+	// template<typename T> void f(T t) {}
+	// template<typename T> void g(T t) {}
+	// template<> void g(int t) {}
+	// void test() {
+	//    X<int> x;
+	//    Y<int> y;
+	//    f(1);
+	//    g(1);
+	// }
+	public void testExplicitSpecializations_296427() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+	
+		ICPPTemplateInstance inst;
+		inst= bh.assertNonProblem("X<int>", 0);
+		assertFalse(inst.isExplicitSpecialization());
+		inst = bh.assertNonProblem("Y<int> y;", 6);
+		assertTrue(inst.isExplicitSpecialization());
+		
+		inst = bh.assertNonProblem("f(1)", 1);
+		assertFalse(inst.isExplicitSpecialization());
+		inst = bh.assertNonProblem("g(1)", 1);
+		assertTrue(inst.isExplicitSpecialization());
+	}
+
 }

@@ -1721,4 +1721,29 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertEquals("T", ct.getTemplateParameters()[0].getName());
 	}
 
+	// template<typename T> class X {};
+	// template<typename T> class Y {};
+	// template<> class Y<int> {};
+	// template<typename T> void f(T t) {}
+	// template<typename T> void g(T t) {}
+	// template<> void g(int t) {}
+
+	// void test() {
+	//    X<int> x;
+	//    Y<int> y;
+	//    f(1);
+	//    g(1);
+	// }
+	public void testExplicitSpecializations_296427() throws Exception { 
+		ICPPTemplateInstance inst;
+		inst= getBindingFromASTName("X<int>", 0);
+		assertFalse(inst.isExplicitSpecialization());
+		inst = getBindingFromASTName("Y<int>", 0);
+		assertTrue(inst.isExplicitSpecialization());
+		
+		inst = getBindingFromASTName("f(1)", 1);
+		assertFalse(inst.isExplicitSpecialization());
+		inst = getBindingFromASTName("g(1)", 1);
+		assertTrue(inst.isExplicitSpecialization());
+	}
 }

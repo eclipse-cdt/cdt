@@ -62,6 +62,10 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 		return (ICPPClassTemplate) getSpecializedBinding();
 	}
 
+	public boolean isExplicitSpecialization() {
+		return false;
+	}
+
 	 @Override
 	public CPPDeferredClassInstance clone() {
 		 CPPDeferredClassInstance cloned= (CPPDeferredClassInstance) super.clone();

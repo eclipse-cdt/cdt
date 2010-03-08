@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -43,6 +44,14 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return arguments;
+	}
+
+	public boolean isExplicitSpecialization() {
+		try {
+			return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
+		} catch (DOMException e) {
+			return false;
+		}
 	}
 
 	@Deprecated

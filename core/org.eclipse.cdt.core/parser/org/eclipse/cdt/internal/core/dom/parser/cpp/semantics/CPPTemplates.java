@@ -129,7 +129,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalTemplateDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -1279,16 +1278,11 @@ public class CPPTemplates {
 							if (j++ == missingTemplateDecls) {
 								IBinding b= n.resolveBinding();
 								if (b instanceof ICPPTemplateInstance && b instanceof ICPPClassType) {
-									try {
-										IScope s= ((ICPPClassType) b).getCompositeScope();
-										if (!(s instanceof ICPPClassSpecializationScope)) {
-											// template-id of an explicit specialization. 
-											// here we don't have a template declaration. (see 14.7.3.5)
-											missingTemplateDecls++;
-											lastIsTemplate= true;
-										}
-									} catch (DOMException e) {
-										// assume that it is not an explicit instance
+									if (((ICPPTemplateInstance) b).isExplicitSpecialization()) {
+										// For a template-id of an explicit specialization. 
+										// we don't have a template declaration. (see 14.7.3.5)
+										missingTemplateDecls++;
+										lastIsTemplate= true;
 									}
 								}
 								break;

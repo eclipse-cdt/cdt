@@ -117,6 +117,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 * @see IndexBindingResolutionTestBase#getBindingFromASTName(Class, String, int)
 	 */
 	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
+		if (len <= 0)
+			len+= section.length();
+		
 		IASTName name= findName(section, len);
 		assertNotNull("name not found for \""+section+"\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());

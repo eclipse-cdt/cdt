@@ -2,7 +2,7 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
-import org.eclipse.cdt.codan.ui.actions.ToggleNatureAction;
+import org.eclipse.cdt.codan.internal.ui.actions.ToggleNatureAction;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
@@ -21,7 +21,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 * 
 	 */
 	public BuildPropertyPage() {
-		setPreferenceStore(org.eclipse.cdt.codan.ui.Activator.getDefault()
+		setPreferenceStore(org.eclipse.cdt.codan.ui.CodanUIActivator.getDefault()
 				.getPreferenceStore());
 	}
 

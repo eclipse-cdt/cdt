@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.sample;
+package org.eclipse.cdt.codan.internal.checkers.sample;
 
 import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.sample.AssignmentInConditionProblem";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.

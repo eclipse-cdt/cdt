@@ -8,7 +8,7 @@
  * Contributors:
  *    Andrew Gvozdev  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.ui.quickfix;
+package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;

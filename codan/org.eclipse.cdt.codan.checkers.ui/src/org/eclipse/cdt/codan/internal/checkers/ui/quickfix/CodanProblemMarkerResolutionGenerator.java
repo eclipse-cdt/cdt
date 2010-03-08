@@ -8,7 +8,7 @@
  * Contributors:
  *    Andrew Gvozdev  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.ui.quickfix;
+package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

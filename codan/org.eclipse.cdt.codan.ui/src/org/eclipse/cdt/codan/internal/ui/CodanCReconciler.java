@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.ui;
+package org.eclipse.cdt.codan.internal.ui;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;

@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.ui.actions;
+package org.eclipse.cdt.codan.internal.ui.actions;
 
 import java.util.Iterator;
 

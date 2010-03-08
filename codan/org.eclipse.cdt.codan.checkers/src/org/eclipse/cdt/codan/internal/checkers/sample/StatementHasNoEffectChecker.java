@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.sample;
+package org.eclipse.cdt.codan.internal.checkers.sample;
 
 import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
  * 
  */
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.sample.StatementHasNoEffectProblem";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.

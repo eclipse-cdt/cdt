@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Checkers
 Bundle-SymbolicName: org.eclipse.cdt.codan.checkers;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: org.eclipse.cdt.codan.checkers.Activator
+Bundle-Activator: org.eclipse.cdt.codan.checkers.CodanCheckersActivator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.5.0",
  org.eclipse.cdt.core;bundle-version="5.1.0",

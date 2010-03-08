@@ -25,7 +25,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = org.eclipse.cdt.codan.ui.Activator
+		IPreferenceStore store = org.eclipse.cdt.codan.ui.CodanUIActivator
 				.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_RUN_ON_BUILD, false);
 	}

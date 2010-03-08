@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.sample;
+package org.eclipse.cdt.codan.internal.checkers.sample;
 
 import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * 
  */
 public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.SuggestedParenthesisProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.sample.SuggestedParenthesisProblem";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.

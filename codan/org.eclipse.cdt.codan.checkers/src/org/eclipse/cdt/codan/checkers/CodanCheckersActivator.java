@@ -8,16 +8,16 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends Plugin {
+public class CodanCheckersActivator extends Plugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.checkers";
 	// The shared instance
-	private static Activator plugin;
+	private static CodanCheckersActivator plugin;
 
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public CodanCheckersActivator() {
 	}
 
 	/*
@@ -49,7 +49,7 @@ public class Activator extends Plugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static CodanCheckersActivator getDefault() {
 		return plugin;
 	}
 

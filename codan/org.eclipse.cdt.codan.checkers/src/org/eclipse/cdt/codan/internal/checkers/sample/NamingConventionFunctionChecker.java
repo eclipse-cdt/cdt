@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.sample;
+package org.eclipse.cdt.codan.internal.checkers.sample;
 
 import java.util.regex.Pattern;
 import org.eclipse.cdt.codan.core.model.AbstractCIndexChecker;
@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 		implements ICheckerWithParameters {
 	public static final String PARAM_KEY = "pattern";
-	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.NamingConventionFunctionProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.sample.NamingConventionFunctionProblem";
 
 	/*
 	 * (non-Javadoc)

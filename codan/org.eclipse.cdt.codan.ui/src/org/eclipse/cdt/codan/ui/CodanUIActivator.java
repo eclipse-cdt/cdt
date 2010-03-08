@@ -9,16 +9,16 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class CodanUIActivator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui";
 	// The shared instance
-	private static Activator plugin;
+	private static CodanUIActivator plugin;
 
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public CodanUIActivator() {
 	}
 
 	/*
@@ -50,7 +50,7 @@ public class Activator extends AbstractUIPlugin {
 	 * 
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static CodanUIActivator getDefault() {
 		return plugin;
 	}
 

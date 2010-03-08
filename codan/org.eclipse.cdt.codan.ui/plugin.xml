@@ -12,7 +12,7 @@
             id="org.eclipse.cdt.codan.ui.runaction">
          <action
                label="Run Code Analysis"
-               class="org.eclipse.cdt.codan.ui.actions.RunCodeAnalysis"
+               class="org.eclipse.cdt.codan.internal.ui.actions.RunCodeAnalysis"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.cdt.codan.ui.actions.RunCodeAnalysis">
@@ -65,6 +65,6 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="org.eclipse.cdt.codan.ui.Startup"></startup>
+            class="org.eclipse.cdt.codan.internal.ui.Startup"></startup>
    </extension>
 </plugin>

@@ -8,11 +8,11 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.sample;
+package org.eclipse.cdt.codan.internal.checkers.sample;
 
 import java.text.MessageFormat;
 
-import org.eclipse.cdt.codan.checkers.Activator;
+import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -33,7 +33,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  * 
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.checkers.sample.NonVirtualDestructorProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.sample.NonVirtualDestructorProblem";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -74,7 +74,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				} catch (DOMException e) {
 					// ignore, no error
 				} catch (Exception e) {
-					Activator.log(e);
+					CodanCheckersActivator.log(e);
 				}
 				return PROCESS_SKIP;
 			}

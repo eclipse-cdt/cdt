@@ -6,7 +6,7 @@
          id="org.eclipse.cdt.codan.core.checkers.sample">
 
       <checker
-            class="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.sample.AssignmentInConditionChecker"
             id="org.eclipse.cdt.codan.checkers.sample.AssignmentInConditionChecker"
             name="Assignment in condition">
       <problem
@@ -18,7 +18,7 @@
       
       </checker>
             <checker
-            class="org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.sample.StatementHasNoEffectChecker"
             id="org.eclipse.cdt.codan.checkers.sample.StatementHasNoEffectChecker"
             name="StatementHasNoEffectChecker">
       <problem
@@ -30,7 +30,7 @@
       </checker>
       
       <checker
-            class="org.eclipse.cdt.codan.checkers.sample.NonVirtualDestructor"
+            class="org.eclipse.cdt.codan.internal.checkers.sample.NonVirtualDestructor"
             id="org.eclipse.cdt.codan.checkers.sample.NonVirtualDescructor"
             name="NonVirtualDescructorChecker">
       <problem
@@ -42,7 +42,7 @@
       </checker>
 
       <checker
-            class="org.eclipse.cdt.codan.checkers.sample.CatchUsesReference"
+            class="org.eclipse.cdt.codan.internal.checkers.sample.CatchUsesReference"
             id="org.eclipse.cdt.codan.checkers.sample.CatchUsesReference"
             name="CatchUsesReferenceChecker">
       <problem
@@ -53,7 +53,7 @@
       </problem>
       </checker>
       <checker
-            class="org.eclipse.cdt.codan.checkers.sample.SuggestedParenthesisChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.sample.SuggestedParenthesisChecker"
             id="org.eclipse.cdt.codan.checkers.sample.SuggestedParenthesisChecker"
             name="SuggestedParenthesisChecker">
       <problem
@@ -64,7 +64,7 @@
       </problem>
       </checker>
             <checker
-            class="org.eclipse.cdt.codan.checkers.sample.NamingConventionFunctionChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.sample.NamingConventionFunctionChecker"
             id="org.eclipse.cdt.codan.checkers.sample.NamingConventionFunctionChecker"
             name="NamingConventionFunctionChecker">
       <problem

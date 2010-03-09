@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -179,7 +180,7 @@ public class GdbAdapterFactory
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
                 public String[] getModelIdentifiers() {
-                    return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID };
+                    return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID };
                 }
             };
             session.registerModelAdapter(IDebugModelProvider.class, fDebugModelProvider);

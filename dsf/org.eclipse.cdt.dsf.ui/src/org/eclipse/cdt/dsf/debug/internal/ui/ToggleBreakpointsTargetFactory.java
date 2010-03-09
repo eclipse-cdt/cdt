@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
@@ -68,18 +69,27 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IDisassemblyPart) {
-		       Object element = getDebugContext(part).getFirstElement();
-		        if (element instanceof IAdaptable) {
-		            IDebugModelProvider modelProvider = 
-		                (IDebugModelProvider)((IAdaptable)element).getAdapter(IDebugModelProvider.class);
-		            if (modelProvider != null) {
-		                String[] models = modelProvider.getModelIdentifiers();
-		                if (Arrays.asList(models).contains(CDIDebugModel.getPluginIdentifier())) {
-		                    return TOGGLE_C_BREAKPOINT_TARGET_ID;
-		                }
-		            }
-		        }
-			return null;
+	        // Return the debug context as a default if the currently selected context
+	        // is a CDT element.  Otherwise return null.
+	        Object element = getDebugContext(part).getFirstElement();
+	        if (element instanceof IAdaptable) {
+	            IDebugModelProvider modelProvider = 
+	                (IDebugModelProvider)((IAdaptable)element).getAdapter(IDebugModelProvider.class);
+	            if (modelProvider != null) {
+	                String[] models = modelProvider.getModelIdentifiers();
+	                for (String model : models) {
+	                    if (CDIDebugModel.getPluginIdentifier().equals(model) ||
+	                        ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID.equals(model)) 
+	                    {
+	                        return TOGGLE_C_BREAKPOINT_TARGET_ID;
+	                    }
+	                }
+	            } else if (element instanceof IDebugElement) {
+	                if (CDIDebugModel.getPluginIdentifier().equals(((IDebugElement)element).getModelIdentifier()) ) {
+	                    return TOGGLE_C_BREAKPOINT_TARGET_ID;
+	                }
+	            }
+	        }
 		}
 		return null;
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 
@@ -25,6 +26,16 @@ import org.eclipse.debug.core.model.IBreakpoint;
  */
 public interface ICBreakpoint extends IBreakpoint {
 
+    /**
+     * This debug model identifier can be returned by a debug implementation 
+     * to indicate that a given debugger integration is using C Breakpoints.
+     * This model ID will allow breakpoint actions to configure their default
+     * selection. 
+     * 
+     * @since 7.0
+     */
+    public static final String C_BREAKPOINTS_DEBUG_MODEL_ID = CDIDebugModel.getPluginIdentifier() + ".cbreakpoints"; //$NON-NLS-1$
+    
 	/**
 	 * Breakpoint attribute storing the number of debug targets a breakpoint is
 	 * installed in (value

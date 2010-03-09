@@ -33,7 +33,6 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -55,6 +54,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * Option settings page in project properties Build Settings under Tool Settings tab.
+ */
 public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	private Map<String, FieldEditor> fieldsMap = 
 		new HashMap<String, FieldEditor>();
@@ -96,14 +98,22 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	}
 
 	/**
+	 * @param page - parent page
+	 * @param info - resource info
+	 * @param optionHolder - option holder (i.e. tool)
+	 * @param cat - option category
+	 * @param displayFixedTip - {@code true} if tooltips for the option are
+	 *    displayed at fixed area on the bottom of the dialog or
+	 *    {@code false} as a regular tooltip hover
+	 * 
 	 * @since 7.0
 	 */
 	public BuildOptionSettingsUI(AbstractCBuildPropertyTab page,
 			IResourceInfo info, IHoldsOptions optionHolder, 
-			IOptionCategory _category, boolean _displayFixedTip) {
+			IOptionCategory cat, boolean displayFixedTip) {
 		super(info);
-		this.category = _category;
-		this.displayFixedTip = _displayFixedTip;
+		this.category = cat;
+		this.displayFixedTip = displayFixedTip;
 		this.optionHolder = optionHolder;
 		buildPropPage = page;
 		if (info instanceof MultiItemsHolder) {
@@ -360,7 +370,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	@Override
 	public boolean isFor(Object holder, Object cat) {
 		if (holder instanceof IHoldsOptions && cat != null && cat instanceof IOptionCategory) {
-			if (this.optionHolder == optionHolder && cat.equals(this.category))
+			if (holder == this.optionHolder && cat.equals(this.category))
 				return true;
 		}
 		return false;
@@ -675,7 +685,11 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	}
 	
 	/**
+	 * @param optionHolder - option holder such as {@link ITool}
+	 * @param category - option category
+	 * 
 	 * @return true if the page needs to have the tool tip box.
+	 * 
 	 * @since 7.0
 	 */
 	protected boolean needToolTipBox(IHoldsOptions optionHolder, IOptionCategory category) {
@@ -806,9 +820,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		}
 		@Override
 		protected void valueChanged(boolean oldValue, boolean newValue) {
-			// TODO: uncomment before M5
-			//if (button.getGrayed())
-			AbstractCPropertyTab.setGrayed(button, false);
+			button.setGrayed(false);
 			super.valueChanged(!newValue, newValue);
 		}
 		@Override
@@ -834,7 +846,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						if (vals[0] > 0)
 							gray = true;
 					}
-					AbstractCPropertyTab.setGrayed(button, gray);
+					button.setGrayed(gray);
 					button.setSelection(value);
 					return;
 				}

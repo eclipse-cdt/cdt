@@ -11,16 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -28,6 +19,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
+import org.eclipse.cdt.launch.ui.CAbstractMainTab;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -43,7 +35,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,11 +44,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
@@ -68,7 +56,7 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * </p>
  */
 
-public class CMainTab extends CLaunchConfigurationTab {
+public class CMainTab extends CAbstractMainTab {
 
     /**
      * Tab identifier used for ordering of tabs added using the 
@@ -79,41 +67,22 @@ public class CMainTab extends CLaunchConfigurationTab {
      */
     public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.mainTab"; //$NON-NLS-1$
 
-	// Project UI widgets
-	protected Label fProjLabel;
-	protected Text fProjText;
-	protected Button fProjButton;
-
-	// Main class UI widgets
-	protected Label fProgLabel;
-	protected Text fProgText;
-	protected Button fSearchButton;
-
-	// Core file UI widgets
-	/** @since 2.0 */
-	protected Label fCoreLabel;
-	/** @since 2.0 */
-	protected Text fCoreText;
-	/** @since 2.0 */
-	protected Button fCoreButton;
-
 	private final boolean fDontCheckProgram;
 	private final boolean fSpecifyCoreFile;
-	
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
-	private String filterPlatform = EMPTY_STRING;
+	private final boolean fIncludeBuildSettings;
 
 	public static final int DONT_CHECK_PROGRAM = 2;
 	public static final int SPECIFY_CORE_FILE = 4;
+	public static final int INCLUDE_BUILD_SETTINGS = 8;
 	
 	public CMainTab() {
-		this(0);
+		this(INCLUDE_BUILD_SETTINGS);
 	}
 
 	public CMainTab(int flags) {
 		fDontCheckProgram = (flags & DONT_CHECK_PROGRAM) != 0;
 		fSpecifyCoreFile = (flags & SPECIFY_CORE_FILE) != 0;
+		fIncludeBuildSettings = (flags & INCLUDE_BUILD_SETTINGS) != 0;
 	}
 	
 	/*
@@ -137,46 +106,11 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (fSpecifyCoreFile) {
 			createCoreFileGroup(comp, 1);
 		}
+		if (fIncludeBuildSettings){
+			createBuildOptionGroup(comp, 1);			
+		}
 		
 		GdbUIPlugin.setDialogShell(parent.getShell());
-	}
-
-	protected void createProjectGroup(Composite parent, int colSpan) {
-		Composite projComp = new Composite(parent, SWT.NONE);
-		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 2;
-		projLayout.marginHeight = 0;
-		projLayout.marginWidth = 0;
-		projComp.setLayout(projLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = colSpan;
-		projComp.setLayoutData(gd);
-
-		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText(LaunchMessages.getString("CMainTab.&ProjectColon")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fProjLabel.setLayoutData(gd);
-
-		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fProjText.setLayoutData(gd);
-		fProjText.addModifyListener(new ModifyListener() {
-
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		fProjButton = createPushButton(projComp, LaunchMessages.getString("Launch.common.Browse_1"), null); //$NON-NLS-1$
-		fProjButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				handleProjectButtonSelected();
-				updateLaunchConfigurationDialog();
-			}
-		});
 	}
 
 	protected void createExeFileGroup(Composite parent, int colSpan) {
@@ -225,45 +159,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 		});
 	}	
-	
-	/** @since 2.0 */
-	protected void createCoreFileGroup(Composite parent, int colSpan) {
-		Composite coreComp = new Composite(parent, SWT.NONE);
-		GridLayout coreLayout = new GridLayout();
-		coreLayout.numColumns = 3;
-		coreLayout.marginHeight = 0;
-		coreLayout.marginWidth = 0;
-		coreComp.setLayout(coreLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = colSpan;
-		coreComp.setLayoutData(gd);
-		fCoreLabel = new Label(coreComp, SWT.NONE);
-		fCoreLabel.setText(LaunchMessages.getString("CMainTab.CoreFile_path")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		fCoreLabel.setLayoutData(gd);
-		fCoreText = new Text(coreComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fCoreText.setLayoutData(gd);
-		fCoreText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		Button browseForCoreButton;
-		browseForCoreButton = createPushButton(coreComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
-		browseForCoreButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent evt) {
-				String text = handleBrowseButtonSelected();
-				if (text != null) {
-					fCoreText.setText(text);
-				}
-				updateLaunchConfigurationDialog();
-			}
-		});
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -275,26 +170,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		updateProjectFromConfig(config);
 		updateProgramFromConfig(config);
 		updateCoreFromConfig(config);
-	}
-
-	protected void updateProjectFromConfig(ILaunchConfiguration config) {
-		String projectName = EMPTY_STRING;
-		try {
-			projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
-		} catch (CoreException ce) {
-			GdbUIPlugin.log(ce);
-		}
-		fProjText.setText(projectName);
-	}
-
-	protected void updateProgramFromConfig(ILaunchConfiguration config) {
-		String programName = EMPTY_STRING;
-		try {
-			programName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EMPTY_STRING);
-		} catch (CoreException ce) {
-			GdbUIPlugin.log(ce);
-		}
-		fProgText.setText(programName);
+		updateBuildOptionFromConfig(config);
 	}
 	
 	/** @since 2.0 */
@@ -315,22 +191,13 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		super.performApply(config);
 		ICProject cProject = this.getCProject();
 		if (cProject != null && cProject.exists())
 		{
 			config.setMappedResources(new IResource[] { cProject.getProject() });
-			try { // Only initialize the build config ID once.
-				if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, "").length() == 0)//$NON-NLS-1$
-				{
-					ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
-					if (projDes != null)
-					{
-						String buildConfigID = projDes.getActiveConfiguration().getId();
-						config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);			
-					}				
-				}
-			} catch (CoreException e) { e.printStackTrace(); }
 		} else {
 			config.setMappedResources(null);
 		}
@@ -345,6 +212,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	/**
 	 * Show a dialog that lists all main types
 	 */
+	@Override
 	protected void handleSearchButtonSelected() {
 
 		if (getCProject() == null) {
@@ -413,135 +281,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
 
-	}
-
-	/**
-	 * Show a dialog that lets the user select a file.
-	 */
-	protected String handleBrowseButtonSelected() {
-		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
-		fileDialog.setFileName(fProgText.getText());
-		return fileDialog.open();
-	}
-
-	/**
-	 * Iterate through and suck up all of the executable files that we can find.
-	 */
-	protected IBinary[] getBinaryFiles(final ICProject cproject) {
-		final Display display;
-		if (cproject == null || !cproject.exists()) {
-			return null;
-		}
-		if (getShell() == null) {
-			display = GdbUIPlugin.getShell().getDisplay();
-		} else {
-			display = getShell().getDisplay();
-		}
-		final Object[] ret = new Object[1];
-		BusyIndicator.showWhile(display, new Runnable() {
-
-			public void run() {
-				try {
-					ret[0] = cproject.getBinaryContainer().getBinaries();
-				} catch (CModelException e) {
-					GdbUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$
-				}
-			}
-		});
-
-		return (IBinary[])ret[0];
-	}
-
-	/**
-	 * Show a dialog that lets the user select a project. This in turn provides context for the main
-	 * type, allowing the user to key a main type name, or constraining the search for main types to
-	 * the specified project.
-	 */
-	protected void handleProjectButtonSelected() {
-		String currentProjectName = fProjText.getText();
-		ICProject project = chooseCProject();
-		if (project == null) {
-			return;
-		}
-
-		String projectName = project.getElementName();
-		fProjText.setText(projectName);
-		if (currentProjectName.length() == 0)
-		{
-			// New project selected for the first time, set the program name default too.
-			IBinary[] bins = getBinaryFiles(project);
-			if (bins != null && bins.length == 1) {				
-				fProgText.setText(bins[0].getResource().getProjectRelativePath().toOSString());
-			}
-		
-		}
-	}
-
-	/**
-	 * Realize a C Project selection dialog and return the first selected project, or null if there
-	 * was none.
-	 */
-	protected ICProject chooseCProject() {
-		try {
-			ICProject[] projects = getCProjects();
-
-			ILabelProvider labelProvider = new CElementLabelProvider();
-			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-			dialog.setTitle(LaunchMessages.getString("CMainTab.Project_Selection")); //$NON-NLS-1$
-			dialog.setMessage(LaunchMessages.getString("CMainTab.Choose_project_to_constrain_search_for_program")); //$NON-NLS-1$
-			dialog.setElements(projects);
-
-			ICProject cProject = getCProject();
-			if (cProject != null) {
-				dialog.setInitialSelections(new Object[]{cProject});
-			}
-			if (dialog.open() == Window.OK) {
-				return (ICProject)dialog.getFirstResult();
-			}
-		} catch (CModelException e) {
-			GdbUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$			
-		}
-		return null;
-	}
-
-	/**
-	 * Return an array a ICProject whose platform match that of the runtime env.
-	 */
-	protected ICProject[] getCProjects() throws CModelException {
-		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
-		ArrayList<ICProject> list = new ArrayList<ICProject>(cproject.length);
-
-		for (int i = 0; i < cproject.length; i++) {
-			ICDescriptor cdesciptor = null;
-			try {
-				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject)cproject[i].getResource(), false);
-				if (cdesciptor != null) {
-					String projectPlatform = cdesciptor.getPlatform();
-					if (filterPlatform.equals("*") //$NON-NLS-1$
-							|| projectPlatform.equals("*") //$NON-NLS-1$
-							|| filterPlatform.equalsIgnoreCase(projectPlatform) == true) {
-						list.add(cproject[i]);
-					}
-				} else {
-					list.add(cproject[i]);
-				}
-			} catch (CoreException e) {
-				list.add(cproject[i]);
-			}
-		}
-		return list.toArray(new ICProject[list.size()]);
-	}
-
-	/**
-	 * Return the ICProject corresponding to the project name in the project name text field, or
-	 * null if the text does not match a project name.
-	 */
-	protected ICProject getCProject() {
-		String projectName = fProjText.getText().trim();
-		if (projectName.length() < 1) {
-			return null;
-		}
-		return CoreModel.getDefault().getCModel().getCProject(projectName);
 	}
 
 	/*
@@ -625,34 +364,6 @@ public class CMainTab extends CLaunchConfigurationTab {
 		return true;
 	}
 
-	/**
-	 * @param project
-	 * @param exePath
-	 * @return
-	 * @throws CoreException
-	 */
-	protected boolean isBinary(IProject project, IPath exePath) throws CoreException {
-		ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
-		for (int i = 0; i < parserRef.length; i++) {
-			try {
-				IBinaryParser parser = (IBinaryParser)parserRef[i].createExtension();
-				IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-				if (exe != null) {
-					return true;
-				}
-			} catch (ClassCastException e) {
-			} catch (IOException e) {
-			}
-		}
-		IBinaryParser parser = CCorePlugin.getDefault().getDefaultBinaryParser();
-		try {
-			IBinaryObject exe = (IBinaryObject)parser.getBinary(exePath);
-			return exe != null;
-		} catch (ClassCastException e) {
-		} catch (IOException e) {
-		}
-		return false;
-	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -666,6 +377,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		// corresponding text boxes)
 		// plus getContext will use this to base context from if set.
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EMPTY_STRING);
 
 		ICElement cElement = null;
@@ -763,13 +475,4 @@ public class CMainTab extends CLaunchConfigurationTab {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_MAIN_TAB);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
-	 */
-	@Override
-	protected void updateLaunchConfigurationDialog() {
-		super.updateLaunchConfigurationDialog();
-	}
 }

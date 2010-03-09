@@ -169,12 +169,6 @@
             id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
       </page>
       <page
-            name="%PreferenceMakeProject.name"
-            category="org.eclipse.cdt.make.ui.preferences.MakePreferencePage"
-            class="org.eclipse.cdt.make.internal.ui.preferences.NewMakeProjectPreferencePage"
-            id="org.eclipse.cdt.make.ui.preferences.MakeProjectPreferencePage">
-      </page>
-      <page
             name="%PreferenceMakefileEditor.name"
             category="org.eclipse.cdt.make.ui.preferences.BuildSettings"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferencePage"

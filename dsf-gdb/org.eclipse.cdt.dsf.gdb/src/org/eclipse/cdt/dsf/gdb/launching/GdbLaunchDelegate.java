@@ -208,7 +208,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	 */
 	protected IPath checkBinaryDetails(final ILaunchConfiguration config) throws CoreException {
 		// First verify we are dealing with a proper project.
-		ICProject project = LaunchUtils.verifyCProject(config);
+		ICProject project = verifyCProject(config);
 		// Now verify we know the program to debug.
 		IPath exePath = LaunchUtils.verifyProgramPath(config, project);
 		// Finally, make sure the program is a proper binary.

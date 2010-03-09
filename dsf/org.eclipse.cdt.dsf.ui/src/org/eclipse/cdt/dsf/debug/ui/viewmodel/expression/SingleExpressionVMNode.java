@@ -320,7 +320,10 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
         return new RootDMVMContext(getVMProvider().getRootVMNode(), dmc);
     }
 
-    void setExpression(IExpressionDMContext dmc) {
+    /**
+     * @since 2.1
+     */
+    public void setExpression(IExpressionDMContext dmc) {
 		String text = dmc.getExpression();
 		fManager.setExpression(new SimpleExpression(text));
     }

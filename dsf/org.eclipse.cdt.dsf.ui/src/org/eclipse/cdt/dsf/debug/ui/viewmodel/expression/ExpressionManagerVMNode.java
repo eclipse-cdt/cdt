@@ -64,11 +64,11 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      * VMC for a new expression object to be added.  When user clicks on this node to 
      * edit it, he will create a new expression.
      */
-    class NewExpressionVMC extends AbstractVMContext {
+    public class NewExpressionVMC extends AbstractVMContext {
         public NewExpressionVMC() {
             super(ExpressionManagerVMNode.this);
         }
-
+        
         @Override
         @SuppressWarnings("rawtypes") 
         public Object getAdapter(Class adapter) {
@@ -90,7 +90,17 @@ public class ExpressionManagerVMNode extends AbstractVMNode
     private IExpressionManager fManager = DebugPlugin.getDefault().getExpressionManager();
     
     /** Cached reference to a cell modifier for editing expression strings of invalid expressions */
-    private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
+    private ICellModifier fWatchExpressionCellModifier = null;
+    
+    /**
+     * @since 2.1
+     * 
+     * @return The cell modifier to be used when editing. If you need to provide
+     *         a custom cell editor you would override this method.
+     */
+    protected ICellModifier createCellModifier() {
+    	return new WatchExpressionCellModifier();
+    }
     
     public ExpressionManagerVMNode(ExpressionVMProvider provider) {
         super(provider);
@@ -296,7 +306,10 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         return new TreePath(elementList.toArray());
     }
 
-    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
+     */
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
@@ -304,7 +317,14 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         return null;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
+     */
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+        if ( fWatchExpressionCellModifier == null ) {
+        	fWatchExpressionCellModifier = createCellModifier();
+        }
         return fWatchExpressionCellModifier;
     }
 }

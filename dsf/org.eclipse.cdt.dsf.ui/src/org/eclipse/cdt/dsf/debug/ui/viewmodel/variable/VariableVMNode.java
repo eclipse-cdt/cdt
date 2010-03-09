@@ -88,6 +88,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -102,29 +103,29 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             implements IElementEditor, IElementLabelProvider, IElementPropertiesProvider, IElementMementoProvider 
 {
     /**
-     * @since 2.0
+     * @since 2.1
      */    
-    private static final String PROP_VARIABLE_TYPE_NAME = "variable_type_name";  //$NON-NLS-1$
+    public static final String PROP_VARIABLE_TYPE_NAME = "variable_type_name";  //$NON-NLS-1$
 
     /**
-     * @since 2.0
+     * @since 2.1
      */    
-    private static final String PROP_VARIABLE_BASIC_TYPE = "variable_basic_type";  //$NON-NLS-1$
+    public static final String PROP_VARIABLE_BASIC_TYPE = "variable_basic_type";  //$NON-NLS-1$
 
     /**
-     * @since 2.0
+     * @since 2.1
      */    
-    private static final String PROP_VARIABLE_ADDRESS = "variable_address";  //$NON-NLS-1$
+    public static final String PROP_VARIABLE_ADDRESS = "variable_address";  //$NON-NLS-1$
     
     /**
-     * @since 2.0
+     * @since 2.1
      */
-    private static final String PROP_VARIABLE_SHOW_TYPE_NAMES = "variable_show_type_names"; //$NON-NLS-1$
+    public static final String PROP_VARIABLE_SHOW_TYPE_NAMES = "variable_show_type_names"; //$NON-NLS-1$
     
     /**
-     * @since 2.0
+     * @since 2.1
      */    
-    private static final String PROP_VARIABLE_ADDRESS_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + PROP_VARIABLE_ADDRESS;
+    public static final String PROP_VARIABLE_ADDRESS_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + PROP_VARIABLE_ADDRESS;
 
     private final SyncVariableDataAccess fSyncVariableDataAccess;
     
@@ -213,48 +214,142 @@ public class VariableVMNode extends AbstractExpressionVMNode
      *  
      * @since 2.0
      */    
+    private LabelBackground columnIdValueBackground; 
+    private LabelBackground columnNoColumnsBackground;
+    private IPropertyChangeListener fPreferenceChangeListener;
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#dispose()
+     * 
+     * We need to take over the dispose so we can get rid of the preference listener we created.
+     */
+    @Override
+	public void dispose() {
+    	
+    	if ( fPreferenceChangeListener != null ) {
+    		DebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
+    	}
+    	
+        super.dispose();	
+    }
+
+    /**
+     * Create label image objects which are used in more than one column. 
+     * 
+     * @since 2.1
+     * 
+     * Pointer image is used for variable and function pointers.
+     */    
+    public final static LabelImage POINTER_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_POINTER) {
+        { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
+
+        @Override
+        public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+            String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
+            return IExpressionDMData.BasicType.pointer.name().equals(type) ||
+                IExpressionDMData.BasicType.function.name().equals(type);
+        };
+    };
+    
+    /**
+     * @since 2.1
+     * 
+     * Aggregate image is used for array, struct, etc.
+     */   
+    public final static  LabelImage AGGREGATE_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE) {
+        { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
+
+        @Override
+        public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+            String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
+            return IExpressionDMData.BasicType.array.name().equals(type) ||
+                IExpressionDMData.BasicType.composite.name().equals(type);
+        };
+    };
+    
+    /**
+     * @since 2.1
+     * 
+     * Simple variable image is used for all other types, except when there is no type specified.
+     */ 
+    public final static  LabelImage SIMPLE_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_SIMPLE) {
+        { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
+        
+        @Override
+        public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+            String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
+            return type != null;
+        };
+    };
+    
     protected IElementLabelProvider createLabelProvider() {
+    	
+    	//
+    	// Create the foreground/background colors which can be dynamically modified.
+    	//
+    	columnIdValueBackground = new LabelBackground(
+                DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
+            {
+                { 
+                    setPropertyNames(new String[] { 
+                        FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT),
+                        ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT),
+                        IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, 
+                        ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,
+                        IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT, 
+                        ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT}); 
+                }
+
+                @Override
+                public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                    Boolean activeFormatChanged = (Boolean)properties.get(
+                        ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
+                    Boolean activeChanged = (Boolean)properties.get(
+                        ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
+                    Boolean stringChanged = (Boolean)properties.get(
+                        ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT));
+                    return Boolean.TRUE.equals(stringChanged) || 
+                        ( Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged));
+                };                    
+            };
+            
+    	columnNoColumnsBackground = new LabelBackground(DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB())
+    	{
+    		{ 
+    			setPropertyNames(new String[] { 
+    					FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT), 
+    					IDebugVMConstants.PROP_IS_STRING_FORMAT_VALUE_CHANGED, 
+    					IDebugVMConstants.PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED}); 
+    		}
+
+    		@Override
+    		public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+    			Boolean stringChanged = (Boolean)properties.get(IDebugVMConstants.PROP_IS_STRING_FORMAT_VALUE_CHANGED);
+    			Boolean activeChanged = (Boolean)properties.get(IDebugVMConstants.PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED);
+    			return Boolean.TRUE.equals(stringChanged) || Boolean.TRUE.equals(activeChanged);
+    		}                
+    	};
+
+    	// Get rid of the previous listener if it exists and then create a new one and sign it up.
+    	if ( fPreferenceChangeListener != null ) {
+    		DebugUITools.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
+    	}
+
+    	fPreferenceChangeListener = new IPropertyChangeListener() {
+    		public void propertyChange(PropertyChangeEvent event) {
+    			if ( event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ) {
+    				columnIdValueBackground.setBackground(DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
+    				columnNoColumnsBackground.setBackground(DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
+    			}
+    		}
+    	};
+
+        DebugUITools.getPreferenceStore().addPropertyChangeListener(fPreferenceChangeListener);
+
+        // Create the initial properties provider which can be built on.
         PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
 
-        // 
-        // Create label image objects which are used in more than one column. 
-        //
-        
-        // Pointer image is used for variable and function pointers.
-        LabelImage pointerLabelImage = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_POINTER) {
-            { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
-
-            @Override
-            public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
-                return IExpressionDMData.BasicType.pointer.name().equals(type) ||
-                    IExpressionDMData.BasicType.function.name().equals(type);
-            };
-        };
-        
-        // Aggregate image is used for array, struct, etc.
-        LabelImage aggregateLabelImage = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE) {
-            { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
-
-            @Override
-            public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
-                return IExpressionDMData.BasicType.array.name().equals(type) ||
-                    IExpressionDMData.BasicType.composite.name().equals(type);
-            };
-        };
-        
-        // Simple variable image is used for all other types, except when there is no type specified.
-        LabelImage simpleLabelImage = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_SIMPLE) {
-            { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
-            
-            @Override
-            public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
-                return type != null;
-            };
-        };
-        
         // The name column consists of the expression name.  The name column image depends on the variable type. 
         provider.setColumnInfo(
             IDebugVMConstants.COLUMN_ID__NAME,
@@ -262,9 +357,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 new LabelText(
                     MessagesForVariablesVM.VariableVMNode_Name_column__text_format, 
                     new String[] { PROP_NAME }),
-                pointerLabelImage,
-                aggregateLabelImage, 
-                simpleLabelImage,
+                POINTER_LABEL_IMAGE,
+                AGGREGATE_LABEL_IMAGE, 
+                SIMPLE_LABEL_IMAGE,
                 new StaleDataLabelForeground(),
                 new VariableLabelFont(),
             }));
@@ -277,9 +372,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 new LabelText(
                     MessagesForVariablesVM.VariableVMNode_Expression_column__text_format, 
                     new String[] { PROP_ELEMENT_EXPRESSION }),
-                pointerLabelImage,
-                aggregateLabelImage, 
-                simpleLabelImage,
+                POINTER_LABEL_IMAGE,
+                AGGREGATE_LABEL_IMAGE, 
+                SIMPLE_LABEL_IMAGE,
                 new StaleDataLabelForeground(),
                 new VariableLabelFont(),
             }));
@@ -342,31 +437,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     }
                 },
                 // 
-                new LabelBackground(
-                    DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB()) 
-                {
-                    { 
-                        setPropertyNames(new String[] { 
-                            FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT),
-                            ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT),
-                            IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE, 
-                            ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE,
-                            IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT, 
-                            ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT}); 
-                    }
-
-                    @Override
-                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        Boolean activeFormatChanged = (Boolean)properties.get(
-                            ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
-                        Boolean activeChanged = (Boolean)properties.get(
-                            ICachingVMProvider.PROP_IS_CHANGED_PREFIX + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
-                        Boolean stringChanged = (Boolean)properties.get(
-                            ICachingVMProvider.PROP_IS_CHANGED_PREFIX + FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT));
-                        return Boolean.TRUE.equals(stringChanged) || 
-                            ( Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged));
-                    };                    
-                },
+                columnIdValueBackground,
                 new StaleDataLabelForeground(),
                 new VariableLabelFont(),
             }));
@@ -501,9 +572,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 new ErrorLabelText(
                     MessagesForVariablesVM.VariableVMNode_NoColumns_column__Error__text_format, 
                     new String[] { PROP_NAME }),
-                pointerLabelImage,
-                aggregateLabelImage, 
-                simpleLabelImage,
+                POINTER_LABEL_IMAGE,
+                AGGREGATE_LABEL_IMAGE, 
+                SIMPLE_LABEL_IMAGE,
                 new LabelForeground(new RGB(255, 0, 0)) // TODO: replace with preference error color
                 {
                     { setPropertyNames(new String[] { PROP_NAME }); }
@@ -532,6 +603,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                         return Boolean.TRUE.equals(stringChanged) || Boolean.TRUE.equals(activeChanged);
                     };                    
                 },
+                columnNoColumnsBackground,
                 new StaleDataLabelBackground(),
                 new VariableLabelFont(),
             }));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
+ * David McKnight  (IBM)   [305218][dstore] problem reading double-byte characters through data socket layer
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -30,7 +31,6 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
-import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 
@@ -69,7 +69,7 @@ public class Sender implements ISender
 		try
 		{
 			_outFile = new PrintStream(_socket.getOutputStream());
-			_outData = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream(), DE.ENCODING_UTF_8));
+			_outData = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));
 
 			_xmlGenerator.setFileWriter(_outFile);
 			_xmlGenerator.setDataWriter(_outData);

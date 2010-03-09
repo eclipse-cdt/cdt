@@ -318,17 +318,6 @@
       </initializer>
    </extension>
 
-   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
-      <toggleTargetFactory
-            id="org.eclipse.cdt.dsf.gdb.ui.ToggleBreakpointsTargetFactory"
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleBreakpointsTargetFactory">
-          <enablement>
-            <!-- Enable the breakpoint toggle for DSF Disassembly -->
-            <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
-         </enablement>
-      </toggleTargetFactory>
-   </extension>
-
    <extension
          point="org.eclipse.cdt.ui.textHovers">
       <hover

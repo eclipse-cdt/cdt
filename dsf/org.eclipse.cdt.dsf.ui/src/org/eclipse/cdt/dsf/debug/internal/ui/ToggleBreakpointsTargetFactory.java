@@ -8,17 +8,24 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
+package org.eclipse.cdt.dsf.debug.internal.ui;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.model.IDebugModelProvider;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -61,7 +68,18 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IDisassemblyPart) {
-			return TOGGLE_C_BREAKPOINT_TARGET_ID;
+		       Object element = getDebugContext(part).getFirstElement();
+		        if (element instanceof IAdaptable) {
+		            IDebugModelProvider modelProvider = 
+		                (IDebugModelProvider)((IAdaptable)element).getAdapter(IDebugModelProvider.class);
+		            if (modelProvider != null) {
+		                String[] models = modelProvider.getModelIdentifiers();
+		                if (Arrays.asList(models).contains(CDIDebugModel.getPluginIdentifier())) {
+		                    return TOGGLE_C_BREAKPOINT_TARGET_ID;
+		                }
+		            }
+		        }
+			return null;
 		}
 		return null;
 	}
@@ -79,6 +97,15 @@ public class ToggleBreakpointsTargetFactory implements IToggleBreakpointsTargetF
 			return TOGGLE_TARGET_IDS;
 		}
 		return Collections.emptySet();
+	}
+
+	private IStructuredSelection getDebugContext(IWorkbenchPart part) {
+		ISelection selection = DebugUITools.getDebugContextManager().
+		getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
+		if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection)selection;
+		} 
+		return StructuredSelection.EMPTY;
 	}
 
 }

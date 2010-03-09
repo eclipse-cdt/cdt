@@ -695,5 +695,15 @@
       </factory>	  
    </extension>	
 
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.ui.ToggleBreakpointsTargetFactory"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.ToggleBreakpointsTargetFactory">
+          <enablement>
+            <!-- Enable the breakpoint toggle for DSF Disassembly -->
+            <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
 
 </plugin>

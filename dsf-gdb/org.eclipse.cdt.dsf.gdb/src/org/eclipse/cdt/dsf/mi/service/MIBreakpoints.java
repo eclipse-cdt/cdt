@@ -20,7 +20,6 @@ import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
@@ -28,8 +27,6 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -1146,131 +1143,6 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		fRunControl.executeWithTargetAvailable(context, new Step[] { disableBreakpointStep }, finalRm);
 	}
 
-	/* ******************************************************************************
-	 * Section to support making breakpoint operations while the target is running.
-	 *
-	 * Basically, we must make sure we have one thread suspended before making
-	 * a breakpoint operation.  If we don't we must suspend a thread, do the 
-	 * breakpoint operation and then resume the thread.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=242943
-	 * and https://bugs.eclipse.org/bugs/show_bug.cgi?id=282273
-	 * 
-	 * ******************************************************************************/
-	/** The top level context describing our target **/
-	private IDMContext fTargetDmc = null;
-	/** The container context used to determine if the target is suspended **/
-	private IContainerDMContext fContainerDmc  = null;
-	/** Must we suspend the target **/
-	private boolean fMustSuspend = false;
-	
-	/**
-	 * Returns the context of our target.  It will be used to find the container we need
-	 * to use to check to see if the target is suspended.
-	 * @since 3.0
-	 */
-	protected IDMContext getTargetDmc() {
-		return fTargetDmc;
-	}
-
-	/**
-	 * Returns the container context that should be used to determine if target is suspended.
-	 * This container will also be the one suspended if needed.
-	 * @since 3.0
-	 */
-	protected IContainerDMContext getContainerDmc() {
-		return fContainerDmc;
-	}
-	
-	/**
-	 * Returns whether the target must be suspended before performing the breakpoint operation
-	 * @since 3.0
-	 */
-	protected boolean getMustSuspended() {
-		return fMustSuspend;
-	}
-	
-	/**
-	 * Returns whether the target must be suspended before performing the breakpoint operation
-	 * @since 3.0
-	 */
-	protected IExecutionDMContext getContextToSuspend() {
-		return fContainerDmc;
-	}
-	
-	/**
-	 * Find the context for the container we should use to know
-	 * if the target is already suspended.
-	 * @since 3.0
-	 */
-	protected class FindContainerDmcStep extends Sequence.Step {
-		@Override
-		public void execute(final RequestMonitor rm) {
-			IProcesses processControl = getServicesTracker().getService(IProcesses.class);
-	        processControl.getProcessesBeingDebugged(
-	        		getTargetDmc(),
-	        		new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
-	        			@Override
-	        			protected void handleSuccess() {
-	        				if (getData() != null && getData().length != 0) {
-	        					fContainerDmc = (IContainerDMContext)(getData()[0]);
-	        				} 
-	        				// else Not debugging any process yet, so no need to suspend target
-        					rm.done();
-	        			}
-	        		});
-		}
-	};
-
-
-	/**
-	 * Check if the container returned by getContainerDmc() is suspended.
-	 * If it is, we can do breakpoint operations.  If it is not, we must first
-	 * suspend it, and then we'll have to resume it.
-	 * 
-	 * @since 3.0
-	 */
-	protected class IsContainerSuspendedStep extends Sequence.Step {
-		@Override
-		public void execute(RequestMonitor rm) {
-			IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-			fMustSuspend = !runControl.isSuspended(getContainerDmc());
-			rm.done();
-		}
-	};
-
-	/**
-	 * If needed, suspend the target that is returned by getContextToSuspend().
-	 * @since 3.0
-	 */
-	protected class SuspendTargetStep extends Sequence.Step {
-		@Override
-		public void execute(final RequestMonitor rm) {
-			if (getMustSuspended()) {
-				IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-				runControl.suspend(getContextToSuspend(), rm);
-			} else {
-				rm.done();
-			}
-		}
-	};
-	
-	/**
-	 * If needed, resume the thread that is returned by getThreadToSuspend().
-	 * @since 3.0
-	 */
-	protected class ResumeThreadStep extends Sequence.Step {
-		@Override
-		public void execute(final RequestMonitor rm) {
-			if (getMustSuspended()) {
-				IRunControl runControl = getServicesTracker().getService(IRunControl.class);
-				runControl.resume(getContextToSuspend(), rm);
-			} else {
-				// We didn't suspend the thread, so we don't need to resume it
-				rm.done();
-			}
-		}
-	};
-	
     /**
      * @nooverride This method is not intended to be re-implemented or extended by clients.
      * @noreference This method is not intended to be referenced by clients.

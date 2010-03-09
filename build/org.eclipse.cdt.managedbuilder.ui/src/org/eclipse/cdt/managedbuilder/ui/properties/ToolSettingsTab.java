@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Intel Corporation - Initial API and implementation 
+ * Intel Corporation - Initial API and implementation
  * Miwako Tokugawa (Intel Corporation) - Fixed-location tooltip support
  * QNX Software Systems - [269571] Apply button failure on tool changes
  *******************************************************************************/
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -42,6 +41,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -63,6 +63,8 @@ import org.eclipse.swt.widgets.ScrollBar;
 
 
 /**
+ * Tool Settings Tab in project properties Build Settings
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -89,11 +91,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private Object propertyObject;
 
 		private IResourceInfo fInfo;
-		
+
 		private boolean displayFixedTip = CDTPrefUtil.getBool(CDTPrefUtil.KEY_TIPBOX);
 		private int[] defaultWeights = new int[] {4, 1};
 		private int[] hideTipBoxWeights = new int[] {1, 0};
-		
+
 		@Override
 		public void createControls(Composite par)  {
 			super.createControls(par);
@@ -101,12 +103,12 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 			configToPageListMap = new HashMap<String, List<AbstractToolSettingUI>>();
 			settingsStore = ToolSettingsPrefStore.getDefault();
-			
+
 			// Create the sash form
 			sashForm = new SashForm(usercomp, SWT.NONE);
 			sashForm.setOrientation(SWT.HORIZONTAL);
 			sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-			
+
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
 			layout.marginHeight = 5;
@@ -127,11 +129,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				public void controlResized(ControlEvent e) {
 					specificResize();
 				}});
-			
+
 			propertyObject = page.getElement();
 			setValues();
 		}
-		
+
 		private void specificResize() {
 			Point p1 = optionList.getTree().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point p2 = optionList.getTree().getSize();
@@ -140,16 +142,16 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			if (p3.x >= p1.x && (p1.x < p2.x || (p2.x * 2 < p3.x))) {
 				optionList.getTree().setSize(p1.x , p2.y);
 				sashForm.setWeights(new int[] {p1.x, (p3.x - p1.x)});
-			} 
+			}
 		}
-		
+
 		private int calcExtra() {
 			int x = optionList.getTree().getBorderWidth() * 2;
 			ScrollBar sb = optionList.getTree().getVerticalBar();
 			if (sb != null && sb.isVisible()) x += sb.getSize().x;
 			return x;
 		}
-		
+
 		protected void createSelectionArea (Composite parent) {
 			optionList = new TreeViewer(parent, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
 			optionList.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -171,7 +173,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				}
 			});
 		}
-		
+
 		/**
 		 * @param name - header of the tooltip help
 		 * @param tip - tooltip text
@@ -186,7 +188,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			tipText.setStyleRange(styleRange);
 			tipText.update();
 		}
-		
+
 		/* (non-Javadoc)
 		 * Method resetTipText
 		 * @since 7.0
@@ -204,7 +206,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		 * @param category
 		 */
 		private void displayOptionsForCategory(ToolListElement toolListElement) {
-			
+
 			selectedElement = toolListElement;
 			IOptionCategory category = toolListElement.getOptionCategory();
 			IHoldsOptions optionHolder = toolListElement.getHoldOptions();
@@ -214,10 +216,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 			// Create a new settings page if necessary
 			List<AbstractToolSettingUI> pages = getPagesForConfig();
-			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
-			
-			while (iter.hasNext()) {
-				AbstractToolSettingUI page = iter.next();
+			for (AbstractToolSettingUI page : pages) {
 				if (page.isFor(optionHolder, category)) {
 					currentSettingsPage = page;
 					break;
@@ -225,9 +224,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 			if (currentSettingsPage == null) {
 				currentSettingsPage = new BuildOptionSettingsUI(
-						this, 
-						fInfo, 
-						optionHolder, 
+						this,
+						fInfo,
+						optionHolder,
 						category,
 						displayFixedTip);
 				boolean needToolTipBox = false;
@@ -241,15 +240,15 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					currentSettingsPage.createControl(settingsPageContainer);
 				}
 			}
-			
+
 			// Make all the other pages invisible
 			Control[] children = settingsPageContainer.getChildren();
 			Control currentControl = currentSettingsPage.getControl();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] != currentControl)
-					children[i].setVisible(false);
+			for (Control element : children) {
+				if (element != currentControl)
+					element.setVisible(false);
 			}
-			
+
 			if (displayFixedTip==true) {
 				if (currentSettingsPage.isToolTipBoxNeeded()==false) {
 					// eliminate the option tip box
@@ -263,7 +262,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 			currentSettingsPage.setVisible(true);
 			currentSettingsPage.updateFields();
-			
+
 			if (oldPage != null  && oldPage != currentSettingsPage) {
 				oldPage.setVisible(false);
 				resetTipText();
@@ -281,22 +280,20 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private void displayOptionsForTool(ToolListElement toolListElement) {
 			selectedElement = toolListElement;
 			ITool tool = toolListElement.getTool();
-			
+
 			// Cache the current build setting page
 			AbstractToolSettingUI oldPage = currentSettingsPage;
 			currentSettingsPage = null;
 
 			// Create a new page if we need one
 			List<AbstractToolSettingUI> pages = getPagesForConfig();
-			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
-			while (iter.hasNext()) {
-				AbstractToolSettingUI page = iter.next();
+			for (AbstractToolSettingUI page : pages) {
 				if (page.isFor(tool, null)) {
 					currentSettingsPage = page;
 					break;
 				}
 			}
-			
+
 			if (currentSettingsPage == null) {
 				currentSettingsPage = new BuildToolSettingUI(this, fInfo, tool);
 				pages.add(currentSettingsPage);
@@ -308,17 +305,17 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			// Make all the other pages invisible
 			Control[] children = settingsPageContainer.getChildren();
 			Control currentControl = currentSettingsPage.getControl();
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] != currentControl)
-					children[i].setVisible(false);
+			for (Control element : children) {
+				if (element != currentControl)
+					element.setVisible(false);
 			}
-			
+
 			if (displayFixedTip==true) {
 				// eliminate the tool tip area
-				sashForm2.setWeights(hideTipBoxWeights); 
+				sashForm2.setWeights(hideTipBoxWeights);
 				sashForm2.layout();
 			}
-			
+
 			// Make the current page visible
 			currentSettingsPage.setVisible(true);
 
@@ -343,7 +340,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			tipText = new StyledText(parent, SWT.V_SCROLL|SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
 			tipText.setLayoutData(new GridData(GridData.FILL_BOTH));
 			tipText.setText(Messages.getString("ToolSettingsTab.0")); //$NON-NLS-1$
-			
+
 			styleRange = new StyleRange();
 			styleRange.start = 0;
 			FontData data = new FontData();
@@ -353,7 +350,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			Font font = new Font(parent.getDisplay(),data);
 			styleRange.font = font;
 		}
-		
+
 		/* (non-Javadoc)
 		 * Add the tabs relevant to the project to edit area tab folder.
 		 */
@@ -365,7 +362,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			containerSC = new ScrolledComposite(parent, style);
 			containerSC.setExpandHorizontal(true);
 			containerSC.setExpandVertical(true);
-			
+
 			// Add a container for the build settings page
 			settingsPageContainer = new Composite(containerSC, SWT.NULL);
 			settingsPageContainer.setLayout(new PageLayout());
@@ -389,7 +386,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			 *  This method updates the context of the build property pages
 			 *   - Which configuration/resource configuration is selected
 			 *   - Which tool/option category is selected
-			 *    
+			 *
 			 *  It is called:
 			 *   - When a property page becomes visible
 			 *   - When the user changes the configuration selection
@@ -405,11 +402,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 			//  Update the selected configuration and the Tree Viewer
 			ToolListElement[] newElements;
-			
-			optionList.setInput(fInfo);	
+
+			optionList.setInput(fInfo);
 			newElements = (ToolListElement[])listprovider.getElements(fInfo);
 			optionList.expandAll();
-			
+
 			//  Determine what the selection in the tree should be
 			//  If the saved selection is not null, try to match the saved selection
 			//  with an object in the new element list.
@@ -418,11 +415,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			if (selectedElement != null) {
 				selectedElement = matchSelectionElement(selectedElement, newElements);
 			}
-				
+
 			if (selectedElement == null) {
 				selectedElement = (newElements != null && newElements.length > 0 ? newElements[0] : null);
 			}
-				
+
 			if (selectedElement != null) {
 				primaryObject = selectedElement.getTool();
 				if (primaryObject == null) {
@@ -437,7 +434,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 			specificResize();
 		}
-							
+
 		private ToolListElement matchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
 			//  First, look for an exact match
 			ToolListElement match = exactMatchSelectionElement(currentElement, elements);
@@ -448,8 +445,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 
 		private ToolListElement exactMatchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
-			for (int i=0; i<elements.length; i++) {
-				ToolListElement e = elements[i];
+			for (ToolListElement e : elements) {
 				if (e == currentElement) {
 					return currentElement;
 				}
@@ -460,8 +456,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 
 		private ToolListElement equivalentMatchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {
-			for (int i=0; i<elements.length; i++) {
-				ToolListElement e = elements[i];
+			for (ToolListElement e : elements) {
 				if (e.isEquivalentTo(currentElement)) {
 					return e;
 				}
@@ -470,19 +465,19 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			}
 			return null;
 		}
-		
+
 		private void handleOptionSelection() {
 			// Get the selection from the tree list
 			if (optionList == null) return;
 			IStructuredSelection selection = (IStructuredSelection) optionList.getSelection();
-		
+
 			// Set the option page based on the selection
 			ToolListElement toolListElement = (ToolListElement)selection.getFirstElement();
 			if (toolListElement != null) {
 				IOptionCategory cat = toolListElement.getOptionCategory();
 				if (cat == null)
 					cat = (IOptionCategory)toolListElement.getTool();
-				if (cat != null) 
+				if (cat != null)
 					((ToolSettingsPrefStore)settingsStore).setSelection(getResDesc(), toolListElement, cat);
 
 				cat = toolListElement.getOptionCategory();
@@ -506,7 +501,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				ManagedBuildManager.resetOptionSettings(fInfo);
 			}
 			ITool tools[];
-			if (page.isForProject()) 
+			if (page.isForProject())
 				tools = getCfg().getFilteredTools();
 			else
 				tools = getResCfg(getResDesc()).getTools();
@@ -530,7 +525,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			if(src instanceof ITool) {
 				ITool t1 = (ITool)src;
 				ITool t2 = (ITool)dst;
-				if (t1.getCustomBuildStep()) return; 
+				if (t1.getCustomBuildStep()) return;
 				t2.setToolCommand(t1.getToolCommand());
 				t2.setCommandLinePattern(t1.getCommandLinePattern());
 			}
@@ -540,18 +535,26 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				setOption(op1[i], op2[i], dst, res);
 			}
 		}
-		
+
 		/**
+		 * @param filter - a viewer filter
+		 * @see StructuredViewer#addFilter(ViewerFilter)
+		 * 
 		 * @since 5.1
 		 */
 		protected void addFilter(ViewerFilter filter) {
 			optionList.addFilter(filter);
 		}
-		
+
 		/**
+		 * Copy the value of an option to another option for a given resource.
+		 * @param op1 - option to copy the value from
+		 * @param op2 - option to copy the value to
+		 * @param dst - the holder/parent of the option
+		 * @param res - the resource configuration the option belongs to
+		 *
 		 * @since 5.1
 		 */
-		@SuppressWarnings("unchecked")
 		protected void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res){
 			try {
 				switch (op1.getValueType()) {
@@ -583,6 +586,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
+						@SuppressWarnings("unchecked")
 						String[] data = ((List<String>)op1.getValue()).toArray(new String[0]);
 						ManagedBuildManager.setOption(res, dst, op2, data);
 						break;
@@ -593,12 +597,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			} catch (ClassCastException e) {
 			}
 		}
-		
+
 		protected boolean containsDefaults(){
 			IConfiguration parentCfg = fInfo.getParent().getParent();
 			ITool tools[] = fInfo.getParent().getTools();
-			for(int i = 0; i < tools.length; i++){
-				ITool tool = tools[i];
+			for (ITool tool : tools) {
 				if(!tool.getCustomBuildStep()){
 					ITool cfgTool = parentCfg.getToolChain().getTool(tool.getSuperClass().getId());
 					//  Check for a non-default command or command-line-pattern
@@ -608,8 +611,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					}
 					//  Check for a non-default option
 					IOption options[] = tool.getOptions();
-					for( int j = 0; j < options.length; j++){
-						IOption option = options[j];
+					for (IOption option : options) {
 						if(option.getParent() == tool){
 							IOption ext = option;
 							do{
@@ -620,11 +622,11 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 							if(ext != null){
 								if(cfgTool != null){
 									IOption defaultOpt = cfgTool.getOptionBySuperClassId(ext.getId());
-									try {								
+									try {
 										if(defaultOpt != null && defaultOpt.getValueType() == option.getValueType()){
 											Object value = option.getValue();
 											Object defaultVal = defaultOpt.getValue();
-											
+
 											if(value.equals(defaultVal))
 												continue;
 											//TODO: check list also
@@ -642,14 +644,14 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 
 		/* (non-Javadoc)
-		 * Answers the list of settings pages for the selected configuration 
+		 * Answers the list of settings pages for the selected configuration
 		 */
 		private List<AbstractToolSettingUI> getPagesForConfig() {
 			if (getCfg() == null) return null;
 			List<AbstractToolSettingUI> pages = configToPageListMap.get(getCfg().getId());
 			if (pages == null) {
 				pages = new ArrayList<AbstractToolSettingUI>();
-				configToPageListMap.put(getCfg().getId(), pages);	
+				configToPageListMap.put(getCfg().getId(), pages);
 			}
 			return pages;
 		}
@@ -660,14 +662,16 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 
 		/**
 		 * Sets the "dirty" state
+		 * @param b - the new dirty state, {@code true} or {@code false}
 		 */
 		public void setDirty(boolean b) {
 			List<AbstractToolSettingUI> pages = getPagesForConfig();
-			if (pages == null) return;
-			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
-			while (iter.hasNext()) {
-				AbstractToolSettingUI page = iter.next();
-				if (page == null) continue;
+			if (pages == null)
+				return;
+
+			for (AbstractToolSettingUI page : pages) {
+				if (page == null)
+					continue;
 				page.setDirty(b);
 			}
 		}
@@ -683,19 +687,18 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				// Nothing to do
 				return false;
 			}
-			ListIterator<AbstractToolSettingUI> iter = pages.listIterator();
-			while (iter.hasNext()) {
-				AbstractToolSettingUI page = iter.next();
+
+			for (AbstractToolSettingUI page : pages) {
 				if (page == null) continue;
 				if (page.isDirty()) return true;
 			}
 			return false;
 		}
-		
+
 		/**
 		 * @return the build macro provider to be used for macro resolution
 		 * In case the "Build Macros" tab is available, returns the BuildMacroProvider
-		 * supplied by that tab. 
+		 * supplied by that tab.
 		 * Unlike the default provider, that provider also contains
 		 * the user-modified macros that are not applied yet
 		 * If the "Build Macros" tab is not available, returns the default BuildMacroProvider
@@ -705,7 +708,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		public BuildMacroProvider obtainMacroProvider(){
 			return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 		}
-	
+
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
 			fInfo = getResCfg(cfgd);
@@ -726,7 +729,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			t1 = ((IFileInfo)ri1).getToolsToInvoke();
 			t2 = ((IFileInfo)ri2).getToolsToInvoke();
 		} else return;
-		
+
 		// get the corresponding pairs of tools for which we can copy settings
 		// and do the copy
 		for (Map.Entry<ITool, ITool> pair : getToolCorrespondence(t1, t2).entrySet()) {
@@ -742,14 +745,15 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	 * the result, and that order is not significant.  Also, in case of replication of tools
 	 * in a chain (?) they are matched one-for one in the order in which they are found in
 	 * each chain.
-	 * 
-	 * @param t1,&nbsp;t2 two groups of tools.  Neither may be <code>null</code>
+	 *
+	 * @param t1 - first group of tools.  May not be <code>null</code>
+	 * @param t2 - second group of tools.  May not be <code>null</code>
 	 * @return the one-for-one correspondence of tools, in order of <tt>t2</tt>
 	 */
 	private Map<ITool, ITool> getToolCorrespondence(ITool[] t1, ITool[] t2) {
 		Map<ITool, ITool> result = new java.util.LinkedHashMap<ITool, ITool>();
 		Map<ITool, List<ITool>> realT1Tools = new java.util.LinkedHashMap<ITool, List<ITool>>();
-		
+
 		for (ITool next : t1) {
 			ITool real = ManagedBuildManager.getRealTool(next);
 			List<ITool> list = realT1Tools.get(real);
@@ -771,7 +775,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			List<ITool> correspondents = realT1Tools.get(real);
 			if (correspondents != null) {
 				result.put(correspondents.get(0), next);
-				
+
 				// consume the correspondent
 				if (correspondents.size() == 1) {
 					// remove the list; no more entries to consume
@@ -784,7 +788,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -797,9 +801,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	@Override
 	public boolean canBeVisible() {
 		IConfiguration cfg = getCfg();
-		if (cfg instanceof MultiConfiguration) 
+		if (cfg instanceof MultiConfiguration)
 			return ((MultiConfiguration)cfg).isManagedBuildOn();
-		else	
+		else
 			return cfg.getBuilder().isManagedBuildOn();
 	}
 }

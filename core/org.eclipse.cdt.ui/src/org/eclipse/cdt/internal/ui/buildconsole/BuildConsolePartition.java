@@ -84,7 +84,7 @@ public class BuildConsolePartition extends TypedRegion {
 		int otherStart = partition.getOffset();
 		int otherEnd = otherStart + partition.getLength();
 		boolean overlap = (otherStart >= start && otherStart <= end) || (start >= otherStart && start <= otherEnd);
-		return overlap && getType().equals(partition.getType()) && getStream().equals(partition.getStream());
+		return getStream() != null && overlap && getType().equals(partition.getType()) && getStream().equals(partition.getStream());
 	}
 
 	/**

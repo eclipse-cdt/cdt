@@ -663,18 +663,40 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 break;
             case IToken.tLPAREN:
                 // function call
-                consume();
-                if (LT(1) != IToken.tRPAREN)
-                    secondExpression = expression();
-				if (LT(1) == IToken.tRPAREN)
-					last = consume().getEndOffset();
-				else
-					// must be EOC
-					last = Integer.MAX_VALUE;
-                IASTFunctionCallExpression f = nodeFactory.newFunctionCallExpression(firstExpression, secondExpression);
-                ((ASTNode) f).setOffsetAndLength(((ASTNode) firstExpression)
-                        .getOffset(), last - ((ASTNode) firstExpression).getOffset());
-                firstExpression = f;
+                int endOffset;
+                List<IASTExpression> argList= null;
+                consume(IToken.tLPAREN);
+                boolean isFirst= true;
+                while(true) {
+                	final int lt1= LT(1);
+                	if (lt1 == IToken.tRPAREN) {
+                		endOffset= consume().getEndOffset();
+                		break;
+                	} else if (lt1 == IToken.tEOC) {
+                		endOffset= LA(1).getEndOffset();
+                		break;
+                	} 
+                	if (isFirst) {
+                		isFirst= false;
+                	} else {
+                		consume(IToken.tCOMMA);
+                	}
+                	
+                	IASTExpression expr= expression(ExprKind.eAssignment);
+                	if (argList == null) {
+                		argList= new ArrayList<IASTExpression>();
+                	}
+                	argList.add(expr);
+                }
+                
+				final IASTExpression[] args;
+				if (argList == null) { 
+					args= IASTExpression.EMPTY_EXPRESSION_ARRAY;
+				} else {
+					args= argList.toArray(new IASTExpression[argList.size()]);
+				}
+				IASTFunctionCallExpression f = nodeFactory.newFunctionCallExpression(firstExpression, args);
+                firstExpression = setRange(f, firstExpression, endOffset);
                 break;
             case IToken.tINCR:
                 int offset = consume().getEndOffset();

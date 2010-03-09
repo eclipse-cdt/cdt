@@ -685,8 +685,19 @@
                  id="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
            </projectNature>
         </projectConfigurationFactory>
-     </extension>  
-   
- 
+     </extension>
+     <extension
+           point="org.eclipse.ui.importWizards">
+        <wizard
+              category="org.eclipse.cdt.ui.importWizardCategory"
+              class="org.eclipse.cdt.managedbuilder.ui.wizards.NewMakeProjFromExisting"
+              icon="icons/obj16/convert-normal.gif"
+              id="org.eclipse.cdt.ui.wizards.MakeProjFromExisting"
+              name="%WizardMakeProjFromExisting.name">
+           <description>
+              %WizardMakeProjFromExisting.description
+           </description>
+        </wizard>
+     </extension>
    
 </plugin>

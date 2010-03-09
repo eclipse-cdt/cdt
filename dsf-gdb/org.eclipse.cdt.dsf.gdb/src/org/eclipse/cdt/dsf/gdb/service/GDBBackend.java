@@ -36,7 +36,9 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl.InitializationShutdownStep;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.cdt.utils.spawner.Spawner;
@@ -98,6 +100,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     private Process fProcess;
     private int fGDBExitValue;
     private int fGDBLaunchTimeout = 30;
+    
+    /**
+     * A Job that will set a failed status
+     * in the proper request monitor, if the interrupt
+     * did not succeed after a certain time.
+     */
+    private MonitorInterruptJob fInterruptFailedJob;
+
     
 	public GDBBackend(DsfSession session, ILaunchConfiguration lc) {
 		super(session);
@@ -364,6 +374,20 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         }
     }
 
+    /**
+	 * @since 3.0
+	 */
+    public void interrupt(final RequestMonitor rm) {
+        if (fProcess instanceof Spawner) {
+            Spawner gdbSpawner = (Spawner) fProcess;
+            gdbSpawner.interrupt();
+            fInterruptFailedJob = new MonitorInterruptJob(rm);
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Cannot interrupt.", null)); //$NON-NLS-1$
+            rm.done();
+        }
+    }
+
     public void destroy() {
 		// destroy() should be supported even if it's not spawner. 
     	if (getState() == State.STARTED) {
@@ -558,6 +582,8 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
                               IGDBBackend.class.getName() }, 
                 new Hashtable<String,String>());
             
+            getSession().addServiceEventListener(GDBBackend.this, null);
+
             /*
 			 * This event is not consumed by any one at present, instead it's
 			 * the GDBControlInitializedDMEvent that's used to indicate that GDB
@@ -574,6 +600,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         @Override
         protected void shutdown(RequestMonitor requestMonitor) {
             unregister();
+            getSession().removeServiceEventListener(GDBBackend.this);
             requestMonitor.done();
         }
     }
@@ -625,4 +652,50 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         }
     }   
 
+    /**
+     * Monitors an ongoing interrupt to be able to properly
+     * deal with the request monitor.
+     */
+    private class MonitorInterruptJob extends Job {
+        private final RequestMonitor fRequestMonitor;
+
+        public MonitorInterruptJob(RequestMonitor rm) {
+            super("Interrupt monitor job.");
+            setSystem(true);
+            fRequestMonitor = rm;
+            schedule(5000);  // Give the interrupt 5 seconds to succeed
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+        	getExecutor().submit(
+                    new DsfRunnable() {
+                        public void run() {
+                        	fRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Interrupt failed.", null)); //$NON-NLS-1$
+                        	fRequestMonitor.done();
+                        }
+                    });
+        	return Status.OK_STATUS;
+        }
+
+        public RequestMonitor getRequestMonitor() { return fRequestMonitor; }
+    }   
+
+    /*
+     * We must listen for an MI event and not a higher-level ISuspendedEvent.
+     * The reason is that some ISuspendedEvent are not sent when the target stops,
+     * in cases where we don't want to views to update.
+     * For example, if we want to interrupt the target to set a breakpoint,
+     * this interruption is done silently; we will receive the MI event though.
+     */
+	/** @since 3.0 */
+    @DsfServiceEventHandler
+    public void eventDispatched(final MISignalEvent e) {
+    	if (fInterruptFailedJob != null) {
+    		if (fInterruptFailedJob.cancel()) {
+    			fInterruptFailedJob.getRequestMonitor().done();
+    		}
+    		fInterruptFailedJob = null;
+    	}
+    }
 }

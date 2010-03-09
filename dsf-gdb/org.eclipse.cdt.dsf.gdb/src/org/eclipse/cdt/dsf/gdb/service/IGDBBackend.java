@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -100,7 +101,17 @@ public interface IGDBBackend extends IMIBackend {
 	 * Sends an interrupt signal to the GDB process.
 	 */
 	public void interrupt();
-	
+
+	/**
+	 * Interrupts the backend.
+	 * The request monitor indicates if the interrupt succeeded or not;
+	 * it may or may not indicate that the backend is already interrupted,
+	 * but does indicate if the backend will become interrupted.
+	 * 
+	 * @since 3.0
+	 */
+	public void interrupt(RequestMonitor rm);
+
 	/**
 	 * @return The type of the session currently ongoing with the backend
 	 */

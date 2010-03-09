@@ -138,11 +138,11 @@ public class GDBRunControl extends MIRunControl {
                 @Override
                 protected void handleSuccess() {
                     if (getData()) {
-                        fGdb.interrupt();
+                        fGdb.interrupt(rm);
                     } else {
                         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
+                        rm.done();
                     }
-                    rm.done();
                 }
             });
     }

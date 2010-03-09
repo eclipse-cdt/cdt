@@ -324,10 +324,18 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	private StateChangeReason fStateChangeReason;
 	private IExecutionDMContext fStateChangeTriggeringContext;
 	/** 
-	 * A counter of MIRunning/MIStopped events that should
-	 * be kept silent. 
+	 * Indicates that the next MIRunning event should be silenced.
 	 */
-	private int fDisableRunningAndStoppedEventsCount = 0;
+	private boolean fDisableNextRunningEvent;
+	/** 
+	 * Indicates that the next MISignal (MIStopped) event should be silenced.
+	 */
+	private boolean fDisableNextSignalEvent;
+	/** 
+	 * Stores the silenced MIStopped event in case we need to use it
+	 * for a failure.
+	 */
+	private MIStoppedEvent fSilencedSignalEvent;
 	
 	private static final int FAKE_THREAD_ID = 0;
 
@@ -396,9 +404,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
      */
     @DsfServiceEventHandler
     public void eventDispatched(final MIRunningEvent e) {
-    	if (fDisableRunningAndStoppedEventsCount > 0) {
-    		fDisableRunningAndStoppedEventsCount--;
-    		// We don't broadcast running events right now
+    	if (fDisableNextRunningEvent) {
+    		fDisableNextRunningEvent = false;
+    		// We don't broadcast this running event
     		return;
     	}
 
@@ -421,9 +429,10 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
      */
     @DsfServiceEventHandler
     public void eventDispatched(final MIStoppedEvent e) {
-    	if (fDisableRunningAndStoppedEventsCount > 0) {
-    		fDisableRunningAndStoppedEventsCount--;
-    		// We don't broadcast stopped events right now
+    	if (fDisableNextSignalEvent && e instanceof MISignalEvent) {
+    		fDisableNextSignalEvent = false;
+    		fSilencedSignalEvent = e;
+    		// We don't broadcast this stopped event
     		return;
     	}
 
@@ -443,7 +452,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             // Set the triggering context only if it's not the container context, since we are looking for a thread.
             IExecutionDMContext triggeringCtx = !e.getDMContext().equals(containerDmc) ? e.getDMContext() : null;
             if (triggeringCtx == null) {
-            	// Still no thread.  Let's ask the bakend for one.
+            	// Still no thread.  Let's ask the backend for one.
             	// We need a proper thread id for the debug view to select the right thread
             	// Bug 300096 comment #15 and Bug 302597
 				getConnection().queueCommand(
@@ -934,10 +943,20 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		@Override
 		public void execute(final RequestMonitor rm) {
 			if (!isTargetAvailable()) {
-				// Don't broadcast the coming stopped/running events
-				assert fDisableRunningAndStoppedEventsCount == 0;
-				fDisableRunningAndStoppedEventsCount++;
-				suspend(getContextToSuspend(), rm);
+				assert fDisableNextRunningEvent == false;
+				assert fDisableNextSignalEvent == false;
+				
+				// Don't broadcast the coming stopped signal event
+				fDisableNextSignalEvent = true;
+				suspend(getContextToSuspend(), 
+						new RequestMonitor(getExecutor(), rm) {
+					@Override
+					protected void handleFailure() {
+						// We weren't able to suspend, so abort the operation
+						fDisableNextSignalEvent = false;
+						super.handleFailure();
+					};
+				});
 			} else {
 				rm.done();
 			}
@@ -951,14 +970,38 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		@Override
 		public void execute(final RequestMonitor rm) {
 			if (!isTargetAvailable()) {
-				assert fDisableRunningAndStoppedEventsCount == 0 || fDisableRunningAndStoppedEventsCount == 1;
-				fDisableRunningAndStoppedEventsCount++;
+				assert fDisableNextRunningEvent == false;
+				fDisableNextRunningEvent = true;
 				
 				// Can't use the resume() call because we 'silently' stopped
 				// so resume() will not know we are actually stopped
 				fConnection.queueCommand(
 						fCommandFactory.createMIExecContinue(getContextToSuspend()),
-						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								fSilencedSignalEvent = null;
+								super.handleSuccess();
+							}
+
+							@Override
+							protected void handleFailure() {
+								// Darn, we're unable to restart the target.  Must cleanup!
+								fDisableNextRunningEvent = false;
+								
+								// We must also sent the Stopped event that we had kept silent
+								if (fSilencedSignalEvent != null) {
+									eventDispatched(fSilencedSignalEvent);
+									fSilencedSignalEvent = null;
+								} else {
+									// Maybe the stopped event didn't arrive yet.
+									// We don't want to silence it anymore
+									fDisableNextSignalEvent = false;
+								}
+
+								super.handleFailure();
+							}
+						});
 			} else {
 				// We didn't suspend the container, so we don't need to resume it
 				rm.done();

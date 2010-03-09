@@ -265,13 +265,17 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
 	/** 
-	 * A counter of MIRunning/MIStopped events that should be kept silent for the specified thread. 
+	 * Indicates that the next MIRunning event for this thread should be silenced.
 	 */
-	private class DisableRunningAndStoppedEvents {
-		public IMIExecutionDMContext executionDmc = null;
-		public int count = 0;
-	};
-	private DisableRunningAndStoppedEvents fDisableRunningAndStoppedEvents = new DisableRunningAndStoppedEvents();
+	private IMIExecutionDMContext fDisableNextRunningEventDmc;
+	/** 
+	 * Indicates that the next MISignal (MIStopped) event for this thread should be silenced.
+	 */
+	private IMIExecutionDMContext fDisableNextSignalEventDmc;
+	/** 
+	 * Stores the silenced MIStopped event in case we need to use it for a failure.
+	 */
+	private MIStoppedEvent fSilencedSignalEvent;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
@@ -925,12 +929,22 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 							
 								fExecutionDmcToSuspend = (IMIExecutionDMContext)getData()[0];
 							
-								// Don't broadcast the coming stopped/running events
-								assert fDisableRunningAndStoppedEvents.count == 0;
-								fDisableRunningAndStoppedEvents.count++;
-								fDisableRunningAndStoppedEvents.executionDmc = fExecutionDmcToSuspend;
+								assert fDisableNextRunningEventDmc == null;
+								assert fDisableNextSignalEventDmc == null;
 								
-								suspend(fExecutionDmcToSuspend, rm);
+								// Don't broadcast the next stopped signal event
+								fDisableNextSignalEventDmc = fExecutionDmcToSuspend;
+								
+								suspend(fExecutionDmcToSuspend,
+										new RequestMonitor(getExecutor(), rm) {
+									@Override
+									protected void handleFailure() {
+										// We weren't able to suspend, so abort the operation
+										fDisableNextSignalEventDmc = null;
+										super.handleFailure();
+									};
+								});
+
 							}
 						});
 			} else {
@@ -946,15 +960,39 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		@Override
 		public void execute(final RequestMonitor rm) {
 			if (!fTargetAvailable) {
-				assert fDisableRunningAndStoppedEvents.count == 0 || fDisableRunningAndStoppedEvents.count == 1;
-				fDisableRunningAndStoppedEvents.count++;
-				fDisableRunningAndStoppedEvents.executionDmc = fExecutionDmcToSuspend;
+				assert fDisableNextRunningEventDmc == null;
+				fDisableNextRunningEventDmc = fExecutionDmcToSuspend;
 				
 				// Can't use the resume() call because we 'silently' stopped
 				// so resume() will not know we are actually stopped
 				fConnection.queueCommand(
 						fCommandFactory.createMIExecContinue(fExecutionDmcToSuspend),
-						new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+								fSilencedSignalEvent = null;
+								super.handleSuccess();
+							}
+
+							@Override
+							protected void handleFailure() {
+								// Darn, we're unable to restart the target.  Must cleanup!
+								fDisableNextRunningEventDmc = null;
+								
+								// We must also sent the Stopped event that we had kept silent
+								if (fSilencedSignalEvent != null) {
+									eventDispatched(fSilencedSignalEvent);
+									fSilencedSignalEvent = null;
+								} else {
+									// Maybe the stopped event didn't arrive yet.
+									// We don't want to silence it anymore
+									fDisableNextSignalEventDmc = null;
+								}
+
+								super.handleFailure();
+							}
+						});
+
 			} else {
 				// We didn't suspend the thread, so we don't need to resume it
 				rm.done();
@@ -972,10 +1010,10 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
      */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIRunningEvent e) {
-		if (fDisableRunningAndStoppedEvents.count > 0 &&
-			fDisableRunningAndStoppedEvents.executionDmc.equals(e.getDMContext())) {
+		if (fDisableNextRunningEventDmc != null &&
+			fDisableNextRunningEventDmc.equals(e.getDMContext())) {
 
-			fDisableRunningAndStoppedEvents.count--;
+			fDisableNextRunningEventDmc = null;
 			
 			// Don't broadcast the running event
 			return;
@@ -1041,10 +1079,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     			}
     		}
     	}
-		if (fDisableRunningAndStoppedEvents.count > 0 &&
-		    fDisableRunningAndStoppedEvents.executionDmc.equals(e.getDMContext())) {
+		if (fDisableNextSignalEventDmc != null && e instanceof MISignalEvent &&
+			fDisableNextSignalEventDmc.equals(e.getDMContext())) {
 			
-			fDisableRunningAndStoppedEvents.count--;
+			fDisableNextSignalEventDmc = null;
+			fSilencedSignalEvent = e;
 
 			// Don't broadcast the stopped event
 			return;

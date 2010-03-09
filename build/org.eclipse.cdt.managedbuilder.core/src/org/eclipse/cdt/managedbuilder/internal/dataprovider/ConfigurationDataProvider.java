@@ -59,6 +59,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentType;
 
+/**
+ * The main hook ManagedBuild uses to connect to cdt.core's project model.
+ * Provides & Persists Build configuration data in the project model storage.
+ */
 public class ConfigurationDataProvider extends CConfigurationDataProvider implements ISettingsChangeListener {
 	private static final String BUILD_SYSTEM_DATA_MODULE_NAME = "cdtBuildSystem";	//$NON-NLS-1$
 	private static final String VERSION_ATTRIBUTE = "version";	//$NON-NLS-1$
@@ -136,6 +140,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return appliedCfg;
 	}
 
+	@Override
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
@@ -217,6 +222,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 			
 
+	@Override
 	public CConfigurationData createConfiguration(
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
@@ -395,21 +401,21 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	private static Configuration adjustPreferenceConfig(Configuration cfg){
 		LanguageManager mngr = LanguageManager.getInstance();
 		ILanguageDescriptor dess[] = mngr.getLanguageDescriptors();
-		Map map = mngr.getContentTypeIdToLanguageDescriptionsMap();
+		Map<String, ILanguageDescriptor[]> map = mngr.getContentTypeIdToLanguageDescriptionsMap();
 		
 		IResourceInfo[] rcInfos = cfg.getResourceInfos();
 		for(int i = 0; i < rcInfos.length; i++){
 			if(rcInfos[i] instanceof IFolderInfo){
-				adjustFolderInfo((IFolderInfo)rcInfos[i], dess, new HashMap(map));
+				adjustFolderInfo((IFolderInfo)rcInfos[i], dess, new HashMap<Object, ILanguageDescriptor[]>(map));
 			}
 		}
 		
 		return cfg;
 	}
 	
-	private static void adjustFolderInfo(IFolderInfo info, ILanguageDescriptor dess[], HashMap map){
+	private static void adjustFolderInfo(IFolderInfo info, ILanguageDescriptor dess[], HashMap<Object, ILanguageDescriptor[]> map){
 		IToolChain tch = info.getToolChain();
-		Map langMap = new HashMap();
+		Map<String, ILanguageDescriptor> langMap = new HashMap<String, ILanguageDescriptor>();
 		for(int i = 0; i < dess.length; i++){
 			langMap.put(dess[i].getId(), dess[i]);
 		}
@@ -422,7 +428,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 					InputType type = (InputType)types[k];
 					String langId = type.getLanguageId(tool);
 					if(langId != null){
-						ILanguageDescriptor des = (ILanguageDescriptor)langMap.remove(langId);
+						ILanguageDescriptor des = langMap.remove(langId);
 						if(des != null)
 							adjustInputType(tool, type, des);
 						continue;
@@ -430,7 +436,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 						IContentType[] cTypes = type.getSourceContentTypes();
 						for(int c = 0; c < cTypes.length; c++){
 							IContentType cType = cTypes[c];
-							ILanguageDescriptor[] langs = (ILanguageDescriptor[])map.remove(cType.getId());
+							ILanguageDescriptor[] langs = map.remove(cType.getId());
 							if(langs != null && langs.length != 0){
 								for(int q = 0; q < langs.length; q++){
 									langMap.remove(langs[q].getId());
@@ -454,15 +460,15 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		String srcIds[] = type.getSourceContentTypeIds();
 		String hIds[] = type.getHeaderContentTypeIds();
 		
-		Set landTypes = new HashSet(Arrays.asList(cTypeIds));
+		Set<String> landTypes = new HashSet<String>(Arrays.asList(cTypeIds));
 		landTypes.removeAll(Arrays.asList(srcIds));
 		landTypes.removeAll(Arrays.asList(hIds));
 		
 		if(landTypes.size() != 0){
-			List srcList = new ArrayList();
+			List<String> srcList = new ArrayList<String>();
 			srcList.addAll(landTypes);
 			type = (InputType)tool.getEditableInputType(type);
-			type.setSourceContentTypeIds((String[])srcList.toArray(new String[srcList.size()]));
+			type.setSourceContentTypeIds(srcList.toArray(new String[srcList.size()]));
 		}
 		
 		if(!des.getId().equals(type.getLanguageId(tool))){
@@ -473,16 +479,16 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return type;
 	}
 	
-	private static void addTools(IToolChain tc, Map langMap, Map cTypeToLangMap){
+	private static void addTools(IToolChain tc, Map<String, ILanguageDescriptor> langMap, Map<Object, ILanguageDescriptor[]> cTypeToLangMap){
 		ITool extTool = ManagedBuildManager.getExtensionTool(PREF_TOOL_ID);
-		List list = new ArrayList(langMap.values());
+		List<ILanguageDescriptor> list = new ArrayList<ILanguageDescriptor>(langMap.values());
 		ILanguageDescriptor des;
 		while(list.size() != 0){
-			des = (ILanguageDescriptor)list.remove(list.size() - 1);
+			des = list.remove(list.size() - 1);
 			String[] ctypeIds = des.getContentTypeIds();
 			boolean addLang = false;
 			for(int i = 0; i < ctypeIds.length; i++){
-				ILanguageDescriptor[] langs = (ILanguageDescriptor[])cTypeToLangMap.remove(ctypeIds[i]);
+				ILanguageDescriptor[] langs = cTypeToLangMap.remove(ctypeIds[i]);
 				if(langs != null && langs.length != 0){
 					addLang = true;
 					for(int q = 0; q < langs.length; q++){
@@ -522,6 +528,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return emptyPrefCfg;
 	}
 
+	@Override
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
 			IProgressMonitor monitor)
 			throws CoreException {
@@ -559,6 +566,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		}
 	}
 
+	@Override
 	public void removeConfiguration(ICConfigurationDescription des,
 			CConfigurationData data,
 			IProgressMonitor monitor) {
@@ -569,6 +577,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		mProj.removeConfiguration(cfg.getId());
 	}
 
+	@Override
 	public void dataCached(ICConfigurationDescription cfgDes,
 			CConfigurationData data,
 			IProgressMonitor monitor) {

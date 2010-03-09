@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -1733,7 +1734,19 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	return funcDefinition;
 	}
 
-	protected abstract IASTDeclarator addInitializer(FoundAggregateInitializer lie, DeclarationOptions option) throws EndOfFileException;
+	protected abstract IASTInitializer optionalInitializer(DeclarationOptions options)
+			throws EndOfFileException, BacktrackException;
+
+	protected IASTDeclarator addInitializer(FoundAggregateInitializer e, DeclarationOptions options)
+			throws EndOfFileException, BacktrackException {
+	    final IASTDeclarator d = e.fDeclarator;
+	    IASTInitializer i = optionalInitializer(options);
+	    if (i != null) {
+	    	d.setInitializer(i);
+	    	((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());
+	    }
+		return d;
+    }
 
 	protected IToken asmExpression(StringBuilder content) throws EndOfFileException, BacktrackException {
 		IToken t= consume(IToken.tLPAREN);

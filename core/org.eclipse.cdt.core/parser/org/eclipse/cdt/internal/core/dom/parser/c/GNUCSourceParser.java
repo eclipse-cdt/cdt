@@ -134,7 +134,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         this.nodeFactory = CNodeFactory.getDefault();
     }
 
-    protected IASTInitializer optionalCInitializer() throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTInitializer optionalInitializer(DeclarationOptions options) throws EndOfFileException, BacktrackException {
         if (LTcatchEOF(1) == IToken.tASSIGN) {
             final int offset= consume().getOffset();
             IASTInitializerClause initClause = initClause(false);
@@ -1314,7 +1315,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if (lt1 == IToken.tASSIGN && LT(2) == IToken.tLBRACE) 
         	throw new FoundAggregateInitializer(declspec, d);
        
-        IASTInitializer i = optionalCInitializer();
+        IASTInitializer i = optionalInitializer(option);
         if (i != null) {
             d.setInitializer(i);
             ((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());
@@ -1322,21 +1323,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return d;
     }
     
-    @Override
-	protected IASTDeclarator addInitializer(FoundAggregateInitializer e, DeclarationOptions options) throws EndOfFileException {
-	    final IASTDeclarator d = e.fDeclarator;
-        try {
-			IASTInitializer i = optionalCInitializer();
-			if (i != null) {
-				d.setInitializer(i);
-			    ((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());
-			}
-		} catch (BacktrackException e1) {
-			// mstodo add problem node
-		}
-		return d;
-    }
-
     protected IASTDeclarator declarator(IASTDeclSpecifier declSpec, DeclarationOptions option) throws EndOfFileException, BacktrackException {
         final int startingOffset = LA(1).getOffset();
         int endOffset = startingOffset;

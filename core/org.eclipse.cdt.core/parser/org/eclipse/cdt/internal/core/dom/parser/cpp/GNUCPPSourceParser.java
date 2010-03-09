@@ -2779,22 +2779,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return dtor;
     }
     
-    @Override
-	protected IASTDeclarator addInitializer(FoundAggregateInitializer e, DeclarationOptions option) throws EndOfFileException {
-	    final IASTDeclarator d = e.fDeclarator;
-        try {
-			IASTInitializer i = optionalInitializer(option);
-			if (i != null) {
-				d.setInitializer(i);
-			    ((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());
-			}
-		} catch (BacktrackException e1) {
-			// mstodo add problem node
-            failParse();
-		}
-		return d;
-    }
-
     /**
      * initializer:
      *    brace-or-equal-initializer
@@ -2804,7 +2788,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *    = initializer-clause
      *    braced-init-list
      */
-    private IASTInitializer optionalInitializer(DeclarationOptions option) throws EndOfFileException, BacktrackException {
+    @Override
+	protected IASTInitializer optionalInitializer(DeclarationOptions option) throws EndOfFileException, BacktrackException {
     	final int lt1= LTcatchEOF(1);
     	
     	// = initializer-clause

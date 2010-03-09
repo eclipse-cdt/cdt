@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
@@ -279,7 +278,6 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 			prefs.setValue(key, b.getSelection());
 		}
 		prefs.setValue(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, fLinesToTrigger.getIntValue());
-		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
 
 /**
@@ -77,10 +77,10 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 
 	protected void makeActions() {
 		moveAction = new MoveResourceAction(shellProvider);
-		moveAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.MOVE);
+		moveAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_MOVE);
 		
 		renameAction = new RenameResourceAction(shellProvider, tree);
-		renameAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.RENAME);
+		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 	}
 
 	@Override

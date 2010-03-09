@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Abstract preference page which is used to wrap a
@@ -97,8 +95,6 @@ public abstract class AbstractConfigurationBlockPreferencePage extends Preferenc
 		fConfigurationBlock.performOk();
 
 		fOverlayStore.propagate();
-		
-		CUIPlugin.getDefault().savePluginPreferences();
 		
 		return true;
 	}

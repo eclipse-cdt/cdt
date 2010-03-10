@@ -451,15 +451,23 @@ public class RequestMonitor extends DsfExecutable {
      * Default handler for when the executor supplied in the constructor 
      * rejects the runnable that is submitted invoke this request monitor.
      * This usually happens only when the executor is shutting down.
+     * <p>
+     * The default handler creates a new error status for the rejected 
+     * execution and propagates it to the client or logs it.
      */
     protected void handleRejectedExecutionException() {
-        MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
-        logStatus.merge(getStatus());
+        IStatus rejectedStatus = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
+        if (!getStatus().isOK()) {
+            DsfMultiStatus multiStatus = new DsfMultiStatus(DsfPlugin.PLUGIN_ID, 0, "Composite status", null); //$NON-NLS-1$
+            multiStatus.merge(getStatus());
+            multiStatus.merge(rejectedStatus);
+            rejectedStatus = multiStatus;
+        }
         if (fParentRequestMonitor != null) {
-            fParentRequestMonitor.setStatus(logStatus);
+            fParentRequestMonitor.setStatus(rejectedStatus);
             fParentRequestMonitor.done();
         } else {
-            DsfPlugin.getDefault().getLog().log(logStatus);
+            DsfPlugin.getDefault().getLog().log(rejectedStatus);
         }
     }
     

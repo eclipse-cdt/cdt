@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+ * David McKnight (IBM)  - [304170] [api] ISystemFileTypes and ISystemFileTransferModeMapping should be marked @noimplement
  ********************************************************************************/
 
 
@@ -19,7 +20,11 @@ package org.eclipse.rse.services.clientserver;
 
 import java.io.File;
 
-
+/*
+ *  Used to determine whether a file is binary, text or XML.
+ *  
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ISystemFileTypes  
 {
     public boolean isBinary(File file);

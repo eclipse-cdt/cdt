@@ -14,10 +14,16 @@
  * Contributors:
  * David McKnight   (IBM)        - [208951] new priority field
  * David McKnight (IBM)  - [283033] remoteFileTypes extension point should include "xml" type
+ * David McKnight (IBM)  - [304170] [api] ISystemFileTypes and ISystemFileTransferModeMapping should be marked @noimplement
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
 
+/**
+ * Interface using for determining the mapping for a particular file type. 
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ISystemFileTransferModeMapping {
 
 	/**

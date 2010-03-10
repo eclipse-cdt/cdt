@@ -213,7 +213,7 @@ public class MIRunControlTest extends BaseTestCase {
 		Assert.assertEquals(1, dmc.getThreadId());
 
 		if (sProgramIsCygwin) {
-			dmc = (IMIExecutionDMContext) ctxts[2];
+			dmc = (IMIExecutionDMContext) ctxts[1];
 			Assert.assertEquals(2, dmc.getThreadId());
 		}
 		

@@ -152,14 +152,17 @@ public class MIExpressionsTest extends BaseTestCase {
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
-        tests.put("3.1415 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526000000000002", "4.2526000000000002" });
-        tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336", "33.333333333333336" });
+        tests.put("3.1415 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
+        tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
         tests.put("-100.0 / 3.0", new String[] { "0xffffffffffffffdf", "01777777777777777777737",
-            "1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.333333333333336", "-33.333333333333336" });
-        tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.333333333333336", "33.333333333333336" });
-        tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
+            "1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.3333", "-33.3333" });
+        tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
+        executeExpressionSubTests(tests, false, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 
-        executeExpressionSubTests(tests, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+        tests.clear();
+        tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
+        executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));        
+
     }
 
     /**
@@ -2813,16 +2816,27 @@ public class MIExpressionsTest extends BaseTestCase {
     	wait.waitReset();
     }
 
-    /**
-     * Executes a group of sub-tests.
-     * 
-     * @param tests:
-     *            A Map in which the key is an expression to evaluate and the
-     *            value is an array of expected values, one for each of the
-     *            formats supported by the Expressions service (hex, octal,
-     *            binary, decimal, natural).
-     */
-    private void executeExpressionSubTests(final Map<String, String[]> tests, IDMContext dmc)
+	/**
+	 * Executes a group of sub-tests.
+	 * 
+	 * @param tests
+	 *            A Map in which the key is an expression to evaluate and the
+	 *            value is an array of expected values, one for each of the
+	 *            formats supported by the Expressions service (hex, octal,
+	 *            binary, decimal, natural, details).
+	 * @param exact
+	 *            Indicates whether the natural and details format should
+	 *            require an exact match to the expected value, or whether the
+	 *            comparison should match only up to the number of characters
+	 *            provided in the expected value. Where this is used is in
+	 *            expressions that involve floating point calculation. Such
+	 *            calculations are not exact (even when you'd think they should
+	 *            be) and these tests cannot predict what exactly the result
+	 *            will be. When this param is false, then we consider it a match
+	 *            if, e.g., the gdb expression resolves to "1.23456789", but the
+	 *            caller only supplied "1.2345".
+	 */
+    private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact, IDMContext dmc)
         throws Throwable 
     {
 
@@ -2903,6 +2917,12 @@ public class MIExpressionsTest extends BaseTestCase {
                                                     else
                                                         expectedValue = "[Unrecognized format ID: " + formatId + "]";
 
+                                                    if ((exact == false) && 
+                                                    		(formatId.equals(IFormattedValues.NATURAL_FORMAT) || formatId.equals(MIExpressions.DETAILS_FORMAT)) &&
+                                                    		(expectedValue.length() < actualValue.length())) {
+                                                    	actualValue = actualValue.substring(0, expectedValue.length());
+                                                    }
+                                                    
                                                     if (actualValue.equalsIgnoreCase(expectedValue)) {
                                                         wait.waitFinished();
                                                     } else {
@@ -2926,6 +2946,10 @@ public class MIExpressionsTest extends BaseTestCase {
             assertTrue("ExprChangedEvent problem: expected 0, received " + getExprChangedCount(),
                 getExprChangedCount() == 0);
         }
+    }
+    
+    private void executeExpressionSubTests(final Map<String, String[]> tests, IDMContext dmc) throws Throwable {
+    	executeExpressionSubTests(tests, true, dmc);
     }
     
     private boolean addressesEqual(IExpressionDMAddress addrToTest, String addrStr, int size) {

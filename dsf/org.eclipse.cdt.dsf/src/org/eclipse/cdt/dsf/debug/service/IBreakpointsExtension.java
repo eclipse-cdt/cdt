@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 
 /**
- * Extension to the Breakpoints service which adds support for corollating 
+ * Extension to the Breakpoints service which adds support for correlating 
  * breakpoints and execution contexts.
  * @since 2.1
  */
@@ -28,7 +28,7 @@ public interface IBreakpointsExtension extends IBreakpoints {
     public interface IBreakpointHitDMEvent extends ISuspendedDMEvent {
         
         /**
-         * Returs the breakpoints that suspended the thread.
+         * Returns the breakpoints that suspended the thread.
          */
         IBreakpointDMContext[] getBreakpoints();
     }
@@ -37,9 +37,13 @@ public interface IBreakpointsExtension extends IBreakpoints {
      * If a given execution context was suspended due hitting a breakpoint, 
      * this method should return the breakpoints which caused the thread or 
      * container to suspend.
+     * <p>
+     * If the given thread is not suspended or is not suspended at a 
+     * breakpoint, an empty array or an error with an INVALID_STATE code 
+     * will be returned. 
      * 
      * @param ctx Thread or container to get breakpoints for.
-     * @param rm Breakpoints that the thread suspended on.
+     * @param rm Breakpoints that the thread or container is suspended on.
      */
     public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm);
 }

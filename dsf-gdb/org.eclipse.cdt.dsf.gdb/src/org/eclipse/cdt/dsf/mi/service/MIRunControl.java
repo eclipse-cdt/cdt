@@ -197,12 +197,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     protected static class BreakpointHitEvent extends SuspendedEvent
     implements IBreakpointHitDMEvent
     {
-        final private MIBreakpointDMContext[] fBreakpoints;
+        final private IBreakpointDMContext[] fBreakpoints;
         
-        BreakpointHitEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo, MIBreakpointDMContext bpCtx) {
+        BreakpointHitEvent(IExecutionDMContext ctx, MIBreakpointHitEvent miInfo, IBreakpointDMContext bpCtx) {
             super(ctx, miInfo);
             
-            fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
+            fBreakpoints = new IBreakpointDMContext[] { bpCtx };
         }
         
         public IBreakpointDMContext[] getBreakpoints() {
@@ -237,7 +237,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     {
         final private MIBreakpointDMContext[] fBreakpoints;
         
-        ContainerBreakpointHitEvent(IContainerDMContext containerDmc, MIStoppedEvent miInfo, IExecutionDMContext triggeringDmc, MIBreakpointDMContext bpCtx) {
+        ContainerBreakpointHitEvent(IContainerDMContext containerDmc, MIBreakpointHitEvent miInfo, IExecutionDMContext triggeringDmc, MIBreakpointDMContext bpCtx) {
             super(containerDmc, miInfo, triggeringDmc);
             
             fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
@@ -436,14 +436,15 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     		return;
     	}
 
-    	MIBreakpointDMContext bp = null;
+    	MIBreakpointDMContext _bp = null;
     	if (e instanceof MIBreakpointHitEvent) {
     	    int bpId = ((MIBreakpointHitEvent)e).getNumber();
             IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
             if (bpsTarget != null && bpId >= 0) {
-                bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
+                _bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
             }
     	}
+        final MIBreakpointDMContext bp = _bp;
     	
     	IDMEvent<?> event = null;
         // Find the container context, which is used in multi-threaded debugging.
@@ -464,20 +465,22 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 								if (isSuccess() && getData().getCurrentThread() != null) {
 									triggeringCtx2 = createMIExecutionContext(containerDmc, getData().getCurrentThread());
 								}
-								IDMEvent<?> event2 = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx2);
+								IDMEvent<?> event2 = bp != null
+								    ? new ContainerBreakpointHitEvent(containerDmc, (MIBreakpointHitEvent)e, triggeringCtx2, bp)
+								    : new ContainerSuspendedEvent(containerDmc, e, triggeringCtx2);
 								getSession().dispatchEvent(event2, getProperties());
 							}
 						});
 				return;
             }
             if (bp != null) {
-                event = new ContainerBreakpointHitEvent(containerDmc, e, triggeringCtx, bp);
+                event = new ContainerBreakpointHitEvent(containerDmc, (MIBreakpointHitEvent)e, triggeringCtx, bp);
             } else {
                 event = new ContainerSuspendedEvent(containerDmc, e, triggeringCtx);
             }
         } else {
             if (bp != null) {
-                event = new BreakpointHitEvent(e.getDMContext(), e, bp);
+                event = new BreakpointHitEvent(e.getDMContext(), (MIBreakpointHitEvent)e, bp);
             } else {
                 event = new SuspendedEvent(e.getDMContext(), e);
             }

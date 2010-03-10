@@ -160,12 +160,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     private static class BreakpointHitEvent extends SuspendedEvent
     implements IBreakpointHitDMEvent
     {
-        final private MIBreakpointDMContext[] fBreakpoints;
+        final private IBreakpointDMContext[] fBreakpoints;
         
-        BreakpointHitEvent(IExecutionDMContext ctx, MIStoppedEvent miInfo, MIBreakpointDMContext bpCtx) {
+        BreakpointHitEvent(IExecutionDMContext ctx, MIBreakpointHitEvent miInfo, IBreakpointDMContext bpCtx) {
             super(ctx, miInfo);
             
-            fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
+            fBreakpoints = new IBreakpointDMContext[] { bpCtx };
         }
         
         public IBreakpointDMContext[] getBreakpoints() {
@@ -1089,21 +1089,20 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			return;
 		}
 		
+        IDMEvent<?> event = null;
         MIBreakpointDMContext bp = null;
         if (e instanceof MIBreakpointHitEvent) {
             int bpId = ((MIBreakpointHitEvent)e).getNumber();
             IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(e.getDMContext(), IBreakpointsTargetDMContext.class);
             if (bpsTarget != null && bpId >= 0) {
                 bp = new MIBreakpointDMContext(getSession().getId(), new IDMContext[] {bpsTarget}, bpId); 
+                event = new BreakpointHitEvent(e.getDMContext(), (MIBreakpointHitEvent)e, bp);
             }
         }
-		
-        IDMEvent<?> event = null;
-        if (bp != null) {
-            event = new BreakpointHitEvent(e.getDMContext(), e, bp);
-        } else {
+        if (event == null) {
             event = new SuspendedEvent(e.getDMContext(), e);
         }
+        
         getSession().dispatchEvent(event, getProperties());
 	}
 

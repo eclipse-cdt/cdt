@@ -11,9 +11,11 @@
 
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -497,6 +499,18 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
      */
 	public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm) {
 	    IBreakpointDMContext[] bps = fBreakpointHitMap.get(ctx);
+	    if (bps == null && ctx instanceof IContainerDMContext) {
+	        List<IBreakpointDMContext> bpsList = new ArrayList<IBreakpointDMContext>(1); 
+	        for (Map.Entry<IExecutionDMContext, IBreakpointDMContext[]> entry : fBreakpointHitMap.entrySet()) {
+	            
+	            if (DMContexts.isAncestorOf(entry.getKey(), ctx)) {
+	                for (IBreakpointDMContext bp : entry.getValue()) {
+	                    bpsList.add(bp);
+	                }
+	            }
+	        }
+	        bps = bpsList.toArray(new IBreakpointDMContext[bpsList.size()]);
+	    } 
 	    rm.setData(bps != null ? bps : new IBreakpointDMContext[0]);
 	    rm.done();
 	}
@@ -1151,9 +1165,12 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     public void eventDispatched(IBreakpointHitDMEvent e) {
         if (e instanceof IContainerSuspendedDMEvent) {
             IExecutionDMContext[] triggeringContexts = ((IContainerSuspendedDMEvent)e).getTriggeringContexts();
-            for (IExecutionDMContext ctx : triggeringContexts) {
-                fBreakpointHitMap.put(ctx, e.getBreakpoints());
-                
+            if (triggeringContexts != null) {
+                for (IExecutionDMContext ctx : triggeringContexts) {
+                    fBreakpointHitMap.put(ctx, e.getBreakpoints());
+                }
+            } else {
+                fBreakpointHitMap.put(e.getDMContext(), e.getBreakpoints());
             }
         } else {
             fBreakpointHitMap.put(e.getDMContext(), e.getBreakpoints());
@@ -1167,7 +1184,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
         if (e instanceof IContainerResumedDMEvent) {
-            clearBreakpointHitForContainer(((IContainerResumedDMEvent)e).getDMContext());
+            clearBreakpointHitForContainer((IContainerDMContext)((IContainerResumedDMEvent)e).getDMContext());
         } else {
             fBreakpointHitMap.remove(e.getDMContext());
         }
@@ -1181,13 +1198,13 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     @DsfServiceEventHandler
     public void eventDispatched(IExitedDMEvent e) {
         if (e.getDMContext() instanceof IContainerDMContext) {
-            clearBreakpointHitForContainer(e.getDMContext());
+            clearBreakpointHitForContainer((IContainerDMContext)e.getDMContext());
         } else {
             fBreakpointHitMap.remove(e.getDMContext());
         }
     }
 
-    private void clearBreakpointHitForContainer(IDMContext container) {
+    private void clearBreakpointHitForContainer(IContainerDMContext container) {
         for (Iterator<Map.Entry<IExecutionDMContext, IBreakpointDMContext[]>> itr = fBreakpointHitMap.entrySet().iterator(); itr.hasNext();) {
             if (DMContexts.isAncestorOf(itr.next().getKey(), container)) {
                 itr.remove();

@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -74,6 +75,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 
 		// Register this service
 		register(new String[] { IBreakpoints.class.getName(),
+		                        IBreakpointsExtension.class.getName(),
 								MIBreakpoints.class.getName(),
 				 				GDBBreakpoints_7_0.class.getName() },
 				new Hashtable<String, String>());

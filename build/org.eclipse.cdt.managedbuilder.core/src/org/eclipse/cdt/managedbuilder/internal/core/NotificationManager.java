@@ -42,10 +42,8 @@ public class NotificationManager /*implements ISettingsChangeListener */{
 	}
 	
 	private void notifyListeners(SettingsChangeEvent event){
-		ISettingsChangeListener listeners[] = fListeners.toArray(new ISettingsChangeListener[fListeners.size()]); 
-		for(int i = 0; i < listeners.length; i++){
-			listeners[i].settingsChanged(event);
-		}
+		for (ISettingsChangeListener listener : fListeners)
+			listener.settingsChanged(event);
 	}
 	
 	private static SettingsChangeEvent createOptionChangedEvent(IResourceInfo rcInfo, IHoldsOptions holder, IOption option, Object oldValue){

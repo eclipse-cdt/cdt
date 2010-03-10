@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -24,7 +26,16 @@ public class IncludeTab extends AbstractLangsListTab {
 public void additionalTableSet() {
 	   columnToFit = new TableColumn(table, SWT.NONE);
 	   columnToFit.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
+	   columnToFit.setToolTipText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
 	   showBIButton.setSelection(true);
+	   table.getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {                       
+                   @Override
+					public void getName(AccessibleEvent e) {
+                           e.result = UIMessages.getString("IncludeTab.0"); //$NON-NLS-1$
+                   }
+               }
+		  );
    }
 	
 	@Override

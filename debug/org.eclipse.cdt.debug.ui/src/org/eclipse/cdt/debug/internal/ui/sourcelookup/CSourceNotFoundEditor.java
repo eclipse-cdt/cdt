@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -195,7 +194,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		IWorkbenchPage page = CUIPlugin.getActivePage();
 		if (page != null) {		
 			try {
-				page.showView(ICDebugUIConstants.ID_DISASSEMBLY_VIEW);
+				page.showView("org.eclipse.cdt.dsf.debug.ui.disassembly.view"); //$NON-NLS-1$
 			} catch (PartInitException e) {}
 		}
 	}

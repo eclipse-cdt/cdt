@@ -45,7 +45,7 @@ public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
      * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
      */
     public String getDefaultDetailPane(IStructuredSelection selection) {
-        return NumberFormatDetailPane.ID;
+        return null; // Allow competing detail pane factories to override this one
     }
 
     /* (non-Javadoc)

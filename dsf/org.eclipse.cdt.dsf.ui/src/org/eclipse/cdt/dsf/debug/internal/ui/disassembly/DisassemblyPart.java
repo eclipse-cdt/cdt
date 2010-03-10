@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.getAddressText;
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
@@ -157,8 +161,6 @@ import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.getAddressText;
 /**
  * DisassemblyPart
  */
@@ -280,7 +282,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 			}
 			public void partOpened(IWorkbenchPartReference partRef) {
-			}
+				}
 			public void partHidden(IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false) == DisassemblyPart.this) {
 					setActive(false);
@@ -1764,6 +1766,13 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					}
 				}
 			}
+			IAdaptable context = DebugUITools.getDebugContext();
+			if (context != null)
+			{
+				ISteppingModeTarget target= (ISteppingModeTarget) (context).getAdapter(ISteppingModeTarget.class);
+				target.enableInstructionStepping(true);
+			}
+
 		} else {
 			fGotoAddressPending= fFocusAddress= PC_UNKNOWN;
 		}

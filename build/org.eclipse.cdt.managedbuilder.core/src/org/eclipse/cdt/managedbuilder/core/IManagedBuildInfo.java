@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.runtime.IPath;
 
@@ -45,7 +46,9 @@ public interface IManagedBuildInfo {
 	 * Add a new target to the build information for the receiver
 	 * 
 	 * @param target
+	 * @deprecated
 	 */
+	@Deprecated
 	public void addTarget(ITarget target);
 		
 	/**
@@ -54,7 +57,9 @@ public interface IManagedBuildInfo {
 	 *  
 	 * @param srcExt
 	 * @return
+	 * @deprecated
 	 */
+	@Deprecated
 	public boolean buildsFileType(String srcExt);
 
 	/**
@@ -123,13 +128,14 @@ public interface IManagedBuildInfo {
 	/**
 	 * Returns the name of the artifact to build for the receiver.
 	 * 
-	 * @return
+	 * @return Name of the build artifact
 	 */
 	public String getBuildArtifactName();
 
 	/**
 	 * Answers a <code>String</code> containing the make command invocation 
 	 * for the default configuration.
+	 * @return build command
 	 */
 	public String getBuildCommand();
 
@@ -172,7 +178,7 @@ public interface IManagedBuildInfo {
 	 * Answers the name of the default configuration, for example <code>Debug</code>  
 	 * or <code>Release</code>.
 	 * 
-	 * @return
+	 * @return String name of default configuration
 	 */
 	public String getConfigurationName();
 	
@@ -180,14 +186,14 @@ public interface IManagedBuildInfo {
 	 * Answers a <code>String</code> array containing the names of all the configurations
 	 * defined for the project.
 	 *  
-	 * @return
+	 * @return String[] of configuration names
 	 */
 	public String[] getConfigurationNames();
 
 	/**
 	 * Get the default configuration associated with the receiver
 	 * 
-	 * @return
+	 * @return IConfiguration default
 	 */
 	public IConfiguration getDefaultConfiguration();
 	
@@ -288,7 +294,7 @@ public interface IManagedBuildInfo {
 	 * Answers the extension that will be built by the current configuration
 	 * for the extension passed in the argument or <code>null</code>.
 	 * 
-	 * @param resourceName
+	 * @param resourceExtension
 	 * @return
 	 */
 	public String getOutputExtension(String resourceExtension);
@@ -309,7 +315,7 @@ public interface IManagedBuildInfo {
 	 * artifact. For example, a library foo, should have the prefix 'lib' and 
 	 * the extension '.a', so the final goal would be 'libfoo.a' 
 	 * 
-	 * @param extension
+	 * @param outputExtension
 	 * @return the prefix or an empty string
 	 */
 	public String getOutputPrefix(String outputExtension);
@@ -326,15 +332,18 @@ public interface IManagedBuildInfo {
 	 * Get the target specified in the argument.
 	 * 
 	 * @param id
-	 * @return
+	 * @return ITarget
+	 * @deprecated
 	 */
+	@Deprecated
 	public ITarget getTarget(String id);
 
 	/**
 	 * Get all of the targets associated with the receiver.
-	 * 
-	 * @return
+	 * @return List<ITarget>
+	 * @deprecated
 	 */
+	@Deprecated
 	public List<ITarget> getTargets();
 
 	/**
@@ -450,9 +459,8 @@ public interface IManagedBuildInfo {
 	public void setDefaultConfiguration(IConfiguration configuration);
 	
 	/**
-	 * 
-	 * @param configuration
-	 * @return
+	 * @param configName 
+	 * @return boolean indicating if setDefaultConfiguration was successful
 	 */
 	public boolean setDefaultConfiguration(String configName);
 	
@@ -490,7 +498,7 @@ public interface IManagedBuildInfo {
 	 * only be done if a project resource or setting has been modified in a 
 	 * way that would invalidate the previous build.  
 	 *  
-	 * @param <code>true</code> will force a rebuild the next time the project builds
+	 * @param rebuild <code>true</code> will force a rebuild the next time the project builds
 	 */
 	public void setRebuildState(boolean rebuild);
 	

@@ -29,6 +29,7 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_no_arguments;
 	public static String HeadlessBuilder_NoConfigMatched;
 	public static String HeadlessBuilder_NoProjectMatched;
+	public static String HeadlessBuilder_Not_CDT_Proj;
 	public static String HeadlessBuilder_project;
 	public static String HeadlessBuilder_Quote;
 	public static String HeadlessBuilder_RegExSyntaxError;

@@ -24,9 +24,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -56,6 +58,7 @@ import org.eclipse.equinox.app.IApplicationContext;
  * IApplication ID: org.eclipse.cdt.managedbuilder.core.headlessbuild
  * Provides:
  *   - Import projects :                       -import     {[uri:/]/path/to/project}
+ *   - Import all projects in the tree :       -importAll  {[uri:/]/path/to/projectTreeURI} 
  *   - Build projects / the workspace :        -build      {project_name_reg_ex/config_name_reg_ex | all}
  *   - Clean build projects / the workspace :  -cleanBuild {project_name_reg_ex/config_name_reg_ex | all}
  *
@@ -96,7 +99,7 @@ public class HeadlessBuilder implements IApplication {
 	/*
 	 *  Find all project build configurations that match the regular expression ("project/config")
 	 */
-	private Map<IProject, HashSet<IConfiguration>> matchConfigurations(String regularExpression, IProject[] projectList, Map<IProject, HashSet<IConfiguration>> cfgMap) {
+	private Map<IProject, Set<ICConfigurationDescription>> matchConfigurations(String regularExpression, IProject[] projectList, Map<IProject, Set<ICConfigurationDescription>> cfgMap) {
 		try {
 			int separatorIndex = regularExpression.indexOf('/');
 
@@ -123,21 +126,22 @@ public class HeadlessBuilder implements IApplication {
 				if(projectMatcher.matches()) {
 					projectMatched = true;
 					// Find the configurations that match the regular expression
-					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-					if (info == null)
+					ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(project, false);
+					if (desc == null) {
+						System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + project.getName() + HeadlessBuildMessages.HeadlessBuilder_Not_CDT_Proj);
 						continue;
-					IConfiguration[] cfgs = info.getManagedProject().getConfigurations();
+					}
+					ICConfigurationDescription[] cfgs = desc.getConfigurations();
 
-					for(IConfiguration cfg : cfgs) {
+					for(ICConfigurationDescription cfg : cfgs) {
 						Matcher cfgMatcher = configPattern.matcher(cfg.getName());
 
 						if(cfgMatcher.matches()) {
 							configMatched = true;
 							// Build this configuration for this project
-							HashSet<IConfiguration> set = cfgMap.get(project);
-							if(set == null){
-								set = new HashSet<IConfiguration>();
-							}
+							Set<ICConfigurationDescription> set = cfgMap.get(project);
+							if(set == null)
+								set = new HashSet<ICConfigurationDescription>();
 							set.add(cfg);
 							cfgMap.put(project, set);
 						}
@@ -158,12 +162,16 @@ public class HeadlessBuilder implements IApplication {
 	/*
 	 *  Build the given configurations using the specified build type (FULL, CLEAN, INCREMENTAL)
 	 */
-	private void buildConfigurations(Map<IProject, HashSet<IConfiguration>> projConfigs, final IProgressMonitor monitor, final int buildType) throws CoreException {
-		for (Map.Entry<IProject, HashSet<IConfiguration>> entry : projConfigs.entrySet()) {
+	private void buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs, final IProgressMonitor monitor, final int buildType) throws CoreException {
+		for (Map.Entry<IProject, Set<ICConfigurationDescription>> entry : projConfigs.entrySet()) {
 			final IProject proj = entry.getKey();
-			HashSet<IConfiguration> cfgs = entry.getValue();
+			Set<ICConfigurationDescription> cfgDescs = entry.getValue();
 
-			final Map<String, String> map = BuilderFactory.createBuildArgs(cfgs.toArray(new IConfiguration[cfgs.size()]));
+			IConfiguration[] configs = new IConfiguration[cfgDescs.size()];
+			int i = 0;
+			for (ICConfigurationDescription cfgDesc : cfgDescs)
+				configs[i++] = ManagedBuildManager.getConfigurationForDescription(cfgDesc);
+			final Map<String, String> map = BuilderFactory.createBuildArgs(configs);
 
 			IWorkspaceRunnable op = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -319,7 +327,7 @@ public class HeadlessBuilder implements IApplication {
 
 			IProject[] allProjects = root.getProjects();
 			// Map from Project -> Configurations to build. We also Build all projects which are clean'd
-			Map<IProject, HashSet<IConfiguration>> configsToBuild = new HashMap<IProject, HashSet<IConfiguration>>();
+			Map<IProject, Set<ICConfigurationDescription>> configsToBuild = new HashMap<IProject, Set<ICConfigurationDescription>>();
 
 			/*
 			 * Perform the Clean / Build

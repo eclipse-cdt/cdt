@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,7 +170,10 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 				ManagedBuilderCorePlugin.log(e);
 			}
 			info.setValid(true);
-			
+			// Update the ManagedBuildInfo in the ManagedBuildManager map. Doing this creates a barrier for subsequent
+			// ManagedBuildManager#getBuildInfo(...) see Bug 305146 for more
+			ManagedBuildManager.setLoaddedBuildInfo(des.getProjectDescription().getProject(), info);
+
 			setPersistedFlag(des);
 			cacheNaturesIdsUsedOnCache(des);
 			
@@ -543,6 +546,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			info.setValid(true);
 			setPersistedFlag(des);
 			cacheNaturesIdsUsedOnCache(des);
+			// Update the ManagedBuildInfo in the ManagedBuildManager map. Doing this creates a barrier for subsequent
+			// ManagedBuildManager#getBuildInfo(...) see Bug 305146 for more
+			ManagedBuildManager.setLoaddedBuildInfo(des.getProjectDescription().getProject(), info);
 			return cfg.getConfigurationData();
 		}
 		return null;

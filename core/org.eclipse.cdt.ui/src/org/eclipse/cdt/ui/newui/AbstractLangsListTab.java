@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -289,14 +287,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		langCol.setText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
 		langCol.setWidth(200);
 		langCol.setResizable(false);
-		langTree.getAccessible().addAccessibleListener(
-			   new AccessibleAdapter() {                       
-	               @Override
-				public void getName(AccessibleEvent e) {
-	                       e.result = UIMessages.getString("AbstractLangsListTab.1"); //$NON-NLS-1$
-	               }
-			   }
-		);
+		langCol.setToolTipText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
+//		langTree.getAccessible().addAccessibleListener(
+//			   new AccessibleAdapter() {                       
+//	               @Override
+//				public void getName(AccessibleEvent e) {
+//	                       e.result = UIMessages.getString("AbstractLangsListTab.1"); //$NON-NLS-1$
+//	               }
+//			   }
+//		);
 		return langTree;
 	}
 

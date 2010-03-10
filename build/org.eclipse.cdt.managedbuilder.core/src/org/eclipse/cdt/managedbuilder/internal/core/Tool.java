@@ -1229,11 +1229,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 				//  No Match?  Add it.
 				if (j == types.length) {
 					IInputType[] newTypes = new IInputType[types.length + 1];
+					boolean[] newTypesWasReplaced = new boolean[types.length + 1];
 					for (int k = 0; k < types.length; k++) {
 						newTypes[k] = types[k];
+						newTypesWasReplaced[k] = typesWasReplaced[k];
 					}						 
 					newTypes[j] = ourType;
 					types = newTypes;
+					typesWasReplaced = newTypesWasReplaced;
 				}
 			}
 		} else {

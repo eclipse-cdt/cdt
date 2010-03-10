@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Bundle;
 
@@ -71,12 +72,14 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	
 	protected File target; // the location of the generated PDOM
 
+	@Override
 	protected void setUp() throws Exception {
 		toDeleteOnTearDown.clear();
 		target= File.createTempFile("test", "pdom");
 		target.delete();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		for(Iterator i= toDeleteOnTearDown.iterator(); i.hasNext(); ) {
 			ICProject cproject= (ICProject) i.next();
@@ -214,12 +217,14 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		WritablePDOM wpdom= generatePDOM(LOC_TSTPRJ3, TestProjectProvider5.class, null);
 		
 		IndexFilter CLinkage= new IndexFilter() {
+			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return linkage.getLinkageID() == ILinkage.C_LINKAGE_ID;
 			}
 		};
 
 		IndexFilter CPPLinkage= new IndexFilter() {
+			@Override
 			public boolean acceptLinkage(ILinkage linkage) {
 				return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 			}
@@ -389,4 +394,5 @@ class MockApplicationContext implements IApplicationContext {
 	public String getBrandingId() {return null;}
 	public String getBrandingName() {return null;}
 	public String getBrandingProperty(String key) {return null;}
+	public void setResult(Object result, IApplication application) {}
 }

@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
+import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 
@@ -69,7 +70,15 @@ public class Sender implements ISender
 		try
 		{
 			_outFile = new PrintStream(_socket.getOutputStream());
-			_outData = new BufferedWriter(new OutputStreamWriter(_socket.getOutputStream()));
+			
+			String encoding = DE.ENCODING_UTF_8;
+			if (!_dataStore.isVirtual()){
+				encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+			}
+			
+			
+			OutputStreamWriter writer = new OutputStreamWriter(_socket.getOutputStream(), encoding);
+			_outData = new BufferedWriter(writer);
 
 			_xmlGenerator.setFileWriter(_outFile);
 			_xmlGenerator.setDataWriter(_outData);

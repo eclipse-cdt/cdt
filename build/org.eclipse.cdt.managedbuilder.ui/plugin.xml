@@ -23,6 +23,18 @@
             class="org.eclipse.core.resources.IProject">
          </selection>
       </wizard>
+      <wizard
+            category="org.eclipse.cdt.ui.newCWizards"
+            class="org.eclipse.cdt.managedbuilder.ui.wizards.NewMakeProjFromExisting"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            icon="icons/obj16/convert-normal.gif"
+            id="org.eclipse.cdt.ui.wizards.NewMakeFromExisting"
+            name="%NewMakeFromExisting.name"
+            project="true">
+         <description>
+            %WizardMakeProjFromExisting.description
+         </description>
+      </wizard>
    </extension>
 
    <extension

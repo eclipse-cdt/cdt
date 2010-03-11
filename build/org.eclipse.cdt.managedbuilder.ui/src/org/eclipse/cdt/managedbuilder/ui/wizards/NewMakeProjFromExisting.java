@@ -37,6 +37,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
+import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -44,7 +45,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * Wizard to create a new CDT project that wraps existing code.
  * @since 7.0
  */
-public class NewMakeProjFromExisting extends Wizard implements IImportWizard {
+public class NewMakeProjFromExisting extends Wizard implements IImportWizard, INewWizard {
 
 	NewMakeProjFromExistingPage page;
 	

@@ -9,6 +9,7 @@
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ *                                Save build output    
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
+import org.eclipse.cdt.internal.core.BuildOutputLogger;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
@@ -903,6 +905,7 @@ public class CommonBuilder extends ACBuilder {
 		ConsoleOutputStream consoleOutStream = null;
 		IConsole console = null;
 		OutputStream epmOutputStream = null;
+		BuildOutputLogger bol = null;
 		try {
 			int flags = 0;
 			IResourceDelta delta = getDelta(currentProject);
@@ -944,10 +947,19 @@ public class CommonBuilder extends ACBuilder {
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 			}
-			consoleOutStream.write(buf.toString().getBytes());
-			consoleOutStream.flush();
 
 			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, cBS, delta, flags);
+			// Hook up an error parser manager
+			String[] errorParsers = builder.getErrorParsers();
+			ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocationURI(), this, errorParsers);
+			epm.setOutputStream(consoleOutStream);
+			// This variable is necessary to ensure that the EPM stream stay open
+			// until we explicitly close it. See bug#123302.
+			epmOutputStream = epm.getOutputStream();
+			bol = new BuildOutputLogger(getProject(), epmOutputStream);
+
+			bol.write(buf.toString().getBytes());
+			bol.flush();
 
 			DescriptionBuilder dBuilder = null;
 			if (!isParallel)
@@ -957,21 +969,13 @@ public class CommonBuilder extends ACBuilder {
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
 
-				// Hook up an error parser manager
-				String[] errorParsers = builder.getErrorParsers();
-				ErrorParserManager epm = new ErrorParserManager(currentProject, des.getDefaultBuildDirLocationURI(), this, errorParsers);
-				epm.setOutputStream(consoleOutStream);
-				// This variable is necessary to ensure that the EPM stream stay open
-				// until we explicitly close it. See bug#123302.
-				epmOutputStream = epm.getOutputStream();
-
 				int status = 0;
 
 				long t1 = System.currentTimeMillis();
 				if (isParallel)
-					status = ParallelBuilder.build(des, null, null, epmOutputStream, epmOutputStream, monitor, resumeOnErr, buildIncrementaly);
+					status = ParallelBuilder.build(des, null, null, bol, bol, monitor, resumeOnErr, buildIncrementaly);
 				else
-				    status = dBuilder.build(epmOutputStream, epmOutputStream, monitor);
+					status = dBuilder.build(bol, bol, monitor);
 				long t2 = System.currentTimeMillis();
 
 				// Report either the success or failure of our mission
@@ -1011,22 +1015,20 @@ public class CommonBuilder extends ACBuilder {
 				}
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 				// Write message on the console
-				consoleOutStream.write(buf.toString().getBytes());
-				consoleOutStream.flush();
-				epmOutputStream.close();
-				epmOutputStream = null;
+				bol.write(buf.toString().getBytes());
+				bol.flush();
+				
 				// Generate any error markers that the build has discovered
 				monitor.subTask(ManagedMakeMessages
 						.getResourceString(MARKERS));
-//TODO:				addBuilderMarkers(epm);
 
 				bsMngr.setProjectBuildState(currentProject, pBS);
 			} else {
 				buf = new StringBuffer();
 				buf.append(ManagedMakeMessages.getFormattedString(NOTHING_BUILT, currentProject.getName()));
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				consoleOutStream.write(buf.toString().getBytes());
-				consoleOutStream.flush();
+				bol.write(buf.toString().getBytes());
+				bol.flush();
 			}
 
 		} catch (Exception e) {
@@ -1047,6 +1049,12 @@ public class CommonBuilder extends ACBuilder {
 			}
 			forgetLastBuiltState();
 		} finally {
+			if ( bol != null ) {
+				try {
+					bol.close();
+				} catch (IOException e) {
+				}
+			}
 			if(epmOutputStream != null){
 				try {
 					epmOutputStream.close();
@@ -1059,7 +1067,6 @@ public class CommonBuilder extends ACBuilder {
 				} catch (IOException e) {
 				}
 			}
-//			getGenerationProblems().clear();
 			monitor.done();
 		}
 		return false;
@@ -1897,7 +1904,8 @@ public class CommonBuilder extends ACBuilder {
 				}
 				ErrorParserManager epm = new ErrorParserManager(currProject, workingDirectoryURI, this, builder.getErrorParsers());
 				epm.setOutputStream(cos);
-				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), epm, last.intValue());
+				BuildOutputLogger bol = new BuildOutputLogger(getProject(), epm.getOutputStream());
+				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), bol, last.intValue());
 				OutputStream stdout = streamMon;
 				OutputStream stderr = streamMon;
 				// Sniff console output for scanner info

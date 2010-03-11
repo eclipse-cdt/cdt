@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
+ * Dmitry Kozlov (CodeSourcery) - Save build output preferences
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -157,6 +158,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private static final String RC_CHANGE_STATE = "rcState";  //$NON-NLS-1$
 	//resource change state
 	private int resourceChangeState = -1;
+	private String buildLogFilename = null;
+	private boolean savingBuildLog = false;	
 
 	//Internal Builder state
 	//NOTE: these are temporary properties
@@ -3055,4 +3058,33 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setBuildLogFilename()
+	 */
+	public void setBuildLogFilename(String fileName) {
+		buildLogFilename = fileName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getBuildLogFilename()
+	 */
+	public String getBuildLogFilename() {
+		return buildLogFilename;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setSavingBuildLog()
+	 */
+	public void setSavingBuildLog(boolean save) {
+		savingBuildLog = save;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#isSavingBuildLog()
+	 */
+	public boolean isSavingBuildLog() {
+		return savingBuildLog;
+	}
+
 }

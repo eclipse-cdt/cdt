@@ -8,6 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ *                                Save build output
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -33,6 +34,7 @@ public final class ConsoleMessages extends NLS {
 	public static String PreviousErrorAction_Tooltip;
 	public static String NextErrorAction_Tooltip;
 	public static String ShowErrorAction_Tooltip;
+	public static String SaveConsole_ActionTooltip;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

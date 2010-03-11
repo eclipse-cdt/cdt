@@ -8,16 +8,23 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
+ * Dmitry Kozlov (CodeSourcery) - save build output preferences
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.core.BuildOutputLogger;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.ui.newui.CDTPropertyManager;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,6 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -55,11 +63,16 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	private Button b_dirFile;
 	private Button b_dirVars;
 	private Group group_dir;
-
+	private Text   saveBuildFilename;
+	private Button saveBuildFileButton;
+	private Button saveBuildCheckbox;
+	private Group buildOutputGroup;
+	
 	private IBuilder bldr;
 	private IConfiguration icfg;
 	private boolean canModify = true;
 	
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
@@ -72,9 +85,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		c_builderType.add(Messages.getString("BuilderSettingsTab.2")); //$NON-NLS-1$
 		c_builderType.add(Messages.getString("BuilderSettingsTab.3")); //$NON-NLS-1$
 		c_builderType.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent event) {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
 				enableInternalBuilder(c_builderType.getSelectionIndex() == 1);
-		    	updateButtons();
+				updateButtons();
 		 }});
 		
 		b_useDefault = setupCheck(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
@@ -119,6 +133,46 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_dirWsp = setupBottomButton(c, WORKSPACEBUTTON_NAME);
 		b_dirFile = setupBottomButton(c, FILESYSTEMBUTTON_NAME);
 		b_dirVars = setupBottomButton(c, VARIABLESBUTTON_NAME);
+		
+		// Save build output group
+		if ( page.isForProject() ) {
+			buildOutputGroup = setupGroup(usercomp, 
+					Messages.getString("BuilderSettingsTab.23"), //$NON-NLS-1$ 
+					3, GridData.FILL_HORIZONTAL); 
+			@SuppressWarnings("unused")
+			Label l = setupLabel(buildOutputGroup, Messages.getString("BuilderSettingsTab.24"), 1, GridData.BEGINNING); //$NON-NLS-1$
+			saveBuildFilename = setupText(buildOutputGroup, 1, GridData.FILL_HORIZONTAL);
+			saveBuildFilename.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if ( BuildOutputLogger.canWriteToFile(saveBuildFilename.getText())) {
+					saveBuildCheckbox.setEnabled(true);
+					//saveBuildCheckbox.setSelection(true);
+				} else {
+					saveBuildCheckbox.setEnabled(false);
+					saveBuildCheckbox.setSelection(false);
+				}
+				icfg.setBuildLogFilename(saveBuildFilename.getText());
+				icfg.setSavingBuildLog(saveBuildCheckbox.getSelection());
+			}} );
+			saveBuildFileButton = new Button(buildOutputGroup, SWT.PUSH);
+			saveBuildFileButton.setText(Messages.getString("BuilderSettingsTab.25")); //$NON-NLS-1$
+			saveBuildFileButton.setData(saveBuildFilename);
+			saveBuildFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				buttonVarPressed(event);
+			}});
+			saveBuildCheckbox = new Button(buildOutputGroup, SWT.CHECK);
+			saveBuildCheckbox.setText(Messages.getString("BuilderSettingsTab.26")); //$NON-NLS-1$
+			saveBuildCheckbox.setEnabled(false);
+			saveBuildCheckbox.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent event) {
+					if ( ((Control)event.widget) == saveBuildCheckbox ) {
+						icfg.setSavingBuildLog(!icfg.isSavingBuildLog());
+					}
+				}});
+		}
 	}
 
 	private void setManagedBuild(boolean enable) {
@@ -130,6 +184,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	/**
 	 * sets widgets states
 	 */
+	@Override
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
@@ -191,6 +246,30 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		if (external) { // just set relatet text widget state,
 			checkPressed(b_useDefault, false); // do not update 
 		}
+		
+		if ( page.isForProject() ) {
+			if ( page.isMultiCfg() ) {
+				buildOutputGroup.setVisible(false);
+			} else {
+				boolean b = icfg.isSavingBuildLog();
+				buildOutputGroup.setVisible(true);
+				String s = icfg.getBuildLogFilename();
+				if ( s != null ) { 
+					saveBuildFilename.setText(s);                                   
+				} else {
+					saveBuildFilename.setText(""); //$NON-NLS-1$
+				}
+				
+				if ( s != null && BuildOutputLogger.canWriteToFile(s) ) {
+					saveBuildCheckbox.setSelection(b);
+					icfg.setSavingBuildLog(b);
+				} else {
+					saveBuildCheckbox.setEnabled(false);
+					saveBuildCheckbox.setSelection(false);
+					icfg.setSavingBuildLog(false);
+				}
+			}
+		}		
 		canModify = true;
 	}
 	
@@ -202,9 +281,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b.setLayoutData(fd);
 		b.setData(t_dir);
 		b.addSelectionListener(new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent event) {
-	        	buttonVarPressed(event);
-	        }});
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				buttonVarPressed(event);
+			}});
 		return b;
 	}
 	
@@ -218,7 +298,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b.setData(t); // to get know which text is affected
 		t.setData(b); // to get know which button to enable/disable
 		b.addSelectionListener(new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent event) {
+	        @Override
+			public void widgetSelected(SelectionEvent event) {
 	        	buttonVarPressed(event);
 	        }});
 		if (check != null) check.setData(t);
@@ -239,6 +320,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			} else if (b.equals(b_dirFile)) {
 				x = getFileSystemDirDialog(usercomp.getShell(), EMPTY_STR);
 				if (x != null) ((Text)b.getData()).setText(x);
+			} else if (b.equals(saveBuildFileButton)) {
+				FileDialog dialog = new FileDialog(usercomp.getShell(), SWT.SAVE);
+				dialog.setText(FILESYSTEM_FILE_DIALOG_TITLE);
+				x = dialog.open();
+				if (x != null) ((Text)b.getData()).setText(x);
 			} else { 
 				x = AbstractCPropertyTab.getVariableDialog(usercomp.getShell(), getResDesc().getConfiguration());
 				if (x != null) ((Text)b.getData()).insert(x);
@@ -246,10 +332,11 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		}
 	}
 	
-    public void checkPressed(SelectionEvent e) {
-    	checkPressed((Control)e.widget, true);
-    	updateButtons();
-    }
+	@Override
+	public void checkPressed(SelectionEvent e) {
+		checkPressed((Control)e.widget, true);
+		updateButtons();
+	}
 	
 	private void checkPressed(Control b, boolean needUpdate) {	
 		if (b == null) return;
@@ -296,15 +383,65 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	 * (Copy from config to widgets)
 	 * @param cfgd - 
 	 */
-	
+	@Override	
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
 		icfg = getCfg(cfgd.getConfiguration());
+		if (icfg.getBuildLogFilename() == null) {
+			// In this case this tab is loaded for the first time, 
+			// and we need to populate configuration with values stored 
+			// in Preferences. This is horrible workaround because we need 
+			// to use this settings in build console which is in cdt ui,
+			// hence IConfiguration is not accessible there and this values 
+			// have be stored separately.
+			// That is why we have convention that IConfiguration have 
+			// buildLogFilename set to null this means that it is not loaded.
+			// Otherwise it is loaded and doesn't require reloading.
+			// performOk, performApply and performDefaults shouldn't never write
+			// null values to Preferences to distinct this case from overs.
+			//
+			// To properly fix this problem without this workaround we need  
+			// to make IConfiguration accessible for buildconsole package
+			loadBuildLogSettings(page.getProject(), icfg);
+		}
 		updateButtons();
 	}
 
+	private static void loadBuildLogSettings(IProject project, IConfiguration icfg) {
+		BuildOutputLogger.SaveBuildOutputPreferences bp = BuildOutputLogger.readSaveBuildOutputPreferences(project, icfg.getName());
+		icfg.setBuildLogFilename(bp.fileName);                                               		                
+		icfg.setSavingBuildLog(bp.isSaving);
+	}
+
+	@Override	
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		BuildBehaviourTab.apply(src, dst, page.isMultiCfg());
+		BuildOutputLogger.SaveBuildOutputPreferences bp = new BuildOutputLogger.SaveBuildOutputPreferences();
+		bp.fileName = icfg.getBuildLogFilename();
+		bp.isSaving = icfg.isSavingBuildLog();
+		BuildOutputLogger.writeSaveBuildOutputPreferences(page.getProject(), icfg.getName(), bp);
+	}
+	
+	@Override
+	public void performOK() {
+		if ( page.isForProject() ) {
+			// Saving for all configurations
+			ICProjectDescription pd = CDTPropertyManager.getProjectDescription(page.getProject());
+			if ( pd != null ) {
+				ICConfigurationDescription cfgs[] = pd.getConfigurations();
+				if ( cfgs != null ) {
+					for (ICConfigurationDescription cd : cfgs) {
+						IConfiguration c = ManagedBuildManager.getConfigurationForDescription(cd);
+						BuildOutputLogger.SaveBuildOutputPreferences bp = new BuildOutputLogger.SaveBuildOutputPreferences(); 
+						bp.fileName = c.getBuildLogFilename();
+						bp.isSaving = c.isSavingBuildLog(); 
+						BuildOutputLogger.writeSaveBuildOutputPreferences(page.getProject(), c.getName(), bp);
+						c.setBuildLogFilename(null);
+						c.setSavingBuildLog(false);
+					}
+				}
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -321,23 +458,29 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		
 	}
 	// This page can be displayed for project only
+	@Override
 	public boolean canBeVisible() {
 		return page.isForProject() || page.isForPrefs();
 	}
 	
+	@Override
 	public void setVisible (boolean b) {
 		super.setVisible(b);
 	}
 
+	@Override
 	protected void performDefaults() {
+		icfg.setBuildLogFilename(""); //$NON-NLS-1$
+		icfg.setSavingBuildLog(false);
 		if (icfg instanceof IMultiConfiguration) {
 			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
 			for (int i=0; i<cfs.length; i++) {
 				IBuilder b = cfs[i].getEditableBuilder();
 				BuildBehaviourTab.copyBuilders(b.getSuperClass(), b);
 			}
-		} else 
+		} else {
 			BuildBehaviourTab.copyBuilders(bldr.getSuperClass(), bldr);
+		}
 		updateData(getResDesc());
 	}
 	

@@ -8,7 +8,8 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Red Hat Inc. - multiple build console support
- *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation     
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation 
+ *                                    Save build output    
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -25,6 +26,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -81,13 +86,21 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
+
+import org.eclipse.cdt.internal.core.BuildOutputLogger;
 
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
@@ -96,8 +109,10 @@ public class BuildConsolePage extends Page
 			ISelectionListener,
 			IPropertyChangeListener,
 			IBuildConsoleListener,
-			ITextListener, 
-			IAdaptable {
+			ITextListener,
+			IAdaptable,
+			IPreferenceChangeListener,
+			ICProjectDescriptionListener {
 
 	static final int POSITION_NEXT = -1;
 	static final int POSITION_PREV = -2;
@@ -121,6 +136,7 @@ public class BuildConsolePage extends Page
 	private ClearOutputAction fClearOutputAction;
 	private Map<String, IAction> fGlobalActions = new HashMap<String, IAction>(10);
 	private List<String> fSelectionActions = new ArrayList<String>(3);
+	SaveConsoleAction fSaveConsoleAction;
 
 	// menus
 	private Menu fMenu;
@@ -140,10 +156,26 @@ public class BuildConsolePage extends Page
 		fConsole = console;
 		fConsoleView = view;
 		fContextMenuId = contextId;
+		IEclipsePreferences pref = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+		pref.addPreferenceChangeListener(this);
+		CoreModel.getDefault().addCProjectDescriptionListener(this, CProjectDescriptionEvent.DATA_APPLIED );
 	}
 
 	protected void setProject(IProject project) {
-		fProject = project;
+		if (fProject != project && project.isAccessible()) {		
+			fProject = project;
+			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
+			fSaveConsoleAction.setChecked(false);
+			ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+			// Read save console log preferences            
+			try {
+				IEclipsePreferences pref = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+				boolean b = pref.getBoolean(BuildOutputLogger.getIsSavingKey(project, configDesc.getName()),false);
+				fSaveConsoleAction.setChecked(b);
+			} catch (Exception e) {
+				CUIPlugin.log(e);
+			}
+		}
 	}
 
 	protected IProject getProject() {
@@ -288,11 +320,13 @@ public class BuildConsolePage extends Page
 	protected void createActions() {
 		fClearOutputAction = new ClearOutputAction(getViewer());
 		fScrollLockAction = new ScrollLockAction(getViewer());
+		fScrollLockAction.setChecked(fIsLocked);
 		fNextErrorAction = new NextErrorAction(this);
 		fPreviousErrorAction = new PreviousErrorAction(this);	
 		fShowErrorAction = new ShowErrorAction(this);
+		fSaveConsoleAction = new SaveConsoleAction(this);
+		fSaveConsoleAction.setChecked(false);
 
-		fScrollLockAction.setChecked(fIsLocked);
 		getViewer().setAutoScroll(!fIsLocked);
 		// In order for the clipboard actions to accessible via their shortcuts
 		// (e.g., Ctrl-C, Ctrl-V), we *must* set a global action handler for
@@ -346,7 +380,7 @@ public class BuildConsolePage extends Page
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fNextErrorAction);
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fPreviousErrorAction);
 		mgr.appendToGroup(BuildConsole.ERROR_GROUP, fShowErrorAction);
-
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fSaveConsoleAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fScrollLockAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
 	}
@@ -626,4 +660,33 @@ public class BuildConsolePage extends Page
 		}			
 	}
 	
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (fProject != null) {
+			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(fProject);
+			ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+			String sk = BuildOutputLogger.getIsSavingKey(fProject, configDesc.getName());
+			String fk = BuildOutputLogger.getFileNameKey(fProject, configDesc.getName());
+			if ( sk.equals(event.getKey()) || fk.equals(event.getKey()) ) {
+				IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
+				IConsole console = consoleManager.getConsole(fProject);
+				if (console != null && console instanceof BuildConsolePartitioner) {
+					BuildOutputLogger.SaveBuildOutputPreferences bp = BuildOutputLogger.readSaveBuildOutputPreferences(fProject);
+					fSaveConsoleAction.setChecked(bp.isSaving);
+				}
+			}
+		}
+	}
+
+	public void handleEvent(CProjectDescriptionEvent event) {
+		ICProjectDescription newPd = event.getNewCProjectDescription();
+		ICProjectDescription oldPd = event.getOldCProjectDescription();
+		if ( fProject != null && fProject.equals(event.getProject()) &&
+				newPd != null && oldPd != null && 
+				newPd.getActiveConfiguration() != null &&
+				newPd.getActiveConfiguration() != oldPd.getActiveConfiguration() ) {
+			BuildOutputLogger.SaveBuildOutputPreferences bp = BuildOutputLogger.readSaveBuildOutputPreferences(fProject);
+			fSaveConsoleAction.setChecked(bp.isSaving);
+		}
+		
+	}
 }

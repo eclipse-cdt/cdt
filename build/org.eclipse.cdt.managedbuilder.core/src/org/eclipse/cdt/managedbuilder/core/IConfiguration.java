@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -6,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Dmitry Kozlov (CodeSourcery) - Save build output preferences
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
@@ -624,4 +626,33 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	IBuildPropertyValue getBuildArtefactType();
 	
 	void setBuildArtefactType(String id) throws BuildException;
+	
+	/** 
+	 * Set name of file to save build log
+	 * @param fileName full file name where to build log file
+	 * @since 7.0
+	 */
+	public void setBuildLogFilename(String fileName);
+
+	/** 
+	 * Get name of file to which build log is saved
+	 * @return full filename where to save build log file
+	 * @since 7.0
+	 */
+	public String getBuildLogFilename();
+
+	/** 
+	 * Set whether to save build log
+	 * @param saveBuildLog whether to save build log
+	 * @since 7.0
+	 */
+	public void setSavingBuildLog(boolean saveBuildLog);
+
+	/** 
+	 * Test if build log saving is turned on
+	 * @return true if saving build log is enabled
+	 * @since 7.0 
+	 */
+	public boolean isSavingBuildLog();
+
 }

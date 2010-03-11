@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
  * Contributors:
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ *  David McKnight  (IBM)  - [305276] [dstore][multithread] log close in ServerLogger
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -51,4 +52,9 @@ public interface IServerLogger
 	 * @param message Message text to be logged.
 	 */
 	public void logDebugMessage(String minerName, String message);
+	
+	/**
+	 * closeLogFileStream
+	 */
+	public void closeLogFileStream();
 }

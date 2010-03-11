@@ -59,6 +59,8 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	private IMILaunchConfigurationComponent fSolibBlock;
 	
 	private boolean fIsInitializing = false;
+	
+	private Button fBreakpointsFullPath;
 
 	public void createControl( Composite parent ) {
 		Composite comp = new Composite( parent, SWT.NONE );
@@ -124,6 +126,14 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			}
 		}
 		fProtocolCombo.select( index );
+
+		boolean useFullPath = IMILaunchConfigurationConstants.DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT; 
+		try {
+			useFullPath = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_FULLPATH_BREAKPOINTS, useFullPath);
+		}
+		catch (CoreException e) {}
+		fBreakpointsFullPath.setSelection(useFullPath);
+		
 		setInitializing( false ); 
 	}
 
@@ -139,6 +149,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			str = "mi"; //$NON-NLS-1$
 		}
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, str );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_FULLPATH_BREAKPOINTS, fBreakpointsFullPath.getSelection() );		
 		if ( fSolibBlock != null )
 			fSolibBlock.performApply( configuration );
 	}
@@ -270,7 +281,13 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
 		label.setLayoutData( gd );
+
 		createProtocolCombo( subComp );
+		
+		createBreakpointFullPathName(subComp);		
+		GridData gd2 = new GridData();
+		gd2.horizontalSpan = 3;
+		fBreakpointsFullPath.setLayoutData(gd2);
 	}
 
 	public void createSolibTab( TabFolder tabFolder ) {
@@ -325,6 +342,20 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 					updateLaunchConfigurationDialog();
 			}
 			
+			public void widgetSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+		} );
+	}
+	
+	protected void createBreakpointFullPathName( Composite parent ) {
+		fBreakpointsFullPath = createCheckButton( parent, MIUIMessages.getString( "StandardGDBDebuggerPage.14" ) ); //$NON-NLS-1$
+		fBreakpointsFullPath.addSelectionListener( new SelectionListener() {
+			public void widgetDefaultSelected( SelectionEvent e ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();

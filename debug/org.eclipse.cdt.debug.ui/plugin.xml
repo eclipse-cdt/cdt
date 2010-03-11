@@ -144,13 +144,6 @@
             class="org.eclipse.cdt.debug.internal.ui.views.signals.SignalsView"
             id="org.eclipse.cdt.debug.ui.SignalsView">
       </view>
-      <view
-            name="%DisassemblyView.name"
-            icon="icons/view16/disassembly_view.gif"
-            category="org.eclipse.debug.ui"
-            class="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"
-            id="org.eclipse.cdt.debug.ui.DisassemblyView">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -179,15 +172,6 @@
          </viewShortcut>
          <viewShortcut
                id="org.eclipse.debug.ui.MemoryView">
-         </viewShortcut>
-         <view
-               relative="org.eclipse.ui.views.ContentOutline"
-               visible="false"
-               relationship="stack"
-               id="org.eclipse.cdt.debug.ui.DisassemblyView">
-         </view>
-         <viewShortcut
-               id="org.eclipse.cdt.debug.ui.DisassemblyView">
          </viewShortcut>
          <view
                visible="false"

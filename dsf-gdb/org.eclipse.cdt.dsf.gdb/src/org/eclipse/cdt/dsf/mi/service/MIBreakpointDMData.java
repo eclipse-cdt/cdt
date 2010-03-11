@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Ericsson and others.
+ * Copyright (c) 2007, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
 				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getIgnoreCount());
 				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
 	
 				// MI-specific breakpoint attributes
 				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
@@ -126,8 +127,9 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(MIBreakpoints.FUNCTION,        dsfMIBreakpoint.getFunction());
 				fProperties.put(MIBreakpoints.ADDRESS,         dsfMIBreakpoint.getAddress());
 				fProperties.put(MIBreakpoints.CONDITION,       dsfMIBreakpoint.getCondition());
-				fProperties.put(MIBreakpoints.IGNORE_COUNT,    dsfMIBreakpoint.getPassCount());
+				fProperties.put(MIBreakpoints.PASS_COUNT,      dsfMIBreakpoint.getPassCount());
 				fProperties.put(MIBreakpoints.IS_ENABLED,      new Boolean(dsfMIBreakpoint.isEnabled()));
+				fProperties.put(MIBreakpoints.COMMANDS,        dsfMIBreakpoint.getCommands());
 	
 				// MI-specific breakpoint attributes
 				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());
@@ -302,9 +304,17 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	 */
 	public void setPassCount(int count) {
 		fBreakpoint.setPassCount(count);
-		fProperties.put(MIBreakpoints.IGNORE_COUNT, count);
+		fProperties.put(MIBreakpoints.PASS_COUNT, count);
 	}
 
+	/**
+	 * @since 3.0
+	 */
+	public void setCommands(String commands) {
+		fBreakpoint.setCommands(commands);
+		fProperties.put(MIBreakpoints.COMMANDS, commands);
+	}
+	
 	public boolean isReadWatchpoint() {
 		return fBreakpoint.isReadWatchpoint();
 	}

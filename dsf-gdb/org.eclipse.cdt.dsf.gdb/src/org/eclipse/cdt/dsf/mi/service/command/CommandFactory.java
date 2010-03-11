@@ -39,6 +39,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCommands;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCondition;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDelete;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakDisable;
@@ -237,6 +238,10 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
 		return new MIBreakCondition(ctx, breakpoint, condition);
+	}
+
+	public ICommand<MIInfo> createMIBreakCommands(IBreakpointsTargetDMContext ctx, int breakpoint, String[] commands) {
+		return new MIBreakCommands(ctx, breakpoint, commands);
 	}
 
 	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, int[] array) {

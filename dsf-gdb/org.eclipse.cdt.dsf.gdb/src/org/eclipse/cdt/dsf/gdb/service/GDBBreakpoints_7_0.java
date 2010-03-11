@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -24,6 +25,8 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.ITracepointAction;
+import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManager;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
@@ -243,9 +246,11 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 												// If it wasn't supposed to be, then disable it right away
 												// Also, tracepoints are created with no passcount.
 												// We have to set the passcount manually now.
+												// Same for commands.
 												Map<String,Object> delta = new HashMap<String,Object>();
 												delta.put(MIBreakpoints.IS_ENABLED, getProperty(attributes, MIBreakpoints.IS_ENABLED, true));
 												delta.put(MIBreakpoints.PASS_COUNT, getProperty(attributes, MIBreakpoints.PASS_COUNT, 0));
+												delta.put(MIBreakpoints.COMMANDS, getProperty(attributes, MIBreakpoints.COMMANDS, "")); //$NON-NLS-1$
 												modifyBreakpoint(dmc, delta, drm, false);
 												return;
 											}
@@ -297,74 +302,72 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	        attributes.remove(passCountAttribute);
 		}
 
-//		// Determine if the breakpoint state changed
-//		String commandsAttribute = MIBreakpoints.COMMANDS;
-//		if (properties.containsKey(commandsAttribute)) {
-//			String oldValue = "khouzam"; //TODO
-//			String newValue = (String) properties.get(commandsAttribute);
-//			if (newValue == null) newValue = NULL_STRING;
-//	        if (!oldValue.equals(newValue)) {
-//	        	IBreakpointAction[] actions = generateGdbActions(newValue);
-//	        	numberOfChanges++;
-//	        	changeActions(context, reference, actions, countingRm);
-//	        }
-//			properties.remove(commandsAttribute);
-//		}
+		// Determine if tracepoint commands changed 
+		// Note that breakpoint commands (actions) are not handled by the backend 
+		// which is why we don't check for changes here
+		String commandsAttribute = MIBreakpoints.COMMANDS;
+		if (attributes.containsKey(commandsAttribute) &&
+				breakpoint.getBreakpointType().equals(MIBreakpoints.TRACEPOINT)) {
+			String oldValue = breakpoint.getCommands();
+			String newValue = (String) attributes.get(commandsAttribute);
+			if (newValue == null) newValue = NULL_STRING;
+			if (!oldValue.equals(newValue)) {
+				ITracepointAction[] actions = generateGdbCommands(newValue);
+				numberOfChanges++;
+				changeActions(context, reference, newValue, actions, countingRm);
+			}
+			attributes.remove(commandsAttribute);
+		}
 
 		// Set the number of completions required
         countingRm.setDoneCount(numberOfChanges);
 	}
+	
+	private ITracepointAction[] generateGdbCommands(String actionStr) {
+		String[] actionNames = actionStr.split(","); //$NON-NLS-1$
+		ITracepointAction[] actions = new ITracepointAction[actionNames.length];
 
-//	private IBreakpointAction[] generateGdbActions(String actionStr) {
-//		String[] actionNames = actionStr.split(",");
-//		IBreakpointAction[] actions = new IBreakpointAction[actionNames.length];
-//		
-//		for (int i = 0; i < actionNames.length; i++) {
-//			BreakpointActionManager actionManager = CDebugCorePlugin.getDefault().getBreakpointActionManager();
-//			actions[i] = actionManager.findTracepointAction(actionNames[i]);
-//		}
-//		return actions;
-//	}
+		TracepointActionManager actionManager = TracepointActionManager.getInstance();
+		for (int i = 0; i < actionNames.length; i++) {
+			actions[i] = actionManager.findAction(actionNames[i]);
+		}
+		return actions;
+	}
 
-//	private void changeActions(final IBreakpointsTargetDMContext context,
-//			final int reference, final IBreakpointAction[] actions, final RequestMonitor rm)
-//	{
-//		// Pick the context breakpoints map
-//		final Map<Integer, MIBreakpointDMData> contextBreakpoints = fBreakpoints.get(context);
-//		if (contextBreakpoints == null) {
-//       		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
-//       		rm.done();
-//			return;
-//		}
-//
-//		// We only do this for tracepoints
-//		
-//		ArrayList<String> actionStrings = new ArrayList<String>();
-//		for (int i = 0; i< actions.length; i++) {
-//			IBreakpointAction action = actions[i];
-//			if (action != null) {
-//				actionStrings.add(action.toString());
-//			}
-//		}
-//		// Queue the command
-//		//TODO should we use a cache?
-//		fConnection.queueCommand(
-//			new MIBreakCommands(context, reference, actionStrings.toArray(new String[0])),
-//		    new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
-//		        @Override
-//		        protected void handleSuccess() {
-////		        	MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
-////		        	if (breakpoint == null) {
-////		        		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
-////                   		rm.done();
-////                   		return;
-////		        	}
-////			        breakpoint.setCondition(condition);
-//		            rm.done();
-//		        }
-//			});
-//	}
+	private void changeActions(final IBreakpointsTargetDMContext context,
+			final int reference, final String actionNames, final ITracepointAction[] actions, final RequestMonitor rm)
+	{
+		// Pick the context breakpoints map
+		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		if (contextBreakpoints == null) {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+			rm.done();
+			return;
+		}
+		
+		ArrayList<String> actionStrings = new ArrayList<String>();
+		for (ITracepointAction action : actions) {
+			if (action != null) {
+				actionStrings.add(action.getSummary());
+			}
+		}
 
+		fConnection.queueCommand(
+				fCommandFactory.createMIBreakCommands(context, reference, actionStrings.toArray(new String[0])),
+				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						MIBreakpointDMData breakpoint = contextBreakpoints.get(reference);
+						if (breakpoint == null) {
+							rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT, null));
+							rm.done();
+							return;
+						}
+						breakpoint.setCommands(actionNames);
+						rm.done();
+					}
+				});
+	}
 
 	/**
 	 * Update the breakpoint ignoreCount.

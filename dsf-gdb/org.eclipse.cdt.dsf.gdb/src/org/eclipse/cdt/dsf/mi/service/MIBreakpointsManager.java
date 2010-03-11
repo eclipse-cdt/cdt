@@ -1659,6 +1659,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             properties.put(MIBreakpoints.LINE_NUMBER,     attributes.get(IMarker.LINE_NUMBER));
             properties.put(MIBreakpoints.FUNCTION,        attributes.get(ICLineBreakpoint.FUNCTION));
             properties.put(MIBreakpoints.ADDRESS,         attributes.get(ICLineBreakpoint.ADDRESS));
+            properties.put(MIBreakpoints.COMMANDS,        attributes.get(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE));
             
             if (breakpoint instanceof ICTracepoint) {
             	// A tracepoint is a LineBreakpoint, but needs its own type

@@ -390,6 +390,50 @@
          </menuContribution>
    </extension>
    <extension
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+      <actionPage
+            actionType="org.eclipse.cdt.dsf.gdb.tracepointactions.CollectAction"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.CollectActionPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.CollectActionPage">
+      </actionPage>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+      <actionPage
+            actionType="org.eclipse.cdt.dsf.gdb.tracepointactions.EvaluateAction"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.EvaluateActionPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.EvaluateActionPage">
+      </actionPage>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+      <actionPage
+            actionType="org.eclipse.cdt.dsf.gdb.tracepointactions.WhileSteppingAction"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.WhileSteppingActionPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.WhileSteppingActionPage">
+      </actionPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.TracepointActionsPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.tracepointActions"
+            name="%tracepoints.action.page.label">
+         <enabledWhen>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+       <page
+             category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+             class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.TracepointActionsPreferencePage"
+             id="org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage"
+             name="%tracepointActionsPrefPage.name">
+      </page> 
+   </extension>
+   <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
             id="org.eclipse.cdt.debug.ui.editor.actions.popup"

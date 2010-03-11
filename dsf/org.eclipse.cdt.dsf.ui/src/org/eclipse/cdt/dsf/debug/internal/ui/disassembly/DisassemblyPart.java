@@ -24,7 +24,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
-import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
@@ -282,7 +281,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 			}
 			public void partOpened(IWorkbenchPartReference partRef) {
-				}
+			}
 			public void partHidden(IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false) == DisassemblyPart.this) {
 					setActive(false);
@@ -1766,13 +1765,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 					}
 				}
 			}
-			IAdaptable context = DebugUITools.getDebugContext();
-			if (context != null)
-			{
-				ISteppingModeTarget target= (ISteppingModeTarget) (context).getAdapter(ISteppingModeTarget.class);
-				target.enableInstructionStepping(true);
-			}
-
 		} else {
 			fGotoAddressPending= fFocusAddress= PC_UNKNOWN;
 		}

@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     Anna Dushistova(MontaVista) - Hardware Debugging: Host name or ip address not saving in the debug configuration, bug 241279
+ *     Andy Jin (QNX) - Added DSF debugging, bug 248593
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryDescriptor;
 import org.eclipse.cdt.debug.mi.core.command.factories.CommandFactoryManager;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -387,6 +389,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim());
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim()); // DSF
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, commandFactory.getText());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, miProtocol.getText());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, verboseMode.getSelection());

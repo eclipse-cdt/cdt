@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     Andy Jin (QNX) - Added DSF debugging, bug 248593
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -25,20 +26,12 @@ public class Activator extends Plugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
 	public Activator() {
 		plugin = this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
 	}
 
 	/*
@@ -65,14 +58,18 @@ public class Activator extends Plugin {
 	public static String getUniqueIdentifier() {
 		return PLUGIN_ID;
 	}
-	
+
+	public static BundleContext getBundleContext() {
+		return getDefault().getBundle().getBundleContext();
+	}
+
 	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
 	 */
-	public static void log( IStatus status ) {
-		getDefault().getLog().log( status );
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
 	}
-	
+
 }

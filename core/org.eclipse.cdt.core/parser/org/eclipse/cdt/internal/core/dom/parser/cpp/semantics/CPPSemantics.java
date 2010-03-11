@@ -93,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -393,7 +394,7 @@ public class CPPSemantics {
 		// if the lookup in base-classes ran into a deferred instance, use the computed unknown binding.
 		final ASTNodeProperty namePropertyInParent = name.getPropertyInParent();
 		if (binding == null && data.skippedScope != null) {
-			if (data.hasArgumentTypes()) {
+			if (data.hasFunctionArguments()) {
 				binding= new CPPUnknownFunction(data.skippedScope, name.getSimpleID());
 			} else {
 				if (namePropertyInParent == IASTNamedTypeSpecifier.NAME) {
@@ -527,11 +528,25 @@ public class CPPSemantics {
 		return false;
 	}
 
+	public static IBinding selectConstructor(ICPPClassType classTarget, ICPPASTInitializerList initializerList) {
+		LookupData data= new LookupData();
+		IASTName name = new CPPASTName(classTarget.getNameCharArray());
+		name.setParent(initializerList);
+	    name.setPropertyInParent(CPPSemantics.STRING_LOOKUP_PROPERTY);
+    	data.setFunctionArguments(initializerList);
+		try {
+			return CPPSemantics.selectConstructor(classTarget, data);
+		} catch (DOMException e) {
+			return e.getProblem();
+		}
+	}
+
 	private static IBinding selectConstructor(ICPPClassType cls, LookupData data) throws DOMException {
 		// Force resolution of constructor bindings
 		final ICPPConstructor[] constructors= cls.getConstructors();
 		if (constructors.length > 0) {
-			return CPPSemantics.resolveAmbiguities(data.astName, constructors);
+			data.foundItems= constructors;
+			return CPPSemantics.resolveAmbiguities(data, data.astName);
 		}
 		return cls;
 	}
@@ -626,8 +641,8 @@ public class CPPSemantics {
 	            	data.setFunctionArguments();
 	            } else if (init instanceof ICPPASTConstructorInitializer) {
 					data.setFunctionArguments(((ICPPASTConstructorInitializer) init).getArguments());
-	            } else {
-	            	// mstodo handle braced init list
+	            } else if (init instanceof ICPPASTInitializerList) {
+	            	data.setFunctionArguments(new IASTInitializerClause[] {(ICPPASTInitializerList) init});
 	            }
 	        }
 		} else if (parent instanceof ICPPASTConstructorChainInitializer) {
@@ -635,8 +650,8 @@ public class CPPSemantics {
 			IASTInitializer init = ctorinit.getInitializer();
             if (init instanceof ICPPASTConstructorInitializer) {
 				data.setFunctionArguments(((ICPPASTConstructorInitializer) init).getArguments());
-            } else {
-            	// mstodo handle braced init list
+            } else if (init instanceof ICPPASTInitializerList) {
+            	data.setFunctionArguments(new IASTInitializerClause[] {(ICPPASTInitializerList) init});
             }
 		}
 		
@@ -644,7 +659,7 @@ public class CPPSemantics {
 	}
 
     static private ObjectSet<ICPPScope> getAssociatedScopes(LookupData data) {
-    	if (!data.hasArgumentTypes())
+    	if (!data.hasFunctionArguments())
     		return ObjectSet.emptySet();
     	
         IType[] ps = data.getFunctionArgumentTypes();
@@ -2138,7 +2153,8 @@ public class CPPSemantics {
 		}
 
 		// We don't have any arguments with which to resolve the function
-		if (!data.hasArgumentTypes()) {
+		final boolean isFuncDecl = data.forFunctionDeclaration();
+		if (!data.hasFunctionArguments()) {
 		    return resolveTargetedFunction(data, fns);
 		}
 
@@ -2146,7 +2162,7 @@ public class CPPSemantics {
 			return resolveUserDefinedConversion(data, fns);
 		}
 
-		if (!data.forFunctionDeclaration() || data.forExplicitFunctionSpecialization()) {
+		if (!isFuncDecl || data.forExplicitFunctionSpecialization()) {
 			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.getFunctionArgumentLValues(), data.astName);
 		}
 		
@@ -2165,7 +2181,7 @@ public class CPPSemantics {
 				}
 			}
 		}
-		if (firstViable == null || data.forFunctionDeclaration()) 
+		if (firstViable == null || isFuncDecl) 
 			return firstViable;
 
 		// The arguments the function is being called with

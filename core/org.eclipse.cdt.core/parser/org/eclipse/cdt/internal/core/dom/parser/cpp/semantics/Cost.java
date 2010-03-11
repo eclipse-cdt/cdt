@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,8 @@ final class Cost {
 	private int fInheritanceDistance;
 	private ICPPFunction fUserDefinedConversion;
 	private ReferenceBinding fReferenceBinding;
+
+	private boolean fCouldNarrow;
 	
 	public Cost(IType s, IType t, Rank rank) {
 		source = s;
@@ -125,9 +127,11 @@ final class Cost {
 			if (isAmbiguousUDC() || other.isAmbiguousUDC())
 				return 0;
 			
-			if (!fUserDefinedConversion.equals(other.fUserDefinedConversion))
-				return 0;
-			
+			if (fUserDefinedConversion != other.fUserDefinedConversion) {
+				if (fUserDefinedConversion == null ||
+						!fUserDefinedConversion.equals(other.fUserDefinedConversion))
+					return 0;
+			}			
 			cmp= fSecondStandardConversionRank.compareTo(other.fSecondStandardConversionRank);
 			if (cmp != 0)
 				return cmp;
@@ -182,5 +186,13 @@ final class Cost {
 		}
 		buf.append(']');
 		return buf.toString();
+	}
+
+	public boolean isNarrowingConversion() {
+		return fCouldNarrow;
+	}
+
+	public void setCouldNarrow() {
+		fCouldNarrow= true;
 	}
 }

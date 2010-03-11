@@ -8077,5 +8077,68 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	template<typename T> struct complex {
+	//		complex(const T& r, const T& i);
+	//	};
+	//	template<typename T> struct vector {
+	//		vector(std::initializer_list<T>);
+	//	};
+	//	struct str {
+	//		str(const char*);
+	//	};
+	//	template<typename T> void f(std::initializer_list<T>);
+	//	std::initializer_list<const char*> test() {
+	//		int a = {1};
+	//		complex<double> z{1,2};
+	//		new vector<str>{"a", "b", "c", "d"}; // 4 string elements
+	//		f( {"a","b"} ); // pass list of two elements
+	//		int* e {}; // initialization to zero / null pointer
+	//		a = double{1}; // explicitly construct a double
+	//		return { "a" }; // return list of one element
+	//	}
+	//
+	//	struct S {
+	//		S(std::initializer_list<double>) {}
+	//		S(std::initializer_list<int>) {}
+	//	};
+	//	void fs(S){}
+	//	void tests() {
+	//		fs({1,2,3});
+	//		fs({1.0,2.0,3.0});
+	//	}
+	public void _testListInitialization_302412a() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	void f(std::initializer_list<int>);
+	//	//void ff(std::initializer_list<str>);
+	//	struct A {
+	//		A(std::initializer_list<double>); // #1
+	//		A(std::initializer_list<const char*>); // #3
+	//	};
+	//	void g(A);
+	//	void test() {
+	//		f( {1,2,3} ); // OK: f(initializer_list<int>) identity conversion
+	//		f( {'a','b'} ); // OK: f(initializer_list<int>) integral promotion
+	//		f( {1.0} ); // error: narrowing
+	//		A a{ 1.0,2.0 }; // OK, uses #1
+	//		g({ "foo", "bar" }); // OK, uses #3
+	//	}
+	public void testListInitialization_302412b() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("f( {1,2,3} )", 1);
+		bh.assertNonProblem("f( {'a','b'} )", 1);
+		bh.assertProblem("f( {1.0} )", 1);
+		bh.assertNonProblem("g({ \"foo\", \"bar\" })", 1);
+	}
 }
 

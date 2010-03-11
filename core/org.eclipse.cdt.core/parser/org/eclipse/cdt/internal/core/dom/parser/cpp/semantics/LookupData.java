@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -101,12 +102,14 @@ public class LookupData {
 	public boolean firstArgIsImpliedMethodArg = false;
 	public boolean ignoreMembers = false;
 	
+	private ICPPASTParameterDeclaration[] functionParameters;
+	private IASTInitializerClause[] functionArgs;
+	private IType[] functionArgTypes;
+	private BitSet functionArgLValues;
+
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
-	private Object[] functionArgs;
-	private IType[] functionArgTypes;
 	public ProblemBinding problem;
-	private BitSet functionArgLValues;
 	
 	public LookupData(IASTName n) {
 		astName = n;
@@ -529,27 +532,27 @@ public class LookupData {
 	}
 
 	public IType[] getFunctionArgumentTypes() {
-		if (functionArgTypes == null && functionArgs != null) {
-			if (functionArgs instanceof ICPPASTParameterDeclaration[]) {
-				ICPPASTParameterDeclaration[] pdecls= (ICPPASTParameterDeclaration[]) functionArgs;
-				functionArgTypes= new IType[pdecls.length];
-				for (int i = 0; i < pdecls.length; i++) {
-					functionArgTypes[i] = SemanticUtil.getSimplifiedType(CPPVisitor.createParameterType(
-							pdecls[i], true));
-				}
-			} else if (functionArgs instanceof IASTInitializerClause[]) {
-				IASTInitializerClause[] exprs= (IASTInitializerClause[]) functionArgs;
+		if (functionArgTypes == null) {
+			if (functionArgs != null) {
+				IASTInitializerClause[] exprs= functionArgs;
 				functionArgTypes= new IType[exprs.length];
 				for (int i = 0; i < exprs.length; i++) {
 					IASTInitializerClause e = exprs[i];
 					if (e instanceof IASTExpression) {
 						IType etype= ((IASTExpression) e).getExpressionType();
 						functionArgTypes[i]= SemanticUtil.getSimplifiedType(etype);
-					} else {
-						// mstodo handle braced init list
+					} else if (e instanceof ICPPASTInitializerList) {
+						functionArgTypes[i]= new InitializerListType((ICPPASTInitializerList) e);
 					}
 				}
-			}
+			} else if (functionParameters != null) {
+				ICPPASTParameterDeclaration[] pdecls= functionParameters;
+				functionArgTypes= new IType[pdecls.length];
+				for (int i = 0; i < pdecls.length; i++) {
+					functionArgTypes[i] = SemanticUtil.getSimplifiedType(CPPVisitor.createParameterType(
+							pdecls[i], true));
+				}
+			} 
 		}
 		return functionArgTypes;
 	}
@@ -564,7 +567,7 @@ public class LookupData {
 					if (arg instanceof IASTExpression) {
 						functionArgLValues.set(i, ((IASTExpression) arg).isLValue());
 					} else {
-						// mstodo handle braced init list
+						functionArgLValues.set(i, false);
 					}
 				}
 			} else {
@@ -580,32 +583,24 @@ public class LookupData {
 		return functionArgLValues;
 	}
 
-
-	public void setFunctionArgumentTypes(IType[] paramTypes) {
-		functionArgTypes= paramTypes;
-	}
-
 	public void setFunctionParameters(ICPPASTParameterDeclaration[] parameters) {
-		functionArgs= parameters;
+		functionParameters= parameters;
 	}
 
 	public IASTInitializerClause[] getFunctionArguments() {
-		if (functionArgs instanceof IASTInitializerClause[])
-			return (IASTInitializerClause[]) functionArgs;
-		
-		return null;
+		return functionArgs;
 	}
 	
 	public int getFunctionArgumentCount() {
 		if (functionArgs != null)
 			return functionArgs.length;
-		if (functionArgTypes != null)
-			return functionArgTypes.length;
+		if (functionParameters != null)
+			return functionParameters.length;
 		return 0;
 	}
 
-	public boolean hasArgumentTypes() {
-		return functionArgTypes != null || functionArgs != null;
+	public boolean hasFunctionArguments() {
+		return functionArgs != null || functionParameters != null;
 	}
 
 	public IBinding[] getFoundBindings() {

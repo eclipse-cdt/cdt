@@ -16,9 +16,9 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -64,7 +64,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 	public CPPASTFunctionCallExpression copy() {
 		IASTInitializerClause[] args = null;
 		if (fArguments.length > 0) {
-			args= new IASTExpression[fArguments.length];
+			args= new IASTInitializerClause[fArguments.length];
 			for (int i=0; i<fArguments.length; i++) {
 				args[i]= fArguments[i].copy();
 			}

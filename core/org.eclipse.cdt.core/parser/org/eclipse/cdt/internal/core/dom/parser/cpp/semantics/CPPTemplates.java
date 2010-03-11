@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -1542,6 +1544,8 @@ public class CPPTemplates {
 	}
 	
 	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] fnArgs, BitSet argIsLValue, IASTName name) {
+		// mstodo handle list initialization
+
 		boolean requireTemplate= false;
 		if (name != null) {
 			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
@@ -2045,12 +2049,29 @@ public class CPPTemplates {
 						return true;
 				}
 				t= ((ITypeContainer) t).getType();
+			} else if (t instanceof InitializerListType) {
+				return isDependentInitializerList(((InitializerListType) t).getInitializerList());
 			} else {
 				return false;
 			}
 		}
 	}
 	
+	private static boolean isDependentInitializerList(ICPPASTInitializerList initializerList) {
+		IASTInitializerClause[] clauses= initializerList.getClauses();
+		for (IASTInitializerClause clause : clauses) {
+			if (clause instanceof IASTExpression) {
+				IType t= ((IASTExpression) clause).getExpressionType();
+				if (isDependentType(t))
+					return true;
+			} else if (clause instanceof ICPPASTInitializerList) {
+				if (isDependentInitializerList((ICPPASTInitializerList) clause))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean containsDependentArg(ObjectMap tpMap) {
 		for (Object arg : tpMap.valueArray()) {
 			if (isDependentType((IType)arg))

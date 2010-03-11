@@ -830,7 +830,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		if (allowThrow && LT(1) == IToken.t_throw) {
     			expr= throwExpression();
     		} else if (allowBraceInitializer && LT(1) == IToken.tLBRACE) {
-    			expr= bracedInitList();
+    			expr= bracedInitList(true);
     		} else {
     			expr= castExpression(castCtx); 	// next cast expression
     			continue loop;
@@ -1162,7 +1162,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		if (t != null) {
         			consume(IToken.tRPAREN);
         			if (LT(1) == IToken.tLBRACE) {
-        				IASTInitializer i = bracedInitList();
+        				IASTInitializer i = bracedInitList(false);
         		        firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
         		        setRange(firstExpression, offset, calculateEndOffset(i));
         				break;        
@@ -1212,7 +1212,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume(IToken.tLBRACKET);
                 IASTInitializerClause expression;
 				if (LT(1) == IToken.tLBRACE) {
-                	expression= bracedInitList();
+                	expression= bracedInitList(false);
                 } else {
                 	expression= expression();
                 }
@@ -2795,14 +2795,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	// = initializer-clause
         if (lt1 == IToken.tASSIGN) {
             int offset= consume().getOffset();
-            IASTInitializerClause initClause = initClause(false);
+            IASTInitializerClause initClause = initClause(LT(1) == IToken.tLBRACE);
             IASTEqualsInitializer initExpr= nodeFactory.newEqualsInitializer(initClause);
             return setRange(initExpr, offset, calculateEndOffset(initClause));
         }
 
         // braced-init-list
     	if (option.fAllowBracedInitializer && lt1 == IToken.tLBRACE) {
-        	return bracedInitList();
+        	return bracedInitList(false);
         }
     	 
         // ( expression-list )
@@ -2817,7 +2817,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (lt1 == IToken.tLPAREN) {
 			return ctorStyleInitializer(true);
 		}
-		return bracedInitList();
+		return bracedInitList(false);
 	}
 
 	/**
@@ -2848,17 +2848,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *   assignment-expression
      *   braced-init-list
      */
-	private IASTInitializerClause initClause(boolean inBraces) throws EndOfFileException,
+	private IASTInitializerClause initClause(boolean allowSkipping) throws EndOfFileException,
 			BacktrackException {
 		// braced-init-list
 		if (LT(1) == IToken.tLBRACE) {
-			return bracedInitList();
+			return bracedInitList(allowSkipping);
 		}
 
 		// assignment expression
 		final BinaryExprCtx ctx = fInTemplateParameterList ? BinaryExprCtx.eTmplID : BinaryExprCtx.eNoTmplID;
 		IASTExpression assignmentExpression = expression(ExprKind.eAssignment, ctx);
-		if (inBraces && skipTrivialExpressionsInAggregateInitializers) {
+		if (allowSkipping && skipTrivialExpressionsInAggregateInitializers) {
 			if (!ASTQueries.canContainName(assignmentExpression))
 				return null;
 		}
@@ -2870,7 +2870,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 *     { initializer-list ,opt }
 	 *     { }
 	 */
-	private ICPPASTInitializerList bracedInitList() throws EndOfFileException, BacktrackException {
+	private ICPPASTInitializerList bracedInitList(boolean allowSkipping) throws EndOfFileException, BacktrackException {
 		int offset = consume(IToken.tLBRACE).getOffset();
 		
 		// { }
@@ -2879,7 +2879,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 		
 		// { initializer-list ,opt }
-		List<IASTInitializerClause> initList= initializerList(true);
+		List<IASTInitializerClause> initList= initializerList(allowSkipping);
 		if (LT(1) == IToken.tCOMMA)
 			consume();
 		
@@ -2896,14 +2896,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 *    initializer-clause ...opt
 	 *    initializer-list , initializer-clause ...opt
 	 */
-	private List<IASTInitializerClause> initializerList(boolean inAggregateInit) throws EndOfFileException,
+	private List<IASTInitializerClause> initializerList(boolean allowSkipping) throws EndOfFileException,
 			BacktrackException {
 
 		List<IASTInitializerClause> result= null;
 		// List of initializer clauses
 		loop: for(;;) {
 			// Clause may be null, add to initializer anyways, such that the size can be computed.
-			IASTInitializerClause clause = initClause(inAggregateInit);
+			IASTInitializerClause clause = initClause(allowSkipping);
 			if (LT(1) == IToken.tELLIPSIS) {
 				final int endOffset = consume(IToken.tELLIPSIS).getEndOffset();
 				if (clause instanceof ICPPASTPackExpandable) {
@@ -4073,7 +4073,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         IASTInitializerClause expr = null;
         final int lt1 = LT(1);
         if (lt1 == IToken.tLBRACE) {
-        	expr= bracedInitList();
+        	expr= bracedInitList(true);
         } else if (lt1 != IToken.tSEMI) {
         	expr = expression();
         }

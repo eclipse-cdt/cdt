@@ -17,11 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -42,6 +42,15 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	}
 
 	public IASTExpression getDefault() {
+		IASTInitializerClause def= getDefaultClause();
+		if (def instanceof IASTExpression) {
+			return (IASTExpression) def;
+		}
+		
+		return null;
+	}
+	
+	public IASTInitializerClause getDefaultClause() {
 		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
 		    return null;
@@ -54,12 +63,7 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 					IASTDeclarator dtor = (IASTDeclarator) parent;
 					IASTInitializer initializer = dtor.getInitializer();
 					if (initializer instanceof IASTEqualsInitializer) {
-						IASTInitializerClause clause= ((IASTEqualsInitializer) initializer).getInitializerClause();
-						if (clause instanceof IASTExpression)
-							return (IASTExpression) clause;
-						if (clause instanceof IASTInitializerList) {
-							// mstodo handle braced init list
-						}
+						return ((IASTEqualsInitializer) initializer).getInitializerClause();
 					}
 				}
 			}
@@ -68,7 +72,23 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 	}
 	
 	public ICPPTemplateArgument getDefaultValue() {
-		IASTExpression d= getDefault();
+		IASTInitializerClause dc= getDefault();
+		IASTExpression d= null;
+		if (dc instanceof IASTExpression) {
+			d= (IASTExpression) dc;
+		} else if (dc instanceof ICPPASTInitializerList) {
+			ICPPASTInitializerList list= (ICPPASTInitializerList) dc;
+			switch(list.getSize()) {
+			case 0:
+				return new CPPTemplateArgument(Value.create(0), getType());
+			case 1:
+				dc= list.getClauses()[0];
+				if (dc instanceof IASTExpression) {
+					d= (IASTExpression) dc;
+				}
+			}
+		}
+		
 		if (d == null)
 			return null;
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
@@ -734,5 +735,31 @@ public class ClassTypeHelper {
 			return null;
 		}
 		return null;
+	}
+
+	/**
+	 * 8.5.1 Aggregates [dcl.init.aggr]
+	 * An aggregate is an array or a class (Clause 9) with no user-provided constructors (12.1), 
+	 * no private or protected non-static data members (Clause 11), 
+	 * no base classes (Clause 10), and no virtual functions (10.3).
+	 */
+	public static boolean isAggregateClass(ICPPClassType classTarget) throws DOMException {
+		if (classTarget.getBases().length > 0)
+			return false;
+		ICPPMethod[] methods = classTarget.getDeclaredMethods();
+		for (ICPPMethod m : methods) {
+			if (m instanceof ICPPConstructor)
+				return false;
+			if (m.isVirtual()) {
+				return false;
+			}
+		}
+		ICPPField[] fields = classTarget.getDeclaredFields();
+		for (ICPPField field : fields) {
+			if (!(field.getVisibility() == ICPPMember.v_public || field.isStatic())) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -409,11 +410,18 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 							clause= args[0];
 						}
 					}
+				} else if (init instanceof ICPPASTInitializerList) {
+					ICPPASTInitializerList list= (ICPPASTInitializerList) init;
+					switch (list.getSize()) {
+					case 0:
+						return Value.create(0);
+					case 1:
+						clause= list.getClauses()[0];
+					}
 				}
 				if (clause instanceof IASTExpression) {
 					return Value.create((IASTExpression) clause, maxDepth);
 				}
-				// mstodo handle braced init list
 				return Value.UNKNOWN;
 			}
 		}

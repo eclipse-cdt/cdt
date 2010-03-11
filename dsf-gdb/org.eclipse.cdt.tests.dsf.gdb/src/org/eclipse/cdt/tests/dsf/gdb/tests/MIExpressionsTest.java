@@ -152,7 +152,7 @@ public class MIExpressionsTest extends BaseTestCase {
         // Create a map of expressions and their expected values.
         Map<String, String[]> tests = new HashMap<String, String[]>();
 
-        tests.put("3.1415 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
+        tests.put("3.14159 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
         tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
         tests.put("-100.0 / 3.0", new String[] { "0xffffffffffffffdf", "01777777777777777777737",
             "1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.3333", "-33.3333" });

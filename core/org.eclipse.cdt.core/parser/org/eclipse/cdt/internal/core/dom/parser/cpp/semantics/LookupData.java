@@ -37,8 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -51,10 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -98,7 +93,6 @@ public class LookupData {
 	public boolean contentAssist = false;
 	public boolean prefixLookup = false;
 	public boolean typesOnly = false;
-	public boolean considerConstructors = false;
 	/** For lookup of unknown bindings the point of declaration can be reversed. */
 	public boolean checkPointOfDecl= true;
     /** For field references or qualified names, enclosing template declarations are ignored. */
@@ -118,7 +112,6 @@ public class LookupData {
 		astName = n;
 		tu= (CPPASTTranslationUnit) astName.getTranslationUnit();
 		typesOnly = typesOnly(astName);
-		considerConstructors = considerConstructors();
 		checkWholeClassScope = checkWholeClassScope(n);
 	}
 	
@@ -251,51 +244,6 @@ public class LookupData {
 		return false;
 	}
 
-	private boolean considerConstructors() {
-		if (astName == null) return false;
-		final ASTNodeProperty propertyInParent = astName.getPropertyInParent();
-		if (propertyInParent == CPPSemantics.STRING_LOOKUP_PROPERTY || propertyInParent == null) return false;
-		IASTNode p1 = astName.getParent();
-		IASTNode p2 = p1.getParent();
-		
-		if (p1 instanceof ICPPASTQualifiedName) {
-			if (((ICPPASTQualifiedName) p1).getLastName() != astName)
-				return false;
-			if (p2 instanceof ICPPASTFunctionDeclarator) {
-				IASTName[] names = ((ICPPASTQualifiedName)p1).getNames();
-				if (names.length >= 2 && names[names.length - 1] == astName)
-				    return CPPVisitor.isConstructor(names[names.length - 2], (IASTDeclarator) p2);
-			}
-			if (p2 != null) {
-				p1= p2;
-				p2= p1.getParent();
-			}
-		}
-		if (p1 instanceof ICPPASTConstructorChainInitializer) {
-			return true;
-		}
-		if (p1 instanceof IASTExpression) {
-			ASTNodeProperty prop = p1.getPropertyInParent();
-			if (p1 instanceof IASTIdExpression) {
-				p1= p1.getParent();
-			}
-			while (p1 instanceof IASTUnaryExpression && ((IASTUnaryExpression) p1).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
-				prop = p1.getPropertyInParent();
-				p1= p1.getParent();
-			}
-			if (p1 instanceof IASTFunctionCallExpression && prop == IASTFunctionCallExpression.FUNCTION_NAME) {
-				return true;
-			}
-		} else if (p1 instanceof ICPPASTNamedTypeSpecifier && p2 instanceof IASTTypeId) {
-			if (p2.getParent() instanceof ICPPASTNewExpression) {
-				IASTDeclarator dtor = ((IASTTypeId) p2).getAbstractDeclarator();
-				if (dtor != null && dtor.getPointerOperators().length == 0)
-					return true;
-			}
-		} 
-		return false;
-	}
-	
 	public boolean qualified() {
 	    if (forceQualified) return true;
 		if (astName == null) return false;

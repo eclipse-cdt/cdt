@@ -342,11 +342,11 @@ public class CPPSemantics {
 			}
 		}
 		
-		if (data.considerConstructors) {
-			if (binding instanceof ICPPClassType) {
-			    if (binding instanceof IIndexBinding) {
-			    	binding= data.tu.mapToAST((ICPPClassType) binding);
-			    }
+		if (binding instanceof ICPPClassType) {
+			if (convertClassToConstructor(data.astName)) {
+				if (binding instanceof IIndexBinding) {
+					binding= data.tu.mapToAST((ICPPClassType) binding);
+				}
 				ICPPClassType cls= (ICPPClassType) binding;
 
 				try {
@@ -363,14 +363,10 @@ public class CPPSemantics {
 					if (cls instanceof ICPPDeferredClassInstance) {
 						binding= new CPPUnknownConstructor(cls);
 					} else {
-						// Force resolution of constructor bindings
-						final ICPPConstructor[] constructors = cls.getConstructors();
-						if (constructors.length > 0) {
-							binding= CPPSemantics.resolveAmbiguities(data.astName, constructors);
-						}
+						binding= selectConstructor(cls, data);
 					}
 				} catch (DOMException e) {
-					binding = e.getProblem();
+					return e.getProblem();
 				}
 			}
 		}
@@ -432,10 +428,10 @@ public class CPPSemantics {
 					} else if (parent instanceof ICPPASTUnaryExpression
 							&& ((ICPPASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_sizeofParameterPack) {
 						// argument of sizeof... can be a type
-		        	} else if (data.considerConstructors && 
-		        			(binding instanceof ICPPUnknownType || binding instanceof ITypedef || binding instanceof IEnumeration)) {
-		        		// constructor or simple-type constructor
-		        	} else {
+					} else if ((binding instanceof ICPPUnknownType || binding instanceof ITypedef || binding instanceof IEnumeration)
+							&& convertClassToConstructor(data.astName)) {
+						// constructor or simple-type constructor
+					} else {
 		        		binding= new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE,
 		        				data.getFoundBindings());
 		        	}
@@ -487,6 +483,58 @@ public class CPPSemantics {
 		}
         return binding;
     }
+
+	private static boolean convertClassToConstructor(IASTName name) {
+		if (name == null)
+			return false;
+		final ASTNodeProperty propertyInParent = name.getPropertyInParent();
+		if (propertyInParent == CPPSemantics.STRING_LOOKUP_PROPERTY || propertyInParent == null)
+			return false;
+		
+		if (propertyInParent == ICPPASTTemplateId.TEMPLATE_NAME)
+			return false;
+		
+		IASTNode parent= name.getParent();
+		if (parent instanceof ICPPASTQualifiedName) {
+			if (((ICPPASTQualifiedName) parent).getLastName() != name)
+				return false;
+			parent= parent.getParent();
+		}
+		if (parent instanceof ICPPASTConstructorChainInitializer) {
+			return true;
+		}
+		if (parent instanceof IASTExpression) {
+			ASTNodeProperty propInParent= parent.getPropertyInParent();
+			if (parent instanceof IASTIdExpression) {
+				parent= parent.getParent();
+			}
+			while (parent instanceof IASTUnaryExpression
+					&& ((IASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				propInParent = parent.getPropertyInParent();
+				parent= parent.getParent();
+			}
+			if (parent instanceof IASTFunctionCallExpression && propInParent == IASTFunctionCallExpression.FUNCTION_NAME) {
+				return true;
+			}
+		} else if (parent instanceof ICPPASTNamedTypeSpecifier) {
+			parent= parent.getParent();
+			if (parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression) {
+				IASTDeclarator dtor = ((IASTTypeId) parent).getAbstractDeclarator();
+				if (dtor != null && dtor.getPointerOperators().length == 0)
+					return true;
+			}
+		} 
+		return false;
+	}
+
+	private static IBinding selectConstructor(ICPPClassType cls, LookupData data) throws DOMException {
+		// Force resolution of constructor bindings
+		final ICPPConstructor[] constructors= cls.getConstructors();
+		if (constructors.length > 0) {
+			return CPPSemantics.resolveAmbiguities(data.astName, constructors);
+		}
+		return cls;
+	}
 
 	private static void doKoenigLookup(LookupData data) throws DOMException {
 		data.ignoreUsingDirectives = true;
@@ -1707,7 +1755,7 @@ public class CPPSemantics {
 
 	        	if (type == null) {
 	                type = temp;
-	        	} else if (type != temp) {
+	        	} else if (!type.equals(temp)) {
 	        		int c = compareByRelevance(data, type, temp);
 	        		if (c < 0) {
         				type= temp;

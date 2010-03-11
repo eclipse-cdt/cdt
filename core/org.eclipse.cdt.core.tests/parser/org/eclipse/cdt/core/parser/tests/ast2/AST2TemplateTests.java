@@ -4863,4 +4863,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue(inst.isExplicitSpecialization());
 	}
 
+	//	template <typename T> struct CT {
+	//		CT ();
+	//	};
+	//	template<> struct CT<int> {
+	//		CT ();
+	//		int value_;
+	//	};
+	//	CT<int>::CT() :	value_(0) {
+	//	}
+	public void testConstructorOfExplicitSpecialization() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
 }

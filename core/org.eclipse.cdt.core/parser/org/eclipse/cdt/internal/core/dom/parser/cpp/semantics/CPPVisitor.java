@@ -726,6 +726,45 @@ public class CPPVisitor extends ASTQueries {
         return isConstructor(clsName, declarator);
 	}
 
+	public static boolean isConstructorDeclaration(IASTName name) {
+		if (name == null)
+			return false;
+		final ASTNodeProperty propertyInParent = name.getPropertyInParent();
+		if (propertyInParent == CPPSemantics.STRING_LOOKUP_PROPERTY || propertyInParent == null)
+			return false;
+		IASTNode parent = name.getParent();
+		if (parent instanceof ICPPASTTemplateId) {
+			name= (IASTName) parent;
+			parent= name.getParent();
+		}
+		if (parent instanceof ICPPASTQualifiedName) {
+			if (((ICPPASTQualifiedName) parent).getLastName() != name)
+				return false;
+			name= (IASTName) parent;
+			parent= name.getParent();
+		}
+		if (parent instanceof IASTDeclarator) {
+			IASTDeclarator dtor= findTypeRelevantDeclarator((IASTDeclarator) parent);
+			if (dtor instanceof ICPPASTFunctionDeclarator) {
+				if (name instanceof ICPPASTQualifiedName) {
+					IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
+					if (names.length >= 2) {
+						return CPPVisitor.isConstructor(names[names.length - 2], dtor);
+					}
+				} else {
+					while(parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier)) {
+						parent= parent.getParent();
+					}
+					if (parent instanceof ICPPASTCompositeTypeSpecifier) {
+						IASTName compName= ((ICPPASTCompositeTypeSpecifier) parent).getName().getLastName();
+						return CPPVisitor.isConstructor(compName, dtor);
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	public static boolean isConstructor(IASTName parentName, IASTDeclarator declarator) {
 		if (declarator == null || !(declarator instanceof IASTFunctionDeclarator))
 			return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -222,9 +222,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			compName= ((ICPPASTTemplateId) compName).getTemplateName();
 		}
 	    if (CharArrayUtils.equals(c, compName.getLookupKey())) {
-	        if (isConstructorReference(name)) {
-	            return CPPSemantics.resolveAmbiguities(name, getConstructors(name, resolve));
-	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             return compName.resolveBinding();
 	    }
@@ -244,7 +241,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    IBinding[] result = null;
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
 	    		|| (prefixLookup && CharArrayUtils.equals(compName.getLookupKey(), 0, c.length, c, true))) {
-	        if (isConstructorReference(name)) {
+	        if (shallReturnConstructors(name, prefixLookup)) {
 	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors(name, resolve));
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
@@ -332,26 +329,31 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    return super.find(name);
 	}
 
-	public static boolean isConstructorReference(IASTName name) {
-	    if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
-	    IASTNode node = name.getParent();
-	    if (node instanceof ICPPASTTemplateId)
-	    	return false;
-	    if (node instanceof ICPPASTQualifiedName) {
-	    	if (((ICPPASTQualifiedName) node).getLastName() == name)
-	    		node = node.getParent();
-	    	else
-	    		return false;
-	    }
-	    if (node instanceof IASTDeclSpecifier) {
-	        IASTNode parent = node.getParent();
-	        if (parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression)
-	            return true;
-	        return false;
-	    } else if (node instanceof IASTFieldReference) {
-	    	return false;
-	    }
-	    return true;
+	public static boolean shallReturnConstructors(IASTName name, boolean isPrefixLookup) {
+		if (!isPrefixLookup)
+			return CPPVisitor.isConstructorDeclaration(name);
+		
+		if (name.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY)
+			return false;
+		
+		IASTNode node = name.getParent();
+		if (node instanceof ICPPASTTemplateId)
+			return false;
+		if (node instanceof ICPPASTQualifiedName) {
+			if (((ICPPASTQualifiedName) node).getLastName() == name)
+				node = node.getParent();
+			else
+				return false;
+		}
+		if (node instanceof IASTDeclSpecifier) {
+			IASTNode parent = node.getParent();
+			if (parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression)
+				return true;
+			return false;
+		} else if (node instanceof IASTFieldReference) {
+			return false;
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)

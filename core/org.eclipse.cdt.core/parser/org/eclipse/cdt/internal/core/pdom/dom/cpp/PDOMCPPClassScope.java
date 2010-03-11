@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,9 +121,6 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		try {
 		    final char[] nameChars = name.getSimpleID();
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
-		        if (CPPClassScope.isConstructorReference(name)){
-		            return CPPSemantics.resolveAmbiguities(name, fBinding.getConstructors());
-		        }
 	            //9.2 ... The class-name is also inserted into the scope of the class itself
 		        return getClassNameBinding();
 		    }
@@ -155,7 +152,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			final char[] nameChars = name.getSimpleID();
 			if (!prefixLookup) {
 				if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
-			        if (CPPClassScope.isConstructorReference(name)){
+			        if (CPPClassScope.shallReturnConstructors(name, prefixLookup)){
 			            return fBinding.getConstructors();
 			        }
 			        return new IBinding[] {getClassNameBinding()};

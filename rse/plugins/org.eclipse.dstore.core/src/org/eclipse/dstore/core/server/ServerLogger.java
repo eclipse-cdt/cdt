@@ -20,7 +20,7 @@
  * David McKnight  (IBM)  - [271914] [dstore] Setting debug on/off dynamically
  * David McKnight  (IBM)  - [269908] [dstore] rsecomm.log file management
  * David McKnight  (IBM)  - [284787] [dstore] ability to disable RSECOMM_LOGFILE_MAX option
- * David McKnight  (IBM)  - [305276] [dstore][multithread] log close in ServerLogger
+ * David McKnight  (IBM)  - [305272] [dstore][multithread] log close in ServerLogger
  ********************************************************************************/
 
 package org.eclipse.dstore.core.server;

@@ -11,7 +11,7 @@
 
  * Contributors:
  *  Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
- *  David McKnight  (IBM)  - [305276] [dstore][multithread] log close in ServerLogger
+ *  David McKnight  (IBM)  - [305272] [dstore][multithread] log close in ServerLogger
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;

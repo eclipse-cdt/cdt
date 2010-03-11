@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
+import org.eclipse.cdt.debug.internal.ui.commands.ResumeWithoutSignalCommand;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 
@@ -32,6 +34,9 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 		}
 		if ( adapterType == IMoveToLineTarget.class ) {
 			return new MoveToLineAdapter();
+		} 		
+		if ( adapterType == IResumeWithoutSignalHandler.class ) {
+			return new ResumeWithoutSignalCommand();
 		} 
 		return null;
 	}
@@ -40,6 +45,9 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{ IRunToLineTarget.class, IResumeAtLineTarget.class, IMoveToLineTarget.class };
+		return new Class[]{ IRunToLineTarget.class, 
+				            IResumeAtLineTarget.class, 
+				            IMoveToLineTarget.class,
+				            IResumeWithoutSignalHandler.class };
 	}
 }

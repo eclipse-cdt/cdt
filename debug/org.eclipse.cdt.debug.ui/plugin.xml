@@ -264,16 +264,6 @@
                label="%GlobalMoveToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"/>
          <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
-               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
-               disabledIcon="icons/dlcl16/signal0_co.gif"
-               icon="icons/elcl16/signal0_co.gif"
-               helpContextId="resume_without_signal_action_context"
-               label="%SignalZeroAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
-               tooltip="%SignalZeroAction.tooltip">
-         </action>
-         <action
                id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
                disabledIcon="icons/dlcl16/restart.gif"
@@ -283,6 +273,39 @@
                menubarPath="org.eclipse.ui.run/stepGroup">
          </action>
       </actionSet>
+   </extension>
+   <extension
+       point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.run?endof=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
+               disabledIcon="icons/dlcl16/signal0_co.gif"
+               helpContextId="resume_without_signal_action_context"
+               icon="icons/elcl16/signal0_co.gif"
+               label="%ResumeWithoutSignal.label"
+               style="push"
+               tooltip="%ResumeWithoutSignal.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsDebugActionSetActive">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.DebugView?after=threadGroup">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
+               disabledIcon="icons/dlcl16/signal0_co.gif"
+               helpContextId="resume_without_signal_action_context"
+               icon="icons/elcl16/signal0_co.gif"
+               label="%ResumeWithoutSignal.label"
+               style="push"
+               tooltip="%ResumeWithoutSignal.tooltip">
+         </command>
+      </menuContribution>
    </extension>
    
    <extension 
@@ -390,27 +413,6 @@
                      value="activated"
                      id="org.eclipse.cdt.debug.ui">
                </pluginState>
-            </enablement>
-         </action>
-         <action
-               helpContextId="signal_zero_action_context"
-               enablesFor="1"
-               label="%SignalZeroAction.label"
-               tooltip="%SignalZeroAction.tooltip"
-               icon="icons/elcl16/signal0_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
-               menubarPath="threadGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate">
-            <enablement>
-               <and>
-                  <pluginState
-                        id="org.eclipse.cdt.debug.ui"
-                        value="activated">
-                  </pluginState>
-                  <objectClass
-                        name="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal">
-                  </objectClass>
-               </and>
             </enablement>
          </action>
       </viewerContribution>
@@ -605,10 +607,6 @@
                </pluginState>
             </enablement>
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal"
-            id="org.eclipse.cdt.debug.ui.DebugTargetActions">
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICastToType"
@@ -1571,6 +1569,27 @@
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
          </adapter>
       </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICThread"
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICDebugTarget"
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.themes">
@@ -2038,6 +2057,18 @@
           id="org.eclipse.cdt.debug.ui.command.saveTraceData"
           name="%SaveTraceData.name">
     </command>
+    <category
+          description="%RunControlCategory.description"
+          id="org.eclipse.cdt.debug.ui.category.runControl"
+          name="%RunControlCategory.name">
+    </category>
+    <command
+          categoryId="org.eclipse.cdt.debug.ui.category.runControl"
+          description="%ResumeWithoutSignal.description"
+          helpContextId="resume_without_signal_action_context"
+          id="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
+          name="%ResumeWithoutSignal.name">
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -2072,6 +2103,11 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.SaveTraceDataCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.saveTraceData">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.ResumeWithoutSignalCommandHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
+            helpContextId="resume_without_signal_action_context">
       </handler>
  </extension>
  <extension
@@ -2114,6 +2150,18 @@
          <with variable="activeContexts">
             <iterate operator="or">
                <equals value="org.eclipse.cdt.debug.ui.tracepointActionSet">
+               </equals>
+            </iterate>
+         </with>
+      </definition>
+      <definition
+            id="org.eclipse.cdt.debug.ui.testIsDebugActionSetActive">
+         <with
+               variable="activeContexts">
+            <iterate
+                  operator="or">
+               <equals
+                     value="org.eclipse.cdt.debug.ui.debugActionSet">
                </equals>
             </iterate>
          </with>

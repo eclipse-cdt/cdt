@@ -17,6 +17,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepOverHandler;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbConnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbRestartCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbSteppingModeTarget;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbResumeWithoutSignalCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseResumeCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepIntoCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepOverCommand;
@@ -101,6 +103,7 @@ public class GdbAdapterFactory
         final DsfSuspendCommand fSuspendCommand;
         final DsfResumeCommand fResumeCommand;
         final GdbReverseResumeCommand fReverseResumeCommand;
+        final GdbResumeWithoutSignalCommand fResumeWithoutSignalCommand;
         final GdbRestartCommand fRestartCommand;
         final DsfTerminateCommand fTerminateCommand;
         final GdbConnectCommand fConnectCommand;
@@ -144,6 +147,7 @@ public class GdbAdapterFactory
             fSuspendCommand = new DsfSuspendCommand(session);
             fResumeCommand = new DsfResumeCommand(session);
             fReverseResumeCommand = new GdbReverseResumeCommand(session);
+            fResumeWithoutSignalCommand = new GdbResumeWithoutSignalCommand(session);
             fRestartCommand = new GdbRestartCommand(session, fLaunch);
             fTerminateCommand = new DsfTerminateCommand(session);
             fConnectCommand = new GdbConnectCommand(session);
@@ -166,6 +170,7 @@ public class GdbAdapterFactory
             session.registerModelAdapter(ISuspendHandler.class, fSuspendCommand);
             session.registerModelAdapter(IResumeHandler.class, fResumeCommand);
             session.registerModelAdapter(IReverseResumeHandler.class, fReverseResumeCommand);
+            session.registerModelAdapter(IResumeWithoutSignalHandler.class, fResumeWithoutSignalCommand);
             session.registerModelAdapter(IRestart.class, fRestartCommand);
             session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);
             session.registerModelAdapter(IConnect.class, fConnectCommand);
@@ -214,6 +219,7 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(ISuspendHandler.class);
             session.unregisterModelAdapter(IResumeHandler.class);
             session.unregisterModelAdapter(IReverseResumeHandler.class);
+            session.unregisterModelAdapter(IResumeWithoutSignalHandler.class);
             session.unregisterModelAdapter(IRestart.class);
             session.unregisterModelAdapter(ITerminateHandler.class);
             session.unregisterModelAdapter(IConnect.class);
@@ -235,6 +241,7 @@ public class GdbAdapterFactory
             fSuspendCommand.dispose();
             fResumeCommand.dispose();
             fReverseResumeCommand.dispose();
+            fResumeWithoutSignalCommand.dispose();
             fRestartCommand.dispose();
             fTerminateCommand.dispose();
             fConnectCommand.dispose();

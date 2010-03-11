@@ -83,9 +83,11 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	/**
 	 * Creates the <code>IToolChain</code> child of this configuration.
 	 *
-	 * @param superClass The superClass, if any
-	 * @param Id The id for the new tool chain
-	 * @param name The name for the new tool chain
+	 * @param superClass - The superClass, if any
+	 * @param Id - The id for the new tool chain
+	 * @param name - The name for the new tool chain
+	 * @param isExtensionElement - set {@code true} if the toolchain being created
+	 *    represents extension point toolchain
 	 * 
 	 * @return IToolChain
 	 */
@@ -213,10 +215,10 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	public IProjectType getProjectType();
 	
 	/**
-	 * Returns the resource configuration child of this configuration
+	 * @param path - path of the resource
+	 *  
+	 * @return the resource configuration child of this configuration
 	 * that is associated with the project resource, or <code>null</code> if none.
-	 * 
-	 * @return IResourceConfiguration
 	 */
 	public IResourceConfiguration getResourceConfiguration(String path);
 	
@@ -334,6 +336,8 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 
 	/**
 	 * Removes a resource configuration from the configuration's list.
+	 * 
+	 * @param resConfig - resource configuration to remove
 	 */
 	public void removeResourceConfiguration(IResourceInfo resConfig);
 	
@@ -400,6 +404,7 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
    
     /** 
 	 * Sets the command used to clean the outputs of this configuration.
+     * @param command - the command to clean outputs
 	 */
 	public void setCleanCommand(String command);
 

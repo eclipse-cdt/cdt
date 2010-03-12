@@ -12,10 +12,12 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
@@ -23,71 +25,38 @@ import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
  */
 public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	
-	public static final String CATCH = "org.eclipse.cdt.debug.gdb.catch";
-	public static final String THROW = "org.eclipse.cdt.debug.gdb.throw";
-	public static final String SIGNAL_CATCH = "org.eclipse.cdt.debug.gdb.signal";
-	public static final String STOP_ON_FORK = "org.eclipse.cdt.debug.gdb.catch_fork";
-	public static final String STOP_ON_VFORK = "org.eclipse.cdt.debug.gdb.catch_vfork";
-	public static final String STOP_ON_EXEC = "org.eclipse.cdt.debug.gdb.catch_exec";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_EXIT = "org.eclipse.cdt.debug.gdb.catch_exit";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_START = "org.eclipse.cdt.debug.gdb.catch_start";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_STOP = "org.eclipse.cdt.debug.gdb.catch_stop";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_THREAD_START = "org.eclipse.cdt.debug.gdb.catch_thread_start";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_THREAD_EXIT = "org.eclipse.cdt.debug.gdb.catch_thread_exit";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_THREAD_JOIN = "org.eclipse.cdt.debug.gdb.catch_thread_join";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_LOAD = "org.eclipse.cdt.debug.gdb.catch_load";
-	/**
-	 * @since 6.0
-	 */
-	public static final String CATCH_UNLOAD = "org.eclipse.cdt.debug.gdb.catch_unload";
 
 	private String eventType;
 	private String arg;
-	private static final HashMap<String, String> idToKeyword = new HashMap<String, String>();
+
+	/**
+	 * A mapping of ICEventBreakpoint event types to their corresponding gdb
+	 * catchpoint keyword
+	 */
+	private static final Map<String, String> idToKeyword = new HashMap<String, String>();
 	static {
 		// these Ids are also referenced in mi.ui plugin as contribution
 		// to event breakpoints selector
-		idToKeyword.put(CATCH, "catch");
-		idToKeyword.put(THROW, "throw");
-		idToKeyword.put(SIGNAL_CATCH, "signal");
-		idToKeyword.put(STOP_ON_EXEC, "exec");
-		idToKeyword.put(STOP_ON_FORK, "fork");
-		idToKeyword.put(STOP_ON_VFORK, "vfork");
-		idToKeyword.put(CATCH_EXIT, "exit");
-		idToKeyword.put(CATCH_START, "start");
-		idToKeyword.put(CATCH_STOP, "stop");
-		idToKeyword.put(CATCH_THREAD_START, "thread_start");
-		idToKeyword.put(CATCH_THREAD_EXIT, "thread_exit");
-		idToKeyword.put(CATCH_THREAD_JOIN, "thread_join");
-		idToKeyword.put(CATCH_LOAD, "load");
-		idToKeyword.put(CATCH_UNLOAD, "unload");
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_CATCH, "catch"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_THROW, "throw"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_SIGNAL_CATCH, "signal"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_EXEC, "exec"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_FORK, "fork"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_VFORK, "vfork"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_EXIT, "exit"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_PROCESS_START, "start"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_PROCESS_STOP, "stop"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_THREAD_START, "thread_start"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_THREAD_EXIT, "thread_exit"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_THREAD_JOIN, "thread_join"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_LIBRARY_LOAD, "load"); //$NON-NLS-1$
+		idToKeyword.put(ICEventBreakpoint.EVENT_TYPE_LIBRARY_UNLOAD, "unload"); //$NON-NLS-1$
 	}
 
 	public EventBreakpoint(Target target, String event, String arg, ICDICondition cond, boolean enabled) {
 		super(target, ICBreakpointType.REGULAR, cond, enabled);
 		this.eventType = event;
-		this.arg = arg==null?"":arg;
+		this.arg = arg==null?"":arg; //$NON-NLS-1$
 	}
 
 	public String getEventType()  {
@@ -103,7 +72,7 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 		String etype = getEventType();
 		String key= idToKeyword.get(etype);
 		if (key!=null) return key;
-		return "unknown";
+		return "unknown"; //$NON-NLS-1$
 	}
 
 	public String getGdbArg() {
@@ -130,16 +99,16 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	 * @return null if unknown type, null cannot be used to create valid EventBreakpoint
 	 */
 	public static String getEventTypeFromMI(MIBreakpoint miBreakpoint) {
-		if (miBreakpoint.getWhat().equals("exception catch")) {
-			return  EventBreakpoint.CATCH;
-		} else if (miBreakpoint.getWhat().equals("exception throw")) {
-			return  EventBreakpoint.THROW;
-		} else if (miBreakpoint.getType().equals("catch signal")) {
+		if (miBreakpoint.getWhat().equals("exception catch")) { //$NON-NLS-1$
+			return  ICEventBreakpoint.EVENT_TYPE_CATCH;
+		} else if (miBreakpoint.getWhat().equals("exception throw")) { //$NON-NLS-1$
+			return ICEventBreakpoint.EVENT_TYPE_THROW;
+		} else if (miBreakpoint.getType().equals("catch signal")) { //$NON-NLS-1$
 			// catch signal does not work in gdb 
-			return  EventBreakpoint.SIGNAL_CATCH;
+			return  ICEventBreakpoint.EVENT_TYPE_SIGNAL_CATCH;
 		} 
 		String miType = miBreakpoint.getType();
-		String prefix = "catch "; 
+		String prefix = "catch ";  //$NON-NLS-1$
 		if (miType.startsWith(prefix)) {
 			String key = miType.substring(prefix.length());
 			for (String id : idToKeyword.keySet()) {
@@ -154,7 +123,7 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 	
 	public static String getEventArgumentFromMI(MIBreakpoint miBreakpoint) {
 		// need a working gdb command command that support catch event argument test test
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 }

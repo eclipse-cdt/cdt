@@ -14,7 +14,7 @@ Export-Package: org.eclipse.cdt.debug.mi.internal.ui;x-internal:=true,
  org.eclipse.cdt.debug.mi.ui
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.cdt.debug.mi.core;bundle-version="[6.0.0,7.0.0)",
+ org.eclipse.cdt.debug.mi.core;bundle-version="[7.0.0,8.0.0)",
  org.eclipse.cdt.debug.ui;bundle-version="[7.0.0,8.0.0)",
  org.eclipse.cdt.debug.core;bundle-version="[7.0.0,8.0.0)",
  org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)",

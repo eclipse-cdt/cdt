@@ -17,7 +17,7 @@ import java.io.OutputStream;
 
 /**
  * Receiving, and printing to the console, stderr output
- * @since 6.1
+ * @since 7.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

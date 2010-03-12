@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 
 /**
- * @since 6.1
+ * @since 7.0
  */
 public class MICatchpointHitEvent extends MIStoppedEvent {
 

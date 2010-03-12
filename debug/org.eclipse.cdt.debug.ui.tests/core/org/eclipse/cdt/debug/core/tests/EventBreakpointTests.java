@@ -16,15 +16,13 @@ import junit.framework.Test;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.cdi.model.EventBreakpoint;
 
 public class EventBreakpointTests extends AbstractDebugTest {
 	public static Test suite() {
@@ -54,11 +52,11 @@ public class EventBreakpointTests extends AbstractDebugTest {
 
 
 	public void testCatch() throws CModelException, IOException, MIException, CDIException {
-		eventbreakpoints(EventBreakpoint.CATCH, "");
+		eventbreakpoints(ICEventBreakpoint.EVENT_TYPE_CATCH, "");
 	}
 
 	public void testThrow() throws CModelException, IOException, MIException, CDIException {
-		eventbreakpoints(EventBreakpoint.THROW, "");
+		eventbreakpoints(ICEventBreakpoint.EVENT_TYPE_THROW, "");
 	}
 	
 	private void eventbreakpoints(String type, String arg) throws CModelException, IOException, MIException, CDIException {

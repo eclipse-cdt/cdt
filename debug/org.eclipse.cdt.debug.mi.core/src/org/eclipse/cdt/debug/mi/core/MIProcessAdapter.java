@@ -109,7 +109,7 @@ public class MIProcessAdapter implements MIProcess {
 	 * @throws IOException
 	 *             on failure to create the child process
 	 * 
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	protected Process createGDBProcess(String[] args) throws IOException {
 		return ProcessFactory.getFactory().exec(args);

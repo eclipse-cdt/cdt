@@ -14,7 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIEventBreakpointHit;
 import org.eclipse.cdt.debug.mi.core.event.MICatchpointHitEvent;
 
 /**
- * @since 6.1
+ * @since 7.0
  */
 public class EventBreakpointHit extends SessionObject implements ICDIEventBreakpointHit {
 

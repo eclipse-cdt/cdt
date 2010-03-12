@@ -87,12 +87,20 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				}
 			}
 		}
+		
+		if (file!=null) {
+			String filePath = new Path(fileName).toString();
+			String foundLocation = file.getLocation().toString();
+			if (!foundLocation.endsWith(filePath)) {
+				file = null;
+			}
+		}
 		return file;
 	}
 	
 	/**
 	 * @param filePath
-	 * @return
+	 * @return file in workspace as {@link IFile} or {@code null} if not found
 	 */
 	protected IFile findFilePath(String filePath) {
 		IPath path = null;
@@ -132,7 +140,7 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 
 	/**
 	 * @param fileName
-	 * @return
+	 * @return file in workspace as {@link IFile} or {@code null}
 	 */
 	protected IFile findFileName(String fileName) {
 		IPath path = new Path(fileName);

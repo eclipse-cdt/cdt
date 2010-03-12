@@ -40,6 +40,12 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IGDBBackend extends IMIBackend {
 
+	/** 
+	 * ID to use when requesting that the interruptAndWait call wait for an
+	 * implementation-specific default.
+	 * @since 3.0 */
+	public final static int INTERRUPT_TIMEOUT_DEFAULT = 0;
+
 	/**
 	 * Get path of the debugged program on host.
 	 * 
@@ -101,16 +107,22 @@ public interface IGDBBackend extends IMIBackend {
 	 * Sends an interrupt signal to the GDB process.
 	 */
 	public void interrupt();
-
+	
 	/**
-	 * Interrupts the backend.
-	 * The request monitor indicates if the interrupt succeeded or not;
-	 * it may or may not indicate that the backend is already interrupted,
-	 * but does indicate if the backend will become interrupted.
+	 * Interrupts the backend and wait to confirm the interrupt 
+	 * succeeded.  The request monitor indicates to the caller if 
+	 * the interrupt succeeded or not.
 	 * 
+	 * @param timeout Maximum number of milliseconds to wait to confirm
+	 *                that the backend has been interrupted.  A value
+	 *                of INTERRUPT_TIMEOUT_DEFAULT specifies to use an 
+	 *                implementation-specific default value.
+	 *                Using a value of 0 or a negative value has unspecified
+	 *                behavior. 
+ 	 *
 	 * @since 3.0
 	 */
-	public void interrupt(RequestMonitor rm);
+	public void interruptAndWait(int timeout, RequestMonitor rm);
 
 	/**
 	 * @return The type of the session currently ongoing with the backend

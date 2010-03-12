@@ -377,11 +377,11 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     /**
 	 * @since 3.0
 	 */
-    public void interrupt(final RequestMonitor rm) {
+    public void interruptAndWait(int timeout, RequestMonitor rm) {
         if (fProcess instanceof Spawner) {
             Spawner gdbSpawner = (Spawner) fProcess;
             gdbSpawner.interrupt();
-            fInterruptFailedJob = new MonitorInterruptJob(rm);
+            fInterruptFailedJob = new MonitorInterruptJob(timeout, rm);
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Cannot interrupt.", null)); //$NON-NLS-1$
             rm.done();
@@ -653,17 +653,34 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     }   
 
     /**
-     * Monitors an ongoing interrupt to be able to properly
-     * deal with the request monitor.
+     * Stores the request monitor that must be dealt with for 
+     * the result of the interrupt operation.  If the interrupt
+     * successfully suspends the backend, the request monitor can
+     * be retrieved and completed successfully, and then this job
+     * should be canceled.  If this job is not canceled before 
+     * the time is up, it will imply the interrupt did not 
+     * successfully suspend the backend, and the current job will 
+     * indicate this in the request monitor.
+     * 
+     * The specified timeout is used to indicate how many milliseconds
+     * this job should wait for. INTERRUPT_TIMEOUT_DEFAULT indicates
+     * to use the default of 500 ms.  The default is also use if the 
+     * timeout value is 0 or negative.
      */
     private class MonitorInterruptJob extends Job {
+    	private final static int TIMEOUT_DEFAULT_VALUE = 500;
         private final RequestMonitor fRequestMonitor;
 
-        public MonitorInterruptJob(RequestMonitor rm) {
+        public MonitorInterruptJob(int timeout, RequestMonitor rm) {
             super("Interrupt monitor job.");
             setSystem(true);
             fRequestMonitor = rm;
-            schedule(5000);  // Give the interrupt 5 seconds to succeed
+            
+            if (timeout == INTERRUPT_TIMEOUT_DEFAULT || timeout <= 0) {
+            	timeout = TIMEOUT_DEFAULT_VALUE; // default of 0.5 seconds
+            }
+            
+           	schedule(timeout);
         }
 
         @Override

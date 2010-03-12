@@ -144,7 +144,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
                 @Override
                 protected void handleSuccess() {
                     if (getData()) {
-                        fGdb.interrupt(rm);
+                        fGdb.interruptAndWait(IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
                     } else {
                         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
                         rm.done();

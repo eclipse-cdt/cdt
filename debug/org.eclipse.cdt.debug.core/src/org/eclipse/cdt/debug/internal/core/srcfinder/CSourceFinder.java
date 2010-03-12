@@ -119,7 +119,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 				ILaunch[] launches = lmgr.getLaunches();
 				for (ILaunch launch : launches) {
 					ILaunchConfiguration config = launch.getLaunchConfiguration();
-					if (isMatch(config)) {
+					if (config != null && isMatch(config)) {
 						ISourceLocator launchLocator = launch.getSourceLocator();
 						// in practice, a launch locator is always an ISourceLookupDirector
 						if (launchLocator instanceof ISourceLookupDirector) {
@@ -373,7 +373,8 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 		// searching using an inactive launch configuration's locator, then the
 		// new launch's locator should take precedence
 		for (ILaunch launch : launches) {
-			if (isMatch(launch.getLaunchConfiguration())) {
+			ILaunchConfiguration config = launch.getLaunchConfiguration();
+			if (config != null && isMatch(config)) {
 				fLaunchLocator = null;
 			}
 		}

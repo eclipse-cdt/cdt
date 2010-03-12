@@ -272,7 +272,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			@Override
 			public void done() {
 				if (isSuccess() && getDisassemblyBlock() != null) {
-					if (!insertDisassembly(startAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly)) {
+					if (!insertDisassembly(startAddress, finalEndAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly)) {
 						// did not get disassembly data for startAddress - try fallbacks
 						if (file != null) {
 							// previous attempt used the file; retry using the address
@@ -394,13 +394,13 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.lang.String, int, java.math.BigInteger, boolean, boolean, boolean)
 	 */
 	public void retrieveDisassembly(String file, int lines,
-			BigInteger endAddress, final boolean mixed, final boolean showSymbols,
+			final BigInteger endAddress, final boolean mixed, final boolean showSymbols,
 			final boolean showDisassembly) {
 		final IDisassemblyRetrieval.DisassemblyRequest disassemblyRequest= new DisassemblyRequest() {
 			@Override
 			public void done() {
 				if (isSuccess() && getDisassemblyBlock() != null) {
-					insertDisassembly(null, getDisassemblyBlock(), mixed, showSymbols, showDisassembly);
+					insertDisassembly(null, endAddress, getDisassemblyBlock(), mixed, showSymbols, showDisassembly);
 				} else {
 					final IStatus status= getStatus();
 					if (status != null && !status.isOK()) {
@@ -436,7 +436,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 	 * @param showDisassembly
 	 * @return whether [startAddress] was inserted
 	 */
-	private boolean insertDisassembly(BigInteger startAddress, IDisassemblyBlock disassemblyBlock, boolean mixed, boolean showSymbols, boolean showDisassembly) {
+	private boolean insertDisassembly(BigInteger startAddress, BigInteger endAddress, IDisassemblyBlock disassemblyBlock, boolean mixed, boolean showSymbols, boolean showDisassembly) {
 		if (!fCallback.hasViewer() || fCdiSessionId == null) {
 			// return true to avoid a retry
 			return true;
@@ -480,7 +480,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 					if (p instanceof ErrorPosition && p.fValid) {
 						p.fValid = false;
 						document.addInvalidAddressRange(p);
-					} else if (p == null) {
+					} else if (p == null || address.compareTo(endAddress) > 0) {
 						return insertedStartAddress;
 					} else if (p.fValid) {
 						if (srcElement != null && lineNumber >= 0 || p.fAddressLength == BigInteger.ONE) {

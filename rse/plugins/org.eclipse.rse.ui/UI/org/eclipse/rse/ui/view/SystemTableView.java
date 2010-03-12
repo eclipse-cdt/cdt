@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [187058] Incorrect Right Click Menu in Remote System Details View with no selection
  * David McKnight   (IBM)        - [260346] RSE view for jobs does not remember resized columns
  * Martin Oberhuber (Wind River) - [289533] NPE on "Show in Table"
+ * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -459,7 +460,9 @@ public class SystemTableView
 			// reset the filter
 			//setViewFilters(null);
 
-			super.inputChanged(newObject, oldObject);
+			if (_showColumns != false) {
+				super.inputChanged(newObject, oldObject);
+			}
 
 		}
 		else if (newObject == null)
@@ -673,6 +676,7 @@ public class SystemTableView
 		// if no children, don't update
 		if (children == null || children.length == 0)
 		{
+			_showColumns = false;
 			return;
 		}
 

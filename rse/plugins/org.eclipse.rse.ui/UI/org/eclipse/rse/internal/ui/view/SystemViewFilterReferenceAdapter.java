@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@
  * David McKnight   (IBM)        - [244824] filter not refreshed if child is "empty list" or system message node
  * David McKnight   (IBM)        - [249245] not showing inappropriate popup actions for: Refresh, Show In Table, Go Into, etc. 
  * David McKnight   (IBM)        - [254614] Promptable filter's shouldn't require supportsCommands on the subsystem to be false
+ * Noriaki Takatsu  (IBM)        - [288894] CANCEL has to be pressed 3 times in Userid/Password prompt window in Remote System Details view
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -289,6 +290,7 @@ public class SystemViewFilterReferenceAdapter
 	 */
 	public Object[] getChildren(IContextObject element, IProgressMonitor monitor) {
 		Object[] children = getChildren(element.getModelObject(), monitor);
+		if (children == null) return null;
 		ISubSystem subsystem = element.getSubSystem();
 		ISubSystemConfiguration configuration = subsystem.getSubSystemConfiguration();
 		Object adapter = Platform.getAdapterManager().getAdapter(configuration, ISubSystemConfigurationAdapter.class);
@@ -507,6 +509,7 @@ public class SystemViewFilterReferenceAdapter
 					children = new SystemMessageObject[1];
 					children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_FAILED), ISystemMessageObject.MSGTYPE_ERROR, element);
 					SystemBasePlugin.logError("Exception resolving filters' strings ", exc); //$NON-NLS-1$
+					return null;
 				} // message already issued
 
 				return checkForEmptyList(children, element, true);

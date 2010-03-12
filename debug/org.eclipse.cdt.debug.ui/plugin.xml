@@ -834,41 +834,6 @@
             </enablement>
          </action>
       </viewerContribution>
-      <viewerContribution
-            targetID="#DisassemblyViewContext"
-            id="org.eclipse.cdt.debug.ui.disassemblyView.popupMenu">
-         <visibility>
-            <and>
-               <systemProperty
-                     value="true"
-                     name="org.eclipse.cdt.debug.ui.debuggerActive"/>
-               <objectClass name="org.eclipse.jface.text.ITextSelection"/>
-            </and>
-         </visibility>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
-               enablesFor="1"
-               helpContextId="resume_at_line_action_context"
-               icon="icons/elcl16/resume_at_line_co.gif"
-               id="org.eclipse.cdt.debug.ui.resumeAtLineAction"
-               label="%ResumeAtLineAction.label"
-               menubarPath="additions"/>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate"
-               enablesFor="1"
-               helpContextId="move_to_line_action_context"
-               icon="icons/elcl16/move_to_line_co.gif"
-               id="org.eclipse.cdt.debug.ui.moveToLineAction"
-               label="%MoveToLineAction.label"
-               menubarPath="additions"/>
-         <action
-               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
-               definitionId="org.eclipse.debug.ui.commands.RunToLine"
-               helpContextId="run_to_line_action_context"
-               id="org.eclipse.cdt.debug.ui.runToLineAction"
-               label="%RunToLineAction.label"
-               menubarPath="additions"/>
-      </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICModule"
             id="org.eclipse.cdt.debug.ui.ModuleActions">
@@ -1055,23 +1020,6 @@
                menubarPath="cDebugActions"
                style="push"
                tooltip="%AddEventBreakpoint.tooltip">
-         </action>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.cdt.debug.ui.disassemblyView.menu"
-            targetID="org.eclipse.cdt.debug.ui.DisassemblyView">
-         <menu
-               id="org.eclipse.cdt.debug.ui.disassemblyViewMenu"
-               label="%disassemblyViewMenu.label">
-         </menu>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.views.disassembly.GoToAddressActionDelegate"
-               icon="icons/elcl16/show_ascii.gif"
-               id="org.eclipse.cdt.debug.internal.ui.actions.disassemblyViewAction"
-               label="%DisassemblyViewAction.label"
-               menubarPath="org.eclipse.cdt.debug.ui.disassemblyViewMenu"
-               style="push"
-               tooltip="%DisassemblyViewAction.tooltip">
          </action>
       </viewContribution>
       <viewContribution
@@ -1406,15 +1354,6 @@
       <factory
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
             adaptableType="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
-         </adapter>
-         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
-         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
-      </factory>
-      <factory
-            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
-            adaptableType="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView">
          <adapter
                type="org.eclipse.debug.ui.actions.IRunToLineTarget">
          </adapter>
@@ -1786,43 +1725,6 @@
 	      	</enablement>      
 		</detailFactories>
  	</extension>
- <extension
-       point="org.eclipse.ui.commands">
-    <category
-          description="%DisassemblyCategory.description"
-          id="org.eclipse.cdt.debug.ui.category.disassembly"
-          name="%DisassemblyCategory.name">
-    </category>
-    <command
-          categoryId="org.eclipse.cdt.debug.ui.category.disassembly"
-          defaultHandler="org.eclipse.cdt.debug.internal.ui.disassembly.commands.OpenDisassemblyHandler"
-          description="%OpenDisassembly.description"
-          helpContextId="open_disassembly_context"
-          id="org.eclipse.cdt.debug.ui.command.openDisassembly"
-          name="%OpenDisassembly.name">
-    </command>
-    <command
-          categoryId="org.eclipse.cdt.debug.ui.category.disassembly"
-          defaultHandler="org.eclipse.cdt.debug.internal.ui.disassembly.commands.DisassemblyDisplayModeHandler"
-          description="%DisassemblyDisplayMode.description"
-          helpContextId="disassembly_display_mode_command_context"
-          id="org.eclipse.cdt.debug.command.disassemblyDisplayMode"
-          name="%DisassemblyDisplayMode.name">
-       <commandParameter
-             id="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
-             name="%displayMode.name"
-             optional="false">
-       </commandParameter>
-    </command>
-    <command
-          categoryId="org.eclipse.debug.ui.category.run"
-          defaultHandler="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesHandler"
-          description="%BreakpointPropertiesCommand.description"
-          helpContextId="breakpoint_properties_action_context"
-          id="org.eclipse.cdt.debug.command.breakpointProperties"
-          name="%BreakpointPropertiesCommand.name">
-    </command>
- </extension>
  <extension
        point="org.eclipse.ui.menus">
     <menuContribution

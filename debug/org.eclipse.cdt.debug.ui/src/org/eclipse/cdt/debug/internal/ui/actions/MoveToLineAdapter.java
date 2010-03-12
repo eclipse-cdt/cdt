@@ -11,18 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.model.IMoveToAddress;
 import org.eclipse.cdt.debug.core.model.IMoveToLine;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -95,35 +91,6 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 				}
 			}
 		}
-		else if ( part instanceof DisassemblyView ) {
-			IEditorInput input = ((DisassemblyView)part).getInput();
-			if ( !(input instanceof DisassemblyEditorInput) ) {
-				errorMessage = ActionMessages.getString( "MoveToLineAdapter.2" ); //$NON-NLS-1$
-			}
-			else {
-				ITextSelection textSelection = (ITextSelection)selection;
-				int lineNumber = textSelection.getStartLine() + 1;
-				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				if ( address != null && target instanceof IAdaptable ) {
-					final IMoveToAddress moveToAddress = (IMoveToAddress)((IAdaptable)target).getAdapter( IMoveToAddress.class );
-					if ( moveToAddress != null && moveToAddress.canMoveToAddress( address ) ) {
-						Runnable r = new Runnable() {
-
-							public void run() {
-								try {
-									moveToAddress.moveToAddress( address );
-								}
-								catch( DebugException e ) {
-									failed( e );
-								}
-							}
-						};
-						runInBackground( r );
-					}
-				}
-				return;
-			}
-		}
 		else {
 			errorMessage = ActionMessages.getString( "MoveToLineAdapter.3" ); //$NON-NLS-1$
 		}
@@ -171,19 +138,6 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
 				return moveToLine.canMoveToLine(path.toPortableString(), lineNumber );
-			}
-			if ( part instanceof DisassemblyView ) {
-				IMoveToAddress moveToAddress = (IMoveToAddress)((IAdaptable)target).getAdapter( IMoveToAddress.class );
-				if ( moveToAddress == null )
-					return false;
-				IEditorInput input = ((DisassemblyView)part).getInput();
-				if ( !(input instanceof DisassemblyEditorInput) ) {
-					return false;
-				}
-				ITextSelection textSelection = (ITextSelection)selection;
-				int lineNumber = textSelection.getStartLine() + 1;
-				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				return moveToAddress.canMoveToAddress( address );
 			}
 		}
 		return false;

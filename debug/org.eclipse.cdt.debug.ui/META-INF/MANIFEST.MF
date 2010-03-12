@@ -16,7 +16,6 @@ Export-Package:
  org.eclipse.cdt.debug.internal.ui.propertypages;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.sourcelookup;x-friends:="org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.debug.internal.ui.views;x-internal:=true,
- org.eclipse.cdt.debug.internal.ui.views.disassembly;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.views.executables;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.views.modules;x-internal:=true,
  org.eclipse.cdt.debug.internal.ui.views.signals;x-internal:=true,

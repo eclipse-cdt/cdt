@@ -13,12 +13,12 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.ui.actions.RulerBreakpointAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -49,7 +49,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	 * @param info  vertical ruler information
 	 */
 	public AbstractBreakpointRulerAction(IWorkbenchPart part, IVerticalRulerInfo info) {
-		Assert.isTrue(part instanceof ITextEditor || part instanceof DisassemblyView);
+		Assert.isTrue(part instanceof ITextEditor);
 		fTargetPart = part;
 		fRulerInfo = info;
 	}
@@ -64,7 +64,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 		IAnnotationModel annotationModel = getAnnotationModel();
 		IDocument document = getDocument();
 		if (annotationModel != null) {
-			Iterator iterator = annotationModel.getAnnotationIterator();
+			Iterator<?> iterator = annotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
 				Object object = iterator.next();
 				if (object instanceof SimpleMarkerAnnotation) {
@@ -116,12 +116,6 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 			if ( provider != null )
 				return provider.getDocument( textEditor.getEditorInput() );
 		}
-		else if ( targetPart instanceof DisassemblyView ) {
-			DisassemblyView dv = (DisassemblyView)targetPart;
-			IDocumentProvider provider = dv.getDocumentProvider();
-			if ( provider != null )
-				return provider.getDocument( dv.getInput() );
-		}
 		return null;
 	}
 
@@ -132,12 +126,6 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 			IDocumentProvider provider = textEditor.getDocumentProvider();
 			if ( provider != null )
 				return provider.getAnnotationModel( textEditor.getEditorInput() );
-		}
-		else if ( targetPart instanceof DisassemblyView ) {
-			DisassemblyView dv = (DisassemblyView)targetPart;
-			IDocumentProvider provider = dv.getDocumentProvider();
-			if ( provider != null )
-				return provider.getAnnotationModel( dv.getInput() );
 		}
 		return null;
 	}

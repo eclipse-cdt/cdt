@@ -51,7 +51,6 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IDisassemblyContextProvider fgDisassemblyContextProvider = new CDisassemblyContextProvider();
     private static IDocumentElementContentProvider fgDisassemblyContentProvider = new DisassemblyElementContentProvider();
     private static IDocumentElementLabelProvider fgDisassemblyLabelProvider = new DisassemblyElementLabelProvider();
-    private static IDocumentElementAnnotationProvider fgDisassemblyAnnotationProvider = new DisassemblyElementAnnotationProvider();
     private static IElementToggleBreakpointAdapter fgDisassemblyToggleBreakpointAdapter = new DisassemblyToggleBreakpointAdapter();
     private static ISourceDisplay fgSourceDisplayAdapter = new SourceDisplayAdapter();
     
@@ -119,11 +118,6 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
         if ( adapterType.equals( IDocumentElementLabelProvider.class ) ) {
             if ( adaptableObject instanceof IDisassemblyLine ) {
                 return fgDisassemblyLabelProvider;
-            }
-        }
-        if ( adapterType.equals( IDocumentElementAnnotationProvider.class ) ) {
-            if ( adaptableObject instanceof IDisassemblyLine ) {
-                return fgDisassemblyAnnotationProvider;
             }
         }
         if ( adapterType.equals( IElementToggleBreakpointAdapter.class ) ) {

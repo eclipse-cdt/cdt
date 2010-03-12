@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.internal.ui.disassembly.rendering.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;

@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -33,8 +32,6 @@ import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.disassembly.editor.DisassemblyEditor;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.VirtualDocument;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.disassembly.IElementToggleBreakpointAdapter;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -47,7 +44,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -147,47 +143,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				}
 			}
 		}
-		else if ( part instanceof DisassemblyView ) {
-			IEditorInput input = ((DisassemblyView)part).getInput();
-			if ( !(input instanceof DisassemblyEditorInput) ) {
-				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_1" ); //$NON-NLS-1$
-			}
-			else {
-				BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-				int lineNumber = bv.getValidAddressBreakpointLocation( null, ((ITextSelection)selection).getStartLine() );
-				if ( lineNumber == -1 ) {
-					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
-				}
-				else {
-					IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-					if ( address == null ) {
-						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
-					}
-					else {
-						ICLineBreakpoint breakpoint = ((DisassemblyEditorInput)input).breakpointExists( address );
-						if ( breakpoint != null ) {
-							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
-						}
-						else {
-							String module = ((DisassemblyEditorInput)input).getModuleFile();
-							IResource resource = getAddressBreakpointResource( ((DisassemblyEditorInput)input).getSourceFile() );
-							String sourceHandle = getSourceHandle( input );
-							CDIDebugModel.createAddressBreakpoint( module,
-																   sourceHandle, 
-																   resource,
-																   ICBreakpointType.REGULAR,
-																   ((DisassemblyEditorInput)input).getSourceLine( lineNumber ),
-																   address, 
-																   true, 
-																   0, 
-																   "", //$NON-NLS-1$
-																   true );
-						}
-						return;
-					}
-				}
-			}
-		}
 		else {
 			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
@@ -198,14 +153,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) {
-		if ( part instanceof DisassemblyView ) {
-			IEditorInput input = ((DisassemblyView)part).getInput();
-			if ( !(input instanceof DisassemblyEditorInput) || 
-				 ((DisassemblyEditorInput)input).equals( DisassemblyEditorInput.EMPTY_EDITOR_INPUT ) ) {
-				return false;
-			}			
-		}
-		else if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
+		if ( part instanceof DisassemblyEditor && selection instanceof ITextSelection ) {
             DisassemblyEditor editor = (DisassemblyEditor)part;
             int lineNumber = ((ITextSelection)selection).getStartLine();
             if ( lineNumber != -1 ) {
@@ -514,18 +462,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 													"", //$NON-NLS-1$
 													true );
 		}
-	}
-
-	private IResource getAddressBreakpointResource( String fileName ) {
-		if ( fileName != null ) {
-			IPath path = new Path( fileName );
-			if ( path.isValidPath( fileName ) ) {
-				IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
-				if ( files.length > 0 )
-					return files[0];
-			}
-		}
-		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
     private IElementToggleBreakpointAdapter getToggleBreakpointAdapter( Object element ) {

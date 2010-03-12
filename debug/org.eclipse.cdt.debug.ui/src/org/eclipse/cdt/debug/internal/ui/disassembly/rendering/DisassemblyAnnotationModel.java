@@ -8,7 +8,7 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.internal.ui.views.disassembly;
+package org.eclipse.cdt.debug.internal.ui.disassembly.rendering;
 
 import java.util.ArrayList;
 import java.util.Iterator;

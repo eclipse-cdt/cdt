@@ -11,18 +11,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -98,35 +94,6 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				}
 			}
 		}
-		else if ( part instanceof DisassemblyView ) {
-			IEditorInput input = ((DisassemblyView)part).getInput();
-			if ( !(input instanceof DisassemblyEditorInput) ) {
-				errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
-			}
-			else {
-				ITextSelection textSelection = (ITextSelection)selection;
-				int lineNumber = textSelection.getStartLine() + 1;
-				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				if ( address != null && target instanceof IAdaptable ) {
-					final IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
-					if ( runToAddress != null && runToAddress.canRunToAddress( address ) ) {
-						Runnable r = new Runnable() {
-							
-							public void run() {
-								try {
-									runToAddress.runToAddress( address, DebugUITools.getPreferenceStore().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
-								}
-								catch( DebugException e ) {
-									failed( e );
-								}								
-							}
-						};
-						runInBackground( r );
-					}
-				}
-				return;
-			}
-		}
 		else {
 			errorMessage = ActionMessages.getString( "RunToLineAdapter.Operation_is_not_supported_1" ); //$NON-NLS-1$
 		}
@@ -173,19 +140,6 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
 				return runToLine.canRunToLine( path.toPortableString(), lineNumber );
-			}
-			if ( part instanceof DisassemblyView ) {
-				IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
-				if ( runToAddress == null )
-					return false;
-				IEditorInput input = ((DisassemblyView)part).getInput();
-				if ( !(input instanceof DisassemblyEditorInput) ) {
-					return false;
-				}
-				ITextSelection textSelection = (ITextSelection)selection;
-				int lineNumber = textSelection.getStartLine() + 1;
-				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				return runToAddress.canRunToAddress( address );
 			}
 		}
 		return false;

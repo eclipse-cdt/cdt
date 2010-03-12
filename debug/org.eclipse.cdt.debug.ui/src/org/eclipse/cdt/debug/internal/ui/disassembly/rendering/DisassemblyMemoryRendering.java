@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.DisassemblyPane;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.VirtualDocument;
 import org.eclipse.cdt.debug.internal.ui.disassembly.viewer.VirtualSourceViewer;
-import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyAnnotationModel;
 import org.eclipse.cdt.debug.ui.disassembly.IDocumentPresentation;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IMemoryBlock;

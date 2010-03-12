@@ -7,9 +7,14 @@
  *
  * Contributors:
  *     Ericsson - initial API and implementation this class is based on
- *     QNX Software Systems (Andy Jin) - Initial implementation for Jtag debugging
+ *     QNX Software Systems - Initial implementation for Jtag debugging
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
+
+/**
+ * @author Andy Jin
+ *
+ */
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +26,7 @@ import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContribution;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContributionFactory;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -323,12 +329,17 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 	            	public void execute(RequestMonitor rm) {
+						Exception exception = null;
 		            	try {
 							fGdbJtagDevice = getGDBJtagDevice(fLaunch.getLaunchConfiguration());
 						} catch (NullPointerException e) {
-		                    rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get Jtag device", e)); //$NON-NLS-1$
+							exception = e;
 						} catch (CoreException e) {
-		                    rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get Jtag device", e)); //$NON-NLS-1$
+							exception = e;
+						}
+						if (fGdbJtagDevice == null) {
+							// Abort the launch
+							rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get Jtag device", exception)); //$NON-NLS-1$
 						}
 						rm.done();
 		            }
@@ -342,8 +353,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
-							
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
@@ -354,12 +363,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				                    fCommandControl.queueCommand(
 				                    		new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 					                    	new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot connect to remote target", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -371,7 +381,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, true)) {
@@ -380,12 +389,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 								    fCommandControl.queueCommand(
 								    		new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 								        	new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot reset the remote target", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -397,7 +407,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							int defaultDelay = fGdbJtagDevice.getDefaultDelay();
 							try {
@@ -410,7 +419,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot delay the remote target", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -422,7 +430,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
@@ -431,12 +438,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 									fCommandControl.queueCommand(
 									    new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 									    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot halt the remote target", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -448,22 +456,23 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, ""); //$NON-NLS-1$
 								userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
 								String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
+								
+								CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+								crm.setDoneCount(commands.length);
 								for (int i = 0; i < commands.length; ++i) {
 									fCommandControl.queueCommand(
 									    new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
-									    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+									    new DataRequestMonitor<MIInfo>(getExecutor(), crm));
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot run user defined init commands", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -475,7 +484,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE)) {
@@ -489,13 +497,17 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 										fCommandControl.queueCommand(
 										    new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 										    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+									} else {
+										rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Image name cannot be empty", null)); //$NON-NLS-1$
+										rm.done();
 									}
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot load image", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -507,7 +519,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS)) {
@@ -521,13 +532,17 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 										fCommandControl.queueCommand(
 										    new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 										    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+									} else {
+										rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Symbol name cannot be empty", null)); //$NON-NLS-1$
+										rm.done();
 									}
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot load symbol", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /* 
@@ -553,7 +568,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER)) {
@@ -563,12 +577,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 									fCommandControl.queueCommand(
 									    new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 									    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot set program counter", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -580,7 +595,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT)) {
@@ -590,12 +604,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 									fCommandControl.queueCommand(
 									    new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 									    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot run the stop script", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -607,7 +622,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								if (config.getAttribute(IGDBJtagConstants.ATTR_SET_RESUME, IGDBJtagConstants.DEFAULT_SET_RESUME)) {
@@ -616,12 +630,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 									fCommandControl.queueCommand(
 									    new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 									    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+								} else {
+									rm.done();
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot resume the remote target", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 	            /*
@@ -633,22 +648,23 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					 */
 					@Override
 					public void execute(RequestMonitor rm) {
-						if (fGdbJtagDevice != null) {
 							ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 							try {
 								String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
 								userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
 								String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
+								
+								CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+								crm.setDoneCount(commands.length);
 								for (int i = 0; i < commands.length; ++i) {
 									fCommandControl.queueCommand(
 									    new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
-									    new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+									    new DataRequestMonitor<MIInfo>(getExecutor(), crm));
 								}
 							} catch (CoreException e) {
 			        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot run user defined run commands", e)); //$NON-NLS-1$
 			        			rm.done();
 							}
-						}
 					}
 	            },
 

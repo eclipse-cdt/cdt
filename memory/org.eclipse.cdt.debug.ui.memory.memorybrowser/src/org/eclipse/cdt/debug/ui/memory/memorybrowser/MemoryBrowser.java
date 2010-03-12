@@ -601,7 +601,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			{
 				fGotoAddressBarControl.setVisible(true);
 				String addressSpaces[][] = getAddressSpaces(retrieval);
-				if(addressSpaces[0].length > 0)
+				if(addressSpaces.length > 0)
 				{
 					fGotoAddressSpaceControl.setVisible(true);
 					fGotoAddressSpaceControl.setItems(addressSpaces[0]);

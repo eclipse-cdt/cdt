@@ -528,21 +528,23 @@ public class CPPSemantics {
 		return false;
 	}
 
-	public static IBinding selectConstructor(ICPPClassType classTarget, ICPPASTInitializerList initializerList) {
-		LookupData data= new LookupData();
-		IASTName name = new CPPASTName(classTarget.getNameCharArray());
-		name.setParent(initializerList);
-	    name.setPropertyInParent(CPPSemantics.STRING_LOOKUP_PROPERTY);
-    	data.setFunctionArguments(initializerList);
-		try {
-			return CPPSemantics.selectConstructor(classTarget, data);
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
-	}
-
 	private static IBinding selectConstructor(ICPPClassType cls, LookupData data) throws DOMException {
-		// Force resolution of constructor bindings
+		final IType[] types = data.getFunctionArgumentTypes();
+		if (types != null && types.length == 1 && types[0] instanceof InitializerListType) {
+			Cost cost= Conversions.listInitializationSequence((InitializerListType) types[0], cls, UDCMode.allowUDC, true);
+			if (cost.converts()) {
+				if (cost.isAmbiguousUDC()) {
+					return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, cls.getConstructors());
+				}
+				IBinding result= cost.getUserDefinedConversion();
+				if (result == null) {
+					return cls;
+				}
+				return result;
+			}
+			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, cls.getConstructors());
+		}
+		
 		final ICPPConstructor[] constructors= cls.getConstructors();
 		if (constructors.length > 0) {
 			data.foundItems= constructors;

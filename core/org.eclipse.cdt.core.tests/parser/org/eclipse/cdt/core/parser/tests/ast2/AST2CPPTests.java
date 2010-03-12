@@ -8110,7 +8110,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		fs({1,2,3});
 	//		fs({1.0,2.0,3.0});
 	//	}
-	public void _testListInitialization_302412a() throws Exception {
+	public void testListInitialization_302412a() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}

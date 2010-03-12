@@ -77,8 +77,9 @@ class FunctionCost {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			if (cost.isDeferredUDC()) {
-				Cost udcCost= Conversions.checkUserDefinedConversionSequence(fSourceIsLValue.get(i), cost.source, cost.target, false);
-				fCosts[i]= udcCost;
+				Cost udcCost = Conversions.checkUserDefinedConversionSequence(fSourceIsLValue.get(i),
+						cost.source, cost.target, false, false);
+				fCosts[i] = udcCost;
 				if (!udcCost.converts()) {
 					return false;
 				}

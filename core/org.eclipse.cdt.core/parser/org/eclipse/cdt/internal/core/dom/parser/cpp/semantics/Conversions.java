@@ -272,7 +272,7 @@ public class Conversions {
 
 	private static Cost nonReferenceConversion(boolean sourceIsLValue, IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
 		if (source instanceof InitializerListType) {
-			return listInitializationSequence(((InitializerListType) source), target, udc);
+			return listInitializationSequence(((InitializerListType) source), target, udc, false);
 		}
 		// [13.3.3.1-6] Subsume cv-qualifications
 		IType uqSource= SemanticUtil.getNestedType(source, TDEF | ALLCVQ);
@@ -280,13 +280,13 @@ public class Conversions {
 		if (cost.converts() || udc == UDCMode.noUDC) 
 			return cost;
 		
-		return checkUserDefinedConversionSequence(sourceIsLValue, source, target, udc == UDCMode.deferUDC);
+		return checkUserDefinedConversionSequence(sourceIsLValue, source, target, udc == UDCMode.deferUDC, false);
 	}
 
 	/**
 	 * 13.3.3.1.5 List-initialization sequence [over.ics.list]
 	 */
-	private static Cost listInitializationSequence(InitializerListType arg, IType target, UDCMode udc) throws DOMException {
+	static Cost listInitializationSequence(InitializerListType arg, IType target, UDCMode udc, boolean isDirect) throws DOMException {
 		IType listType= getInitListType(target);
 		if (listType != null) {
 			IType[] exprTypes= arg.getExpressionTypes();
@@ -319,7 +319,7 @@ public class Conversions {
 				cost.setUserDefinedConversion(null);
 				return cost;
 			}
-			return checkUserDefinedConversionSequence(false, arg, target, udc == UDCMode.deferUDC);
+			return checkUserDefinedConversionSequence(false, arg, target, udc == UDCMode.deferUDC, isDirect);
 		}
 		
 		IASTInitializerClause[] args = arg.getInitializerList().getClauses();
@@ -508,7 +508,7 @@ public class Conversions {
 	/**
 	 * [13.3.3.1.2] User-defined conversions
 	 */
-	static final Cost checkUserDefinedConversionSequence(boolean sourceIsLValue, IType source, IType target, boolean deferUDC) throws DOMException {
+	static final Cost checkUserDefinedConversionSequence(boolean sourceIsLValue, IType source, IType target, boolean deferUDC, boolean isDirect) throws DOMException {
 		IType s= getNestedType(source, TDEF | CVTYPE | REF);
 		IType t= getNestedType(target, TDEF | CVTYPE | REF);
 
@@ -525,7 +525,7 @@ public class Conversions {
 		if (t instanceof ICPPClassType) {
 			if (s instanceof InitializerListType) {
 				// 13.3.1.7 Initialization by list-initialization
-				return listInitializationOfClass((InitializerListType) s, (ICPPClassType) t, false);
+				return listInitializationOfClass((InitializerListType) s, (ICPPClassType) t, isDirect);
 			}
 			// 13.3.1.4 Copy initialization of class by user-defined conversion
 			return copyInitalizationOfClass(sourceIsLValue, source, s, target, (ICPPClassType) t);
@@ -552,7 +552,7 @@ public class Conversions {
 					final IType target = parTypes[0];
 					if (getInitListType(target) != null) {
 						hasInitListConstructor= true;
-						Cost cost= listInitializationSequence(arg, target, UDCMode.noUDC);
+						Cost cost= listInitializationSequence(arg, target, UDCMode.noUDC, isDirect);
 						if (cost.converts()) {
 							int cmp= cost.compareTo(bestCost);
 							if (bestCost == null || cmp < 0) {

@@ -190,6 +190,24 @@ public class TemplateArgumentDeduction {
 					boolean isReferenceTypeParameter= false;
 					IType arg = fnArgs[j];
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
+					
+					// C++0x: 14.9.2.1-1
+					if (arg instanceof InitializerListType) {
+						assert !checkExactMatch;
+						par= SemanticUtil.getNestedType(par, TDEF | REF | CVTYPE);
+
+						// Check if this is a deduced context
+						IType inner= Conversions.getInitListType(par);
+						if (inner != null) {
+							IType[] types = ((InitializerListType) arg).getExpressionTypes();
+							for (IType iType : types) {
+								if (!deduct.fromType(inner, iType))
+									return false;
+							}
+						}
+						continue;
+					}
+
 					// 14.8.2.1-2
 					if (par instanceof ICPPReferenceType) {
 						// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an

@@ -4876,4 +4876,25 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	template<class T> void f(std::initializer_list<T>);
+	//	template<class T> void g(T);
+	//	void test() {
+	//		f({1,2,3}); // T deduced to int
+	//		f({1,"asdf"}); // error: T deduced to both int and const char*
+	//		g({1,2,3}); // error: no argument deduced for T
+	//	}
+	public void testTypeDeductForInitLists_302412() throws Exception {
+		final String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+	
+		ICPPTemplateInstance inst;
+		inst= bh.assertNonProblem("f({1,2,3})", 1);
+		assertEquals("<int>", ASTTypeUtil.getArgumentListString(inst.getTemplateArguments(), true));
+		bh.assertProblem("f({1,\"asdf\"})", 1);
+		bh.assertProblem("g({1,2,3})", 1);
+	}
 }

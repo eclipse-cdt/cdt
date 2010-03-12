@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -202,7 +201,7 @@ public class Conversions {
 			if (!isImpliedObjectType) {
 				if (isReferenceRelated(T1, T2) < 0 || compareQualifications(cv1T1, cv2T2) >= 0) {
 					Cost cost= nonReferenceConversion(exprIsLValue, cv2T2, T1, udc, false);
-					if (!isImplicitWithoutRefQualifier) {
+					if (!isImplicitWithoutRefQualifier && cost.converts()) {
 						cost.setReferenceBinding(isLValueRef ? ReferenceBinding.LVALUE_REF : ReferenceBinding.RVALUE_REF_BINDS_RVALUE);
 					}
 					return cost;
@@ -322,11 +321,27 @@ public class Conversions {
 			}
 			return checkUserDefinedConversionSequence(false, arg, target, udc == UDCMode.deferUDC);
 		}
+		
+		IASTInitializerClause[] args = arg.getInitializerList().getClauses();
+		if (args.length == 1) {
+			final IASTInitializerClause firstArg = args[0];
+			if (firstArg instanceof IASTExpression) {
+				IASTExpression expr= (IASTExpression) firstArg;
+				Cost cost= checkImplicitConversionSequence(target, expr.getExpressionType(), expr.isLValue(), udc, false);
+				if (cost.isNarrowingConversion()) {
+					return Cost.NO_CONVERSION;
+				}
+				return cost;
+			}
+		} else if (args.length == 0) {
+			return new Cost(arg, target, Rank.IDENTITY);
+		}
+		
 		return Cost.NO_CONVERSION;
 	}
 
-	private static IType getInitListType(IType target) throws DOMException {
-		if (target instanceof ICPPClassSpecialization && target instanceof ICPPTemplateInstance) {
+	static IType getInitListType(IType target) throws DOMException {
+		if (target instanceof ICPPClassType && target instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) target;
 			if (CharArrayUtils.equals(INITIALIZER_LIST_NAME, inst.getNameCharArray())) {
 				IBinding owner = inst.getOwner();

@@ -8118,12 +8118,14 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}
-	//	void f(std::initializer_list<int>);
-	//	//void ff(std::initializer_list<str>);
+	//	struct str {
+	//		str(const char*);
+	//	};
 	//	struct A {
 	//		A(std::initializer_list<double>); // #1
-	//		A(std::initializer_list<const char*>); // #3
+	//		A(std::initializer_list<str>); // #3
 	//	};
+	//	void f(std::initializer_list<int>);
 	//	void g(A);
 	//	void test() {
 	//		f( {1,2,3} ); // OK: f(initializer_list<int>) identity conversion
@@ -8213,5 +8215,27 @@ public class AST2CPPTests extends AST2BaseTest {
 		// not detected by CDT
 		// bh.assertProblem("f( {1.0} )", 1);
 	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	void g(const double &);
+	//	void h(int);
+	//	void test() {
+	//		g({1}); // same conversion as int to double
+	//
+	//		h( {'a'} ); // OK: same conversion as char to int
+	//		h( {1.0} ); // error: narrowing
+	//		h( { } ); // OK: identity conversion
+	//	} 
+	public void testListInitialization_302412e() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		// not detected by CDT
+		// bh.assertProblem("g({1})", 1);
+		bh.assertNonProblem("h( {'a'} )", 1);
+		bh.assertProblem("h( {1.0} )", 1);
+		bh.assertNonProblem("h( { } )", 1);
+	}	
 }
 

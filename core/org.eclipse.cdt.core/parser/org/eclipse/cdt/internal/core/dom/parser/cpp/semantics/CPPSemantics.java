@@ -2296,7 +2296,7 @@ public class CPPSemantics {
 				cost = new Cost(thisType, implicitType, Rank.IDENTITY);
 			} else {
 				cost = Conversions.checkImplicitConversionSequence(implicitType, thisType, sourceIsLValue, UDCMode.noUDC, true);
-			    if (cost.getRank() == Rank.NO_MATCH) {
+			    if (!cost.converts()) {
 				    if (CPPTemplates.isDependentType(implicitType) || CPPTemplates.isDependentType(thisType)) {
 				    	IType s= getNestedType(thisType, TDEF|REF|CVTYPE);
 				    	IType t= getNestedType(implicitType, TDEF|REF|CVTYPE);
@@ -2307,7 +2307,7 @@ public class CPPSemantics {
 				    }
 			    }
 			}
-			if (cost.getRank() == Rank.NO_MATCH)
+			if (!cost.converts())
 				return null;
 			
 			result.setCost(k++, cost, sourceIsLValue);
@@ -2338,8 +2338,11 @@ public class CPPSemantics {
 			    if (CPPTemplates.isDependentType(paramType))
 			    	return CONTAINS_DEPENDENT_TYPES;
 				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue, udc, false);
+				if (data.fNoNarrowing && cost.isNarrowingConversion()) {
+					cost= Cost.NO_CONVERSION;
+				}
 			}
-			if (cost.getRank() == Rank.NO_MATCH)
+			if (!cost.converts())
 				return null;
 			
 			result.setCost(k++, cost, sourceIsLValue);

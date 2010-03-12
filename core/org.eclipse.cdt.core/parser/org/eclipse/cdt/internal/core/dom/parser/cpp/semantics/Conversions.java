@@ -21,7 +21,9 @@ import java.util.BitSet;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -33,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -47,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -145,7 +149,7 @@ public class Conversions {
 				ok= !exprIsLValue;
 			}
 			if (!ok) {
-				return new Cost(exprType, cv1T1, Rank.NO_MATCH);
+				return Cost.NO_CONVERSION;
 			}
 
 			// If T1 and T2 are class types and ...
@@ -204,7 +208,7 @@ public class Conversions {
 					return cost;
 				}
 			}
-			return new Cost(exprType, cv1T1, Rank.NO_MATCH);
+			return Cost.NO_CONVERSION;
 		} 
 		
 		// Non-reference binding
@@ -274,14 +278,10 @@ public class Conversions {
 		// [13.3.3.1-6] Subsume cv-qualifications
 		IType uqSource= SemanticUtil.getNestedType(source, TDEF | ALLCVQ);
 		Cost cost= checkStandardConversionSequence(uqSource, sourceIsLValue, target, isImpliedObject);
-		if (cost.getRank() != Rank.NO_MATCH || udc == UDCMode.noUDC) 
+		if (cost.converts() || udc == UDCMode.noUDC) 
 			return cost;
 		
-		Cost temp = checkUserDefinedConversionSequence(sourceIsLValue, source, target, udc == UDCMode.deferUDC);
-		if (temp != null) {
-			cost = temp;
-		}
-		return cost;
+		return checkUserDefinedConversionSequence(sourceIsLValue, source, target, udc == UDCMode.deferUDC);
 	}
 
 	/**
@@ -296,7 +296,7 @@ public class Conversions {
 			for (int i = 0; i < exprTypes.length; i++) {
 				IType exprType = exprTypes[i];
 				Cost cost= checkImplicitConversionSequence(listType, exprType, isLValue.get(i), UDCMode.allowUDC, false);
-				if (cost.getRank() == Rank.NO_MATCH)
+				if (!cost.converts())
 					return cost;
 				if (cost.isNarrowingConversion()) {
 					cost.setRank(Rank.NO_MATCH);
@@ -312,17 +312,17 @@ public class Conversions {
 		IType noCVTarget= getNestedType(target, CVTYPE | TDEF);
 		if (noCVTarget instanceof ICPPClassType) {
 			if (udc == UDCMode.noUDC)
-				return new Cost(arg, target, Rank.NO_MATCH);
+				return Cost.NO_CONVERSION;
 			
 			ICPPClassType classTarget= (ICPPClassType) noCVTarget;
 			if (ClassTypeHelper.isAggregateClass(classTarget)) {
-				return new Cost(arg, target, Rank.USER_DEFINED_CONVERSION);
-			}
-			Cost cost= checkUserDefinedConversionSequence(false, arg, target, udc == UDCMode.deferUDC);
-			if (cost != null)
+				Cost cost= new Cost(arg, target, Rank.IDENTITY);
+				cost.setUserDefinedConversion(null);
 				return cost;
+			}
+			return checkUserDefinedConversionSequence(false, arg, target, udc == UDCMode.deferUDC);
 		}
-		return new Cost(arg, target, Rank.NO_MATCH);
+		return Cost.NO_CONVERSION;
 	}
 
 	private static IType getInitListType(IType target) throws DOMException {
@@ -492,18 +492,13 @@ public class Conversions {
 
 	/**
 	 * [13.3.3.1.2] User-defined conversions
-	 * @param source
-	 * @param target
-	 * @return
-	 * @throws DOMException
 	 */
 	static final Cost checkUserDefinedConversionSequence(boolean sourceIsLValue, IType source, IType target, boolean deferUDC) throws DOMException {
-		// mstodo don't return null
 		IType s= getNestedType(source, TDEF | CVTYPE | REF);
 		IType t= getNestedType(target, TDEF | CVTYPE | REF);
 
 		if (!(s instanceof ICPPClassType || t instanceof ICPPClassType)) {
-			return null;
+			return Cost.NO_CONVERSION;
 		}
 		
 		if (deferUDC) {
@@ -525,26 +520,25 @@ public class Conversions {
 			// 13.3.1.5 Initialization by conversion function
 			return initializationByConversion(source, (ICPPClassType) s, target);
 		}
-		return null;
+		return Cost.NO_CONVERSION;
 	}
 
-	private static Cost listInitializationOfClass(InitializerListType s, ICPPClassType t, boolean isDirect) throws DOMException {
+	private static Cost listInitializationOfClass(InitializerListType arg, ICPPClassType t, boolean isDirect) throws DOMException {
 		// If T has an initializer-list constructor
 		ICPPConstructor usedCtor= null;
 		Cost bestCost= null;
-		ICPPConstructor[] ctors= t.getConstructors();
+		boolean hasInitListConstructor= false;
+		final ICPPConstructor[] constructors = t.getConstructors();
+		ICPPConstructor[] ctors= constructors;
 		for (ICPPConstructor ctor : ctors) {
 			if (ctor.getRequiredArgumentCount() <= 1) {
 				IType[] parTypes= ctor.getType().getParameterTypes();
 				if (parTypes.length > 0) {
 					final IType target = parTypes[0];
 					if (getInitListType(target) != null) {
-						Cost cost= listInitializationSequence(s, target, UDCMode.noUDC);
-						if (cost.getRank() == Rank.NO_MATCH) {
-							if (bestCost == null) {
-								bestCost= cost;
-							}
-						} else {
+						hasInitListConstructor= true;
+						Cost cost= listInitializationSequence(arg, target, UDCMode.noUDC);
+						if (cost.converts()) {
 							int cmp= cost.compareTo(bestCost);
 							if (bestCost == null || cmp < 0) {
 								usedCtor= ctor;
@@ -558,7 +552,10 @@ public class Conversions {
 				}
 			}
 		}
-		if (bestCost != null) {
+		if (hasInitListConstructor) {
+			if (bestCost == null)
+				return Cost.NO_CONVERSION;
+			
 			if (!bestCost.isAmbiguousUDC() && !isDirect) {
 				if (usedCtor != null && usedCtor.isExplicit()) {
 					bestCost.setRank(Rank.NO_MATCH);
@@ -566,10 +563,48 @@ public class Conversions {
 			}
 			return bestCost;
 		}
-		
-		// mstodo expanding the list for selecting the ctor.
-		return new Cost(s, t, Rank.NO_MATCH);
-		
+
+		// No initializer-list constructor
+		final ICPPASTInitializerList initializerList = arg.getInitializerList();
+
+		LookupData data= new LookupData();
+		IASTName name = new CPPASTName(t.getNameCharArray());
+		name.setParent(initializerList);
+	    name.setPropertyInParent(CPPSemantics.STRING_LOOKUP_PROPERTY);
+    	final IASTInitializerClause[] expandedArgs = initializerList.getClauses();
+		data.setFunctionArguments(expandedArgs);
+		data.fNoNarrowing= true;
+
+		// 13.3.3.1.4
+		ICPPConstructor[] filteredConstructors = constructors;
+		if (expandedArgs.length == 1) {
+			filteredConstructors= new ICPPConstructor[constructors.length];
+			int j=0;
+			for (ICPPConstructor ctor : constructors) {
+				if (ctor.getRequiredArgumentCount() < 2) {
+					IType[] ptypes= ctor.getType().getParameterTypes();
+					if (ptypes.length > 0) {
+						IType ptype= getNestedType(ptypes[0], TDEF | REF | CVTYPE);
+						if (!t.isSameType(ptype)) {
+							filteredConstructors[j++]= ctor;
+						}
+					}
+				}
+			}
+		}
+		final IBinding result= CPPSemantics.resolveFunction(data, filteredConstructors, true);
+		final Cost c;
+		if (result instanceof ICPPMethod) {
+			c= new Cost(arg, t, Rank.IDENTITY);
+			c.setUserDefinedConversion((ICPPMethod) result);
+		} else if (result instanceof IProblemBinding
+				&& ((IProblemBinding) result).getID() == IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP) {
+			c = new Cost(arg, t, Rank.USER_DEFINED_CONVERSION);
+			c.setAmbiguousUDC(true);
+		} else {
+			c= Cost.NO_CONVERSION;
+		}
+		return c;
 	}
 
 	/**
@@ -646,8 +681,8 @@ public class Conversions {
 				}
 			}
 		}
-		if (cost1 == null || cost1.getCost(0).getRank() == Rank.NO_MATCH)
-			return null;
+		if (cost1 == null || !cost1.getCost(0).converts())
+			return Cost.NO_CONVERSION;
 		
 		return cost2;
 	}
@@ -667,7 +702,7 @@ public class Conversions {
 				boolean isLValue = uqReturnType instanceof ICPPReferenceType
 						&& !((ICPPReferenceType) uqReturnType).isRValueReference();
 				Cost c2= checkImplicitConversionSequence(target, uqReturnType, isLValue, UDCMode.noUDC, false);
-				if (c2.getRank() != Rank.NO_MATCH) {
+				if (c2.converts()) {
 					ICPPFunctionType ftype = op.getType();
 					IType implicitType= CPPSemantics.getImplicitType(op, ftype.isConst(), ftype.isVolatile());
 					final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
@@ -686,8 +721,8 @@ public class Conversions {
 				}
 			}
 		}
-		if (cost1 == null || cost1.getCost(0).getRank() == Rank.NO_MATCH)
-			return null;
+		if (cost1 == null || !cost1.getCost(0).converts())
+			return Cost.NO_CONVERSION;
 		
 		return cost2;
 	}

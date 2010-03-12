@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 
 /**
  * Cost for the entire function call
@@ -66,6 +65,8 @@ class FunctionCost {
 
 	public boolean hasDeferredUDC() {
 		for (Cost cost : fCosts) {
+			if (!cost.converts())
+				return false;
 			if (cost.isDeferredUDC())
 				return true;
 		}
@@ -77,10 +78,10 @@ class FunctionCost {
 			Cost cost = fCosts[i];
 			if (cost.isDeferredUDC()) {
 				Cost udcCost= Conversions.checkUserDefinedConversionSequence(fSourceIsLValue.get(i), cost.source, cost.target, false);
-				if (udcCost == null || udcCost.getRank() == Rank.NO_MATCH) {
+				fCosts[i]= udcCost;
+				if (!udcCost.converts()) {
 					return false;
 				}
-				fCosts[i]= udcCost;
 			}
 		}
 		return true;
@@ -102,7 +103,7 @@ class FunctionCost {
 		int idxOther= other.getLength() - 1;
 		for (; idx >= 0 && idxOther >= 0; idx--, idxOther--) {
 			Cost cost= getCost(idx);
-			if (cost.getRank() == Rank.NO_MATCH) {
+			if (!cost.converts()) {
 				haveWorse = true;
 				haveBetter = false;
 				break;
@@ -155,7 +156,7 @@ class FunctionCost {
 		int idxOther= other.getLength() - 1;
 		for (; idx >= 0 && idxOther >= 0; idx--, idxOther--) {
 			Cost cost= getCost(idx);
-			if (cost.getRank() == Rank.NO_MATCH) 
+			if (!cost.converts()) 
 				return true;
 			
 			Cost otherCost= other.getCost(idxOther);

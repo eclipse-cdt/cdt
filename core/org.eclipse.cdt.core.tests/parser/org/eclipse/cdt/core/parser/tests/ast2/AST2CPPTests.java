@@ -8140,5 +8140,78 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("f( {1.0} )", 1);
 		bh.assertNonProblem("g({ \"foo\", \"bar\" })", 1);
 	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct str {
+	//		str(const char*) {
+	//		}
+	//	};
+	//	struct A {
+	//		A(std::initializer_list<int>);
+	//	};
+	//	struct B {
+	//		B(int, double);
+	//	};
+	//	struct C {
+	//		C(str);
+	//	};
+	//	struct D {
+	//		D(A, C);
+	//	};
+	//  struct X {
+	//      X();
+	//      X(X&);
+    //  };
+	//	void e(A);
+	//	void f(A);
+	//	void f(B);
+	//	void g(B);
+	//	void h(C);
+	//	void i(D);
+	//	void x(const X);
+	//
+	//	void test() {
+	//		e( { 'a', 'b' }); // OK: f(A(std::initializer_list<int>)) user-defined conversion
+	//		g( { 'a', 'b' }); // OK: g(B(int,double)) user-defined conversion
+	//		g( { 1.0, 1.0 }); // error: narrowing
+	//		f( { 'a', 'b' }); // error: ambiguous f(A) or f(B)
+	//		h( { "foo" }); // OK: h(C(std::string("foo")))
+	//		i( { { 1, 2 }, { "bar" } }); // OK: i(D(A(std::initializer_list<int>{1,2}),C(std::string("bar"))))
+	//      X x1;
+	//      x({x1});  // no matching constructor
+	//	}
+	public void testListInitialization_302412c() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("e( { 'a', 'b' })", 1);
+		bh.assertNonProblem("g( { 'a', 'b' })", 1);
+		bh.assertProblem("g( { 1.0, 1.0 })", 1);
+		bh.assertProblem("f( { 'a', 'b' })", 1);
+		bh.assertNonProblem("h( {", 1);
+		bh.assertNonProblem("i( { { 1, 2 }, {", 1);
+		bh.assertProblem("x({x1})", 1);
+	}
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct A {
+	//		int m1;
+	//		double m2;
+	//	};
+	//	void f(A);
+	//	void test() {
+	//		f( {'a', 'b'} ); // OK: f(A(int,double)) user-defined conversion
+	//		f( {1.0} );      // narrowing not detected by cdt.
+	//	}
+	public void testListInitialization_302412d() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertNonProblem("f( {'a', 'b'} )", 1);
+		// not detected by CDT
+		// bh.assertProblem("f( {1.0} )", 1);
+	}
 }
 

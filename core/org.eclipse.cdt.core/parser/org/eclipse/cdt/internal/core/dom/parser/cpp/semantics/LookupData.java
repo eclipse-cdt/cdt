@@ -101,6 +101,8 @@ public class LookupData {
     /** When computing the cost of a method call, treat the first argument as the implied method argument. */
 	public boolean firstArgIsImpliedMethodArg = false;
 	public boolean ignoreMembers = false;
+	/** In list-initialization **/
+	public boolean fNoNarrowing= false;
 	
 	private ICPPASTParameterDeclaration[] functionParameters;
 	private IASTInitializerClause[] functionArgs;

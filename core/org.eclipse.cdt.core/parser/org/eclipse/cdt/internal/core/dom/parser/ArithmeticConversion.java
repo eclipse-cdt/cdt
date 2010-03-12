@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 
 /**
  * Arithmetic conversions as required to compute the type of unary or binary expressions.
@@ -276,6 +277,45 @@ public abstract class ArithmeticConversion {
 		} else {
 			// This branch is unreachable due to limitations of Java long type. 
 			return IBasicType.IS_UNSIGNED | IBasicType.IS_LONG;
+		}
+	}
+
+	public static boolean fitsIntoType(ICPPBasicType basicTarget, long n) {
+		final Kind kind = basicTarget.getKind();
+		switch (kind) {
+		case eInt:
+			if (!basicTarget.isUnsigned()) {
+				if (basicTarget.isShort()) {
+					return Short.MIN_VALUE <= n && n <= Short.MAX_VALUE;
+				}
+				// Can't represent long longs with java longs.
+				if (basicTarget.isLong() || basicTarget.isLongLong()) {
+					return true;
+				}
+				return Integer.MIN_VALUE <= n && n <= Integer.MAX_VALUE;
+			}
+			if (n < 0)
+				return false;
+			
+			if (basicTarget.isShort()) {
+				return n < (Short.MAX_VALUE + 1L)*2;
+			}
+			// Can't represent long longs with java longs.
+			if (basicTarget.isLong() || basicTarget.isLongLong()) {
+				return true;
+			}
+			return n < (Integer.MAX_VALUE + 1L)*2;
+
+		case eFloat:
+			float f= n;
+			return  (long)f == n;
+		
+		case eDouble:
+			double d= n;
+			return  (long)d == n;
+			
+		default:
+			return false;
 		}
 	}
 }

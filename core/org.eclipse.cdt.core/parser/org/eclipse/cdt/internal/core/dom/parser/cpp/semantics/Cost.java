@@ -13,16 +13,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
+import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 
 /**
  * The cost of an implicit conversion sequence.
  * 
  * See [over.best.ics] 13.3.3.1.
  */
-final class Cost {
+class Cost {
 	enum Rank {
 		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, 
 		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
@@ -30,6 +37,41 @@ final class Cost {
 	enum ReferenceBinding {
 		RVALUE_REF_BINDS_RVALUE, LVALUE_REF, OTHER
 	}
+
+	public static final Cost NO_CONVERSION = new Cost(null, null, Rank.NO_MATCH) {
+		@Override
+		public void setRank(Rank rank) {
+			assert false;
+		}
+		@Override
+		public void setReferenceBinding(ReferenceBinding binding) {
+			assert false;
+		}
+		@Override
+		public void setAmbiguousUDC(boolean val) {
+			assert false;
+		}
+		@Override
+		public void setDeferredUDC(boolean val) {
+			assert false;
+		}
+		@Override
+		public void setInheritanceDistance(int inheritanceDistance) {
+			assert false;
+		}
+		@Override
+		public void setQualificationAdjustment(int adjustment) {
+			assert false;
+		}
+		@Override
+		public void setUserDefinedConversion(ICPPMethod conv) {
+			assert false;
+		}
+		@Override
+		public void setCouldNarrow() {
+			assert false;
+		}
+	};
 
 	IType source;
 	IType target;
@@ -52,10 +94,14 @@ final class Cost {
 		fReferenceBinding= ReferenceBinding.OTHER;
 	}
 
-	public Rank getRank() {
+	public final Rank getRank() {
 		return fRank;
 	}
 
+	public final boolean converts() {
+		return fRank != Rank.NO_MATCH;
+	}
+	
 	public void setRank(Rank rank) {
 		fRank= rank;
 	}
@@ -99,10 +145,9 @@ final class Cost {
 	 */
 	public void setUserDefinedConversion(ICPPMethod conv) {
 		fUserDefinedConversion= conv;
-		if (conv != null) {
-			fSecondStandardConversionRank= fRank;
-			fRank= Rank.USER_DEFINED_CONVERSION;
-		}
+		fSecondStandardConversionRank= fRank;
+		fRank= Rank.USER_DEFINED_CONVERSION;
+		fCouldNarrow= false;
 	}
 
 	/**
@@ -189,7 +234,26 @@ final class Cost {
 	}
 
 	public boolean isNarrowingConversion() {
-		return fCouldNarrow;
+		if (fCouldNarrow) {
+			if (source instanceof CPPBasicType && target instanceof ICPPBasicType) {
+				ICPPBasicType basicTarget= (ICPPBasicType) target;
+				final Kind targetKind = basicTarget.getKind();
+				if (targetKind != Kind.eInt && targetKind != Kind.eFloat && targetKind != Kind.eDouble) {
+					return true;
+				}
+				IASTExpression val = ((CPPBasicType) source).getCreatedFromExpression();
+				if (val instanceof IASTLiteralExpression) {
+					// mstodo extend to constant expressions
+					Long l= Value.create(val, Value.MAX_RECURSION_DEPTH).numericalValue();
+					if (l != null) {
+						long n= l.longValue();
+						return !ArithmeticConversion.fitsIntoType(basicTarget, n);
+					}
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	public void setCouldNarrow() {

@@ -91,6 +91,7 @@ import org.osgi.framework.BundleContext;
  * 
  * It relies on MIBreakpoints for the actual back-end interface.
  */
+@SuppressWarnings("restriction")	// we use an internal platform type (BreakpointProblems)
 public class MIBreakpointsManager extends AbstractDsfService implements IBreakpointManagerListener, IBreakpointListener
 {
     // Note: Find a way to import this (careful of circular dependencies)
@@ -827,7 +828,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         // Get the list of back-end breakpoints
         final Vector<IBreakpointDMContext> oldTargetBPs = new Vector<IBreakpointDMContext>(breakpointIDs.get(breakpoint));
-        if (oldTargetBPs == null) {
+        if (oldTargetBPs.isEmpty()) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, INVALID_BREAKPOINT, null));
             rm.done();
             return;
@@ -1388,15 +1389,15 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Support functions
     ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * supportsBreakpoint
-     * 
-     * Indicates if it is breakpoint we can deal with. For now, it boils down
-     * to a CDI breakpoint...
-     * 
-     * @param bp
-     * @return
-     */
+	/**
+	 * Indicates if the platform breakpoint object [bp] is one we can deal with.
+	 * For now, it boils down to whether it's a CDT Breakpoint (an
+	 * ICBreakpoint). DSF can supports other (custom) types of breakpoints, but
+	 * DSF-GDB is tied to ICBreakpoint.
+	 * 
+	 * @param bp the platform breakpoint
+	 * @return true if we support it; false otherwise
+	 */
     private boolean supportsBreakpoint(IBreakpoint bp) {
         if (bp instanceof ICBreakpoint && bp.getModelIdentifier().equals(fDebugModelId)) {
             IMarker marker = bp.getMarker();
@@ -1634,26 +1635,32 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     // Non-generic (MI-specific) functions
     ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Create a target breakpoint from an ICBreakpoint
-     * 
-     * @param breakpoint
-     * @param attributes
-     * @return
-     */
+	/**
+	 * Create a collection of DSF-GDB specific breakpoint properties given a
+	 * platform/CDT breakpoint object and its properties. Basically, this
+	 * determines the set of MI-specific properties to be used in installing the
+	 * given breakpoint.
+	 * 
+	 * @param breakpoint
+	 *            the platform breakpoint object; was created by CDT
+	 * @param attributes
+	 *            the breakpoint's properties. By allowing this to be passed in
+	 *            (rather than us calling
+	 *            IBreakpoint#getMarker()#getProperties()), we allow the caller
+	 *            to specify additional/modified properties.
+	 * @return a property bag containing the corresponding DSF-GDB properties
+	 */
     protected Map<String,Object> convertToTargetBreakpoint(ICBreakpoint breakpoint, Map<String,Object> attributes) {
 
         Map<String, Object> properties = new HashMap<String, Object>();
 
         if (breakpoint instanceof ICWatchpoint) {
-            // Convert the CDI watchpoint to an IBreakpoint
             properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.WATCHPOINT);
             properties.put(MIBreakpoints.EXPRESSION,      attributes.get(ICWatchpoint.EXPRESSION));
             properties.put(MIBreakpoints.READ,            attributes.get(ICWatchpoint.READ));
             properties.put(MIBreakpoints.WRITE,           attributes.get(ICWatchpoint.WRITE));
         }
         else if (breakpoint instanceof ICLineBreakpoint) {
-            // Convert the CDI breakpoint to an IBreakpoint
             properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
             properties.put(MIBreakpoints.FILE_NAME,       attributes.get(ATTR_DEBUGGER_PATH));
             properties.put(MIBreakpoints.LINE_NUMBER,     attributes.get(IMarker.LINE_NUMBER));

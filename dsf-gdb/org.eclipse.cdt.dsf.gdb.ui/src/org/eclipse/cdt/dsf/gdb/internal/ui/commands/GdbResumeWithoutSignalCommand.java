@@ -66,7 +66,10 @@ public class GdbResumeWithoutSignalCommand extends AbstractDebugCommand implemen
        			IRunControl runControl = fTracker.getService(IRunControl.class);
 
        			if (runControl != null) {
-       				runControl.resume(dmc, rm);
+       				// This call must be replaced by a new 'resumeWithoutSignal' or even better
+       				// resumeWithSignal(0) which does not exist in the runControl service yet.
+       				// But this method is currently disabled anyway, until proper support is available.
+       				rm.done();
        			} else {
        				rm.done();
        			}

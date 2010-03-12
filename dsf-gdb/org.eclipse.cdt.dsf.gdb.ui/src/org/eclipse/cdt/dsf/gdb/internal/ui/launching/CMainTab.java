@@ -100,14 +100,14 @@ public class CMainTab extends CAbstractMainTab {
 		comp.setLayout(topLayout);
 
 		createVerticalSpacer(comp, 1);
-		createProjectGroup(comp, 1);
 		createExeFileGroup(comp, 1);
+		createProjectGroup(comp, 1);
+		if (fIncludeBuildSettings){
+			createBuildOptionGroup(comp, 1);			
+		}
 		createVerticalSpacer(comp, 1);
 		if (fSpecifyCoreFile) {
 			createCoreFileGroup(comp, 1);
-		}
-		if (fIncludeBuildSettings){
-			createBuildOptionGroup(comp, 1);			
 		}
 		
 		GdbUIPlugin.setDialogShell(parent.getShell());

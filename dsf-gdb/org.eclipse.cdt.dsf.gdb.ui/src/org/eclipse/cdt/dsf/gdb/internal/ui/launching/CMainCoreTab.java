@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,6 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
  */
 public class CMainCoreTab extends CMainTab {
     public CMainCoreTab() {
-        super(CMainTab.SPECIFY_CORE_FILE);
+        super(CMainTab.SPECIFY_CORE_FILE | CMainTab.INCLUDE_BUILD_SETTINGS);
     }
 }

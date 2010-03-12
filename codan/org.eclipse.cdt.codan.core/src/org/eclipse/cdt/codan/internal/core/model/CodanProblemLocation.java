@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
-import org.eclipse.cdt.codan.core.model.ProblemLocation;
+import org.eclipse.cdt.codan.core.model.AbstractProblemLocation;
 import org.eclipse.core.resources.IFile;
 
 /**
  * Codan Problem Location, so far same as abstract class
  *
  */
-public class CodanProblemLocation extends ProblemLocation {
+public class CodanProblemLocation extends AbstractProblemLocation {
 
 	public CodanProblemLocation(IFile file, int startChar, int endChar) {
 		super(file, startChar, endChar);

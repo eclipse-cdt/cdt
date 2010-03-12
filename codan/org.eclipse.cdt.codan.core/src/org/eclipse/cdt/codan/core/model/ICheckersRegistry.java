@@ -18,6 +18,9 @@ import org.eclipse.core.resources.IResource;
  * This interface an API to add/remove checker and problems programmatically,
  * get problem profiles and change problem default settings
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * 
  */
 public interface ICheckersRegistry extends Iterable<IChecker> {
 	/**

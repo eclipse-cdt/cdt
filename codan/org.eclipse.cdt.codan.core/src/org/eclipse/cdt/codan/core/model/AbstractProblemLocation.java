@@ -16,22 +16,27 @@ import org.eclipse.core.resources.IFile;
  * Abstract Implementation of IProblemLocation
  * 
  * Clients may extend this class.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ * </p>
  */
-public abstract class ProblemLocation implements IProblemLocation {
+public abstract class AbstractProblemLocation implements IProblemLocation {
 	protected IFile file;
 	protected int line;
 	protected int posStart;
 	protected int posEnd;
 	protected Object extra;
 
-	protected ProblemLocation(IFile file, int line) {
+	protected AbstractProblemLocation(IFile file, int line) {
 		this.file = file;
 		this.line = line;
 		this.posStart = -1;
 		this.posEnd = -1;
 	}
 
-	protected ProblemLocation(IFile file, int startChar, int endChar) {
+	protected AbstractProblemLocation(IFile file, int startChar, int endChar) {
 		this.file = file;
 		this.line = -1;
 		this.posStart = startChar;

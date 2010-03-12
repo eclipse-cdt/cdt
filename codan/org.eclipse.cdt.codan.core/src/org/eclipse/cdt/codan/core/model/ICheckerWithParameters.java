@@ -15,6 +15,8 @@ package org.eclipse.cdt.codan.core.model;
  * interface method would be called on initialization so checker has
  * a chance to set default values for its parameters
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICheckerWithParameters {
 	/**

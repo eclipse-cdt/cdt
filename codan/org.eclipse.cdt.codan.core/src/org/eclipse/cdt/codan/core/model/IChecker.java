@@ -16,6 +16,15 @@ import org.eclipse.core.resources.IResource;
  * Interface that checker must implement. CDT Checker must be able to process a resource.
  * 
  * Clients may implement and extend this interface.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ * </p>
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients. Extend AbstractChecker class instead.
  */
 public interface IChecker {
 	/**

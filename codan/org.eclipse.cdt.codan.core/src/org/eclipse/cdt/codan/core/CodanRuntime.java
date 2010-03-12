@@ -24,6 +24,12 @@ import org.eclipse.cdt.codan.internal.core.model.ProblemLocationFactory;
  * Runtime singleton class to get access to Codan framework parts
  * 
  * Clients may extend this class to override default framework parts.
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ * </p>
  */
 public class CodanRuntime {
 	private static CodanRuntime instance = new CodanRuntime();

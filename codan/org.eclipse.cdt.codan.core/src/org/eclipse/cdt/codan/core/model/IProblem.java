@@ -18,6 +18,11 @@ package org.eclipse.cdt.codan.core.model;
  * be created (i.e. one for error and one for warning).
  *   
  * Clients may implement and extend this interface.
+ * <p>
+* <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+* part of a work in progress. There is no guarantee that this API will
+* work or that it will remain the same.
+* </p>
  * 
  */
 public interface IProblem extends IProblemElement {

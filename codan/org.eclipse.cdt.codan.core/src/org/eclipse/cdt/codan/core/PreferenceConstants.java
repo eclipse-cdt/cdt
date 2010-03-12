@@ -12,6 +12,11 @@ package org.eclipse.cdt.codan.core;
 
 /**
  * Constant definitions for plug-in preferences
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same.
+ * </p>
  */
 public class PreferenceConstants {
 	public static final String P_RUN_ON_BUILD = "booleanPreference"; //$NON-NLS-1$

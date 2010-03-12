@@ -12,7 +12,11 @@ package org.eclipse.cdt.codan.core.model;
 
 /**
  * Problem category.
- * 
+ * <p>
+* <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+* part of a work in progress. There is no guarantee that this API will
+* work or that it will remain the same.
+* </p>
  * Clients may extend and implement this interface.
  */
 public interface IProblemCategory extends IProblemElement {

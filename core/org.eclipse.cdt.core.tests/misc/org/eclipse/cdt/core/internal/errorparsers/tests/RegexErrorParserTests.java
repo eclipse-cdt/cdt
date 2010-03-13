@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.errorparsers.ErrorParserNamedWrapper;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.internal.errorparsers.GASErrorParser;
@@ -309,19 +310,40 @@ public class RegexErrorParserTests extends TestCase {
 	}
 
 	/**
-	 * Make sure extensions contributed through extension point are sorted by name.
+	 * Make sure extensions contributed through extension point are sorted by name
+	 * unless deprecated or contributed by test plugin.
 	 *
 	 * @throws Exception...
 	 */
 	public void testExtensionsSorting() throws Exception {
 		{
 			String[] ids = ErrorParserManager.getErrorParserExtensionIds();
-			String lastName="";
-			// error parsers created from extensions are to be sorted by names
+			String lastName = "";
+			boolean lastIsDeprecated = false;
+			boolean lastIsTestPlugin = false;
+			// first regular error parsers
+			// then deprecated ones
+			// then contributed by test plugin
 			for (String id : ids) {
 				String name = ErrorParserManager.getErrorParserCopy(id).getName();
-				assertTrue(lastName.compareTo(name)<=0);
+				boolean isDeprecated = name.contains("(Deprecated)");
+				boolean isTestPlugin = id.startsWith(CTestPlugin.PLUGIN_ID);
+				String message = "Parser ["+lastName+"] preceeds ["+name+"]";
+				
+				// inside the same category sorted by names
+				if (lastIsDeprecated==isDeprecated && lastIsTestPlugin==isTestPlugin) {
+					assertTrue(message, lastName.compareTo(name)<=0);
+				}
+				// deprecated follow non-deprecated (unless parsers from test plugin show up)
+				if (lastIsTestPlugin==isTestPlugin) {
+					assertFalse(message, lastIsDeprecated==true && isDeprecated==false);
+				}
+				// error parsers from test plugin are the last
+				assertFalse(message, lastIsTestPlugin==true && isTestPlugin==false);
+				
 				lastName = name;
+				lastIsDeprecated = isDeprecated;
+				lastIsTestPlugin = isTestPlugin;
 			}
 		}
 	}

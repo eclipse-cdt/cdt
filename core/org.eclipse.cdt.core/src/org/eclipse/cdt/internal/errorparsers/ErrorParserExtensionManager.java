@@ -212,9 +212,30 @@ public class ErrorParserExtensionManager {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	synchronized public static void loadErrorParserExtensions() {
-		// sort by name - for the error parsers taken from platform extensions
 		Set<IErrorParserNamed> sortedErrorParsers = new TreeSet<IErrorParserNamed>(new Comparator<IErrorParserNamed>() {
+			// For the error parsers taken from platform extensions following sorting order applies:
+			// - first regular error parsers
+			// - then deprecated ones
+			// - then contributed by test plugin
+			// inside the same category sort by parser name
 			public int compare(IErrorParserNamed errorParser1, IErrorParserNamed errorParser2) {
+				final String TEST_PLUGIN_ID="org.eclipse.cdt.core.tests"; //$NON-NLS-1$
+				final String DEPRECATED=CCorePlugin.getResourceString("CCorePlugin.Deprecated"); //$NON-NLS-1$
+				
+				boolean isTestPlugin1 = errorParser1.getId().startsWith(TEST_PLUGIN_ID);
+				boolean isTestPlugin2 = errorParser2.getId().startsWith(TEST_PLUGIN_ID);
+				if (isTestPlugin1==true && isTestPlugin2==false)
+					return 1;
+				if (isTestPlugin1==false && isTestPlugin2==true)
+					return -1;
+				
+				boolean isDeprecated1 = errorParser1.getName().contains(DEPRECATED);
+				boolean isDeprecated2 = errorParser2.getName().contains(DEPRECATED);
+				if (isDeprecated1==true && isDeprecated2==false)
+					return 1;
+				if (isDeprecated1==false && isDeprecated2==true)
+					return -1;
+				
 				return errorParser1.getName().compareTo(errorParser2.getName());
 			}
 		});

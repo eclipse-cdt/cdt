@@ -306,13 +306,12 @@ public class RxThread extends Thread {
 				}
 
 				// GDB does not provide reason when stopping on a shared library
-				// event or because of a catchpoint. Hopefully this will be
-				// fixed in a future version. Meanwhile, we will use a hack to
-				// cope. On most platform we can detect by looking at the
-				// console stream for phrase.
-				//
-				// Although it is a _real_ bad idea to do this, we do not have
-				// any other alternatives.
+				// event or because of a catchpoint (in some versions).
+				// Hopefully this will be fixed in a future version. Meanwhile,
+				// we will use a hack to cope. On most platform we can detect by
+				// looking at the console stream for phrase. Although it is a
+				// _real_ bad idea to do this, we do not have any other
+				// alternatives.
 				if (list.isEmpty()) {
 					String[] logs = getStreamRecords();
 					for (int i = 0; i < logs.length; i++) {

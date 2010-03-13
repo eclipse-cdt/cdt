@@ -17,17 +17,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.dsf.concurrent.DataCache;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
@@ -42,15 +42,20 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.OtherBreakpointCategory;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointsViewInput;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The expression provider is used to populate the contents of the expressions 
@@ -88,6 +93,12 @@ public class BreakpointVMProvider extends AbstractVMProvider
         
     };
  
+    private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
+        public void debugContextChanged(final DebugContextEvent event) {
+            handleEventInExecThread(event);
+        }
+    };
+    
     private class ContainerBreakpointsCache extends DataCache<List<BreakpointOrganizerVMContext>> {
         
         private BreakpointOrganizerVMNode fOrganizerVMNode;
@@ -169,9 +180,21 @@ public class BreakpointVMProvider extends AbstractVMProvider
     public BreakpointVMProvider(AbstractVMAdapter adapter, IPresentationContext context) {
         super(adapter, context);
         
+        // Create the top level node which provides the anchor starting point.
+        // This node is referenced by the BreakpointVMInput element so it 
+        // should not change when the view layout is updated.
+        setRootNode(new RootDMVMNode(this));
+        // Configure the rest of the layout nodes.
         configureLayout();
+        
         context.addPropertyChangeListener(fPresentationContextListener);
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(fBreakpointsListener);
+        IWorkbenchWindow window = context.getWindow();
+        if (window != null) {
+            DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(
+                fDebugContextListener);
+        }
+        
     }
 
     @Override
@@ -188,15 +211,10 @@ public class BreakpointVMProvider extends AbstractVMProvider
      * sub classes to create an alternate configuration in this provider.
      */
     protected void configureLayout() {
-        /*
-         *  Create the top level node which provides the anchor starting point.
-         */
-        IRootVMNode rootNode = new RootDMVMNode(this); 
-
         IBreakpointOrganizer[] organizers = (IBreakpointOrganizer[])
             getPresentationContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS);
         
-        IVMNode parentNode = rootNode;
+        IVMNode parentNode = getRootVMNode();
         if (organizers != null) {
             for (IBreakpointOrganizer organizer : organizers) {
                 IVMNode organizerNode = new BreakpointOrganizerVMNode(this, organizer);
@@ -207,11 +225,6 @@ public class BreakpointVMProvider extends AbstractVMProvider
         
         IVMNode bpsNode = createBreakpointVMNode();
         addChildNodes(parentNode, new IVMNode[] {bpsNode});
-        
-        /*
-         *  Let the work know which is the top level node.
-         */
-        setRootNode(rootNode);
     }
     
 
@@ -219,6 +232,11 @@ public class BreakpointVMProvider extends AbstractVMProvider
     public void dispose() {
         getPresentationContext().removePropertyChangeListener(fPresentationContextListener);
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointsListener);
+        IWorkbenchWindow window = getPresentationContext().getWindow();
+        if (window != null) {
+            DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(
+                fDebugContextListener);
+        }        
         super.dispose();
     }
     
@@ -234,15 +252,18 @@ public class BreakpointVMProvider extends AbstractVMProvider
 
     @Override
     public void update(IViewerInputUpdate update) {
-        IStructuredSelection filterSelection = (IStructuredSelection) 
-            update.getPresentationContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION);
         IDMContext activeDMContext = null;
-        if (filterSelection != null) {
-            if (update.getElement() instanceof IDMVMContext) {
-                activeDMContext = ((IDMVMContext)update.getElement()).getDMContext();
-            }
+        if (update.getElement() instanceof IDMVMContext) {
+            activeDMContext = ((IDMVMContext)update.getElement()).getDMContext();
+            activeDMContext = DMContexts.getAncestorOfType(activeDMContext, IBreakpointsTargetDMContext.class);
         }
-        update.setInputElement(new BreakpointVMInput(getRootVMNode(), activeDMContext));
+        if (activeDMContext != null) {
+            update.setInputElement(new BreakpointVMInput(getRootVMNode(), activeDMContext));
+        } else {
+            // If no breakpoints target found in active context, delegate the breakpoint
+            // presentation to the default: breakpoint manager.
+            update.setInputElement(new DefaultBreakpointsViewInput(update.getPresentationContext()));
+        }
         update.done();
     }
     
@@ -306,6 +327,11 @@ public class BreakpointVMProvider extends AbstractVMProvider
         rm.done();
     }
 
+    public void getBreakpointsForDebugContext(ISelection debugContext, DataRequestMonitor<IBreakpoint[]> rm) {
+        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
+        rm.done();
+    }
+    
     public void handleEventInExecThread(final Object event) {
         getExecutor().execute(new DsfRunnable() {
             public void run() {
@@ -320,7 +346,7 @@ public class BreakpointVMProvider extends AbstractVMProvider
             PropertyChangeEvent propertyEvent = (PropertyChangeEvent)event;
             if (IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS.equals(propertyEvent.getProperty())) 
             {
-                clearNodes();
+                clearNodes(false);
                 configureLayout();
             } 
         } 

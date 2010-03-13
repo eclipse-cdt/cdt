@@ -11,11 +11,9 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints;
 
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMAdapter;
+import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
@@ -23,14 +21,19 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
 /**
  * @since 2.1
  */
-public class BreakpointVMInput extends PlatformObject implements IElementMementoProvider {
+public class BreakpointVMInput extends AbstractVMContext implements IElementMementoProvider, IDMVMContext {
 
-    private IVMNode fVMNode;
+    final private IDMContext fDMContext; 
     
-    public BreakpointVMInput(IVMNode node, IDMContext activeDMContext) {
-        fVMNode = node;
+    public BreakpointVMInput(IVMNode node, IDMContext dmc) {
+        super(node);
+        fDMContext = dmc;
     }
 
+    public IDMContext getDMContext() {
+        return fDMContext;
+    }
+    
     public void encodeElements(IElementMementoRequest[] requests) {
         for (IElementMementoRequest request : requests) {
             request.getMemento().putString("ELEMENT_NAME", "BreakpointInputMemento");  //$NON-NLS-1$//$NON-NLS-2$
@@ -46,33 +49,12 @@ public class BreakpointVMInput extends PlatformObject implements IElementMemento
     }
     
     @Override
-    @SuppressWarnings({"rawtypes" })
-    public Object getAdapter(Class adapter) {
-        // If the context implements the given adapter directly, it always takes
-        // precedence.
-        if (adapter.isInstance(this)) {
-            return this;
-        }
-        
-        IVMProvider vmProvider = fVMNode.getVMProvider();
-        IVMAdapter vmAdapter = vmProvider.getVMAdapter();
-        if (adapter.isInstance(vmAdapter)) {
-            return vmAdapter;
-        } else if (adapter.isInstance(vmProvider)) {
-            return vmProvider;
-        } else if (adapter.isInstance(fVMNode)) {
-            return fVMNode;
-        }
-        return Platform.getAdapterManager().getAdapter(this, adapter);
-    }
-
-    @Override
     public boolean equals(Object obj) {
-        return obj instanceof BreakpointVMInput;
+        return obj instanceof BreakpointVMInput && ((BreakpointVMInput)obj).getDMContext().equals(fDMContext);
     }
     
     @Override
     public int hashCode() {
-        return getClass().hashCode(); 
+        return fDMContext.hashCode(); 
     }
 }

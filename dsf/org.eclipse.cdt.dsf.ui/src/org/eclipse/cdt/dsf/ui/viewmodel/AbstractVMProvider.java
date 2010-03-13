@@ -484,10 +484,11 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     }
 
     /**
-     * Clears all configured nodes.  This allows a subclass to reset and 
-     * reconfigure its nodes.
+     * Clears all configured nodes, including the root node.  This allows a 
+     * subclass to reset and reconfigure its nodes.
      */
     protected void clearNodes() {
+        clearNodes(true);
         for (IVMNode node : fChildNodesMap.keySet()) {
             node.dispose();
         }
@@ -495,6 +496,27 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         fRootNode = null;
     }
 
+    /**
+     * Clears all configured nodes.  This allows a subclass to reset and 
+     * reconfigure its nodes.
+     * 
+     * @param clearRootNode Flag indicating whether to also clear the root node.
+     * @since 2.1
+     */
+    protected void clearNodes(boolean clearRootNode) {
+        for (IVMNode node : fChildNodesMap.keySet()) {
+            if ( !clearRootNode || !node.equals(getRootVMNode()) ) { 
+                node.dispose();
+            }
+        }
+        fChildNodesMap.clear();
+        if (clearRootNode) {
+            fRootNode = null;
+        } else {
+            fChildNodesMap.put(getRootVMNode(), EMPTY_NODES_ARRAY);
+        }
+    }
+    
     /**
      * Sets the root node for this provider.  
      */

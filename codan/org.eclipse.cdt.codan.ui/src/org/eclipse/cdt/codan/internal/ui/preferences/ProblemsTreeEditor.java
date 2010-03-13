@@ -18,6 +18,9 @@ import org.eclipse.cdt.codan.core.model.IProblemElement;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
+import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -29,7 +32,10 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class ProblemsTreeEditor extends CheckedTreeEditor {
 	private CodanPreferencesLoader codanPreferencesLoader = new CodanPreferencesLoader();
@@ -169,6 +175,23 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		column2.getColumn().setWidth(100);
 		column2.getColumn().setText("Severity");
 		column2.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public Image getImage(Object element) {
+				final ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+				if (element instanceof IProblem) {
+					IProblem p = (IProblem) element;
+					switch (p.getSeverity().intValue()) {
+					case IMarker.SEVERITY_INFO:
+						return images.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+					case IMarker.SEVERITY_WARNING:
+						return images.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+					case IMarker.SEVERITY_ERROR:
+						return images.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+					}
+				}
+				return null;
+			}
+
 			public String getText(Object element) {
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;

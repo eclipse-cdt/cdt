@@ -125,10 +125,16 @@ public interface IFormattedValues extends IDsfService {
             return fValue;
         }
         
+        /**
+		 * @since 2.1
+		 */
         public void setEditableValue(String editableValue) {
         	fEditableValue = editableValue;
         }
         
+        /**
+		 * @since 2.1
+		 */
         public String getEditableValue() {
         	return fEditableValue;
         }

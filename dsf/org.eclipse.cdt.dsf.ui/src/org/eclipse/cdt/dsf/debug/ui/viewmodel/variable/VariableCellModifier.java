@@ -90,7 +90,7 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
                 formatId = IFormattedValues.NATURAL_FORMAT;
             }
             
-            String value = fDataAccess.getFormattedValue(element, formatId);
+            String value = fDataAccess.getEditableValue(element, formatId);
             
             if (value == null) {
                 return "...";  //$NON-NLS-1$

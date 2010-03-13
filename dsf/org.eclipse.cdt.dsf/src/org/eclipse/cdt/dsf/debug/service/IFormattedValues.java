@@ -114,15 +114,24 @@ public interface IFormattedValues extends IDsfService {
     public static class FormattedValueDMData implements IDMData {
 
         private final String fValue;
+        private String fEditableValue;
         
         public FormattedValueDMData(String value) {
             fValue = value;
+            fEditableValue = value;
         }
         
         public String getFormattedValue() {
             return fValue;
         }
         
+        public void setEditableValue(String editableValue) {
+        	fEditableValue = editableValue;
+        }
+        
+        public String getEditableValue() {
+        	return fEditableValue;
+        }
         
     }
 }

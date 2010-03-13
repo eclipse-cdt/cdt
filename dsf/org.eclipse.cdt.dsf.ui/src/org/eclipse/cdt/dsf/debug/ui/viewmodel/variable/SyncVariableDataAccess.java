@@ -374,11 +374,13 @@ public class SyncVariableDataAccess {
 
         private IFormattedDataDMContext fDmc;
         private String fFormatId;
+        private boolean fEditable;
 
-        public GetFormattedValueValueQuery(IFormattedDataDMContext dmc, String formatId) {
+        public GetFormattedValueValueQuery(IFormattedDataDMContext dmc, String formatId, boolean editable) {
             super();
             fDmc = dmc;
             fFormatId = formatId;
+            fEditable = editable;
         }
 
         @Override
@@ -413,10 +415,7 @@ public class SyncVariableDataAccess {
             service.getFormattedExpressionValue(formDmc, new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
                 @Override
                 protected void handleSuccess() {
-                    /*
-                     * All good set return value.
-                     */
-                    rm.setData(getData().getFormattedValue());
+                    rm.setData(fEditable ? getData().getEditableValue() : getData().getFormattedValue());
                     rm.done();
                 }
             });
@@ -424,6 +423,14 @@ public class SyncVariableDataAccess {
     }
 
     public String getFormattedValue(Object element, String formatId) {
+    	return getValue(element, formatId, false);
+    }
+    
+    public String getEditableValue(Object element, String formatId) {
+    	return getValue(element, formatId, true);
+    }
+    
+    public String getValue(Object element, String formatId, boolean editable) {
 
         /*
          * Get the DMC and the session. If element is not an register DMC, or
@@ -439,7 +446,7 @@ public class SyncVariableDataAccess {
          * guard against RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(dmc, formatId);
+        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(dmc, formatId, editable);
         session.getExecutor().execute(query);
 
         /*

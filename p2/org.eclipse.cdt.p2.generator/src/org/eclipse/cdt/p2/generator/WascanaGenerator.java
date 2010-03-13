@@ -26,8 +26,6 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository;
 import org.eclipse.equinox.internal.p2.metadata.ArtifactKey;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.internal.provisional.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -35,8 +33,11 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.ILicense;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.metadata.ITouchpointType;
 import org.eclipse.equinox.p2.metadata.IUpdateDescriptor;
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.VersionRange;
 import org.eclipse.equinox.p2.repository.IRepository;
@@ -172,7 +173,7 @@ public class WascanaGenerator implements IApplication {
 				"wascana.tools",
 				"Wascana Tools",
 				wascanaVersion,
-				new IRequiredCapability[] {
+				new IRequirement[] {
 						createRequiredCap(binutilsIU),
 						createRequiredCap(gccIU),
 						createRequiredCap(gppIU),
@@ -228,7 +229,7 @@ public class WascanaGenerator implements IApplication {
 				"wascana.sdks",
 				"Wascana SDKs",
 				wascanaVersion,
-				new IRequiredCapability[] {
+				new IRequirement[] {
 						createRequiredCap(mingwrtIU),
 						createRequiredCap(w32apiIU),
 						createRequiredCap(qtIU),
@@ -238,7 +239,7 @@ public class WascanaGenerator implements IApplication {
 				"wascana.source",
 				"Wascana Desktop Developer Source",
 				wascanaVersion,
-				new IRequiredCapability[] {
+				new IRequirement[] {
 						createRequiredCap(binutilsSrcIU),
 						createRequiredCap(gccSrcIU),
 						createRequiredCap(gppSrcIU),
@@ -254,12 +255,12 @@ public class WascanaGenerator implements IApplication {
 				"wascana",
 				"Wascana Desktop Developer",
 				wascanaVersion,
-				new IRequiredCapability[] {
+				new IRequirement[] {
 						createRequiredCap(toolsIU),
 						createRequiredCap(sdksIU),
 				});
 
-		metaRepo.addInstallableUnits(iuList.toArray(new IInstallableUnit[iuList.size()]));
+		metaRepo.addInstallableUnits(iuList);
 
 		System.out.println("done");
 		
@@ -356,7 +357,7 @@ public class WascanaGenerator implements IApplication {
 	}
 
 	private IInstallableUnit createCategory(String id, String name, Version version,
-			IRequiredCapability[] reqs) throws ProvisionException {
+			IRequirement[] reqs) throws ProvisionException {
 		InstallableUnitDescription iuDesc = createIUDesc(id, name, version, null);
 		if (reqs != null)
 			iuDesc.setRequiredCapabilities(reqs);
@@ -366,14 +367,14 @@ public class WascanaGenerator implements IApplication {
 		return iu;
 	}
 
-	private IRequiredCapability createRequiredCap(IInstallableUnit iu) {
-		return MetadataFactory.createRequiredCapability(
+	private IRequirement createRequiredCap(IInstallableUnit iu) {
+		return MetadataFactory.createRequirement(
 				IInstallableUnit.NAMESPACE_IU_ID,
 				iu.getId(), new VersionRange(null), null, false, false);
 	}
 	
-	private IRequiredCapability createStrictRequiredCap(IInstallableUnit iu) {
-		return MetadataFactory.createRequiredCapability(
+	private IRequirement createStrictRequiredCap(IInstallableUnit iu) {
+		return MetadataFactory.createRequirement(
 				IInstallableUnit.NAMESPACE_IU_ID,
 				iu.getId(), new VersionRange(iu.getVersion(), true, iu.getVersion(), true), null, false, false);
 	}

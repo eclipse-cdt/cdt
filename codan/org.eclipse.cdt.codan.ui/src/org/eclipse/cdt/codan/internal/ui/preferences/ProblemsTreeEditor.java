@@ -18,8 +18,6 @@ import org.eclipse.cdt.codan.core.model.IProblemElement;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
-import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;

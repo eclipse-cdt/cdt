@@ -72,7 +72,7 @@ public class MIPlugin extends Plugin {
 
 	/**
 	 * Has tracing for this plug-in been turned on? 
-	 * @since 6.1
+	 * @since 7.0
 	 */
 	public static final boolean DEBUG = "true".equals( //$NON-NLS-1$
             Platform.getDebugOption("org.eclipse.cdt.debug.mi.core/debug")); //$NON-NLS-1$

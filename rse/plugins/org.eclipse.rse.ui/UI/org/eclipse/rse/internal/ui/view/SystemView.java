@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -72,6 +72,7 @@
  * Martin Oberhuber (Wind River) - [276195] Avoid unnecessary selectionChanged when restoring connections
  * David McKnight   (IBM)        - [277328] Unhandled Event Loop Exception When Right-Clicking on "Pending..." Message
  * David McKnight   (IBM)        - [283793] [dstore] Expansion indicator(+) does not reset after no connect
+ * Uwe Stieber      (Wind River) - [238519] [usability][api] Adapt RSE view(s) to follow decoration style of the Eclipse platform common navigator
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -99,7 +100,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -530,7 +530,7 @@ public class SystemView extends SafeTreeViewer
 			IWorkbench wb = PlatformUI.getWorkbench();
 			decorator = wb.getDecoratorManager().getLabelDecorator();
 		}
-		setLabelProvider(new DecoratingLabelProvider(lcProvider, decorator));
+		setLabelProvider(new SystemViewDecoratingStyledCellLabelProvider(lcProvider, decorator));
 		setContentProvider(lcProvider);
 	}
 

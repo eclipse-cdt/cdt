@@ -128,5 +128,23 @@
  	<modelInitializer class="org.eclipse.rse.tests.initialization.UglyInitializer"/>
  	<modelInitializer class="org.eclipse.rse.tests.initialization.ListenerInitializer"/>
  </extension>
+
+   <extension point="org.eclipse.ui.decorators">
+	  <decorator
+	         label="RSE Model Object Test Decorator"
+	         state="false"
+	         adaptable="true"
+	         class="org.eclipse.rse.tests.decorators.RSEModelObjectDecorator"
+	         id="org.eclipse.rse.tests.decorators.RSEModelObjectDecorator">
+		 <enablement>
+        <or>
+            <objectClass name="org.eclipse.rse.ui.model.ISystemPromptableObject"/>
+            <objectClass name="org.eclipse.rse.ui.wizards.newconnection.RSENewConnectionWizardSelectionTreeElement"/>
+            <objectClass name="org.eclipse.rse.core.model.IRSEModelObject">
+            </objectClass>            
+        </or>
+ 		 </enablement>
+	  </decorator>	
+   </extension>
  
 </plugin>

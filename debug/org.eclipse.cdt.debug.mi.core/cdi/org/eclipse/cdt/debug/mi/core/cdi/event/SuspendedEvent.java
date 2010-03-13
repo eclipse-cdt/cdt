@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointHit;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.EndSteppingRange;
 import org.eclipse.cdt.debug.mi.core.cdi.ErrorInfo;
 import org.eclipse.cdt.debug.mi.core.cdi.EventBreakpointHit;
@@ -23,6 +24,8 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalReceived;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointScope;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointTrigger;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
+import org.eclipse.cdt.debug.mi.core.cdi.model.EventBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MICatchpointHitEvent;
@@ -51,7 +54,20 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 
 	public ICDISessionObject getReason() {
 		if (event instanceof MIBreakpointHitEvent) {
-			return new BreakpointHit(session, (MIBreakpointHitEvent)event);
+			BreakpointManager bkptMgr = session.getBreakpointManager();
+			Breakpoint bkpt = bkptMgr.getBreakpoint(event.getMISession(), ((MIBreakpointHitEvent)event).getNumber());
+			// In versions prior to 7.0, a catchpoint (Event Breakpoint in
+			// CDT speak) is reported by gdb as a generic stopped event; gdb
+			// does not indicate it was caused by a breakpoint. In 7.0 and
+			// above, it does. Here we handle the >= 7.0 case. In the < 7.0
+			// case, we generate a MICatchpointHitEvent, and that's handled
+			// below
+			if (bkpt instanceof EventBreakpoint) {
+				return new EventBreakpointHit(session, EventBreakpoint.getGdbEventFromId(((EventBreakpoint)bkpt).getEventType()));
+			}
+			else {
+				return new BreakpointHit(session, (MIBreakpointHitEvent)event);
+			}
 		} else if (event instanceof MIWatchpointTriggerEvent) {
 			return new WatchpointTrigger(session, (MIWatchpointTriggerEvent)event);
 		} else if (event instanceof MIWatchpointScopeEvent) {
@@ -69,7 +85,8 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		} else if (event instanceof MISharedLibEvent) {
 			return new SharedLibraryEvent(session);
 		} else if (event instanceof MICatchpointHitEvent) {
-			return new EventBreakpointHit(session, (MICatchpointHitEvent)event);
+			// See note above. If we get here, we're dealing with a gdb < 7.0
+			return new EventBreakpointHit(session, ((MICatchpointHitEvent)event).getCatchpointType());
 		}
 		return session;
 	}

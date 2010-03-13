@@ -67,14 +67,31 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 		return arg;
 	}
 
-
+	/**
+	 * Returns the gdb catchpoint keyword associated with this event breakpoint
+	 * (e.g., "signal", "throw")
+	 */
 	public String getGdbEvent() {
-		String etype = getEventType();
-		String key= idToKeyword.get(etype);
-		if (key!=null) return key;
-		return "unknown"; //$NON-NLS-1$
+		return getGdbEventFromId(getEventType());
 	}
 
+	/**
+	 * Returns the gdb catchpoint keyword associated with the given event point
+	 * type id (e.g., "signal", "throw")
+	 * 
+	 * @param eventTypeId
+	 *            one of the EVENT_TYPE_XXXXX constants from
+	 *            {@link ICEventBreakpoint}
+	 * 
+	 * @since 7.0
+	 */
+	public static String getGdbEventFromId(String eventTypeId) {
+		String key= idToKeyword.get(eventTypeId);
+		if (key!=null) return key;
+		assert false : "Unexpected even breakpoint type ID: " + eventTypeId; //$NON-NLS-1$
+		return "unknown"; //$NON-NLS-1$
+	}
+	
 	public String getGdbArg() {
 		return getExtraArgument();
 	}

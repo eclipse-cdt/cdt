@@ -18,8 +18,19 @@ import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
  */
 public class MICatchpointHitEvent extends MIStoppedEvent {
 
+	/**
+	 * See catcpointType parameter in constructor
+	 */
 	private String fCatchpointType;
 
+	/**
+	 * @param source
+	 * @param async
+	 * @param catchpointType
+	 *            the type of catchpoint as reported by gdb via the gdb console
+	 *            when the catchpoint is hit. We parse the stream record to get
+	 *            this.
+	 */
 	public MICatchpointHitEvent(MISession source, MIExecAsyncOutput async, String catchpointType) {
 		super(source, async);
 		fCatchpointType = catchpointType;

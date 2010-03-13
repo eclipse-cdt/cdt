@@ -11,21 +11,33 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIEventBreakpointHit;
-import org.eclipse.cdt.debug.mi.core.event.MICatchpointHitEvent;
 
 /**
  * @since 7.0
  */
 public class EventBreakpointHit extends SessionObject implements ICDIEventBreakpointHit {
 
-	MICatchpointHitEvent fMiEvent;
+	/**
+	 * See description of eventType param in constructor
+	 */
+	private String fEventType;
 
-	public EventBreakpointHit(Session session, MICatchpointHitEvent miEvent) {
+	/**
+	 * @param session
+	 * @param eventType
+	 *            the type of event breakpoint, in descriptive form (rather than
+	 *            an ID). E.g., "signal", or "load". These are not standardized,
+	 *            and can vary slightly from one gdb version to another, because
+	 *            of difference in how catchpoint hits are reported. This string
+	 *            should be used solely for display purposes.
+	 */
+	public EventBreakpointHit(Session session, String eventType) {
 		super(session);
-		fMiEvent = miEvent;
+		assert (eventType != null) && (eventType.length() > 0);
+		fEventType = eventType;
 	}
 
 	public String getEventBreakpointType() {
-		return fMiEvent.getCatchpointType();
+		return fEventType;
 	}
 }

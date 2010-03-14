@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class LazyCharArray extends AbstractCharArray {
 	private final static int CHUNK_BITS= 16;  // 2^16 == 64K
 	protected final static int CHUNK_SIZE= 1 << CHUNK_BITS;
-	
+
 	protected static class Chunk {
 		final int fDataLength;
 		final long fFileOffset;
@@ -36,7 +36,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 			fData= new SoftReference<char[]>(data);
 		}
 	}
-	
+
 	private int fLength= -1;
 	private List<Chunk> fChunks= new ArrayList<Chunk>();
 	private StreamHasher hasher;
@@ -65,7 +65,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		readUpTo(offset);
 		if (fLength >= 0)
 			return offset < fLength;
-		
+
 		assert offset < fChunks.size() << CHUNK_BITS;
 		return true;
 	}
@@ -83,7 +83,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	private void readUpTo(int offset) {
 		if (fLength >= 0)
 			return;
-		
+
 		final int chunkOffset= offset >> CHUNK_BITS;
 		getChunkData(chunkOffset);
 	}
@@ -108,14 +108,14 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		System.arraycopy(data, loffset, destination, destinationPos, canCopy);
 		arraycopy(offset+canCopy, destination, destinationPos+canCopy, length-canCopy);
 	}
-	
+
 	private char[] getChunkData(int chunkOffset) {
 		Chunk chunk= getChunk(chunkOffset);
 		if (chunk != null) {
 			char[] data= chunk.fData.get();
 			if (data != null)
 				return data;
-			
+
 			return loadChunkData(chunk);
 		}
 		return null;
@@ -125,13 +125,13 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		final int chunkCount = fChunks.size();
 		if (chunkOffset < chunkCount)
 			return fChunks.get(chunkOffset);
-		
+
 		if (fLength >=0)
 			return null;
-		
+
 		return createChunk(chunkOffset);
 	}
-		
+
 	/**
 	 * Called when a chunk is requested for the first time. There is no
 	 * need to override this method.
@@ -183,7 +183,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	 * the source.
 	 */
 	protected abstract char[] readChunkData(long sourceOffset, long[] sourceEndOffsetHolder) throws Exception;
-		
+
 	/**
 	 * Read the chunk data at the given source range. In case the source range no longer (fully) exists,
 	 * read as much as possible.

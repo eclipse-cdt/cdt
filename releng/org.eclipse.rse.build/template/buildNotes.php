@@ -42,11 +42,15 @@
   <li>A regression in the Terminal widget was fixed, which made initial output after login
       invisible above the initial viewport
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=294327">294327</a>].</li>
+  <li>EFS provider performance was improved, and multiple connections to a host can
+      now be disambiguated by name
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=291738">291738</a>]
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=287185">287185</a>].</li>
 </ul>
 </li>
-<li>At least 24 bugs were resolved: Use 
+<li>At least 28 bugs were resolved: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-03-20;chfield=resolution;query_format=advanced;chfieldfrom=2009-09-10;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[7];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2;target_milestone=3.2%20M2;target_milestone=3.2%20M6;product=Target%20Management">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20M6;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1.1-200909160905/">
   TM 3.1.1</a>

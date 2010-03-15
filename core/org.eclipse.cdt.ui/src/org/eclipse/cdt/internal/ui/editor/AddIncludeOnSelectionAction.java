@@ -548,26 +548,25 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 					}
 				}
 			}
-			if (k == 0) {
-				return null;
-			}
-			Arrays.sort(ballotBox, 0, k);
-			String contender = ballotBox[0];
-			int votes = 1;
-			String winner = contender;
-			int winnerVotes = votes;
-			for (int i = 1; i < k; i++) {
-				if (!ballotBox[i].equals(contender)) {
-					contender = ballotBox[i]; 
-					votes = 1;
+			if (k != 0) {
+				Arrays.sort(ballotBox, 0, k);
+				String contender = ballotBox[0];
+				int votes = 1;
+				String winner = contender;
+				int winnerVotes = votes;
+				for (int i = 1; i < k; i++) {
+					if (!ballotBox[i].equals(contender)) {
+						contender = ballotBox[i]; 
+						votes = 1;
+					}
+					votes++;
+					if (votes > winnerVotes) {
+						winner = contender;
+						winnerVotes = votes;
+					}
 				}
-				votes++;
-				if (votes > winnerVotes) {
-					winner = contender;
-					winnerVotes = votes;
-				}
+				return new RequiredInclude(winner, systemIncludeVotes * 2 >= k);
 			}
-			return new RequiredInclude(winner, systemIncludeVotes * 2 >= k);
 		}
 
 		// The file has never been included before.

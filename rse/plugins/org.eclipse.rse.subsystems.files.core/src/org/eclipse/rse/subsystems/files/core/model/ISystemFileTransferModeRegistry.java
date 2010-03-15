@@ -25,7 +25,11 @@ import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 
 
-
+/**
+ * Registry for associating file types with transfer modes.  
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ISystemFileTransferModeRegistry extends ISystemFileTypes
 {
 

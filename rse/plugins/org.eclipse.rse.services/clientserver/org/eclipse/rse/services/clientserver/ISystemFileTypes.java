@@ -20,7 +20,7 @@ package org.eclipse.rse.services.clientserver;
 
 import java.io.File;
 
-/*
+/**
  *  Used to determine whether a file is binary, text or XML.
  *  
  * @noimplement This interface is not intended to be implemented by clients.

@@ -119,7 +119,14 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ API Specification Updates
 <ul>
-  <li>None.</li>
+  <li>The <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/ISystemFileTypes.html">ISystemFileTypes</a></code>,
+      <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/model/ISystemFileTransferModeMapping.html">ISystemFileTransferModeMapping</a></code>
+      and <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/model/ISystemFileTransferModeRegistry.html">ISystemFileTransferModeRegistry</a></code>
+      interfaces have been marked <b>@noimplement</b> in order to allow adding new methods.
+      These interfaces had not been documented at all so far, and have never been intended
+      to be implemented. The amendment adds a restriction which should have been there
+      from the start 
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304170">304170</a>].</li>
 </ul></li>
 </ul>
 </li>

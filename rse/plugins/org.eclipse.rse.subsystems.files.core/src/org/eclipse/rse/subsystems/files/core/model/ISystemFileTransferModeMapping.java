@@ -82,6 +82,7 @@ public interface ISystemFileTransferModeMapping {
 	 * Returns if the mapping is XML
 	 * 
 	 * @return true if XML
+	 * @since 3.2
 	 */
 	public boolean isXML();
 	

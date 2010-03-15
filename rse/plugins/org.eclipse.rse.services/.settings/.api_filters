@@ -98,6 +98,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="clientserver/org/eclipse/rse/services/clientserver/ISystemFileTypes.java" type="org.eclipse.rse.services.clientserver.ISystemFileTypes">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.rse.services.clientserver.ISystemFileTypes"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/rse/internal/services/terminals/ProcessBaseShell.java" type="org.eclipse.rse.internal.services.terminals.ProcessBaseShell">
         <filter id="305365105">
             <message_arguments>

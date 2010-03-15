@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,39 +192,32 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				navigateToName(sourceName);
 				return Status.OK_STATUS;
 			}
-			IName[] declNames = null;
+			List<IName> nameList= new ArrayList<IName>();
 			String filename = ast.getFilePath();
 			for (IBinding binding : bindings) {
 				if (binding != null && !(binding instanceof IProblemBinding)) {
 					IName[] names = findDeclNames(ast, kind, binding);
-					for (int i = 0; i < names.length; i++) {
-						if (names[i] instanceof IIndexName &&
-								filename.equals(((IIndexName) names[i]).getFileLocation().getFileName())) {
+					for (final IName name : names) {
+						if (name instanceof IIndexName &&
+								filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
 							// Exclude index names from the current file.
-							names[i] = null;
-						} else if (isSameName(names[i], sourceName)) {
+						} else if (isSameName(name, sourceName)) {
 							// Exclude the current location.
-							names[i] = null;
 						} else if (binding instanceof IParameter) {
-							if (!isInSameFunction(sourceName, names[i])) {
-								names[i] = null;
+							if (isInSameFunction(sourceName, name)) {
+								nameList.add(name);
 							}
 						} else if (binding instanceof ICPPTemplateParameter) {
-							if (!isInSameTemplate(sourceName, names[i])) {
-								names[i] = null;
+							if (isInSameTemplate(sourceName, name)) {
+								nameList.add(name);
 							}
+						} else if (name != null) {
+							nameList.add(name);
 						}
-					}
-					compact(names);
-					if (declNames == null) {
-						declNames = names;
-					} else {
-						declNames = (IName[]) ArrayUtil.addAll(IName.class, declNames, names);
 					}
 				}
 			}
-			declNames = (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
-
+			IName[] declNames = nameList.toArray(new IName[nameList.size()]);
 			if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, declNames)) {
 				found= true;
 			} else {
@@ -375,22 +368,6 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Compacts an array by moving all <code>null</code> elements to the end.
-	 * @param array
-	 */
-	private void compact(Object[] array) {
-		for (int i = 0, j = 0; i < array.length; i++) {
-			if (array[i] != null) {
-				if (i != j) {
-					array[j] = array[i];
-					array[i] = null;
-				}
-				j++;
-			}
-		}
 	}
 
 	private boolean isSameName(IName n1, IName n2) {

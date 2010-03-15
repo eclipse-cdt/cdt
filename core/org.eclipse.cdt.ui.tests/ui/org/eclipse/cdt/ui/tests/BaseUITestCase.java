@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,6 +103,10 @@ public class BaseUITestCase extends BaseTestCase {
      */
 	public StringBuffer[] getContentsForTest(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), sections);
+	}
+	
+	public String getAboveComment() throws IOException {
+		return getContentsForTest(1)[0].toString();
 	}
 	
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {

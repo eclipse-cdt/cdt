@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+/**
+ * @deprecated as of CDT 4.0. This class was used for property pages
+ * for 3.X style projects.
+ */
+@Deprecated
 class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 
 	private Color inDirect = new Color(Display.getDefault(), new RGB(170, 170, 170));

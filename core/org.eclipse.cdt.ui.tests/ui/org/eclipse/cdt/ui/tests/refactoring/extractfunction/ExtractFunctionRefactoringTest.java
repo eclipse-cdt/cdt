@@ -86,12 +86,17 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 			}
 		}
 		
-		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
-		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		assertConditionsOk(finalConditions);
-		createChange.perform(NULL_PROGRESS_MONITOR);
-		
-		compareFiles(fileMap);
+		refactoring.lockIndex();
+		try {
+			Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
+			RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+			assertConditionsOk(finalConditions);
+			createChange.perform(NULL_PROGRESS_MONITOR);
+
+			compareFiles(fileMap);
+		} finally {
+			refactoring.unlockIndex();
+		}
 	}
 
 	

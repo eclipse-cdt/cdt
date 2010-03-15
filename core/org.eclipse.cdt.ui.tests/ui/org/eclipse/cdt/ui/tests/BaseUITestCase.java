@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,6 +103,10 @@ public class BaseUITestCase extends BaseTestCase {
      */
 	public StringBuffer[] getContentsForTest(int sections) throws IOException {
 		return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", getClass(), getName(), sections);
+	}
+	
+	public String getAboveComment() throws IOException {
+		return getContentsForTest(1)[0].toString();
 	}
 	
     protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {
@@ -220,10 +224,9 @@ public class BaseUITestCase extends BaseTestCase {
 	
 	protected void closeAllEditors() {
 		IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i= 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages= windows[i].getPages();
-			for (int j= 0; j < pages.length; j++) {
-				IWorkbenchPage page= pages[j];
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages= window.getPages();
+			for (IWorkbenchPage page : pages) {
 				page.closeAllEditors(false);
 			}
 		}
@@ -235,13 +238,11 @@ public class BaseUITestCase extends BaseTestCase {
 		runEventQueue(0);
 
 		IViewReference[] viewRefs= page.getViewReferences();
-		for (int i = 0; i < viewRefs.length; i++) {
-			IViewReference ref = viewRefs[i];
+		for (IViewReference ref : viewRefs) {
 			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
 		}
 		IEditorReference[] editorRefs= page.getEditorReferences();
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorReference ref = editorRefs[i];
+		for (IEditorReference ref : editorRefs) {
 			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
 		}
 		runEventQueue(0);
@@ -273,8 +274,8 @@ public class BaseUITestCase extends BaseTestCase {
 		if (w instanceof Composite) {
 			Composite comp= (Composite) w;
 			Control[] children= comp.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				findControls(children[i], clazz, result);
+			for (Control element : children) {
+				findControls(element, clazz, result);
 			}
 		}
 	}

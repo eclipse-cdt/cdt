@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -83,6 +83,7 @@
  * Martin Oberhuber (Wind River) - [217472][ftp] Error copying files with very short filenames
  * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
  * Martin Oberhuber (Wind River) - [285948] Avoid recursive deletion over symbolic links
+ * Martin Oberhuber (Wind River) - [300398] Avoid product hang-up on isConnected()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -109,7 +110,6 @@ import org.apache.commons.net.ProtocolCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
-import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -721,17 +721,11 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		if(_ftpClient!=null) {
 			isConnected =  _ftpClient.isConnected();
-			if (isConnected){ // make sure that there hasn't been a timeout
-				try {
-					_ftpClient.noop();
-				}
-				catch (FTPConnectionClosedException e){
-					return false;
-				}
-				catch (IOException e2){
-					return false;
-				}
-			}
+			// Bug 300394: isConnected() is called on the main thread, so it must
+			// return fast without really checking the remote. In FTP, we deal
+			// with "virtual connections" which can automatically re-connect 
+			// through the getFTPClient() method at any time. Sending NOOP as
+			// keepalive is a separate thing to be done.
 		}
 
 		return isConnected;

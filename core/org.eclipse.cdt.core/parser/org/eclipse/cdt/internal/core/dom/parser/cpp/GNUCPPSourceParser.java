@@ -150,6 +150,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     private final boolean allowCPPRestrict;
     private final boolean supportExtendedTemplateSyntax;
+    private final boolean supportAutoTypeSpecifier;
 
 	private final IIndex index;
     protected ICPPASTTranslationUnit translationUnit;
@@ -182,6 +183,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         supportExtendedSizeofOperator= config.supportExtendedSizeofOperator();
         supportFunctionStyleAsm= config.supportFunctionStyleAssembler();
         functionCallCanBeLValue= true;
+        supportAutoTypeSpecifier= true;
         this.index= index;
         this.nodeFactory = CPPNodeFactory.getDefault();
         scanner.setSplitShiftROperator(true);
@@ -2194,8 +2196,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			break declSpecifiers;
         			// storage class specifiers
         		case IToken.t_auto:
-        			storageClass = IASTDeclSpecifier.sc_auto;
-        			endOffset= consume().getEndOffset();
+        			if (supportAutoTypeSpecifier) {
+            			if (encounteredTypename)
+            				break declSpecifiers;
+            			simpleType = ICPPASTSimpleDeclSpecifier.t_auto;
+            			encounteredRawType= true;
+            			endOffset= consume().getEndOffset();
+            			break;
+        			} else {
+	        			storageClass = IASTDeclSpecifier.sc_auto;
+	        			endOffset= consume().getEndOffset();
+        			}
         			break;
         		case IToken.t_register:
         			storageClass = IASTDeclSpecifier.sc_register;
@@ -2399,15 +2410,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			break;
 
         		case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
-        		if (!supportAttributeSpecifiers)
-        			throwBacktrack(LA(1));
-        		__attribute_decl_seq(true, false);
-        		break;
+	        		if (!supportAttributeSpecifiers)
+	        			throwBacktrack(LA(1));
+	        		__attribute_decl_seq(true, false);
+	        		break;
         		case IGCCToken.t__declspec: // __declspec precedes the identifier
-        		if (identifier != null || !supportDeclspecSpecifiers)
-        			throwBacktrack(LA(1));
-        		__attribute_decl_seq(false, true);
-        		break;
+	        		if (identifier != null || !supportDeclspecSpecifiers)
+	        			throwBacktrack(LA(1));
+	        		__attribute_decl_seq(false, true);
+	        		break;
 
         		case IGCCToken.t_typeof:
         			if (encounteredRawType || encounteredTypename)

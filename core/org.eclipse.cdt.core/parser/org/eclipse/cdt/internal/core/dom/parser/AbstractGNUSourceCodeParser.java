@@ -2419,6 +2419,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         case IToken.t_signed:
         case IToken.t_unsigned:
         case IToken.t_decltype:
+        case IToken.t_auto:
 
         // class-specifier:
         case IToken.t_class:
@@ -2428,7 +2429,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         // enum-specifier:
         case IToken.t_enum:
 
-        // elaborated type specifier: (together with class, struct, union, enum
+        // elaborated type specifier: (together with class, struct, union, enum)
         case IToken.t_typename:
         	
         // cq-qualifiers

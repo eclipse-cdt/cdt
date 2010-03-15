@@ -8077,7 +8077,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.CPP);
 	}
-	
+
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}
@@ -8237,7 +8237,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("h( {1.0} )", 1);
 		bh.assertNonProblem("h( { } )", 1);
 	}
-	
+
 	//	namespace std {
 	//		template<typename T> class initializer_list;
 	//	}
@@ -8282,5 +8282,40 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("fH(1)", 2);
 		bh.assertNonProblem("fH({1})", 2);
 	}
-}
 
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct A {};
+	//	A a;
+	//	auto b = a;
+	//	const auto *p = &b, q = "";
+	//	static auto d = 0.0;
+	//	auto r = { 'a', 'b' };
+	//	auto *s = new auto(1L);
+	//	auto t = new auto({1.0});
+	//	auto x;  // Error - missing initializer.
+	//	auto y = { 1.0, 5 };  // Error - inconsistent types in the array initializer.
+	public void testAutoType_289542() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPVariable b= bh.assertNonProblem("b =", 1);
+		assertEquals("A", ASTTypeUtil.getType(b.getType()));
+		ICPPVariable p= bh.assertNonProblem("p =", 1);
+		assertEquals("const A *", ASTTypeUtil.getType(p.getType()));
+		ICPPVariable q= bh.assertNonProblem("q =", 1);
+		assertEquals("const char * const", ASTTypeUtil.getType(q.getType()));
+		ICPPVariable d= bh.assertNonProblem("d =", 1);
+		assertEquals("double", ASTTypeUtil.getType(d.getType()));
+		ICPPVariable r= bh.assertNonProblem("r =", 1);
+		assertEquals("std::initializer_list<char>", ASTTypeUtil.getType(r.getType()));
+		ICPPVariable s= bh.assertNonProblem("s =", 1);
+		assertEquals("long int *", ASTTypeUtil.getType(s.getType()));
+		ICPPVariable t= bh.assertNonProblem("t =", 1);
+		assertEquals("std::initializer_list<double> *", ASTTypeUtil.getType(t.getType()));
+		ICPPVariable x= bh.assertNonProblem("x;", 1);
+		assertNull(x.getType());
+		ICPPVariable y= bh.assertNonProblem("y =", 1);
+		assertNull(y.getType());
+	}
+}

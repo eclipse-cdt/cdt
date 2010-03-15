@@ -27,5 +27,4 @@ public class RewriteTests extends TestSuite {
 		suite.addTest(ChangeGeneratorTestSuite.suite());
 		return suite;
 	}
-
 }

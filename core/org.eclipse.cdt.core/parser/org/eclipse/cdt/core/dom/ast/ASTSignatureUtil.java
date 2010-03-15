@@ -8,6 +8,7 @@
  * Contributors:
  *     Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -75,8 +76,9 @@ public class ASTSignatureUtil {
 				buffer.append(SPACE);
 				buffer.append(getSignature(declarators[i]));
 				if (declarators[i].getInitializer() != null
-						&& declarators[i].getInitializer() instanceof ICPPASTConstructorInitializer)
+						&& declarators[i].getInitializer() instanceof ICPPASTConstructorInitializer) {
 					buffer.append(getInitializerString(declarators[i].getInitializer()));
+				}
 			}
 			buffer.append(";"); //$NON-NLS-1$
 			return buffer.toString();
@@ -697,6 +699,14 @@ public class ASTSignatureUtil {
 					needSpace = false;
 				}
 				result.append(Keywords.cDECLTYPE);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_auto:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.cAUTO);
 				needSpace = true;
 				break;
 			case IASTSimpleDeclSpecifier.t_bool:

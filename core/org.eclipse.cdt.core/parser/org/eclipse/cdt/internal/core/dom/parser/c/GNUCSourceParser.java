@@ -1097,15 +1097,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     				break;
 
     			case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
-    			if (!supportAttributeSpecifiers)
-    				throwBacktrack(LA(1));
-    			__attribute_decl_seq(true, false);
-    			break;
+	    			if (!supportAttributeSpecifiers)
+	    				throwBacktrack(LA(1));
+	    			__attribute_decl_seq(true, false);
+	    			break;
     			case IGCCToken.t__declspec: // __declspec precedes the identifier
-    			if (identifier != null || !supportDeclspecSpecifiers)
-    				throwBacktrack(LA(1));
-    			__attribute_decl_seq(false, true);
-    			break;
+	    			if (identifier != null || !supportDeclspecSpecifiers)
+	    				throwBacktrack(LA(1));
+	    			__attribute_decl_seq(false, true);
+	    			break;
 
     			case IGCCToken.t_typeof:
     				if (encounteredRawType || encounteredTypename)

@@ -8,6 +8,7 @@
  * Contributors:
  *    Doug Schaefer (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *	  Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -81,6 +82,12 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.2
 	 */
 	public static final int t_decltype = 9;
+
+	/**
+	 * <code>auto c = expression;</code>
+	 * @since 5.2
+	 */
+	public static final int t_auto = 10;
 
 	/**
 	 * @since 5.1

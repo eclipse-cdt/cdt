@@ -184,7 +184,7 @@ public class BaseTestCase extends TestCase {
 			}
 		}
 		
-		if (testThrowable!=null)
+		if (testThrowable != null)
 			throw testThrowable;
 	}
 

@@ -19,7 +19,7 @@ static int c;
 //Test7
 int foo()
 {
-    auto int i = 1;
+    int i = 1;
     return i;
 }
 

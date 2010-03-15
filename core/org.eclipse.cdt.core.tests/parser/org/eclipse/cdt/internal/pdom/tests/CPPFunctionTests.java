@@ -118,7 +118,6 @@ public class CPPFunctionTests extends PDOMTestBase {
 		IParameter[] parameters = function.getParameters();
 		assertEquals(2, parameters.length);
 		assertEquals(true, parameters[0].isRegister());
-		assertEquals(true, parameters[1].isAuto());
 	}
 	
 	public void testExternCPPFunction() throws Exception {
@@ -126,14 +125,14 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).isExtern());
 	}
-	
+
 	public void testStaticCPPFunction() throws Exception {
 		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findUnqualifiedName(pdom, "staticCPPFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).isStatic());
 	}
-	
+
 	public void testInlineCPPFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "inlineCPPFunction");
 		assertEquals(1, bindings.length);

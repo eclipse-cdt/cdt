@@ -12,7 +12,7 @@ extern int b;
 static int c;
 int foo()
 {
-    auto int i = 1;
+    int i = 1;
     return i;
 }
 

@@ -16,7 +16,6 @@ import junit.framework.TestSuite;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class AstWriterTestSuite{
 
@@ -33,8 +32,8 @@ public class AstWriterTestSuite{
 				"resources/rewrite/ASTWriterCommentedDeclaratorTestSource.awts"));
 		
 		suite.addTest(SourceRewriteTester.suite("StatementsTests", "resources/rewrite/ASTWriterStatementTestSource.awts"));
-		suite.addTest(SourceRewriteTester
-				.suite("Commented StatementsTests", "resources/rewrite/ASTWriterCommentedStatementTestSource.awts"));
+		suite.addTest(SourceRewriteTester.suite("Commented StatementsTests",
+				"resources/rewrite/ASTWriterCommentedStatementTestSource.awts"));
 		
 		suite.addTest(SourceRewriteTester.suite("NameTests", "resources/rewrite/ASTWriterNameTestSource.awts"));
 		suite.addTest(SourceRewriteTester.suite("Commented NameTests", "resources/rewrite/ASTWriterCommentedNameTestSource.awts"));

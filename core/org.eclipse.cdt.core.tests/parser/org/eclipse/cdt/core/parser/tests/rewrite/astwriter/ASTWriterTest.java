@@ -63,7 +63,6 @@ public class ASTWriterTest extends RewriteBaseTest {
 		}
 	}
 	
-
 	@Override
 	protected void runTest() throws Throwable {
 		file = project.getFile("ASTWritterTest.h"); //$NON-NLS-1$

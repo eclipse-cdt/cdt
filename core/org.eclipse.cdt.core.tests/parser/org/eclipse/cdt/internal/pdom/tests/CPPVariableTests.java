@@ -52,7 +52,8 @@ public class CPPVariableTests extends PDOMTestBase {
 		IBinding[] bindings = findQualifiedName(pdom, "autoCPPVariable");
 		assertEquals(1, bindings.length);
 		ICPPVariable variable = (ICPPVariable) bindings[0];
-		assertTrue(variable.isAuto());
+		assertFalse(variable.isExtern());
+		assertFalse(variable.isStatic());
 	}
 
 	public void testCPPExternVariable() throws Exception {

@@ -275,6 +275,19 @@ public class CPPTemplates {
 		return null;
 	}
 
+	private static IBinding instantiateFunctionTemplate(ICPPFunctionTemplate template,
+			ICPPTemplateArgument[] arguments, CPPTemplateParameterMap map) throws DOMException {
+		ICPPTemplateInstance instance= getInstance(template, arguments, false);
+		if (instance != null) {
+			return instance;
+		}
+	
+		IBinding owner= template.getOwner();
+		instance = CPPTemplates.createInstance(owner, template, map, arguments);
+		addInstance(template, arguments, instance);
+		return instance;
+	}
+
 	/**
 	 * Instantiates a partial class template specialization.
 	 */
@@ -306,19 +319,6 @@ public class CPPTemplates {
 		
 		assert !(template instanceof ICPPClassTemplatePartialSpecialization);
 		ICPPTemplateInstance instance= getInstance(template, arguments, isDef);
-		if (instance != null) {
-			return instance;
-		}
-
-		IBinding owner= template.getOwner();
-		instance = CPPTemplates.createInstance(owner, template, map, arguments);
-		addInstance(template, arguments, instance);
-		return instance;
-	}
-
-	private static IBinding instantiateFunctionTemplate(ICPPFunctionTemplate template,
-			ICPPTemplateArgument[] arguments, CPPTemplateParameterMap map) throws DOMException {
-		ICPPTemplateInstance instance= getInstance(template, arguments, false);
 		if (instance != null) {
 			return instance;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,13 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
+/**
+ * Block for C/C++ Project Paths page for 3.X projects.
+ * 
+ * @deprecated as of CDT 4.0. This option block was for property pages
+ * for 3.X style projects.
+ */
+@Deprecated
 public class CPathTabBlock extends AbstractPathOptionBlock {
 	
 	private final int[] pathTypes = {IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,IPathEntry.CDT_CONTAINER};

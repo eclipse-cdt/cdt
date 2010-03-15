@@ -56,8 +56,12 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
- * CPathLibraryEntryPage
+ * Libraries tab for C/C++ Project Paths page for 3.X projects.
+ * 
+ * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
+ * for 3.X style projects.
  */
+@Deprecated
 public class CPathLibraryEntryPage extends CPathBasePage {
 
 	private ListDialogField<CPElement> fCPathList;

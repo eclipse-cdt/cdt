@@ -167,7 +167,6 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=279837">bug 279837</a> - maj - [shells] RemoteCommandShellOperation can miss output</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=271015">bug 271015</a> - maj - [ftp] "My Home" with "Empty list" doesn't refresh</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=268463">bug 268463</a> - maj - [ssh] [sftp] SftpFileService.getFile(...) fails with cryptic jsch exception (4)</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=260796">bug 260796</a> - maj - [ftp] Fetching folder job sometimes runs forever with Outpost firewall</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=248913">bug 248913</a> - maj - [ssh] SSH subsystem loses connection</li> 
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=238156">bug 238156</a> - maj - Export/Import Connection doesn't create default filters for the specified connection</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226564">bug 226564</a> - maj - [efs] Deadlock while starting dirty workspace

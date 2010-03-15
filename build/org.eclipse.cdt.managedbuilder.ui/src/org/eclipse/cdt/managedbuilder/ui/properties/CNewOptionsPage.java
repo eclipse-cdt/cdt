@@ -17,9 +17,13 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
+ * @deprecated as of CDT 4.0. Does not seem to be used anywhere, looks like
+ *    remnant of 3.X style new project wizard.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class CNewOptionsPage extends NewCProjectWizardOptionPage {
 
 	public CNewOptionsPage(String pageName, String title, ImageDescriptor titleImage) {

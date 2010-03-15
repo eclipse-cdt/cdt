@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,13 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
+/**
+ * Abstract block for C/C++ Project Paths page for 3.X projects.
+ * 
+ * @deprecated as of CDT 4.0. This option block was used to set preferences/properties
+ * for 3.X style projects.
+ */
+@Deprecated
 abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock implements ICOptionContainer {
 
 	private StatusInfo fCPathStatus;

@@ -376,11 +376,15 @@ public class SyncVariableDataAccess {
         private String fFormatId;
         private boolean fEditable;
 
+        public GetFormattedValueValueQuery(IFormattedDataDMContext dmc, String formatId) {
+        	this(dmc, formatId, false);
+        }
+
         public GetFormattedValueValueQuery(IFormattedDataDMContext dmc, String formatId, boolean editable) {
-            super();
-            fDmc = dmc;
-            fFormatId = formatId;
-            fEditable = editable;
+        	super();
+        	fDmc = dmc;
+        	fFormatId = formatId;
+        	fEditable = editable;
         }
 
         @Override
@@ -430,7 +434,7 @@ public class SyncVariableDataAccess {
     	return getValue(element, formatId, true);
     }
     
-    public String getValue(Object element, String formatId, boolean editable) {
+    private String getValue(Object element, String formatId, boolean editable) {
 
         /*
          * Get the DMC and the session. If element is not an register DMC, or

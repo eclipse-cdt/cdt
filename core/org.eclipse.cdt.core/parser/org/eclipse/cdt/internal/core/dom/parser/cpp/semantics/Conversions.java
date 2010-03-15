@@ -108,7 +108,6 @@ public class Conversions {
 				}
 			}
 
-			
 			// If the reference is an lvalue reference and ...
 			if (isLValueRef) {
 				// ... the initializer expression is an lvalue (but is not a bit field)
@@ -126,8 +125,8 @@ public class Conversions {
 					} 
 				}
 				// ... or has a class type (i.e., T2 is a class type), where T1 is not reference-related to T2, and can be
-				// implicitly converted to an lvalue of type “cv3 T3,” where “cv1 T1” is reference-compatible with 
-				// “cv3 T3” (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
+				// implicitly converted to an lvalue of type ï¿½cv3 T3,ï¿½ where ï¿½cv1 T1ï¿½ is reference-compatible with 
+				// ï¿½cv3 T3ï¿½ (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
 				// and choosing the best one through overload resolution (13.3)),
 				if (T2 instanceof ICPPClassType && udc != UDCMode.noUDC && isReferenceRelated(T1, T2) < 0) {
 					Cost cost= conversionFuncForDirectReference(cv1T1, cv2T2, T2, true);
@@ -153,7 +152,7 @@ public class Conversions {
 
 			// If T1 and T2 are class types and ...
 			if (T1 instanceof ICPPClassType && T2 instanceof ICPPClassType) {
-				// ... the initializer expression is an rvalue and “cv1 T1” is reference-compatible with “cv2 T2”
+				// ... the initializer expression is an rvalue and ï¿½cv1 T1ï¿½ is reference-compatible with ï¿½cv2 T2ï¿½
 				if (!exprIsLValue) {
 					Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObjectType);
 					if (cost != null) {
@@ -167,7 +166,7 @@ public class Conversions {
 				}
 
 				// or T1 is not reference-related to T2 and the initializer expression can be implicitly
-				// converted to an rvalue of type “cv3 T3” (this conversion is selected by enumerating the
+				// converted to an rvalue of type ï¿½cv3 T3ï¿½ (this conversion is selected by enumerating the
 				// applicable conversion functions (13.3.1.6) and choosing the best one through overload
 				// resolution (13.3)), then the reference is bound to the initializer expression rvalue in the
 				// first case and to the object that is the result of the conversion in the second case (or,
@@ -181,8 +180,8 @@ public class Conversions {
 				}
 			}
 			
-			// If the initializer expression is an rvalue, with T2 an array type, and “cv1 T1” is
-			// reference-compatible with “cv2 T2,” the reference is bound to the object represented by the
+			// If the initializer expression is an rvalue, with T2 an array type, and ï¿½cv1 T1ï¿½ is
+			// reference-compatible with ï¿½cv2 T2,ï¿½ the reference is bound to the object represented by the
 			// rvalue (see 3.10).
 			if (!exprIsLValue && T2 instanceof IArrayType) {
 				Cost cost= isReferenceCompatible(cv1T1, cv2T2, isImpliedObjectType);
@@ -192,7 +191,7 @@ public class Conversions {
 				}
 			}
 
-			// — Otherwise, a temporary of type “cv1 T1” is created and initialized from the initializer
+			// ï¿½ Otherwise, a temporary of type ï¿½cv1 T1ï¿½ is created and initialized from the initializer
 			// expression using the rules for a non-reference copy initialization (8.5). The reference is then
 			// bound to the temporary. If T1 is reference-related to T2, cv1 must be the same cv-qualification
 			// as, or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
@@ -231,7 +230,7 @@ public class Conversions {
 	}
 
 	/**
-	 * 0x: 13.3.1.6 Initialization by conversion function for direct reference binding	 
+	 * C++0x: 13.3.1.6 Initialization by conversion function for direct reference binding	 
 	 */
 	private static Cost conversionFuncForDirectReference(final IType cv1T1, final IType cv2T2, final IType T2, boolean forLValue)
 			throws DOMException {

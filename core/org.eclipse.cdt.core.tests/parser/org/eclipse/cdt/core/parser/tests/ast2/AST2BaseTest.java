@@ -492,13 +492,13 @@ public class AST2BaseTest extends BaseTestCase {
     		return tu;
     	}
     	
-    	public IBinding assertProblem(String section, int len) {
+    	public IProblemBinding assertProblem(String section, int len) {
     		if (len <= 0)
     			len= section.length()-len;
     		IBinding binding= binding(section, len);
     		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
     				binding instanceof IProblemBinding);
-    		return binding;
+    		return (IProblemBinding) binding;
     	}
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len) {

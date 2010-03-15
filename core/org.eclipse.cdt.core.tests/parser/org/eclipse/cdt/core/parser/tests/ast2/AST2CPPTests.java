@@ -8085,7 +8085,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		complex(const T& r, const T& i);
 	//	};
 	//	template<typename T> struct vector {
-	//		vector(std::initializer_list<T>);
+	//		vector(std::initializer_list<T>){};
 	//	};
 	//	struct str {
 	//		str(const char*);
@@ -8236,6 +8236,51 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertNonProblem("h( {'a'} )", 1);
 		bh.assertProblem("h( {1.0} )", 1);
 		bh.assertNonProblem("h( { } )", 1);
-	}	
+	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	void f(int, int){}
+	//	struct F { F(int,int){}};
+	//	void  fF(F) {}
+	//
+	//	struct G { G(int){} G(){}};
+	//	void  fG(G) {}
+	//
+	//	struct H { H(G) {}};
+	//	void  fH(H) {}
+	//
+	//	void test() {
+	//		f({1,1});	// list is not expanded
+	//		new F({1,1});  // F(1,1)
+	//		fF({1,1});     // F(1,1)
+	//
+	//		fG(1);		// G(1)
+	//		fG({1});    // G(1)
+	//		
+	//		new H(1);   // H(G(1))
+	//		new H({1}); // H(G(1)) or H(H(G(1)))
+	//		fH(1);      // no conversion from int to H
+	//		fH({1});    // H(G(1))
+	//	}
+	public void testListInitialization_302412f() throws Exception {
+		ICPPConstructor ctor;
+		IProblemBinding problem;
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertProblem("f({1,1})", 1);
+		ctor= bh.assertNonProblem("F({1,1})", 1);
+		bh.assertNonProblem("fF({1,1})", 2);
+
+		bh.assertNonProblem("fG(1)", 2);
+		bh.assertNonProblem("fG({1})", 2);
+
+		ctor= bh.assertNonProblem("H(1)", 1);
+		problem= bh.assertProblem("H({1})", 1);
+		assertEquals(IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, problem.getID());
+		bh.assertProblem("fH(1)", 2);
+		bh.assertNonProblem("fH({1})", 2);
+	}
 }
 

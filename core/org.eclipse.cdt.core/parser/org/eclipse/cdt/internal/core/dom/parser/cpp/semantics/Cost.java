@@ -150,10 +150,6 @@ class Cost {
 		fCouldNarrow= false;
 	}
 
-	public ICPPFunction getUserDefinedConversion() {
-		return fUserDefinedConversion;
-	}
-	
 	/**
 	 * Returns an integer &lt 0 if other cost is <code>null</code>, or this cost is smaller than the other cost,
 	 *        0 if this cost is equal to the other cost,

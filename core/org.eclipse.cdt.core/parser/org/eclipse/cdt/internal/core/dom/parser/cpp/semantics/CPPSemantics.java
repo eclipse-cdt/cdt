@@ -364,7 +364,7 @@ public class CPPSemantics {
 					if (cls instanceof ICPPDeferredClassInstance) {
 						binding= new CPPUnknownConstructor(cls);
 					} else {
-						binding= selectConstructor(cls, data);
+						binding= CPPSemantics.resolveFunction(data, cls.getConstructors(), true);
 					}
 				} catch (DOMException e) {
 					return e.getProblem();
@@ -526,31 +526,6 @@ public class CPPSemantics {
 			}
 		} 
 		return false;
-	}
-
-	private static IBinding selectConstructor(ICPPClassType cls, LookupData data) throws DOMException {
-		final IType[] types = data.getFunctionArgumentTypes();
-		if (types != null && types.length == 1 && types[0] instanceof InitializerListType) {
-			Cost cost= Conversions.listInitializationSequence((InitializerListType) types[0], cls, UDCMode.allowUDC, true);
-			if (cost.converts()) {
-				if (cost.isAmbiguousUDC()) {
-					return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, cls.getConstructors());
-				}
-				IBinding result= cost.getUserDefinedConversion();
-				if (result == null) {
-					return cls;
-				}
-				return result;
-			}
-			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, cls.getConstructors());
-		}
-		
-		final ICPPConstructor[] constructors= cls.getConstructors();
-		if (constructors.length > 0) {
-			data.foundItems= constructors;
-			return CPPSemantics.resolveAmbiguities(data, data.astName);
-		}
-		return cls;
 	}
 
 	private static void doKoenigLookup(LookupData data) throws DOMException {

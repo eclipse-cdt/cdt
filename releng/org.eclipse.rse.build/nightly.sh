@@ -39,6 +39,11 @@ basebuilder=${eclipse}
 
 # Find the base build scripts: genericTargets.xml and build.xml
 cd "${basebuilder}/plugins"
+if [ -f org.eclipse.equinox.launcher.jar ]; then
+  launcher=org.eclipse.equinox.launcher.jar
+else
+  launcher=`ls org.eclipse.equinox.launcher_*.jar` | sort | tail -1`
+fi
 pdeBuild=`ls -d org.eclipse.pde.build* | sort | tail -1`
 cd "${builder}"
 pdeBuild="${basebuilder}/plugins/${pdeBuild}"
@@ -71,7 +76,7 @@ bootclasspath_15="/shared/common/jdk-1.5.0_16/jre/lib/rt.jar"
 bootclasspath_foundation11="/shared/dsdp/JDKs/win32/j9_cdc11/lib/jclFoundation11/classes.zip"
 
 
-command="java -cp ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar org.eclipse.core.launcher.Main "
+command="java -cp ${basebuilder}/plugins/${launcher} org.eclipse.core.launcher.Main "
 command="$command -application org.eclipse.ant.core.antRunner "
 command="$command -buildfile ${pdeBuild}/scripts/build.xml "
 command="$command -DbuildDirectory=${buildDirectory} "

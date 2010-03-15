@@ -120,7 +120,19 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public CodeReader getCodeReader(Object tu) {
 		try {
-			return new CodeReader((String) tu);
+			String stu = (String) tu;
+			String fileEncoding = null;
+            // query file's encoding, if we find it and use it to create CodeReader
+			FileEncodingRegistry fileEncodingRegistry = fIndexer.getFileEncodingRegistry();
+			if(fileEncodingRegistry!=null){
+				fileEncoding = fileEncodingRegistry.getFileEncoding(stu);
+			}
+
+			if (fileEncoding != null) {
+				return new CodeReader(stu, fileEncoding);
+			} else {
+				return new CodeReader(stu);
+			}
 		} catch (IOException e) {
 		}
 		return null;

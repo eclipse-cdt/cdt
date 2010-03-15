@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,9 +52,9 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @throws CoreException
 	 */
 	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log) throws CoreException {
+			IScannerInfo scanner, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
-				false, mapper, log, scanner);
+				false, mapper, log, scanner, fileEncodingRegistry);
 	
 	}
 	
@@ -69,9 +69,9 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @throws CoreException
 	 */
 	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IStandaloneScannerInfoProvider scannerProvider, ILanguageMapper mapper, IParserLogService log) throws CoreException {
+			IStandaloneScannerInfoProvider scannerProvider, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
-				false, mapper, log, scannerProvider);
+				false, mapper, log, scannerProvider, fileEncodingRegistry);
 	
 	}
 	
@@ -85,9 +85,9 @@ public class StandaloneFastIndexer extends StandaloneIndexer {
 	 * @throws CoreException
 	 */
 	public StandaloneFastIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			ILanguageMapper mapper, IParserLogService log) throws CoreException {
+			FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
-				false, mapper, log, (IStandaloneScannerInfoProvider)null);
+				false, mapper, log, (IStandaloneScannerInfoProvider)null, fileEncodingRegistry);
 	
 	}
 	

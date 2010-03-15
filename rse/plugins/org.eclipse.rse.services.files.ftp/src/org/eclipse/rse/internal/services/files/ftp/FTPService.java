@@ -144,6 +144,8 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 public class FTPService extends AbstractFileService implements IFTPService, IFilePermissionsService
 {
 	private FTPClient _ftpClient;
+	private long _ftpLastCheck;
+	private static long FTP_CONNECTION_CHECK_TIMEOUT = 30000; //msec before checking connection with NOOP
 	private FTPFile[] _ftpFiles;
 
 	private Mutex _commandMutex = new Mutex();
@@ -335,7 +337,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	protected String checkEncoding(String s) throws SystemMessageException {
 		if (s == null || s.length() == 0)
 			return s;
-		String encoding = _controlEncoding!=null ? _controlEncoding : getFTPClient().getControlEncoding();
+		String encoding = _controlEncoding!=null ? _controlEncoding : getFTPClient(false).getControlEncoding();
 		try {
 			byte[] bytes = s.getBytes(encoding);
 			String decoded = new String(bytes, encoding);
@@ -383,7 +385,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}
 		}
 
-		if(_ftpLoggingOutputStream!=null)
+		if(_ftpLoggingOutputStream!=null && _ftpProtocolCommandListener==null)
 		{
 			_ftpProtocolCommandListener = new ProtocolCommandListener() {
 
@@ -497,14 +499,20 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		clearCache(null);
 		try
 		{
-			getFTPClient().logout();
-			_ftpClient = null;
+			if (_ftpClient!=null) {
+				//no use connecting through NOOP as side-effect
+				//of getFtpClient() just to disconnect
+				_ftpClient.logout();
+			}
 		}
 		catch (IOException e)
 		{
 		}
 		finally {
 			_ftpClient = null;
+			//force checking connection with NOOP on reconnect
+			_ftpLastCheck = 0;
+			_ftpProtocolCommandListener = null;
 		}
 
 	}
@@ -527,16 +535,38 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		}
 	}
 
+	
 	/**
 	 * Returns the commons.net FTPClient for this session.
 	 *
 	 * As a side effect, it also checks the connection
 	 * by sending a NOOP to the remote side, and initiates
 	 * a connect in case the NOOP throws an exception.
+	 * 
+	 * In order to avoid race conditions by this sending
+	 * of NOOP and its related return code, this sending
+	 * of NOOP must always be protected by a command mutex.
 	 *
 	 * @return The commons.net FTPClient.
 	 */
-	public FTPClient getFTPClient()
+	public FTPClient getFTPClient() {
+		return getFTPClient(true);
+	}
+	
+	/**
+	 * Returns the commons.net FTPClient for this session.
+	 *
+	 * @param checkConnection <code>true</code> to request
+	 *    sending a NOOP command as a side-effect in order
+	 *    to check connection or re-connect. 
+	 *    When this is done, the call must be protected
+	 *    by a command mutex in order to avoid race conditions
+	 *    between sending the NOOP command and awaiting its
+	 *    response.
+	 *
+	 * @return The commons.net FTPClient.
+	 */
+	public FTPClient getFTPClient(boolean checkConnection)
 	{
 		if (_ftpClient == null)
 		{
@@ -547,14 +577,18 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 			}
 		}
 
-		if(_hostName!=null)
+		if(_hostName!=null && checkConnection)
 		{
-			try{
-				_ftpClient.sendNoOp();
-			}catch (IOException e){
-				try {
-					connect();
-				} catch (Exception e1) {}
+			long curTime = System.currentTimeMillis();
+			if (curTime - _ftpLastCheck > FTP_CONNECTION_CHECK_TIMEOUT) {
+				_ftpLastCheck = curTime;
+				try{
+					_ftpClient.sendNoOp();
+				}catch (IOException e){
+					try {
+						connect();
+					} catch (Exception e1) {}
+				}
 			}
 		}
 
@@ -669,8 +703,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		{
 			try {
 				//try to retrieve the file
-				_ftpClient = getFTPClient();
-				chdir(_ftpClient, remoteParent);
+				FTPClient ftpc = getFTPClient();
+				chdir(ftpc, remoteParent);
 				if(!listFiles(monitor))
 				{
 					throw new SystemOperationCancelledException();
@@ -762,8 +796,8 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 					filematcher = new NamePatternMatcher(fileFilter, true, true);
 				}
 
-				_ftpClient = getFTPClient();
-				chdir(_ftpClient, parentPath);
+				FTPClient ftpc = getFTPClient();
+				chdir(ftpc, parentPath);
 				if(!listFiles(monitor))
 				{
 					throw new SystemOperationCancelledException();
@@ -1630,8 +1664,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		} else if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 				clearCache(parent);
-				if (!_ftpClient.sendSiteCommand("CHMOD " + newPermissions + " " + file.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
-					String lastMessage = _ftpClient.getReplyString();
+				FTPClient ftpc = getFTPClient();
+				if (!ftpc.sendSiteCommand("CHMOD " + newPermissions + " " + file.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
+					String lastMessage = ftpc.getReplyString();
 					throw new RemoteFileSecurityException(new Exception(lastMessage));
 				}
 			} catch (IOException e) {
@@ -1776,8 +1811,9 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 		if (_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 				clearCache(inFile.getParentPath());
-				if (!_ftpClient.sendSiteCommand("CHMOD " + s + " " + inFile.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
-					String lastMessage = _ftpClient.getReplyString();
+				FTPClient ftpc = getFTPClient();
+				if (!ftpc.sendSiteCommand("CHMOD " + s + " " + inFile.getAbsolutePath())) { //$NON-NLS-1$ //$NON-NLS-2$
+					String lastMessage = ftpc.getReplyString();
 					throw new RemoteFileSecurityException(new Exception(lastMessage));
 				}
 			} catch (IOException e) {

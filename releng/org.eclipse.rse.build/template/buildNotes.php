@@ -42,6 +42,10 @@
   <li>A regression in the Terminal widget was fixed, which made initial output after login
       invisible above the initial viewport
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=294327">294327</a>].</li>
+  <li>FTP performance was strongly improved and made more reliable, by eliminating
+      potential race conditions and lockups due to excessive sending of NOOP commands
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=269171">269171</a>]
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=300394">300394</a>].</li>
   <li>EFS provider performance was improved, and multiple connections to a host can
       now be disambiguated by name
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=291738">291738</a>]

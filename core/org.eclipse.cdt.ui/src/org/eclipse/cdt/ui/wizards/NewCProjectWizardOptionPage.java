@@ -21,6 +21,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainerExtension;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 
+/**
+ * @deprecated as of CDT 4.0. This abstract was used for New Project Wizards
+ * for 3.X style projects.
+ */
 public abstract class NewCProjectWizardOptionPage extends WizardPage implements ICOptionContainerExtension {
 
 	private TabFolderOptionBlock fOptionBlock;

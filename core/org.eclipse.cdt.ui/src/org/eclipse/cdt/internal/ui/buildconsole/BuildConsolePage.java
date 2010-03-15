@@ -8,8 +8,8 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Red Hat Inc. - multiple build console support
- *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation 
- *                                    Save build output    
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ *                                    Save build output
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
@@ -27,9 +27,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -117,7 +117,7 @@ public class BuildConsolePage extends Page
 	static final int POSITION_NEXT = -1;
 	static final int POSITION_PREV = -2;
 	static final int POSITION_FIST = -3;
-	
+
 	private BuildConsole fConsole;
 	private IConsoleView fConsoleView;
 	private String fContextMenuId;
@@ -151,7 +151,7 @@ public class BuildConsolePage extends Page
 	 * @param console
 	 * @param contextId
 	 */
-	public BuildConsolePage(IConsoleView view, BuildConsole console, 
+	public BuildConsolePage(IConsoleView view, BuildConsole console,
 			String contextId) {
 		fConsole = console;
 		fConsoleView = view;
@@ -162,18 +162,20 @@ public class BuildConsolePage extends Page
 	}
 
 	protected void setProject(IProject project) {
-		if (fProject != project && project.isAccessible()) {		
-			fProject = project;
+		if (fProject != project && project.isAccessible()) {
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
-			fSaveConsoleAction.setChecked(false);
-			ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
-			// Read save console log preferences            
-			try {
-				IEclipsePreferences pref = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
-				boolean b = pref.getBoolean(BuildOutputLogger.getIsSavingKey(project, configDesc.getName()),false);
-				fSaveConsoleAction.setChecked(b);
-			} catch (Exception e) {
-				CUIPlugin.log(e);
+			if (projDesc!=null) {
+				fProject = project;
+				fSaveConsoleAction.setChecked(false);
+				ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
+				// Read save console log preferences
+				try {
+					IEclipsePreferences pref = new InstanceScope().getNode(CCorePlugin.PLUGIN_ID);
+					boolean b = pref.getBoolean(BuildOutputLogger.getIsSavingKey(project, configDesc.getName()),false);
+					fSaveConsoleAction.setChecked(b);
+				} catch (Exception e) {
+					CUIPlugin.log(e);
+				}
 			}
 		}
 	}
@@ -190,7 +192,7 @@ public class BuildConsolePage extends Page
 		IProject project = getProject();
 		if (project != null) {
 			IBuildConsoleManager consoleManager = getConsole().getConsoleManager();
-			getViewer().setDocument(consoleManager.getConsoleDocument(project));			
+			getViewer().setDocument(consoleManager.getConsoleDocument(project));
 			IConsole console = consoleManager.getConsole(project);
 			if ( console instanceof BuildConsolePartitioner) {
 				BuildConsolePartitioner par = (BuildConsolePartitioner)console;
@@ -209,7 +211,7 @@ public class BuildConsolePage extends Page
 
 					/*
 					 * (non-Javadoc)
-					 * 
+					 *
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
@@ -235,7 +237,7 @@ public class BuildConsolePage extends Page
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -274,7 +276,7 @@ public class BuildConsolePage extends Page
 
 	/**
 	 * Fill the context menu
-	 * 
+	 *
 	 * @param menu
 	 *            menu
 	 */
@@ -290,7 +292,7 @@ public class BuildConsolePage extends Page
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
@@ -307,7 +309,7 @@ public class BuildConsolePage extends Page
 						getViewer().getTextWidget().redraw();
 					}
 				});
-			} 
+			}
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
 			setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
@@ -322,7 +324,7 @@ public class BuildConsolePage extends Page
 		fScrollLockAction = new ScrollLockAction(getViewer());
 		fScrollLockAction.setChecked(fIsLocked);
 		fNextErrorAction = new NextErrorAction(this);
-		fPreviousErrorAction = new PreviousErrorAction(this);	
+		fPreviousErrorAction = new PreviousErrorAction(this);
 		fShowErrorAction = new ShowErrorAction(this);
 		fSaveConsoleAction = new SaveConsoleAction(this);
 		fSaveConsoleAction.setChecked(false);
@@ -333,22 +335,22 @@ public class BuildConsolePage extends Page
 		// each action
 		IActionBars actionBars = getSite().getActionBars();
 		TextViewerAction action = new TextViewerAction(getViewer(), ITextOperationTarget.COPY);
-		action.configureAction(ConsoleMessages.BuildConsolePage__Copy_Ctrl_C_6, 
-				ConsoleMessages.BuildConsolePage_Copy_7, ConsoleMessages.BuildConsolePage_Copy_7); 
+		action.configureAction(ConsoleMessages.BuildConsolePage__Copy_Ctrl_C_6,
+				ConsoleMessages.BuildConsolePage_Copy_7, ConsoleMessages.BuildConsolePage_Copy_7);
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
 				ISharedImages.IMG_TOOL_COPY_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action = new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
-		action.configureAction(ConsoleMessages.BuildConsolePage_Select__All_Ctrl_A_12, 
-				ConsoleMessages.BuildConsolePage_Select_All, 
-				ConsoleMessages.BuildConsolePage_Select_All); 
+		action.configureAction(ConsoleMessages.BuildConsolePage_Select__All_Ctrl_A_12,
+				ConsoleMessages.BuildConsolePage_Select_All,
+				ConsoleMessages.BuildConsolePage_Select_All);
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		//XXX Still using "old" resource access
-		ResourceBundle bundle = ResourceBundle.getBundle(ConsoleMessages.BUNDLE_NAME); 
+		ResourceBundle bundle = ResourceBundle.getBundle(ConsoleMessages.BUNDLE_NAME);
 		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action_", //$NON-NLS-1$
-				getConsoleView())); 
+				getConsoleView()));
 		action = new TextViewerGotoLineAction(getViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 		actionBars.updateActionBars();
@@ -391,7 +393,7 @@ public class BuildConsolePage extends Page
 
 	/**
 	 * Returns the view this page is contained in
-	 * 
+	 *
 	 * @return the view this page is contained in
 	 */
 	protected IConsoleView getConsoleView() {
@@ -400,7 +402,7 @@ public class BuildConsolePage extends Page
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
 	@Override
@@ -424,7 +426,7 @@ public class BuildConsolePage extends Page
 		ISelection selection= null;
 		if (page != null)
 			selection= page.getSelection();
-		
+
 		if (convertSelectionToProject(selection) == null) {
 			if (selection instanceof ITextSelection) {
 				Object part= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
@@ -457,7 +459,7 @@ public class BuildConsolePage extends Page
 		}
 		return false;
 	}
-	
+
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IProject newProject = convertSelectionToProject(selection);
 		IProject oldProject = getProject();
@@ -492,7 +494,7 @@ public class BuildConsolePage extends Page
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.IPage#getControl()
 	 */
 	@Override
@@ -505,7 +507,7 @@ public class BuildConsolePage extends Page
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	@Override
@@ -519,7 +521,7 @@ public class BuildConsolePage extends Page
 
 	/**
 	 * Sets the font for this page.
-	 * 
+	 *
 	 * @param font
 	 *            font
 	 */
@@ -529,7 +531,7 @@ public class BuildConsolePage extends Page
 
 	/**
 	 * Sets the tab width for this page.
-	 * 
+	 *
 	 * @param tabs
 	 *            tab width
 	 */
@@ -559,14 +561,14 @@ public class BuildConsolePage extends Page
 //			return this;
 //		}
 //		if (IShowInTargetList.class.equals(required)) {
-//			return this; 
+//			return this;
 //		}
 		return null;
-	}	
-	
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
 	 */
 	public void textChanged(TextEvent event) {
@@ -579,7 +581,7 @@ public class BuildConsolePage extends Page
 
 	/**
 	 * Highlight next/previous error or error by console offset
-	 * @param position POSITION_NEXT (-1), POSITION_PREV (-2), or offset 
+	 * @param position POSITION_NEXT (-1), POSITION_PREV (-2), or offset
 	 */
 	void moveToError(int position) {
 		IProject project = getProject();
@@ -601,7 +603,7 @@ public class BuildConsolePage extends Page
 				}
 			}
 			showError(par, position > 0 || fShowErrorAction.isChecked() );
-		}		
+		}
 	}
 
 	/**
@@ -613,24 +615,24 @@ public class BuildConsolePage extends Page
 		if ( p == null ) return;
 		getViewer().selectPartition(par, p);
 		// Show error in editor if necessary
-		// (always show when absolute positioning, otherwise depends 
+		// (always show when absolute positioning, otherwise depends
 		// on fShowErrorAction state)
 		if ( openInEditor ) {
 			openErrorInEditor(par.fDocumentMarkerManager.getCurrentErrorMarker());
-		}			
+		}
 	}
-	
-	/** 
-	 * Open error specified by marker in editor 
+
+	/**
+	 * Open error specified by marker in editor
 	 */
 	public static void openErrorInEditor(ProblemMarkerInfo marker) {
 		IWorkbenchWindow window = CUIPlugin.getActiveWorkbenchWindow();
-		
+
 		if ( marker == null || marker.file == null || window == null )  return;
-		
+
 		IWorkbenchPage page = window.getActivePage();
-		if (page == null) return; 
-		
+		if (page == null) return;
+
 		IEditorPart editor = page.getActiveEditor();
 		if (editor != null) {
 			IEditorInput input = editor.getEditorInput();
@@ -639,7 +641,7 @@ public class BuildConsolePage extends Page
 				page.activate(editor);
 			}
 		}
-			
+
 		if ( marker.file instanceof IFile ) {
 			try {
 				// Find IMarker corresponding to ProblemMarkerInfo
@@ -651,15 +653,15 @@ public class BuildConsolePage extends Page
 						IDE.openEditor(page, m, OpenStrategy.activateOnOpen());
 						return;
 					}
-				}				
+				}
 			} catch (PartInitException e) {
 				CUIPlugin.log(e);
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
-		}			
+		}
 	}
-	
+
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (fProject != null) {
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(fProject);
@@ -681,12 +683,12 @@ public class BuildConsolePage extends Page
 		ICProjectDescription newPd = event.getNewCProjectDescription();
 		ICProjectDescription oldPd = event.getOldCProjectDescription();
 		if ( fProject != null && fProject.equals(event.getProject()) &&
-				newPd != null && oldPd != null && 
+				newPd != null && oldPd != null &&
 				newPd.getActiveConfiguration() != null &&
 				newPd.getActiveConfiguration() != oldPd.getActiveConfiguration() ) {
 			BuildOutputLogger.SaveBuildOutputPreferences bp = BuildOutputLogger.readSaveBuildOutputPreferences(fProject);
 			fSaveConsoleAction.setChecked(bp.isSaving);
 		}
-		
+
 	}
 }

@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
  * 
  * @since 3.2
  */
-public class RSEModelObjectDecorator extends LabelProvider implements ILabelDecorator {
+public class RSEModelObjectTestDecorator extends LabelProvider implements ILabelDecorator {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)

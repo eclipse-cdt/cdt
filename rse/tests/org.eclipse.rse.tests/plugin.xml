@@ -134,8 +134,8 @@
 	         label="RSE Model Object Test Decorator"
 	         state="false"
 	         adaptable="true"
-	         class="org.eclipse.rse.tests.decorators.RSEModelObjectDecorator"
-	         id="org.eclipse.rse.tests.decorators.RSEModelObjectDecorator">
+	         class="org.eclipse.rse.tests.decorators.RSEModelObjectTestDecorator"
+	         id="org.eclipse.rse.tests.decorators.RSEModelObjectTestDecorator">
 		 <enablement>
         <or>
             <objectClass name="org.eclipse.rse.ui.model.ISystemPromptableObject"/>

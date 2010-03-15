@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,5 +297,15 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateIdentifier("a");
 		validateEOF();
 		validateProblemCount(9); 
+	}
+	
+	//	#define str(x) #x
+	//	#define xstr(x) str(x)
+	//  #define MY_MACROS(Type) unsigned ##Type f();
+	//	xstr(MY_MACROS(int))
+	public void testStringify_Bug282418() throws Exception {
+		initializeScanner();
+		validateString("unsignedint f();");
+		validateEOF();
 	}
 }

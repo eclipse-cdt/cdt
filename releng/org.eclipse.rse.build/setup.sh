@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.6M5
-ep_date="-201001291300"
+ep_ver=3.6M6
+ep_date="-201003121448"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3631.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3637e.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -68,17 +68,6 @@ if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3631.jar ]; then
   wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}${ep_ver}${ep_date}/eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz"
   tar xfvz eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
   rm eclipse-SDK-${ep_ver}-${ep_arch}.tar.gz
-  if ${P2_disabled} ; then
-    # Remove P2 due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=225537
-    # See http://wiki.eclipse.org/Equinox_p2_Removal
-    rm -rf eclipse/configuration/* eclipse/configuration/.settings
-    cp ../eclipse-3.3-linux-gtk-ppc/eclipse/configuration/config.ini eclipse/configuration
-    cp -f ../eclipse-3.3-linux-gtk-ppc/eclipse/eclipse.ini eclipse/
-    rm -rf eclipse/features/org.eclipse.equinox.p2.user.ui*
-    rm -f eclipse/plugins/org.eclipse.equinox.p2.*
-    rm -rf eclipse/p2
-    # </Remove P2>
-  fi
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 

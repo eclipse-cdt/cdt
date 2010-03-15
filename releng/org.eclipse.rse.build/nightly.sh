@@ -34,6 +34,9 @@ cd "$mydir/../working" ; working=`pwd`
 cd "$mydir/../publish" ; publishDirectory=`pwd`
 cd "$mydir" ; builder=`pwd`
 
+# SPECIAL 3.2m6: Build with target platform 3.5m6 rather than basebuilder
+basebuilder=${eclipse}
+
 # Find the base build scripts: genericTargets.xml and build.xml
 cd "${basebuilder}/plugins"
 pdeBuild=`ls -d org.eclipse.pde.build* | sort | tail -1`

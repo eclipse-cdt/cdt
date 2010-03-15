@@ -660,7 +660,7 @@
    <feature url="features/org.eclipse.rse.terminals_1.0.100.qualifier.jar" id="org.eclipse.rse.terminals" version="1.0.100.qualifier">
       <category name="TM and RSE 3.2"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_3.1.1.qualifier.jar" id="org.eclipse.rse.tests" version="3.1.1.qualifier">
+   <feature url="features/org.eclipse.rse.tests_3.2.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.2.0.qualifier">
       <category name="TM and RSE 3.2"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_1.1.100.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.100.qualifier">

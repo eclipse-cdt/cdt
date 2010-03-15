@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,8 +252,7 @@ public class MacroExpander {
 				lastConsumed= parseArguments(input, (FunctionStyleMacro) macro, forbidden, argInputs, tracker);
 			} catch (AbortMacroExpansionException e) {
 				// ignore this macro expansion
-				for (int i = 0; i < argInputs.length; i++) {
-					TokenSource argInput= argInputs[i];
+				for (TokenSource argInput : argInputs) {
 					executeScopeMarkers(argInput, forbidden);
 					if (tracker != null) {
 						tracker.setExpandedMacroArgument(null);
@@ -630,6 +629,8 @@ public class MacroExpander {
 				Token pasteArg2= null;
 				TokenList rest= null;
 				if (n != null) {
+					Token spaceDef0= n;
+					Token spaceDef1= (Token) n.getNext();
 					if (n.getType() == CPreprocessor.tMACRO_PARAMETER) {
 						TokenList arg;
 						idx= ((TokenParameterReference) n).getIndex();
@@ -637,12 +638,13 @@ public class MacroExpander {
 							arg= clone(args[idx]);
 							pasteArg2= arg.first();
 							if (pasteArg2 != null && arg.first() != arg.last()) {
+								spaceDef0= pasteArg2;
 								rest= arg;
 								rest.removeFirst();
+								spaceDef1= rest.first();
 							}
 						}
-					}
-					else {
+					} else {
 						idx= -1;
 						pasteArg2= n;
 					}
@@ -660,7 +662,7 @@ public class MacroExpander {
 						}
 						else {
 							result.append(generated);
-							addSpacemarker(pasteArg2, rest == null ? n : rest.first(), result); // end token paste
+							addSpacemarker(spaceDef0, spaceDef1, result); // end token paste
 						}
 					}
 					if (rest != null) {

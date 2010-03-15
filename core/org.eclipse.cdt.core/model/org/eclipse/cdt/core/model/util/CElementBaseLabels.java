@@ -438,7 +438,7 @@ public class CElementBaseLabels {
 	 * @return a "simple" name
 	 */
 	private static String getSimpleName(String elementName) {
-		int idx = elementName.indexOf("::"); //$NON-NLS-1$
+		int idx = elementName.lastIndexOf("::"); //$NON-NLS-1$
 		if (idx >= 0) {
 			return elementName.substring(idx+2);
 		}

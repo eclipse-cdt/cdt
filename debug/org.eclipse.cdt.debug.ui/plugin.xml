@@ -2081,6 +2081,17 @@
       </key>
  </extension>
  <extension
+       point="org.eclipse.ui.commands">
+    <command
+          categoryId="org.eclipse.debug.ui.category.run"
+          defaultHandler="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesHandler"
+          description="%BreakpointPropertiesCommand.description"
+          helpContextId="breakpoint_properties_action_context"
+          id="org.eclipse.cdt.debug.command.breakpointProperties"
+          name="%BreakpointPropertiesCommand.name">
+    </command>
+ </extension>
+ <extension
        point="org.eclipse.ui.menus">
     <menuContribution
             locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">

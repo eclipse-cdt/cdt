@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,10 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
+ * @deprecated as of CDT 4.0. This class was used for property pages
+ * for 3.X style projects.
  */
+@Deprecated
 public class MultipleFolderSelectionDialog extends SelectionStatusDialog implements ISelectionChangedListener {
 
 	CheckboxTreeViewer fViewer;

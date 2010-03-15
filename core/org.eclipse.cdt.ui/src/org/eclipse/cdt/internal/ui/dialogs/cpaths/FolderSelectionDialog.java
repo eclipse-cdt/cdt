@@ -36,7 +36,10 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 
 /**
-  */
+ * @deprecated as of CDT 4.0. This class was used for property pages
+ * for 3.X style projects.
+ */
+@Deprecated
 public class FolderSelectionDialog extends ElementTreeSelectionDialog implements ISelectionChangedListener {
 
 	private Button fNewFolderButton;

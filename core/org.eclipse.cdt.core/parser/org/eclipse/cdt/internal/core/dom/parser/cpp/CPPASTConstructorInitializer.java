@@ -39,8 +39,8 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 	public CPPASTConstructorInitializer copy() {
 		IASTInitializerClause[] args = null;
 		if (fArguments != null) {
-			args= new IASTExpression[fArguments.length];
-			for (int i=0; i<fArguments.length; i++) {
+			args= new IASTInitializerClause[fArguments.length];
+			for (int i= 0; i < fArguments.length; i++) {
 				args[i]= fArguments[i].copy();
 			}
 		}
@@ -48,7 +48,7 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
-	
+
 	public IASTInitializerClause[] getArguments() {
         return fArguments;
     }

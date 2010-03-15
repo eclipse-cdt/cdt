@@ -1,5 +1,5 @@
 feature@org.eclipse.tm.terminal=v201002182100,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal-feature
-feature@org.eclipse.tm.terminal.local=v201003021250,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local-feature
+feature@org.eclipse.tm.terminal.local=v201003151043,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local-feature
 feature@org.eclipse.tm.terminal.sdk=v201003011045,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.sdk-feature
 feature@org.eclipse.tm.terminal.serial=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial-feature
 feature@org.eclipse.tm.terminal.ssh=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh-feature
@@ -7,7 +7,7 @@ feature@org.eclipse.tm.terminal.telnet=v200907301400,:pserver:anonymous:none@dev
 feature@org.eclipse.tm.terminal.test=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.test-feature
 feature@org.eclipse.tm.terminal.view=v200907301400,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view-feature
 plugin@org.eclipse.tm.terminal=v201002182100,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal
-plugin@org.eclipse.tm.terminal.local=v201003021250,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local
+plugin@org.eclipse.tm.terminal.local=v201003151043,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.local
 plugin@org.eclipse.tm.terminal.serial=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial
 plugin@org.eclipse.tm.terminal.ssh=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh
 plugin@org.eclipse.tm.terminal.telnet=v200909160005,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.telnet

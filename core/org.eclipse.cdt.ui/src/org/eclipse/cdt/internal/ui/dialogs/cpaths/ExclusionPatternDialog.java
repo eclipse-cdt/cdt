@@ -52,6 +52,11 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
+/**
+ * @deprecated as of CDT 4.0. This dialog was used for property pages
+ * for 3.X style projects.
+ *
+ */
 public class ExclusionPatternDialog extends StatusDialog {
 	
 	private static class ExclusionPatternLabelProvider extends LabelProvider {

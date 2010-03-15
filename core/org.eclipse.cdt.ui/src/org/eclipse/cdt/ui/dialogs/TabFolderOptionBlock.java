@@ -35,6 +35,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+/**
+ * @deprecated as of CDT 4.0. This abstract block was used for New Project Wizards
+ * and property pages for 3.X style projects.
+ */
 public abstract class TabFolderOptionBlock {
 
 	protected boolean initializingTabs = true;

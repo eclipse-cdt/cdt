@@ -39,6 +39,9 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
+ * @deprecated as of CDT 4.0. This Block was used for New Project Wizard
+ * for 3.X style projects.
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ReferenceBlock extends AbstractCOptionPage {

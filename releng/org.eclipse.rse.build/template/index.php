@@ -138,7 +138,7 @@
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>All</td>
+        <td>All (<i>Experimental</i>)</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-local-@buildId@.zip">TM-terminal-local-@buildId@.zip</a></td>
         <td>
 			A local terminal (console) integrated into Eclipse. Requires CDT 7.0.0 M6 or higher. Includes Source.

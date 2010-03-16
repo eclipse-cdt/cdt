@@ -198,10 +198,16 @@ echo ""
 echo "ls ${OUTPUT}"
 ls ${OUTPUT}
 echo ""
+echo "cd ${DROPDIR}"
 if [ ! -d ${DROPDIR}.unsigned ]; then
-  echo "cp -Rp ${DROPDIR} ${DROPDIR}.unsigned"
-  echo "chmod -R g+w ${DROPDIR}.unsigned"
+  DROPBASE=`basename "${DROPDIR}"`
+  echo "mkdir ../${DROPBASE}.unsigned"
+  echo "tar cf - . | (cd ../${DROPBASE}.unsigned ; tar xf -)" 
+  echo "chmod -R g+w ../${DROPBASE}.unsigned"
 fi
-echo "cp -f ${OUTPUT}/* ${DROPDIR}"
-echo "rm -rf ${DROPDIR}/signed"
-echo "rm -rf install-ws eclipse_ext ${OUTPUT} ${RESULT}"
+echo "cp -f ${OUTPUT}/* ."
+echo "rm -rf signed"
+echo "cd ${curdir}"
+echo "rm -rf install-ws eclipse_ext"
+echo "rm -rf ${OUTPUT}"
+echo "rm -rf ${RESULT}"

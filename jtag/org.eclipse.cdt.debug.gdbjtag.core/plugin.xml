@@ -5,22 +5,27 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.eclipse.cdt.debug.gdbjtag.core.GDBJtagLaunchConfigurationDelegate"
-            delegateDescription="%launchDelegate.jtag.description"
-            delegateName="%launchDelegate.jtag.name"
             id="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"
             modes="debug"
             name="%launchConfig.name"
-            public="true"
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"/>
+            public="true"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchDelegates">
       <launchDelegate
+            delegate="org.eclipse.cdt.debug.gdbjtag.core.GDBJtagLaunchConfigurationDelegate"
+            delegateDescription="%launchDelegate.jtag.description"
+            id="org.eclipse.cdt.debug.gdbjtag.core.cdiLaunchDelegate"
+            modes="debug"
+            name="%launchDelegate.jtag.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="org.eclipse.cdt.debug.gdbjtag.launchConfigurationType">
+      </launchDelegate>
+      <launchDelegate
             delegate="org.eclipse.cdt.debug.gdbjtag.core.GDBJtagDSFLaunchConfigurationDelegate"
             delegateDescription="%launchDelegate.jtagDsf.description"
-            id="org.eclipse.cdt.dsf.gdb.launch.jtagCLaunch"
+            id="org.eclipse.cdt.debug.gdbjtag.core.dsfLaunchDelegate"
             modes="debug"
             name="%launchDelegate.jtagDsf.name"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"

@@ -18,4 +18,3 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.cdt.debug.gdbjtag.core.jtagdevice
 Bundle-Vendor: %providerName
-Import-Package: com.ibm.icu.text

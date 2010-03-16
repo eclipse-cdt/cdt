@@ -8,16 +8,14 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.ui,
- org.eclipse.debug.core,
  org.eclipse.cdt.launch,
- org.eclipse.cdt.ui,
  org.eclipse.cdt.debug.mi.core,
  org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.core.variables,
- org.eclipse.cdt.managedbuilder.ui,
  org.eclipse.ui.ide,
  org.eclipse.cdt.debug.core,
- org.eclipse.cdt.dsf.gdb
+ org.eclipse.cdt.dsf.gdb,
+ org.eclipse.cdt.dsf.gdb.ui
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.cdt.debug.gdbjtag.ui

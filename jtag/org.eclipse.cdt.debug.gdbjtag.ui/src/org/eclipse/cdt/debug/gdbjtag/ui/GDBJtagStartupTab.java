@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2008 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
+ *     Andy Jin - Added DSF debugging, bug 248593
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
@@ -51,6 +52,7 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
 public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 
 	private static final String TAB_NAME = "Startup";
+	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.startuptab";
 	
 	Text initCommands;
 	Text delay;
@@ -65,6 +67,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	
 	Button loadSymbols;
 	Text symbolsFileName;
+
 	Button symbolsFileBrowseWs;
 	Button symbolsFileBrowse;
 	Text symbolsOffset;
@@ -528,6 +531,14 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
+	 */
+	@Override
+	public String getId() {
+		return TAB_ID;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */

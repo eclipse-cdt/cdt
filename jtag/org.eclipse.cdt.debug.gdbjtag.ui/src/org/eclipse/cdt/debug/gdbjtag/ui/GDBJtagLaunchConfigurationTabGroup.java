@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,14 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Andy Jin - Changes to hold tab contributions from extension, bug 248593
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.ui;
 
-import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
-import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 
 /**
  * @author Doug Schaefer
@@ -26,14 +24,7 @@ public class GDBJtagLaunchConfigurationTabGroup extends
 		AbstractLaunchConfigurationTabGroup {
 
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-				new CMainTab(CMainTab.DONT_CHECK_PROGRAM),
-				new GDBJtagDebuggerTab(),
-				new GDBJtagStartupTab(),
-				new SourceLookupTab(),
-				new CommonTab() 
-			};
-		setTabs(tabs);
+		setTabs(new ILaunchConfigurationTab[0]);
 	}
 	
 }

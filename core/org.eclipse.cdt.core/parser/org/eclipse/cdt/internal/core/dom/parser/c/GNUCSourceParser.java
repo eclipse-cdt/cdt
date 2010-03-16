@@ -658,8 +658,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				}
 				
                 IASTArraySubscriptExpression s = nodeFactory.newArraySubscriptExpression(firstExpression, secondExpression);
-                ((ASTNode) s).setOffsetAndLength(((ASTNode) firstExpression)
-                        .getOffset(), last - ((ASTNode) firstExpression).getOffset());
+                ((ASTNode) s).setOffsetAndLength(((ASTNode) firstExpression).getOffset(),
+                		last - ((ASTNode) firstExpression).getOffset());
                 firstExpression = s;
                 break;
             case IToken.tLPAREN:

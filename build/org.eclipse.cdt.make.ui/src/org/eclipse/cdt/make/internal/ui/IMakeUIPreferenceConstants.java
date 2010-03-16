@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
+/**
+ * @deprecated as of CDT 4.0. This interface used in preference pages
+ * for 3.X style projects.
+ */
+@Deprecated
 public interface IMakeUIPreferenceConstants {
 
 	/**

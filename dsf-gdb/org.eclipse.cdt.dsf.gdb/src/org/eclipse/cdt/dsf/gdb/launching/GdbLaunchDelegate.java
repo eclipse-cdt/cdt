@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -140,6 +141,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in services launch sequence", e1.getCause())); //$NON-NLS-1$
+        } catch (CancellationException e1) {
+        	// Launch aborted, so exit cleanly
+        	return;
         }
         
         if (monitor.isCanceled())
@@ -173,6 +177,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR, "Interrupted Exception in dispatch thread", e1)); //$NON-NLS-1$
         } catch (ExecutionException e1) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Error in final launch sequence", e1.getCause())); //$NON-NLS-1$
+        } catch (CancellationException e1) {
+        	// Launch aborted, so exit cleanly
+        	return;
         } finally {
             if (!succeed) {
                 // finalLaunchSequence failed. Shutdown the session so that all started

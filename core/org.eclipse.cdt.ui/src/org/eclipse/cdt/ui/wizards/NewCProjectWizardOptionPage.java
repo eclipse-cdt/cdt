@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
  * @deprecated as of CDT 4.0. This abstract was used for New Project Wizards
  * for 3.X style projects.
  */
+@Deprecated
 public abstract class NewCProjectWizardOptionPage extends WizardPage implements ICOptionContainerExtension {
 
 	private TabFolderOptionBlock fOptionBlock;

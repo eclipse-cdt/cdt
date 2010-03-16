@@ -60,9 +60,9 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 */
 	@Deprecated
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
+			IScannerInfo scanner, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
-				false, mapper, log, scanner);
+				false, mapper, log, scanner, fileEncodingRegistry);
 		fCodeReaderFactory = codeReaderFactory;
 	}
 	
@@ -79,9 +79,9 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 * @throws CoreException
 	 */
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
-			IStandaloneScannerInfoProvider scannerProvider, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
+			IStandaloneScannerInfoProvider scannerProvider, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
 		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
-				false, mapper, log, scannerProvider);
+				false, mapper, log, scannerProvider, fileEncodingRegistry);
 		fCodeReaderFactory = codeReaderFactory;
 	}
 	

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
@@ -129,7 +130,24 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public FileContent getCodeReader(Object tu) {
-		return FileContent.createForExternalFileLocation((String) tu);
+		try {
+			String stu = (String) tu;
+			String fileEncoding = null;
+            // query file's encoding, if we find it and use it to create CodeReader
+			FileEncodingRegistry fileEncodingRegistry = fIndexer.getFileEncodingRegistry();
+			if(fileEncodingRegistry != null){
+				fileEncoding = fileEncodingRegistry.getFileEncoding(stu);
+			}
+
+			if (fileEncoding != null) {
+				// TODO this is bad
+				return FileContent.adapt(new CodeReader(stu, fileEncoding));
+			} else {
+				return FileContent.createForExternalFileLocation((String) tu);
+			}
+		} catch (IOException e) {
+		}
+		return null;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2009 IBM Corporation and others.
+-- Copyright (c) 2009, 2010 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ $Terminals
 	_Decimal32
 	_Decimal64
 	_Decimal128
+	__static_assert
 	
 $End
 
@@ -89,6 +90,9 @@ no_type_declaration_specifiers_opt
     ::= no_type_declaration_specifiers
       | $empty
 
-        
+static_assert_declaration 
+    ::= '__static_assert'  '(' expression ',' literal ')' ';'
+        /. $Build  consumeCPPASTStaticAssertDeclaration();  $EndBuild ./
+
 $End
 

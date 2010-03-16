@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ public class XlcCPPTokenMap implements IDOMTokenMap {
 
 	private final XlcKeywords keywordMap;
 	
-	public XlcCPPTokenMap(boolean supportVectors, boolean supportDecimalFloatingPoint, boolean supportComplex, boolean supportRestrict) {
-		keywordMap = XlcKeywords.createCPP(supportVectors, supportDecimalFloatingPoint, supportComplex, supportRestrict);
+	public XlcCPPTokenMap(boolean supportVectors, boolean supportDecimalFloatingPoint, boolean supportComplex, boolean supportRestrict, boolean supportStaticAssert) {
+		keywordMap = XlcKeywords.createCPP(supportVectors, supportDecimalFloatingPoint, supportComplex, supportRestrict, supportStaticAssert);
 	}
 	
 	

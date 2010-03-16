@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2006, 2009 IBM Corporation and others.
+* Copyright (c) 2006, 2010 IBM Corporation and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -2074,51 +2074,57 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
-            // Rule 642:  specifier_qualifier ::= typedef
+            // Rule 638:  static_assert_declaration ::= __static_assert ( expression , literal ) ;
             //
-            case 642: { action.   consumeToken();            break;
+            case 638: { action.   consumeCPPASTStaticAssertDeclaration();             break;
             }  
   
             //
-            // Rule 643:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers ]
+            // Rule 644:  specifier_qualifier ::= typedef
             //
-            case 643: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true, false);             break;
+            case 644: { action.   consumeToken();            break;
             }  
   
             //
-            // Rule 644:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers assignment_expression ]
+            // Rule 645:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers ]
             //
-            case 644: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true, true);             break;
+            case 645: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true, false);             break;
             }  
   
             //
-            // Rule 645:  array_modifier ::= [ static assignment_expression ]
+            // Rule 646:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers assignment_expression ]
             //
-            case 645: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, false, true);             break;
+            case 646: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true, true);             break;
             }  
   
             //
-            // Rule 646:  array_modifier ::= [ static <openscope-ast> array_modifier_type_qualifiers assignment_expression ]
+            // Rule 647:  array_modifier ::= [ static assignment_expression ]
             //
-            case 646: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);             break;
+            case 647: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, false, true);             break;
             }  
   
             //
-            // Rule 647:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers static assignment_expression ]
+            // Rule 648:  array_modifier ::= [ static <openscope-ast> array_modifier_type_qualifiers assignment_expression ]
             //
-            case 647: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);             break;
+            case 648: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);             break;
             }  
   
             //
-            // Rule 648:  array_modifier ::= [ * ]
+            // Rule 649:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers static assignment_expression ]
             //
-            case 648: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, true, false, false);             break;
+            case 649: { action.   consumeDirectDeclaratorModifiedArrayModifier(true, false, true, true);             break;
             }  
   
             //
-            // Rule 649:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers * ]
+            // Rule 650:  array_modifier ::= [ * ]
             //
-            case 649: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, true, true, false);             break;
+            case 650: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, true, false, false);             break;
+            }  
+  
+            //
+            // Rule 651:  array_modifier ::= [ <openscope-ast> array_modifier_type_qualifiers * ]
+            //
+            case 651: { action.   consumeDirectDeclaratorModifiedArrayModifier(false, true, true, false);             break;
             }  
 
     

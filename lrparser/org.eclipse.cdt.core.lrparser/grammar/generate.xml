@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2009 IBM Corporation and others.
+ Copyright (c) 2009, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -21,7 +21,8 @@
 	
 		Additionally if the $Import or $Include directives are being used in a grammar
 		file then the LPG_INCLUDE environment variable must be set to the directory
-		of the files being included.
+		of the files being included. 
+		lpg_include  - is an optional property to set, if it is set, LPG_INCLUDE will be set by its value before execute lpg_exe.
 	-->
 	
 	<fail unless="lpg_exe">
@@ -41,24 +42,52 @@
 	${grammar_name} - the name of the main grammar file to run LPG on (not including the .g extension)
 	${output_dir} - name of directory where generated files should go
 	-->
-	<target name="generate">
+	<target name="generate" depends="moveFile">
+		
+
+		<echo message="Code generation is done."/>
+		
+		
+	</target>
+	
+	<target name="init">
+		
 		<property name="grammar_file" value="${grammar_dir}/${grammar_name}.g"/>
 		<echo message="lpg_exe=${lpg_exe}"/>
 		<echo message="lpg_template=${lpg_template}"/>
+		<echo message="lpg_include=${lpg_include}"/>
 		<echo message="grammar_file=${grammar_file}.g"/>
 		<echo message="output_dir=${output_dir}"/>
-
+		
+		
+	</target>
+	
+	<target name="generateWithIncludeSet" if="lpg_include" depends="init">
+		
 		<exec executable="${lpg_exe}">
 			<arg value="${grammar_file}"/>
 			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
+			<env key="LPG_INCLUDE" path="${lpg_include}"/>
 		</exec>
+	</target>
+	
+	<target name="generateWithoutIncludeSet" unless="lpg_include" depends="generateWithIncludeSet">
 		
+		
+		<exec executable="${lpg_exe}">
+			<arg value="${grammar_file}"/>
+			<env key="LPG_TEMPLATE" path="${lpg_template}"/>
+				
+		</exec>
+	</target>
+	
+	<target name="moveFile" depends="generateWithoutIncludeSet">
 		<move overwrite="true" toDir="${output_dir}">
 		    <fileset dir=".">
 			    <include name="${grammar_name}*.*"/>
-			</fileset>
+		    </fileset>
 		</move>
-	</target>
+	</target>	
 	
 	
 </project>

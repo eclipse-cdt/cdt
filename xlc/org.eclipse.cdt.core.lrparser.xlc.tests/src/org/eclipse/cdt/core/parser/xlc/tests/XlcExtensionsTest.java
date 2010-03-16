@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,4 +275,48 @@ public class XlcExtensionsTest extends XlcTestBase {
 		parse(code, getCPPLanguage(), true); // xlc supports this in C++
 	}
 	
+	public void testStaticAssertions() {
+		String code =
+            " const unsigned int EIGHT= 8; \n"+
+			" __static_assert(sizeof(long) >= EIGHT, \"no 64-bit support\"); \n" +
+			
+			" namespace ns { \n"+
+			"     __static_assert(sizeof(long) >= 4, \"no 32-bit support\"); \n" +
+			" } \n" +
+			
+			" template <typename T> class basic_string { \n" +
+			"    __static_assert(T::value, \"bla\"); \n" +
+			" }; \n" +
+			
+			" void do_something() { \n" +
+			"    struct VMPage { \n" +
+			"    }; \n" +
+			"    __static_assert(sizeof(VMPage) == 1, \"bla\"); \n" +
+			" }";
+		
+		parse(code, getCPPLanguage(), true); // xlc supports this in C++
+	}
+	
+	public void testV11Attributes() {
+		String code =
+			"#define __inline__ __inline__ __attribute__((gnu_inline)) \n" +
+			
+			"static int w() __attribute__ ((weakref (\"y\")));\n" + 
+			/* is equivalent to... */
+			"static int x() __attribute__ ((weak, weakref, alias (\"y\")));\n" +
+			/* and to... */
+			"static int y() __attribute__ ((weakref));\n" +
+			"static int z() __attribute__ ((alias (\"y\"))); \n" +
+		
+			"int foo() __attribute__((gnu_inline)); \n" +
+			"static inline __attribute__((gnu_inline)) int ins (int *a){ \n" +
+			"   (*a)++; \n" +
+			"} \n" +
+			"inline __attribute__((gnu_inline)) int inc (int *a){ \n" +
+			"   (*a)++; \n" +
+			"} ";
+
+		parse(code, getCLanguage(), true);
+		parse(code, getCPPLanguage(), true);
+	}
 }

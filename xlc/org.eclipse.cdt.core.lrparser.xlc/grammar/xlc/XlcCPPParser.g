@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2009 IBM Corporation and others.
+-- Copyright (c) 2009, 2010 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ cv_qualifier
 
 block_declaration
     ::= vector_declaration
+      | static_assert_declaration
     
 
 identifier_token
@@ -95,5 +96,7 @@ array_modifier_type_qualifiers
 type_qualifier_list
     ::= cv_qualifier         
       | type_qualifier_list cv_qualifier
+member_declaration
+    ::= static_assert_declaration
           
 $End

@@ -464,7 +464,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		int conditionCount= 0;
 		BinaryOperator lastOperator= null;
 		IASTExpression lastExpression= castExpression(CastExprCtx.eBExpr);
-		loop: while(true) {
+		loop: while (true) {
 			lt1= LT(1);
 			switch(lt1) {
 	        case IToken.tQUESTION:
@@ -668,7 +668,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 List<IASTExpression> argList= null;
                 consume(IToken.tLPAREN);
                 boolean isFirst= true;
-                while(true) {
+                while (true) {
                 	final int lt1= LT(1);
                 	if (lt1 == IToken.tRPAREN) {
                 		endOffset= consume().getEndOffset();
@@ -1405,7 +1405,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			final DeclarationOptions option) throws EndOfFileException, BacktrackException {
         IASTDeclarator result= null;
         int lt1;
-        loop: while(true) {
+        loop: while (true) {
         	lt1= LTcatchEOF(1);
         	switch (lt1) {
         	case IToken.tLPAREN:
@@ -1555,7 +1555,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		List<IASTParameterDeclaration> parameters= null;
 		int endOffset= last.getEndOffset();
 		
-		paramLoop: while(true) {
+		paramLoop: while (true) {
 			switch (LT(1)) {
 			case IToken.tRPAREN:
 			case IToken.tEOC:

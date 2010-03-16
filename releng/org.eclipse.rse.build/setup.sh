@@ -201,7 +201,7 @@ fi
 if [ -f org.eclipse.rse.build/CVS/Entries ]; then
   echo "Updating org.eclipse.rse.build from CVS"
   cd org.eclipse.rse.build
-  cvs -q update -dPR
+  cvs -q update -A -dPR
   cd ..
 else
   if [ -d org.eclipse.rse.build ]; then

@@ -109,7 +109,7 @@ public class SRecordImporter implements IMemoryImporter {
 		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		fComboRestoreToThisAddress.setLayoutData(data);
 		
-		fStartText = new Text(composite, SWT.NONE);
+		fStartText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		data.left = new FormAttachment(fComboRestoreToThisAddress);
@@ -137,7 +137,7 @@ public class SRecordImporter implements IMemoryImporter {
 		// file
 		
 		Label fileLabel = new Label(composite, SWT.NONE);
-		fFileText = new Text(composite, SWT.NONE);
+		fFileText = new Text(composite, SWT.BORDER);
 		Button fileButton = new Button(composite, SWT.PUSH);
 		
 		fileLabel.setText(Messages.getString("Importer.File"));   //$NON-NLS-1$

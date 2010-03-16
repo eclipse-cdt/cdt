@@ -92,7 +92,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		FormData data = new FormData();
 		startLabel.setLayoutData(data);
 		
-		fStartText = new Text(composite, SWT.NONE);
+		fStartText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.left = new FormAttachment(startLabel);
 		data.width = 100;
@@ -107,7 +107,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		data.left = new FormAttachment(fStartText);
 		endLabel.setLayoutData(data);
 		
-		fEndText = new Text(composite, SWT.NONE);
+		fEndText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(endLabel);
@@ -123,7 +123,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		data.left = new FormAttachment(fEndText);
 		lengthLabel.setLayoutData(data);
 		
-		fLengthText = new Text(composite, SWT.NONE);
+		fLengthText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(lengthLabel);
@@ -133,7 +133,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		// file
 		
 		Label fileLabel = new Label(composite, SWT.NONE);
-		fFileText = new Text(composite, SWT.NONE);
+		fFileText = new Text(composite, SWT.BORDER);
 		Button fileButton = new Button(composite, SWT.PUSH);
 		
 		fileLabel.setText(Messages.getString("Exporter.FileName"));  //$NON-NLS-1$

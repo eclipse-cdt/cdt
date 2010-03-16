@@ -91,7 +91,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		Label labelStartText = new Label(composite, SWT.NONE);
 		labelStartText.setText(Messages.getString("RAWBinaryImporter.RestoreAddress")); //$NON-NLS-1$
 		
-		fStartText = new Text(composite, SWT.NONE);
+		fStartText = new Text(composite, SWT.BORDER);
 		FormData data = new FormData();
 		data.left = new FormAttachment(labelStartText);
 		data.width = 100;
@@ -100,7 +100,7 @@ public class RAWBinaryImporter implements IMemoryImporter {
 		// file
 		
 		Label fileLabel = new Label(composite, SWT.NONE);
-		fFileText = new Text(composite, SWT.NONE);
+		fFileText = new Text(composite, SWT.BORDER);
 		Button fileButton = new Button(composite, SWT.PUSH);
 		
 		fileLabel.setText(Messages.getString("Importer.File"));  //$NON-NLS-1$

@@ -73,7 +73,7 @@ if [ ${TYPE} = test ]; then
     # CHECK VERSION CORRECTNESS for MICRO UPDATES only
     # Minor/major version updates are not allowed.
     # Update of "qualifier" requires also updating "micro"
-    echo "VERIFYING VERSION CORRECTNESS: Features"
+    echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.1"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
     ls ../updates/3.1/features/*.jar | sed -e 's,^.*features/,,' | sort > f2.$$.txt
     diff f2.$$.txt f1.$$.txt | grep '^[>]' \
@@ -94,7 +94,7 @@ if [ ${TYPE} = test ]; then
         echo "PROBLEM: MAJOR update or NEW : ${f}"
       fi
     done
-    echo "VERIFYING VERSION CORRECTNESS: Plugins"
+    echo "VERIFYING VERSION CORRECTNESS: Plugins against ../updates/3.1"
     ls plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p1.$$.txt
     ls ../updates/3.1/plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p2.$$.txt
     diff p2.$$.txt p1.$$.txt | grep '^[>]' \

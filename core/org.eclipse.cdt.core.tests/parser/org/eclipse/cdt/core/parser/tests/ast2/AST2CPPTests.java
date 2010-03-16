@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -112,7 +113,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -8253,7 +8253,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//
 	//	void test() {
 	//		f({1,1});	// list is not expanded
-	//		new F({1,1});  // F(1,1)
+	//		new F({1,1});  // F(F(1,1))
 	//		fF({1,1});     // F(1,1)
 	//
 	//		fG(1);		// G(1)
@@ -8318,4 +8318,19 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPVariable y= bh.assertNonProblem("y =", 1);
 		assertNull(y.getType());
 	}
+	
+	// auto fpif1(int)->int(*)(int)
+	// auto fpif2(int)->int(*)(int) {}
+	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		
+		ICPPFunction f= bh.assertNonProblem("fpif1", 0);
+		assertEquals("int (* (int))(int)", ASTTypeUtil.getType(f.getType()));
+		
+		f= bh.assertNonProblem("fpif2", 0);
+		assertEquals("int (* (int))(int)", ASTTypeUtil.getType(f.getType()));
+	}
+
+
 }

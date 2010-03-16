@@ -42,7 +42,7 @@ cd "${basebuilder}/plugins"
 if [ -f org.eclipse.equinox.launcher.jar ]; then
   launcher=org.eclipse.equinox.launcher.jar
 else
-  launcher=`ls org.eclipse.equinox.launcher_*.jar` | sort | tail -1`
+  launcher=`ls org.eclipse.equinox.launcher_*.jar | sort | tail -1`
 fi
 pdeBuild=`ls -d org.eclipse.pde.build* | sort | tail -1`
 cd "${builder}"

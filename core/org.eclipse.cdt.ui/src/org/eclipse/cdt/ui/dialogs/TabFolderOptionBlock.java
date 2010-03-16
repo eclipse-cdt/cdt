@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TabItem;
  * @deprecated as of CDT 4.0. This abstract block was used for New Project Wizards
  * and property pages for 3.X style projects.
  */
+@Deprecated
 public abstract class TabFolderOptionBlock {
 
 	protected boolean initializingTabs = true;

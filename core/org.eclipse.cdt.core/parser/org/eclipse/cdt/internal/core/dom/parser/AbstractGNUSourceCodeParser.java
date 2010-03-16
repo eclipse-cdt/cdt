@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -66,7 +67,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -1121,7 +1121,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	protected abstract IASTExpression constantExpression() throws BacktrackException, EndOfFileException;
     protected abstract IASTExpression unaryExpression(CastExprCtx ctx) throws BacktrackException, EndOfFileException;
     protected abstract IASTExpression primaryExpression(CastExprCtx ctx) throws BacktrackException, EndOfFileException;
-    protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException;
+    protected abstract IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException, BacktrackException;
 	
 	private final static class CastAmbiguityMarker extends ASTNode implements IASTExpression {
 		private IASTExpression fExpression;
@@ -1169,7 +1169,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			final IToken mark= mark();
 			final int startingOffset= mark.getOffset();
 			consume();
-			IASTTypeId typeId = typeId(DeclarationOptions.TYPEID);
+			IASTTypeId typeId= null;
+			try {
+				typeId= typeId(DeclarationOptions.TYPEID);
+			} catch (BacktrackException e) {
+			}
 			if (typeId != null && LT(1) == IToken.tRPAREN) {
 				consume();
 				boolean unaryFailed= false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		IASTAmbiguityParent {
     private ICPPASTParameterDeclaration[] parameters = null;
     private IASTTypeId[] typeIds = NO_EXCEPTION_SPECIFICATION;
+    private IASTTypeId trailingReturnType= null;
     
     private boolean varArgs;
     private boolean pureVirtual;
@@ -60,7 +61,9 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			copy.addParameterDeclaration(param == null ? null : param.copy());
 		for(IASTTypeId typeId : getExceptionSpecification())
 			copy.addExceptionSpecificationTypeId(typeId == null ? null : typeId.copy());
-		
+		if (trailingReturnType != null) {
+			copy.setTrailingReturnType(trailingReturnType.copy());
+		}
 		return copy;
 	}
 
@@ -126,7 +129,21 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     	}
     }
 
-    public boolean isPureVirtual() {
+    
+    public IASTTypeId getTrailingReturnType() {
+		return trailingReturnType;
+	}
+
+	public void setTrailingReturnType(IASTTypeId typeId) {
+		assertNotFrozen();
+		trailingReturnType= typeId;
+		if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TRAILING_RETURN_TYPE);
+		}
+	}
+
+	public boolean isPureVirtual() {
         return pureVirtual;
     }
 
@@ -189,6 +206,9 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			if (!ids[i].accept(action))
 				return false;
 		}
+		
+		if (trailingReturnType != null && !trailingReturnType.accept(action)) 
+			return false;
 
 		return super.postAccept(action);
 	}

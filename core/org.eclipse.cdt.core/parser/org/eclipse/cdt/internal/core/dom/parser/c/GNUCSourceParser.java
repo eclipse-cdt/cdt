@@ -618,14 +618,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	try {
         		int offset = consume().getOffset();
         		IASTTypeId t= typeId(DeclarationOptions.TYPEID);
-        		if (t != null) {
-        			consume(IToken.tRPAREN);
-                	if (LT(1) == IToken.tLBRACE) {
-						IASTInitializer i = (IASTInitializerList) initClause(false);
-						firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
-						setRange(firstExpression, offset, calculateEndOffset(i));
-        				break;        
-                	}
+        		consume(IToken.tRPAREN);
+        		if (LT(1) == IToken.tLBRACE) {
+        			IASTInitializer i = (IASTInitializerList) initClause(false);
+        			firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
+        			setRange(firstExpression, offset, calculateEndOffset(i));
+        			break;        
         		}
         	} catch (BacktrackException bt) {
         	}
@@ -812,7 +810,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
 
     @Override
-	protected IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException {
+	protected IASTTypeId typeId(DeclarationOptions option) throws EndOfFileException, BacktrackException {
     	if (!canBeTypeSpecifier()) {
     		return null;
     	}
@@ -827,9 +825,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	declarator= decl.fDtor1;
         } catch (FoundAggregateInitializer lie) {
         	// type-ids have not compound initializers
-        	return null;
-        } catch (BacktrackException bt) {
-        	return null;
+        	throwBacktrack(lie.fDeclarator);
         } finally {
         	fPreventKnrCheck--;
         }

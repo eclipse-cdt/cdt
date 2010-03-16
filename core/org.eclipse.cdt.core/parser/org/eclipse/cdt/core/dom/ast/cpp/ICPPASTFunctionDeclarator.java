@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,13 +29,12 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 */
 	public static final IASTTypeId[] NO_EXCEPTION_SPECIFICATION = {};
 
-	/**
-	 * <code>EXCEPTION_TYPEID</code> represents the type IDs throws in the
-	 * exception specification.
-	 */
 	public static final ASTNodeProperty EXCEPTION_TYPEID = new ASTNodeProperty(
-			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID - TypeId throws in the exception specification"); //$NON-NLS-1$
-
+			"ICPPASTFunctionDeclarator.EXCEPTION_TYPEID [IASTTypeId]"); //$NON-NLS-1$
+	/** @since 5.2*/
+	public static final ASTNodeProperty TRAILING_RETURN_TYPE = new ASTNodeProperty(
+			"ICPPASTFunctionDeclarator.TRAILING_RETURN_TYPE [IASTTypeId]"); //$NON-NLS-1$
+	
 	/**
 	 * Is this a const method?
 	 */
@@ -89,7 +88,19 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * @since 5.1
 	 */
 	public void setEmptyExceptionSpecification();
-	
+
+	/**
+	 * Returns the trailing return type as in <code> auto f() -> int </code>, or <code>null</code>.
+	 * @since 5.2
+	 */
+	public IASTTypeId getTrailingReturnType();
+
+	/**
+	 * Trailing return type as in <code> auto f() -> int </code>.
+	 * @since 5.2
+	 */
+	public void setTrailingReturnType(IASTTypeId typeId);
+
 	/**
 	 * Get function scope this node represents. Returns <code>null</code>, if this declarator does not
 	 * declare a function-prototype or function-definition.

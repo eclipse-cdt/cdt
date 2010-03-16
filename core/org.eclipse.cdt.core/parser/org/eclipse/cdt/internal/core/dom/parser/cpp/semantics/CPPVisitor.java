@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -62,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -76,11 +78,10 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -133,7 +134,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -165,7 +165,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateArgument;
@@ -1734,14 +1733,28 @@ public class CPPVisitor extends ASTQueries {
 			return null;
 		}
 
-		IType type = createType(declSpec);
-		type = createType(type, declarator);
-		
-		// C++ specification 8.3.4.3 and 8.5.1.4
 		IASTNode initClause= declarator.getInitializer();
 		if (initClause instanceof IASTEqualsInitializer) {
 			initClause= ((IASTEqualsInitializer) initClause).getInitializerClause();
 		}
+		
+		if (declSpec instanceof ICPPASTSimpleDeclSpecifier &&
+				((ICPPASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
+			parent = parent.getParent();
+			if (parent instanceof ICPPASTNewExpression) {
+				IASTInitializer initializer = ((ICPPASTNewExpression) parent).getInitializer();
+				IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
+				if (arguments.length == 1) {
+					initClause = arguments[0];
+				} 
+			}
+			return createAutoType(initClause, declSpec, declarator);
+		}
+		
+		IType type = createType(declSpec);
+		type = createType(type, declarator);
+
+		// C++ specification 8.3.4.3 and 8.5.1.4
 		if (initClause instanceof IASTInitializerList) {
 			IType t= SemanticUtil.getNestedType(type, TDEF);
 			if (t instanceof IArrayType) {
@@ -1751,18 +1764,7 @@ public class CPPVisitor extends ASTQueries {
 				}
 			}
 		}
-		if (declSpec instanceof ICPPASTSimpleDeclSpecifier &&
-				((ICPPASTSimpleDeclSpecifier) declSpec).getType() == ICPPASTSimpleDeclSpecifier.t_auto) {
-			parent = parent.getParent();
-			if (parent instanceof ICPPASTNewExpression) {
-				IASTInitializer initializer = ((ICPPASTNewExpression) parent).getInitializer();
-				IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
-				if (arguments.length == 1) {
-					initClause = arguments[0];
-				}
-			}
-			type = createAutoType(initClause, declSpec, declarator);
-		}
+
 		if (type != null && isPackExpansion) {
 			type= new CPPParameterPackType(type);
 		}
@@ -1771,6 +1773,10 @@ public class CPPVisitor extends ASTQueries {
 
 	private static IType createAutoType(IASTNode initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
+		if (declarator instanceof ICPPASTFunctionDeclarator) {
+			return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
+		}
+		
 		IType type = AutoTypeResolver.AUTO_TYPE;
 		ICPPClassTemplate initializer_list_template = null;
 		if (initClause instanceof ICPPASTInitializerList) {
@@ -1808,6 +1814,18 @@ public class CPPVisitor extends ASTQueries {
 		return decorateType(type, declSpec, declarator);
 	}
 
+	/**
+	 * C++0x: [8.3.5-2]
+	 */
+	private static IType createAutoFunctionType(IASTDeclSpecifier declSpec, ICPPASTFunctionDeclarator declarator) {
+		IASTTypeId id= declarator.getTrailingReturnType();
+		if (id == null)
+			return null;
+		IType t= createType(id.getAbstractDeclarator());
+		t= qualifyType(t, declSpec);
+		return createType(t, declarator);
+	}
+
 	public static IType createType(IASTDeclSpecifier declSpec) {
 	    IType type = getBaseType(declSpec);
 	    if (type == null) {
@@ -1831,7 +1849,7 @@ public class CPPVisitor extends ASTQueries {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			// Check for decltype(expr)
 			type = getDeclType(spec);
-			if (type == null && spec.getType() != ICPPASTSimpleDeclSpecifier.t_auto) {
+			if (type == null && spec.getType() != IASTSimpleDeclSpecifier.t_auto) {
 				type = new CPPBasicType(spec);
 			}
 		}
@@ -1871,10 +1889,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	private static IType qualifyType(IType type, IASTDeclSpecifier declSpec) {
-		if (declSpec.isConst() || declSpec.isVolatile()) {
-		    type = new CPPQualifierType(type, declSpec.isConst(), declSpec.isVolatile());
-		}
-		return type;
+		return SemanticUtil.addQualifiers(type, declSpec.isConst(), declSpec.isVolatile());
 	}
 
 	/**

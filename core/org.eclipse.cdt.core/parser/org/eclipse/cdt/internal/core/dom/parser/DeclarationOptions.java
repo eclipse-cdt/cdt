@@ -26,6 +26,7 @@ public class DeclarationOptions {
 	final public static int NO_NESTED= 						0x200;
 	final public static int ALLOW_PARAMETER_PACKS=  		0x400;
 	final public static int REQUIRE_SIMPLE_NAME=    		0x800;
+	final public static int ALLOW_FOLLOWED_BY_BRACE=    	0x1000;
 
     public static final DeclarationOptions 
     	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER),
@@ -35,7 +36,8 @@ public class DeclarationOptions {
     	LOCAL=	    new DeclarationOptions(0),
     	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_PARAMETER_PACKS | REQUIRE_SIMPLE_NAME | NO_BRACED_INITIALIZER | NO_CTOR_STYLE_INITIALIZER),
     	TYPEID=     new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER),
-    	TYPEID_NEW= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
+    	TYPEID_TRAILING_RETURN_TYPE= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | ALLOW_FOLLOWED_BY_BRACE),
+    	TYPEID_NEW= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED | ALLOW_FOLLOWED_BY_BRACE),
     	TYPEID_CONVERSION= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
         EXCEPTION= new DeclarationOptions(ALLOW_ABSTRACT | NO_INITIALIZER),
         CONDITION= new DeclarationOptions(NO_CTOR_STYLE_INITIALIZER),
@@ -47,6 +49,7 @@ public class DeclarationOptions {
 	final public boolean fAllowBitField;
 	final public boolean fAllowInitializer;
 	final public boolean fAllowBracedInitializer;
+	final public boolean fCanBeFollowedByBrace;
 	final public boolean fAllowCtorStyleInitializer;
 	final public boolean fAllowFunctions;
 	final public boolean fAllowNested;
@@ -65,5 +68,6 @@ public class DeclarationOptions {
 		fAllowNested= (options & NO_NESTED) == 0;
 		fAllowParameterPacks= (options & ALLOW_PARAMETER_PACKS) != 0;
 		fRequireSimpleName= (options & REQUIRE_SIMPLE_NAME) != 0;
+		fCanBeFollowedByBrace= fAllowBracedInitializer || (options & ALLOW_FOLLOWED_BY_BRACE) != 0;
 	}
 }

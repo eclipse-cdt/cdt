@@ -112,7 +112,7 @@
 	</target>
 
 	<target name="assemble.org.eclipse.tm.terminal.local">
-		<property name="archiveName" value="TM-terminal-local-${buildId}.zip"/>
+		<property name="archiveName" value="TM-terminal-local-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>

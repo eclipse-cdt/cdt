@@ -84,6 +84,7 @@
  * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
  * Martin Oberhuber (Wind River) - [285948] Avoid recursive deletion over symbolic links
  * Martin Oberhuber (Wind River) - [300398] Avoid product hang-up on isConnected()
+ * Martin Oberhuber (Wind River) - [305986] NPE due to race condition in isConnected()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -144,6 +145,7 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 public class FTPService extends AbstractFileService implements IFTPService, IFilePermissionsService
 {
 	private FTPClient _ftpClient;
+	private boolean _connected;
 	private long _ftpLastCheck;
 	private static long FTP_CONNECTION_CHECK_TIMEOUT = 30000; //msec before checking connection with NOOP
 	private FTPFile[] _ftpFiles;
@@ -492,10 +494,12 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 
 		//Just to be safe
 		clearCache(null);
+		_connected = true;
 	}
 
 	public void disconnect()
 	{
+		_connected = false;
 		clearCache(null);
 		try
 		{
@@ -753,7 +757,7 @@ public class FTPService extends AbstractFileService implements IFTPService, IFil
 	{
 		boolean isConnected = false;
 
-		if(_ftpClient!=null) {
+		if(_ftpClient!=null && _connected) {
 			isConnected =  _ftpClient.isConnected();
 			// Bug 300394: isConnected() is called on the main thread, so it must
 			// return fast without really checking the remote. In FTP, we deal

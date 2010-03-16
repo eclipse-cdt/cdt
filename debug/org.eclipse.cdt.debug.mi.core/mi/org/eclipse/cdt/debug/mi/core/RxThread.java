@@ -68,7 +68,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
 public class RxThread extends Thread {
 
 	final MISession session;
-	LinkedList<MIStreamRecord> oobList;
+	LinkedList<MIStreamRecord> fStreamRecords = new LinkedList<MIStreamRecord>();
 	CLIProcessor cli;
 	int prompt = 1; // 1 --> Primary prompt "(gdb)"; 2 --> Secondary Prompt ">"
 	boolean fEnableConsole = true;
@@ -77,7 +77,6 @@ public class RxThread extends Thread {
 		super("MI RX Thread"); //$NON-NLS-1$
 		session = s;
 		cli = new CLIProcessor(session);
-		oobList = new LinkedList<MIStreamRecord>();
 	}
 
 	/*
@@ -178,10 +177,9 @@ public class RxThread extends Thread {
 				int id = rr.getToken();
 				Command cmd = rxQueue.removeCommand(id);
 
-				// Clear the accumulate oobList on each new Result Command
-				// response.
-				MIOOBRecord[] oobRecords = new MIOOBRecord[oobList.size()];
-				oobList.toArray(oobRecords);
+				// Get a snapshot of the accumulated stream records. We clear
+				// the collection below (with each new Result Command response).
+				MIStreamRecord[] streamRecords = fStreamRecords.toArray(new MIStreamRecord[fStreamRecords.size()]);
 
 				// Check if the state changed.
 				String state = rr.getResultClass();
@@ -221,7 +219,7 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) { //$NON-NLS-1$
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
-						MIEvent event = new MIErrorEvent(session, rr, oobRecords);
+						MIEvent event = new MIErrorEvent(session, rr, streamRecords);
 						list.add(event);
 					}
 				} else if ("done".equals(state) && cmd instanceof CLICommand) { //$NON-NLS-1$
@@ -233,12 +231,12 @@ public class RxThread extends Thread {
 				}
 
 				// Set the accumulate console Stream
-				response.setMIOOBRecords(oobRecords);
+				response.setMIOOBRecords(streamRecords);
 
 				// Notify the waiting command.
 				// Notify any command waiting for a ResultRecord.
 				if (cmd != null) {
-					// Process the Command line to recognise patterns we may need to fire event.
+					// Process the Command line to recognize patterns we may need to fire event.
 					if (cmd instanceof CLICommand) {
 						cli.processSettingChanges((CLICommand)cmd);
 					} else if (cmd instanceof MIInterpreterExecConsole) {
@@ -251,8 +249,8 @@ public class RxThread extends Thread {
 					}
 				}
 
-				// Clear the accumulate oobList on each new Result Command response.
-				oobList.clear();
+				// Clear the accumulated stream records on each new Result Command response.
+				fStreamRecords.clear();
 
 			} else {
 
@@ -261,10 +259,10 @@ public class RxThread extends Thread {
 				for (int i = 0; i < oobs.length; i++) {
 					processMIOOBRecord(oobs[i], list);
 				}
-				// If not waiting for any command results, ensure the oobList doesn't
+				// If not waiting for any command results, ensure the stream list doesn't
 				// get too large. See Bug 302927 for more
-				if (rxQueue.isEmpty() && oobList.size() > 20)
-					oobList.removeFirst();
+				if (rxQueue.isEmpty() && fStreamRecords.size() > 20)
+					fStreamRecords.removeFirst();
 			}
 
 			MIEvent[] events = list.toArray(new MIEvent[list.size()]);
@@ -278,7 +276,7 @@ public class RxThread extends Thread {
 	void processMIOOBRecord(MIOOBRecord oob, List<MIEvent> list) {
 		if (oob instanceof MIAsyncRecord) {
 			processMIOOBRecord((MIAsyncRecord) oob, list);
-			oobList.clear();
+			fStreamRecords.clear();
 		} else if (oob instanceof MIStreamRecord) {
 			processMIOOBRecord((MIStreamRecord) oob);
 		}
@@ -370,7 +368,7 @@ public class RxThread extends Thread {
 			}
 			// Accumulate the Console Stream Output response for parsing.
 			// Some commands will put valuable info  in the Console Stream.
-			oobList.add(stream);
+			fStreamRecords.add(stream);
 		} else if (stream instanceof MITargetStreamOutput) {
 			OutputStream target = session.getMIInferior().getPipedOutputStream();
 			if (target != null) {
@@ -387,7 +385,7 @@ public class RxThread extends Thread {
 			// Accumulate the Target Stream Output response for parsing.
 			// Some commands, e.g. 'monitor' will put valuable info  in the Console Stream.
 			// This fixes bug 119370.
-			oobList.add(stream);
+			fStreamRecords.add(stream);
 		} else if (stream instanceof MILogStreamOutput) {
 			// This is meant for the gdb console.
 			OutputStream log = session.getLogPipe();
@@ -404,7 +402,7 @@ public class RxThread extends Thread {
 			}
 			// Accumulate the Log Stream Output response for parsing.
 			// Some commands will put valuable info  in the Log Stream.
-			oobList.add(stream);
+			fStreamRecords.add(stream);
 		}
 	}
 
@@ -544,17 +542,14 @@ public class RxThread extends Thread {
 	}
 
 	String[] getStreamRecords() {
-		List<String> streamRecords = new ArrayList<String>();
-		MIOOBRecord[] oobRecords = oobList.toArray(new MIOOBRecord[0]);
-		for (int i = 0; i < oobRecords.length; i++) {
-			if (oobRecords[i] instanceof MIStreamRecord) {
-				String s = ((MIStreamRecord) oobRecords[i]).getString().trim();
-				if (s != null && s.length() > 0) {
-					streamRecords.add(s);
-				}
+		List<String> streamRecords = new ArrayList<String>(fStreamRecords.size());
+		for (MIStreamRecord rec : fStreamRecords) {
+			String str = rec.getString().trim();
+			if (str.length() > 0) {
+				streamRecords.add(str);
 			}
 		}
-		return streamRecords.toArray(new String[0]);
+		return streamRecords.toArray(new String[streamRecords.size()]);
 	}
 
 }

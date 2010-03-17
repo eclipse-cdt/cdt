@@ -14,6 +14,8 @@ import org.eclipse.cdt.dsf.gdb.internal.tracepointactions.TracepointActionManage
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,11 +48,18 @@ public class TracepointActionsPreferencePage extends PreferencePage implements I
 		final TracepointGlobalActionsList actionsList = new TracepointGlobalActionsList(container, SWT.NONE, false, false);
 		actionsList.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
+		actionsList.getDeleteButton().addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				actionsList.HandleDeleteButton();
+			}
+		});
 		String helpContextID = GdbUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$	
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), helpContextID);
 
 		return container;
 	}
+
 
 	public void init(IWorkbench workbench) {
 	}

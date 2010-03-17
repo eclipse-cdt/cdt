@@ -1184,7 +1184,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     @DsfServiceEventHandler
     public void eventDispatched(IResumedDMEvent e) {
         if (e instanceof IContainerResumedDMEvent) {
-            clearBreakpointHitForContainer((IContainerDMContext)((IContainerResumedDMEvent)e).getDMContext());
+            clearBreakpointHitForContainer((IContainerDMContext)e.getDMContext());
         } else {
             fBreakpointHitMap.remove(e.getDMContext());
         }
@@ -1210,6 +1210,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
                 itr.remove();
             }
         }
+        fBreakpointHitMap.remove(container);
     }
     
 }

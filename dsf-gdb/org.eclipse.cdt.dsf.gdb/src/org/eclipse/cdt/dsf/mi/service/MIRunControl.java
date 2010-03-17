@@ -235,12 +235,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     protected static class ContainerBreakpointHitEvent extends ContainerSuspendedEvent
     implements IBreakpointHitDMEvent
     {
-        final private MIBreakpointDMContext[] fBreakpoints;
+        final private IBreakpointDMContext[] fBreakpoints;
         
-        ContainerBreakpointHitEvent(IContainerDMContext containerDmc, MIBreakpointHitEvent miInfo, IExecutionDMContext triggeringDmc, MIBreakpointDMContext bpCtx) {
+        ContainerBreakpointHitEvent(IContainerDMContext containerDmc, MIBreakpointHitEvent miInfo, IExecutionDMContext triggeringDmc, IBreakpointDMContext bpCtx) {
             super(containerDmc, miInfo, triggeringDmc);
             
-            fBreakpoints = new MIBreakpointDMContext[] { bpCtx };
+            fBreakpoints = new IBreakpointDMContext[] { bpCtx };
         }
         
         public IBreakpointDMContext[] getBreakpoints() {

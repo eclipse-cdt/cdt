@@ -328,7 +328,7 @@ public class SyncVariableDataAccess {
                         /*
                          * All good set return value.
                          */
-                        rm.setData(new Object());
+                        rm.setData(getData());
                         rm.done();
                     }
                 }

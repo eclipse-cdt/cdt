@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2010 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ *  David McKnight  (IBM)  - [306187] cancel in properties of remote system view doesn't work
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -124,13 +124,19 @@ public abstract class RSEModelServiceElement extends ServiceElement
 	public void revert()
 	{
 		PropertySetServiceElement[] sets = getPropertySets();
+		IPropertySet[] origSets = new IPropertySet[sets.length];
 		for (int i = 0; i < sets.length; i++)
 		{
 			IPropertySet newSet = sets[i].getPropertySet();
 			IPropertySet originalSet = sets[i].getOriginalProperySet();			
+			origSets[i] = originalSet;
+						
 			_modelObject.removePropertySet(newSet.getName());
 			_modelObject.addPropertySet(originalSet);
 		}
+		_propertySetElements = null;
+		_propertySets = origSets;
+		getPropertySets();
 	}
 	
 	public void refreshProperties()

@@ -16,9 +16,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 
 /**
- * Convenience implementation of IChecker interface.
- * Has a default implementation for common methods.
- *
+ * Convenience implementation of IChecker interface. Has a default
+ * implementation for common methods.
+ * 
  * Clients may extend this class.
  */
 public abstract class AbstractChecker implements IChecker {
@@ -49,19 +49,27 @@ public abstract class AbstractChecker implements IChecker {
 	 *            it will be error message (not recommended because of
 	 *            internationalization)
 	 */
-	public void reportProblem(String id, IFile file, int lineNumber, Object... args) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), args);
+	public void reportProblem(String id, IFile file, int lineNumber,
+			Object... args) {
+		getProblemReporter().reportProblem(id,
+				createProblemLocation(file, lineNumber), args);
 	}
 
 	/**
-	 * Finds an instance of problem by given id, in user profile registered for specific file
-	 * @param id - problem id
-	 * @param file - file in scope
+	 * Finds an instance of problem by given id, in user profile registered for
+	 * specific file
+	 * 
+	 * @param id
+	 *            - problem id
+	 * @param file
+	 *            - file in scope
 	 * @return problem instance
 	 */
 	public IProblem getProblemById(String id, IFile file) {
-		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(file).findProblem(id);
-		if (problem == null) throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
+		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(
+				file).findProblem(id);
+		if (problem == null)
+			throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 		return problem;
 	}
 
@@ -77,7 +85,8 @@ public abstract class AbstractChecker implements IChecker {
 	 *            - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
-		getProblemReporter().reportProblem(id, createProblemLocation(file, lineNumber), new Object[] {});
+		getProblemReporter().reportProblem(id,
+				createProblemLocation(file, lineNumber), new Object[] {});
 	}
 
 	/**
@@ -89,6 +98,7 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * Convenience method to return codan runtime
+	 * 
 	 * @return
 	 */
 	protected CodanRuntime getRuntime() {
@@ -97,26 +107,41 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * Convenience method to create and return instance of IProblemLocation
-	 * @param file - file where problem is found
-	 * @param line - line number 1-relative
+	 * 
+	 * @param file
+	 *            - file where problem is found
+	 * @param line
+	 *            - line number 1-relative
 	 * @return instance of IProblemLocation
 	 */
 	protected IProblemLocation createProblemLocation(IFile file, int line) {
-		return getRuntime().getProblemLocationFactory().createProblemLocation(file, line);
+		return getRuntime().getProblemLocationFactory().createProblemLocation(
+				file, line);
 	}
 
 	/**
 	 * Convenience method to create and return instance of IProblemLocation
-	 * @param file - file where problem is found
-	 * @param startChar - start char of the problem in the file, is zero-relative
-	 * @param endChar - end char of the problem in the file, is zero-relative and exclusive.
+	 * 
+	 * @param file
+	 *            - file where problem is found
+	 * @param startChar
+	 *            - start char of the problem in the file, is zero-relative
+	 * @param endChar
+	 *            - end char of the problem in the file, is zero-relative and
+	 *            exclusive.
 	 * @return instance of IProblemLocation
 	 */
-	protected IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
-		return getRuntime().getProblemLocationFactory().createProblemLocation(file, startChar, endChar);
+	protected IProblemLocation createProblemLocation(IFile file, int startChar,
+			int endChar) {
+		return getRuntime().getProblemLocationFactory().createProblemLocation(
+				file, startChar, endChar);
 	}
 
+	/**
+	 * Defines if checker should be run as user type in C editor. Override this
+	 * method is checker is too heavy for that (runs too long)
+	 */
 	public boolean runInEditor() {
-		return false;
+		return this instanceof IRunnableInEditorChecker;
 	}
 }

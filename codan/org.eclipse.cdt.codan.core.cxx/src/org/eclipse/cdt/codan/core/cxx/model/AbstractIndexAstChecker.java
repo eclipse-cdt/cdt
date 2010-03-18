@@ -117,7 +117,13 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	 * (java.lang.Object)
 	 */
 	public void processModel(Object model) {
-		if (model instanceof IASTTranslationUnit)
-			processAst((IASTTranslationUnit) model);
+		if (model instanceof IASTTranslationUnit) {
+			IASTTranslationUnit ast = (IASTTranslationUnit) model;
+			IPath location = new Path(ast.getFilePath());
+			IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
+					.getFileForLocation(location);
+			file = astFile;
+			processAst(ast);
+		}
 	}
 }

@@ -13,10 +13,13 @@ package org.eclipse.cdt.codan.core.model;
 /**
  * Interface for checkers that can be run when user is typing, checker has to be
  * very quick to run in this mode
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same.
+ * </p>
  * 
  * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
- *              Extend AbstractChecker class instead.
  */
 public interface IRunnableInEditorChecker {
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
@@ -212,6 +211,7 @@ import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.text.PreferencesAdapter;
 import org.eclipse.cdt.internal.ui.text.Symbols;
+import org.eclipse.cdt.internal.ui.text.TabsToSpacesConverter;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
@@ -1619,8 +1619,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					int tabWidth= getSourceViewerConfiguration().getTabWidth(asv);
 					if (textWidget.getTabs() != tabWidth)
 						textWidget.setTabs(tabWidth);
+					uninstallTabsToSpacesConverter();
 					if (isTabsToSpacesConversionEnabled()) {
-						uninstallTabsToSpacesConverter();
 						installTabsToSpacesConverter();
 					} else {
 						updateIndentationMode();

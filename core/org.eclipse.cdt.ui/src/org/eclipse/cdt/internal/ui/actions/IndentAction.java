@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,7 +275,10 @@ public class IndentAction extends TextEditorAction {
 		// then just shift to the right
 		if (fIsTabAction && caret == end && whiteSpaceLength(currentIndent) >= whiteSpaceLength(indent)) {
 			int indentWidth= whiteSpaceLength(currentIndent) + getIndentSize();
-			String replacement= IndentUtil.changePrefix(currentIndent.trim(), indentWidth, getTabSize(), useSpaces());
+			if (useTabsAndSpaces()) {
+				currentIndent = trimSpacesRight(currentIndent);
+			}
+			String replacement= IndentUtil.changePrefix(currentIndent, indentWidth, getTabSize(), useSpaces());
 			document.replace(offset, length, replacement);
 			fCaretOffset= offset + replacement.length();
 			return true;
@@ -293,6 +296,20 @@ public class IndentAction extends TextEditorAction {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Strip trailing space characters.
+	 * 
+	 * @param indent
+	 * @return string with trailing spaces removed
+	 */
+	private String trimSpacesRight(String indent) {
+		int i = indent.length() - 1;
+		while (i >= 0 && indent.charAt(i) == ' ') {
+			--i;
+		}
+		return indent.substring(0, i+1);
 	}
 
 	/**
@@ -343,6 +360,16 @@ public class IndentAction extends TextEditorAction {
 	 */
 	private boolean useSpaces() {
 		return CCorePlugin.SPACE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
+	}
+	
+	/**
+	 * Returns whether mixed tabs/spaces should be used for indentation, depending on the editor and
+	 * formatter preferences.
+	 * 
+	 * @return <code>true</code> if tabs and spaces should be used
+	 */
+	private boolean useTabsAndSpaces() {
+		return DefaultCodeFormatterConstants.MIXED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
 	}
 	
 	/**

@@ -15,10 +15,10 @@ import java.util.Map;
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IChecker;
-import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
+import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -115,13 +115,10 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		CheckersRegisry chegistry = CheckersRegisry.getInstance();
 		for (IChecker checker : chegistry) {
 			try {
-				boolean run = false;
-				if (checker.enabledInContext(resource))
-					run = true;
-				if (chegistry.isCheckerEnabled(checker, resource))
-					run = true;
-				if (run)
+				if (chegistry.isCheckerEnabled(checker, resource)
+						&& checker.enabledInContext(resource)) {
 					checker.processResource(resource);
+				}
 			} catch (Throwable e) {
 				CodanCorePlugin.log(e);
 			}
@@ -170,18 +167,19 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 			((IProblemReporterPersistent) problemReporter)
 					.deleteProblems(resource);
 		}
-		for (IChecker checker : CheckersRegisry.getInstance()) {
+		CheckersRegisry chegistry = CheckersRegisry.getInstance();
+		for (IChecker checker : chegistry) {
 			try {
 				boolean run = false;
-				if (checker.enabledInContext(resource))
-					run = true;
-				if (CheckersRegisry.getInstance().isCheckerEnabled(checker,
-						resource)) {
+				if (checker.enabledInContext(resource)
+						&& chegistry.isCheckerEnabled(checker, resource)) {
 					run = true;
 				}
 				if (run && checker.runInEditor()
 						&& checker instanceof IRunnableInEditorChecker)
 					((IRunnableInEditorChecker) checker).processModel(model);
+				if (monitor.isCanceled())
+					break;
 			} catch (Throwable e) {
 				CodanCorePlugin.log(e);
 			}

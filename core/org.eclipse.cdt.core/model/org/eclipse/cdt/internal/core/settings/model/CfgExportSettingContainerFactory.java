@@ -98,12 +98,10 @@ public class CfgExportSettingContainerFactory extends
 						return es;
 					}
 				}
-			} else {
-				// If project doesn't not open in this workspace, just return the previous settings
-				// for the moment. We'll update again when the referenced project reappears
-				return prevSettings;
 			}
-			return new CExternalSetting[0];
+			// If project not yet accessible, just return the previous settings
+			// for the moment. We'll update again when the referenced project reappears
+			return prevSettings;
 		}
 	}
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.codan.core.checkers"
+         id="org.eclipse.cdt.codan.core.internal.checkers">
+
+       <checker
+            class="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionChecker"
+            id="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionChecker"
+            name="NamingConventionFunctionChecker">
+      <problem
+            category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+            defaultEnabled="false"
+            defaultSeverity="Info"
+            id="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"
+            messagePattern="Bad function name &quot;{0}&quot; (pattern /{1}/)"
+            name="Name convention for function">
+      </problem>
+      </checker>
+   </extension>
+</plugin>

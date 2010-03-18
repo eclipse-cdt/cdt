@@ -181,7 +181,6 @@ public class ChangeGenerator extends CPPASTVisitor {
 				fileLocation = node.getTranslationUnit().flattenLocationsToFile(node.getNodeLocations());
 			}
 		}
-
 		return fileLocation;
 	}
 
@@ -259,8 +258,13 @@ public class ChangeGenerator extends CPPASTVisitor {
 						newNodeCode));
 				break;
 			case APPEND_CHILD:
+				if(modification.getTargetNode() instanceof IASTTranslationUnit && ((IASTTranslationUnit)modification.getTargetNode()).getDeclarations().length > 0) {
+					IASTTranslationUnit tu = (IASTTranslationUnit)modification.getTargetNode();
+					IASTDeclaration lastDecl = tu.getDeclarations()[tu.getDeclarations().length -1];
+					targetLocation = lastDecl.getFileLocation();
+				}
 				String lineDelimiter = FileHelper.determineLineDelimiter(FileHelper.getIFilefromIASTNode(modification.getTargetNode()));
-					edit.addChild(new InsertEdit(targetLocation.getNodeOffset()
+				edit.addChild(new InsertEdit(targetLocation.getNodeOffset()
 						+ targetLocation.getNodeLength(),lineDelimiter + lineDelimiter + newNodeCode));
 				break;
 			}

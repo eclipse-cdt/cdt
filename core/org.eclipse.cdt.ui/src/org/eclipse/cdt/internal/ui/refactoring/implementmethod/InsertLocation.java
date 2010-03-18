@@ -84,7 +84,7 @@ public class InsertLocation {
 		if(affectedNode != null) {
 			targetTranslationUnit = affectedNode.getTranslationUnit();
 		} else if(hasFile()) {
-			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile, false);
+			targetTranslationUnit = TranslationUnitHelper.loadTranslationUnit(insertFile, true);
 		}
 	}
 	

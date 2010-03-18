@@ -127,11 +127,11 @@ class Demo
 //=
 #include "A.h"
 
+
+
 void Demo::SubClass::test()
 {
 }
-
-
 
 //!method declared in otherwise empty class without cpp file
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -180,10 +180,10 @@ public:
 //=
 
 
+
 void A::test()
 {
 }
-
 
 //!implement in existing namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -633,11 +633,11 @@ public:
 //=
 #include "A.h"
 
+
+
 void Class::test(int param1, int param2, int param3)
 {
 }
-
-
 
 //!static method
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -658,11 +658,11 @@ public:
 //=
 #include "A.h"
 
+
+
 void Class::test()
 {
 }
-
-
 
 //! Bug 238253 Pointer refence of the return value lost
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -682,11 +682,11 @@ public:
 //=
 #include "A.h"
 
+
+
 int *TestClass::get(char *val)
 {
 }
-
-
 
 //! Bug 238554 void parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -707,11 +707,11 @@ class Test
 //=
 #include "A.h"
 
+
+
 void Test::doNothing(void)
 {
 }
-
-
 
 //! Bug 282989 Refactor->Implement method option doesn't qualify the name in the method definition with a fully qualified container class name
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest

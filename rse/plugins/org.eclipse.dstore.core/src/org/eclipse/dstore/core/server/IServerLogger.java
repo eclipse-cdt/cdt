@@ -18,6 +18,10 @@ package org.eclipse.dstore.core.server;
 
 /**
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Server logger implementations must subclass
+ *              {@link ServerLogger} rather than implementing this
+ *              interface directly.
  */
 public interface IServerLogger
 {
@@ -55,6 +59,7 @@ public interface IServerLogger
 	
 	/**
 	 * closeLogFileStream
+	 * @since 3.1
 	 */
 	public void closeLogFileStream();
 }

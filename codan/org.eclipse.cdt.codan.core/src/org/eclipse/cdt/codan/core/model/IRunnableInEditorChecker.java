@@ -10,21 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 /**
- * Allows to run all checkers that can run on ast via editing using API
+ * Interface for checkers that can be run when user is typing, checker has to be
+ * very quick to run in this mode
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *              Extend AbstractChecker class instead.
  */
-public interface ICodanAstReconciler {
+public interface IRunnableInEditorChecker {
 	/**
-	 * Run code analysis on ast
-	 * @param ast - ast to be reconciled 
-	 * @param monitor - progress monitor
+	 * @param model
 	 */
-	public void reconcileAst(IASTTranslationUnit ast, IProgressMonitor monitor);
+	void processModel(Object model);
 }

@@ -8,9 +8,9 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.ui;
+package org.eclipse.cdt.codan.internal.ui.cxx;
 
-import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.cxx.internal.model.CxxCodanRenciler;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
@@ -22,6 +22,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  */
 public class CodanCReconciler implements ICReconcilingListener {
+	private CxxCodanRenciler reconsiler = new CxxCodanRenciler();
+
 	void install(ITextEditor editor) {
 		if (editor instanceof CEditor) {
 			initialize();
@@ -64,8 +66,7 @@ public class CodanCReconciler implements ICReconcilingListener {
 	 */
 	public void reconciled(IASTTranslationUnit ast, boolean force,
 			IProgressMonitor progressMonitor) {
-		CodanRuntime.getInstance().getAstQuickBuilder().reconcileAst(ast,
-				progressMonitor);
+		reconsiler.reconciledAst(ast, progressMonitor);
 		// System.err.println("ast reconsiled");
 	}
 }

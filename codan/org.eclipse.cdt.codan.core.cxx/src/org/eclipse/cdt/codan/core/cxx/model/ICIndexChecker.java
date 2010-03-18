@@ -8,8 +8,9 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core.cxx.model;
 
+import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**

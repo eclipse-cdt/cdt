@@ -8,10 +8,11 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.examples.checkers;
+package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.regex.Pattern;
-import org.eclipse.cdt.codan.core.model.AbstractCIndexChecker;
+
+import org.eclipse.cdt.codan.core.cxx.model.AbstractCIndexChecker;
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
@@ -29,7 +30,7 @@ public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 		implements ICheckerWithParameters {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; 	// name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
-	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -95,5 +96,12 @@ public class NamingConventionFunctionChecker extends AbstractCIndexChecker
 	
 		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN); 
 									
+	}
+
+
+	
+	@Override
+	public boolean runInEditor() {
+		return false;
 	}
 }

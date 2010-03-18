@@ -3,75 +3,75 @@
 <plugin>
    <extension
          point="org.eclipse.cdt.codan.core.checkers"
-         id="org.eclipse.cdt.codan.core.examples.checkers">
+         id="org.eclipse.cdt.codan.core.internal.checkers">
 
       <checker
-            class="org.eclipse.cdt.codan.examples.checkers.AssignmentInConditionChecker"
-            id="org.eclipse.cdt.codan.examples.checkers.AssignmentInConditionChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionChecker"
             name="Assignment in condition">
       <problem
             defaultSeverity="Warning"
-            id="org.eclipse.cdt.codan.examples.checkers.AssignmentInConditionProblem"
+            id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"
             name="Assignment in condition">
       </problem>
       
       
       </checker>
             <checker
-            class="org.eclipse.cdt.codan.examples.checkers.StatementHasNoEffectChecker"
-            id="org.eclipse.cdt.codan.examples.checkers.StatementHasNoEffectChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker"
             name="StatementHasNoEffectChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            id="org.eclipse.cdt.codan.examples.checkers.StatementHasNoEffectProblem"
+            id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"
             name="Statement has no effect">
       </problem>
       </checker>
       
       <checker
-            class="org.eclipse.cdt.codan.examples.checkers.NonVirtualDestructor"
-            id="org.eclipse.cdt.codan.examples.checkers.NonVirtualDescructor"
+            class="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
+            id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDescructor"
             name="NonVirtualDescructorChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            id="org.eclipse.cdt.codan.examples.checkers.NonVirtualDestructorProblem"
+            id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"
             name="Class has a virtual method and non-virtual destructor">
       </problem>
       </checker>
 
       <checker
-            class="org.eclipse.cdt.codan.examples.checkers.CatchUsesReference"
-            id="org.eclipse.cdt.codan.examples.checkers.CatchUsesReference"
+            class="org.eclipse.cdt.codan.internal.checkers.CatchUsesReference"
+            id="org.eclipse.cdt.codan.internal.checkers.CatchUsesReference"
             name="CatchUsesReferenceChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            id="org.eclipse.cdt.codan.examples.checkers.CatchUsesReference"
+            id="org.eclipse.cdt.codan.internal.checkers.CatchUsesReference"
             name="Catch uses reference to exception">
       </problem>
       </checker>
       <checker
-            class="org.eclipse.cdt.codan.examples.checkers.SuggestedParenthesisChecker"
-            id="org.eclipse.cdt.codan.examples.checkers.SuggestedParenthesisChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisChecker"
             name="SuggestedParenthesisChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            id="org.eclipse.cdt.codan.examples.checkers.SuggestedParenthesisProblem"
+            id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"
             name="Suggested parenthesis around expression">
       </problem>
       </checker>
             <checker
-            class="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionChecker"
-            id="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionChecker"
+            class="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
             name="NamingConventionFunctionChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.CodeStyle"
             defaultEnabled="false"
             defaultSeverity="Info"
-            id="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"
+            id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionProblem"
             messagePattern="Bad function name &quot;{0}&quot; (pattern /{1}/)"
             name="Name convention for function">
       </problem>

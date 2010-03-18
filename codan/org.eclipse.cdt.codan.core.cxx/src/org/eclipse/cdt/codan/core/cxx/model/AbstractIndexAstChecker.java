@@ -8,9 +8,12 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core.cxx.model;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.model.AbstractChecker;
+import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
+import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -27,11 +30,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Convenience implementation of checker that work on index based ast of a c/c++ program.
+ * Convenience implementation of checker that work on index based ast of a c/c++
+ * program.
  * 
  * Clients may extend this class.
  */
-public abstract class AbstractIndexAstChecker extends AbstractChecker implements ICAstChecker {
+public abstract class AbstractIndexAstChecker extends AbstractChecker implements
+		ICAstChecker, IRunnableInEditorChecker {
 	private IFile file;
 
 	protected IFile getFile() {
@@ -41,14 +46,16 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	void processFile(IFile file) throws CoreException, InterruptedException {
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit)) return; // not a C/C++ file
+		if (!(model instanceof ITranslationUnit))
+			return; // not a C/C++ file
 		ITranslationUnit tu = (ITranslationUnit) model;
 		IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 		// lock the index for read access
 		index.acquireReadLock();
 		try {
 			// create index based ast
-			IASTTranslationUnit ast = tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			IASTTranslationUnit ast = tu.getAST(index,
+					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			// traverse the ast using the visitor pattern.
 			this.file = file;
 			processAst(ast);
@@ -76,21 +83,41 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	public void reportProblem(String id, IASTNode astNode, String message) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
-		IFile astFile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(location);
+		IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
+				.getFileForLocation(location);
 		if (astFile == null) {
 			astFile = file;
 		}
 		IProblemLocation loc;
-		if (astLocation.getStartingLineNumber() == astLocation.getEndingLineNumber()) loc = getRuntime()
-				.getProblemLocationFactory().createProblemLocation(astFile, astLocation.getNodeOffset(),
-						astLocation.getNodeOffset() + astLocation.getNodeLength());
-		else loc = getRuntime().getProblemLocationFactory().createProblemLocation(astFile,
-				astLocation.getStartingLineNumber());
+		if (astLocation.getStartingLineNumber() == astLocation
+				.getEndingLineNumber())
+			loc = getRuntime().getProblemLocationFactory()
+					.createProblemLocation(
+							astFile,
+							astLocation.getNodeOffset(),
+							astLocation.getNodeOffset()
+									+ astLocation.getNodeLength());
+		else
+			loc = getRuntime().getProblemLocationFactory()
+					.createProblemLocation(astFile,
+							astLocation.getStartingLineNumber());
 		getProblemReporter().reportProblem(id, loc, message);
 	}
 
 	@Override
 	public boolean runInEditor() {
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker#processModel
+	 * (java.lang.Object)
+	 */
+	public void processModel(Object model) {
+		if (model instanceof IASTTranslationUnit)
+			processAst((IASTTranslationUnit) model);
 	}
 }

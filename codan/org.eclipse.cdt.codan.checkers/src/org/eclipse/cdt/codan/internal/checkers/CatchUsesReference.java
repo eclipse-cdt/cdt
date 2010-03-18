@@ -9,9 +9,9 @@
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.codan.examples.checkers;
+package org.eclipse.cdt.codan.internal.checkers;
 
-import org.eclipse.cdt.codan.core.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
  *
  */
 public class CatchUsesReference extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.CatchUsesReference";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CatchUsesReference";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.

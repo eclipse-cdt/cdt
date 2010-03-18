@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.ui;
+package org.eclipse.cdt.codan.internal.ui.cxx;
 
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener2;

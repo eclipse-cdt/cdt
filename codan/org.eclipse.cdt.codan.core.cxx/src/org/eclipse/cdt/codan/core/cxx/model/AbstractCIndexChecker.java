@@ -8,9 +8,10 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core.cxx.model;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.model.AbstractChecker;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -68,6 +69,6 @@ public abstract class AbstractCIndexChecker extends AbstractChecker implements I
 
 	@Override
 	public boolean runInEditor() {
-		return true;
+		return false;
 	}
 }

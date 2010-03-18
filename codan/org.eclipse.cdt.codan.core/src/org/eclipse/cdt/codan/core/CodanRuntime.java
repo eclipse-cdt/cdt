@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.core;
 
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
-import org.eclipse.cdt.codan.core.model.ICodanAstReconciler;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
@@ -26,20 +25,21 @@ import org.eclipse.cdt.codan.internal.core.model.ProblemLocationFactory;
  * Clients may extend this class to override default framework parts.
  * 
  * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same.
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same.
  * </p>
  */
 public class CodanRuntime {
 	private static CodanRuntime instance = new CodanRuntime();
 	private IProblemReporter problemReporter = new CodanMarkerProblemReporter();
-	private CodanBuilder builder = new CodanBuilder();
+	private ICodanBuilder builder = new CodanBuilder();
 	private CheckersRegisry checkers = CheckersRegisry.getInstance();
 	private IProblemLocationFactory locFactory = new ProblemLocationFactory();
 
 	/**
-	 * CodanRuntime - only can be called by subclasses to override default constructor
+	 * CodanRuntime - only can be called by subclasses to override default
+	 * constructor
 	 */
 	protected CodanRuntime() {
 		// nothing here
@@ -47,6 +47,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get runtime problem reporter. Default reported generated problem markers.
+	 * 
 	 * @return
 	 */
 	public IProblemReporter getProblemReporter() {
@@ -55,6 +56,7 @@ public class CodanRuntime {
 
 	/**
 	 * Set different problem reporter.
+	 * 
 	 * @param reporter
 	 */
 	public void setProblemReporter(IProblemReporter reporter) {
@@ -63,6 +65,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get instance of of Codan Runtime
+	 * 
 	 * @return
 	 */
 	public static CodanRuntime getInstance() {
@@ -70,7 +73,9 @@ public class CodanRuntime {
 	}
 
 	/**
-	 * Get builder. Builder can used to run code analysis on given resource using API.
+	 * Get builder. Builder can used to run code analysis on given resource
+	 * using API.
+	 * 
 	 * @return
 	 */
 	public ICodanBuilder getBuilder() {
@@ -78,15 +83,8 @@ public class CodanRuntime {
 	}
 
 	/**
-	 * Get quick builder. Can be used to run code analysis on given ast.
-	 * @return
-	 */
-	public ICodanAstReconciler getAstQuickBuilder() {
-		return builder;
-	}
-
-	/**
-	 * Get checkers registry. 
+	 * Get checkers registry.
+	 * 
 	 * @return
 	 */
 	public ICheckersRegistry getChechersRegistry() {
@@ -95,6 +93,7 @@ public class CodanRuntime {
 
 	/**
 	 * Get problem location factory.
+	 * 
 	 * @return
 	 */
 	public IProblemLocationFactory getProblemLocationFactory() {
@@ -102,8 +101,9 @@ public class CodanRuntime {
 	}
 
 	/**
-	 * Set another problem location factory - only need if default is not sufficient, i.e
-	 * IProblemLocation is implemented differently
+	 * Set another problem location factory - only need if default is not
+	 * sufficient, i.e IProblemLocation is implemented differently
+	 * 
 	 * @param factory
 	 */
 	public void setProblemLocationFactory(IProblemLocationFactory factory) {

@@ -2,14 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Code Analysis Core
 Bundle-SymbolicName: org.eclipse.cdt.codan.core;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.CodanCorePlugin
 Bundle-Vendor: CDT
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources,
- org.eclipse.cdt.core
+ org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.cdt.codan.core,
  org.eclipse.cdt.codan.core.model,
- org.eclipse.cdt.codan.internal.core;x-friends:="org.eclipse.cdt.codan.core,org.eclipse.cdt.codan.core.test,org.eclipse.cdt.codan.ui"
+ org.eclipse.cdt.codan.internal.core;
+  x-friends:="org.eclipse.cdt.codan.core,
+   org.eclipse.cdt.codan.core.cxx,
+   org.eclipse.cdt.codan.core.test,
+   org.eclipse.cdt.codan.ui",
+ org.eclipse.cdt.codan.internal.core.model;x-friends:="org.eclipse.cdt.codan.core.cxx,org.eclipse.cdt.codan.core.test,org.eclipse.cdt.codan.ui"

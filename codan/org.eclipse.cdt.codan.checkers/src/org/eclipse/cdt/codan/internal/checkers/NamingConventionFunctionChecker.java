@@ -20,6 +20,7 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
@@ -44,11 +45,11 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 					if (element instanceof IASTFunctionDefinition) {
 						String parameter = (String) pt.getParameter(PARAM_KEY);
 						Pattern pattern = Pattern.compile(parameter);
-						String name = ((IASTFunctionDefinition) element)
-								.getDeclarator().getName().toString();
+						IASTName astName = ((IASTFunctionDefinition) element)
+								.getDeclarator().getName();
+						String name = astName.toString();
 						if (!pattern.matcher(name).find()) {
-							reportProblem(ER_ID, getFile(), 1, // TODO: line
-																// number
+							reportProblem(ER_ID, astName,
 									name, parameter);
 						}
 					}

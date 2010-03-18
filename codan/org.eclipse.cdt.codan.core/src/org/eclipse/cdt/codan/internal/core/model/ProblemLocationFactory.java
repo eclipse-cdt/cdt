@@ -16,20 +16,38 @@ import org.eclipse.core.resources.IFile;
 
 /**
  * Factory class that allows to create problem locations
- *
+ * 
  */
 public class ProblemLocationFactory implements IProblemLocationFactory {
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocationFactory#createProblemLocation(org.eclipse.core.resources.IFile, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.core.model.IProblemLocationFactory#
+	 * createProblemLocation(org.eclipse.core.resources.IFile, int)
 	 */
 	public IProblemLocation createProblemLocation(IFile file, int line) {
 		return new CodanProblemLocation(file, line);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocationFactory#createProblemLocation(org.eclipse.core.resources.IFile, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.core.model.IProblemLocationFactory#
+	 * createProblemLocation(org.eclipse.core.resources.IFile, int, int)
 	 */
-	public IProblemLocation createProblemLocation(IFile file, int startChar, int endChar) {
+	public IProblemLocation createProblemLocation(IFile file, int startChar,
+			int endChar) {
 		return new CodanProblemLocation(file, startChar, endChar);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.core.model.IProblemLocationFactory#
+	 * createProblemLocation(org.eclipse.core.resources.IFile, int, int, int)
+	 */
+	public IProblemLocation createProblemLocation(IFile file, int startChar,
+			int endChar, int line) {
+		return new CodanProblemLocation(file, startChar, endChar, line);
 	}
 }

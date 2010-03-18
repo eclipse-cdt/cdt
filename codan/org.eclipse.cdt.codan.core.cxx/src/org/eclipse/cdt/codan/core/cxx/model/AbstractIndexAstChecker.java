@@ -80,7 +80,7 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 		return true;
 	}
 
-	public void reportProblem(String id, IASTNode astNode, String message) {
+	public void reportProblem(String id, IASTNode astNode, Object...  args) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
 		IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
@@ -89,19 +89,20 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 			astFile = file;
 		}
 		IProblemLocation loc;
-		if (astLocation.getStartingLineNumber() == astLocation
+		int line = astLocation.getStartingLineNumber();
+		if (line == astLocation
 				.getEndingLineNumber())
 			loc = getRuntime().getProblemLocationFactory()
 					.createProblemLocation(
 							astFile,
 							astLocation.getNodeOffset(),
 							astLocation.getNodeOffset()
-									+ astLocation.getNodeLength());
+									+ astLocation.getNodeLength(), line);
 		else
 			loc = getRuntime().getProblemLocationFactory()
 					.createProblemLocation(astFile,
-							astLocation.getStartingLineNumber());
-		getProblemReporter().reportProblem(id, loc, message);
+							line);
+		getProblemReporter().reportProblem(id, loc, args);
 	}
 
 	@Override

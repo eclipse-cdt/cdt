@@ -81,24 +81,44 @@ public class NameHelper {
 		return qname;
 	}
 	
+	/**
+	 * Returns the trimmed field name. Leading and trailing non-letters-digits are trimmed.
+	 * If the first letter-digit is in lower case and the next is in upper case, 
+	 * the first letter is trimmed.
+	 * 
+	 * @param fieldName Complete, unmodified name of the field to trim
+	 * @return Trimmed field
+	 */
 	public static String trimFieldName(String fieldName){
 		char[] letters = fieldName.toCharArray();
 		int start = 0;
 		int end = letters.length - 1;
 		try{
-		while(!Character.isLetter(letters[start]) && start < end) {
+			
+		// Trim, non-letters at the beginning
+		while(!Character.isLetterOrDigit(letters[start]) && start < end) {
 			++start;
 		}
 		
-		if(Character.isLowerCase(letters[start])){
-			if(!Character.isLetter(letters[start + 1])){
-				start+= 2;
+		// If the next character is not a letter or digit, 
+		// look ahead because the first letter might not be needed
+		if (start + 1 <= end
+				&& !Character.isLetterOrDigit(letters[start + 1])) {
+			int lookAhead = 1;
+			while (start + lookAhead <= end) {
+				// Only change the start if something is found after the non-letters
+				if (Character.isLetterOrDigit(letters[start + lookAhead])) {
+					start += lookAhead;
+					break;
+				}
+				lookAhead++;
 			}
-			else if (Character.isUpperCase(letters[start + 1])){
-				start += 1;
-			}
+		} else if (start + 1 <= end
+				&& Character.isUpperCase(letters[start + 1])) {
+			start++;
 		}
 		
+		// Trim, non-letters at the end
 		while((!Character.isLetter(letters[end]) && !Character.isDigit(letters[end])) && start < end) {
 			--end;
 		}

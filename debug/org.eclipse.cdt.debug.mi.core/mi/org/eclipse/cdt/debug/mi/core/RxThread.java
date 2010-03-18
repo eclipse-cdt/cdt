@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.Command;
@@ -32,7 +33,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.command.MIInterpreterExecConsole;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
-import org.eclipse.cdt.debug.mi.core.event.MICatchpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
@@ -304,7 +304,7 @@ public class RxThread extends Thread {
 				}
 
 				// GDB does not provide reason when stopping on a shared library
-				// event or because of a catchpoint (in some versions).
+				// event or because of a catchpoint (in gdb < 7.0).
 				// Hopefully this will be fixed in a future version. Meanwhile,
 				// we will use a hack to cope. On most platform we can detect by
 				// looking at the console stream for phrase. Although it is a
@@ -319,17 +319,18 @@ public class RxThread extends Thread {
 							list.add(e);
 						}
 						else if (logs[i].startsWith("Catchpoint ")) { //$NON-NLS-1$
-							// Example: "Catchpoint 1 (exception caught)"
 							session.getMIInferior().setSuspended();
-							String log = logs[i];
-							String catchpointType = "???"; //$NON-NLS-1$
-							int startIndex = log.lastIndexOf('(');
-							int stopIndex = log.lastIndexOf(')');
-							if ((startIndex >= 0) && (stopIndex >= 0) && (stopIndex > startIndex)) {
-								catchpointType = log.substring(startIndex+1, stopIndex);
+
+							// Example: "Catchpoint 1 (exception caught)"
+							StringTokenizer tokenizer = new StringTokenizer(logs[i]);
+							tokenizer.nextToken(); // "Catchpoint"
+							try {
+								int bkptNumber = Integer.parseInt(tokenizer.nextToken()); // 1
+								list.add(new MIBreakpointHitEvent(session, exec, bkptNumber));
 							}
-							MIEvent e = new MICatchpointHitEvent(session, exec, catchpointType);
-							list.add(e);
+							catch (NumberFormatException exc) {
+								assert false : "unexpected catchpoint stream record format: " + logs[i]; //$NON-NLS-1$
+							}
 						}
 					}
 				}

@@ -38,6 +38,21 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
 		parse();
 	}
 
+	/**
+	 * This constructor is used for catchpoint hits with gdb < 7.0. In that
+	 * environment, we have to get creative as gdb doesn't send us a reason with
+	 * the stopped event. Fortunately, a stream record tells us the target has
+	 * stopped because of a catchpoint and the associated breakpoint number.
+	 * 
+	 * @since 7.0
+	 */
+	public MIBreakpointHitEvent(MISession source, MIExecAsyncOutput record, int bkptNumber) {
+		super(source, record);
+		parse();
+		bkptno = bkptNumber;
+		assert bkptNumber > 0;	// we know gdb bkpt numbers are 1-based
+	}
+
 	public int getNumber() {
 		return bkptno;
 	}

@@ -117,7 +117,7 @@ public abstract class AbstractThreadVMNode extends AbstractDMVMNode
                     
                     @Override
                     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        return !((Boolean)properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED)).booleanValue();
+                    	return Boolean.FALSE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
                     };
                 },
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED)),

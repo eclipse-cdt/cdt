@@ -6,7 +6,7 @@
          id="org.eclipse.cdt.codan.core.internal.checkers">
 
        <checker
-            class="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionChecker"
+            class="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionIIndexChecker"
             id="org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionChecker"
             name="NamingConventionFunctionChecker">
       <problem

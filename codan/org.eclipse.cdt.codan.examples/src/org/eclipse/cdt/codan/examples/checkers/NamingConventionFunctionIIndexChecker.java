@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Alena
  * 
  */
-public class NamingConventionFunctionChecker extends AbstractCIndexChecker
+public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 		implements ICheckerWithParameters {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; 	// name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$

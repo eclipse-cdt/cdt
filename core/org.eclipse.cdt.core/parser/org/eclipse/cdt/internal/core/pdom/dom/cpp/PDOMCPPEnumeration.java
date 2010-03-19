@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMNode;
+import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -22,36 +22,45 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Enumerations in the index.
  */
-class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexType {
+class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPDOMMemberOwner {
 
-	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE;
-	private static final int OFFSET_MIN_VALUE= FIRST_ENUMERATOR + Database.PTR_SIZE;
+	private static final int OFFSET_ENUMERATOR_LIST = PDOMBinding.RECORD_SIZE;
+	private static final int OFFSET_MIN_VALUE= OFFSET_ENUMERATOR_LIST + Database.PTR_SIZE;
 	private static final int OFFSET_MAX_VALUE= OFFSET_MIN_VALUE + 8;
+	private static final int OFFSET_FIXED_TYPE = OFFSET_MAX_VALUE + 8;
+	private static final int OFFSET_FLAGS = OFFSET_FIXED_TYPE + Database.TYPE_SIZE;
 	
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = OFFSET_MAX_VALUE + 8;
+	protected static final int RECORD_SIZE = OFFSET_FLAGS + 1;
 	
 	private Long fMinValue;
 	private Long fMaxValue;
+	private IType fFixedType= ProblemBinding.NOT_INITIALIZED;
+	private PDOMCPPEnumScope fScope;
 
-	public PDOMCPPEnumeration(PDOMLinkage linkage, PDOMNode parent, IEnumeration enumeration)
+	public PDOMCPPEnumeration(PDOMLinkage linkage, PDOMNode parent, ICPPEnumeration enumeration)
 			throws CoreException {
 		super(linkage, parent, enumeration.getNameCharArray());
-		storeValueBounds(enumeration);
+		storeProperties(enumeration);
 	}
 
 	public PDOMCPPEnumeration(PDOMLinkage linkage, long record) {
@@ -60,17 +69,25 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 
 	@Override
 	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
-		storeValueBounds((IEnumeration) newBinding);
+		storeProperties((ICPPEnumeration) newBinding);
 	}
 
-	private void storeValueBounds(IEnumeration enumeration) throws CoreException {
+	private void storeProperties(ICPPEnumeration enumeration) throws CoreException {
 		final Database db= getDB();
-		final long minValue = enumeration.getMinValue();
-		final long maxValue = enumeration.getMaxValue();
-		db.putLong(record+ OFFSET_MIN_VALUE, minValue);
-		db.putLong(record+ OFFSET_MAX_VALUE, maxValue);
-		fMinValue= minValue;
-		fMaxValue= maxValue;
+		db.putByte(record + OFFSET_FLAGS, enumeration.isScoped() ? (byte) 1 : (byte) 0);
+
+		getLinkage().storeType(record + OFFSET_FIXED_TYPE, enumeration.getFixedType());
+		
+		if (enumeration instanceof ICPPInternalBinding) {
+			if (((ICPPInternalBinding) enumeration).getDefinition() != null) {
+				final long minValue = enumeration.getMinValue();
+				final long maxValue = enumeration.getMaxValue();
+				db.putLong(record+ OFFSET_MIN_VALUE, minValue);
+				db.putLong(record+ OFFSET_MAX_VALUE, maxValue);
+				fMinValue= minValue;
+				fMaxValue= maxValue;
+			}
+		}
 	}
 
 	@Override
@@ -83,43 +100,29 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 		return IIndexCPPBindingConstants.CPPENUMERATION;
 	}
 
-	public IEnumerator[] getEnumerators() throws DOMException {
-		try {
-			ArrayList<PDOMCPPEnumerator> enums = new ArrayList<PDOMCPPEnumerator>();
-			for (PDOMCPPEnumerator enumerator = getFirstEnumerator();
-					enumerator != null;
-					enumerator = enumerator.getNextEnumerator()) {
-				enums.add(enumerator);
-			}
-			
-			IEnumerator[] enumerators = enums.toArray(new IEnumerator[enums.size()]);
-			
-			// Reverse the list since they are last in first out
-			int n = enumerators.length;
-			for (int i = 0; i < n / 2; ++i) {
-				IEnumerator tmp = enumerators[i];
-				enumerators[i] = enumerators[n - 1 - i];
-				enumerators[n - 1 - i] = tmp;
-			}
-				
-			return enumerators;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new IEnumerator[0];
+	public IEnumerator[] getEnumerators() {
+		return PDOMCPPEnumScope.getEnumerators(this);
+	}
+	
+	@Override
+	public void accept(IPDOMVisitor visitor) throws CoreException {
+		PDOMCPPEnumScope.acceptViaCache(this, visitor);
+	}
+
+	@Override
+	public void addChild(PDOMNode node) throws CoreException {
+		if (node instanceof PDOMCPPEnumerator) {
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
+			list.addMember(node);
+			PDOMCPPEnumScope.updateCache(this, (PDOMCPPEnumerator) node);
 		}
 	}
 
-	private PDOMCPPEnumerator getFirstEnumerator() throws CoreException {
-		long value = getDB().getRecPtr(record + FIRST_ENUMERATOR);
-		return value != 0 ? new PDOMCPPEnumerator(getLinkage(), value) : null;
+	@Override
+	public boolean mayHaveChildren() {
+		return true;
 	}
-	
-	public void addEnumerator(PDOMCPPEnumerator enumerator) throws CoreException {
-		PDOMCPPEnumerator first = getFirstEnumerator();
-		enumerator.setNextEnumerator(first);
-		getDB().putRecPtr(record + FIRST_ENUMERATOR, enumerator.getRecord());
-	}
-	
+
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -176,8 +179,57 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 		return maxValue;
 	}
 
-	@Override
+    @Override
 	public Object clone() {
-		throw new PDOMNotImplementedError();
+    	throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
+    }
+
+	public boolean isScoped() {
+		try {
+			return getDB().getByte(record + OFFSET_FLAGS) != 0;
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
+	public IType getFixedType() {
+		if (fFixedType == ProblemBinding.NOT_INITIALIZED) {
+			fFixedType= loadFixedType();
+		}
+		return fFixedType;
+	}
+
+	private IType loadFixedType() {
+		try {
+			return getLinkage().loadType(record + OFFSET_FIXED_TYPE);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return null;
+		}
+	}
+
+	public ICPPScope asScope() {
+		if (fScope == null) {
+			fScope= new PDOMCPPEnumScope(this);
+		}
+		return fScope;
+	}
+
+	public void loadEnumerators(final CharArrayMap<PDOMCPPEnumerator> map) {
+		try {
+			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
+			list.accept(new IPDOMVisitor() {
+				public boolean visit(IPDOMNode node) throws CoreException {
+					if (node instanceof PDOMCPPEnumerator) {
+						final PDOMCPPEnumerator item = (PDOMCPPEnumerator) node;
+						map.put(item.getNameCharArray(), item);
+					}
+					return true;
+				}
+				public void leave(IPDOMNode node) {}
+			});
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
 	}
 }

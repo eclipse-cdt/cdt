@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -34,11 +35,11 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -903,7 +904,32 @@ public class Conversions {
 		if (trg instanceof IBasicType) {
 			IBasicType basicTgt = (IBasicType) trg;
 			final Kind tKind = basicTgt.getKind();
-
+			
+			if (src instanceof ICPPEnumeration) {
+				final ICPPEnumeration enumType = (ICPPEnumeration) src;
+				if (enumType.isScoped()) {
+					return false;
+				}
+				IType fixedType= enumType.getFixedType();
+				if (fixedType == null) {
+					if (tKind == Kind.eInt || tKind == Kind.eUnspecified) {
+						if (trg instanceof ICPPBasicType) {
+							int qualifiers = ArithmeticConversion.getEnumIntTypeModifiers((IEnumeration) src);
+							int targetModifiers = ((ICPPBasicType) trg).getModifiers();
+							if (qualifiers == (targetModifiers & (IBasicType.IS_LONG | IBasicType.IS_LONG_LONG | IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED))) {
+								canPromote = true;
+							}
+						} else {
+							canPromote = true;
+						}
+					}
+				} else {
+					if (fixedType.isSameType(trg))
+						canPromote= true;
+					// Allow to further promote the fixed type
+					src= fixedType;
+				}
+			}
 			if (src instanceof IBasicType) {
 				final IBasicType basicSrc = (IBasicType) src;
 				Kind sKind = basicSrc.getKind();
@@ -926,19 +952,7 @@ public class Conversions {
 				} else if (tKind == Kind.eDouble && sKind == Kind.eFloat) {
 					canPromote= true;
 				}
-			} else if (src instanceof IEnumeration) {
-				if (tKind == Kind.eInt || tKind == Kind.eUnspecified) {
-					if (trg instanceof ICPPBasicType) {
-						int qualifiers = ArithmeticConversion.getEnumIntTypeModifiers((IEnumeration) src);
-						int targetModifiers = ((ICPPBasicType) trg).getModifiers();
-						if (qualifiers == (targetModifiers & (IBasicType.IS_LONG | IBasicType.IS_LONG_LONG | IBasicType.IS_SHORT | IBasicType.IS_UNSIGNED))) {
-							canPromote = true;
-						}
-					} else {
-						canPromote = true;
-					}
-				}
-			}
+			} 
 		}
 		if (canPromote) {
 			cost.setRank(Rank.PROMOTION);
@@ -963,9 +977,14 @@ public class Conversions {
 			// 4.7 integral conversion
 			// 4.8 floating point conversion
 			// 4.9 floating-integral conversion
-			if (s instanceof IBasicType || s instanceof IEnumeration) {
+			if (s instanceof IBasicType) {
 				// 4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
-				// An rvalue of an enumeration type can be converted to an rvalue of an integer type.
+				cost.setRank(Rank.CONVERSION);
+				cost.setCouldNarrow();
+				return true;
+			} 
+			if (s instanceof ICPPEnumeration && !((ICPPEnumeration) s).isScoped()) {
+				// 4.7 An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 				cost.setRank(Rank.CONVERSION);
 				cost.setCouldNarrow();
 				return true;

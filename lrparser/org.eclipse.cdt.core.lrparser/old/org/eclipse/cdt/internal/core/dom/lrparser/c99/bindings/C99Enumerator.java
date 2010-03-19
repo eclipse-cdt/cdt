@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -20,7 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
@@ -71,9 +69,8 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 	}
 
 	public IBinding getOwner() throws DOMException {
-		if (scope != null) {
-			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
-		}
+		if (type instanceof IBinding)
+			return (IBinding) type;
 		return null;
 	}
 

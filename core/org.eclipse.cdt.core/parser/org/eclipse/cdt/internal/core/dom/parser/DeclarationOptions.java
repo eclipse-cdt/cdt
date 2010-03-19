@@ -27,13 +27,14 @@ public class DeclarationOptions {
 	final public static int ALLOW_PARAMETER_PACKS=  		0x400;
 	final public static int REQUIRE_SIMPLE_NAME=    		0x800;
 	final public static int ALLOW_FOLLOWED_BY_BRACE=    	0x1000;
+	final public static int ALLOW_OPAQUE_ENUM=				0x2000;
 
     public static final DeclarationOptions 
-    	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER),
+    	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM),
     	FUNCTION_STYLE_ASM= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER | ALLOW_ABSTRACT),
     	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD | ALLOW_ABSTRACT),
     	CPP_MEMBER= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD | NO_CTOR_STYLE_INITIALIZER),
-    	LOCAL=	    new DeclarationOptions(0),
+    	LOCAL=	    new DeclarationOptions(ALLOW_OPAQUE_ENUM),
     	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_PARAMETER_PACKS | REQUIRE_SIMPLE_NAME | NO_BRACED_INITIALIZER | NO_CTOR_STYLE_INITIALIZER),
     	TYPEID=     new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER),
     	TYPEID_TRAILING_RETURN_TYPE= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | ALLOW_FOLLOWED_BY_BRACE),
@@ -55,6 +56,7 @@ public class DeclarationOptions {
 	final public boolean fAllowNested;
 	final public boolean fAllowParameterPacks;
 	final public boolean fRequireSimpleName;
+	final public boolean fAllowOpaqueEnum;
 	
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier= (options & ALLOW_EMPTY_SPECIFIER) != 0;
@@ -69,5 +71,6 @@ public class DeclarationOptions {
 		fAllowParameterPacks= (options & ALLOW_PARAMETER_PACKS) != 0;
 		fRequireSimpleName= (options & REQUIRE_SIMPLE_NAME) != 0;
 		fCanBeFollowedByBrace= fAllowBracedInitializer || (options & ALLOW_FOLLOWED_BY_BRACE) != 0;
+		fAllowOpaqueEnum= (options & ALLOW_OPAQUE_ENUM) != 0;
 	}
 }

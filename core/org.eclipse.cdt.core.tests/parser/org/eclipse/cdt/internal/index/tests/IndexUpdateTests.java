@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -1211,6 +1212,54 @@ public class IndexUpdateTests extends IndexTestBase {
 		try { 
 			IBinding func = findBinding(name);
 			assertEquals(count, fIndex.findReferences(func).length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	// enum E {e0};
+	
+	// enum class E;
+
+	// enum E : short {e1};
+	
+	// enum class E {e2};
+	
+	// enum class E : short {e1};
+	
+	// enum E : int;
+	public void testEnumCPP() throws Exception {
+		setupFile(6, true);
+		checkEnum(false, null, "e0");
+		updateFile();
+		checkEnum(true, "int", null);
+		updateFile();
+		checkEnum(false, "short int", "e1");
+		updateFile();
+		checkEnum(true, "int", "e2");
+		updateFile();
+		checkEnum(true, "short int", "e1");
+		updateFile();
+		checkEnum(false, "int", null);
+	}
+
+	private void checkEnum(boolean scoped, String fixedType, String enumItem) throws Exception {
+		fIndex.acquireReadLock();
+		try { 
+			ICPPEnumeration enumType = (ICPPEnumeration) findBinding("E");
+			assertEquals(scoped, enumType.isScoped());
+			if (fixedType == null) {
+				assertNull(enumType.getFixedType());
+			} else {
+				assertEquals(fixedType, ASTTypeUtil.getType(enumType.getFixedType()));
+			}
+			final IEnumerator[] enumItems = enumType.getEnumerators();
+			if (enumItem == null) {
+				assertEquals(0, enumItems.length);
+			} else {
+				assertEquals(1, enumItems.length);
+				assertEquals(enumItem, enumItems[0].getName());
+			}
 		} finally {
 			fIndex.releaseReadLock();
 		}

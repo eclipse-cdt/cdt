@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,6 +104,7 @@ public class CPPFindBinding extends FindBinding {
 
 	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, char[] name, int constant,
 			int sigHash, long localToFileRec) throws CoreException {
+		// mstodo faster searches
 		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(linkage, name, constant, sigHash,
 				localToFileRec);
 		try {

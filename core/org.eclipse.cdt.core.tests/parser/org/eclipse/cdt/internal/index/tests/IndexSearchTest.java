@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.internal.index.tests;
 
 import java.util.LinkedList;
@@ -217,13 +216,13 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsEnumerator(bindings[0]);
 
 		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, true, INDEX_FILTER, NPM);
-		assertEquals(0, bindings.length);
+		assertEquals(1, bindings.length);
 
 		bindings= fIndex.findBindings(new char[][]{sEnumeration, sEnumerator}, INDEX_FILTER, NPM);
-		assertEquals(0, bindings.length);
+		assertEquals(1, bindings.length);
 
 		bindings= fIndex.findBindings(new Pattern[]{pEnumeration, pEnumerator}, false, INDEX_FILTER, NPM);
-		assertEquals(0, bindings.length);
+		assertEquals(1, bindings.length);
 		
 		bindings= fIndex.findBindings(pEnumeration, true, INDEX_FILTER, NPM);
 		assertEquals(1, bindings.length);

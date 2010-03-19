@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier;
 
@@ -20,22 +23,34 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalEnumerationSpecifier
  * AST node for c++ enumeration specifiers.
  */
 public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
-		implements IASTInternalEnumerationSpecifier {
+		implements IASTInternalEnumerationSpecifier, ICPPASTEnumerationSpecifier {
 
-	private IASTName name;
-	private boolean valuesComputed= false;
+	private boolean fIsScoped;
+	private boolean fIsOpaque;
+	private IASTName fName;
+	private ICPPASTDeclSpecifier fBaseType;
 
-	
+	private IASTEnumerator[] fItems = null;
+	private int fItemPos=-1;
+
+	private boolean fValuesComputed= false;
+	private CPPEnumScope fScope;
+
 	public CPPASTEnumerationSpecifier() {
 	}
 
-	public CPPASTEnumerationSpecifier(IASTName name) {
+	public CPPASTEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType) {
+		fIsScoped= isScoped;
 		setName(name);
+		setBaseType(baseType);
 	}
 	
 	public CPPASTEnumerationSpecifier copy() {
-		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(name == null ? null : name.copy());
-		for(IASTEnumerator enumerator : getEnumerators())
+		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped, 
+				fName == null ? null : fName.copy(), 
+				fBaseType == null ? null : fBaseType.copy());
+		copy.fIsOpaque= fIsOpaque;
+		for (IASTEnumerator enumerator : getEnumerators())
 			copy.addEnumerator(enumerator == null ? null : enumerator.copy());
 		copyBaseDeclSpec(copy);
 		return copy;
@@ -43,10 +58,10 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	
 	
 	public boolean startValueComputation() {
-		if (valuesComputed)
+		if (fValuesComputed)
 			return false;
 		
-		valuesComputed= true;
+		fValuesComputed= true;
 		return true;
 	}
 
@@ -55,24 +70,21 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (enumerator != null) {
 			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-			enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
+			fItems = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, fItems, ++fItemPos, enumerator );
 		}
 	}
 
 	public IASTEnumerator[] getEnumerators() {
-		if (enumerators == null)
+		if (fItems == null)
 			return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-		enumerators = (IASTEnumerator[]) ArrayUtil.removeNullsAfter( IASTEnumerator.class, enumerators, enumeratorsPos );
-		return enumerators;
+		
+		fItems = (IASTEnumerator[]) ArrayUtil.removeNullsAfter(IASTEnumerator.class, fItems, fItemPos);
+		return fItems;
 	}
-
-
-	private IASTEnumerator[] enumerators = null;
-	private int enumeratorsPos=-1;
 
 	public void setName(IASTName name) {
         assertNotFrozen();
-		this.name = name;
+		fName = name;
 		if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(ENUMERATION_NAME);
@@ -80,7 +92,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 	}
 
 	public IASTName getName() {
-		return name;
+		return fName;
 	}
 
 	@Override
@@ -95,28 +107,67 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 				break;
 			}
 		}
-		if (name != null)
-			if (!name.accept(action))
-				return false;
-		IASTEnumerator[] enums = getEnumerators();
-		for (int i = 0; i < enums.length; i++)
-			if (!enums[i].accept(action))
-				return false;
-				
-		if( action.shouldVisitDeclSpecifiers ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (fName != null && !fName.accept(action))
+			return false;
+		
+		if (fBaseType != null && !fBaseType.accept(action)) {
+			return false;
 		}
+		
+		for (IASTEnumerator e : getEnumerators()) {
+			if (!e.accept(action))
+				return false;
+		}
+				
+		if (action.shouldVisitDeclSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
 
 		return true;
 	}
 
 	public int getRoleForName(IASTName n) {
-		if (name == n)
-			return r_definition;
+		if (fName == n)
+			return isOpaque() ? r_declaration : r_definition;
 		return r_unclear;
+	}
+
+	public void setIsScoped(boolean isScoped) {
+		assertNotFrozen();
+		fIsScoped= isScoped;
+	}
+
+	public boolean isScoped() {
+		return fIsScoped;
+	}
+
+	public void setBaseType(ICPPASTDeclSpecifier baseType) {
+		assertNotFrozen();
+		fBaseType= baseType;
+		if (baseType != null) {
+			baseType.setParent(this);
+			baseType.setPropertyInParent(BASE_TYPE);
+		}
+	}
+
+	public ICPPASTDeclSpecifier getBaseType() {
+		return fBaseType;
+	}
+
+	public void setIsOpaque(boolean isOpaque) {
+		assertNotFrozen();
+		fIsOpaque= isOpaque;
+	}
+
+	public boolean isOpaque() {
+		return fIsOpaque;
+	}
+
+	public ICPPScope getScope() {
+		if (isOpaque())
+			return null;
+		if (fScope == null) {
+			fScope= new CPPEnumScope(this);
+		}
+		return fScope;
 	}
 }

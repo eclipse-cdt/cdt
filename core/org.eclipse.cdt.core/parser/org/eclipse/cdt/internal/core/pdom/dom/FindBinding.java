@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,8 +94,8 @@ public class FindBinding {
 		protected boolean matches(PDOMBinding nnode) throws CoreException {
 			if (nnode.hasName(fName)) {
 				int constant = nnode.getNodeType();
-				for (int i=0; i<fConstants.length; i++) {
-					if (constant == fConstants[i]) {
+				for (int c : fConstants) {
+					if (constant == c) {
 						return true;
 					}
 				}
@@ -164,6 +164,7 @@ public class FindBinding {
 
 	public static PDOMBinding findBinding(IPDOMNode node, final PDOMLinkage linkage, final char[] name, final int[] constants,
 			long localToFileRec) throws CoreException {
+		// mstodo faster searches
 		final DefaultFindBindingVisitor visitor = new DefaultFindBindingVisitor(linkage, name, constants, localToFileRec);
 		try {
 			node.accept(visitor);

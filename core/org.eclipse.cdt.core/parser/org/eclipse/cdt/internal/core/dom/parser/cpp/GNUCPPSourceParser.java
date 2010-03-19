@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -1874,8 +1875,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return null;
     }
 
+    @Override
+	protected boolean isLegalWithoutDtor(IASTDeclSpecifier declSpec) {
+		if (declSpec instanceof IASTElaboratedTypeSpecifier) {
+			return ((IASTElaboratedTypeSpecifier) declSpec).getKind() != IASTElaboratedTypeSpecifier.k_enum;
+		}
+		return super.isLegalWithoutDtor(declSpec);
+	}
 
-    /**
+	/**
      * Parses a declaration with the given options.
      */
     protected IASTDeclaration simpleDeclaration(DeclarationOptions declOption) throws BacktrackException, EndOfFileException {
@@ -1905,7 +1913,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	dtor= addInitializer(lie, declOption);
         } catch (BacktrackException e) {
         	IASTNode node= e.getNodeBeforeProblem();
-        	if (node instanceof IASTDeclSpecifier && specifiesCompound((IASTDeclSpecifier) node)) {
+        	if (node instanceof IASTDeclSpecifier && isLegalWithoutDtor((IASTDeclSpecifier) node)) {
                 IASTSimpleDeclaration d= nodeFactory.newSimpleDeclaration((IASTDeclSpecifier) node);
                 setRange(d, node);
         		throwBacktrack(e.getProblem(), d);
@@ -1956,7 +1964,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         default:	
         	if (declOption != DeclarationOptions.LOCAL) {
         		insertSemi= true;
-        		if (specifiesCompound(declSpec) && markBeforDtor != null && !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
+        		if (isLegalWithoutDtor(declSpec) && markBeforDtor != null && !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
         			backup(markBeforDtor);
         			declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         			endOffset= calculateEndOffset(declSpec);
@@ -2147,15 +2155,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     @Override
 	protected Decl declSpecifierSeq(final DeclarationOptions option) throws BacktrackException, EndOfFileException {
-    	return declSpecifierSeq(option.fAllowEmptySpecifier, false);
+    	return declSpecifierSeq(option, false);
     }
     
     private ICPPASTDeclSpecifier simpleTypeSpecifier() throws BacktrackException, EndOfFileException {
-    	Decl d= declSpecifierSeq(false, true);
+    	Decl d= declSpecifierSeq(null, true);
     	return (ICPPASTDeclSpecifier) d.fDeclSpec1;
     }
-    	
-    private Decl declSpecifierSeq(final boolean allowEmpty, final boolean single) throws BacktrackException, EndOfFileException {
+
+    private ICPPASTDeclSpecifier simpleTypeSpecifierSequence() throws BacktrackException, EndOfFileException {
+    	Decl d= declSpecifierSeq(null, false);
+    	return (ICPPASTDeclSpecifier) d.fDeclSpec1;
+    }
+
+    private Decl declSpecifierSeq(final DeclarationOptions option, final boolean single) throws BacktrackException, EndOfFileException {
     	int storageClass = IASTDeclSpecifier.sc_unspecified;
         int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
         int options= 0;
@@ -2350,7 +2363,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredRawType || encounteredTypename)
         				break declSpecifiers;
 
-        			if (allowEmpty && LT(1) != IToken.tCOMPLETION) {
+        			if (option != null && option.fAllowEmptySpecifier && LT(1) != IToken.tCOMPLETION) {
         				if ((options & FORBID_IN_EMPTY_DECLSPEC) == 0 && storageClass == IASTDeclSpecifier.sc_unspecified) {
         					altResult= buildSimpleDeclSpec(storageClass, simpleType, options, isLong, typeofExpression, offset, endOffset);
         					returnToken= mark();
@@ -2382,15 +2395,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredTypename || encounteredRawType)
         				break declSpecifiers;
         			try {
-        				result= (ICPPASTDeclSpecifier) enumSpecifier();
+        				result= enumDeclaration(option != null && option.fAllowOpaqueEnum);
         			} catch (BacktrackException bt) {
         				if (bt.getNodeBeforeProblem() instanceof ICPPASTDeclSpecifier) {
         					result= (ICPPASTDeclSpecifier) bt.getNodeBeforeProblem();
         					problem= bt.getProblem();
         					break declSpecifiers;
-        				} else {
-        					result= elaboratedTypeSpecifier();
-        				}
+        				} 
+        				throw bt;
         			}
         			endOffset= calculateEndOffset(result);
         			encounteredTypename= true;
@@ -2450,7 +2462,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	}
 
         	// check for empty specification
-        	if (!encounteredRawType && !encounteredTypename && LT(1) != IToken.tEOC && !allowEmpty) {
+			if (!encounteredRawType && !encounteredTypename && LT(1) != IToken.tEOC
+					&& (option == null || !option.fAllowEmptySpecifier)) {
         		throwBacktrack(LA(1));
         	}
 
@@ -2526,6 +2539,65 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         declSpec.setRestrict((options & RESTRICT) != 0);
 	}
 
+	private ICPPASTDeclSpecifier enumDeclaration(boolean allowOpaque) throws BacktrackException, EndOfFileException {
+		IToken mark= mark();
+		final int offset= consume(IToken.t_enum).getOffset();
+		int endOffset= 0;
+		boolean isScoped= false;
+		IASTName name= null;
+		ICPPASTDeclSpecifier baseType= null;
+
+		try {
+			int lt1= LT(1);
+			if (lt1 == IToken.t_class || lt1 == IToken.t_struct) {
+				isScoped= true;
+				consume();
+			}
+			// if __attribute__ or __declspec occurs after struct/union/class and before the identifier        
+			__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+
+			if (isScoped || LT(1) == IToken.tIDENTIFIER) {
+				name= identifier();
+				endOffset= calculateEndOffset(name);
+			}
+
+			if (LT(1) == IToken.tCOLON) {
+				consume();
+				baseType= simpleTypeSpecifierSequence();
+				endOffset= calculateEndOffset(baseType);
+			}
+		} catch (BacktrackException e) {
+			backup(mark);
+			return elaboratedTypeSpecifier();
+		}
+
+		final int lt1= LT(1);
+		final boolean isDef= lt1 == IToken.tLBRACE || (lt1 == IToken.tEOC && baseType != null);
+		final boolean isOpaque= !isDef && allowOpaque && lt1 == IToken.tSEMI;
+		if (!isDef && !isOpaque) {
+			backup(mark);
+			return elaboratedTypeSpecifier();
+		}
+		mark= null;
+		
+		if (isOpaque && !isScoped && baseType == null)
+			throwBacktrack(LA(1));
+		
+		if (name == null) {
+			if (isOpaque)
+				throwBacktrack(LA(1));
+			name= nodeFactory.newName();
+		}
+	
+		final ICPPASTEnumerationSpecifier result= nodeFactory.newEnumerationSpecifier(isScoped, name, baseType);
+		result.setIsOpaque(isOpaque);
+		if (lt1 == IToken.tLBRACE) {
+			endOffset= enumBody(result);
+		}			
+		assert endOffset != 0;
+		return setRange(result, offset, endOffset);
+    }
+
     /**
      * Parse an elaborated type specifier.
      * 
@@ -2534,10 +2606,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected ICPPASTElaboratedTypeSpecifier elaboratedTypeSpecifier() throws BacktrackException, EndOfFileException {
         // this is an elaborated class specifier
-        IToken t = consume();
+        final int lt1= LT(1);
         int eck = 0;
 
-        switch (t.getType()) {
+        switch (lt1) {
         case IToken.t_class:
             eck = ICPPASTElaboratedTypeSpecifier.k_class;
             break;
@@ -2551,18 +2623,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             eck = IASTElaboratedTypeSpecifier.k_enum;
             break;
         default:
-            backup(t);
-            throwBacktrack(t.getOffset(), t.getLength());
+            throwBacktrack(LA(1));
         }
+        
+        final int offset= consume().getOffset();
 
         // if __attribute__ or __declspec occurs after struct/union/class and before the identifier        
         __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         IASTName name = qualifiedName(CastExprCtx.eNotBExpr);
-
-        ICPPASTElaboratedTypeSpecifier elaboratedTypeSpec = nodeFactory.newElaboratedTypeSpecifier(eck, name);
-        ((ASTNode) elaboratedTypeSpec).setOffsetAndLength(t.getOffset(), calculateEndOffset(name) - t.getOffset());
-        return elaboratedTypeSpec;
+        return setRange(nodeFactory.newElaboratedTypeSpecifier(eck, name), offset, calculateEndOffset(name));
     }
     
 	@Override

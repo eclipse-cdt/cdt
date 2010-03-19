@@ -99,6 +99,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType);
+
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 	
 	/**

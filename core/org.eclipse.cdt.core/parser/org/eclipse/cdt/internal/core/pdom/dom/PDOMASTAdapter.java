@@ -34,8 +34,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IToken;
@@ -406,7 +408,7 @@ public class PDOMASTAdapter {
 		}
 	}
 
-	private static class AnonymousCPPEnumeration extends AnonymousCPPBinding implements IEnumeration {
+	private static class AnonymousCPPEnumeration extends AnonymousCPPBinding implements ICPPEnumeration {
 		public AnonymousCPPEnumeration(char[] name, IEnumeration delegate) {
 			super(name, (ICPPBinding) delegate);
 		}
@@ -425,6 +427,18 @@ public class PDOMASTAdapter {
 
 		public long getMaxValue() {
 			return ((IEnumeration)fDelegate).getMaxValue();
+		}
+
+		public boolean isScoped() {
+			return ((ICPPEnumeration)fDelegate).isScoped();
+		}
+
+		public IType getFixedType() {
+			return ((ICPPEnumeration)fDelegate).getFixedType();
+		}
+
+		public ICPPScope asScope() {
+			return ((ICPPEnumeration)fDelegate).asScope();
 		}
 	}
 

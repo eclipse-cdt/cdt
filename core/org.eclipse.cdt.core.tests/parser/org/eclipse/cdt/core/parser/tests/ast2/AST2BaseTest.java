@@ -494,7 +494,7 @@ public class AST2BaseTest extends BaseTestCase {
     	
     	public IProblemBinding assertProblem(String section, int len) {
     		if (len <= 0)
-    			len= section.length()-len;
+    			len= section.length()+len;
     		IBinding binding= binding(section, len);
     		assertTrue("Non-ProblemBinding for name: " + section.substring(0, len),
     				binding instanceof IProblemBinding);

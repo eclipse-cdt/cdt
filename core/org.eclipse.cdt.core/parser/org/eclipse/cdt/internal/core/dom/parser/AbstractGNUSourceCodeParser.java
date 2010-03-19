@@ -1451,8 +1451,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         final IASTEnumerationSpecifier result= nodeFactory.newEnumerationSpecifier(name);
 
-        boolean needComma= false;
-        int endOffset= consume().getEndOffset(); // IToken.tLBRACE
+        int endOffset= enumBody(result);
+        return setRange(result, offset, endOffset);
+    }
+
+	protected int enumBody(final IASTEnumerationSpecifier result) throws EndOfFileException, BacktrackException {
+		boolean needComma= false;
+        int endOffset= consume(IToken.tLBRACE).getEndOffset(); // IToken.tLBRACE
         int problemOffset= endOffset;
         try {
         	loop: while (true) {
@@ -1504,9 +1509,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         	IASTProblem problem= skipProblemEnumerator(problemOffset);
         	throwBacktrack(problem, result);
         }
-        setRange(result, offset, endOffset);
-        return result;
-    }
+        return endOffset;
+	}
 
     protected abstract IASTStatement statement() throws EndOfFileException, BacktrackException;
 
@@ -1556,7 +1560,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			return result;
 		
     	// support simple declarations without declarators
-    	final boolean acceptEmpty = acceptCompoundWithoutDtor && specifiesCompound(result.fDeclSpec1);
+    	final boolean acceptEmpty = acceptCompoundWithoutDtor && isLegalWithoutDtor(result.fDeclSpec1);
 		if (acceptEmpty) {
 			switch(lt1) {
 			case 0:
@@ -1615,7 +1619,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return result.set(declspec2, dtor2, dtorMark2);
     }
     
-	protected boolean specifiesCompound(IASTDeclSpecifier declSpec) {
+	protected boolean isLegalWithoutDtor(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof IASTCompositeTypeSpecifier)
 			return true;
 		if (declSpec instanceof IASTElaboratedTypeSpecifier)

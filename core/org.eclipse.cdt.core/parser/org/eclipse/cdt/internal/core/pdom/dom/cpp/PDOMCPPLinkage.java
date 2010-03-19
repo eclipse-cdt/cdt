@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -43,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -62,7 +64,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -299,6 +300,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (fromName.isDefinition()) {
 				return true;
 			}
+			// Update opaque enums.
+			if (pdomBinding instanceof ICPPEnumeration && fromName.isDeclaration()) {
+				return true;
+			}
 			return !getPDOM().hasLastingDefinition(pdomBinding);
 		}
 		return false;
@@ -306,6 +311,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 	PDOMBinding createBinding(PDOMNode parent, IBinding binding, long fileLocalRec) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
+		PDOMNode parent2= null;
 
 		// template parameters are created directly by their owners.
 		if (binding instanceof ICPPTemplateParameter) 
@@ -361,15 +367,15 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = new PDOMCPPNamespace(this, parent, (ICPPNamespace) binding);
 		} else if (binding instanceof ICPPUsingDeclaration) {
 			pdomBinding = new PDOMCPPUsingDeclaration(this, parent, (ICPPUsingDeclaration) binding);
-		} else if (binding instanceof IEnumeration) {
-			pdomBinding = new PDOMCPPEnumeration(this, parent, (IEnumeration) binding);
+		} else if (binding instanceof ICPPEnumeration) {
+			pdomBinding = new PDOMCPPEnumeration(this, parent, (ICPPEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
-			final IEnumerator etor = (IEnumerator) binding;
-			IType enumeration= etor.getType();
-			if (enumeration instanceof IEnumeration) {
-				PDOMBinding pdomEnumeration = adaptBinding((IEnumeration) enumeration);
-				if (pdomEnumeration instanceof PDOMCPPEnumeration) {
-					pdomBinding = new PDOMCPPEnumerator(this, parent, etor,	(PDOMCPPEnumeration)pdomEnumeration);
+			assert parent instanceof ICPPEnumeration;
+			pdomBinding = new PDOMCPPEnumerator(this, parent, (IEnumerator) binding);
+			if (parent instanceof ICPPEnumeration && !((ICPPEnumeration) parent).isScoped()) {
+				parent2= parent.getParentNode();
+				if (parent2 == null) {
+					parent2= this;
 				}
 			}
 		} else if (binding instanceof ITypedef) {
@@ -379,7 +385,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (pdomBinding != null) {
 			pdomBinding.setLocalToFileRec(fileLocalRec);
 			parent.addChild(pdomBinding);
-			afterAddBinding(pdomBinding);
+			if (parent2 != null) {
+				parent2.addChild(pdomBinding);
+			}
+			if (parent2 != this) {
+				insertIntoNestedBindingsIndex(pdomBinding);
+			}
 		}
 		
 		return pdomBinding;

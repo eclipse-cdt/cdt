@@ -15,12 +15,14 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPEnumeration extends CompositeCPPBinding implements IEnumeration, IIndexType {
-	public CompositeCPPEnumeration(ICompositesFactory cf, IEnumeration rbinding) {
+class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumeration, IIndexType {
+	public CompositeCPPEnumeration(ICompositesFactory cf, ICPPEnumeration rbinding) {
 		super(cf, rbinding);
 	}
 
@@ -48,5 +50,17 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements IEnumeratio
 
 	public long getMaxValue() {
 		return ((IEnumeration)rbinding).getMaxValue();
+	}
+
+	public boolean isScoped() {
+		return ((ICPPEnumeration)rbinding).isScoped();
+	}
+
+	public IType getFixedType() {
+		return ((ICPPEnumeration)rbinding).getFixedType();
+	}
+
+	public ICPPScope asScope() {
+		return new CompositeCPPEnumScope(cf, rbinding);
 	}
 }

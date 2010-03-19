@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -120,6 +121,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -254,8 +256,8 @@ public class CPPVisitor extends ASTQueries {
 			return createBinding((ICPPASTElaboratedTypeSpecifier) parent);
 		} else if (parent instanceof IASTDeclaration) {
 			return createBinding((IASTDeclaration) parent);
-		} else if (parent instanceof IASTEnumerationSpecifier) {
-		    return createBinding((IASTEnumerationSpecifier) parent);
+		} else if (parent instanceof ICPPASTEnumerationSpecifier) {
+		    return createBinding((ICPPASTEnumerationSpecifier) parent);
 		} else if (parent instanceof IASTEnumerator) {
 		    return createBinding((IASTEnumerator) parent);
 		} else if (parent instanceof IASTGotoStatement) {
@@ -322,23 +324,48 @@ public class CPPVisitor extends ASTQueries {
         return enumtor;
     }
 
-    private static IBinding createBinding(IASTEnumerationSpecifier specifier) {
+    private static IBinding createBinding(ICPPASTEnumerationSpecifier specifier) {
         ICPPScope scope = (ICPPScope) getContainingScope(specifier);
-        IBinding enumeration;
         try {
             final IASTName name = specifier.getName();
-			enumeration = scope.getBinding(name, false);
-            if (enumeration == null || !(enumeration instanceof IEnumeration)) {
-                enumeration = new CPPEnumeration(name);
-            }
+            IType fixedType= createEnumBaseType(specifier);
+			IBinding binding = scope.getBinding(name, false);
+			if (binding instanceof CPPEnumeration) {
+				CPPEnumeration e= (CPPEnumeration) binding;
+				if (e.isScoped() == specifier.isScoped()) {
+					IType ft2= e.getFixedType();
+					if (fixedType == ft2 || (fixedType != null && fixedType.isSameType(ft2))) {
+						if (specifier.isOpaque()) {
+							e.addDeclaration(specifier);
+						} else if (e.getDefinition() == null) {
+							e.addDefinition(specifier);
+						} else {
+							return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
+						}
+						return e;
+					}
+				}
+				return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
+			} 
+			return new CPPEnumeration(specifier, fixedType);
         } catch (DOMException e) {
-            enumeration = e.getProblem();
+            return e.getProblem();
         }
-        
-        return enumeration;
     }
 
-    private static IBinding createBinding(final ICPPASTElaboratedTypeSpecifier elabType) {
+	private static IType createEnumBaseType(ICPPASTEnumerationSpecifier specifier) {
+		ICPPASTDeclSpecifier declspec = specifier.getBaseType();
+		if (declspec != null) {
+			IType type= createType(declspec);
+			return SemanticUtil.getNestedType(type, ALLCVQ);
+		}
+		if (specifier.isScoped()) {
+			return CPPSemantics.INT_TYPE;
+		}
+		return null;
+	}
+
+	private static IBinding createBinding(final ICPPASTElaboratedTypeSpecifier elabType) {
 	    final IASTNode parent = elabType.getParent();
 	    IBinding binding = null;
 	    boolean mustBeSimple = true;
@@ -940,6 +967,18 @@ public class CPPVisitor extends ASTQueries {
 	    	    }
 	    	    
 		        return getContainingScope(n);
+		    } else if (node instanceof IASTEnumerator) {
+		    	node= node.getParent();
+		    	if (node instanceof ICPPASTEnumerationSpecifier) {
+		    		ICPPASTEnumerationSpecifier enumSpec= (ICPPASTEnumerationSpecifier) node;
+		    		IBinding binding = enumSpec.getName().resolveBinding();
+		    		if (binding instanceof ICPPEnumeration) {
+		    			ICPPEnumeration enumType = (ICPPEnumeration) binding;
+		    			if (enumType.isScoped()) {
+		    				return enumType.asScope();
+		    			}
+		    		}
+		    	}
 		    }
 		    node = node.getParent();
 		}
@@ -1017,6 +1056,8 @@ public class CPPVisitor extends ASTQueries {
 						scope= ((ICPPClassType) binding).getCompositeScope();
 					} else if (binding instanceof ICPPNamespace) {
 						scope= ((ICPPNamespace) binding).getNamespaceScope();
+					} else if (binding instanceof ICPPEnumeration) {
+						scope= ((ICPPEnumeration) binding).asScope();
 					} else if (binding instanceof ICPPUnknownBinding) {
 					    scope= ((ICPPUnknownBinding) binding).asScope();
 					} else if (binding instanceof IProblemBinding) {
@@ -2144,6 +2185,9 @@ public class CPPVisitor extends ASTQueries {
 		String[] ns = null;
 	    try {
 	    	for (IBinding owner= binding.getOwner(); owner != null; owner= owner.getOwner()) {
+	    		if (owner instanceof ICPPEnumeration && !((ICPPEnumeration) owner).isScoped()) {
+	    			continue;
+	    		}
             	String n= owner.getName();
             	if (n == null)
             		break;
@@ -2306,6 +2350,8 @@ public class CPPVisitor extends ASTQueries {
 						isNonSimpleElabDecl= false;
 					}
 				}
+			} else if (node instanceof IASTEnumerator) {
+				break;
 			}
 			node= node.getParent();
 		}
@@ -2346,6 +2392,10 @@ public class CPPVisitor extends ASTQueries {
 			}
 			if (node instanceof ICPPASTNamespaceDefinition) {
 				name= ((ICPPASTNamespaceDefinition) node).getName();
+				break;
+			}
+			if (node instanceof ICPPASTEnumerationSpecifier) {
+				name= ((ICPPASTEnumerationSpecifier) node).getName();
 				break;
 			}
 		}

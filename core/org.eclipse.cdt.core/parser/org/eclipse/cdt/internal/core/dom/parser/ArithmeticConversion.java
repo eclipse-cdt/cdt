@@ -12,10 +12,11 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 
 /**
  * Arithmetic conversions as required to compute the type of unary or binary expressions.
@@ -46,7 +47,7 @@ public abstract class ArithmeticConversion {
 	 * or 5.0.9 of C++ standard
 	 */
 	public final IType convertOperandTypes(int operator, IType op1, IType op2) {
-		if (!isArithmeticOrEnum(op1) || !isArithmeticOrEnum(op2)) {
+		if (!isArithmeticOrUnscopedEnum(op1) || !isArithmeticOrUnscopedEnum(op2)) {
 			return null;
 		}
 		switch (operator) {
@@ -76,17 +77,24 @@ public abstract class ArithmeticConversion {
 	}
 	
 	public final IType promoteType(IType type) {
-		if (!isIntegralOrEnum(type))
+		if (!isIntegralOrUnscopedEnum(type))
 			return null;
 		
 		return promote(type, getDomain(type));
 	}
 	
-	private boolean isArithmeticOrEnum(IType op1) {
-		return op1 instanceof IBasicType || op1 instanceof IEnumeration;
+	private boolean isArithmeticOrUnscopedEnum(IType op1) {
+		if  (op1 instanceof IBasicType) 
+			return true;
+		if (op1 instanceof IEnumeration) {
+			if (op1 instanceof ICPPEnumeration && ((ICPPEnumeration) op1).isScoped())
+				return false;
+			return true;
+		}
+		return false;
 	}
 
-	private boolean isIntegralOrEnum(IType op1) {
+	private boolean isIntegralOrUnscopedEnum(IType op1) {
 		if (op1 instanceof IEnumeration)
 			return true;
 		
@@ -175,8 +183,16 @@ public abstract class ArithmeticConversion {
 	
 	private IBasicType promote(IType type, Domain domain) {
 		if (type instanceof IEnumeration) {
-			return createBasicType(Kind.eInt, domain.getModifier() | getEnumIntTypeModifiers((IEnumeration) type));  
-		} else if (type instanceof IBasicType) {
+			IType fixedType= null;
+			if (type instanceof ICPPEnumeration) {
+				fixedType= ((ICPPEnumeration) type).getFixedType();
+			}
+			if (fixedType == null) 
+				return createBasicType(Kind.eInt, domain.getModifier() | getEnumIntTypeModifiers((IEnumeration) type));
+			type= fixedType;
+		} 
+		
+		if (type instanceof IBasicType) {
 			final IBasicType bt = (IBasicType) type;
 			final Kind kind = bt.getKind();
 			switch (kind) {

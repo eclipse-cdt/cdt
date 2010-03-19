@@ -100,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -119,6 +120,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -8332,5 +8334,166 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("int (* (int))(int)", ASTTypeUtil.getType(f.getType()));
 	}
 
+	// enum class EScoped1 {a1};
+	// enum class EScoped2 : short {a2};
+	// enum class EScoped3;
+	// enum EUnscoped1 {b1};
+	// enum EUnscoped2 : long {b2};
+	// enum EUnscoped3 : int;
+	public void testScopedEnums_305975a() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		
+		ICPPEnumeration e;
+		ICPPBinding ei;
+		e= bh.assertNonProblem("EScoped1", 0);
+		assertTrue(e.isScoped());
+		assertEquals("int", ASTTypeUtil.getType(e.getFixedType()));
+		assertDefinition(e);
+		ei= bh.assertNonProblem("a1", 0);
+		assertSame(e, ei.getOwner());
+		assertEquals(2, ei.getQualifiedName().length);
+		
+		e= bh.assertNonProblem("EScoped2", 0);
+		assertTrue(e.isScoped());
+		assertEquals("short int", ASTTypeUtil.getType(e.getFixedType()));
+		assertDefinition(e);
+		ei= bh.assertNonProblem("a2", 0);
+		assertSame(e, ei.getOwner());
+		assertEquals(2, ei.getQualifiedName().length);
+		
+		e= bh.assertNonProblem("EScoped3", 0);
+		assertTrue(e.isScoped());
+		assertEquals("int", ASTTypeUtil.getType(e.getFixedType()));
+		assertDeclaration(e);
+
+		e= bh.assertNonProblem("EUnscoped1", 0);
+		assertFalse(e.isScoped());
+		assertNull(e.getFixedType());
+		assertDefinition(e);
+		ei= bh.assertNonProblem("b1", 0);
+		assertSame(e, ei.getOwner());
+		assertEquals(1, ei.getQualifiedName().length);
+
+		e= bh.assertNonProblem("EUnscoped2", 0);
+		assertFalse(e.isScoped());
+		assertEquals("long int", ASTTypeUtil.getType(e.getFixedType()));
+		assertDefinition(e);
+		ei= bh.assertNonProblem("b2", 0);
+		assertSame(e, ei.getOwner());
+		assertEquals(1, ei.getQualifiedName().length);
+
+		e= bh.assertNonProblem("EUnscoped3", 0);
+		assertFalse(e.isScoped());
+		assertEquals("int", ASTTypeUtil.getType(e.getFixedType()));
+		assertDeclaration(e);
+	}
+
+	private void assertDefinition(ICPPBinding b) {
+		assertTrue(((IASTName)((ICPPInternalBinding) b).getDefinition()).isDefinition());
+	}
+
+	private void assertDeclaration(ICPPBinding b) {
+		assertTrue(((IASTName)((ICPPInternalBinding) b).getDeclarations()[0]).isDeclaration());
+	}
+	
+	//	enum class E { a, b };
+	//	enum E x1 = E::a; // OK 
+	//	enum F { a, b };
+	//	enum F y1 = a; // OK 
+	//	enum E1 : int; // OK: E1 is un-scoped, underlying type is int
+	//	enum class F1; // OK: F1 is scoped, underlying type is int
+	public void testScopedEnums_305975b() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+
+	//	enum class E x2 = E::a; //  illegal (elaborated type specifier)
+	//	enum class F y2 = a; // illegal 
+	//	enum E; // illegal
+	public void testScopedEnums_305975c() throws Exception {
+		String code= getAboveComment();
+		IASTTranslationUnit tu= parse(code, ParserLanguage.CPP, true, false);
+		IASTDeclaration[] decls = tu.getDeclarations();
+		assertEquals(3, decls.length);
+		assertInstance(decls[0], IASTProblemDeclaration.class);
+		assertInstance(decls[1], IASTProblemDeclaration.class);
+		assertInstance(decls[2], IASTProblemDeclaration.class);
+	}
+
+	//  enum class Col { red, yellow, green }; 
+	//	void fint(int);
+	//	void fbool(bool);
+	//	void fCol(Col);
+	//	 
+	//	void test() {
+	//		fCol(Col::red);
+	//		fint(Col::red); // error: no conversion to int
+	//		fbool(Col::red); // error: no Col to bool conversion
+	//	}
+	public void testScopedEnums_305975d() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		
+		bh.assertNonProblem("fCol(Col::red)", 4);
+		bh.assertProblem("fint(Col::red)", 4);
+		bh.assertProblem("fbool(Col::red)", 5);
+	}
+	
+	//	enum direction { left='l', right='r'};
+	//	void g() {
+	//		direction d; // OK
+	//		d = left; // OK
+	//		d = direction::right; // OK
+	//	}
+	//
+	//	enum class altitude { high=1, low=2 };  
+	//	void h() {
+	//		altitude a; // OK
+	//		a = altitude::low; // OK
+	//	}
+	//
+	//	struct X {
+	//		enum xdir { xl=1, xr=2 }; 
+	//		int f(int i) { return i==xl ? 0 : i==xr ? 1 : 2; }
+	//	};
+	//	void g(X* p) {
+	//		int i;
+	//		i = p->f(X::xr); // OK 
+	//		i = p->f(p->xl); // OK  
+	//	}
+	public void testScopedEnums_305975e() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+
+	//	enum class altitude { high=1, low=2 };  
+	//	struct X {
+	//		enum xdir { xl=1, xr=2 }; 
+	//		int f(int i) { return i==xl ? 0 : i==xr ? 1 : 2; }
+	//	};
+	//	void g(X* p) {
+	//		altitude a= high; // error: high not in scope
+	//		xdir d; // error: xdir not in scope
+	//		xl;     // error: not in scope
+	//	}
+	public void testScopedEnums_305975f() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		
+		bh.assertProblem("high;", -1);
+		bh.assertProblem("xdir d", -2);
+		bh.assertProblem("xl;", -1);
+	}
+	
+	//	void f(int);
+	//	enum class X {e1, e2= e1+2, e3};
+	//	enum class Y {e1, e2= f(e1)+2, e3};
+	//	enum A {e1, e2= e1+2, e3};
+	//	enum B {e1, e2= f(e1)+2, e3};
+	public void testScopedEnums_305975g() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
 
 }

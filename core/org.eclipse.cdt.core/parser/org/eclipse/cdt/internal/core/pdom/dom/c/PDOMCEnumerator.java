@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -86,12 +87,21 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 	}
 	
 	public IType getType() throws DOMException {
+		return getEnumeration();
+	}
+
+	private PDOMCEnumeration getEnumeration() {
 		try {
 			return new PDOMCEnumeration(getLinkage(), getDB().getRecPtr(record + ENUMERATION));
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return null;
 		}
+	}
+	
+	@Override
+	public IIndexFragmentBinding getOwner() {
+		return getEnumeration();
 	}
 
 	public IValue getValue() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -209,14 +210,22 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		// The parent node in the binding hierarchy is the scope. 
 		try {
 			IBinding parent= getParentBinding(); 
-			if (parent instanceof ICPPClassType) {
-				return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
-			} else if (parent instanceof ICPPUnknownBinding) {
-				return (IIndexScope) ((ICPPUnknownBinding) parent).asScope();
-			}
-			
-			if (parent instanceof IIndexScope) {
-				return (IIndexScope) parent;
+			while (parent != null) {
+				if (parent instanceof ICPPClassType) {
+					return (IIndexScope) ((ICPPClassType) parent).getCompositeScope();
+				} else if (parent instanceof ICPPUnknownBinding) {
+					return (IIndexScope) ((ICPPUnknownBinding) parent).asScope();
+				} else if (parent instanceof ICPPEnumeration) {
+					final ICPPEnumeration enumeration = (ICPPEnumeration) parent;
+					if (enumeration.isScoped()) {
+						return (IIndexScope) enumeration.asScope();
+					} 
+					parent= ((PDOMNamedNode) parent).getParentBinding();
+				} else if (parent instanceof IIndexScope) {
+					return (IIndexScope) parent;
+				} else {
+					return null;
+				}
 			}
 		} catch (DOMException e) {
 		} catch (CoreException ce) {

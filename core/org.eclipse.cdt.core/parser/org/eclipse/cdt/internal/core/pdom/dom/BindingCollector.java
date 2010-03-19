@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
 
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public final class BindingCollector extends NamedNodeCollector {
 	private IndexFilter filter;
+	private boolean fSkipGlobalEnumerators;
 
 	/**
 	 * Collects all bindings with given name.
@@ -44,6 +47,15 @@ public final class BindingCollector extends NamedNodeCollector {
 	@Override
 	public boolean addNode(PDOMNamedNode tBinding) throws CoreException {
 		if (tBinding instanceof PDOMBinding) {
+			if (fSkipGlobalEnumerators && tBinding instanceof IEnumerator) {
+				PDOMNode parent = tBinding.getParentNode();
+				if (parent instanceof ICPPEnumeration) {
+					final ICPPEnumeration enumType = (ICPPEnumeration) parent;
+					if (parent.getParentNode() == null && !enumType.isScoped()) {
+						return true;
+					}
+				}
+			}
 			if (filter == null || filter.acceptBinding((IBinding) tBinding)) {
 				return super.addNode(tBinding);
 			}
@@ -54,5 +66,9 @@ public final class BindingCollector extends NamedNodeCollector {
 	public PDOMBinding[] getBindings() {
 		List<PDOMNamedNode> bindings= getNodeList();
 		return bindings.toArray(new PDOMBinding[bindings.size()]);
+	}
+
+	public void setSkipGlobalEnumerators(boolean b) {
+		fSkipGlobalEnumerators= b;
 	}
 }

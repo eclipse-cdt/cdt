@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -181,9 +182,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  81.0 - change to c++ function types, bug 264479
 	 *  82.0 - offsets for using directives, bug 270806
 	 *  #83.0# - unconditionally store name in PDOMInclude, bug 272815 - <<CDT 6.0>>
-	 *  84.0 - storing free record pointers as (ptr>>3) and allocated pointers as (ptr-2)>>3 RECPTR_DENSE_VERSION
+	 *  #84.0# - storing free record pointers as (ptr>>3), bug 279620 - <<CDT 6.0.1>>
 	 *  
-	 *  CDT 6.1 development (versions not supported on the 6.0.x branch)
+	 *  CDT 7.0 development (versions not supported on the 6.0.x branch)
 	 *  90.0 - support for array sizes, bug 269926
 	 *  91.0 - storing unknown bindings other than unknown class types, bug 284686.
 	 *  92.0 - simplification of basic types, bug 231859.
@@ -192,10 +193,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  95.0 - parameter packs, bug 294730.
 	 *  96.0 - storing pack expansions in the template parameter map, bug 294730.
 	 *  97.0 - storing file contents hash in PDOMFile, bug 302083.
+	 *  98.0 - strongly typed enums, bug 305975.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(97, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(97, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(97, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(98, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(98, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(98, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -532,6 +534,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 				// check if we have a partial match
 				if (nnode.mayHaveChildren()) {
+					// Avoid visiting unscoped enumerator items twice
+					if (pattern.length == 1 && nnode instanceof ICPPEnumeration
+							&& !((ICPPEnumeration) nnode).isScoped()) {
+						return false;
+					}
 					boolean visitNextLevel= false;
 					BitSet updatedMatchesUpToLevel= new BitSet();
 					if (!isFullyQualified) {
@@ -1065,6 +1072,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 				try {
 					linkage.accept(visitor);
 					if (!filescope) {
+						// Avoid adding unscoped enumerator items twice
+						visitor.setSkipGlobalEnumerators(true);
 						linkage.getNestedBindingsIndex().accept(visitor);
 					}
 				} catch (OperationCanceledException e) {
@@ -1104,8 +1113,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 						if (!isCaseSensitive)
 							linkage.accept(visitor);
 						
-						if (!filescope) 
+						if (!filescope) {
+							// Avoid adding unscoped enumerator items twice
+							visitor.setSkipGlobalEnumerators(true);
 							linkage.getNestedBindingsIndex().accept(visitor);
+						}
 						
 						PDOMBinding[] bindings = visitor.getBindings();
 						for (PDOMBinding binding : bindings) {

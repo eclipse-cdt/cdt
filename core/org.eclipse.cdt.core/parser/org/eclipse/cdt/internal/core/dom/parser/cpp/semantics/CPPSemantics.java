@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -89,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -209,6 +209,7 @@ public class CPPSemantics {
 	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  
 	private static final char[] CALL_FUNCTION = "call-function".toCharArray(); //$NON-NLS-1$
 	public static final IType VOID_TYPE = new CPPBasicType(Kind.eVoid, 0);
+	public static final IType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
 
 	// Set to true for debugging.
 	public static boolean traceBindingResolution = false;
@@ -814,7 +815,6 @@ public class CPPSemantics {
 	 * @param start either a scope or a name.
 	 */
 	static protected void lookup(LookupData data, IScope start) throws DOMException {
-		final IIndexFileSet fileSet= getIndexFileSet(data);
 		if (data.astName == null) 
 			return;
 
@@ -850,6 +850,7 @@ public class CPPSemantics {
 			}
 		}
 
+		final IIndexFileSet fileSet= getIndexFileSet(data);
 		while (nextScope != null || nextTmplScope != null) {
 			// when the non-template scope is no longer contained within the first template scope,
 			// we use the template scope for the next iteration.
@@ -1208,6 +1209,12 @@ public class CPPSemantics {
 			} else {
 				nodes= new IASTNode[] {initDeclaration};
 			}
+		} else if (parent instanceof ICPPASTEnumerationSpecifier) {
+			// The enumeration scope contains the enumeration items
+	    	for (IASTEnumerator enumerator : ((ICPPASTEnumerationSpecifier) parent).getEnumerators()) {
+	    		ASTInternal.addName(scope, enumerator.getName());
+	    	}
+	    	return;
 		}
 		
 		int idx = -1;
@@ -1390,18 +1397,15 @@ public class CPPSemantics {
                         populateCache(scope, decl);
                     }
 				} 
-			} else if (declSpec instanceof IASTEnumerationSpecifier) {
-			    IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier) declSpec;
+			} else if (declSpec instanceof ICPPASTEnumerationSpecifier) {
+				ICPPASTEnumerationSpecifier enumeration = (ICPPASTEnumerationSpecifier) declSpec;
 			    specName = enumeration.getName();
 
-			    // Check enumerators too
-			    IASTEnumerator[] list = enumeration.getEnumerators();
-			    IASTName tempName;
-			    for (IASTEnumerator enumerator : list) {
-			        if (enumerator == null) 
-			        	break;
-			        tempName = enumerator.getName();
-			        ASTInternal.addName(scope, tempName);
+			    // Add unscoped enumerators to the enclosing scope
+			    if (!enumeration.isScoped()) {
+			    	for (IASTEnumerator enumerator : enumeration.getEnumerators()) {
+			    		ASTInternal.addName(scope, enumerator.getName());
+			    	}
 			    }
 			}
 			if (specName != null) {
@@ -1422,6 +1426,7 @@ public class CPPSemantics {
 						dtor.accept(visitor);
 					}
 					break;
+				case eEnumeration:
 				case eClassType:
 				case eTemplateDeclaration:
 					break;
@@ -1462,6 +1467,7 @@ public class CPPSemantics {
 				break;
 			case eClassType:
 			case eTemplateDeclaration:
+			case eEnumeration:
 				break;
 			}
 		}

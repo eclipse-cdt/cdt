@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -344,8 +344,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				result = ns.length == 0 ? null : new CompositeCPPNamespace(this, ns);
 			} else if (binding instanceof ICPPUsingDeclaration) {
 				result = new CompositeCPPUsingDeclaration(this, (ICPPUsingDeclaration) binding);
-			} else if (binding instanceof IEnumeration) {
-				IEnumeration def = (IEnumeration) findOneBinding(binding);
+			} else if (binding instanceof ICPPEnumeration) {
+				ICPPEnumeration def = (ICPPEnumeration) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPEnumeration(this, def);
 			} else if (binding instanceof ICPPFunction) {
 				result = new CompositeCPPFunction(this, (ICPPFunction) binding);				

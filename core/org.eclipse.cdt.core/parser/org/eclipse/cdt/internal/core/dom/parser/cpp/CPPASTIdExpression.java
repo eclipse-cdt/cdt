@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,9 +24,11 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
@@ -92,7 +94,21 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 			if (binding instanceof IVariable) {
 				return SemanticUtil.mapToAST(((IVariable) binding).getType(), this);
 			} else if (binding instanceof IEnumerator) {
-				return ((IEnumerator) binding).getType();
+				IType type= ((IEnumerator) binding).getType();
+				if (type instanceof ICPPEnumeration) {
+					ICPPEnumeration enumType= (ICPPEnumeration) type;
+					if (enumType.asScope() == CPPVisitor.getContainingScope(this)) {
+						// C++0x: 7.2-5
+						IType fixedType= enumType.getFixedType();
+						if (fixedType != null)
+							return fixedType;
+						// This is a simplification, the actual type is determined
+						// - in an implementation dependent manner - by the value
+						// of the enumerator.
+						return CPPSemantics.INT_TYPE;
+					}
+				}
+				return type;
 			} else if (binding instanceof IProblemBinding) {
 				return (IType) binding;
 			} else if (binding instanceof IFunction) {

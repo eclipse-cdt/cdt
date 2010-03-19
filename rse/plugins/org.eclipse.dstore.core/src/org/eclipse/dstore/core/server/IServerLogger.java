@@ -59,7 +59,7 @@ public interface IServerLogger
 	
 	/**
 	 * closeLogFileStream
-	 * @since 3.1
+	 * @since 3.2
 	 */
 	public void closeLogFileStream();
 }

@@ -107,7 +107,8 @@ public class ServerLogger implements IServerLogger
 	}
 
 	/**
-	 * @since 3.1
+	 * closeLogFileStream
+	 * @since 3.2
 	 */
 	public void closeLogFileStream(){
 		if (_logFileStream != null){

@@ -132,7 +132,7 @@ public class TemplateArgumentDeduction {
 		p= getArgumentTypeForDeduction(p, a instanceof ICPPReferenceType);
 		a= SemanticUtil.getNestedType(a, SemanticUtil.REF | SemanticUtil.TDEF);
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplParams, null, map, 0);
-		if (!deduct.fromType(p, a)) {
+		if (!deduct.fromType(p, a, false)) {
 			return null;
 		}
 		
@@ -201,7 +201,7 @@ public class TemplateArgumentDeduction {
 						if (inner != null) {
 							IType[] types = ((InitializerListType) arg).getExpressionTypes();
 							for (IType iType : types) {
-								if (!deduct.fromType(inner, iType))
+								if (!deduct.fromType(inner, iType, false))
 									return false;
 							}
 						}
@@ -265,7 +265,7 @@ public class TemplateArgumentDeduction {
 						}
 					}
 					
-					if (isDependentPar && !deduct.fromType(par, arg)) {
+					if (isDependentPar && !deduct.fromType(par, arg, true)) {
 						return false;
 					}
 					if (checkExactMatch) {
@@ -450,11 +450,11 @@ public class TemplateArgumentDeduction {
 			return tval.equals(sval); 
 		} 
 		
-		return fromType(p.getTypeValue(), a.getTypeValue());
+		return fromType(p.getTypeValue(), a.getTypeValue(), false);
 	}
 
 
-	private boolean fromType(IType p, IType a) throws DOMException {
+	private boolean fromType(IType p, IType a, boolean allowCVQConversion) throws DOMException {
 		while (p != null) {
 			while (a instanceof ITypedef)
 				a = ((ITypedef) a).getType();
@@ -464,7 +464,7 @@ public class TemplateArgumentDeduction {
 				if (!(a instanceof ICPPPointerToMemberType))
 					return false;
 				if (!fromType(((ICPPPointerToMemberType) p).getMemberOfClass(),
-						((ICPPPointerToMemberType) a).getMemberOfClass())) {
+						((ICPPPointerToMemberType) a).getMemberOfClass(), false)) {
 					return false;
 				}
 				p = ((ICPPPointerToMemberType) p).getType();
@@ -510,16 +510,19 @@ public class TemplateArgumentDeduction {
 				p = pa.getType();
 				a = aa.getType();
 			} else if (p instanceof IQualifierType) {
-				IType uqp = SemanticUtil.getNestedType(p, ALLCVQ); 
-				IType uqa = SemanticUtil.getNestedType(a, ALLCVQ); 
-				if (uqp instanceof ICPPTemplateParameter) {
-					CVQualifier remaining= SemanticUtil.getCVQualifier(a).remove(SemanticUtil.getCVQualifier(p));
-					if (remaining != CVQualifier._) {
-						uqa= SemanticUtil.addQualifiers(uqa, remaining.isConst(), remaining.isVolatile());
-					}
+				final CVQualifier cvqP = SemanticUtil.getCVQualifier(p);
+				final CVQualifier cvqA = SemanticUtil.getCVQualifier(a);
+				CVQualifier remaining= CVQualifier._;
+				if (cvqP != cvqA) {
+					if (!allowCVQConversion && !cvqA.isAtLeastAsQualifiedAs(cvqP))
+						return false;
+					remaining= cvqA.remove(cvqP);
 				}
-				a= uqa;
-				p= uqp;
+				p = SemanticUtil.getNestedType(p, ALLCVQ); 
+				a = SemanticUtil.getNestedType(a, ALLCVQ); 
+				if (remaining != CVQualifier._) {
+					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile());
+				}
 			} else if (p instanceof IFunctionType) {
 				if (!(a instanceof IFunctionType))
 					return false;
@@ -611,7 +614,7 @@ public class TemplateArgumentDeduction {
 	}
 
 	private boolean fromFunctionType(IFunctionType ftp, IFunctionType fta) throws DOMException {
-		if (!fromType(ftp.getReturnType(), fta.getReturnType())) 
+		if (!fromType(ftp.getReturnType(), fta.getReturnType(), false)) 
 			return false;
 		
 		IType[] pParams = ftp.getParameterTypes();
@@ -643,7 +646,7 @@ public class TemplateArgumentDeduction {
 						return false;
 				}
 			}
-			if (!deduct.fromType(p, aParams[i]))
+			if (!deduct.fromType(p, aParams[i], false))
 				return false;
 		}
 		return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,16 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.Assert;
@@ -38,6 +35,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	}
 	
 	public static final int MAX_RESOLUTION_DEPTH = 5;
+	public static final int MAX_TYPE_NESTING = 100;
 
 	private IType type;
     private int fResolutionDepth;
@@ -63,20 +61,13 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 		            type= specializeType(getTypedef().getType());
 		        	// A typedef pointing to itself is a sure recipe for an infinite loop -- replace
 		            // with a problem binding.
-		            if (type instanceof ITypedef && type instanceof ICPPSpecialization) {
-		            	ITypedef td= (ITypedef) type;
-		            	if (CharArrayUtils.equals(td.getNameCharArray(), getNameCharArray())) {
-			            	IBinding owner= getOwner();
-							try {
-								owner = ((ICPPSpecialization) type).getOwner();
-							} catch (DOMException e) {
-							}
-			            	if (owner instanceof IType) {
-			            		if (((IType) owner).isSameType((ICPPClassType) getOwner())) {
-					        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
-			            		}
-			            	}
-		            	}
+		            IType checkType= type;
+		            for (int i = 0; checkType instanceof ITypeContainer; i++) {
+			            if (this.equals(checkType) || i == MAX_TYPE_NESTING) {
+			        		type = new RecursionResolvingBinding(getDefinition(), getNameCharArray());
+			        		break;
+			            }
+		            	checkType= ((ITypeContainer) checkType).getType();
 		            }
 	        	}
         	} finally {

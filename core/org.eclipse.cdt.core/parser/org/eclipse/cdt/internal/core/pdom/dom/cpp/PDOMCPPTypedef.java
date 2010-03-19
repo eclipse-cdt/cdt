@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,11 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -41,11 +39,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 	
 	public PDOMCPPTypedef(PDOMLinkage linkage, PDOMNode parent, ITypedef typedef)	throws CoreException {
 		super(linkage, parent, typedef.getNameCharArray());
-		try {
-			setType(parent.getLinkage(), typedef.getType());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		setType(parent.getLinkage(), typedef.getType());
 	}
 
 	public PDOMCPPTypedef(PDOMLinkage linkage, long record) {
@@ -56,22 +50,18 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ITypedef) {
 			ITypedef td= (ITypedef) newBinding;
-			try {
-				setType(linkage, td.getType());
-			} catch (DOMException e) {
-				throw new CoreException(Util.createStatus(e));
-			}
+			setType(linkage, td.getType());
 		}
 	}
 
-	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
+	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException {
 		linkage.storeType(record + TYPE_OFFSET, newType);
 		if (introducesRecursion(getType(), getParentNodeRec(), getNameCharArray())) {
 			linkage.storeType(record + TYPE_OFFSET, null);
 		}
 	}
 
-	private boolean introducesRecursion(IType type, long parentRec, char[] tdname) throws DOMException {
+	static boolean introducesRecursion(IType type, long parentRec, char[] tdname) {
 		int maxDepth= 50;
 		while (--maxDepth > 0) {
 			if (type instanceof ITypedef) {

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.dstore.core" version="2">
+    <resource path="src/org/eclipse/dstore/core/server/IServerLogger.java" type="org.eclipse.dstore.core.server.IServerLogger">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.dstore.core.server.IServerLogger"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/dstore/core/server/ServerLogger.java" type="org.eclipse.dstore.core.server.ServerLogger">
+        <filter id="388055101">
+            <message_arguments>
+                <message_argument value="org.eclipse.dstore.core.server.ServerLogger"/>
+                <message_argument value="DEBUG"/>
+            </message_arguments>
+        </filter>
         <filter id="389242988">
             <message_arguments>
                 <message_argument value="org.eclipse.dstore.core.server.ServerLogger"/>
                 <message_argument value="DEBUG"/>
                 <message_argument value="0"/>
-            </message_arguments>
-        </filter>
-        <filter id="388055101">
-            <message_arguments>
-                <message_argument value="org.eclipse.dstore.core.server.ServerLogger"/>
-                <message_argument value="DEBUG"/>
             </message_arguments>
         </filter>
     </resource>

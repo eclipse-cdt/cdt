@@ -25,7 +25,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	 }
 	 </code>
 	 */
-	public void test1() {
+	public void testUnaryExpression() {
 		load("test1.c");
 		runOnFile();
 		checkErrorLine(3);
@@ -40,7 +40,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	 }
 	 </code>
 	 */
-	public void test2() {
+	public void testBinaryExpression() {
 		load("test2.c");
 		runOnFile();
 		checkErrorLine(4);
@@ -55,9 +55,46 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	 }
 	 </code>
 	 */
-	public void test3() {
+	public void testNormalAssignment() {
 		load("test3.c");
 		runOnFile();
 		checkNoErrors();
+	}
+	/*-
+	 <code file="test4.c">
+	 main() {
+	   int a,b;
+	   
+	   (a=b); // no errors here
+	   a+=b;
+	   a<<=b;
+	   a-=b;
+	   a++;
+	   b--;
+	   --a;
+	   ++b;
+	   a%=2;
+	   a>>=2;
+	 }
+	 </code>
+	 */
+	public void testFalsePositives() {
+		load("test4.c");
+		runOnFile();
+		checkNoErrors();
+	}
+	
+	/*-
+	 <code file="test5.c">
+	 main() {
+	   int a;
+	   a; // error here on line 3
+	 }
+	 </code>
+	 */
+	public void testIdExpression() {
+		load("test5.c");
+		runOnFile();
+		checkErrorLine(3);
 	}
 }

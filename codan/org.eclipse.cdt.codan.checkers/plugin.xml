@@ -25,8 +25,9 @@
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
             id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"
-            name="Statement has no effect">
-      </problem>
+            name="Statement has no effect"
+            messagePattern="Statement has no effect"
+            />
       </checker>
       
       <checker

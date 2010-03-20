@@ -36,10 +36,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
  * 
  */
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
-		// traverse the ast using the visitor pattern.
 		ast.accept(new CheckStmpVisitor());
 	}
 
@@ -52,7 +51,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			if (stmt instanceof IASTExpressionStatement) {
 				if (hasNoEffect(((IASTExpressionStatement) stmt)
 						.getExpression())) {
-					reportProblem(ER_ID, stmt, "Statement has no effect");
+					reportProblem(ER_ID, stmt);
 				}
 				return PROCESS_SKIP;
 			}
@@ -70,8 +69,20 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		private boolean hasNoEffect(IASTExpression e) {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
-				if (binExpr.getOperator() == IASTBinaryExpression.op_assign)
+				switch (binExpr.getOperator()) {
+				case IASTBinaryExpression.op_assign:
+				case IASTBinaryExpression.op_binaryAndAssign:
+				case IASTBinaryExpression.op_binaryOrAssign:
+				case IASTBinaryExpression.op_binaryXorAssign:
+				case IASTBinaryExpression.op_divideAssign:
+				case IASTBinaryExpression.op_plusAssign:
+				case IASTBinaryExpression.op_minusAssign:
+				case IASTBinaryExpression.op_multiplyAssign:
+				case IASTBinaryExpression.op_moduloAssign:
+				case IASTBinaryExpression.op_shiftLeftAssign:
+				case IASTBinaryExpression.op_shiftRightAssign:
 					return false;
+				}
 				if (binExpr instanceof CPPASTBinaryExpression) {
 					// unfortunately ICPPASTBinaryExpression does not have
 					// getOverload public method
@@ -97,6 +108,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				case IASTUnaryExpression.op_postFixIncr:
 				case IASTUnaryExpression.op_prefixIncr:
 					return false;
+				case IASTUnaryExpression.op_bracketedPrimary:
+					return hasNoEffect(unaryExpr.getOperand());
 				}
 				return true;
 			}

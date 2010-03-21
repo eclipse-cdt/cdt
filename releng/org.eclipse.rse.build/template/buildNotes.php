@@ -124,8 +124,6 @@ More information can be found in the associated bugzilla items.
       already, so the API specification update seems acceptable
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=305272">305272</a>].</li>
 </ul></li>
-</ul>
-</li>
 <li>TM 3.2M6 API Specification Updates
 <ul>
   <li>The <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/ISystemFileTypes.html">ISystemFileTypes</a></code>,
@@ -137,8 +135,6 @@ More information can be found in the associated bugzilla items.
       from the start 
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304170">304170</a>].</li>
 </ul></li>
-</ul>
-</li>
 </ul>
 
 Use 

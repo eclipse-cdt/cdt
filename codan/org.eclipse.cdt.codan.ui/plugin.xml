@@ -11,7 +11,7 @@
             nameFilter="*"
             id="org.eclipse.cdt.codan.ui.runaction">
          <action
-               label="Run Code Analysis"
+               label="%CodeAnalysisAction.label"
                class="org.eclipse.cdt.codan.internal.ui.actions.RunCodeAnalysis"
                menubarPath="additions"
                enablesFor="+"
@@ -26,27 +26,27 @@
                    category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
                class="org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"
                id="org.eclipse.cdt.codan.ui.preferences.CodanPreferencePage"
-               name="Code Analysis">
+               name="%CodeAnalysisProperties.name">
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            name="C/C++ Code Analysis "
-
+            category="org.eclipse.cdt.ui.newui.Page_head_general"
             class="org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"
-            id="org.eclipse.cdt.codan.ui.properties.codanProblemsPropertyPage">
+            id="org.eclipse.cdt.codan.ui.properties.codanProblemsPropertyPage"
+            name="%CodeAnalysisPreferences.name">
          <enabledWhen>
-            <instanceof
-                  value="org.eclipse.core.resources.IProject">
-            </instanceof>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		     </adapt>         
          </enabledWhen>
       </page>
       <page
             category="org.eclipse.cdt.codan.ui.properties.codanProblemsPropertyPage"
             class="org.eclipse.cdt.codan.internal.ui.preferences.BuildPropertyPage"
             id="org.eclipse.cdt.codan.ui.properties.buildPropertyPage"
-            name="Build">
+            name="%CodeAnalysisPreferencesBuild.name">
         <enabledWhen>
             <instanceof
                   value="org.eclipse.core.resources.IProject">

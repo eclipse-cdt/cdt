@@ -11,12 +11,14 @@
 package org.eclipse.cdt.codan.core.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Alena
  * 
  */
-public class AbstractListParameterInfo extends AbstractProblemParameterInfo {
+public abstract class AbstractListParameterInfo extends
+		AbstractProblemParameterInfo {
 	protected ArrayList<IProblemParameterInfo> list = new ArrayList<IProblemParameterInfo>(
 			1);
 
@@ -27,8 +29,8 @@ public class AbstractListParameterInfo extends AbstractProblemParameterInfo {
 	 * org.eclipse.cdt.codan.core.model.AbstractProblemParameterInfo#getType()
 	 */
 	@Override
-	public String getType() {
-		return TYPE_LIST;
+	public ParameterTypes getType() {
+		return ParameterTypes.TYPE_LIST;
 	}
 
 	/**
@@ -70,5 +72,10 @@ public class AbstractListParameterInfo extends AbstractProblemParameterInfo {
 
 	protected IProblemParameterInfo getElement(int i) {
 		return list.get(i);
+	}
+
+	@Override
+	public Iterator<IProblemParameterInfo> getIterator() {
+		return list.iterator();
 	}
 }

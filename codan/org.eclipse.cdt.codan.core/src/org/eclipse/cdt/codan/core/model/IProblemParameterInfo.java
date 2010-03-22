@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import java.util.Iterator;
+
 /**
  * Problem parameter usually key=value settings that allows to alter checker
  * behaviour for given problem. For example if checker finds violation of naming
@@ -23,12 +25,34 @@ package org.eclipse.cdt.codan.core.model;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemParameterInfo {
-	final static String TYPE_STRING = "string"; //$NON-NLS-1$
-	final static String TYPE_INTEGER = "integer"; //$NON-NLS-1$
-	final static String TYPE_BOOLEAN = "boolean"; //$NON-NLS-1$
-	final static String TYPE_FILE = "file"; //$NON-NLS-1$
-	final static String TYPE_LIST = "list"; //$NON-NLS-1$
-	final static String TYPE_HASH = "hash"; //$NON-NLS-1$
+	enum ParameterTypes {
+		TYPE_STRING("string"), //$NON-NLS-1$
+		TYPE_INTEGER("integer"), //$NON-NLS-1$
+		TYPE_BOOLEAN("boolean"), //$NON-NLS-1$
+		TYPE_FILE("file"), //$NON-NLS-1$
+		TYPE_LIST("list"), //$NON-NLS-1$
+		TYPE_HASH("hash"); //$NON-NLS-1$
+		private String literal;
+
+		private ParameterTypes(String literal) {
+			this.literal = literal;
+		}
+
+		public static ParameterTypes valueOfLiteral(String name) {
+			ParameterTypes[] values = values();
+			for (int i = 0; i < values.length; i++) {
+				ParameterTypes e = values[i];
+				if (e.literal.equals(name))
+					return e;
+			}
+			return null;
+		}
+
+		@Override
+		public String toString() {
+			return literal;
+		}
+	}
 
 	String getKey();
 
@@ -40,7 +64,7 @@ public interface IProblemParameterInfo {
 	 * 
 	 * @return string value of the type
 	 */
-	String getType();
+	ParameterTypes getType();
 
 	/**
 	 * Additional info on how it is represented in the ui, for example boolean
@@ -73,4 +97,12 @@ public interface IProblemParameterInfo {
 	 * @return
 	 */
 	IProblemParameterInfo getElement(String key);
+
+	/**
+	 * Available if type is list or hash. Returns iterator over parameter values
+	 * for list and hash.
+	 * 
+	 * @return
+	 */
+	Iterator<IProblemParameterInfo> getIterator();
 }

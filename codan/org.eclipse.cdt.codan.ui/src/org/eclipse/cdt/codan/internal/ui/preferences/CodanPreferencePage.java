@@ -15,6 +15,7 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -45,30 +46,28 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		IWorkbenchPreferencePage {
 	private IProblemProfile profile;
-	private Composite parametersComposite;
+	private Composite parametersTab;
 	private ISelectionChangedListener problemSelectionListener;
+	private IProblem selectedProblem;
 
 	public CodanPreferencePage() {
 		super(GRID);
 		setPreferenceStore(new ScopedPreferenceStore(new InstanceScope(),
 				CodanCorePlugin.PLUGIN_ID));
 		setDescription("Code Analyzers Preference Page");
-		problemSelectionListener = new ISelectionChangedListener(){
-		
+		problemSelectionListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (parametersComposite!=null ) {
+				if (parametersTab != null) {
 					if (event.getSelection() instanceof ITreeSelection) {
-						ITreeSelection s = (ITreeSelection) event.getSelection();
-						if (s.getFirstElement() instanceof IProblem) 
+						ITreeSelection s = (ITreeSelection) event
+								.getSelection();
+						if (s.getFirstElement() instanceof IProblem)
 							setSelectedProblem((IProblem) s.getFirstElement());
 					}
 				}
-				
 			}
 		};
 	}
-
-
 
 	protected String getPageId() {
 		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"; //$NON-NLS-1$
@@ -92,39 +91,41 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		// createMainTab(tabFolder);
 		createParamtersTab(tabFolder);
 		createScopeTab(tabFolder);
-		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(problemSelectionListener);
-		
+		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(
+				problemSelectionListener);
 	}
 
 	/**
 	 * @param selection
 	 */
 	protected void setSelectedProblem(IProblem problem) {
-		Control[] children = parametersComposite.getChildren();
-		parametersComposite.setLayout(new GridLayout());
+		if (this.selectedProblem != problem) {
+			saveProblemEdits();
+		}
+		this.selectedProblem = problem;
+		Control[] children = parametersTab.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control control = children[i];
 			control.dispose();
 		}
-		if (problem.getParameterInfo()==null) {
-			Label label = new Label(parametersComposite, SWT.NULL);
-			label.setText("No Parameters");
-		} else {
-			Label label = new Label(parametersComposite, SWT.NULL);
-			label.setText("Parameters: TODO");
-		}
-		parametersComposite.pack(true);
-		parametersComposite.layout(true);
+		ParametersComposite comp = new ParametersComposite(parametersTab,
+				problem);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		parametersTab.pack(true);
+		parametersTab.layout(true);
 	}
+
 	/**
 	 * @param tabFolder
 	 */
 	private void createParamtersTab(TabFolder tabFolder) {
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
 		tabItem1.setText("Parameters");
-		parametersComposite = new Composite(tabFolder, SWT.NONE);
-		tabItem1.setControl(parametersComposite);
+		parametersTab = new Composite(tabFolder, SWT.NONE);
+		tabItem1.setControl(parametersTab);
+		parametersTab.setLayout(new GridLayout());
 	}
+
 	/**
 	 * @param tabFolder
 	 */
@@ -137,8 +138,8 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		Label label = new Label(comp, SWT.NONE);
 		label.setText("Scope: TODO");
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
 	}
+
 	/**
 	 * @return
 	 */
@@ -153,9 +154,24 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	@Override
 	public boolean performOk() {
-		//if (isPropertyPage())
-			getRegistry().updateProfile((IResource) getElement(), null);
+		// if (isPropertyPage())
+		getRegistry().updateProfile((IResource) getElement(), null);
+		saveProblemEdits();
 		return super.performOk();
+	}
+
+	/**
+	 * 
+	 */
+	private void saveProblemEdits() {
+		if (selectedProblem==null) return;
+		Control[] children = parametersTab.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			Control control = children[i];
+			if (control instanceof ParametersComposite) {
+				((ParametersComposite) control).save((IProblemWorkingCopy) selectedProblem); // XXX
+			}
+		}
 	}
 
 	/*

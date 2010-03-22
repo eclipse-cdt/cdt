@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import java.util.Iterator;
+
 /**
  * Default implementation for single parameter checker of type string.
  * 
@@ -32,8 +34,8 @@ public abstract class AbstractProblemParameterInfo implements
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemParameterInfo#getType()
 	 */
-	public String getType() {
-		return TYPE_STRING;
+	public ParameterTypes getType() {
+		return ParameterTypes.TYPE_STRING;
 	}
 
 	/*
@@ -71,6 +73,15 @@ public abstract class AbstractProblemParameterInfo implements
 	 * @see org.eclipse.cdt.codan.core.model.IProblemParameterInfo#getToolTip()
 	 */
 	public String getToolTip() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblemParameterInfo#getIterator()
+	 */
+	public Iterator<IProblemParameterInfo> getIterator() {
 		return null;
 	}
 }

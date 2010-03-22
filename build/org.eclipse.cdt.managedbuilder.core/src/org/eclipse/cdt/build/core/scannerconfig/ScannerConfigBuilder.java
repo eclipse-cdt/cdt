@@ -72,6 +72,9 @@ public class ScannerConfigBuilder extends ACBuilder {
 	 */
 	@Override
 	protected IProject [] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(kind, args);
+
 		// If auto discovery is disabled, do nothing
 //		boolean autodiscoveryEnabled;
 //		boolean autodiscoveryEnabled2;

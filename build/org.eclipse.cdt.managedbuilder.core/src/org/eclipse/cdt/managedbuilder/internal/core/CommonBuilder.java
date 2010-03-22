@@ -469,6 +469,9 @@ public class CommonBuilder extends ACBuilder {
 	 */
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(kind, args);
+
 		fBuildSet.start(this);
 
 		IProject project = getProject();
@@ -1485,6 +1488,9 @@ public class CommonBuilder extends ACBuilder {
 
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+
 		IProject curProject = getProject();
 
 		if(!isCdtProjectCreated(curProject))

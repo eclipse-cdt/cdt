@@ -47,6 +47,9 @@ public class ScannerConfigBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	protected IProject [] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(kind, args);
+
 		// If auto discovery is disabled, do nothing
 //		boolean autodiscoveryEnabled;
 		if(buildNewStyle(getProject(), monitor))

@@ -73,6 +73,9 @@ public class MakeBuilder extends ACBuilder {
 	 */
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(kind, args);
+
 		boolean bPerformBuild = true;
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(args, MakeBuilder.BUILDER_ID);
 		if (!shouldBuild(kind, info)) {
@@ -102,6 +105,9 @@ public class MakeBuilder extends ACBuilder {
 
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+
 		final IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(getProject(), BUILDER_ID);
 		if (shouldBuild(CLEAN_BUILD, info)) {
 			IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();

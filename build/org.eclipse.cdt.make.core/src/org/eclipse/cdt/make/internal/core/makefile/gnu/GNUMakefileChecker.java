@@ -64,6 +64,9 @@ public class GNUMakefileChecker extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(kind, args);
+
 		IResourceDelta delta = null;
 
 		// For non-full-build fetch the deltas

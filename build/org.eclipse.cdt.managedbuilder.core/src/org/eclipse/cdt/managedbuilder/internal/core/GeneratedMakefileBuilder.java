@@ -56,6 +56,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -403,6 +404,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(kind, args);
+
 		// We should always tell the build system what projects we reference
 		referencedProjects = getProject().getReferencedProjects();
 
@@ -582,6 +586,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS)
+			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+
 		referencedProjects = getProject().getReferencedProjects();
 		outputTrace(getProject().getName(), "Clean build requested");	//$NON-NLS-1$
 		IManagedBuildInfo info = getBuildInfo();

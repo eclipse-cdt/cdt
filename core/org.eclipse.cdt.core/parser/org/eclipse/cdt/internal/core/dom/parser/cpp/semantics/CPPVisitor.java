@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.BitSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -188,6 +190,16 @@ public class CPPVisitor extends ASTQueries {
 	public static final String STD = "std"; //$NON-NLS-1$
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	private static final String INITIALIZER_LIST = "initializer_list"; //$NON-NLS-1$
+	// Thread-local set of DeclSpecifiers for which auto types are being created.
+	// Used for preventing infinite recursion while processing invalid self-referring
+	// auto-type declarations.
+	private static final ThreadLocal<Set<IASTDeclSpecifier>> autoTypeDeclSpecs =
+			new ThreadLocal<Set<IASTDeclSpecifier>>() {
+		@Override
+		protected Set<IASTDeclSpecifier> initialValue() {
+			return new HashSet<IASTDeclSpecifier>();
+		}
+	};
 	
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
@@ -1476,8 +1488,7 @@ public class CPPVisitor extends ASTQueries {
 		private static final int KIND_TYPE   = 3;
 		private static final int KIND_NAMESPACE   = 4;
 		private static final int KIND_COMPOSITE = 5;
-		
-		
+
 		public CollectReferencesAction(IBinding binding) {
 			shouldVisitNames = true;
 			this.refs = new IASTName[DEFAULT_LIST_SIZE];
@@ -1817,27 +1828,36 @@ public class CPPVisitor extends ASTQueries {
 		if (declarator instanceof ICPPASTFunctionDeclarator) {
 			return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
 		}
-		
+
+		if (!autoTypeDeclSpecs.get().add(declSpec)) {
+			// Detected a self referring auto type, e.g.: auto x = x;
+			return null;
+		}
+
 		IType type = AutoTypeResolver.AUTO_TYPE;
+		IType initType = null;
 		ICPPClassTemplate initializer_list_template = null;
-		if (initClause instanceof ICPPASTInitializerList) {
-			initializer_list_template = get_initializer_list(declSpec);
-			if (initializer_list_template == null) {
+		try {
+			if (initClause instanceof ICPPASTInitializerList) {
+				initializer_list_template = get_initializer_list(declSpec);
+				if (initializer_list_template == null) {
+					return null;
+				}
+				type = (IType) CPPTemplates.instantiate(initializer_list_template,
+						new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, true);
+			}
+			type = decorateType(type, declSpec, declarator);
+	
+			if (initClause instanceof IASTExpression) {
+				initType = ((IASTExpression) initClause).getExpressionType();
+			} else if (initClause instanceof ICPPASTInitializerList) {
+				initType = new InitializerListType((ICPPASTInitializerList) initClause);
+			}
+			if (initType == null) {
 				return null;
 			}
-			type = (IType) CPPTemplates.instantiate(initializer_list_template,
-					new ICPPTemplateArgument[] { new CPPTemplateArgument(type) }, true);
-		}
-		type = decorateType(type, declSpec, declarator);
-
-		IType initType = null;
-		if (initClause instanceof IASTExpression) {
-			initType = ((IASTExpression) initClause).getExpressionType();
-		} else if (initClause instanceof ICPPASTInitializerList) {
-			initType = new InitializerListType((ICPPASTInitializerList) initClause);
-		}
-		if (initType == null) {
-			return null;
+		} finally {
+			autoTypeDeclSpecs.get().remove(declSpec);
 		}
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);

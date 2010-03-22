@@ -8320,7 +8320,15 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPVariable y= bh.assertNonProblem("y =", 1);
 		assertNull(y.getType());
 	}
-	
+
+	//	auto x = x;  // Self referring type.
+	public void testAutoType_305970() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPVariable x= bh.assertNonProblem("x =", 1);
+		assertNull(x.getType());
+	}
+
 	// auto fpif1(int)->int(*)(int)
 	// auto fpif2(int)->int(*)(int) {}
 	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {

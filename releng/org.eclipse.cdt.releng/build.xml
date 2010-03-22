@@ -676,7 +676,7 @@
 			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.cxx"/>
 		</antcall>
 		<antcall target="tagone">
-			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.ui.cxx"/>
+			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.codan.ui.cxx"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.codan.examples"/>

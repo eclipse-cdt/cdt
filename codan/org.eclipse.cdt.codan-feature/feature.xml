@@ -35,21 +35,7 @@
       <import plugin="org.eclipse.cdt.ui" version="5.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.5.0" match="greaterOrEqual"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.cdt.codan.checkers"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.codan.checkers.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
+   
    <plugin
          id="org.eclipse.cdt.codan.core"
          download-size="0"
@@ -63,7 +49,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+   
    <plugin
          id="org.eclipse.cdt.codan.core.cxx"
          download-size="0"
@@ -73,6 +59,20 @@
 
    <plugin
          id="org.eclipse.cdt.codan.ui.cxx"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+   <plugin
+         id="org.eclipse.cdt.codan.checkers"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.codan.checkers.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -162,6 +162,6 @@ plugin@org.eclipse.cdt.codan.core=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan
 plugin@org.eclipse.cdt.codan.core.test=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.test
 plugin@org.eclipse.cdt.codan.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.ui
 plugin@org.eclipse.cdt.codan.core.cxx=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.cxx
-plugin@org.eclipse.cdt.codan.core.ui.cxx=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.core.ui.cxx
+plugin@org.eclipse.cdt.codan.ui.cxx=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.ui.cxx
 plugin@org.eclipse.cdt.codan.examples=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan.examples
 feature@org.eclipse.cdt.codan.feature=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/codan/org.eclipse.cdt.codan-feature

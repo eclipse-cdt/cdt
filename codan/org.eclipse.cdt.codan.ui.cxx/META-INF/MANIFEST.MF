@@ -4,7 +4,7 @@ Bundle-Name: Codan Analysis UI for C/C++
 Bundle-SymbolicName: org.eclipse.cdt.codan.ui.cxx;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.internal.ui.cxx.Activator
-Bundle-Vendor: CDT
+Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.cdt.codan.core;bundle-version="1.0.0",

@@ -4,7 +4,7 @@ Bundle-Name: Code Analysis Core
 Bundle-SymbolicName: org.eclipse.cdt.codan.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.CodanCorePlugin
-Bundle-Vendor: CDT
+Bundle-Vendor: Eclipse CDT
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy

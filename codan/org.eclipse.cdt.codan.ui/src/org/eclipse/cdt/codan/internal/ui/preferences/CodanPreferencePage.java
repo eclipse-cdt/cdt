@@ -63,6 +63,8 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 								.getSelection();
 						if (s.getFirstElement() instanceof IProblem)
 							setSelectedProblem((IProblem) s.getFirstElement());
+						else 
+							setSelectedProblem(null);
 					}
 				}
 			}
@@ -85,14 +87,26 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		CheckedTreeEditor checkedTreeEditor = new ProblemsTreeEditor(
 				getFieldEditorParent(), profile);
 		addField(checkedTreeEditor);
-		final TabFolder tabFolder = new TabFolder(getFieldEditorParent(),
-				SWT.TOP);
+		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(
+				problemSelectionListener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.internal.ui.preferences.FieldEditorOverlayPage#
+	 * createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createContents(Composite parent) {
+		Composite comp = (Composite) super.createContents(parent);
+		final TabFolder tabFolder = new TabFolder(comp, SWT.TOP);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		// createMainTab(tabFolder);
 		createParamtersTab(tabFolder);
 		createScopeTab(tabFolder);
-		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(
-				problemSelectionListener);
+		return comp;
 	}
 
 	/**
@@ -108,11 +122,14 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 			Control control = children[i];
 			control.dispose();
 		}
-		ParametersComposite comp = new ParametersComposite(parametersTab,
-				problem);
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		parametersTab.pack(true);
-		parametersTab.layout(true);
+		if (problem != null) {
+			ParametersComposite comp = new ParametersComposite(parametersTab,
+					problem);
+			comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			parametersTab.pack(true);
+			getFieldEditorParent().layout(true);
+			getFieldEditorParent().redraw();
+		}
 	}
 
 	/**
@@ -164,12 +181,14 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 * 
 	 */
 	private void saveProblemEdits() {
-		if (selectedProblem==null) return;
+		if (selectedProblem == null)
+			return;
 		Control[] children = parametersTab.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control control = children[i];
 			if (control instanceof ParametersComposite) {
-				((ParametersComposite) control).save((IProblemWorkingCopy) selectedProblem); // XXX
+				((ParametersComposite) control)
+						.save((IProblemWorkingCopy) selectedProblem); // XXX
 			}
 		}
 	}

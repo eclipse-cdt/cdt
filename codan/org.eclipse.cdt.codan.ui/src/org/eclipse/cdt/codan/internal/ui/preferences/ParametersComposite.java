@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * @author Alena
@@ -54,6 +55,8 @@ public class ParametersComposite extends Composite {
 			 */
 			private void createFieldEditorsForParameters(
 					IProblemParameterInfo info) {
+				if (info == null)
+					return;
 				switch (info.getType()) {
 				case TYPE_STRING:
 					StringFieldEditor fe = new StringFieldEditor(info.getKey(),
@@ -67,10 +70,15 @@ public class ParametersComposite extends Composite {
 			}
 		};
 		IProblemParameterInfo info = problem.getParameterInfo();
-		initPrefStore(info);
-		page.setPreferenceStore(pref);
-		page.createControl(parent);
-		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		if (info == null) {
+			Label label = new Label(this, 0);
+			label.setText("No Parameters");
+		} else {
+			initPrefStore(info);
+			page.setPreferenceStore(pref);
+			page.createControl(parent);
+			page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
 	}
 
 	public void save(IProblemWorkingCopy problemwc) {
@@ -85,6 +93,8 @@ public class ParametersComposite extends Composite {
 	 */
 	private void savePrefStore(IProblemParameterInfo info,
 			IProblemWorkingCopy problemwc) {
+		if (info == null)
+			return;
 		String key = info.getKey();
 		Object parameter = problem.getParameter(key);
 		if (parameter instanceof String) {
@@ -98,6 +108,8 @@ public class ParametersComposite extends Composite {
 	 * @param info
 	 */
 	private void initPrefStore(IProblemParameterInfo info) {
+		if (info == null)
+			return;
 		String key = info.getKey();
 		Object parameter = problem.getParameter(key);
 		if (parameter instanceof String) {

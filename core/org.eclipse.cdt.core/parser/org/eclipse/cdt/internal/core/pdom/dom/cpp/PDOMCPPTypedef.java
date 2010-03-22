@@ -77,8 +77,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 			}
 			if (type instanceof ITypeContainer) {
 				type= ((ITypeContainer) type).getType();
-			}
-			else if (type instanceof IFunctionType) {
+			} else if (type instanceof IFunctionType) {
 				IFunctionType ft= (IFunctionType) type;
 				if (introducesRecursion(ft.getReturnType(), parentRec, tdname)) {
 					return true;
@@ -90,8 +89,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 					}
 				}
 				return false;
-			}
-			else {
+			} else {
 				return false;
 			}
 		}

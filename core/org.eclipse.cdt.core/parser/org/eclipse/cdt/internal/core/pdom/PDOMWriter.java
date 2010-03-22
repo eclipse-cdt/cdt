@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *    IBM Corporation
  *    Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import java.util.ArrayList;
@@ -66,19 +66,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Abstract class to write information from AST 
+ * Abstract class to write information from AST
  * @since 4.0
  */
 abstract public class PDOMWriter {
-	// TODO(sprigogin): Remove SEMI_TRANSACTIONAL_UPDATES and ALLOW_LOCK_YIELDING constants and simplify the code.
-	public static boolean SEMI_TRANSACTIONAL_UPDATES = true;
-	public static boolean ALLOW_LOCK_YIELDING = true;
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_MACRO_REFERENCES= 2;
 	public static int SKIP_IMPLICIT_REFERENCES= 4;
 	public static int SKIP_NO_REFERENCES= 0;
-	
+
 	private static class Symbols {
 		ArrayList<IASTName[]> fNames= new ArrayList<IASTName[]>();
 		ArrayList<IASTPreprocessorStatement> fMacros= new ArrayList<IASTPreprocessorStatement>();
@@ -91,23 +88,23 @@ abstract public class PDOMWriter {
 	protected boolean fShowActivity;
 	protected final IndexerStatistics fStatistics;
 	protected final IndexerInputAdapter fResolver;
-	
+
 	private IndexerProgress fInfo= new IndexerProgress();
 	private int fSkipReferences= SKIP_NO_REFERENCES;
-	
+
 	public PDOMWriter(IndexerInputAdapter resolver) {
 		fStatistics= new IndexerStatistics();
 		fResolver= resolver;
 	}
-	
+
 	protected IndexerInputAdapter getInputAdapter() {
 		return fResolver;
 	}
-	
+
 	public void setShowActivity(boolean val) {
 		fShowActivity= val;
 	}
-	
+
 	public void setShowInclusionProblems(boolean val) {
 		fShowInclusionProblems= val;
 	}
@@ -123,28 +120,28 @@ abstract public class PDOMWriter {
 	public void setShowProblems(boolean val) {
 		fShowProblems= val;
 	}
-	
+
 	/**
-	 * Determines whether references are skipped or not. Provide one of 
+	 * Determines whether references are skipped or not. Provide one of
 	 * {@link #SKIP_ALL_REFERENCES}, {@link #SKIP_NO_REFERENCES} or a combination of
 	 * {@link #SKIP_IMPLICIT_REFERENCES}, {@link #SKIP_TYPE_REFERENCES} and {@link #SKIP_MACRO_REFERENCES}.
 	 */
 	public void setSkipReferences(int options) {
 		fSkipReferences= options;
 	}
-	
+
 	public int getSkipReferences() {
 		return fSkipReferences;
 	}
-			
+
 	/**
-	 * Extracts symbols from the given AST and adds them to the index. 
+	 * Extracts symbols from the given AST and adds them to the index.
 	 * 
-	 * When flushIndex is set to <code>false</code>, you must make sure to flush the 
-	 * index after your last write operation.
+	 * When flushIndex is set to <code>false</code>, you must make sure to flush 
+	 * the index after your last write operation.
 	 * @since 4.0
 	 */
-	public void addSymbols(IASTTranslationUnit ast, IIndexFileLocation[] ifls, IWritableIndex index, 
+	public void addSymbols(IASTTranslationUnit ast, IIndexFileLocation[] ifls, IWritableIndex index,
 			int readlockCount, boolean flushIndex, long fileContentsHash, int configHash,
 			ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException, CoreException {
 		if (fShowProblems) {
@@ -160,7 +157,7 @@ abstract public class PDOMWriter {
 
 		HashSet<IASTPreprocessorIncludeStatement> contextIncludes= new HashSet<IASTPreprocessorIncludeStatement>();
 		extractSymbols(ast, symbolMap, contextIncludes);
-			
+
 		// name resolution
 		resolveNames(symbolMap, ifls, stati, pm);
 
@@ -184,10 +181,10 @@ abstract public class PDOMWriter {
 				if (msg.equals(status.getMessage())) {
 					throw new CoreException(status);
 				}
-				throw new CoreException(new Status(status.getSeverity(), status.getPlugin(), status.getCode(), 
+				throw new CoreException(new Status(status.getSeverity(), status.getPlugin(), status.getCode(),
 						msg + ':' + status.getMessage(), status.getException()));
 			}
-			throw new CoreException(new MultiStatus(CCorePlugin.PLUGIN_ID, 0, 
+			throw new CoreException(new MultiStatus(CCorePlugin.PLUGIN_ID, 0,
 					stati.toArray(new IStatus[stati.size()]), msg, null));
 		}
 	}
@@ -198,7 +195,7 @@ abstract public class PDOMWriter {
 			boolean flushIndex, ArrayList<IStatus> stati, IProgressMonitor pm)
 			throws InterruptedException, CoreException {
 		for (int i= 0; i < ifls.length; i++) {
-			if (pm.isCanceled()) 
+			if (pm.isCanceled())
 				return;
 
 			final IIndexFileLocation ifl= ifls[i];
@@ -213,9 +210,9 @@ abstract public class PDOMWriter {
 					storeFileInIndex(index, ifl, symbolMap, linkageID, fileContentsHash, configHash,
 							contextIncludes, lock);
 				} catch (RuntimeException e) {
-					th= e; 
+					th= e;
 				} catch (PDOMNotImplementedError e) {
-					th= e; 
+					th= e;
 				} catch (StackOverflowError e) {
 					th= e;
 				} catch (AssertionError e) {
@@ -267,8 +264,8 @@ abstract public class PDOMWriter {
 								reportProblem((IProblemBinding) binding);
 							}
 						} else if (name.isReference()) {
-							if (binding instanceof ICPPTemplateParameter || 
-									binding instanceof ICPPUnknownBinding || 
+							if (binding instanceof ICPPTemplateParameter ||
+									binding instanceof ICPPUnknownBinding ||
 									((fSkipReferences & SKIP_TYPE_REFERENCES) != 0 &&
 											isTypeReferenceBinding(binding))) {
 								if (!isRequiredReference(name)) {
@@ -296,7 +293,7 @@ abstract public class PDOMWriter {
 						}
 						reported= true;
 						j.remove();
-					} 
+					}
 				}
 			}
 		}
@@ -307,7 +304,7 @@ abstract public class PDOMWriter {
 			Collection<IASTPreprocessorIncludeStatement> contextIncludes) throws CoreException {
 		final HashSet<IIndexFileLocation> contextIFLs= new HashSet<IIndexFileLocation>();
 		final IIndexFileLocation astIFL = fResolver.resolveASTPath(ast.getFilePath());
-		
+
 		int unresolvedIncludes= 0;
 		IASTPreprocessorStatement[] stmts = ast.getAllPreprocessorStatements();
 		for (final IASTPreprocessorStatement stmt : stmts) {
@@ -340,7 +337,7 @@ abstract public class PDOMWriter {
 				}
 			}
 		}
-		
+
 		// names
 		final IndexerASTVisitor visitor = new IndexerASTVisitor((fSkipReferences & SKIP_IMPLICIT_REFERENCES) == 0) {
 			@Override
@@ -352,7 +349,7 @@ abstract public class PDOMWriter {
 						}
 					}
 				}
-					
+
 				// assign a location to anonymous types.
 				name= PDOMASTAdapter.getAdapterIfAnonymous(name);
 				if (name != null) {
@@ -365,7 +362,7 @@ abstract public class PDOMWriter {
 			}
 		};
 		ast.accept(visitor);
-		
+
 		if ((fSkipReferences & SKIP_MACRO_REFERENCES) == 0) {
 			LocationMap lm= (LocationMap) ast.getAdapter(LocationMap.class);
 			if (lm != null) {
@@ -379,7 +376,7 @@ abstract public class PDOMWriter {
 				}
 			}
 		}
-		
+
 		fStatistics.fUnresolvedIncludesCount += unresolvedIncludes;
 		fStatistics.fPreprocessorProblemCount += ast.getPreprocessorProblemsCount() - unresolvedIncludes;
 		if (fShowScannerProblems || fShowInclusionProblems) {
@@ -396,11 +393,11 @@ abstract public class PDOMWriter {
 		fStatistics.fSyntaxProblemsCount += problems.size();
 		if (fShowSyntaxProblems) {
 			for (IASTProblem problem : problems) {
-				reportProblem(problem); 
+				reportProblem(problem);
 			}
 		}
 	}
-	
+
 	protected final boolean isRequiredReference(IASTName name) {
 		IASTNode parentNode= name.getParent();
 		if (parentNode instanceof ICPPASTQualifiedName) {
@@ -433,24 +430,24 @@ abstract public class PDOMWriter {
 
 	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTName[] thing) {
 		Symbols lists= map.get(location);
-		if (lists != null) 
+		if (lists != null)
 			lists.fNames.add(thing);
-	}		
+	}
 
 	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location,
 			IASTPreprocessorIncludeStatement thing) {
 		Symbols lists= map.get(location);
-		if (lists != null) 
+		if (lists != null)
 			lists.fIncludes.add(thing);
-	}		
+	}
 
 	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location,
 			IASTPreprocessorStatement thing) {
 		Symbols lists= map.get(location);
-		if (lists != null) 
+		if (lists != null)
 			lists.fMacros.add(thing);
-	}		
-	
+	}
+
 	private boolean prepareInMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location) {
 		if (map.get(location) == null) {
 			map.put(location, new Symbols());
@@ -465,32 +462,21 @@ abstract public class PDOMWriter {
 		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
 		IIndexFragmentFile file;
 		long timestamp = fResolver.getLastModified(location);
-		if (SEMI_TRANSACTIONAL_UPDATES) {
-			// In fine grained locking mode we create a temporary PDOMFile with zero timestamp,
-			// add names to it, then replace contents of the old file from the temporary one, then
-			// delete the temporary file. The write lock on the index is periodically yielded while
-			// adding names to the temporary file, if the process takes long time.
-			IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location);
-			if (oldFile != null) {
-				IIndexInclude[] includedBy = index.findIncludedBy(oldFile);
-				if (includedBy.length > 0) {
-					clearedContexts= new HashSet<IIndexFileLocation>();
-					for (IIndexInclude include : includedBy) {
-						clearedContexts.add(include.getIncludedByLocation());
-					}
+		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace contents
+		// of the old file from the temporary one, then delete the temporary file. The write lock on
+		// the index can be yielded between adding names to the temporary file, if another thread
+		// is waiting for a read lock.
+		IIndexFragmentFile oldFile = index.getWritableFile(linkageID, location);
+		if (oldFile != null) {
+			IIndexInclude[] includedBy = index.findIncludedBy(oldFile);
+			if (includedBy.length > 0) {
+				clearedContexts= new HashSet<IIndexFileLocation>();
+				for (IIndexInclude include : includedBy) {
+					clearedContexts.add(include.getIncludedByLocation());
 				}
 			}
-			file= index.addUncommittedFile(linkageID, location);
-		} else {
-			file= index.getWritableFile(linkageID, location);
-			if (file != null) {
-				clearedContexts= new HashSet<IIndexFileLocation>();
-				index.clearFile(file, clearedContexts);
-			} else {
-				file= index.addFile(linkageID, location);
-			}
-			file.setTimestamp(timestamp);
 		}
+		file= index.addUncommittedFile(linkageID, location);
 		try {
 			file.setScannerConfigurationHashcode(configHash);
 			Symbols lists= symbolMap.get(location);
@@ -503,7 +489,7 @@ abstract public class PDOMWriter {
 						ASTInternal.setFullyResolved(name.getBinding(), true);
 					}
 				}
-	
+
 				IncludeInformation[] includeInfos= new IncludeInformation[lists.fIncludes.size()];
 				for (int i= 0; i < lists.fIncludes.size(); i++) {
 					final IASTPreprocessorIncludeStatement include = lists.fIncludes.get(i);
@@ -511,24 +497,21 @@ abstract public class PDOMWriter {
 					info.fStatement= include;
 					if (include.isResolved()) {
 						info.fLocation= fResolver.resolveASTPath(include.getPath());
-						info.fIsContext= include.isActive() && 
+						info.fIsContext= include.isActive() &&
 							(contextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
 					}
 				}
-				index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver,
-						SEMI_TRANSACTIONAL_UPDATES && ALLOW_LOCK_YIELDING ? lock : null);
+				index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver, lock);
 			}
-			if (SEMI_TRANSACTIONAL_UPDATES) {
-				file.setTimestamp(timestamp);
-				file.setContentsHash(fileContentsHash);
-				file = index.commitUncommittedFile();
-			}
+			file.setTimestamp(timestamp);
+			file.setContentsHash(fileContentsHash);
+			file = index.commitUncommittedFile();
 		} finally {
 			index.clearUncommittedFile();
 		}
 		return file;
 	}
-	
+
 	/**
 	 * Makes a copy of the current progress information and returns it.
 	 * @since 4.0
@@ -549,7 +532,7 @@ abstract public class PDOMWriter {
 			fInfo.fCompletedHeaders += header;
 		}
 	}
-	
+
 	/**
 	 * Updates current progress information with the provided delta.
 	 */
@@ -566,7 +549,7 @@ abstract public class PDOMWriter {
 	private void reportProblem(IProblemBinding problem) {
 		String msg= "Indexer: unresolved name" + getLocationInfo(problem.getFileName(), problem.getLineNumber()); //$NON-NLS-1$
 		String pmsg= problem.getMessage();
-		if (pmsg != null && pmsg.length() > 0) 
+		if (pmsg != null && pmsg.length() > 0)
 			msg += "; " + problem.getMessage(); //$NON-NLS-1$
 		trace(msg);
 	}
@@ -575,7 +558,7 @@ abstract public class PDOMWriter {
 		String msg= "Indexer: " + problem.getMessageWithLocation(); //$NON-NLS-1$
 		trace(msg);
 	}
-	
+
 	protected void trace(String message) {
 		System.out.println(message);
 	}
@@ -583,7 +566,7 @@ abstract public class PDOMWriter {
 	protected IStatus createStatus(String msg) {
 		return CCorePlugin.createStatus(msg);
 	}
-	
+
 	protected IStatus createStatus(String msg, Throwable e) {
 		return CCorePlugin.createStatus(msg, e);
 	}

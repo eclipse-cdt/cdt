@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -25,9 +31,14 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.ide.ResourceUtil;
 
 import org.eclipse.cdt.core.CCorePlugin;
 
@@ -38,7 +49,12 @@ public class BuildGroup extends CViewActionGroup {
 
 	/**
 	 * An internal class which overrides the 'shouldPerformResourcePruning'
-	 * method so that referenced projects aren't build twice 
+	 * method so that referenced projects aren't build twice . (The CDT
+	 * managedbuild builds CDT reference project configuration as part of
+	 * building the top-level project).
+	 *
+	 * Also ensure that files in referenced projects are saved automatically
+	 * before build.
 	 */
 	public static class CDTBuildAction extends BuildAction {
 	    public CDTBuildAction(IShellProvider shell, int kind) {
@@ -47,11 +63,69 @@ public class BuildGroup extends CViewActionGroup {
 	    @Override
 	    protected boolean shouldPerformResourcePruning() {
 	    	// If the selected resources aren't new-style CDT projects, then
-	    	// fall-back to parent behaviour
+	    	// fall-back to parent behaviour. 
+	    	// For CDT projects, we only want 'build' to be called on the top-level
+	    	// selected project(s)
 	    	for (Object res : getSelectedResources())
 	    		if (!(res instanceof IProject) || !CCorePlugin.getDefault().isNewStyleProject((IProject)res))
 	    			return super.shouldPerformResourcePruning();
 	    	return false;
+	    }
+	    @Override
+	    @SuppressWarnings("unchecked")
+	    public void run() {
+	    	// Ensure we correctly save files in all referenced projects before build
+	    	Set<IProject> prjs = new HashSet<IProject>();
+	    	for (IResource resource : (List<IResource>)getSelectedResources()) {
+	    		IProject project = resource.getProject();
+	    		if (project != null) {
+	    			prjs.add(project);
+	    			try {
+	    				prjs.addAll(Arrays.asList(project.getReferencedProjects()));
+	    			} catch (CoreException e) {
+	    				// Project not accessible or not open
+	    			}
+	    		}
+	    	}
+	    	saveEditors(prjs);
+
+	    	// Now delegate to the parent
+	    	super.run();
+	    }
+
+	    /**
+	     * Taken from inaccessible o.e.ui.ide.BuildUtilities.java
+	     *
+	     * Causes all editors to save any modified resources in the provided collection
+	     * of projects depending on the user's preference.
+	     * @param projects The projects in which to save editors, or <code>null</code>
+	     * to save editors in all projects.
+	     */
+	    private static void saveEditors(Collection<IProject> projects) {
+	    	if (!BuildAction.isSaveAllSet()) {
+	    		return;
+	    	}
+	    	IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+	    	for (int i = 0; i < windows.length; i++) {
+	    		IWorkbenchPage[] pages = windows[i].getPages();
+	    		for (int j = 0; j < pages.length; j++) {
+	    			IWorkbenchPage page = pages[j];
+	    			if (projects == null) {
+	    				page.saveAllEditors(false);
+	    			} else {
+	    				IEditorPart[] editors = page.getDirtyEditors();
+	    				for (int k = 0; k < editors.length; k++) {
+	    					IEditorPart editor = editors[k];
+	    					IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+	    					if (inputFile != null) {
+	    						if (projects.contains(inputFile.getProject())) {
+	    							page.saveEditor(editor, false);
+	    						}
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
 	    }
 	}
 

@@ -11,8 +11,8 @@
 package org.eclipse.cdt.codan.examples.checkers;
 
 import java.util.regex.Pattern;
-
 import org.eclipse.cdt.codan.core.cxx.model.AbstractCIndexChecker;
+import org.eclipse.cdt.codan.core.model.AbstractProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.CoreException;
  * @author Alena
  * 
  */
-public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
-		implements ICheckerWithParameters {
-	private static final String DEFAULT_PATTERN = "^[a-z]"; 	// name starts with english lowercase letter //$NON-NLS-1$
+public class NamingConventionFunctionIIndexChecker extends
+		AbstractCIndexChecker implements ICheckerWithParameters {
+	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
 
@@ -49,8 +49,8 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 						Pattern pattern = Pattern.compile(parameter);
 						String name = element.getElementName();
 						if (!pattern.matcher(name).find()) {
-		
-							reportProblem(ER_ID, getFile(), 1, // TODO: line number 
+							reportProblem(ER_ID, getFile(), 1, // TODO: line
+																// number
 									name, parameter);
 						}
 						return false;
@@ -71,15 +71,7 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
 	public void initParameters(IProblemWorkingCopy problem) {
-		IProblemParameterInfo info = new IProblemParameterInfo() {
-			public String getUiInfo() {
-				return null;
-			}
-
-			public String getType() {
-				return IProblemParameterInfo.TYPE_STRING;
-			}
-
+		IProblemParameterInfo info = new AbstractProblemParameterInfo() {
 			public String getLabel() {
 				return "Name Pattern";
 			}
@@ -87,19 +79,11 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 			public String getKey() {
 				return PARAM_KEY;
 			}
-
-			public IProblemParameterInfo getElement(String key) {
-				return null;
-			}
 		};
 		problem.setParameterInfo(info);
-	
-		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN); 
-									
+		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN);
 	}
 
-
-	
 	@Override
 	public boolean runInEditor() {
 		return false;

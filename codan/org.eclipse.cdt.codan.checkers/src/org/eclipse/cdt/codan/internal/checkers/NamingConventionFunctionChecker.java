@@ -11,8 +11,8 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.regex.Pattern;
-
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.AbstractProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
@@ -24,12 +24,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 /**
- * @author Alena
+ * This is style checker for function name code style. Pattern parameter is
+ * regular expression defining the style.
  * 
  */
 public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 		implements ICheckerWithParameters {
-	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
+	private static final String DEFAULT_PATTERN = "^[a-z]"; // default pattern name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"; //$NON-NLS-1$
 
@@ -49,8 +50,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 								.getDeclarator().getName();
 						String name = astName.toString();
 						if (!pattern.matcher(name).find()) {
-							reportProblem(ER_ID, astName,
-									name, parameter);
+							reportProblem(ER_ID, astName, name, parameter);
 						}
 					}
 					return PROCESS_SKIP;
@@ -69,25 +69,13 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
 	public void initParameters(IProblemWorkingCopy problem) {
-		IProblemParameterInfo info = new IProblemParameterInfo() {
-			public String getUiInfo() {
-				return null;
-			}
-
-			public String getType() {
-				return IProblemParameterInfo.TYPE_STRING;
-			}
-
+		IProblemParameterInfo info = new AbstractProblemParameterInfo() {
 			public String getLabel() {
 				return "Name Pattern";
 			}
 
 			public String getKey() {
 				return PARAM_KEY;
-			}
-
-			public IProblemParameterInfo getElement(String key) {
-				return null;
 			}
 		};
 		problem.setParameterInfo(info);
@@ -98,5 +86,4 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 	public boolean runInEditor() {
 		return true;
 	}
-
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -41,6 +42,11 @@ public class ScannerConfigNature implements IProjectNature {
 		}
 		ICommand command = description.newCommand();
 		command.setBuilderName(ScannerConfigBuilder.BUILDER_ID);
+		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+
 		ICommand[] newCommands = new ICommand[commands.length + 1];
 		System.arraycopy(commands, 0, newCommands, 0, commands.length);
 		newCommands[commands.length] = command;

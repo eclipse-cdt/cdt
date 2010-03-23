@@ -475,7 +475,9 @@
          name="%epScannerConfigBuilder.name"
          point="org.eclipse.core.resources.builders">
       <builder
-            hasNature="true">
+            callOnEmptyDelta="true"
+            hasNature="true"
+            isConfigurable="true">
          <run
                class="org.eclipse.cdt.build.core.scannerconfig.ScannerConfigBuilder">
          </run>

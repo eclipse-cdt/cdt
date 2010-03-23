@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Broadcom Corp. and others.
+ * Copyright (c) 2009, 2010 Broadcom Corp. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -138,6 +139,69 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));
 		assertEquals(var1, envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id2), true));
 		assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id2), true));
+	}
+
+	/**
+	 * Tests we can load an old-style preferences while an incompatible scheduling rule is held.
+	 * @throws Exception
+	 */
+	public void testOldStyleLoadConflictingSchedulingRule() throws Exception {
+		final IProject project = ResourceHelper.createCDTProjectWithConfig("incompatibleSchedRule");
+
+		// Add another, derived configuration
+		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		ICConfigurationDescription desc = prjDesc.getActiveConfiguration();
+		final String id1 = desc.getId(); // Config 1's ID
+		final String id2 = "712427638";  // Config 2's ID
+		prjDesc.createConfiguration(id2, "config2", desc);
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		IEnvironmentVariableManager envManager = CCorePlugin.getDefault().getBuildEnvironmentManager();
+		IContributedEnvironment contribEnv = envManager.getContributedEnvironment();
+		final IEnvironmentVariable varOrig = new EnvironmentVariable("FOO", "ZOO");
+		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+
+		final String env = "#Mon Nov 16 21:47:46 GMT 2009\n" +
+		"eclipse.preferences.version=1\n" +
+		"environment/project/712427638=<?xml version\\=\"1.0\" encoding\\=\"UTF-8\" standalone\\=\"no\"?>\\n" +
+		"<environment append\\=\"true\" appendContributed\\=\"true\">\\n" +
+		"<variable delimiter\\=\"\\:\" name\\=\"FOO1\" operation\\=\"replace\" value\\=\"BAR1\"/>\\n" +
+		"<variable delimiter\\=\"\\:\" name\\=\"FOO2\" operation\\=\"replace\" value\\=\"BAR2\"/>\\n" +
+		"<variable delimiter\\=\"\\;\" name\\=\"FOO\" operation\\=\"append\" value\\=\"BAR\"/>\\n</environment>\n";
+		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
+
+		ISchedulingRule incompatibleRule = new ISchedulingRule() {
+			public boolean isConflicting(ISchedulingRule rule) {
+				return rule == this || rule instanceof IResource;
+			}
+			public boolean contains(ISchedulingRule rule) {
+				return rule == this;
+			}
+		};
+		try {
+			Job.getJobManager().beginRule(incompatibleRule, new NullProgressMonitor());
+			final IEnvironmentVariable var = new EnvironmentVariable("FOO", "BAR", IEnvironmentVariable.ENVVAR_APPEND, ";");
+			final IEnvironmentVariable var1 = new EnvironmentVariable("FOO1", "BAR1", ":");
+			final IEnvironmentVariable var2 = new EnvironmentVariable("FOO2", "BAR2", ":");
+	
+			prjDesc = CoreModel.getDefault().getProjectDescription(project);
+			assertEquals(var, envManager.getVariable(var.getName(), prjDesc.getConfigurationById(id2), true));
+			assertEquals(var1, envManager.getVariable(var1.getName(), prjDesc.getConfigurationById(id2), true));
+			assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id2), true));
+		} finally {
+			Job.getJobManager().endRule(incompatibleRule);
+		}
+
+		// Change back to FOO => ZOO , close and re-open the project and check its still there
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		contribEnv.addVariable(varOrig, prjDesc.getConfigurationById(id2));
+		CoreModel.getDefault().setProjectDescription(project, prjDesc);
+		project.close(null);
+		project.open(null);
+
+		prjDesc = CoreModel.getDefault().getProjectDescription(project);
+		assertEquals(varOrig, envManager.getVariable(varOrig.getName(), prjDesc.getConfigurationById(id2), true));
 	}
 
 	/**

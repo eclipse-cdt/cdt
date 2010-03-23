@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Broadcom Corporation and others.
+ * Copyright (c) 2009, 2010 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -342,29 +342,22 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		//      topNode.get(fSerialEnv.getPrefName(), def)
 		String envString = StorableEnvironmentLoader.loadPreferenceNode(fSerialEnv);
 		ICStorageElement element = StorableEnvironmentLoader.environmentStorageFromString(envString);
-		try {
-			if (element != null) {
-				Preferences oldNode = fSerialEnv.getNode();
-				oldNode.put(fSerialEnv.getPrefName(), ""); //$NON-NLS-1$
-				oldNode.flush();
+		if (element != null) {
+			Preferences oldNode = fSerialEnv.getNode();
+			oldNode.put(fSerialEnv.getPrefName(), ""); //$NON-NLS-1$
 
-				// New Preferences node
-				Preferences newNode = fSerialEnv.getNode().node(fSerialEnv.getPrefName());
-				StorableEnvironment oldEnv = new StorableEnvironment(element, false);
-				for (Map.Entry<String, IEnvironmentVariable> e : oldEnv.getMap().entrySet())
-						((StorableEnvVar)e.getValue()).serialize(newNode.node(e.getKey()));
-				fCachedSerialEnv.putAll(oldEnv.getMap());
-				if (!fAppendChanged)
-					fAppend = oldEnv.fAppend;
-				newNode.putBoolean(ATTRIBUTE_APPEND, fAppend);
-				if (!fAppendContributedChanged)
-					fAppendContributedEnv = oldEnv.fAppendContributedEnv;
-				newNode.putBoolean(ATTRIBUTE_APPEND_CONTRIBUTED, fAppendContributedEnv);
-				// flush
-				fSerialEnv.getNode().flush();
-			}
-		} catch (BackingStoreException e) {
-			CCorePlugin.log(e);
+			// New Preferences node
+			Preferences newNode = fSerialEnv.getNode().node(fSerialEnv.getPrefName());
+			StorableEnvironment oldEnv = new StorableEnvironment(element, false);
+			for (Map.Entry<String, IEnvironmentVariable> e : oldEnv.getMap().entrySet())
+					((StorableEnvVar)e.getValue()).serialize(newNode.node(e.getKey()));
+			fCachedSerialEnv.putAll(oldEnv.getMap());
+			if (!fAppendChanged)
+				fAppend = oldEnv.fAppend;
+			newNode.putBoolean(ATTRIBUTE_APPEND, fAppend);
+			if (!fAppendContributedChanged)
+				fAppendContributedEnv = oldEnv.fAppendContributedEnv;
+			newNode.putBoolean(ATTRIBUTE_APPEND_CONTRIBUTED, fAppendContributedEnv);
 		}
 	}
 

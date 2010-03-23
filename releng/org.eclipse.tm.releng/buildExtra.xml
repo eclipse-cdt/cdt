@@ -18,20 +18,6 @@
 		-->
 	</target>
 
-	<target name="getDependencies">	
-		<echo message="Download, then unpack EMF and RXTX" />
-		<ant target="getDependency"
-		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
-			<property name="url" value="${modeling.emf.runtime.url}" />
-			<property name="file" value="${modeling.emf.runtime.file}" />
-		</ant>
-		<ant target="getDependency"
-		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
-			<property name="url" value="${downloads.RXTX.runtime.url}" />
-			<property name="file" value="${downloads.RXTX.runtime.file}" />
-		</ant>
-	</target>
-
 	<target name="extraPackaging">
 		<!-- USE PDE PACKAGER TO ASSEMBLE THESE ZIPS -->
 

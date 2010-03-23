@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.ui.preferences;
+package org.eclipse.cdt.codan.internal.ui.dialogs;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
@@ -38,6 +38,8 @@ public class ParametersComposite extends Composite {
 	 */
 	public ParametersComposite(Composite parent, final IProblem problem) {
 		super(parent, SWT.NONE);
+		if (problem == null)
+			throw new NullPointerException();
 		this.setLayout(new GridLayout(2, false));
 		this.problem = problem;
 		this.pref = new PreferenceStore();
@@ -73,12 +75,11 @@ public class ParametersComposite extends Composite {
 		if (info == null) {
 			Label label = new Label(this, 0);
 			label.setText("No Parameters");
-		} else {
-			initPrefStore(info);
-			page.setPreferenceStore(pref);
-			page.createControl(parent);
-			page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
+		initPrefStore(info);
+		page.setPreferenceStore(pref);
+		page.createControl(parent);
+		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	public void save(IProblemWorkingCopy problemwc) {

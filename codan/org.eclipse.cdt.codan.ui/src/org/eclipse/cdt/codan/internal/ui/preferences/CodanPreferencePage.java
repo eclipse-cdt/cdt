@@ -14,21 +14,26 @@ import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
-import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -46,24 +51,27 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		IWorkbenchPreferencePage {
 	private IProblemProfile profile;
-	private Composite parametersTab;
 	private ISelectionChangedListener problemSelectionListener;
 	private IProblem selectedProblem;
+	private Group info;
+	private Label infoMessage;
+	private Label infoParams;
+	private Button infoButton;
 
 	public CodanPreferencePage() {
 		super(GRID);
 		setPreferenceStore(new ScopedPreferenceStore(new InstanceScope(),
 				CodanCorePlugin.PLUGIN_ID));
-		setDescription("Code Analyzers Preference Page");
+		//setDescription("Code Analysis Preference Page");
 		problemSelectionListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (parametersTab != null) {
+				if (info != null) {
 					if (event.getSelection() instanceof ITreeSelection) {
 						ITreeSelection s = (ITreeSelection) event
 								.getSelection();
 						if (s.getFirstElement() instanceof IProblem)
 							setSelectedProblem((IProblem) s.getFirstElement());
-						else 
+						else
 							setSelectedProblem(null);
 					}
 				}
@@ -89,6 +97,12 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		addField(checkedTreeEditor);
 		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(
 				problemSelectionListener);
+		checkedTreeEditor.getTreeViewer().addDoubleClickListener(
+				new IDoubleClickListener() {
+					public void doubleClick(DoubleClickEvent event) {
+						openCustomizeDialog();
+					}
+				});
 	}
 
 	/*
@@ -101,60 +115,45 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = (Composite) super.createContents(parent);
-		final TabFolder tabFolder = new TabFolder(comp, SWT.TOP);
-		tabFolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		// createMainTab(tabFolder);
-		createParamtersTab(tabFolder);
-		createScopeTab(tabFolder);
+		createInfoControl(comp);
 		return comp;
+	}
+
+	/**
+	 * @param comp
+	 */
+	private void createInfoControl(Composite comp) {
+		info = new Group(comp, SWT.NONE);
+		info.setLayoutData(new GridData(GridData.FILL_BOTH));
+		info.setLayout(new GridLayout(2, false));
+		info.setText("Info");
+		infoParams = new Label(info, SWT.NONE);
+		infoParams.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
+				false));
+		infoButton = new Button(info, SWT.PUSH);
+		infoButton
+				.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+		infoButton.setText("Customize...");
+		infoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				openCustomizeDialog();
+			}
+		});
+		infoMessage = new Label(info, SWT.WRAP);
+		GridData ld = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+		ld.horizontalSpan = 2;
+		ld.widthHint=400;
+		infoMessage.setLayoutData(ld);
+		setSelectedProblem(null);
 	}
 
 	/**
 	 * @param selection
 	 */
 	protected void setSelectedProblem(IProblem problem) {
-		if (this.selectedProblem != problem) {
-			saveProblemEdits();
-		}
 		this.selectedProblem = problem;
-		Control[] children = parametersTab.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			Control control = children[i];
-			control.dispose();
-		}
-		if (problem != null) {
-			ParametersComposite comp = new ParametersComposite(parametersTab,
-					problem);
-			comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			parametersTab.pack(true);
-			getFieldEditorParent().layout(true);
-			getFieldEditorParent().redraw();
-		}
-	}
-
-	/**
-	 * @param tabFolder
-	 */
-	private void createParamtersTab(TabFolder tabFolder) {
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
-		tabItem1.setText("Parameters");
-		parametersTab = new Composite(tabFolder, SWT.NONE);
-		tabItem1.setControl(parametersTab);
-		parametersTab.setLayout(new GridLayout());
-	}
-
-	/**
-	 * @param tabFolder
-	 */
-	private void createScopeTab(TabFolder tabFolder) {
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
-		tabItem1.setText("Scope");
-		Composite comp = new Composite(tabFolder, SWT.NONE);
-		tabItem1.setControl(comp);
-		comp.setLayout(new GridLayout());
-		Label label = new Label(comp, SWT.NONE);
-		label.setText("Scope: TODO");
-		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		updateProblemInfo();
 	}
 
 	/**
@@ -173,24 +172,28 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	public boolean performOk() {
 		// if (isPropertyPage())
 		getRegistry().updateProfile((IResource) getElement(), null);
-		saveProblemEdits();
 		return super.performOk();
 	}
 
 	/**
 	 * 
 	 */
-	private void saveProblemEdits() {
-		if (selectedProblem == null)
-			return;
-		Control[] children = parametersTab.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			Control control = children[i];
-			if (control instanceof ParametersComposite) {
-				((ParametersComposite) control)
-						.save((IProblemWorkingCopy) selectedProblem); // XXX
-			}
+	private void updateProblemInfo() {
+		if (selectedProblem == null) {
+			infoMessage.setText("");
+			infoParams.setText("");
+			infoButton.setEnabled(false);
+		} else {
+			IProblemParameterInfo parameterInfo = selectedProblem
+					.getParameterInfo();
+			String desc = selectedProblem.getDescription();
+			infoMessage.setText(desc == null ? "No additional information"
+					: desc);
+			infoParams.setText(parameterInfo == null ? "No parameters"
+					: "This problem has parameters");
+			infoButton.setEnabled(true);
 		}
+		info.layout(true);
 	}
 
 	/*
@@ -200,5 +203,14 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+	}
+
+	/**
+	 * 
+	 */
+	protected void openCustomizeDialog() {
+		CustomizeProblemDialog d = new CustomizeProblemDialog(getShell(),
+				selectedProblem);
+		d.open();
 	}
 }

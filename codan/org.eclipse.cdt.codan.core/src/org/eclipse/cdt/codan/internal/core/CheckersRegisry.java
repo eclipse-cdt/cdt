@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
@@ -187,6 +186,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 			String enab = getAtt(configurationElement, "defaultEnabled", false); //$NON-NLS-1$
 			String sev = getAtt(configurationElement, "defaultSeverity", false); //$NON-NLS-1$
 			String patt = getAtt(configurationElement, "messagePattern", false); //$NON-NLS-1$
+			String desc = getAtt(configurationElement, "description", false); //$NON-NLS-1$
 			if (enab != null) {
 				p.setEnabled(Boolean.valueOf(enab));
 			}
@@ -198,6 +198,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 			if (patt != null) {
 				p.setMessagePattern(patt);
 			}
+			p.setDescription(desc);
 			addProblem(p, category);
 			return p;
 		}

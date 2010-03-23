@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import java.util.HashMap;
-
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
@@ -26,6 +25,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 	private HashMap<Object, Object> parameters = new HashMap<Object, Object>(0);
 	private IProblemParameterInfo parameterInfo;
 	private boolean frozen;
+	private String description;
 
 	public CodanSeverity getSeverity() {
 		return severity;
@@ -60,7 +60,8 @@ public class CodanProblem implements IProblemWorkingCopy {
 	}
 
 	public void setSeverity(CodanSeverity sev) {
-		if (sev == null) throw new NullPointerException();
+		if (sev == null)
+			throw new NullPointerException();
 		this.severity = sev;
 	}
 
@@ -117,6 +118,27 @@ public class CodanProblem implements IProblemWorkingCopy {
 	}
 
 	protected void checkSet() {
-		if (frozen) throw new IllegalStateException("Object is unmodifieble"); //$NON-NLS-1$
+		if (frozen)
+			throw new IllegalStateException("Object is unmodifieble"); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
+	 * .lang.String)
+	 */
+	public void setDescription(String desc) {
+		this.description = desc;
 	}
 }

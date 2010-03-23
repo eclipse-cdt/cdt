@@ -11,6 +11,7 @@
             name="Assignment in condition">
       <problem
             defaultSeverity="Warning"
+            description="Finds statements like  &apos;if (a=b)&apos;"
             id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"
             name="Assignment in condition">
       </problem>
@@ -24,10 +25,10 @@
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
+            description="Finds statements like &apos;a;&apos; or &apos;-a;&apos; or &apos;a-b;&apos; which do no seems to have any side effect therefore suspicious"
             id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"
-            name="Statement has no effect"
             messagePattern="Statement has no effect"
-            />
+            name="Statement has no effect"/>
       </checker>
       
       <checker
@@ -60,6 +61,7 @@
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
+            description="This checker finds a problems that caused by lack of understanding operator precedence in C. Example (! x&gt;0 &amp;&amp; x&lt;10). Parenthesis should be used to clarify programmer's intent."
             id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"
             name="Suggested parenthesis around expression">
       </problem>
@@ -73,6 +75,7 @@
             category="org.eclipse.cdt.codan.core.categories.CodeStyle"
             defaultEnabled="false"
             defaultSeverity="Info"
+            description="Finds and reports functions name of which does not match pattern parameter"
             id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
             messagePattern="Bad function name &quot;{0}&quot; (pattern /{1}/)"
             name="Name convention for function">

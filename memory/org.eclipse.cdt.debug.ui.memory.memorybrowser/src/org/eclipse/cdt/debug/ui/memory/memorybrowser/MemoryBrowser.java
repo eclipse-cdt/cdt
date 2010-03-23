@@ -375,10 +375,13 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	
 	private String getAddressSpacePrefix()
 	{
-		String prefixes[] = (String[]) fGotoAddressSpaceControl.getData(KEY_ADDRESS_SPACE_PREFIXES);
-		if(prefixes.length > 0)
+		if(fGotoAddressSpaceControl.isVisible())
 		{
-			return prefixes[fGotoAddressSpaceControl.getSelectionIndex()];
+			String prefixes[] = (String[]) fGotoAddressSpaceControl.getData(KEY_ADDRESS_SPACE_PREFIXES);
+			if(prefixes != null && prefixes.length > 0)
+			{
+				return prefixes[fGotoAddressSpaceControl.getSelectionIndex()];
+			}
 		}
 		return "";
 	}

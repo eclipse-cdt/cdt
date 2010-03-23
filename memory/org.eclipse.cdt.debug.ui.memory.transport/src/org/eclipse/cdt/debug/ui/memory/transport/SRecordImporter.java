@@ -349,7 +349,13 @@ public class SRecordImporter implements IMemoryImporter {
 							addressSize = 2;
 						else if("S2".equals(recordType))  //$NON-NLS-1$
 							addressSize = 3;
-
+						else if("S0".equals(recordType) || "S5".equals(recordType) ||"S7".equals(recordType) ||
+								"S8".equals(recordType) || "S9".equals(recordType) )	//$NON-NLS-1$
+						{	// ignore S0, S5, S7, S8 and S9 records
+							line = reader.readLine();
+							lineNo++;
+							continue; 
+						}
 						try {
 							recordAddress = new BigInteger(line.substring(position, position + addressSize * 2), 16);
 						} catch (NumberFormatException ex) {

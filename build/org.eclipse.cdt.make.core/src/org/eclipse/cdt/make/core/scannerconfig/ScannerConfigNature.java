@@ -28,11 +28,15 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 /**
+ * @deprecated as of CDT 4.0. Used by legacy CDT 3.X projects.
+ * Replaced by ScannerConfigNature in org.eclipse.cdt.managedbuilder.core.
+ * 
  * @see IProjectNature
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class ScannerConfigNature implements IProjectNature {
 	
 	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigNature"; //$NON-NLS-1$
@@ -191,9 +195,9 @@ public class ScannerConfigNature implements IProjectNature {
 			scProjInfo.setBuildOutputFilePath(scPrefInfo.getBuildOutputFilePath());
 	
 			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(selectedProfile);
-			List providerIdList = scPrefInfo.getProviderIdList();
-			for (Iterator i = providerIdList.iterator(); i.hasNext();) {
-				String providerId = (String) i.next();
+			List<String> providerIdList = scPrefInfo.getProviderIdList();
+			for (Iterator<String> i = providerIdList.iterator(); i.hasNext();) {
+				String providerId = i.next();
 				
 				scProjInfo.setProviderOutputParserEnabled(providerId, scPrefInfo.isProviderOutputParserEnabled(providerId));
 				if (profile.getScannerInfoProviderElement(providerId).getProviderKind().equals(

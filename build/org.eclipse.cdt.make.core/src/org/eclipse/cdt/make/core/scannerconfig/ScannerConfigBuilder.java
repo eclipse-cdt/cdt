@@ -31,11 +31,15 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * Runs after standard make builder.
  * Consolidates discovered scanner configuration and updates project's scanner configuration.
  * 
+ * @deprecated as of CDT 4.0. Used by legacy CDT 3.X projects.
+ * Replaced by ScannerConfigBuilder in org.eclipse.cdt.managedbuilder.core.
+ * 
  * @see IncrementalProjectBuilder
  * 
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class ScannerConfigBuilder extends ACBuilder {
 	public final static String BUILDER_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigBuilder"; //$NON-NLS-1$
 
@@ -46,6 +50,8 @@ public class ScannerConfigBuilder extends ACBuilder {
 	/**
 	 * @see IncrementalProjectBuilder#build
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
 	protected IProject [] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 		if (DEBUG_EVENTS)
 			printEvent(kind, args);

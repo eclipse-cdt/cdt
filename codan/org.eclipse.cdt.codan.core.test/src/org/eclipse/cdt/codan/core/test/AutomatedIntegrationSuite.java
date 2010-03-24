@@ -14,8 +14,8 @@ package org.eclipse.cdt.codan.core.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.codan.core.checkers.sample.StatementHasNoEffectCheckerTest;
-import org.eclipse.cdt.codan.core.checkers.sample.SuggestedParenthesisCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
+import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
 
 public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {

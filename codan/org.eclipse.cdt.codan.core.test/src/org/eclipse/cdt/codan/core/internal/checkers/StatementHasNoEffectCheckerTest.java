@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.checkers.sample;
+package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.checkers.sample;
+package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 
@@ -58,5 +58,46 @@ public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
 		load("test3.c");
 		runOnFile();
 		checkNoErrors();
+	}
+	/*-
+	 <code file="test4.c">
+	 main() {
+      int a=1,b=3;
+	   if (a && !b) b=4; // no error here on line 3
+	 }
+	 </code>
+	 */
+	public void test_lastnot() {
+		load("test4.c");
+		runOnFile();
+		checkNoErrors();
+	}
+	
+	/*-
+	 <code file="test5.c">
+	 main() {
+       int a=1,b=3;
+	   if ((!a) && 10) b=4; // no error here on line 3
+	 }
+	 </code>
+	 */
+	public void test_fixed() {
+		load("test5.c");
+		runOnFile();
+		checkNoErrors();
+	}
+	
+	/*-
+	 <code file="test6.c">
+	 main() {
+      int a=1,b=3;
+	   if (a && b & a) b=4; //  error here on line 3
+	 }
+	 </code>
+	 */
+	public void test_mixedbin() {
+		load("test6.c");
+		runOnFile();
+		checkErrorLine(3);
 	}
 }

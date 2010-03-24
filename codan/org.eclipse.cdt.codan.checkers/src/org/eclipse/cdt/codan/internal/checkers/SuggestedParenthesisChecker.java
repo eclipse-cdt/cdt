@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
@@ -37,32 +38,29 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	}
 
 	class ExpressionVisitor extends ASTVisitor {
-		private SuspiciousExpressionVisitor svis;
-
 		ExpressionVisitor() {
 			shouldVisitExpressions = true;
-			svis = new SuspiciousExpressionVisitor();
 		}
 
 		public int visit(IASTExpression expression) {
 			int precedence = getPrecedence(expression);
-			if (precedence == 2) { // unary not
-				if (isUsedAsOperand(expression)) {
-					reportProblem(ER_ID, expression,
-							"Suggested parenthesis around expression");
-					return PROCESS_SKIP;
-				}
-			}
-			if (precedence >= 0) {
-				synchronized (svis) { // since we use only one instance of this
-										// visitor sync just in case
-					svis.init(expression);
-					expression.accept(svis);
-					if (svis.suspicious == true) {
-						reportProblem(ER_ID, svis.other,
+			IASTNode parent = expression.getParent();
+			if (parent instanceof IASTExpression) {
+				IASTExpression parentExpr = (IASTExpression) parent;
+				if (isInParentesis(expression))
+					return PROCESS_CONTINUE;
+				if (precedence == 2) { // unary not
+					if (isUsedAsOperand(expression)) {
+						reportProblem(ER_ID, expression,
 								"Suggested parenthesis around expression");
 						return PROCESS_SKIP;
 					}
+				} else if (precedence >= 0) {
+					int pp = getPrecedence(parentExpr);
+					if (pp == -1 || pp == precedence)
+						return PROCESS_CONTINUE;
+					reportProblem(ER_ID, expression,
+							"Suggested parenthesis around expression");
 				}
 			}
 			return PROCESS_CONTINUE;
@@ -71,7 +69,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 		private boolean isUsedAsOperand(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
 			if (prop == IASTBinaryExpression.OPERAND_ONE
-					|| prop == IASTBinaryExpression.OPERAND_TWO
+			// || prop == IASTBinaryExpression.OPERAND_TWO
 					|| prop == IASTUnaryExpression.OPERAND)
 				return true;
 			return false;
@@ -104,38 +102,18 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 		return -1;
 	}
 
-	class SuspiciousExpressionVisitor extends ASTVisitor {
-		IASTExpression parent;
-		IASTExpression other;
-		boolean suspicious = false;
-
-		void init(IASTExpression e) {
-			parent = e;
-			suspicious = false;
-		}
-
-		SuspiciousExpressionVisitor() {
-			shouldVisitExpressions = true;
-		}
-
-		public int visit(IASTExpression expression) {
-			if (expression == parent)
-				return PROCESS_CONTINUE;
-			if (expression instanceof IASTUnaryExpression) {
-				IASTUnaryExpression uExpr = (IASTUnaryExpression) expression;
-				int operator = uExpr.getOperator();
-				if (operator == IASTUnaryExpression.op_bracketedPrimary) {
-					return PROCESS_SKIP;
-				}
+	/**
+	 * @param parent
+	 * @return
+	 */
+	private boolean isInParentesis(IASTExpression node) {
+		IASTNode parent = node.getParent();
+		if (parent instanceof IASTUnaryExpression) {
+			IASTUnaryExpression br = (IASTUnaryExpression) parent;
+			if (br.getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
+				return true;
 			}
-			if (getPrecedence(expression) < 0) // not considered operator
-				return PROCESS_CONTINUE;
-			if (getPrecedence(expression) == getPrecedence(parent)) {
-				return PROCESS_SKIP;
-			}
-			suspicious = true;
-			other = expression;
-			return PROCESS_ABORT;
 		}
+		return false;
 	}
 }

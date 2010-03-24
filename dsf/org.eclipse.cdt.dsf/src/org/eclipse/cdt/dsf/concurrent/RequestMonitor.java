@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -101,7 +102,7 @@ public class RequestMonitor extends DsfExecutable {
      */
     private final RequestMonitor fParentRequestMonitor;
 
-    private ListenerList fCancelListeners;
+    private List<ICanceledListener> fCancelListeners;
     
     /**
      * Status 
@@ -110,6 +111,8 @@ public class RequestMonitor extends DsfExecutable {
     private boolean fCanceled = false;
     private boolean fDone = false;
 
+    private final ICanceledListener fCanceledListener;
+    
 	/**
 	 * This field is never read by any code; its purpose is strictly to assist
 	 * developers debug DPF code. Developer can select this field in the
@@ -144,12 +147,15 @@ public class RequestMonitor extends DsfExecutable {
         // this request monitor will automatically be canceled when the parent
         // is canceled.
         if (fParentRequestMonitor != null) {
-            fParentRequestMonitor.addCancelListener(
-                new ICanceledListener() {
-                    public void requestCanceled(RequestMonitor rm) {
-                        cancel();
-                    }
-                });
+            fCanceledListener = new ICanceledListener() {
+                public void requestCanceled(RequestMonitor rm) {
+                    cancel();
+                }
+            };
+
+            fParentRequestMonitor.addCancelListener(fCanceledListener);
+        } else {
+            fCanceledListener = null;
         }
         
         if (DEBUG_MONITORS) {
@@ -197,13 +203,13 @@ public class RequestMonitor extends DsfExecutable {
 	 * </p>
 	 */
     public void cancel() {
-        Object[] listeners = null;
+        ICanceledListener[] listeners = null;
         synchronized (this) {
             // Check to make sure the request monitor wasn't previously canceled.
             if (!fCanceled) {
                 fCanceled = true;
                 if (fCancelListeners != null) {
-                    listeners = fCancelListeners.getListeners();
+                    listeners = fCancelListeners.toArray(new ICanceledListener[fCancelListeners.size()]);
                 }
             }
         }
@@ -211,8 +217,8 @@ public class RequestMonitor extends DsfExecutable {
         // Call the listeners outside of a synchronized section to reduce the 
         // risk of deadlocks.
         if (listeners != null) {
-            for (Object listener : listeners) {
-                ((ICanceledListener)listener).requestCanceled(this);
+            for (ICanceledListener listener : listeners) {
+                listener.requestCanceled(this);
             }
         }
     }
@@ -237,7 +243,7 @@ public class RequestMonitor extends DsfExecutable {
      */
     public synchronized void addCancelListener(ICanceledListener listener) {
         if (fCancelListeners == null) {
-            fCancelListeners = new ListenerList();
+            fCancelListeners = new ArrayList<ICanceledListener>(1);
         }
         fCancelListeners.add(listener);
     }
@@ -274,6 +280,10 @@ public class RequestMonitor extends DsfExecutable {
         // circular reference between parent and child requestMonitor, which
         // causes a memory leak.
         fCancelListeners = null;
+        
+        if (fParentRequestMonitor != null) {
+            fParentRequestMonitor.removeCancelListener(fCanceledListener);
+        }
         
         try {
             fExecutor.execute(new DsfRunnable() {

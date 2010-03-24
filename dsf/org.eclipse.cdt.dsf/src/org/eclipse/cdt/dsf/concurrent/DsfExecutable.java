@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
-import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -181,34 +180,38 @@ public class DsfExecutable {
         return true;
     }
 
-	/**
-	 * Checks to see if the object was executed before being garbage collected.
-	 * If not, and it's expected to have been, then output a trace message to
-	 * that effect.
-	 * 
-	 * @see java.lang.Object#finalize()
-	 */
-    @Override
-    protected void finalize() {
-        if (DEBUG_EXECUTOR && !fSubmitted && isExecutionRequired()) {
-            StringBuilder traceBuilder = new StringBuilder();
-
-            // Record the time
-            traceBuilder.append(DsfPlugin.getDebugTime());
-            traceBuilder.append(' ');
-            
-            final String refstr = LoggingUtils.toString(this, false);
-            traceBuilder.append("DSF executable was never executed: " + refstr); //$NON-NLS-1$
-            final String tostr = LoggingUtils.trimTrailingNewlines(this.toString());
-            if (!tostr.equals(refstr)) {
-            	traceBuilder.append(" ["); //$NON-NLS-1$
-            	traceBuilder.append(tostr);
-            	traceBuilder.append(']');
-            }
-            traceBuilder.append("\nCreated at:\n"); //$NON-NLS-1$
-            traceBuilder.append(fCreatedAt);
-            
-            DsfPlugin.debug(traceBuilder.toString());
-        }
-    }
+// Bug 306982
+//  Disable the use of finalize() method in DSF runnables tracing to avoid 
+//  a performance penalty in garbage colleciton.
+//
+//	/**
+//	 * Checks to see if the object was executed before being garbage collected.
+//	 * If not, and it's expected to have been, then output a trace message to
+//	 * that effect.
+//	 * 
+//	 * @see java.lang.Object#finalize()
+//	 */
+//    @Override
+//    protected void finalize() {
+//        if (DEBUG_EXECUTOR && !fSubmitted && isExecutionRequired()) {
+//            StringBuilder traceBuilder = new StringBuilder();
+//
+//            // Record the time
+//            traceBuilder.append(DsfPlugin.getDebugTime());
+//            traceBuilder.append(' ');
+//            
+//            final String refstr = LoggingUtils.toString(this, false);
+//            traceBuilder.append("DSF executable was never executed: " + refstr); //$NON-NLS-1$
+//            final String tostr = LoggingUtils.trimTrailingNewlines(this.toString());
+//            if (!tostr.equals(refstr)) {
+//            	traceBuilder.append(" ["); //$NON-NLS-1$
+//            	traceBuilder.append(tostr);
+//            	traceBuilder.append(']');
+//            }
+//            traceBuilder.append("\nCreated at:\n"); //$NON-NLS-1$
+//            traceBuilder.append(fCreatedAt);
+//            
+//            DsfPlugin.debug(traceBuilder.toString());
+//        }
+//    }
 }

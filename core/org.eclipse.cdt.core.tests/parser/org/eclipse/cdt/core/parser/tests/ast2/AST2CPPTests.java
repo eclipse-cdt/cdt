@@ -8447,7 +8447,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("fint(Col::red)", 4);
 		bh.assertProblem("fbool(Col::red)", 5);
 	}
-	
+
 	//	enum direction { left='l', right='r'};
 	//	void g() {
 	//		direction d; // OK
@@ -8493,7 +8493,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		bh.assertProblem("xdir d", -2);
 		bh.assertProblem("xl;", -1);
 	}
-	
+
 	//	void f(int);
 	//	enum class X {e1, e2= e1+2, e3};
 	//	enum class Y {e1, e2= f(e1)+2, e3};
@@ -8504,4 +8504,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(code);
 	}
 
+	//	struct S {
+	//	  int m;
+	//	};
+	//	void f(unsigned int x);
+	//	void test() {
+	//	  f(sizeof(S::m));
+	//	//  f(sizeof(S::m + 1)); // Error not detected by CDT: reference to non-static member in subexpression
+	//	}
+	public void testSizeofOfNonstaticMember_305979() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
 }

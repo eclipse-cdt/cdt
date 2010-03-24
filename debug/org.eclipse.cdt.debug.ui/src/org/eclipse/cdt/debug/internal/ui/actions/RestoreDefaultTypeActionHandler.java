@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,39 +7,33 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Nokia - port to command framework
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICastToType;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * The delegate of the "Restore Default Type" action.
  */
-public class RestoreDefaultTypeActionDelegate extends ActionDelegate implements IObjectActionDelegate {
+public class RestoreDefaultTypeActionHandler extends AbstractHandler {
 
 	private ICastToType fCastToType = null;
 
 	private IStatus fStatus = null;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
-	}
 
 	protected ICastToType getCastToType() {
 		return fCastToType;
@@ -49,14 +43,10 @@ public class RestoreDefaultTypeActionDelegate extends ActionDelegate implements 
 		fCastToType = castToType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run( IAction action ) {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if ( getCastToType() == null )
-			return;
+			return null;
+		
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
 			public void run() {
@@ -78,29 +68,30 @@ public class RestoreDefaultTypeActionDelegate extends ActionDelegate implements 
 				CDebugUIPlugin.log( getStatus() );
 			}
 		}
+		
+		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged( IAction action, ISelection selection ) {
-		if ( selection instanceof IStructuredSelection ) {
-			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICastToType ) {
-				boolean enabled = ((ICastToType)element).isCasted();
-				action.setEnabled( enabled );
-				if ( enabled ) {
-					setCastToType( (ICastToType)element );
-					return;
-				}
-			}
-		}
-		action.setEnabled( false );
-		setCastToType( null );
+	@Override
+	public void setEnabled(Object evaluationContext) {
+		ICastToType castToType = getCastToType(evaluationContext);
+		setBaseEnabled( castToType != null && castToType.isCasted() );
+		setCastToType(castToType);
 	}
-
+	
+	private ICastToType getCastToType(Object evaluationContext) {
+	    if (evaluationContext instanceof IEvaluationContext) {
+	        Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+	        if (s instanceof IStructuredSelection) {
+	            IStructuredSelection ss = (IStructuredSelection)s;
+	            if (!ss.isEmpty()) {
+	   	            return (ICastToType)DebugPlugin.getAdapter(ss.getFirstElement(), ICastToType.class);
+	            }
+	        }
+	    }
+	    return null;
+	}
+	
 	public IStatus getStatus() {
 		return fStatus;
 	}

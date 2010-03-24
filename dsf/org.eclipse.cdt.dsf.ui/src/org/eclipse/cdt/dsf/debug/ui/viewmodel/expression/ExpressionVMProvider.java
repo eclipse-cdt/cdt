@@ -16,8 +16,10 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -239,9 +241,16 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
          *  view comes in as a fully qualified expression so we go directly to the SubExpression layout
          *  node.
          */
-        IExpressionVMNode variableNode =  new VariableVMNode(this, getSession(), syncvarDataAccess);
+        VariableVMNode variableNode =  new VariableVMNode(this, getSession(), syncvarDataAccess);
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
+        /* Wire up the casting support if the IExpressions2 service is available. */
+        DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
+        IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+        if (expressions2 != null) {
+        	variableNode.setCastToTypeSupport(new DsfCastToTypeSupport(getSession(), this, syncvarDataAccess));
+        }
+
         /*
          *  Tell the expression node which sub-nodes it will directly support.  It is very important
          *  that the variables node be the last in this chain.  The model assumes that there is some

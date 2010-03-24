@@ -13,8 +13,10 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.variable;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
@@ -95,8 +97,15 @@ public class VariableVMProvider extends AbstractDMVMProvider
         setRootNode(rootNode);
         
         // Create the next level which represents members of structs/unions/enums and elements of arrays.
-        IVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
+        VariableVMNode subExpressioNode = new VariableVMNode(this, getSession(), varAccess);
         addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
+        
+        // Wire up the casting support if the IExpressions2 service is available.
+        DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
+        IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+        if (expressions2 != null) {
+        	subExpressioNode.setCastToTypeSupport(new DsfCastToTypeSupport(getSession(), this, varAccess));
+        }
 
         // Configure the sub-expression node to be a child of itself.  This way the content
         // provider will recursively drill-down the variable hierarchy.

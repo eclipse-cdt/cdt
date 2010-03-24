@@ -43,7 +43,6 @@ public interface IExpressions extends IFormattedValues {
         String getExpression();
     }
 
-
     /**
      * The address and size of an expression.
      */
@@ -143,6 +142,9 @@ public interface IExpressions extends IFormattedValues {
          *         "int *", "mytypedef", "(int *)[]", "enum Bar".  If the debugger backend cannot supply
          *         this information, this method returns "<UNKNOWN>" (the angle brackets are there just in
          *         case there is a type named "UNKNOWN" in the application).
+         *         <p>
+         *         If you implement {@link IExpressions2}, this should return the casted type name,
+         *         if this expression was generated via {@link IExpressions2#createCastedExpression(IDMContext, String, IExpressions2.ICastedExpressionDMContext)}
          */
         String getTypeName();
         
@@ -175,6 +177,7 @@ public interface IExpressions extends IFormattedValues {
      */
     public interface IExpressionChangedDMEvent extends IDMEvent<IExpressionDMContext> {}
 
+    
     /**
      * Retrieves the expression DM data object for the given expression context(<tt>dmc</tt>).
      * 

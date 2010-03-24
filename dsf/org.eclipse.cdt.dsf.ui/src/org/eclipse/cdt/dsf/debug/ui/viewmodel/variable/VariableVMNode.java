@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.debug.core.model.ICastToArray;
+import org.eclipse.cdt.debug.core.model.ICastToType;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
@@ -28,7 +30,9 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
@@ -149,13 +153,17 @@ public class VariableVMNode extends AbstractExpressionVMNode
             fExpression = expression;
         }
         
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
         public Object getAdapter(Class adapter) {
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
             } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapter2.class)) {
                 return fVariableExpressionFactory;
+			} else if (fCastToTypeSupport != null && getDMContext() instanceof IExpressionDMContext
+					&& (adapter.isAssignableFrom(ICastToType.class)
+						|| adapter.isAssignableFrom(ICastToArray.class))) {
+				return fCastToTypeSupport.getCastImpl((IExpressionDMContext) getDMContext());
             } else {
                 return super.getAdapter(adapter);
             }
@@ -198,6 +206,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
     final protected VariableExpressionFactory fVariableExpressionFactory = new VariableExpressionFactory();
 
+	protected DsfCastToTypeSupport fCastToTypeSupport;
+
     public VariableVMNode(AbstractDMVMProvider provider, DsfSession session, 
         SyncVariableDataAccess syncVariableDataAccess) 
     {
@@ -206,6 +216,15 @@ public class VariableVMNode extends AbstractExpressionVMNode
         fLabelProvider = createLabelProvider();
     }
 
+    /**
+     * Set the cast support target.  This is only meaningful if the {@link IExpressions2}
+     * service is available.
+     * @param castToTypeSupport
+     */
+    public void setCastToTypeSupport(DsfCastToTypeSupport castToTypeSupport) {
+    	this.fCastToTypeSupport = castToTypeSupport;
+    }
+    
     /**
      * Creates the label provider delegate.  This VM node will delegate label 
      * updates to this provider which can be created by sub-classes.   
@@ -821,9 +840,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 public void run() {
                     final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
                     if (expressionService != null) {
-                        IExpressionDMContext expressionDMC = expressionService.createExpression(
-                            createCompositeDMVMContext(update), 
-                            update.getExpression().getExpressionText());
+                        IExpressionDMContext expressionDMC = createExpression(expressionService, 
+                        		createCompositeDMVMContext(update), 
+                        		update.getExpression().getExpressionText());
+                       
                         VariableExpressionVMC variableVmc = (VariableExpressionVMC)createVMContext(expressionDMC);
                         variableVmc.setExpression(update.getExpression());
                         
@@ -965,10 +985,20 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             handleFailedUpdate(update);
                             return;
                         }
-                        if (update.getOffset() < 0) {
-                            fillUpdateWithVMCs(update, getData());
+                        
+                        IExpressionDMContext[] data = getData();
+                        
+                    	// If any of these expressions use casts, replace them.
+                    	if (fCastToTypeSupport != null) {
+                    		for (int i = 0; i < data.length; i++) {
+                    			data[i] = fCastToTypeSupport.replaceWithCastedExpression(data[i]);
+                    		}
+                    	}
+                    			
+						if (update.getOffset() < 0) {
+                            fillUpdateWithVMCs(update, data);
                         } else {
-                            fillUpdateWithVMCs(update, getData(), update.getOffset());
+                            fillUpdateWithVMCs(update, data, update.getOffset());
                         }
                         update.done();
                     }
@@ -1058,7 +1088,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                             
                             int i = 0;
                             for (IVariableDMData localDMData : localsDMData) {
-                                expressionDMCs[i++] = expressionService.createExpression(frameDmc, localDMData.getName());
+                            	expressionDMCs[i++] = createExpression(expressionService, frameDmc, localDMData.getName());
                             }
 
                             // Lastly, we fill the update from the array of view model context objects
@@ -1099,7 +1129,19 @@ public class VariableVMNode extends AbstractExpressionVMNode
         stackFrameService.getLocals(frameDmc, rm);
     }
     
-    public int getDeltaFlags(Object e) {
+
+    private IExpressionDMContext createExpression(
+			IExpressions expressionService,
+			final IDMContext dmc, final String expression) {
+    	IExpressionDMContext exprDMC = expressionService.createExpression(dmc, expression);
+    	
+    	if (fCastToTypeSupport != null) {
+    		exprDMC = fCastToTypeSupport.replaceWithCastedExpression(exprDMC);
+    	}
+    	return exprDMC;
+	}
+
+	public int getDeltaFlags(Object e) {
         if ( e instanceof ISuspendedDMEvent || 
              e instanceof IMemoryChangedEvent ||
              e instanceof IExpressionChangedDMEvent ||

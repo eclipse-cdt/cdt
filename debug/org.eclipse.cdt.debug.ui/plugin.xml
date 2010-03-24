@@ -593,57 +593,6 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.model.ICastToType"
-            id="org.eclipse.cdt.debug.ui.VariableActions">
-         <action
-               label="%RestoreDefaultTypeAction.label"
-               helpContextId="restore_default_type_action_context"
-               tooltip="%RestoreDefaultTypeAction.tooltip"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate"
-               menubarPath="variableGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%CastToTypeAction.label"
-               icon="icons/elcl16/casttotype_co.gif"
-               helpContextId="cast_to_type_action_context"
-               tooltip="%CastToTypeAction.tooltip"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate"
-               menubarPath="variableGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%CastToArrayAction.label"
-               icon="icons/elcl16/showasarray_co.gif"
-               helpContextId="cast_to_array_action_context"
-               tooltip="%CastToArrayAction.tooltip"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate"
-               menubarPath="variableGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.cdt.core.model.IFunction"
             id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
          <action
@@ -2360,4 +2309,119 @@
        </action>
     </viewerContribution>
  </extension>
+ 
+ <!-- Cast to Type / Display as Array -->
+ <extension
+       point="org.eclipse.ui.commands">
+
+    <category
+          description="%CastingCategory.description"
+          id="org.eclipse.cdt.debug.ui.category.casting"
+          name="%CastingCategory.name">
+    </category>
+       
+   <command id="org.eclipse.cdt.debug.ui.command.restoreDefaultType"
+          categoryId="org.eclipse.cdt.debug.ui.category.casting"
+          description="%BreakpointPropertiesCommand.description"
+          helpContextId="restore_default_type_action_context"
+          name="%RestoreDefaultTypeAction.label">
+    </command>
+     
+     <command id="org.eclipse.cdt.debug.ui.command.castToType" 
+     		name="%CastToTypeAction.label"
+     		categoryId="org.eclipse.cdt.debug.ui.category.casting"
+           helpContextId="cast_to_type_action_context"
+           >
+     </command>
+     
+      <command id="org.eclipse.cdt.debug.ui.command.castToArray" 
+      		name="%CastToTypeAction.label"
+      		categoryId="org.eclipse.cdt.debug.ui.category.casting"
+            helpContextId="cast_to_array_action_context"
+            >
+      </command>
+	</extension>
+  
+	<extension point="org.eclipse.ui.menus">
+		
+		<!-- items for variables view... -->
+	   	<menuContribution 
+	          locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
+	       <command commandId="org.eclipse.cdt.debug.ui.command.castToType"
+	           label="%CastToTypeAction.label"
+	           icon="icons/elcl16/casttotype_co.gif"
+	           helpContextId="cast_to_type_action_context"
+	           tooltip="%CastToTypeAction.tooltip"
+	           id="org.eclipse.cdt.debug.menu.command.castToType">
+	           <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>
+	       <command commandId="org.eclipse.cdt.debug.ui.command.castToArray"
+               label="%CastToArrayAction.label"
+               icon="icons/elcl16/showasarray_co.gif"
+               helpContextId="cast_to_array_action_context"
+               tooltip="%CastToArrayAction.tooltip"
+               id="org.eclipse.cdt.debug.menu.command.castToArray">
+                <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>
+ 		  <command
+	             commandId="org.eclipse.cdt.debug.ui.command.restoreDefaultType"
+	             helpContextId="restore_default_type_action_context"
+	             id="org.eclipse.cdt.debug.menu.restoreDefaultType"
+	             label="%RestoreDefaultTypeAction.label"
+	             tooltip="%RestoreDefaultTypeAction.tooltip">
+	          <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>	       
+     	</menuContribution>
+     	
+		<!-- items for expressions view... -->
+	   	<menuContribution 
+	          locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=additions">
+	       <command commandId="org.eclipse.cdt.debug.ui.command.castToType"
+	           label="%CastToTypeAction.label"
+	           icon="icons/elcl16/casttotype_co.gif"
+	           helpContextId="cast_to_type_action_context"
+	           tooltip="%CastToTypeAction.tooltip"
+	           id="org.eclipse.cdt.debug.menu.command.castToType">
+	           <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>
+	       <command commandId="org.eclipse.cdt.debug.ui.command.castToArray"
+               label="%CastToArrayAction.label"
+               icon="icons/elcl16/showasarray_co.gif"
+               helpContextId="cast_to_array_action_context"
+               tooltip="%CastToArrayAction.tooltip"
+               id="org.eclipse.cdt.debug.menu.command.castToArray">
+                <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>
+ 		   <command
+	             commandId="org.eclipse.cdt.debug.ui.command.restoreDefaultType"
+	             helpContextId="restore_default_type_action_context"
+	             id="org.eclipse.cdt.debug.menu.restoreDefaultType"
+	             label="%RestoreDefaultTypeAction.label"
+	             tooltip="%RestoreDefaultTypeAction.tooltip">
+	          <visibleWhen checkEnabled="true">
+	          </visibleWhen>
+	       </command>	       
+     	</menuContribution>     	
+	</extension>  
+	
+ 	<extension
+         point="org.eclipse.ui.handlers">
+      <handler
+           class="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.restoreDefaultType">
+      </handler>
+      <handler
+           class="org.eclipse.cdt.debug.internal.ui.actions.CastToTypeActionHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.castToType">
+      </handler>
+      <handler
+           class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionHandler"
+            commandId="org.eclipse.cdt.debug.ui.command.castToArray">
+      </handler>
+	</extension>	
 </plugin>

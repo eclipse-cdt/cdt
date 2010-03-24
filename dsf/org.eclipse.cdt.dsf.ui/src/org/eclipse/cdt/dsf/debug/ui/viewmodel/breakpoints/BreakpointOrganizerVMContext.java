@@ -26,7 +26,7 @@ public class BreakpointOrganizerVMContext extends AbstractVMContext implements I
     private final IAdaptable fCategory;
     private final IBreakpoint[] fBreakpoints;
     
-    BreakpointOrganizerVMContext(BreakpointOrganizerVMNode vmNode, IAdaptable category, IBreakpoint[] breakpoints) {
+    public BreakpointOrganizerVMContext(BreakpointOrganizerVMNode vmNode, IAdaptable category, IBreakpoint[] breakpoints) {
         super(vmNode);
         fCategory = category;
         fBreakpoints = breakpoints;

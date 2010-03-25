@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.debug.ui.memory.memorybrowser;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -82,7 +81,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -119,7 +117,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	private HashMap<Object,CTabFolder> fContextFolders = new HashMap<Object,CTabFolder> ();
 	private GoToAddressBarWidget fGotoAddressBar;
 	private Control fGotoAddressBarControl;
-	private Combo fGotoAddressSpaceControl;
+	
+	// revisit; see bug 307023 
+	// private Combo fGotoAddressSpaceControl; 
+	
 	private Label fUnsupportedLabel;
 	private Composite fMainComposite;
 	private String defaultRenderingTypeId = null;
@@ -131,7 +132,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	private final static String KEY_MEMORY_BLOCK = "MEMORY"; //$NON-NLS-1$
 	private final static String KEY_RETRIEVAL    = "RETRIEVAL"; //$NON-NLS-1$
 	private final static String KEY_CONTAINER    = "CONTAINER"; //$NON-NLS-1$
-	private final static String KEY_ADDRESS_SPACE_PREFIXES = "ADDRESSSPACEPREFIXES"; //$NON-NLS-1$
+
+	// revisit; see bug 307023	
+	// private final static String KEY_ADDRESS_SPACE_PREFIXES = "ADDRESSSPACEPREFIXES"; //$NON-NLS-1$
 	
 	public static final String PREF_DEFAULT_RENDERING = "org.eclipse.cdt.debug.ui.memory.memorybrowser.defaultRendering";  //$NON-NLS-1$
 
@@ -177,7 +180,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		layout.spacing = 0;
 		fMainComposite.setLayout(layout);
 		
-		fGotoAddressSpaceControl = new Combo(fMainComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		// revisit; see bug 307023
+		//fGotoAddressSpaceControl = new Combo(fMainComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
 		
 		fGotoAddressBar = new GoToAddressBarWidget();
 		fGotoAddressBarControl = fGotoAddressBar.createControl(fMainComposite);
@@ -206,7 +210,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		
 		FormData data = new FormData();
 		data.top = new FormAttachment(0);
-		data.left = new FormAttachment(fGotoAddressSpaceControl);
+		// revisit; see bug 307023
+		//data.left = new FormAttachment(fGotoAddressSpaceControl);
+		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		fGotoAddressBarControl.setLayoutData(data);
 		
@@ -319,7 +325,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	{
 		fStackLayout.topControl = fUnsupportedLabel;
 		fGotoAddressBarControl.setVisible(false);
-		fGotoAddressSpaceControl.setVisible(false);
+		
+		// revisit; see bug 307023
+		//fGotoAddressSpaceControl.setVisible(false);
 	}
 	
 	private void performGo(boolean inNewTab)
@@ -372,17 +380,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			}
 		}
 	}
-	
+
 	private String getAddressSpacePrefix()
 	{
-		if(fGotoAddressSpaceControl.isVisible())
-		{
-			String prefixes[] = (String[]) fGotoAddressSpaceControl.getData(KEY_ADDRESS_SPACE_PREFIXES);
-			if(prefixes != null && prefixes.length > 0)
-			{
-				return prefixes[fGotoAddressSpaceControl.getSelectionIndex()];
-			}
-		}
+		// revisit; see bug 307023		
+//		if(fGotoAddressSpaceControl.isVisible())
+//		{
+//			String prefixes[] = (String[]) fGotoAddressSpaceControl.getData(KEY_ADDRESS_SPACE_PREFIXES);
+//			if(prefixes != null && prefixes.length > 0)
+//			{
+//				return prefixes[fGotoAddressSpaceControl.getSelectionIndex()];
+//			}
+//		}
 		return "";
 	}
 	
@@ -392,15 +401,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	private void updateLabel(CTabItem tab, IMemoryRendering rendering)
 	{
 		String label = null;
-		// would like to avoid using reflection
-		try {
-			Method m = rendering.getControl().getClass().getMethod("getViewportStartAddress", new Class[0]); //$NON-NLS-1$
-			if(m != null)
-        		label = "0x" + ((BigInteger) m.invoke(rendering.getControl(), new Object[0])).toString(16).toUpperCase(); //$NON-NLS-1$
-		} 
-		catch (Exception e) 
-		{
-		}
+
+		// This is a hack and needs to be revisited.
+//		
+//		// would like to avoid using reflection
+//		try {
+//			Method m = rendering.getControl().getClass().getMethod("getViewportStartAddress", new Class[0]); //$NON-NLS-1$
+//			if(m != null)
+//        		label = "0x" + ((BigInteger) m.invoke(rendering.getControl(), new Object[0])).toString(16).toUpperCase(); //$NON-NLS-1$
+//		} 
+//		catch (Exception e) 
+//		{
+//		}
 		
 		if(label == null)
 			label = rendering.getLabel();
@@ -413,22 +425,22 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 * @param retrieval memory block retrieval.
 	 * @return two arrays, the first containing memory space mnemonics, the second containing associated expression prefixes
 	 */
-	
-	private String[][] getAddressSpaces(IMemoryBlockRetrieval retrieval)
-	{
-		// would like to avoid using reflection, but necessary interface additions should live in platform to avoid introducing dependencies.
-		
-		String[][] addressSpaceTitles = new String[0][0];
-		try {
-			Method m = retrieval.getClass().getMethod("getAddressSpaces", new Class[0]); //$NON-NLS-1$
-			if(m != null)
-        		addressSpaceTitles = (String[][]) m.invoke(retrieval, new Object[0]);
-		} 
-		catch (Exception e) 
-		{
-		}
-		return addressSpaceTitles;
-	}
+	// revisit; see bug 307023
+//	private String[][] getAddressSpaces(IMemoryBlockRetrieval retrieval)
+//	{
+//		// would like to avoid using reflection, but necessary interface additions should live in platform to avoid introducing dependencies.
+//		
+//		String[][] addressSpaceTitles = new String[0][0];
+//		try {
+//			Method m = retrieval.getClass().getMethod("getAddressSpaces", new Class[0]); //$NON-NLS-1$
+//			if(m != null)
+//        		addressSpaceTitles = (String[][]) m.invoke(retrieval, new Object[0]);
+//		} 
+//		catch (Exception e) 
+//		{
+//		}
+//		return addressSpaceTitles;
+//	}
 	
 	private CTabFolder createTabFolder(Composite parent)
 	{
@@ -603,15 +615,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			if(retrieval != null && launch != null && !launch.isTerminated())
 			{
 				fGotoAddressBarControl.setVisible(true);
-				String addressSpaces[][] = getAddressSpaces(retrieval);
-				if(addressSpaces.length > 0)
-				{
-					fGotoAddressSpaceControl.setVisible(true);
-					fGotoAddressSpaceControl.setItems(addressSpaces[0]);
-					fGotoAddressSpaceControl.setData(KEY_ADDRESS_SPACE_PREFIXES, addressSpaces[1]);
-				}
-				else
-					fGotoAddressSpaceControl.setVisible(false);
+
+				// revisit; see bug 307023
+//				String addressSpaces[][] = getAddressSpaces(retrieval);
+//				if(addressSpaces.length > 0)
+//				{
+//					fGotoAddressSpaceControl.setVisible(true);
+//					fGotoAddressSpaceControl.setItems(addressSpaces[0]);
+//					fGotoAddressSpaceControl.setData(KEY_ADDRESS_SPACE_PREFIXES, addressSpaces[1]);
+//				}
+//				else
+//					fGotoAddressSpaceControl.setVisible(false);
+
 				CTabFolder tabFolder = getTabFolder(retrieval);
 				if(tabFolder != null)
 				{
@@ -643,7 +658,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			{
 				handleUnsupportedSelection();
 			}
-			fGotoAddressSpaceControl.pack(true);
+
+			// revisit; see bug 307023
+			//fGotoAddressSpaceControl.pack(true);
+			
 			fStackLayout.topControl.getParent().layout(true);
 		}
 	}

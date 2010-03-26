@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
@@ -222,6 +225,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							switch (opt.getBrowseType()) {
 								case IOption.BROWSE_DIR: {
 									stringField = new DirectoryFieldEditor(optId, nameStr, fieldEditorParent);
+									if(opt.getBrowseFilterPath() != null) {
+										try {
+											String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(opt.getBrowseFilterPath(),
+													null, null, IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
+											((DirectoryFieldEditor)stringField).setFilterPath(new File(filterPath));
+										} catch(BuildMacroException bmx) {
+											ManagedBuilderUIPlugin.log(bmx);
+										}
+									}
 								} break;
 		
 								case IOption.BROWSE_FILE: {
@@ -236,6 +248,15 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 											return true;
 										}
 									};
+									if(opt.getBrowseFilterPath() != null) {
+										try {
+											String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(opt.getBrowseFilterPath(),
+													null, null, IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
+											((FileFieldEditor)stringField).setFilterPath(new File(filterPath));
+										} catch(BuildMacroException bmx) {
+											ManagedBuilderUIPlugin.log(bmx);
+										}
+									}
 									((FileFieldEditor)stringField).setFileExtensions(opt.getBrowseFilterExtensions());
 								} break;
 		
@@ -336,8 +357,17 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String tooltipHoverStr = displayFixedTip ? null : tipStr;
 							fieldEditor = new FileListControlFieldEditor(optId, nameStr, 
 									tooltipHoverStr, contextId, fieldEditorParent, opt.getBrowseType());
+							if(opt.getBrowseFilterPath() != null) {
+								try {
+									String filterPath = ManagedBuildManager.getBuildMacroProvider().resolveValue(opt.getBrowseFilterPath(),
+											null, null, IBuildMacroProvider.CONTEXT_OPTION, opt.getOptionContextData(holder));
+									((FileListControlFieldEditor)fieldEditor).setFilterPath(filterPath);
+								} catch(BuildMacroException bmx) {
+									ManagedBuilderUIPlugin.log(bmx);
+								}
+							}
 							((FileListControlFieldEditor)fieldEditor).setFilterExtensions(opt.getBrowseFilterExtensions());
-							
+
 							if (pageHasToolTipBox) {
 								Label label = fieldEditor.getLabelControl(fieldEditorParent);
 								label.setData(new TipInfo(nameStr,tipStr));

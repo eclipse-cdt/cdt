@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
+
 /**
  * Basic Tool / Toolchain Option type.
  * 
@@ -75,6 +77,8 @@ public interface IOption extends IBuildObject {
 	
 	// Schema attribute names for option elements
 	public static final String BROWSE_TYPE = "browseType";	//$NON-NLS-1$
+	/** @since 7.0 */
+	public static final String BROWSE_FILTER_PATH = "browseFilterPath"; //$NON-NLS-1$
 	/** @since 7.0 */
 	public static final String BROWSE_FILTER_EXTENSIONS = "browseFilterExtensions"; //$NON-NLS-1$
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
@@ -140,6 +144,14 @@ public interface IOption extends IBuildObject {
 	public IOption getSuperClass();
 	
 	/**
+	 * @param holder - the actual option-holder for the context-data. This holder
+	 * is usually a subclass of this option's {@link #getOptionHolder() holder}.
+	 * @return the option context-data to be used for macro resolution.
+	 * @since 7.0
+	 */
+	public IOptionContextData getOptionContextData(IHoldsOptions holder);
+	
+	/**
 	 * @return If this option is defined as an enumeration, this function returns
 	 * the list of possible values for that enum.
 	 * 
@@ -164,6 +176,19 @@ public interface IOption extends IBuildObject {
 	 * @param type - browseType attribute
 	 */
 	public void setBrowseType(int type);
+	
+	/**
+	 * @return the setting of the browseFilterPath attribute. For options of {@link #BROWSE_FILE} and {@link #BROWSE_DIR} types.
+	 * @since 7.0
+	 */
+	public String getBrowseFilterPath();
+	
+	/**
+	 * Sets the browseFilterPath attribute. For options of {@link #BROWSE_FILE} and {@link #BROWSE_DIR} types.
+	 * @param path - default filter-path for the underlying browse dialog
+	 * @since 7.0
+	 */
+	public void setBrowseFilterPath(String path);
 	
 	/**
 	 * @return the setting of the browseFilterExtensions attribute. For options of {@link #BROWSE_FILE} type.

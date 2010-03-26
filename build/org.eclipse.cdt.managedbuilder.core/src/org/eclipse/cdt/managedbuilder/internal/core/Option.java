@@ -36,6 +36,8 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
+import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -54,6 +56,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	//  Managed Build model attributes
 	private String unusedChildren;
 	private Integer browseType;
+	private String browseFilterPath;
 	private String[] browseFilterExtensions;
 	private List<OptionStringValue> builtIns;
 	private IOptionCategory category;
@@ -200,6 +203,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (option.browseType != null) {
 			browseType = new Integer(option.browseType.intValue());
+		}
+		if (option.browseFilterPath != null) {
+			browseFilterPath = option.browseFilterPath;
 		}
 		if (option.browseFilterExtensions != null) {
 			browseFilterExtensions = option.browseFilterExtensions.clone();
@@ -360,6 +366,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			browseType = new Integer(BROWSE_DIR);
 		}
 
+		// Get the browseFilterPath attribute
+		this.browseFilterPath = element.getAttribute(BROWSE_FILTER_PATH);
+		
 		// Get the browseFilterExtensions attribute
 		String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
 		if (browseFilterExtensionsStr != null) {
@@ -597,6 +606,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			} else if (browseTypeStr.equals(DIR)) {
 				browseType = new Integer(BROWSE_DIR);
 			}
+		}
+
+		// Get the browseFilterPath attribute
+		if (element.getAttribute(BROWSE_FILTER_PATH) != null) {
+			this.browseFilterPath = element.getAttribute(BROWSE_FILTER_PATH);
 		}
 
 		// Get the browseFilterExtensions attribute
@@ -877,6 +891,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			element.setAttribute(BROWSE_TYPE, str);
 		}
 		
+		// browse filter path
+		if (browseFilterPath != null) {
+			element.setAttribute(BROWSE_FILTER_PATH, browseFilterPath);
+		}
+		
 		// browse filter extensions
 		if (browseFilterExtensions != null) {
 			StringBuilder sb = new StringBuilder();
@@ -930,6 +949,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		isDirty = false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getOptionContextData(org.eclipse.cdt.managedbuilder.core.IHoldsOptions)
+	 */
+	public IOptionContextData getOptionContextData(IHoldsOptions holder) {
+		return new OptionContextData(this, holder);
+	}
+
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
@@ -1011,6 +1037,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return browseType.intValue();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterPath()
+	 */
+	public String getBrowseFilterPath() {
+		if (browseFilterPath == null) {
+			if (superClass != null) {
+				return superClass.getBrowseFilterPath();
+			} else {
+				return null;
+			}
+		}
+		return browseFilterPath;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterExtensions()
 	 */
@@ -1737,6 +1777,19 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (browseType == null || !(type == browseType.intValue())) {
 			browseType = new Integer(type);
 			if(!isExtensionElement()){
+				isDirty = true;
+				rebuildState = true;
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterPath(java.lang.String)
+	 */
+	public void setBrowseFilterPath(String path) {
+		if (browseFilterPath == null || !(browseFilterPath.equals(path))) {
+			browseFilterPath = path;
+			if(!isExtensionElement()) {
 				isDirty = true;
 				rebuildState = true;
 			}

@@ -305,6 +305,8 @@ public class FileListControl {
 								currentName = getText().getText();
 								if(currentName != null && currentName.trim().length() != 0) {
 									dialog.setFilterPath(currentName);
+								} else if(FileListControl.this.filterPath != null) {
+									dialog.setFilterPath(FileListControl.this.filterPath);
 								}
 								dialog.setMessage(FILESYSTEM_DIR_DIALOG_MSG);
 								result = dialog.open();
@@ -318,6 +320,8 @@ public class FileListControl {
 								currentName = getText().getText();
 								if (currentName != null && currentName.trim().length() != 0) {
 									browseDialog.setFilterPath(currentName);
+								} else if (FileListControl.this.filterPath != null) {
+									browseDialog.setFilterPath(FileListControl.this.filterPath);
 								}
 								if (FileListControl.this.filterExtensions != null) {
 									browseDialog.setFilterExtensions(FileListControl.this.filterExtensions);
@@ -468,6 +472,7 @@ public class FileListControl {
 
 	// The type of browse support that is required
 	private int browseType;
+	private String filterPath;
 	private String[] filterExtensions;
 	/** The base path that should be used when adding new resources */
 	private IPath path = new Path(""); //$NON-NLS-1$
@@ -959,6 +964,16 @@ public class FileListControl {
 			promptForDelete = type == BROWSE_FILE || type == BROWSE_DIR;
 	}
 
+	/**
+	 * Sets the default filter-path for the underlying Browse dialog. Only applies when browseType is 'file' or 'dir'.
+	 * @param filterPath
+	 * 
+	 * @since 5.2
+	 */
+	public void setFilterPath(String filterPath) {
+		this.filterPath = filterPath;
+	}
+	
 	/**
 	 * Sets the filter-extensions for the underlying Browse dialog. Only applies when browseType is 'file'.
 	 * @param filterExtensions

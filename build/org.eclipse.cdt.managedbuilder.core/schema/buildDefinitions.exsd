@@ -1306,6 +1306,13 @@ Additional special types exist to flag options of special relevance to the build
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="browseFilterPath" type="string">
+            <annotation>
+               <documentation>
+                  An optional value that specifies the default filter-path for the underlying file or directory browse-dialog. Macros in the value will be expanded. This attribute only applies when user chooses to browse the file-system.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="browseFilterExtensions" type="string">
             <annotation>
                <documentation>

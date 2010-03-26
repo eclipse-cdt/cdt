@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.w3c.dom.Document;
@@ -294,6 +295,13 @@ public class OptionReference implements IOption {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getOptionContextData(org.eclipse.cdt.managedbuilder.core.IHoldsOptions)
+	 */
+	public IOptionContextData getOptionContextData(IHoldsOptions holder) {
+		return option.getOptionContextData(holder);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
 	 */
 	public String[] getApplicableValues() {
@@ -487,6 +495,13 @@ public class OptionReference implements IOption {
 	 */
 	public int getBrowseType() {
 		return option.getBrowseType();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterPath()
+	 */
+	public String getBrowseFilterPath() {
+		return option.getBrowseFilterPath();
 	}
 
 	/* (non-Javadoc)
@@ -803,6 +818,12 @@ public class OptionReference implements IOption {
 	public void setBrowseType(int type) {
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterPath(java.lang.String)
+	 */
+	public void setBrowseFilterPath(String path) {
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterExtensions(java.lang.String[])
 	 */

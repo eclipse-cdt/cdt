@@ -293,8 +293,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					ICProjectDescriptionManager.GET_WRITABLE;
 		CProjectDescription des = (CProjectDescription)getProjectDescription(to, flags);
 		// set configuration descriptions to "writable" state
-		for (ICConfigurationDescription cfgDes : des.getConfigurations()) {
-				des.updateChild((CConfigurationDescription)cfgDes, true);
+		if (des != null) {
+			for (ICConfigurationDescription cfgDes : des.getConfigurations()) {
+					des.updateChild((CConfigurationDescription)cfgDes, true);
+			}
 		}
 		return des;
 	}

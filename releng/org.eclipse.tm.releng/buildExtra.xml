@@ -153,31 +153,6 @@
 		<antcall target="revealServerStuff" />
 	</target>
 
-	<target name="copyOrbitBundlesToUpdateSite" depends="copyOrbit,copyOrbitSrc">
-	</target>
-
-	<target name="copyOrbit" if="copyOrbit">
-		<copy todir="${orbitDest}/plugins">
-			<fileset dir="${buildDirectory}/plugins">
-				<include name="org.apache.commons.net_*.jar"/>
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="copyOrbitSrc" if="copyOrbitSrc">
-		<copy todir="${orbitDest}/plugins">
-			<fileset dir="${buildDirectory}/plugins">
-				<include name="org.apache.commons.net.source_*.jar"/>
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="packageLicenseFiles">
-		<copy file="${builder}/template/epl-v10.html" todir="${tmpsite}/new/eclipse"/>
-		<copy file="${builder}/template/notice.html" todir="${tmpsite}/new/eclipse"/>
-	</target>
-
-
 	<!-- =====================================================================
 	     Specialized targets hide/reveal the server stuff so it doesn't get packaged
 	     in the client.          

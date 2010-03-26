@@ -107,6 +107,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				case IASTUnaryExpression.op_prefixDecr:
 				case IASTUnaryExpression.op_postFixIncr:
 				case IASTUnaryExpression.op_prefixIncr:
+				case IASTUnaryExpression.op_throw:
 					return false;
 				case IASTUnaryExpression.op_bracketedPrimary:
 					return hasNoEffect(unaryExpr.getOperand());

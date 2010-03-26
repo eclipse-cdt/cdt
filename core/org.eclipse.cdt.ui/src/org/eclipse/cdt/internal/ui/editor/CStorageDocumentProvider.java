@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,10 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.editors.text.StorageDocumentProvider;
 
 /**
@@ -27,6 +30,14 @@ public class CStorageDocumentProvider extends StorageDocumentProvider {
 	 */
 	public CStorageDocumentProvider() {
 		super();
+	}
+
+	@Override
+	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
+		IAnnotationModel m = super.createAnnotationModel(element);
+		if (m == null)
+			m = new AnnotationModel();
+		return m;
 	}
 
 	/*

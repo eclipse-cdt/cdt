@@ -312,6 +312,9 @@ public class ErrorParserManager extends OutputStream {
 		String lineTrimmed = line.trim();
 		lineCounter++;
 
+		ProblemMarkerInfo marker=null;
+		
+outer:
 		for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser parser : parsers) {
 				IErrorParser curr = parser;
@@ -344,21 +347,22 @@ public class ErrorParserManager extends OutputStream {
 					String id = "";  //$NON-NLS-1$
 					if (parser instanceof IErrorParserNamed)
 						id = ((IErrorParserNamed)parser).getId();
-					String message = "Errorparser " + id + " failed parsing line [" + lineToParse + "]";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					@SuppressWarnings("nls")
+					String message = "Errorparser " + id + " failed parsing line [" + lineToParse + "]";
 					CCorePlugin.log(message, e);
 				} finally {
 					if (fErrors.size() > 0) {
-						ProblemMarkerInfo m = fErrors.get(0);
-						outputLine(line, m);
+						if (marker==null)
+							marker = fErrors.get(0);
 						fErrors.clear();
 					}
 				}
 
 				if (consume)
-					return;
+					break outer;
 			}
 		}
-		outputLine(line, null);
+		outputLine(line, marker);
 	}
 	
 	/** 

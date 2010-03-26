@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputRequestor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
@@ -67,6 +66,35 @@ import org.eclipse.ui.IWorkbenchPartSite;
 @SuppressWarnings("restriction")
 public class ExpressionInformationControlCreator implements IInformationControlCreator {
 
+    /**
+     * A presentation context for the expression hover control.
+     * Implements equals and hashCode based on id comparison.
+     */
+    private static final class ExpressionHoverPresentationContext extends PresentationContext {
+
+        private ExpressionHoverPresentationContext(String id) {
+            super(id);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof ExpressionHoverPresentationContext) {
+                if (getId().equals(((PresentationContext) obj).getId())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return getId().hashCode();
+        }
+    }
+
 	class ExpressionInformationControl extends AbstractInformationControl implements IInformationControlExtension2, IViewerInputRequestor {
 
 		/**
@@ -102,7 +130,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		private ViewerInputService fInputService;
 
-		/**
+        /**
 		 * Creates the content for the root element of the tree viewer in the hover
 		 */
 		private class TreeRoot extends ElementContentProvider {
@@ -268,7 +296,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 			// update presentation context
 			AbstractDebugView view = getViewToEmulate();
-			IPresentationContext context = new PresentationContext(IDsfDebugUIConstants.ID_EXPRESSION_HOVER);
+			IPresentationContext context = new ExpressionHoverPresentationContext(IDsfDebugUIConstants.ID_EXPRESSION_HOVER);
 			if (view != null) {
 				// copy over properties
 				IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
@@ -283,9 +311,9 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			}
 
-			fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, context);
+			fViewer = new TreeModelViewer(fSashForm, SWT.MULTI | SWT.VIRTUAL | SWT.FULL_SELECTION, context);
 			fViewer.setAutoExpandLevel(1);
-
+			
 			if (view != null) {
 				// copy over filters
 				StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
@@ -322,21 +350,21 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			// add update listener to auto-select and display details of root expression
 			fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
 				public void viewerUpdatesComplete() {
+                    fViewer.getDisplay().timerExec(100, new Runnable() {
+                        public void run() {
+                            TreeSelection selection = (TreeSelection) fViewer.getSelection();
+                            if (selection.isEmpty()) {
+                                selection = new TreeSelection(fViewer.getTopElementPath());
+                            }
+                            fViewer.setSelection(selection);
+                            fDetailPane.display(selection);
+                        }});
 				}
 				public void viewerUpdatesBegin() {
 				}
 				public void updateStarted(IViewerUpdate update) {
 				}
 				public void updateComplete(IViewerUpdate update) {
-					if (update instanceof IChildrenUpdate) {
-						fViewer.removeViewerUpdateListener(this);
-						fViewer.getDisplay().timerExec(100, new Runnable() {
-							public void run() {
-								TreeSelection selection = new TreeSelection(fViewer.getTopElementPath());
-								fViewer.setSelection(selection);
-								fDetailPane.display(selection);
-							}});
-					}
 				}
 			});
 

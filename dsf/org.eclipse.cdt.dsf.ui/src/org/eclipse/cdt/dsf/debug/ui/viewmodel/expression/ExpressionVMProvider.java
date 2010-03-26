@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.expression;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -41,6 +42,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
+import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.RootDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
 import org.eclipse.cdt.dsf.ui.viewmodel.update.IVMUpdatePolicy;
@@ -143,8 +145,10 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
      */
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         // Workaround: find the first active proxy and use it.
-        if (!getActiveModelProxies().isEmpty()) {
-            return ((ExpressionVMProviderModelProxyStrategy)getActiveModelProxies().get(0)).getDeltaFlagsForExpression(expression, event);
+        final List<IVMModelProxy> activeModelProxies= getActiveModelProxies();
+        int count = activeModelProxies.size();
+        if (count > 0) {
+            return ((ExpressionVMProviderModelProxyStrategy)activeModelProxies.get(count - 1)).getDeltaFlagsForExpression(expression, event);
         }
         return 0;
     }
@@ -397,7 +401,12 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         		IExpressionDMContext dmc = (IExpressionDMContext) input;
         		SingleExpressionVMNode vmNode = (SingleExpressionVMNode) getChildVMNodes(getRootVMNode())[0];
         		vmNode.setExpression(dmc);
-				update.setInputElement(vmNode.createVMContext(dmc));
+				final IDMVMContext viewerInput= vmNode.createVMContext(dmc);
+
+				// provide access to viewer (needed by details pane)
+	            getPresentationContext().setProperty("__viewerInput", viewerInput); //$NON-NLS-1$
+	            
+                update.setInputElement(viewerInput);
         		update.done();
         		return;
         	}

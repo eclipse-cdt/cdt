@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,9 +24,9 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionsChangedEvent
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.InvalidExpressionVMContext;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
+import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -42,8 +42,10 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * A VM node for displaying a single expression in the expression hover.
+ * 
+ * @since 2.1
  */
-public class SingleExpressionVMNode extends AbstractDMVMNode implements IElementLabelProvider {
+public class SingleExpressionVMNode extends AbstractVMNode implements IElementLabelProvider {
 
 	private static class RootDMVMContext extends AbstractVMContext implements IDMVMContext {
 		private final IDMContext fDmc;
@@ -72,10 +74,14 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
 
 		@Override
 		public boolean equals(Object other) {
-            if (!(other instanceof RootDMVMContext)) return false;
-            RootDMVMContext otherVmc = (RootDMVMContext)other;
-            return getVMNode().equals(otherVmc.getVMNode()) &&
-                   fDmc.equals(otherVmc.fDmc);
+		    if (this == other) {
+		        return true;
+		    }
+            if (other instanceof RootDMVMContext) {
+                RootDMVMContext otherVmc = (RootDMVMContext)other;
+                return getVMNode().equals(otherVmc.getVMNode()) && fDmc.equals(otherVmc.fDmc);
+            }
+            return false;
 		}
 
 		@Override
@@ -111,7 +117,20 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
-
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof SimpleExpression) {
+                return fExpressionText.equals(((SimpleExpression) obj).getExpressionText());
+            }
+            return false;
+        }
+        @Override
+        public int hashCode() {
+            return fExpressionText.hashCode();
+        }
 	}
 
 	private static class SingleExpressionManager {
@@ -133,7 +152,7 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
     private final SingleExpressionManager fManager;
     
     public SingleExpressionVMNode(ExpressionVMProvider provider) {
-        super(provider, provider.getSession(), IExpressionDMContext.class);
+        super(provider);
         fManager = new SingleExpressionManager();
     }
 
@@ -146,7 +165,6 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
         return (ExpressionVMProvider)getVMProvider();
     }
 
-    @Override
 	public void update(IHasChildrenUpdate[] updates) {
         // Test availability of children based on whether there are any expressions 
         // in the manager.  We assume that the getExpressions() will just read 
@@ -158,7 +176,6 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
         }
     }
     
-    @Override
 	public void update(IChildrenCountUpdate[] updates) {
         for (IChildrenCountUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -170,7 +187,6 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
         }
     }
     
-    @Override
 	public void update(final IChildrenUpdate[] updates) {
         for (IChildrenUpdate update : updates) {
             doUpdateChildren(update);
@@ -294,7 +310,7 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
                 : -1; 
             getExpressionVMProvider().buildDeltaForExpression(
                 event.getExpressions()[i], expIndex, event, parentDelta, getTreePathFromDelta(parentDelta), 
-                new RequestMonitor(getExecutor(), multiRm));                
+                new RequestMonitor(getExecutor(), multiRm));
         }
         multiRm.setDoneCount(event.getExpressions().length);
     }
@@ -310,19 +326,14 @@ public class SingleExpressionVMNode extends AbstractDMVMNode implements IElement
         return new TreePath(elementList.toArray());
     }
 
-	@Override
 	protected void updateElementsInSessionThread(IChildrenUpdate update) {
         doUpdateChildren(update);
 	}
 
-    @Override
 	public IDMVMContext createVMContext(IDMContext dmc) {
         return new RootDMVMContext(getVMProvider().getRootVMNode(), dmc);
     }
 
-    /**
-     * @since 2.1
-     */
     public void setExpression(IExpressionDMContext dmc) {
 		String text = dmc.getExpression();
 		fManager.setExpression(new SimpleExpression(text));

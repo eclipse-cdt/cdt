@@ -54,7 +54,7 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
 		IASTNode node= astAmbiguousNode.resolveAmbiguity(this);
 		if (node instanceof IASTDeclarator) {
-			while(node != null) {
+			while (node != null) {
 				if (node instanceof IASTDeclaration) {
 					fRepopulate.add((IASTDeclaration) node);
 					break;

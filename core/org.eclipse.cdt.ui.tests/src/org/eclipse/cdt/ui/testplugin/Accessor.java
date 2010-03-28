@@ -34,6 +34,31 @@ public class Accessor extends Assert {
 	private Object fInstance;
 
 	/**
+	 * Creates an accessor for the given <code>instance</code> and its
+	 * <code>class</code>. Only non-inherited members that particular
+	 * <code>class</code> can be accessed.
+	 * 
+	 * @param instance the instance
+	 */
+	public Accessor(Object instance) {
+		assertNotNull(instance);
+		fInstance= instance;
+		fClass= instance.getClass();
+	}
+
+	/**
+	 * Creates an accessor for the given <code>class</code>.
+	 * Only static members of that particular <code>class</code> can be accessed.
+	 * 
+	 * @param clazz the class
+	 */
+	public Accessor(Class<?> clazz) {
+		assertNotNull(clazz);
+		fInstance= null;
+		fClass= clazz;
+	}
+
+	/**
 	 * Creates an accessor for the given <code>instance</code> and
 	 * <code>class</code>. Only non-inherited members that particular
 	 * <code>class</code> can be accessed.
@@ -145,6 +170,17 @@ public class Accessor extends Assert {
 		}
 	}
 
+	/**
+	 * Invokes the method with the given method name and no arguments.
+	 * <p>
+	 * 
+	 * @param methodName the method name
+	 * @return the method return value
+	 */
+	public Object invoke(String methodName) {
+		return invoke(methodName, null, new Object[0]);
+	}
+	
 	/**
 	 * Invokes the method with the given method name and arguments.
 	 * <p>

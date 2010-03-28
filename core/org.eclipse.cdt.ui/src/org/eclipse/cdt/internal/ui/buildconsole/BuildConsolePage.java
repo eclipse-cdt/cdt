@@ -163,9 +163,15 @@ public class BuildConsolePage extends Page
 
 	protected void setProject(IProject project) {
 		if (fProject != project && project.isAccessible()) {
+			fProject = project;
+
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
-			if (projDesc!=null) {
-				fProject = project;
+			if (projDesc == null) {
+				// don't support logging for non-C/C++ projects
+				fSaveConsoleAction.setChecked(false);
+				fSaveConsoleAction.setEnabled(false);
+			} else {
+				fSaveConsoleAction.setEnabled(true);
 				fSaveConsoleAction.setChecked(false);
 				ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
 				// Read save console log preferences

@@ -205,6 +205,7 @@ public class ResourceHelper {
 		if (!project.isOpen())
 			project.open(NULL_MONITOR);
 		
+		resourcesCreated.add(project);
 		return project;
 	}
 	

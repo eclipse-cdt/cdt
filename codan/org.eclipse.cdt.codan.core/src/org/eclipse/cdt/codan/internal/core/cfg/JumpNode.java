@@ -1,45 +1,31 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
-
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
 
 /**
- * Plain node has one prev one jump
- *
+ * Jump node is node that connects unusual control pass, such as goto, break and
+ * continue
+ * 
  */
-public class JumpNode extends AbstarctBasicBlock implements IJumpNode {
-	final private IBasicBlock entry;
-	private IBasicBlock jump;
+public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
+	private IConnectorNode jump;
 	private boolean backward;
 
-	public JumpNode(IBasicBlock entry, IBasicBlock jump, boolean backward) {
-		super();
-		this.entry = entry;
+	public JumpNode(IBasicBlock entry, IConnectorNode jump, boolean backward) {
+		super(entry);
 		this.jump = jump;
 		this.backward = backward;
-	}
-
-	public Iterator<IBasicBlock> getIncomingIterator() {
-		return new OneElementIterator<IBasicBlock>(entry);
 	}
 
 	public Iterator<IBasicBlock> getOutgoingIterator() {
 		return new OneElementIterator<IBasicBlock>(jump);
 	}
 
-	public int getIncomingSize() {
-		return 1;
-	}
-
 	public int getOutgoingSize() {
 		return 1;
-	}
-
-	public IBasicBlock getIncoming() {
-		return entry;
 	}
 
 	public IBasicBlock getOutgoing() {
@@ -50,9 +36,10 @@ public class JumpNode extends AbstarctBasicBlock implements IJumpNode {
 		return backward;
 	}
 
-	public void setJump(IBasicBlock jump) {
-		if (!(jump instanceof IConnectorNode))
-			throw new IllegalArgumentException("Jump target must be a connection node"); //$NON-NLS-1$
+	public void setJump(IConnectorNode jump) {
+		if (this.jump != null)
+			throw new IllegalArgumentException(
+					"Cannot modify exiting connector"); //$NON-NLS-1$
 		this.jump = jump;
 	}
 
@@ -60,4 +47,8 @@ public class JumpNode extends AbstarctBasicBlock implements IJumpNode {
 		this.backward = backward;
 	}
 
+	@Override
+	public void addOutgoing(IBasicBlock node) {
+		throw new UnsupportedOperationException();
+	}
 }

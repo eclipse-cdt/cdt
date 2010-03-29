@@ -3,17 +3,18 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
 
 /**
- * Plain node has one incoming arc and one outgoing arc
+ * Abstract impl of basic block with single outgoing arc
  * 
  */
-public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode {
-	IBasicBlock next;
+public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock
+		implements ISingleOutgoing {
+	private IBasicBlock next;
 
-	public PlainNode(IBasicBlock prev, IBasicBlock next) {
-		super(prev);
+	public AbstractSingleOutgoingNode(IBasicBlock next) {
+		super();
 		this.next = next;
 	}
 

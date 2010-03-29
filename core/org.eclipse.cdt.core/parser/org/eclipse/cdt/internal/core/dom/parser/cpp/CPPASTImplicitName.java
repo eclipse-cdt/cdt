@@ -18,13 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 
 public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
-
-	private boolean alternate = false;
-	private boolean isOperator = false;
+	private boolean alternate;
+	private boolean isOperator;
 
 	public CPPASTImplicitName(char[] name, IASTNode parent) {
 		super(name);
@@ -52,7 +52,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 
 	@Override
 	public boolean accept(ASTVisitor action) {
-		if ((!alternate && action.shouldVisitImplicitNames) || 
+		if ((!alternate && action.shouldVisitImplicitNames) ||
 				(alternate && action.shouldVisitImplicitNameAlternates)) {
             switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -80,11 +80,11 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	@Override
 	public boolean isReference() {
 		return true;
-	} 
+	}
 
 	/**
 	 * Utility method for setting offsets using operator syntax.
-	 * 
+	 *
 	 * @param trailing true for trailing syntax, false for leading syntax
 	 */
 	public void computeOperatorOffsets(IASTNode relativeNode, boolean trailing) {
@@ -95,14 +95,14 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 		try {
 			first = trailing ? relativeNode.getTrailingSyntax() : relativeNode.getLeadingSyntax();
 
-			int offset = ((ASTNode)relativeNode).getOffset() + first.getOffset();
+			int offset = ((ASTNode) relativeNode).getOffset() + first.getOffset();
 			if (trailing)
-				offset += ((ASTNode)relativeNode).getLength();
+				offset += ((ASTNode) relativeNode).getLength();
 
 			OverloadableOperator oo = OverloadableOperator.valueOf(first);
 			if ((first.getNext() == null && oo != null) ||
-			   Arrays.equals(first.getCharImage(), "delete".toCharArray()) || //$NON-NLS-1$
-			   Arrays.equals(first.getCharImage(), "new".toCharArray())) {    //$NON-NLS-1$
+					Arrays.equals(first.getCharImage(), Keywords.cDELETE) ||
+					Arrays.equals(first.getCharImage(), Keywords.cNEW)) {
 				int length = first.getLength();
 				setOffsetAndLength(offset, length);
 			} else {

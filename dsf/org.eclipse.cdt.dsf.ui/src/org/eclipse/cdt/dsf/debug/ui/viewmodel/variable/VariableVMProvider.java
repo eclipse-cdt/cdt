@@ -101,16 +101,32 @@ public class VariableVMProvider extends AbstractDMVMProvider
         addChildNodes(rootNode, new IVMNode[] { subExpressioNode });
         
         // Wire up the casting support if the IExpressions2 service is available.
-        DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
-        IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
-        if (expressions2 != null) {
-        	subExpressioNode.setCastToTypeSupport(new DsfCastToTypeSupport(getSession(), this, varAccess));
-        }
+        hookUpCastingSupport(varAccess, subExpressioNode);
 
         // Configure the sub-expression node to be a child of itself.  This way the content
         // provider will recursively drill-down the variable hierarchy.
         addChildNodes(subExpressioNode, new IVMNode[] { subExpressioNode });
     }
+
+	private void hookUpCastingSupport(final SyncVariableDataAccess syncvarDataAccess,
+			final VariableVMNode variableNode) {
+		 try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
+                    IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+                    if (expressions2 != null) {
+                    	variableNode.setCastToTypeSupport(new DsfCastToTypeSupport(
+                    			getSession(), VariableVMProvider.this, syncvarDataAccess));
+                    }
+                    tracker.dispose();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session disposed, ignore.
+        }
+	}
+    
 
     @Override
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {

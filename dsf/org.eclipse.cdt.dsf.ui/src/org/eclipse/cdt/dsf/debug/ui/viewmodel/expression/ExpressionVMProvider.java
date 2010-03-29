@@ -248,12 +248,10 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         VariableVMNode variableNode =  new VariableVMNode(this, getSession(), syncvarDataAccess);
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
-        /* Wire up the casting support if the IExpressions2 service is available. */
-        DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
-        IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
-        if (expressions2 != null) {
-        	variableNode.setCastToTypeSupport(new DsfCastToTypeSupport(getSession(), this, syncvarDataAccess));
-        }
+        /*
+         * Hook up IExpressions2 if it exists.
+         */
+        hookUpCastingSupport(syncvarDataAccess, variableNode);
 
         /*
          *  Tell the expression node which sub-nodes it will directly support.  It is very important
@@ -273,6 +271,25 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
          */
         setRootNode(rootNode);
     }
+
+	private void hookUpCastingSupport(final SyncVariableDataAccess syncvarDataAccess,
+			final VariableVMNode variableNode) {
+		 try {
+            getSession().getExecutor().execute(new DsfRunnable() {
+                public void run() {
+                    DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
+                    IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+                    if (expressions2 != null) {
+                    	variableNode.setCastToTypeSupport(new DsfCastToTypeSupport(
+                    			getSession(), ExpressionVMProvider.this, syncvarDataAccess));
+                    }
+                    tracker.dispose();
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Session disposed, ignore.
+        }
+	}
     
     /**
      * Finds the expression node which can parse the given expression.  This 

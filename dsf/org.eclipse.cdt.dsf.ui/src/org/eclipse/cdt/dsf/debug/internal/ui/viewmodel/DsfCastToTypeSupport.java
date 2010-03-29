@@ -13,10 +13,13 @@ package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.debug.core.model.ICastToArray;
 import org.eclipse.cdt.debug.core.model.ICastToType;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
@@ -57,8 +60,51 @@ public class DsfCastToTypeSupport  {
 			this.memento = createCastedExpressionMemento(exprDMC);
     	}
 		
+	    public class TestExpressions2Query extends Query<Boolean> {
+
+	        public TestExpressions2Query() {
+	            super();
+	        }
+
+	        @Override
+	        protected void execute(final DataRequestMonitor<Boolean> rm) {
+	            /*
+	             * We're in another dispatch, so we must guard against executor
+	             * shutdown again.
+	             */
+	            final DsfSession session = DsfSession.getSession(
+	            		dmvmProvider.getSession().getId());
+	            if (session == null) {
+	                cancel(false);
+	                rm.done();
+	                return;
+	            }
+
+                DsfServicesTracker tracker = new DsfServicesTracker(
+                		DsfUIPlugin.getBundleContext(), dmvmProvider.getSession().getId());
+                IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
+                rm.setData(expressions2 != null);
+                rm.done();
+                tracker.dispose();
+	        }
+	    }
+
 		private boolean isValid() {
-			return (serviceTracker.getService(IExpressions2.class) != null && exprDMC != null); 
+	        TestExpressions2Query query = new TestExpressions2Query();
+	        dmvmProvider.getSession().getExecutor().execute(query);
+
+			try {
+				/*
+				 * Return value is irrelevant, any error would come through with an
+				 * exception.
+				 */
+				return query.get();
+			} catch (InterruptedException e) {
+				assert false;
+				return false;
+			} catch (ExecutionException e) {
+				return false;
+			}
 		}
 		
 		private void throwIfNotValid() throws DebugException {

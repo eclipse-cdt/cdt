@@ -28,10 +28,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * This class represents a template function used for deducing 'auto' types ( C++0x: 7.1.6.4).
+ * This class represents a template function used for deducing 'auto' types (C++0x: 7.1.6.4).
  */
 class AutoTypeResolver implements ICPPFunctionTemplate {
-	// Template parameter of the function. This parameter is used in place of 'auto' keyword. 
+	// Template parameter of the function. This parameter is used in place of 'auto' keyword.
 	public static final ICPPTemplateTypeParameter AUTO_TYPE =
 			new CPPTemplateTypeParameter(new CPPASTName(), false);
 	private static final ICPPTemplateTypeParameter[] TEMPLATE_PARAMETERS =
@@ -68,7 +68,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	}
 
 	public ICPPParameter[] getParameters() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public int getRequiredArgumentCount() throws DOMException {
@@ -80,7 +80,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	}
 
 	public IScope getFunctionScope() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public boolean isStatic() throws DOMException {
@@ -104,39 +104,39 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 	}
 
 	public String getName() {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public char[] getNameCharArray() {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public ILinkage getLinkage() throws CoreException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public IBinding getOwner() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public IScope getScope() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public String[] getQualifiedName() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public char[][] getQualifiedNameCharArray() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
 	public boolean isGloballyQualified() throws DOMException {
-		throw new AssertionError(UNEXPECTED_CALL);
+		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 }

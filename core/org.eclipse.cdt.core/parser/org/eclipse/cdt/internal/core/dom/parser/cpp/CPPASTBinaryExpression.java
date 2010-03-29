@@ -43,7 +43,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     private IASTImplicitName[] implicitNames = null;
     
-    
     public CPPASTBinaryExpression() {
 	}
 
@@ -108,11 +107,11 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     }
 
 	public IASTImplicitName[] getImplicitNames() {
-		if(implicitNames == null) {
+		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if(overload == null)
+			if (overload == null)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-				
+
 			CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
 			operatorName.setBinding(overload);
 			operatorName.setOperator(true);
@@ -123,7 +122,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return implicitNames;
 	}
 
-	
     @Override
 	public boolean accept(ASTVisitor action) {
     	if (operand1 instanceof IASTBinaryExpression || operand2 instanceof IASTBinaryExpression) {
@@ -132,8 +130,8 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	
 		if (action.shouldVisitExpressions) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
 	            default : break;
 	        }
 		}
@@ -158,7 +156,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return true;
     }
 
-	private static class N {
+    private static class N {
 		final IASTBinaryExpression fExpression;
 		int fState;
 		N fNext;
@@ -167,10 +165,10 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			fExpression = expr;
 		}
 	}
-	
+
 	public static boolean acceptWithoutRecursion(IASTBinaryExpression bexpr, ASTVisitor action) {
 		N stack= new N(bexpr);
-		while(stack != null) {
+		while (stack != null) {
 			IASTBinaryExpression expr= stack.fExpression;
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
@@ -196,7 +194,8 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			if (stack.fState == 1) {
 				if (action.shouldVisitImplicitNames) {
 					for (IASTImplicitName name : ((IASTImplicitNameOwner) expr).getImplicitNames()) {
-		        		if(!name.accept(action)) return false;
+		        		if (!name.accept(action))
+		        			return false;
 		        	}
 		        }
 				stack.fState= 2;
@@ -300,7 +299,6 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     		return type;
     	}
 
-
         switch (op) {
         case IASTBinaryExpression.op_lessEqual:
         case IASTBinaryExpression.op_lessThan:
@@ -311,11 +309,13 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         case IASTBinaryExpression.op_equals:
         case IASTBinaryExpression.op_notequals:
         	return new CPPBasicType(Kind.eBoolean, 0, this);
+
         case IASTBinaryExpression.op_plus:
         	if (type2 instanceof IPointerType) {
         		return type2;
         	}
         	break;
+
         case IASTBinaryExpression.op_minus:
         	if (type2 instanceof IPointerType) {
         		if (type1 instanceof IPointerType) {
@@ -324,6 +324,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         		return type1;
         	}
         	break;
+
         case ICPPASTBinaryExpression.op_pmarrow:
         case ICPPASTBinaryExpression.op_pmdot:
         	if (type2 instanceof ICPPPointerToMemberType) {
@@ -333,5 +334,4 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         }
 		return type1;
 	}
-
 }

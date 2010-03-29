@@ -93,14 +93,13 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     public boolean isPostfixOperator() {
     	return op == op_postFixDecr || op == op_postFixIncr;
     }
-	
-	
+
     public IASTImplicitName[] getImplicitNames() {
-		if(implicitNames == null) {
+		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if(overload == null)
+			if (overload == null)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			
+
 			CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
 			operatorName.setOperator(true);
 			operatorName.setBinding(overload);
@@ -110,7 +109,6 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		
 		return implicitNames; 
 	}
-	
 	
     @Override
 	public boolean accept(ASTVisitor action) {
@@ -124,17 +122,19 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
       
         final boolean isPostfix = isPostfixOperator();
         
-        if(!isPostfix && action.shouldVisitImplicitNames) { 
-        	for(IASTImplicitName name : getImplicitNames()) {
-        		if(!name.accept(action)) return false;
+        if (!isPostfix && action.shouldVisitImplicitNames) { 
+        	for (IASTImplicitName name : getImplicitNames()) {
+        		if (!name.accept(action))
+        			return false;
         	}
         }
         
-        if (operand != null && !operand.accept(action)) return false;
+        if (operand != null && !operand.accept(action))
+        	return false;
         
-        if(isPostfix && action.shouldVisitImplicitNames) { 
-        	for(IASTImplicitName name : getImplicitNames()) {
-        		if(!name.accept(action)) return false;
+        if (isPostfix && action.shouldVisitImplicitNames) { 
+        	for (IASTImplicitName name : getImplicitNames()) {
+        		if (!name.accept(action)) return false;
         	}
         }
         
@@ -142,7 +142,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default : break;
+	            default: break;
 	        }
 		}
         return true;
@@ -155,21 +155,18 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
             operand  = (IASTExpression) other;
         }
     }
-    
-    
+
     public ICPPFunction getOverload() {
     	if (overload != UNINITIALIZED_FUNCTION)
     		return overload;
     	
     	overload = CPPSemantics.findOverloadedOperator(this);
-    	if(overload != null && op == op_amper && computePointerToMemberType() instanceof CPPPointerToMemberType)
+    	if (overload != null && op == op_amper && computePointerToMemberType() instanceof CPPPointerToMemberType)
     		overload = null;
     	
     	return overload;
     }
-    
-    
-    
+
     private IType computePointerToMemberType() {
     	IASTNode child= operand;
 		boolean inParenthesis= false;
@@ -200,7 +197,6 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return null;
     }
     
-    
     public IType getExpressionType() {
     	final int op= getOperator();
 		switch (op) {
@@ -215,19 +211,18 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
 		if (op == op_amper) {  // check for pointer to member
 			IType ptm = computePointerToMemberType();
-			if(ptm != null)
+			if (ptm != null)
 				return ptm;
 
 			IType operator = findOperatorReturnType();
-			if(operator != null)
+			if (operator != null)
 				return operator;
 
 			IType type= operand.getExpressionType();
 			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			return new CPPPointerType(type);
 		} 
-		
-		
+
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
 			type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
@@ -235,7 +230,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	    		return type;
 	    	}
 		    IType operator = findOperatorReturnType();
-			if(operator != null) {
+			if (operator != null) {
 				return operator;
 			} else if (type instanceof IPointerType || type instanceof IArrayType) {
 				return ((ITypeContainer) type).getType();
@@ -244,12 +239,11 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			}
 			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
 		} 
-		
 
 		IType origType= operand.getExpressionType();
 		IType type = SemanticUtil.getUltimateTypeUptoPointers(origType);
 		IType operator = findOperatorReturnType();
-		if(operator != null) {
+		if (operator != null) {
 			return operator;
 		}
 		
@@ -292,10 +286,10 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return false;
 		}
 	}
-    
+
     private IType findOperatorReturnType() {
     	ICPPFunction operatorFunction = getOverload();
-    	if(operatorFunction != null) {
+    	if (operatorFunction != null) {
     		try {
 				return operatorFunction.getType().getReturnType();
 			} catch (DOMException e) {
@@ -304,6 +298,4 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     	}
     	return null;
     }
-    
-    
 }

@@ -34,8 +34,8 @@ import org.eclipse.core.runtime.IPath;
 /**
  * This class is used by <code>CModelManager</code> to convert
  * <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
- * It also does some processing on the <code>CElement</code>s involved
- * (e.g. closing them or updating classpaths).
+ * It also does some processing on the <code>CElement</code>s involved.
+ * (e.g. closing them or updating binary containers).
  */
 final class DeltaProcessor {
 	
@@ -46,7 +46,7 @@ final class DeltaProcessor {
 	
 	static final ICElementDelta[] NO_DELTA = new ICElementDelta[0];
 
-	// Hold on the element bein renamed.
+	// Hold on the element being renamed.
 	private ICElement movedFromElement = null;
 
 	/**
@@ -226,8 +226,8 @@ final class DeltaProcessor {
 	 * Processing for an element that has been added:<ul>
 	 * <li>If the element is a project, do nothing, and do not process
 	 * children, as when a project is created it does not yet have any
-	 * natures - specifically a java nature.
-	 * <li>If the elemet is not a project, process it as added (see
+	 * natures - specifically a C nature.
+	 * <li>If the element is not a project, process it as added (see
 	 * <code>basicElementAdded</code>.
 	 * </ul>
 	 */
@@ -256,8 +256,7 @@ final class DeltaProcessor {
 	 *		as a the element being closed (CHANGED + F_CLOSED).
 	 * </ul>
 	 * <p>In both cases, the children of the element are not processed. When
-	 * a resource is closed, the platform reports all children as removed. This
-	 * would effectively delete the classpath if we processed children.
+	 * a resource is closed, the platform reports all children as removed.
 	 */
 	protected void elementClosed(ICElement element, IResourceDelta delta) throws CModelException {
 
@@ -333,7 +332,7 @@ final class DeltaProcessor {
 	protected void elementChanged(ICElement element, IResourceDelta delta) {
 		// For Binary/Archive We can not call close() to do the work
 		// closing will remove the element from the {Binary,Archive}Container
-		// We nee to clear the cache explicitely
+		// We need to clear the cache explicitly
 		if (element instanceof IBinary || element instanceof IArchive) {
 			closeBinary(element);
 		} else if (element instanceof Openable) {
@@ -407,7 +406,7 @@ final class DeltaProcessor {
 
 	/**
 	 * Returns true if the given resource is contained in an open project
-	 * with a java nature, otherwise false.
+	 * with a C nature, otherwise false.
 	 */
 	protected boolean hasCNature(IResource resource) {
 		// ensure the project has a C nature (if open)
@@ -448,8 +447,8 @@ final class DeltaProcessor {
 	/**
 	 * Converts an <code>IResourceDelta</code> and its children into
 	 * the corresponding <code>ICElementDelta</code>s.
-	 * Return whether the delta corresponds to a resource on the classpath.
-	 * If it is not a resource on the classpath, it will be added as a non-java
+	 * Return whether the delta corresponds to a C element.
+	 * If it is not a C element, it will be added as a non-C
 	 * resource by the sender of this method.
 	 */
 	protected void traverseDelta(ICElement parent, IResourceDelta delta) {
@@ -564,7 +563,7 @@ final class DeltaProcessor {
 
 	/*
 	 * Update the current delta (ie. add/remove/change the given element) and update the
-	 * correponding index.
+	 * corresponding index.
 	 * Returns whether the children of the given delta must be processed.
 	 * @throws a CModelException if the delta doesn't correspond to a c element of the given type.
 	 */
@@ -576,11 +575,29 @@ final class DeltaProcessor {
 			case IResourceDelta.ADDED :
 				if (element != null) {
 					elementAdded(element, delta);
-					// no need to traverse further
 					if (element instanceof ICContainer) {
-						return ((ICContainer) element).isOpen();
+						ICContainer container = (ICContainer) element;
+						ICProject cProject = container.getCProject();
+						if (cProject.isOnOutputEntry(resource)) {
+							// if new folder is on output entry there might be new binaries to add
+							IBinaryContainer bin = cProject.getBinaryContainer();
+							IArchiveContainer archive = cProject.getArchiveContainer();
+							// traverse further if a binary container is open
+							return bin.isOpen() || archive.isOpen();
+						}
+						return container.isOpen();
 					} else if (element instanceof ICProject) {
 						return ((ICProject) element).isOpen();
+					} else if (element instanceof IBinary) {
+						if (((IBinary) element).showInBinaryContainer()) {
+							ICProject cProject = element.getCProject();
+							IBinaryContainer bin = cProject.getBinaryContainer();
+							fCurrentDelta.changed(bin, ICElementDelta.F_CONTENT);
+						}
+					} else if (element instanceof IArchive) {
+						ICProject cProject = element.getCProject();
+						IArchiveContainer archive = cProject.getArchiveContainer();
+						fCurrentDelta.changed(archive, ICElementDelta.F_CONTENT);
 					}
 				}
 				return false;

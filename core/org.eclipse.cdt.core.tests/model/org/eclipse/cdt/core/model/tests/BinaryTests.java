@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,14 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
@@ -33,7 +34,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -73,6 +73,7 @@ public class BinaryTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
+    @Override
     protected void setUp()  throws Exception  {
         /***
          * The tests assume that they have a working workspace
@@ -95,17 +96,14 @@ public class BinaryTests extends TestCase {
             
         testProject=CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
         
-        // since our test require that we can read the debug info from the exe whne must set the GNU elf 
+        // since our test require that we can read the debug info from the exe we must set the GNU elf 
         // binary parser since the default (generic elf binary parser) does not do this.
-		ICDescriptorOperation op = new ICDescriptorOperation() {
-			
-			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.GNU_ELF");
-			}
-		};
-		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(testProject.getProject(), op, null);
-
+        ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
+        ICConfigurationDescription defaultConfig = projDesc.getDefaultSettingConfiguration();
+        defaultConfig.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+        defaultConfig.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.GNU_ELF");
+        CoreModel.getDefault().setProjectDescription(testProject.getProject(), projDesc);
+        
         if (testProject==null)
             fail("Unable to create project");
 
@@ -180,6 +178,7 @@ public class BinaryTests extends TestCase {
      *
      * Called after every test case method.
      */
+    @Override
     protected void tearDown() throws CoreException, InterruptedException {
     	System.gc();
     	System.runFinalization();

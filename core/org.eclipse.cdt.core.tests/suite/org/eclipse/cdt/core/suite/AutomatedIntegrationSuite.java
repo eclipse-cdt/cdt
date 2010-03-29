@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
 import org.eclipse.cdt.core.internal.tests.StringBuilderTest;
 import org.eclipse.cdt.core.language.AllLanguageTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
-import org.eclipse.cdt.core.model.tests.BinaryTests;
 import org.eclipse.cdt.core.model.tests.ElementDeltaTests;
 import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
@@ -63,7 +62,6 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(ErrorParserTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());
-		suite.addTest(BinaryTests.suite());
 		suite.addTest(ElementDeltaTests.suite());
 		suite.addTest(WorkingCopyTests.suite());
         suite.addTest(PositionTrackerTests.suite());

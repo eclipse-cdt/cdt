@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.model.tests;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -23,9 +24,13 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
@@ -43,9 +48,16 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.osgi.framework.Bundle;
 
 /**
  * This file contains a set of generic tests for the core C model. Nothing 
@@ -474,4 +486,89 @@ public class CModelTests extends TestCase {
 		} 
 		catch (CoreException e) {}
     }
+
+    // bug 131165
+    public void testPickUpBinariesInNewFolder_131165() throws Exception {
+        ICProject testProject;
+        testProject = CProjectHelper.createCProject("bug131165", "none", IPDOMManager.ID_NO_INDEXER);
+        if (testProject == null) {
+            fail("Unable to create project");
+        }
+        CProjectHelper.addDefaultBinaryParser(testProject.getProject());
+        
+        final IBinaryContainer bin = testProject.getBinaryContainer();
+        assertEquals(0, bin.getBinaries().length);
+
+        final boolean binContainerChanged[] = { false };
+        
+        IElementChangedListener elementChangedListener = new IElementChangedListener() {
+            public void elementChanged(ElementChangedEvent event) {
+                ICElementDelta delta = event.getDelta();
+                processDelta(delta);
+            }
+            private boolean processDelta(ICElementDelta delta) {
+                if (delta.getElement().equals(bin)) {
+                    synchronized (binContainerChanged) {
+                        binContainerChanged[0] = true;
+                        binContainerChanged.notify();
+                    }
+                    return true;
+                }
+                ICElementDelta[] childDeltas = delta.getChangedChildren();
+                for (ICElementDelta childDelta : childDeltas) {
+                    if (processDelta(childDelta)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+        CoreModel.getDefault().addElementChangedListener(elementChangedListener );
+
+        Thread waiter = new Thread() {
+            @Override
+            public void run() {
+                synchronized (binContainerChanged) {
+                    try {
+                        binContainerChanged.wait(1000);
+                    } catch (InterruptedException exc) {
+                    }
+                }
+            }
+        };
+        waiter.start();
+        Thread.sleep(50);
+        
+        // import with folder structure
+        importSourcesFromPlugin(testProject, CTestPlugin.getDefault().getBundle(), "resources/exe/x86");
+
+        // wait for delta notification
+        waiter.join(1000);
+        
+        assertTrue(binContainerChanged[0]);
+        assertEquals(2, bin.getBinaries().length);
+
+        try {
+            testProject.getProject().delete(true,true,monitor);
+        } 
+        catch (CoreException e) {}
+    }
+    
+    // same as CprojectHelper.importSourcesFromPlugin(), but preserving folder structure
+    private static void importSourcesFromPlugin(ICProject project, Bundle bundle, String sources) throws CoreException {
+        try {
+            String baseDir= FileLocator.toFileURL(FileLocator.find(bundle, new Path(sources), null)).getFile();
+            ImportOperation importOp = new ImportOperation(project.getProject().getFullPath(),
+                    new File(baseDir), FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+                        public String queryOverwrite(String file) {
+                            return ALL;
+                        }});
+            importOp.setCreateContainerStructure(true);
+            importOp.run(new NullProgressMonitor());
+        }
+        catch (Exception e) {
+            throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
+        }
+    }
+
 }

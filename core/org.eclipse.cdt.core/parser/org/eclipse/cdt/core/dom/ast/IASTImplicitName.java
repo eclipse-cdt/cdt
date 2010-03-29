@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * An implicit name is used to resolve uses of implicit bindings, such as overloaded operators.
  * 
@@ -24,8 +23,7 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTImplicitName extends IASTName {
 
 	public static final IASTImplicitName[] EMPTY_NAME_ARRAY = {}; 
-	
-	
+
 	/**
 	 * {@inheritDoc}
 	 * Redeclared with strengthened postcondition.
@@ -34,8 +32,7 @@ public interface IASTImplicitName extends IASTName {
      * Implicit names are not generated unless they resolve to something.
 	 */
 	public IBinding resolveBinding();
-	
-	
+
 	/**
 	 * Returns true if this node is an alternate.
 	 * 
@@ -46,15 +43,13 @@ public interface IASTImplicitName extends IASTName {
 	 * @see ASTVisitor#shouldVisitImplicitNameAlternates
 	 */
 	public boolean isAlternate();
-	
-	
+
 	/**
 	 * Convenience method that returns true if this 
 	 * name represents an overloaded operator.
 	 */
 	public boolean isOperator();
-	
-	
+
 	/**
 	 * This method is not supported on implicit names.
 	 * 

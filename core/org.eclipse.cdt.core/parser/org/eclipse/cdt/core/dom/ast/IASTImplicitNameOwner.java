@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * An implicit name generated on demand.
  * @since 5.1
@@ -20,9 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTImplicitNameOwner extends IASTNode {
 
 	public static final ASTNodeProperty IMPLICIT_NAME = 
-		new ASTNodeProperty("ICPPASTImplicitNameOwner.IMPLICIT_NAME"); //$NON-NLS-1$
-	
-	
+			new ASTNodeProperty("ICPPASTImplicitNameOwner.IMPLICIT_NAME"); //$NON-NLS-1$
+
 	public IASTImplicitName[] getImplicitNames();
-	
 }

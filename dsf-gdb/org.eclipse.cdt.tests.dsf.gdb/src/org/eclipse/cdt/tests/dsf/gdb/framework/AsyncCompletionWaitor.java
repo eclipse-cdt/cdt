@@ -37,11 +37,15 @@ public class AsyncCompletionWaitor {
 	public AsyncCompletionWaitor() {
 	    waitReset();
 	}
-	
-	/*
-	 *  A timeout of WAIT_FOREVER indicates we wait until the operation is
-	 *  completed by a call to waitFinished. Or if we are interrupted
-	 *  with an exception.
+
+	/**
+	 * A timeout of WAIT_FOREVER indicates we wait until the operation is
+	 * completed by a call to waitFinished. Or if we are interrupted with an
+	 * exception.
+	 * 
+	 * @param timeout the maximum time to wait in milliseconds
+	 * 
+	 * @throws InterruptedException
 	 */
 	public synchronized void waitUntilDone(int timeout) throws InterruptedException {
 		if (fWaitFinished) return;
@@ -50,7 +54,7 @@ public class AsyncCompletionWaitor {
 	}
 		
 
-	/*
+	/**
 	 *  Indicates that we are done with the operation and the code
 	 *  waiting ( waitUntilDone ) will be allowed to continue.
 	 */

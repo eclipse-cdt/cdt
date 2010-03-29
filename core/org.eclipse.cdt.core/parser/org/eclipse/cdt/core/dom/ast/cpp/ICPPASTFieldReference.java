@@ -40,5 +40,4 @@ public interface ICPPASTFieldReference extends IASTFieldReference, IASTImplicitN
 	 * @since 5.1
 	 */
 	public ICPPASTFieldReference copy();
-
 }

@@ -50,10 +50,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
     private int op;
     private IASTExpression operand;
-    
+
     private ICPPFunction overload = UNINITIALIZED_FUNCTION;
     private IASTImplicitName[] implicitNames = null;
-    
+
     public CPPASTUnaryExpression() {
 	}
 
@@ -89,25 +89,29 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			expression.setPropertyInParent(OPERAND);
 		}
     }
-    
+
     public boolean isPostfixOperator() {
     	return op == op_postFixDecr || op == op_postFixIncr;
     }
 
+    /**
+     * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
+     */
     public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if (overload == null)
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-
-			CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
-			operatorName.setOperator(true);
-			operatorName.setBinding(overload);
-			operatorName.computeOperatorOffsets(operand, isPostfixOperator());
-			implicitNames = new IASTImplicitName[] { operatorName };
+			if (overload == null) {
+				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			} else {
+				CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
+				operatorName.setOperator(true);
+				operatorName.setBinding(overload);
+				operatorName.computeOperatorOffsets(operand, isPostfixOperator());
+				implicitNames = new IASTImplicitName[] { operatorName };
+			}
 		}
 		
-		return implicitNames; 
+		return implicitNames;
 	}
 	
     @Override
@@ -116,28 +120,29 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default : break;
+	            default: break;
 	        }
 		}
-      
+ 
         final boolean isPostfix = isPostfixOperator();
-        
-        if (!isPostfix && action.shouldVisitImplicitNames) { 
+
+        if (!isPostfix && action.shouldVisitImplicitNames) {
         	for (IASTImplicitName name : getImplicitNames()) {
         		if (!name.accept(action))
         			return false;
         	}
         }
-        
+
         if (operand != null && !operand.accept(action))
         	return false;
-        
-        if (isPostfix && action.shouldVisitImplicitNames) { 
+
+        if (isPostfix && action.shouldVisitImplicitNames) {
         	for (IASTImplicitName name : getImplicitNames()) {
-        		if (!name.accept(action)) return false;
+        		if (!name.accept(action))
+        			return false;
         	}
         }
-        
+
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -196,7 +201,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		}
 		return null;
     }
-    
+
     public IType getExpressionType() {
     	final int op= getOperator();
 		switch (op) {
@@ -221,7 +226,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			IType type= operand.getExpressionType();
 			type = SemanticUtil.getNestedType(type, TDEF | REF);
 			return new CPPPointerType(type);
-		} 
+		}
 
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
@@ -238,7 +243,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 				return CPPUnknownClass.createUnnamedInstance();
 			}
 			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
-		} 
+		}
 
 		IType origType= operand.getExpressionType();
 		IType type = SemanticUtil.getUltimateTypeUptoPointers(origType);
@@ -265,7 +270,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		}
 		return origType;
     }
-    
+
 	public boolean isLValue() {
 		ICPPFunction op = getOverload();
 		if (op != null) {

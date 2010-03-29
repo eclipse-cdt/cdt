@@ -63,7 +63,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		copy.setIsNewTypeId(isNewTypeId);
 		if (placement != null) {
 			IASTInitializerClause[] plcmt = new IASTInitializerClause[placement.length];
-			for (int i=0; i<placement.length; i++) {
+			for (int i= 0; i < placement.length; i++) {
 				plcmt[i]= placement[i].copy();
 			}
 			copy.setPlacementArguments(plcmt);
@@ -133,13 +133,15 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
         isNewTypeId = value;
     }
     
+    /**
+     * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
+     */
     public IASTImplicitName[] getImplicitNames() {
-    	if(implicitNames == null) {
+    	if (implicitNames == null) {
 			ICPPFunction operatorFunction = CPPSemantics.findOverloadedOperator(this);
-			if(operatorFunction == null) {
+			if (operatorFunction == null) {
 				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-			}
-			else {
+			} else {
 				CPPASTImplicitName operatorName = new CPPASTImplicitName(operatorFunction.getNameCharArray(), this);
 				operatorName.setOperator(true);
 				operatorName.setBinding(operatorFunction);
@@ -150,8 +152,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     	
     	return implicitNames;  
     }
-    
-    
+
     /**
 	 * Returns true if this expression is allocating an array.
 	 * @since 5.1
@@ -163,18 +164,18 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 	
     
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch(action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
+	            default: break;
 	        }
 		}
         
-        if(action.shouldVisitImplicitNames) { 
+        if (action.shouldVisitImplicitNames) { 
         	for(IASTImplicitName name : getImplicitNames()) {
-        		if(!name.accept(action)) return false;
+        		if (!name.accept(action)) return false;
         	}
         }
         
@@ -190,11 +191,11 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		if (initializer != null && !initializer.accept(action))
 			return false;       
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP:  return true;
+	            default: break;
 	        }
 		}
         return true;

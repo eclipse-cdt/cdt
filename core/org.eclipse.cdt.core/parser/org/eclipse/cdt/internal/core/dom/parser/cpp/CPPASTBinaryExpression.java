@@ -42,7 +42,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     private IType type;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     private IASTImplicitName[] implicitNames = null;
-    
+
     public CPPASTBinaryExpression() {
 	}
 
@@ -86,7 +86,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 
     public void setOperand1(IASTExpression expression) {
         assertNotFrozen();
-        operand1 = expression;   
+        operand1 = expression;
         if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(OPERAND_ONE);
@@ -106,19 +106,23 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	setInitOperand2(expression);
     }
 
+    /**
+     * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
+     */
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if (overload == null)
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
-
-			CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
-			operatorName.setBinding(overload);
-			operatorName.setOperator(true);
-			operatorName.computeOperatorOffsets(operand1, true);
-			implicitNames = new IASTImplicitName[] { operatorName };
+			if (overload == null) {
+				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			} else {
+				CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);
+				operatorName.setBinding(overload);
+				operatorName.setOperator(true);
+				operatorName.computeOperatorOffsets(operand1, true);
+				implicitNames = new IASTImplicitName[] { operatorName };
+			}
 		}
-		
+
 		return implicitNames;
 	}
 
@@ -135,21 +139,20 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 	            default : break;
 	        }
 		}
-        
+
 		if (operand1 != null && !operand1.accept(action))
 			return false;
-        
+
 		if (action.shouldVisitImplicitNames) {
 			for (IASTImplicitName name : getImplicitNames()) {
 				if (!name.accept(action))
 					return false;
 			}
 		}
-        
+
 		if (operand2 != null && !operand2.accept(action))
 			return false;
-        
-		
+
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
@@ -173,9 +176,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			if (stack.fState == 0) {
 				if (action.shouldVisitExpressions) {
 					switch (action.visit(expr)) {
-					case ASTVisitor.PROCESS_ABORT : 
+					case ASTVisitor.PROCESS_ABORT :
 						return false;
-					case ASTVisitor.PROCESS_SKIP: 
+					case ASTVisitor.PROCESS_SKIP:
 						stack= stack.fNext;
 						continue;
 					}
@@ -188,7 +191,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 					stack= n;
 					continue;
 				}
-				if (op1 != null && !op1.accept(action)) 
+				if (op1 != null && !op1.accept(action))
 					return false;
 			}
 			if (stack.fState == 1) {
@@ -199,19 +202,19 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		        	}
 		        }
 				stack.fState= 2;
-		        
+
 				IASTExpression op2 = expr.getOperand2();
 				if (op2 instanceof IASTBinaryExpression) {
 					N n= new N((IASTBinaryExpression) op2);
 					n.fNext= stack;
 					stack= n;
 					continue;
-				} 
-				if (op2 != null && !op2.accept(action)) 
+				}
+				if (op2 != null && !op2.accept(action))
 					return false;
 			}
 			
-			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT) 
+			if (action.shouldVisitExpressions && action.leave(expr) == ASTVisitor.PROCESS_ABORT)
 				return false;
 		
 			stack= stack.fNext;
@@ -246,7 +249,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	
     	return overload = CPPSemantics.findOverloadedOperator(this);
     }
-    
+
 	public boolean isLValue() {
 		ICPPFunction op = getOverload();
 		if (op != null) {
@@ -329,8 +332,8 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         case ICPPASTBinaryExpression.op_pmdot:
         	if (type2 instanceof ICPPPointerToMemberType) {
         		return ((ICPPPointerToMemberType) type2).getType();
-        	} 
-        	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray()); 
+        	}
+        	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray());
         }
 		return type1;
 	}

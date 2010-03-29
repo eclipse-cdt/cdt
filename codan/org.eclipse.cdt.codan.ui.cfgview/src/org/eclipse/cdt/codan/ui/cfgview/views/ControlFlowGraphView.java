@@ -64,7 +64,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -273,9 +272,8 @@ public class ControlFlowGraphView extends ViewPart {
 			}
 		};
 		action1.setText("Synchronize");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		action1.setToolTipText("Synchronize");
+		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();

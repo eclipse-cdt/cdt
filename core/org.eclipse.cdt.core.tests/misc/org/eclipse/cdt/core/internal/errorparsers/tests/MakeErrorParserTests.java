@@ -49,6 +49,7 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 
 	private static final String[] GMAKE_ERROR_STREAM1 = {
 		// Warning
+		"GNUmakefile:12: warning: overriding commands for target `target'",
 		"Makefile1:10: include.mk: No such file or directory",
 		// Errors
 		"Makefile2:10: *** missing separator.  Stop.",
@@ -56,11 +57,13 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 		"Makefile4:10: *** commands commence before first target. Stop.",
 		"Makefile5:10: *** Recursive variable 'VAR' references itself (eventually). Stop.",
 		"Makefile6:10: *** target pattern contains no `%'.  Stop.",
+		// Ignored
+		"mytest.cpp:19: warning: unused variable 'i'", // do not intercept compiler warnings
 	};
-	private static final int GMAKE_ERROR_STREAM1_WARNINGS = 1;
+	private static final int GMAKE_ERROR_STREAM1_WARNINGS = 2;
 	private static final int GMAKE_ERROR_STREAM1_ERRORS = 5;
-	private static final String[] GMAKE_ERROR_STREAM1_FILENAMES = {"Makefile1", "Makefile2",
-		"Makefile3", "Makefile4", "Makefile5", "Makefile6"};
+	private static final String[] GMAKE_ERROR_STREAM1_FILENAMES = {"GNUmakefile", "Makefile1",
+		"Makefile2", "Makefile3", "Makefile4", "Makefile5", "Makefile6"};
 
 	private static final String[] GMAKE_ERROR_STREAM2 = {
 		// Errors

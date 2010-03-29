@@ -57,8 +57,9 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 		"Makefile4:10: *** commands commence before first target. Stop.",
 		"Makefile5:10: *** Recursive variable 'VAR' references itself (eventually). Stop.",
 		"Makefile6:10: *** target pattern contains no `%'.  Stop.",
-		// Ignored
-		"mytest.cpp:19: warning: unused variable 'i'", // do not intercept compiler warnings
+		// Ignored. Do not intercept compiler warnings
+		"mytest.cpp:19: warning: unused variable 'i'",
+		"hello.c:14:17: error: foo.h: No such file or directory",
 	};
 	private static final int GMAKE_ERROR_STREAM1_WARNINGS = 2;
 	private static final int GMAKE_ERROR_STREAM1_ERRORS = 5;

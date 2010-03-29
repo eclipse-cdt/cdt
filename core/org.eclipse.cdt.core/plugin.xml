@@ -284,15 +284,6 @@
             class="org.eclipse.cdt.internal.errorparsers.VCErrorParser">
       </errorparser>
    </extension>
-   <extension
-         id="RegexErrorParser"
-         name="%CDTRegexErrorParser.name"
-         point="org.eclipse.cdt.core.ErrorParser">
-      <errorparser
-            id="org.eclipse.cdt.core.RegexErrorParser"
-            name="%CDTRegexErrorParser.name">
-      </errorparser>
-   </extension>
 <!-- =================================================================================== -->
 <!-- CDT customized problem markers: C Problem markers                                   -->
 <!-- =================================================================================== -->

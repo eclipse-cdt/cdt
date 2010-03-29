@@ -40,7 +40,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	private static final String CONTENTS_CONFIGURATION_IDS = "org.eclipse.cdt.make.core.configurationIds"; //$NON-NLS-1$
 	/** @since 5.2 */ // set to true to print build events on the console in debug mode
-	protected static final boolean DEBUG_EVENTS = true;
+	protected static final boolean DEBUG_EVENTS = false;
 	/**
 	 * Constructor for ACBuilder
 	 */

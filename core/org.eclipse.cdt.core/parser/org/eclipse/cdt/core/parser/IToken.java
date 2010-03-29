@@ -20,7 +20,7 @@ public interface IToken {
 	// getters
 	public int getType();
 	public String getImage();
-	public char [] getCharImage();
+	public char[] getCharImage();
 	public int getOffset();
 	public int getLength();
 	public int getEndOffset();

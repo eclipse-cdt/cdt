@@ -8,9 +8,9 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.codan.internal.checkers;
 
+import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -41,7 +41,6 @@ public class CatchUsesReference extends AbstractIndexAstChecker {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new OnCatch());
 	}
-
 	class OnCatch extends ASTVisitor {
 		OnCatch() {
 			shouldVisitStatements = true;
@@ -49,31 +48,36 @@ public class CatchUsesReference extends AbstractIndexAstChecker {
 
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof ICPPASTTryBlockStatement) {
-				ICPPASTTryBlockStatement tblock = (ICPPASTTryBlockStatement) stmt;
-				ICPPASTCatchHandler[] catchHandlers = tblock.getCatchHandlers();
-				next: for (int i = 0; i < catchHandlers.length; i++) {
-					ICPPASTCatchHandler catchHandler = catchHandlers[i];
-					IASTDeclaration decl = catchHandler.getDeclaration();
-					if (decl instanceof IASTSimpleDeclaration) {
-						IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
-						IASTDeclSpecifier spec = sdecl.getDeclSpecifier();
-						if (!usesReference(catchHandler)) {
-							if (spec instanceof ICPPASTNamedTypeSpecifier) {
-								IBinding typeName = ((ICPPASTNamedTypeSpecifier) spec).getName().getBinding();
-								// unwind typedef chain
-								while (typeName instanceof ITypedef) {
-									IType t = ((ITypedef) typeName).getType();
-									if (t instanceof IBasicType) continue next;
-									if (t instanceof IBinding) typeName = (IBinding) t;
-									else break;
+				try {
+					ICPPASTTryBlockStatement tblock = (ICPPASTTryBlockStatement) stmt;
+					ICPPASTCatchHandler[] catchHandlers = tblock.getCatchHandlers();
+					next: for (int i = 0; i < catchHandlers.length; i++) {
+						ICPPASTCatchHandler catchHandler = catchHandlers[i];
+						IASTDeclaration decl = catchHandler.getDeclaration();
+						if (decl instanceof IASTSimpleDeclaration) {
+							IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
+							IASTDeclSpecifier spec = sdecl.getDeclSpecifier();
+							if (!usesReference(catchHandler)) {
+								if (spec instanceof ICPPASTNamedTypeSpecifier) {
+									IBinding typeName = ((ICPPASTNamedTypeSpecifier) spec).getName().getBinding();
+									// unwind typedef chain
+									while (typeName instanceof ITypedef) {
+										IType t = ((ITypedef) typeName).getType();
+										if (t instanceof IBasicType)
+											continue next;
+										if (t instanceof IBinding)
+											typeName = (IBinding) t;
+										else
+											break;
+									}
+									reportProblem(ER_ID, decl);
 								}
-
-								reportProblem(ER_ID, decl);
 							}
 						}
 					}
+				} catch (Exception e) {
+					CodanCheckersActivator.log(e);
 				}
-
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
@@ -92,13 +96,13 @@ public class CatchUsesReference extends AbstractIndexAstChecker {
 					IASTPointerOperator[] pointerOperators = d.getPointerOperators();
 					for (int j = 0; j < pointerOperators.length; j++) {
 						IASTPointerOperator po = pointerOperators[j];
-						if (po instanceof ICPPASTReferenceOperator) { return true; }
-
+						if (po instanceof ICPPASTReferenceOperator) {
+							return true;
+						}
 					}
 				}
 			}
 			return false;
 		}
 	}
-
 }

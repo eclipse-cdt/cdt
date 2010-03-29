@@ -12,6 +12,8 @@
 package org.eclipse.cdt.core.resources;
 
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -38,7 +40,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 
 	private static final String CONTENTS_CONFIGURATION_IDS = "org.eclipse.cdt.make.core.configurationIds"; //$NON-NLS-1$
 	/** @since 5.2 */ // set to true to print build events on the console in debug mode
-	protected static final boolean DEBUG_EVENTS = false;
+	protected static final boolean DEBUG_EVENTS = true;
 	/**
 	 * Constructor for ACBuilder
 	 */
@@ -92,10 +94,17 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
 			}
 			if (externalLocation != null) {
-				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
-				String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
-						problemMarkerInfo.lineNumber, externalLocation);
-				marker.setAttribute(IMarker.LOCATION, locationText);
+				try {
+					URI uri = new URI(externalLocation);
+					if (uri.getScheme()!=null) {
+						marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
+						String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
+								problemMarkerInfo.lineNumber, externalLocation);
+						marker.setAttribute(IMarker.LOCATION, locationText);
+					}
+				} catch (URISyntaxException e) {
+					// Just ignore those which cannot be open by editor
+				}
 			} else if (problemMarkerInfo.lineNumber==0){
 				marker.setAttribute(IMarker.LOCATION, " "); //$NON-NLS-1$
 			}

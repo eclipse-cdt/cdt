@@ -11,9 +11,10 @@
 package org.eclipse.cdt.codan.core.cxx.model;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractChecker;
-import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -87,6 +88,10 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 				.getFileForLocation(location);
 		if (astFile == null) {
 			astFile = file;
+		}
+		if (astFile == null) {
+			Activator.log("Cannot resolve location: "+location); //$NON-NLS-1$
+			return;
 		}
 		IProblemLocation loc;
 		int line = astLocation.getStartingLineNumber();

@@ -13,7 +13,6 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
@@ -121,6 +120,8 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	public IAdaptable getElement() {
+		if (!(element instanceof IProject))
+			return (IAdaptable) element.getAdapter(IProject.class);
 		return element;
 	}
 
@@ -157,12 +158,15 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 			// Cache the page id
 			pageId = getPageId();
 			// Create an overlay preference store and fill it with properties
-			ProjectScope ps = new ProjectScope((IProject) getElement());
-			ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps,
-					CodanCorePlugin.PLUGIN_ID);
-			scoped.setSearchContexts(new IScopeContext[] { ps,
-					new InstanceScope() });
-			overlayStore = scoped;
+			IAdaptable e = getElement();
+			if (e != null) {
+				ProjectScope ps = new ProjectScope((IProject) e);
+				ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps,
+						CodanCorePlugin.PLUGIN_ID);
+				scoped.setSearchContexts(new IScopeContext[] { ps,
+						new InstanceScope() });
+				overlayStore = scoped;
+			}
 			// Set overlay store as current preference store
 		}
 		super.createControl(parent);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -48,6 +49,7 @@ public class AddBuildTargetAction extends Action {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IMakeTargetManager manager = MakeCorePlugin.getDefault().getTargetManager();
 		IFile file = getFile();
@@ -56,8 +58,8 @@ public class AddBuildTargetAction extends Action {
 		if (file != null && rules.length > 0 && shell != null) {
 			StringBuffer sbBuildName = new StringBuffer();
 			StringBuffer sbMakefileTarget = new StringBuffer();
-			for (int i = 0; i < rules.length; i++) {
-				String name = rules[i].getTarget().toString().trim();
+			for (ITargetRule rule : rules) {
+				String name = rule.getTarget().toString().trim();
 				if (sbBuildName.length() == 0) {
 					sbBuildName.append(name);
 				} else {
@@ -113,13 +115,16 @@ public class AddBuildTargetAction extends Action {
 	
 	public boolean canActionBeAdded(ISelection selection) {
 		ITargetRule[] rules = getTargetRules(selection);
-		for (int i = 0; i < rules.length; i++) {
-			IFile file = getFile();
-			if (file == null)
-				return false;
-			if (!MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
-				return false;
-		}
+		if (rules.length == 0)
+			return false;
+		
+		IFile file = getFile();
+		if (file == null)
+			return false;
+		
+		if (!MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(file.getProject()))
+			return false;
+		
 		return true;
 	}
 
@@ -133,16 +138,16 @@ public class AddBuildTargetAction extends Action {
 
 	private ITargetRule[] getTargetRules(ISelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			List list = ((IStructuredSelection)sel).toList();
+			List<?> list = ((IStructuredSelection)sel).toList();
 			if (list.size() > 0) {
-				List targets = new ArrayList(list.size());
+				List<ITargetRule> targets = new ArrayList<ITargetRule>(list.size());
 				Object[] elements = list.toArray();
-				for (int i = 0; i < elements.length; i++) {
-					if (elements[i] instanceof ITargetRule) {
-						targets.add(elements[i]);
+				for (Object element : elements) {
+					if (element instanceof ITargetRule) {
+						targets.add((ITargetRule) element);
 					}
 				}
-				return (ITargetRule[])targets.toArray(EMPTY_TARGET_RULES);
+				return targets.toArray(EMPTY_TARGET_RULES);
 			}
 		}
 		return EMPTY_TARGET_RULES;

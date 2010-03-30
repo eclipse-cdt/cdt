@@ -62,7 +62,9 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						if (destName != null) {
 							if (destName instanceof ICPPInternalBinding) {
 								ICPPInternalBinding bin = (ICPPInternalBinding) destName;
-								ast = bin.getDeclarations()[0];
+								IASTNode[] decls = bin.getDeclarations();
+								if (decls!=null && decls.length>0)
+									ast = decls[0];
 							}
 							mess = MessageFormat
 									.format(

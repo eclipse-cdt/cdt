@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
  * David McKnight  (IBM)   [305218][dstore] problem reading double-byte characters through data socket layer
+ * David McKnight  (IBM)   [307541][dstore] fix for Bug 305218 breaks RDz connections
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -74,6 +75,10 @@ public class Sender implements ISender
 			String encoding = DE.ENCODING_UTF_8;
 			if (!_dataStore.isVirtual()){
 				encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+				String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+				if (theOS.startsWith("z")){ //$NON-NLS-1$
+					encoding = DE.ENCODING_UTF_8;
+				}
 			}
 			
 			

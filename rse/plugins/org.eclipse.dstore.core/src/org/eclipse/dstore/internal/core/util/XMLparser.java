@@ -18,6 +18,7 @@
  * David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  * David McKnight  (IBM)   [246826][dstore] KeepAlive does not work correctly
  * David McKnight  (IBM)   [305218][dstore] problem reading double-byte characters through data socket layer
+ * David McKnight  (IBM)   [307541][dstore] fix for Bug 305218 breaks RDz connections
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -449,6 +450,10 @@ public class XMLparser
 			String encoding = DE.ENCODING_UTF_8;
 			if (!_dataStore.isVirtual()){
 				encoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+				String theOS = System.getProperty("os.name"); //$NON-NLS-1$
+				if (theOS.startsWith("z")){ //$NON-NLS-1$
+					encoding = DE.ENCODING_UTF_8;
+				}
 			}
 
 			try

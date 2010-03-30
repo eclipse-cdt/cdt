@@ -110,8 +110,9 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 
 	/**
 	 * Returns the list of references in this translation unit to the given
-	 * binding. This list contains the IName nodes that represent a use of
-	 * the binding. They may be part of the AST or pulled in from the index.
+	 * binding. This list contains the IASTName nodes that represent a use of
+	 * the binding. These are part of the AST no definitions are pulled in from 
+	 * the index.
 	 * 
 	 * @param binding
 	 * @return List of IASTName nodes representing uses of the binding

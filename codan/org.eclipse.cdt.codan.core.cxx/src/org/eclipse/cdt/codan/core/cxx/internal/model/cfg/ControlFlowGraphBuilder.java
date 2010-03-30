@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
+import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 
 /**
  * TODO: add description
@@ -41,7 +43,7 @@ public class ControlFlowGraphBuilder {
 	 */
 	public CxxControlFlowGraph build(IASTFunctionDefinition def) {
 		IASTStatement body = def.getBody();
-		start = new CxxStartNode(null);
+		start = new CxxStartNode();
 		exits = new ArrayList<IExitNode>();
 		dead = new ArrayList<IBasicBlock>();
 		IBasicBlock last = createSubGraph(start, body);
@@ -71,7 +73,8 @@ public class ControlFlowGraphBuilder {
 			addOutgoing(prev, node);
 			return node;
 		} else if (body instanceof IASTIfStatement) {
-			DecisionNode node = new DecisionNode(prev);
+			DecisionNode node = new CxxDecisionNode(prev,
+					((IASTIfStatement) body).getConditionExpression());
 			addOutgoing(prev, node);
 			ConnectorNode conn = new ConnectorNode();
 			node.setConnectorNode(conn);
@@ -84,6 +87,26 @@ public class ControlFlowGraphBuilder {
 			conn.addIncoming(then);
 			addOutgoing(then, conn);
 			return conn;
+		} else if (body instanceof IASTWhileStatement) {
+			// add continue connector
+			ConnectorNode nContinue = new ConnectorNode(prev);
+			addOutgoing(prev, nContinue);
+			// decision node
+			CxxDecisionNode decision = new CxxDecisionNode(nContinue,
+					((IASTWhileStatement) body).getCondition());
+			addOutgoing(nContinue, decision);
+			// add break connector
+			ConnectorNode nBreak = new ConnectorNode(decision);
+			addOutgoing(decision, nBreak);
+			decision.setConnectorNode(nBreak);
+			// create body and jump to continue node
+			IBasicBlock nBody = createSubGraph(decision,
+					((IASTWhileStatement) body).getBody());
+			JumpNode jumpContinue = new JumpNode(nBody, nContinue, true);
+			addOutgoing(nBody, jumpContinue);
+			// connect with backward link
+			nContinue.addIncoming(jumpContinue);
+			return nBreak;
 		} else if (body instanceof IASTReturnStatement) {
 			CxxExitNode node = new CxxExitNode(prev, start, body);
 			addOutgoing(prev, node);

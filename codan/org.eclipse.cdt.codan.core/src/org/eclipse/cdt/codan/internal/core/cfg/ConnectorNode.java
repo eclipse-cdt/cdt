@@ -12,21 +12,25 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
 
 /**
  * TODO: add description
  */
 public class ConnectorNode extends AbstractSingleOutgoingNode implements
 		IConnectorNode {
-	ArrayList<IBasicBlock> incoming = new ArrayList<IBasicBlock>(2);
+	protected ArrayList<IBasicBlock> incoming = new ArrayList<IBasicBlock>(2);
 
-	/**
-	 * @param next
-	 */
 	public ConnectorNode() {
-		super(null);
+		super();
+	}
+
+	public ConnectorNode(IBasicBlock prev) {
+		super();
+		addIncoming(prev);
 	}
 
 	public void addIncoming(IBasicBlock node) {
@@ -51,7 +55,22 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements
 	 * ()
 	 */
 	public int getIncomingSize() {
-		// TODO Auto-generated method stub
 		return incoming.size();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode#
+	 * hasBackwardIncoming()
+	 */
+	public boolean hasBackwardIncoming() {
+		for (IBasicBlock node : incoming) {
+			if (node instanceof IJumpNode) {
+				if (((IJumpNode) node).isBackwardArc())
+					return true;
+			}
+		}
+		return false;
 	}
 }

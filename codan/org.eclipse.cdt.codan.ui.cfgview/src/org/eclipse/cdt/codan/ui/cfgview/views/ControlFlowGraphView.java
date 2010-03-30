@@ -3,7 +3,6 @@ package org.eclipse.cdt.codan.ui.cfgview.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
@@ -123,9 +122,14 @@ public class ControlFlowGraphView extends ViewPart {
 				ArrayList blocks = new ArrayList();
 				Iterator<IDecisionArc> iter = ((IDecisionNode) parent)
 						.getDecisionArcs();
-				for (; iter.hasNext();) {
-					IDecisionArc arc = iter.next();
-					blocks.add(arc);
+				if (iter.hasNext()) {
+					IDecisionArc arc0 = iter.next();
+					for (; iter.hasNext();) {
+						IDecisionArc arc = iter.next();
+						blocks.add(arc);
+					}
+					blocks.add(arc0);// people naturally expect false branch
+										// after true
 				}
 				blocks.add(((IDecisionNode) parent).getConnectionNode());
 				return blocks.toArray();
@@ -151,7 +155,34 @@ public class ControlFlowGraphView extends ViewPart {
 			if (obj instanceof AbstractBasicBlock) {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
+			if (strdata == null || strdata.length() == 0) {
+				if (obj instanceof IConnectorNode) {
+					strdata = blockHexLabel(obj);
+				} else if (obj instanceof IJumpNode) {
+					strdata = blockHexLabel(((IJumpNode) obj).getJumpNode());
+				} else if (obj instanceof IDecisionArc) {
+					IDecisionArc arc = (IDecisionArc) obj;
+					int index = arc.getIndex();
+					if (arc.getDecisionNode().getDecisionArcSize() == 2) {
+						if (index == 0)
+							strdata = "false";
+						else
+							strdata = "true";
+					} else if (index == 0)
+						strdata = "default";
+					else
+						strdata = "" + index;
+				}
+			}
 			return obj.getClass().getSimpleName() + ": " + strdata;
+		}
+
+		/**
+		 * @param obj
+		 * @return
+		 */
+		protected String blockHexLabel(Object obj) {
+			return "0x" + Integer.toHexString(System.identityHashCode(obj));
 		}
 
 		public Image getImage(Object obj) {
@@ -186,9 +217,12 @@ public class ControlFlowGraphView extends ViewPart {
 	public Collection<IBasicBlock> getFlat(IBasicBlock node,
 			Collection<IBasicBlock> prev) {
 		prev.add(node);
-		if (node instanceof IConnectorNode) {
+		if (node instanceof IConnectorNode
+				&& !((IConnectorNode) node).hasBackwardIncoming()) {
 			return prev;
 		}
+		if (node instanceof IJumpNode)
+			return prev;
 		if (node instanceof ISingleOutgoing) {
 			getFlat(((ISingleOutgoing) node).getOutgoing(), prev);
 		} else if (node instanceof IDecisionNode) {
@@ -273,7 +307,8 @@ public class ControlFlowGraphView extends ViewPart {
 		};
 		action1.setText("Synchronize");
 		action1.setToolTipText("Synchronize");
-		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
+		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault()
+				.getImageDescriptor("icons/refresh_view.gif"));
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
@@ -365,7 +400,6 @@ public class ControlFlowGraphView extends ViewPart {
 				if (data instanceof IASTNode) {
 					IASTNode node = (IASTNode) data;
 					if (node instanceof IASTTranslationUnit) // don't
-																							
 						return;
 					IASTFileLocation loc = node.getFileLocation();
 					String filename = loc.getFileName();
@@ -381,19 +415,18 @@ public class ControlFlowGraphView extends ViewPart {
 							return;
 						}
 					} else {
-//						IPath path = new Path(filename);
-//						if (tu != null) {
-//							try {
-//								aPart = EditorUtility.openInEditor(path, tu);
-//							} catch (PartInitException e) {
-//								return;
-//							}
-//						}
+						// IPath path = new Path(filename);
+						// if (tu != null) {
+						// try {
+						// aPart = EditorUtility.openInEditor(path, tu);
+						// } catch (PartInitException e) {
+						// return;
+						// }
+						// }
 					}
 					if (aPart instanceof AbstractTextEditor) {
-						((AbstractTextEditor) aPart).selectAndReveal(
-								loc.getNodeOffset(),
-								loc.getNodeLength());
+						((AbstractTextEditor) aPart).selectAndReveal(loc
+								.getNodeOffset(), loc.getNodeLength());
 					} else
 						System.out.println(A_PART_INSTANCEOF
 								+ aPart.getClass().getName());

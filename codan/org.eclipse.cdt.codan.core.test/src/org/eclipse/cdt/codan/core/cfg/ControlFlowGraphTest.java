@@ -81,6 +81,15 @@ public class ControlFlowGraphTest extends CodanTestCase {
 			fail(e.getMessage());
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	private void checkCfg() {
+		assertNotNull(graph);
+		assertNotNull(graph.getStartNode());
+		
+	}
 	/*-
 	 <code file="test1.c">
 	 main() {
@@ -92,6 +101,9 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	public void test1() {
 		load("test1.c");
 		buildCfg();
-		graph.print(graph.getStartNode());
+		checkCfg();
+		
 	}
+
+
 }

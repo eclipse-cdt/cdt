@@ -2,6 +2,7 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Collections;
 import java.util.Iterator;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 
@@ -10,8 +11,8 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
  * 
  */
 public class StartNode extends AbstractSingleOutgoingNode implements IStartNode {
-	public StartNode(IBasicBlock next) {
-		super(next);
+	public StartNode() {
+		super();
 	}
 
 	@SuppressWarnings("unchecked")

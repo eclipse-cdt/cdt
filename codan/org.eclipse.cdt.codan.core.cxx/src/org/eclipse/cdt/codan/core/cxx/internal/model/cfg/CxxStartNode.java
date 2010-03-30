@@ -12,7 +12,6 @@
 package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
 import org.eclipse.cdt.codan.internal.core.cfg.StartNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 
 /**
  * TODO: add description
@@ -22,8 +21,8 @@ public class CxxStartNode extends StartNode {
 	/**
 	 * @param next
 	 */
-	public CxxStartNode(IBasicBlock next) {
-		super(next);
+	public CxxStartNode() {
+		super();
 	}
 	
 	/* (non-Javadoc)

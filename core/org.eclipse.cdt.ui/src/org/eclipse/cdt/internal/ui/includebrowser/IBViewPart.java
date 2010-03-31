@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -221,15 +222,27 @@ public class IBViewPart extends ViewPart
 					index.acquireReadLock();
 					try {
 						if (!IndexUI.isIndexed(index, input)) {
-							final String msg = IndexUI.getFileNotIndexedMessage(input);
-							display.asyncExec(new Runnable() {
-								public void run() {
-									if (fTreeViewer.getInput() == input) {
-										setMessage(msg);
-										fTreeViewer.setInput(null);
+							// Bug 306879: Try to find an alternative translation unit for the file by the location.
+							final ITranslationUnit alt= CoreModelUtil.findTranslationUnitForLocation(input.getLocation(), input.getCProject());
+							if (alt != null && IndexUI.isIndexed(index, alt)) {
+								display.asyncExec(new Runnable() {
+									public void run() {
+										if (fTreeViewer.getInput() == input) {
+											setInput(alt);
+										}
 									}
-								}
-							});
+								});
+							} else {
+								final String msg = IndexUI.getFileNotIndexedMessage(input);
+								display.asyncExec(new Runnable() {
+									public void run() {
+										if (fTreeViewer.getInput() == input) {
+											setMessage(msg);
+											fTreeViewer.setInput(null);
+										}
+									}
+								});
+							}
 						}
 						return Status.OK_STATUS;
 					} finally {

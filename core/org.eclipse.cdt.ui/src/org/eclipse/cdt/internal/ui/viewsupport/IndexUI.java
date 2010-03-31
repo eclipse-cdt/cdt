@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.ui.IEditorInput;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -328,8 +327,17 @@ public class IndexUI {
 		return null;
 	}
 	
-	public static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
+	public static ITranslationUnit getTranslationUnit(ICProject cproject, IASTName name) {
 		return getTranslationUnit(cproject, name.getFileLocation());
+	}
+
+	public static ITranslationUnit getTranslationUnit(ICProject cproject, IIndexName name) {
+		try {
+			return CoreModelUtil.findTranslationUnitForLocation(name.getFile().getLocation(), cproject);
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+		}
+		return null;
 	}
 
 	private static ITranslationUnit getTranslationUnit(ICProject cproject, final IASTFileLocation fileLocation) {

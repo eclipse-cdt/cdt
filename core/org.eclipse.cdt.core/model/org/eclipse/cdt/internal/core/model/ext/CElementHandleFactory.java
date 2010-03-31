@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -131,6 +132,17 @@ public class CElementHandleFactory {
 				return null;
 			}
 			return tu;
+		}
+		
+		if (parentBinding instanceof IEnumeration) {
+			ICElement grandParent= createParent(tu, parentBinding);
+			if (parentBinding instanceof ICPPEnumeration && parentBinding.getNameCharArray().length > 0) {
+				if (grandParent != null) {
+					return new EnumerationHandle(grandParent, (ICPPEnumeration) parentBinding);
+				}
+			} else {
+				return grandParent;
+			}
 		}
 
 		if (parentBinding instanceof ICPPNamespace) {

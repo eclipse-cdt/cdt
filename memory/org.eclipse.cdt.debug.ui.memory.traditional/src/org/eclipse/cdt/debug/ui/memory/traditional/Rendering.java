@@ -1813,7 +1813,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     public void setDisplayLittleEndian(boolean littleEndian)
     {
-    	if(fIsDisplayLittleEndian = littleEndian)
+    	if(fIsDisplayLittleEndian == littleEndian)
     		return;
     	
     	fIsDisplayLittleEndian = littleEndian;

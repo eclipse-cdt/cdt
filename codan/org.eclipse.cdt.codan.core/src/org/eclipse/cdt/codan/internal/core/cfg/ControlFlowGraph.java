@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
@@ -29,6 +31,7 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
  */
 public class ControlFlowGraph implements IControlFlowGraph {
 	private List<IExitNode> exitNodes;
+	private List<IBasicBlock> deadNodes = new ArrayList<IBasicBlock>();
 	private IStartNode start;
 
 	public ControlFlowGraph(IStartNode start, Collection<IExitNode> exitNodes) {
@@ -67,9 +70,11 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	}
 
 	public void print(IBasicBlock node) {
-		System.out.println(node.toString());
+		System.out.println(node.getClass().getSimpleName() + ": "
+				+ ((AbstractBasicBlock) node).toStringData());
 		if (node instanceof IConnectorNode)
-			return;
+			if (((IConnectorNode) node).hasBackwardIncoming() == false)
+				return;
 		if (node instanceof IDecisionNode) {
 			// todo
 			Iterator<IDecisionArc> decisionArcs = ((IDecisionNode) node)
@@ -95,5 +100,48 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public Iterator<IBasicBlock> getUnconnectedNodeIterator() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
+	 * getUnconnectedNodeSize()
+	 */
+	public int getUnconnectedNodeSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#getNodes
+	 * ()
+	 */
+	public Collection<IBasicBlock> getNodes() {
+		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
+		getNodes(getStartNode(), result);
+		for (Iterator iterator = deadNodes.iterator(); iterator.hasNext();) {
+			IBasicBlock d = (IBasicBlock) iterator.next();
+			getNodes(d, result);
+		}
+		return result;
+	}
+
+	/**
+	 * @param d
+	 * @param result
+	 */
+	private void getNodes(IBasicBlock start, Collection<IBasicBlock> result) {
+		if (result.contains(start))
+			return;
+		result.add(start);
+		for (Iterator<IBasicBlock> outgoingIterator = start
+				.getOutgoingIterator(); outgoingIterator.hasNext();) {
+			IBasicBlock b = outgoingIterator.next();
+			getNodes(b, result);
+		}
 	}
 }

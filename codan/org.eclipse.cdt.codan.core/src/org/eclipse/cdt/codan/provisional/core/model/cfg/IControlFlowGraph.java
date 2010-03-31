@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.provisional.core.model.cfg;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -27,4 +28,8 @@ public interface IControlFlowGraph {
 	int getExitNodeSize();
 
 	Iterator<IBasicBlock> getUnconnectedNodeIterator();
+
+	int getUnconnectedNodeSize();
+
+	Collection<IBasicBlock> getNodes();
 }

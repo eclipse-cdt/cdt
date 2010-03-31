@@ -474,7 +474,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					try {
 						sourceRange = target.getSourceRange();
 						if (tu != null && sourceRange != null) {
-							fAction.open(tu.getLocation(), sourceRange.getIdStartPos(), sourceRange.getIdLength());
+							fAction.open(tu, sourceRange.getIdStartPos(), sourceRange.getIdLength());
 						}
 					} catch (CoreException e) {
 						CUIPlugin.log(e);

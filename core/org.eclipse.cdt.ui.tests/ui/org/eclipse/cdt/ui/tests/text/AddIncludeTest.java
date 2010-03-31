@@ -149,4 +149,9 @@ public class AddIncludeTest extends TestCase {
 		select("func306670");
 		assertAddIncludeResult();
 	}
+
+	public void testEnumerator_307738() throws Exception {
+		select("ENUM_VALUE");
+		assertAddIncludeResult();
+	}
 }

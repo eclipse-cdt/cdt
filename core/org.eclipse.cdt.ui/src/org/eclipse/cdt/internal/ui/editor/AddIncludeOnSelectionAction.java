@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -260,8 +261,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				}
 			}
 			IIndexName[] definitions= null;
-			// class, struct, union, enum
-			if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration) {
+			// class, struct, union, enum-type, enum-item
+			if (indexBinding instanceof ICompositeType || indexBinding instanceof IEnumeration || indexBinding instanceof IEnumerator) {
 				definitions= index.findDefinitions(indexBinding);
 			} else if (indexBinding instanceof ITypedef || (indexBinding instanceof IFunction)) {
 				definitions = index.findDeclarations(indexBinding);

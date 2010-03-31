@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cfg;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
 import org.eclipse.cdt.codan.core.test.CodanTestCase;
 import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -25,7 +29,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 /**
  * TODO: add description
@@ -73,7 +76,7 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	}
 	void buildCfg() {
 		try {
-			Path path = new Path(currentFile.toString());
+		
 			IResource el = cproject.getProject().findMember(currentFile.getName());
 			processFile((IFile) el);
 		} catch (Exception e) {
@@ -88,8 +91,40 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	private void checkCfg() {
 		assertNotNull(graph);
 		assertNotNull(graph.getStartNode());
+		Collection<IBasicBlock> nodes = graph.getNodes();
+		for (Iterator<IBasicBlock> iterator = nodes.iterator(); iterator.hasNext();) {
+		    IBasicBlock node = iterator.next();
+			checkNode(node);
+		}
 		
 	}
+	/**
+	 * @param node
+	 */
+	private void checkNode(IBasicBlock node) {
+		for (Iterator<IBasicBlock> iterator = node.getIncomingIterator(); iterator.hasNext();) {
+			IBasicBlock b = iterator.next();
+			if (!contains(node, b.getOutgoingIterator()))
+				fail("Block "+node+" inc "+b);
+		}
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @param node
+	 * @param outgoingIterator
+	 * @return
+	 */
+	private boolean contains(IBasicBlock node,
+			Iterator<IBasicBlock> iterator) {
+		for (; iterator.hasNext();) {
+			IBasicBlock b = iterator.next();
+			if (b.equals(node)) return true;
+		}
+		return false;
+	}
+
 	/*-
 	 <code file="test1.c">
 	 main() {

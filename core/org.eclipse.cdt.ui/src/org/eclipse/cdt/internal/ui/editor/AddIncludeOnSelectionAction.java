@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -55,7 +56,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -231,12 +232,23 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		}
 
 		final Map<String, IncludeCandidate> candidatesMap= new HashMap<String, IncludeCandidate>();
-		IIndex index = ast.getIndex();
+		final IIndex index = ast.getIndex();
 		final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
-		IIndexBinding[] bindings =
-				binding instanceof IIndexBinding && !(binding instanceof IProblemBinding) ?
-						new IIndexBinding[] { (IIndexBinding) binding } :
-						index.findBindings(nameChars, false, filter, new NullProgressMonitor());
+		
+		List<IIndexBinding> bindings = new ArrayList<IIndexBinding>();
+		IIndexBinding adaptedBinding= index.adaptBinding(binding);
+		if (adaptedBinding == null) {
+			bindings.addAll(Arrays.asList(index.findBindings(nameChars, false, filter, new NullProgressMonitor())));
+		} else {
+			bindings.add(adaptedBinding);
+			while (adaptedBinding instanceof ICPPSpecialization) {
+				adaptedBinding= index.adaptBinding(((ICPPSpecialization) adaptedBinding).getSpecializedBinding());
+				if (adaptedBinding != null) {
+					bindings.add(adaptedBinding);
+				}
+			}
+		}
+
 
 		for (IIndexBinding indexBinding : bindings) {
 			// Replace ctor with the class itself.
@@ -258,6 +270,8 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				for (IIndexName definition : definitions) {
 					considerForInclusion(definition, indexBinding, index, candidatesMap);
 				}
+				if (definitions.length > 0 && adaptedBinding != null) 
+					break;
 			}
 		}
 		IIndexMacro[] macros = index.findMacros(nameChars, filter, new NullProgressMonitor());

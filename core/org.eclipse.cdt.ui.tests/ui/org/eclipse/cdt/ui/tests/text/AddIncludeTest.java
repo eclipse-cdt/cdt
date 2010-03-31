@@ -144,4 +144,9 @@ public class AddIncludeTest extends TestCase {
 		select("XXX");
 		assertAddIncludeResult();
 	}
+	
+	public void testTemplate_306670() throws Exception {
+		select("func306670");
+		assertAddIncludeResult();
+	}
 }

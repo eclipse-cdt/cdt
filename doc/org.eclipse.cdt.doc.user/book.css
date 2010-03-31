@@ -49,3 +49,8 @@ th	     { font-weight: bold }
 div.linux  {display:none;}
 .firsterm {font-style:italic;}
 
+.typewriter {font-family:monospace;}
+.bold {font-weight:600;}
+.linethrough {text-decoration: line-through;}
+.underline {text-decoration: underline;}
+

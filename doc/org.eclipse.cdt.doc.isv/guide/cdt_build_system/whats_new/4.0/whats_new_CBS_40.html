@@ -31,7 +31,7 @@ h3
 	margin-left:0in;
 	page-break-after:avoid;
 	font-size:14.0pt;
-	font-family:Arial;
+	font-family:"Arial";
 	font-style:italic}
 table.MsoTableGrid
 	{border:1.0pt solid windowtext;
@@ -68,11 +68,11 @@ table.MsoTableGrid
 <table border="0" cellpadding="2" width="100%">
   <tbody>
     <tr>
-      <td align="left" width="72%"><font class="indextop">What's New in CDT 
-		Build System 4.0</font><br>
-      <font class="indexsub">This document outlines the new features presented 
+      <td align="left" width="72%">What's New in CDT 
+		Build System 4.0<br>
+      This document outlines the new features presented 
 		in the new
-		CDT build system in CDT 4.0</font></td>
+		CDT build system in CDT 4.0</td>
       <td width="28%"><img src="http://dev.eclipse.org/images/Idea.jpg"
  height="86" width="120" alt="idea"></td>
     </tr>
@@ -196,11 +196,11 @@ functionality (org.eclipse.cdt.managedbuilder.core and
 org.eclipse.cdt.managedbuilder.ui plug-ins). So all the API that were used for 
 the Managed Build Projects in the CDT 3.x becomes valid for the Makefile 
 Projects in the 4.0, i.e</p>
-<p style="margin-top: 0; margin-bottom: 0">The <b>
-org.eclipse.cdt.managedbuilder.core.buildDefinitions</b> extension point serves 
+<p style="margin-top: 0; margin-bottom: 0">The <strong>
+org.eclipse.cdt.managedbuilder.core.buildDefinitions</strong> extension point serves 
 as an entry-point for the tool integration into the Build System.</p>
-<p style="margin-top: 0; margin-bottom: 0">The <b>
-org.eclipse.cdt.managedbuilder.core.ManagedBuildManager</b> class serves as an 
+<p style="margin-top: 0; margin-bottom: 0">The <strong>
+org.eclipse.cdt.managedbuilder.core.ManagedBuildManager</strong> class serves as an 
 entry-point for accessing/manipulating the Build Settings information.</p>
 <p>From the API point of view there is no principal difference between 
 the Makefile and Managed Build Projects. From the Build System perspective the 
@@ -230,21 +230,21 @@ Project Wizard&quot; user description for more detail on the New Project Wizard 
 type and tool-chain(s) to be used with the project type.</p>
 <p>&nbsp;</p>
 <p><img border="0" src="../../migration_guides/4.0/migrat1.gif"  alt="New project wizard dialog"></p>
-<p><b>Presenting project-types and tool-chains in the New Project Wizard</b></p>
+<p><span class="bold">Presenting project-types and tool-chains in the New Project Wizard</span></p>
 <p>A tool-integrator has two options of presenting his project-types in the 
 wizard.</p>
 <ol>
 	<li>Define a new custom Project Type entry.</li>
 	<li>Use the general project type entries mechanism.</li>
 </ol>
-<p><b><font color="#FF0000">NOTE:</font></b>&nbsp; The new New Project Wizard now 
+<p><strong><span style="color:#FF0000">NOTE:</span></strong>&nbsp; The new New Project Wizard now 
 	operates with tool-chains allowing to select the tool-chain(s) to be used on 
 	project creation. Thus it is 
 	required that all toolChain/tool/builder build definitions representing 
 	different tool-chains/tools/builders must have different names as well as toolChain/tool/builder build definitions representing one and the same 
 	tool-chain/tool/builder must have identical names.</p>
-<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><b>&nbsp;&nbsp;&nbsp; 
-	Example:</b> to illustrate the above requirement here is how this is handled 
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><strong>&nbsp;&nbsp;&nbsp; 
+	Example:</strong> to illustrate the above requirement here is how this is handled 
 	in the gnu tool-chain definitions:</p>
 <p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
 	The gnu plug-in contains the gcc linker tool on Linux is defined as</p>
@@ -276,14 +276,14 @@ wizard.</p>
 	different tool(executable) than the Linux linker definition. The cygwin 
 	linker definition specifies the name=&quot;%ToolName.linker.cygwin.gnu.c&quot; that 
 	differs from the one defined by the Linux gcc linker.</p>
-<p><b>Defining new Project Type entries</b></p>
+<p><span class="bold">Defining new Project Type entries</span></p>
 <p>In case a tool-integrator is willing his/her project type to be displayed as 
 separate entries with custom names, his project-type definition must specify a 
 &quot;name&quot; property for the project-type, e.g.</p>
 <p><img border="0" src="whats_3.gif"  alt="Project type definition and new project wizard"></p>
 <p>When the project type entry is selected in the wizard the &quot;Toolchain:&quot; 
 pane will display the list of tool-chains defined/associated with the project type</p>
-<p><b>Using general project type entries</b></p>
+<p><span class="bold">Using general project type entries</span></p>
 <p>The &quot;general project types&quot; mechanism allows grouping multiple project 
 types/tool-chains under one project-type entry thus ensuring the compactness of 
 the project-type information and ensuring a common user experience across 
@@ -291,7 +291,7 @@ different tool-chains and integrations. When the general project type entry is s
 &quot;ToolChains:&quot; pane will list all tool-chains contributed from different project 
 types allowing user to select the tool-chain to be used with the given 
 project-type.</p>
-<p><b>What are the general project type entries?</b></p>
+<p><span class="bold">What are the general project type entries?</span></p>
 <p>The general project type entries mechanism is made based upon the new Build 
 Properties mechanism introduces in the new CDT Build System. Each general project type 
 entry is a value of the &quot;buildArtefactType&quot; property which represents the build 
@@ -308,7 +308,7 @@ shared library</p>
 org.eclipse.cdt.managedbuilder.core.buildProperties extension point.</p>
 <p>See the &quot;Build Properties&quot; section for more detail on the Build Properties 
 mechanism.</p>
-<p><b>Contributing to the general project type entries</b></p>
+<p><span class="bold">Contributing to the general project type entries</span></p>
 <p>The minimal steps needed to specify that the general project type entry should be used, a project-type 
 definition should specify the &quot;buildArtefact&quot; attribute and assign it to one of 
 the values of the buildArtefactType build property, e.g.</p>
@@ -353,8 +353,8 @@ E.g.</p>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
 id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;cdt.managedbuild.tool.gnu.builder.mingw.base&quot;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<span style="font-family: Courier New"><font size="2" color="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</font><span style="font-size: 10.0pt; color: navy">&nbsp;...</span></span></p>
+<span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-size: 10.0pt; color: navy">&nbsp;...</span></span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
@@ -418,9 +418,9 @@ supported</p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <table border="1" width="725" height="45">
 	<tr>
-		<td height="12" width="352" align="center"><b>Modification type</b></td>
-		<td height="12" width="357" align="center"><b>Possible levels of 
-		modifications</b></td>
+		<td height="12" width="352" align="center"><strong>Modification type</strong></td>
+		<td height="12" width="357" align="center"><strong>Possible levels of 
+		modifications</strong></td>
 	</tr>
 	<tr>
 		<td height="11" width="352">Changing/substituting the entire tool-chain</td>
@@ -484,12 +484,12 @@ following </p>
 	properties associated with the configuration. (See the &quot;Build Properties 
 	mechanism&quot; section for detail on the Build Properties mechanism)</p></li>
 </ol>
-<p><font color="#FF0000"><b>NOTE: </b></font>&nbsp;In order to function properly 
+<p><span style="color:#FF0000"><strong>NOTE: </strong></span>&nbsp;In order to function properly 
 the tool-chain modification functionality requires that all toolChain/tool/builder build definitions representing 
 	different tool-chains/tools/builders must have different names as well as toolChain/tool/builder build definitions representing one and the same 
 	tool-chain/tool/builder must have identical names.</p>
-<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><b>&nbsp;&nbsp;&nbsp; 
-	Example:</b> to illustrate the above requirement here is how this is handled 
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><strong>&nbsp;&nbsp;&nbsp; 
+	Example:</strong> to illustrate the above requirement here is how this is handled 
 	in the gnu tool-chain definitions:</p>
 <p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
 	The gnu plug-in contains the gcc linker tool on Linux is defined as</p>
@@ -562,8 +562,8 @@ functionality:</p>
 	changing the value of the buildArtefactType property in case the tool-chain 
 	supports that.</li>
 </ol>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><b>Defining new 
-Build Properties and their values</b></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span class="bold">Defining new 
+Build Properties and their values</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Build Properties 
 are defined with the org.eclipse.cdt.managedbuilder.core.buildProperties 
@@ -776,13 +776,13 @@ Build System-predefined properties</span></p>
 	<tr style="height: 13.5pt">
 		<td width="120" valign="top" style="width: 1.25in; height: 13.5pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
 		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
-		<b><span lang="EN-US">Property id</span></b></td>
+		<strong><span lang="EN-US">Property id</span></strong></td>
 		<td width="324" valign="top" style="width: 243.0pt; height: 13.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
 		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
-		<b><span lang="EN-US">Description</span></b></td>
+		<strong><span lang="EN-US">Description</span></strong></td>
 		<td width="168" valign="top" style="width: 1.75in; height: 13.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
 		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
-		<b><span lang="EN-US">Pre-defined Values</span></b></td>
+		<strong><span lang="EN-US">Pre-defined Values</span></strong></td>
 	</tr>
 	<tr style="height: 8.25pt">
 		<td width="120" valign="top" style="width: 1.25in; height: 8.25pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
@@ -848,8 +848,8 @@ Build System-predefined properties</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
 &nbsp;</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
-<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><b>Automatic tool 
-settings adjustment with Build Properties</b></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span class="bold">Automatic tool 
+settings adjustment with Build Properties</span></p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Tool-chain ant tool 
 definitions can specify enablement expressions to make their default settings be 
@@ -994,8 +994,8 @@ font-family:&quot;Courier New&quot;;color:navy">&lt;/option&gt;</span></p>
 information on using enablement expressions please refer to the description of 
 the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.</p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
-<p style="margin-top: 0; margin-bottom: 0"><b>Specifying the set of supported 
-build properties</b></p>
+<p style="margin-top: 0; margin-bottom: 0"><span class="bold">Specifying the set of supported 
+build properties</span></p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p style="margin-top: 0; margin-bottom: 0">The tool-chain modification and New 
 Project Wizard mechanisms need to know the set of build properties each 
@@ -1077,8 +1077,8 @@ color:black">&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-size:10.0pt;font-f
 	</ul>
 	</li>
 </ol>
-<p style="margin-top: 0; margin-bottom: 0"><b>Assigning the set of build 
-properties for configurations/project-types</b></p>
+<p style="margin-top: 0; margin-bottom: 0"><span class="bold">Assigning the set of build 
+properties for configurations/project-types</span></p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p style="margin-top: 0; margin-bottom: 0">Once the tools/tool-chains has 
 specified the setting adjustment expressions it is possible to use one and the 
@@ -1102,9 +1102,9 @@ buildArtefactType=</span><span lang="EN-US" style="font-size: 10.0pt; font-famil
 configurations. The buildArtefactType is a convenience attribute that allows to 
 specify the value for the &quot;buildArtefactType&quot; property.</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<font size="2"><span style="font-family: Courier New">It is possible to specify 
+<span style="font-family: Courier New">It is possible to specify 
 the &quot;buildProperties&quot; attribute for the project type and define the set of build 
-properties there in the same way as for configuration (see below)</span></font></p>
+properties there in the same way as for configuration (see below)</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
@@ -1114,8 +1114,8 @@ properties there in the same way as for configuration (see below)</span></font><
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
 &lt;configuration</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<font size="2" color="#000080"><span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-...</span></font></p>
+<span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+...</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
@@ -1138,8 +1138,8 @@ color:navy">&gt;</span></p>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<font size="2" color="#000080"><span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-...</span></font></p>
+<span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+...</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
@@ -1172,9 +1172,9 @@ font-family:&quot;Courier New&quot;;color:navy">&nbsp;&lt;/toolChain&gt;</span><
 The folderInfo is a new element presented in 4.0. The element represents the 
 per-folder settings<table border="1" width="688" height="58" id="table21">
 	<tr>
-		<td height="30" width="271" align="center"><b>Property</b></td>
-		<td height="30" width="235" align="center"><b>Description</b></td>
-		<td height="30" width="160" align="center"><b>Default Value</b></td>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
 	</tr>
 	<tr>
 		<td height="20" width="271">resourcePath</td>
@@ -1202,9 +1202,9 @@ path, while the fileInfo specifies project-relative resource path in the same
 way as the folderInfo does.</p>
 <table border="1" width="688" height="58" id="table22">
 	<tr>
-		<td height="30" width="271" align="center"><b>Property</b></td>
-		<td height="30" width="235" align="center"><b>Description</b></td>
-		<td height="30" width="160" align="center"><b>Default Value</b></td>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
 	</tr>
 	<tr>
 		<td height="20" width="271">resourcePath</td>
@@ -1249,9 +1249,9 @@ way as the folderInfo does.</p>
 the default value is used ONLY in case the property is undefined for all 
 tool-chain's super-classes<table border="1" width="688" height="58">
 	<tr>
-		<td height="30" width="271" align="center"><b>Property</b></td>
-		<td height="30" width="235" align="center"><b>Description</b></td>
-		<td height="30" width="160" align="center"><b>Default Value</b></td>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
 	</tr>
 	<tr>
 		<td height="20" width="271">supportsManagedBuild</td>
@@ -1266,9 +1266,9 @@ tool-chain's super-classes<table border="1" width="688" height="58">
 the default value is used ONLY in case the property is undefined for all tool's 
 super-classes<table border="1" width="688" height="58" id="table19">
 	<tr>
-		<td height="30" width="271" align="center"><b>Property</b></td>
-		<td height="30" width="235" align="center"><b>Description</b></td>
-		<td height="30" width="160" align="center"><b>Default Value</b></td>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
 	</tr>
 	<tr>
 		<td height="20" width="271">supportsManagedBuild</td>
@@ -1283,9 +1283,9 @@ super-classes<table border="1" width="688" height="58" id="table19">
 the default value is used ONLY in case the property is undefined for all input 
 types's super-classes<table border="1" width="688" height="58" id="table20">
 	<tr>
-		<td height="30" width="271" align="center"><b>Property</b></td>
-		<td height="30" width="235" align="center"><b>Description</b></td>
-		<td height="30" width="160" align="center"><b>Default Value</b></td>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
 	</tr>
 	<tr>
 		<td height="20" width="271">languageId</td>
@@ -1320,9 +1320,9 @@ types's super-classes<table border="1" width="688" height="58" id="table20">
 the default value is used ONLY in case the property is undefined for all input 
 types's super-classes<table border="1" width="688" height="58" id="table23">
 	<tr>
-		<td height="30" width="271" align="center"><b>Property</b></td>
-		<td height="30" width="235" align="center"><b>Description</b></td>
-		<td height="30" width="160" align="center"><b>Default Value</b></td>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
 	</tr>
 	<tr>
 		<td height="20" width="271">parallelBuildCmd</td>

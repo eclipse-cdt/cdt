@@ -13,44 +13,44 @@
 
 <h1>Launch Group</h1>
 
-<p>The user can launch multiple applications at the same time or in sequential order. This is made possible by the launch configuration type: <i>Launch Group</i>.</p>
+<p>The user can launch multiple applications at the same time or in sequential order. This is made possible by the launch configuration type: <em>Launch Group</em>.</p>
 
 <h2>Launches tab</h2>
 <p>
 
-The <i>Launches</i> tab lets you add and delete launch configurations to the group.
+The <em>Launches</em> tab lets you add and delete launch configurations to the group.
 It also allows you to temporarily disable, re-order and edit properties of the elements in the group.
 
 </p>
-<img src="../images/run_debug_launch_group.png">
+<img src="../images/run_debug_launch_group.png" alt="Run Configuration dialog, Launch group">
 <p></p>
-<dl>
+
 <table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
 <tr ><th>Component</th><th>Description</th></tr>
-<tr><td width="30%"><dt>Name</dt></td><td>Displays the name of the launch configuration and a checkbox for enabling or disabling the configuration.</td></tr>
-<tr><td><dt>Mode</dt></td><td>Displays the mode the configuration will run in when the group is launched.</td></tr>
-<tr><td><dt>Action</dt></td><td>Displays the optional action that will be carried after the configuration is launched.</td></tr>
-<tr><td><dt>Up</dt></td><td>Move selected configuration(s) up</td></tr>
-<tr><td><dt>Down</dt></td><td>Move selected configuration(s) down</td></tr>
-<tr><td><dt>Add...</dt></td><td>Opens a dialog to add a new configuration.</td></tr>
-<tr><td><dt>Edit...</dt></td><td>Opens a dialog to edit values for configuration(s).</td></tr>
-<tr><td><dt>Remove</dt></td><td>Removes selected configuration(s) from the list.</td></tr>
+<tr><td width="30%"><strong>Name</strong></td><td>Displays the name of the launch configuration and a checkbox for enabling or disabling the configuration.</td></tr>
+<tr><td><strong>Mode</strong></td><td>Displays the mode the configuration will run in when the group is launched.</td></tr>
+<tr><td><strong>Action</strong></td><td>Displays the optional action that will be carried after the configuration is launched.</td></tr>
+<tr><td><strong>Up</strong></td><td>Move selected configuration(s) up</td></tr>
+<tr><td><strong>Down</strong></td><td>Move selected configuration(s) down</td></tr>
+<tr><td><strong>Add...</strong></td><td>Opens a dialog to add a new configuration.</td></tr>
+<tr><td><strong>Edit...</strong></td><td>Opens a dialog to edit values for configuration(s).</td></tr>
+<tr><td><strong>Remove</strong></td><td>Removes selected configuration(s) from the list.</td></tr>
 
 </table>
-</dl>
+
 
 <h2>Common tab</h2>
 
-The <i>Common</i> tab lets you select where the configuration is stored, see <a href="cdt_u_run_dbg_comm.htm">Common tab reference</a> page for details.
+The <em>Common</em> tab lets you select where the configuration is stored, see <a href="cdt_u_run_dbg_comm.htm">Common tab reference</a> page for details.
 
 <h2>Add and Edit launch configuration Dialog</h2>
 <p>
-<img src="../images/run_debug_launch_group_edit.png">
+<img src="../images/run_debug_launch_group_edit.png"  alt="Edit Launch Configuration dialog">
 </p>
-<dl>
+
 <table width="580" fgcolor="#DDD" border="1" cellpadding="2" cellspacing="0" >
 <tr ><th>Component</th><th>Description</th></tr>
-<tr><td width="30%"><dt>Launch Mode</dt></td>
+<tr><td width="30%"><strong>Launch Mode</strong></td>
   <td>The Launch Mode combobox at the top of the dialog serves a dual purpose.<br>
    1. It dictates the desired mode for the launch configuration being added,
 and <br>
@@ -62,9 +62,9 @@ that support being invoked in 'debug' mode appear. Also, (2) when the launch
 group is invoked, that particular child launch configuration will be invoked in
 'debug' mode.
   </td></tr>
-<tr><td><dt>Filter input</dt></td><td>Type in filter input to filter list of configurations by name</td></tr>
-<tr><td><dt>Configurations tree</dt></td><td>Lists all available launch configurations for the selected Launch Mode, filtered by <i>Filter input</i>.</td></tr>
-<tr><td><dt>Use default mode when launching</dt></td>
+<tr><td><strong>Filter input</strong></td><td>Type in filter input to filter list of configurations by name</td></tr>
+<tr><td><strong>Configurations tree</strong></td><td>Lists all available launch configurations for the selected Launch Mode, filtered by <em>Filter input</em>.</td></tr>
+<tr><td><strong>Use default mode when launching</strong></td>
   <td>
 This checkbox acts as a sort of override to whatever mode is set in the Launch Mode
 combobox. Checking this option indicates that the child launch configuration
@@ -82,7 +82,7 @@ Note that "Use default..." control can allow you to create a launch group
 that will not be successful. For example when one or more launch configurations
 selected cannot be launched in the mode dictated by launch group mode.
   </td></tr>
-<tr><td><dt>Post launch action</dt></td><td>
+<tr><td><strong>Post launch action</strong></td><td>
 There are several actions available that control what should be done after each launch:
 <li>Delay - Waits a specified number of second before launching the next configuration in the group</li>
 <li>Wait until terminated - Waits until current launch is terminated</li>
@@ -90,7 +90,7 @@ There are several actions available that control what should be done after each 
 </td></tr>
 
 </table>
-</dl>
+
 
 
 <p>

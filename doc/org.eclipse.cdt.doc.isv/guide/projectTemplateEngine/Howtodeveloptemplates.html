@@ -447,7 +447,7 @@ The following is a list of process types provided by the Template Engine:
 <!--<ul>
 <li>
 <p>
-<b>NewProject</b>: It defines all the parameters required for a
+<strong>NewProject</strong>: It defines all the parameters required for a
 new C/C++ project and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -484,7 +484,7 @@ configurations for the project. It is of type <code>simple</code>.
 </ul> -->
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>NewManagedProject</b>: It defines all the parameters
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>NewManagedProject</strong>: It defines all the parameters
 required for a new managed project and provides the fully qualified name of the
 class, which processes these parameters.
 </p>
@@ -521,7 +521,7 @@ configurations for the managed project. It is of type <code>simple</code>.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>Copy</b>: It defines all the parameters required to copy
+<em>org.eclipse.cdt.core.</em><strong>Copy</strong>: It defines all the parameters required to copy
 files and provides the fully qualified name of the class, which processes these
 parameters.
 </p>
@@ -559,14 +559,14 @@ location.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>Append</b>: It defines all the parameters required to append
+<em>org.eclipse.cdt.core.</em><strong>Append</strong>: It defines all the parameters required to append
 files to a project and provides the fully qualified name of the class, which
 processes these parameters. For more information about the parameters, refer to
 the <code>Copy</code> process type described above.
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>AddFile</b>: It defines all the parameters required to add a
+<em>org.eclipse.cdt.core.</em><strong>AddFile</strong>: It defines all the parameters required to add a
 file to the project and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -591,7 +591,7 @@ process type described above.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>AddFiles</b>: It defines all the parameters required to add
+<em>org.eclipse.cdt.core.</em><strong>AddFiles</strong>: It defines all the parameters required to add
 files to a project and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -616,7 +616,7 @@ process type described above.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>CreateSourceFolder</b>: It defines all the parameters
+<em>org.eclipse.cdt.core.</em><strong>CreateSourceFolder</strong>: It defines all the parameters
 required to create a folder for the source files in a project and provides the
 fully qualified name of the class, which processes these parameters.
 </p>
@@ -640,7 +640,7 @@ created. It is of <code>simple</code> type.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>AddLink</b>: It defines all the parameters required to
+<em>org.eclipse.cdt.core.</em><strong>AddLink</strong>: It defines all the parameters required to
 create a linked file and provides the fully qualified name of the class, which
 processes these parameters.
 </p>
@@ -670,7 +670,7 @@ file should be created. It is of <code>simple</code> type.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>CreateIncludeFolder</b>: It defines all the parameters
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>CreateIncludeFolder</strong>: It defines all the parameters
 required to create a folder for the header files in a project and provides the
 fully qualified name of the class, which processes these parameters. For
 information about the parameters, refer to the <code>CreateSourceFolder</code>
@@ -678,7 +678,7 @@ process type described above.
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>ExcludeResources</b>: It defines all the parameters
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>ExcludeResources</strong>: It defines all the parameters
 required to exclude resources from a CDT project and provides the
 fully qualified name of the class, which processes these parameters.
 </p>
@@ -696,7 +696,7 @@ type.
 <p>
 <em>configIdPattern</em>: Use this parameter to specify a regular expression of 
 <code>java.util.regex.Pattern</code> syntax for matching against project configuration ids.
-The resources that match any of the regular expressions given in the <i>filePatterns</i> argument 
+The resources that match any of the regular expressions given in the <em>filePatterns</em> argument 
 will be excluded from all matching project configurations. It is of <code>simple</code> type.
 </p>
 <li>
@@ -706,7 +706,7 @@ will be excluded from all matching project configurations. It is of <code>simple
 will be matched against are workspace relative (include the project folder) and use forward slash as the file separator. 
 That this argument is an array is purely to allow logically separate patterns to be given separately rather than as one big string. 
 If any of the regular expressions matches then the resource in question will be excluded for the matching configuration(s).
-The resources that match any of the regular expressions given in the <i>filePatterns</i> argument 
+The resources that match any of the regular expressions given in the <em>filePatterns</em> argument 
 will be excluded for all matching project configurations. It is of <code>simple-array</code> type.
 <li>
 <p>
@@ -719,7 +719,7 @@ files should not be excluded for without having to know what other configuration
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>SetMBSStringOptionValue</b>: It defines all the parameters
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>SetMBSStringOptionValue</strong>: It defines all the parameters
 required to create a string option value and provides the fully qualified name
 of the class, which processes these parameters.
 </p>
@@ -762,7 +762,7 @@ the resource. It is of <code>simple</code> type.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>SetMBSStringListOptionValues</b>: It defines all the
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>SetMBSStringListOptionValues</strong>: It defines all the
 parameters required to create a string list of option values and provides the
 fully qualified name of the class, which processes these parameters. The
 parameters required are similar to that of <code>SetMBSStringOptionValue</code>
@@ -772,7 +772,7 @@ option values. For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>SetMBSBooleanOptionValue</b>: It defines all the parameters
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>SetMBSBooleanOptionValue</strong>: It defines all the parameters
 required to create a boolean option value and provides the fully qualified name
 of the class, which processes these parameters. The parameters required are
 similar to that of <code>SetMBSStringOptionValue</code> process type, only
@@ -782,7 +782,7 @@ For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>AppendToMBSStringOptionValue</b>: It defines all the
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>AppendToMBSStringOptionValue</strong>: It defines all the
 parameters required to append a string option value to an existing string
 option. It also provides the fully qualified name of the class, which processes
 these parameters. For information about the parameters, refer to the
@@ -790,21 +790,21 @@ these parameters. For information about the parameters, refer to the
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>AppendToMBSStringListOptionValues</b>: It defines all the 
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>AppendToMBSStringListOptionValues</strong>: It defines all the 
 parameters required to append a string list of option values to an existing string list of option value. 
 It also provides the fully qualified name of the class, which processes these parameters. For information 
 about the parameters, refer to the <code>SetMBSStringListOptionValues</code> process type described above.
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>AppendCreate</b>: It defines all the parameters required to
+<em>org.eclipse.cdt.core.</em><strong>AppendCreate</strong>: It defines all the parameters required to
 append or create a file in a project. It also provides the fully qualified name
 of the class, which processes these parameters. For information about the
 parameters, refer to the <code>AddFiles</code> process type described above.
 </p>
 <li>
 <p>
-<i>org.eclipse.cdt.core.</i><b>CreateResourceIdentifier</b>: It defines all the parameters
+<em>org.eclipse.cdt.core.</em><strong>CreateResourceIdentifier</strong>: It defines all the parameters
 required to append or create a resource identifier. It also provides the fully
 qualified name of the class, which processes these parameters.
 </p>
@@ -827,7 +827,7 @@ type.
 </ul>
 <li>
 <p>
-<i>org.eclipse.cdt.managedbuilder.core.</i><b>GenerateMakefileWithBuildDescription</b>: 
+<em>org.eclipse.cdt.managedbuilder.core.</em><strong>GenerateMakefileWithBuildDescription</strong>: 
 </p>
 <ul>
 <li>

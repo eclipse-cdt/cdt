@@ -1655,7 +1655,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 					+ remaining_breakpoints.length, remaining_breakpoints.length == breakpoints_left);
 			for (int j = 0; j < breakpoints_left; j++) {
 				assertTrue("BreakpointService problem: removed breakpoint still present (" + index + ")",
-						remaining_breakpoints[j] != index);
+						!remaining_breakpoints[j].equals(index));
 			}
 		}
 		clearEventCounters();

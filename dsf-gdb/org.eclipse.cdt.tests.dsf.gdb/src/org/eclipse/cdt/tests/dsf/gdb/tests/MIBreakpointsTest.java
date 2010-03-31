@@ -1653,7 +1653,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 			IBreakpointDMContext[] remaining_breakpoints = getBreakpoints(fBreakpointsDmc);
 			assertTrue("BreakpointService problem: expected " + breakpoints_left + " breakpoint(s), received "
 					+ remaining_breakpoints.length, remaining_breakpoints.length == breakpoints_left);
-			for (int j = 0; i < breakpoints_left; i++) {
+			for (int j = 0; j < breakpoints_left; j++) {
 				assertTrue("BreakpointService problem: removed breakpoint still present (" + index + ")",
 						remaining_breakpoints[j] != index);
 			}

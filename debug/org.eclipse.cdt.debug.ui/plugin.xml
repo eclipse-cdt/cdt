@@ -1677,56 +1677,6 @@
  <extension
        point="org.eclipse.ui.menus">
     <menuContribution
-          locationURI="popup:org.eclipse.debug.ui.DebugView?after=launchGroup">
-       <command
-             commandId="org.eclipse.cdt.debug.ui.command.openDisassembly"
-             disabledIcon="icons/dlcl16/disassembly.gif"
-             hoverIcon="icons/elcl16/disassembly.gif"
-             icon="icons/elcl16/disassembly.gif"
-             id="org.eclipse.cdt.debug.ui.menu.openDisassembly"
-             label="%OpenDisassembly.label"
-             style="push"
-             tooltip="%OpenDisassembly.tooltip">
-          <visibleWhen
-                checkEnabled="false">
-             <iterate
-                   ifEmpty="false"
-                   operator="or">
-                <adapt
-                      type="org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider">
-                </adapt>
-             </iterate>
-          </visibleWhen>
-       </command>
-    </menuContribution>
-    <menuContribution
-          locationURI="popup:#DisassemblyEditorContext?after=additions">
-       <command
-             commandId="org.eclipse.cdt.debug.command.disassemblyDisplayMode"
-             helpContextId="instructions_display_mode_menu_context"
-             id="org.eclipse.cdt.debug.menu.command.disassemblyDisplayMode.instructions"
-             label="%InstructionsDisplayMode.label"
-             style="toggle"
-             tooltip="%InstructionsDisplayMode.tooltip">
-          <parameter
-                name="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
-                value="instructions">
-          </parameter>
-       </command>
-       <command
-             commandId="org.eclipse.cdt.debug.command.disassemblyDisplayMode"
-             helpContextId="source_display_mode_menu_context"
-             id="org.eclipse.cdt.debug.menu.command.disassemblyDisplayMode.source"
-             label="%SourceDisplayMode.label"
-             style="toggle"
-             tooltip="%SourceDisplayMode.tooltip">
-          <parameter
-                name="org.eclipse.cdt.debug.command.disassemblyDisplayMode.parameterMode"
-                value="source">
-          </parameter>
-       </command>
-    </menuContribution>
-    <menuContribution
           locationURI="popup:org.eclipse.debug.ui.BreakpointView?after=additions">
        <command
              commandId="org.eclipse.cdt.debug.command.breakpointProperties"

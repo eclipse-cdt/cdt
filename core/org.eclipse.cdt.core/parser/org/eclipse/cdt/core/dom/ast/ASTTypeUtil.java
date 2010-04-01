@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -460,47 +461,46 @@ public class ASTTypeUtil {
 		IQualifierType cvq= null;
 		ICPPReferenceType ref= null;
 		while (type != null && ++i < 100) {
-			if (!normalize) {
-			    types = (IType[]) ArrayUtil.append(IType.class, types, type);
-				if (type instanceof ITypedef) {
-					type= null;	// stop here
+			if (type instanceof ITypedef) {
+				if (normalize || type instanceof ICPPSpecialization) {
+					// Skip the typedef and proceed with its target type.
+				} else {
+					// Use the typedef and stop
+					types = (IType[]) ArrayUtil.append(IType.class, types, type);
+					type= null; 
 				}
 			} else {
-				if (type instanceof ITypedef) {
-					// skip it
-				} else {
-					if (type instanceof ICPPReferenceType) {
-						// reference types ignore cv-qualifiers
-						cvq=null;
-						// lvalue references win over rvalue references
-						if (ref == null || ref.isRValueReference()) {
-							// delay reference to see if there are more
-							ref= (ICPPReferenceType) type;
-						}
-					} else {
-						if (cvq != null) {
-							// merge cv qualifiers
-							if (type instanceof IQualifierType || type instanceof IPointerType) {
-								type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile());
-								cvq= null;
-							} 
-						} 
-						if (type instanceof IQualifierType) {
-							// delay cv qualifier to merge it with others
-							cvq= (IQualifierType) type;
-						} else {
-							// no reference, no cv qualifier: output reference and cv-qualifier
-							if (ref != null) {
-								types = (IType[]) ArrayUtil.append(IType.class, types, ref);
-								ref= null;
-							}
-							if (cvq != null) {
-								types = (IType[]) ArrayUtil.append(IType.class, types, cvq);
-								cvq= null;
-							}
-							types = (IType[]) ArrayUtil.append(IType.class, types, type);
-						} 
+				if (type instanceof ICPPReferenceType) {
+					// reference types ignore cv-qualifiers
+					cvq=null;
+					// lvalue references win over rvalue references
+					if (ref == null || ref.isRValueReference()) {
+						// delay reference to see if there are more
+						ref= (ICPPReferenceType) type;
 					}
+				} else {
+					if (cvq != null) {
+						// merge cv qualifiers
+						if (type instanceof IQualifierType || type instanceof IPointerType) {
+							type= SemanticUtil.addQualifiers(type, cvq.isConst(), cvq.isVolatile());
+							cvq= null;
+						} 
+					} 
+					if (type instanceof IQualifierType) {
+						// delay cv qualifier to merge it with others
+						cvq= (IQualifierType) type;
+					} else {
+						// no reference, no cv qualifier: output reference and cv-qualifier
+						if (ref != null) {
+							types = (IType[]) ArrayUtil.append(IType.class, types, ref);
+							ref= null;
+						}
+						if (cvq != null) {
+							types = (IType[]) ArrayUtil.append(IType.class, types, cvq);
+							cvq= null;
+						}
+						types = (IType[]) ArrayUtil.append(IType.class, types, type);
+					} 
 				}
 			}
 			if (type instanceof ITypeContainer) {

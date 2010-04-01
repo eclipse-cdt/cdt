@@ -221,7 +221,11 @@ public class CompletionTests extends AbstractContentAssistTest {
 	protected void assertCompletionResults(String[] expected) throws Exception {
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
-	
+
+	protected void assertParameterHint(String[] expected) throws Exception {
+		assertContentAssistResults(fCursorOffset, expected, false, AbstractContentAssistTest.COMPARE_DISP_STRINGS);
+	}
+
 	//void gfunc() {C1 v; v.m/*cursor*/
 	public void testLocalVariable() throws Exception {
 		final String[] expected= {
@@ -1286,8 +1290,22 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//public:
 	//  InitializerListTest() : h/*cursor*/
 	//};
-	public void testCunstructorInitializerList_BaseClassInput_Bug266586() throws Exception {
+	public void testConstructorInitializerList_BaseClassInput_Bug266586() throws Exception {
 		final String[] expected= { "Helper(void)", "Helper(const Helper &)" };
 		assertCompletionResults(fCursorOffset, expected, COMPARE_ID_STRINGS);
+	}
+	
+	//	template <typename T> struct vector {
+	//      typedef T value_type;
+	//		void push_back(const value_type& value) {}
+	//	};
+	//	typedef int MyType;
+	//	void test() {
+	//	    vector<MyType> v;
+	//	    v.push_back(/*cursor*/);
+	//	} 
+	public void testTypedefSpecialization_Bug307818() throws Exception {
+		final String[] expected= { "push_back(const int & value) : void" };
+		assertParameterHint(expected);
 	}
 }

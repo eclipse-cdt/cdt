@@ -36,7 +36,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchUtils;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl.InitializationShutdownStep;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
-import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -674,7 +674,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         private final RequestMonitor fRequestMonitor;
 
         public MonitorInterruptJob(int timeout, RequestMonitor rm) {
-            super("Interrupt monitor job.");
+            super("Interrupt monitor job."); //$NON-NLS-1$
             setSystem(true);
             fRequestMonitor = rm;
             
@@ -698,18 +698,26 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         }
 
         public RequestMonitor getRequestMonitor() { return fRequestMonitor; }
-    }   
+    }
 
-    /*
-     * We must listen for an MI event and not a higher-level ISuspendedEvent.
-     * The reason is that some ISuspendedEvent are not sent when the target stops,
-     * in cases where we don't want to views to update.
-     * For example, if we want to interrupt the target to set a breakpoint,
-     * this interruption is done silently; we will receive the MI event though.
-     */
-	/** @since 3.0 */
+	/**
+	 * We use this handler to determine if the SIGINT we sent to GDB has been
+	 * effective. We must listen for an MI event and not a higher-level
+	 * ISuspendedEvent. The reason is that some ISuspendedEvent are not sent
+	 * when the target stops, in cases where we don't want to views to update.
+	 * For example, if we want to interrupt the target to set a breakpoint, this
+	 * interruption is done silently; we will receive the MI event though.
+	 * 
+	 * <p>
+	 * Though we send a SIGINT, we may not specifically get an MISignalEvent.
+	 * Typically we will, but not always, so wait for an MIStoppedEvent. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=305178#c21
+	 * 
+	 * @since 3.0
+	 * 
+	 */
     @DsfServiceEventHandler
-    public void eventDispatched(final MISignalEvent e) {
+    public void eventDispatched(final MIStoppedEvent e) {
     	if (fInterruptFailedJob != null) {
     		if (fInterruptFailedJob.cancel()) {
     			fInterruptFailedJob.getRequestMonitor().done();

@@ -15,10 +15,8 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	private IConnectorNode jump;
 	private boolean backward;
 
-	public JumpNode(IBasicBlock entry, IConnectorNode jump, boolean backward) {
-		super(entry);
-		this.jump = jump;
-		this.backward = backward;
+	public JumpNode() {
+		super();
 	}
 
 	public Iterator<IBasicBlock> getOutgoingIterator() {
@@ -47,11 +45,12 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 		return backward;
 	}
 
-	public void setJump(IConnectorNode jump) {
+	public void setJump(IConnectorNode jump, boolean backward) {
 		if (this.jump != null)
 			throw new IllegalArgumentException(
 					"Cannot modify exiting connector"); //$NON-NLS-1$
 		this.jump = jump;
+		this.backward = backward;
 	}
 
 	public void setBackward(boolean backward) {
@@ -60,6 +59,8 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 
 	@Override
 	public void addOutgoing(IBasicBlock node) {
+		if (node == jump)
+			return;
 		throw new UnsupportedOperationException();
 	}
 }

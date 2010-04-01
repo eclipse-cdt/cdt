@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionArc;
@@ -63,8 +64,8 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	/**
 	 * @param prev
 	 */
-	public DecisionNode(IBasicBlock prev) {
-		super(prev);
+	public DecisionNode() {
+		super();
 	}
 
 	public void setDecisionArcs(Collection<IDecisionArc> next) {

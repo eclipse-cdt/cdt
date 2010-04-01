@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
 import org.eclipse.cdt.codan.internal.core.cfg.PlainNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
@@ -21,24 +20,8 @@ public class CxxPlainNode extends PlainNode {
 
 
 	/**
-	 * @param prev
-	 * @param body
-	 */
-	public CxxPlainNode(IBasicBlock prev, IASTNode body) {
-		super(prev, null);
-		this.setNode(body);
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return getNode().getRawSignature();
-	}
-
-	/**
-	 * @param node the node to set
+	 * @param node
+	 *            the node to set
 	 */
 	public void setNode(IASTNode node) {
 		setData(node);
@@ -50,6 +33,7 @@ public class CxxPlainNode extends PlainNode {
 	public IASTNode getNode() {
 		return (IASTNode) getData();
 	}
+
 	/**
 	 * @return
 	 */

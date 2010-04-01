@@ -1,6 +1,7 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 
 public abstract class AbstractBasicBlock implements IBasicBlock {
@@ -46,4 +47,14 @@ public abstract class AbstractBasicBlock implements IBasicBlock {
 			return "";
 		return getData().toString();
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + ": " + toStringData();
+	}
+
+	/**
+	 * @param node
+	 */
+	public abstract void addIncoming(IBasicBlock node);
 }

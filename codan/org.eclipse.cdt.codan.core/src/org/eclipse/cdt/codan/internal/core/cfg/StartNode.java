@@ -2,7 +2,6 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Collections;
 import java.util.Iterator;
-
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 
@@ -27,5 +26,10 @@ public class StartNode extends AbstractSingleOutgoingNode implements IStartNode 
 	@Override
 	public void addOutgoing(IBasicBlock node) {
 		setOutgoing(node);
+	}
+
+	@Override
+	public void addIncoming(IBasicBlock node) {
+		throw new UnsupportedOperationException();
 	}
 }

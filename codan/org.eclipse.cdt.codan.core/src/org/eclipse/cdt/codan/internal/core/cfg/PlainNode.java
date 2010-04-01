@@ -1,7 +1,6 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
-
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
 
@@ -12,9 +11,8 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
 public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode {
 	IBasicBlock next;
 
-	public PlainNode(IBasicBlock prev, IBasicBlock next) {
-		super(prev);
-		this.next = next;
+	public PlainNode() {
+		super();
 	}
 
 	public Iterator<IBasicBlock> getOutgoingIterator() {

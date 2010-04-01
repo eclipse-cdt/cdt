@@ -17,6 +17,7 @@ import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder
 import org.eclipse.cdt.codan.core.test.CodanTestCase;
 import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -105,10 +106,17 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		for (Iterator<IBasicBlock> iterator = node.getIncomingIterator(); iterator.hasNext();) {
 			IBasicBlock b = iterator.next();
 			if (!contains(node, b.getOutgoingIterator()))
-				fail("Block "+node+" inc "+b);
+				fail("Block "+node+" inconsitent prev/next "+b);
 		}
-		// TODO Auto-generated method stub
-		
+		for (Iterator<IBasicBlock> iterator = node.getOutgoingIterator(); iterator.hasNext();) {
+			IBasicBlock b = iterator.next();
+			if (!contains(node, b.getIncomingIterator()))
+				fail("Block "+node+" inconsitent next/prev "+b);
+		}
+		if (node instanceof IDecisionNode) {
+			assertTrue("decision node outgping size",node.getOutgoingSize()>1);
+			assertNotNull(((IDecisionNode) node).getConnectionNode());
+		}
 	}
 
 	/**
@@ -140,5 +148,21 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		
 	}
 
+	/*-
+	 <code file="test2.c">
+	 main() {
+	   int a=10;
+	   while (a--) {
+	      a=a-2;
+	   }
+	 }
+	 </code>
+	 */
+	public void test_while() {
+		load("test2.c");
+		buildCfg();
+		checkCfg();
+		
+	}
 
 }

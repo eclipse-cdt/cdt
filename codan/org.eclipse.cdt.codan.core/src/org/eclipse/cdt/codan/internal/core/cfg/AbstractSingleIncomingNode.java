@@ -10,11 +10,10 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleIncoming;
  */
 public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock
 		implements ISingleIncoming {
-	final IBasicBlock prev;
+	private IBasicBlock prev;
 
-	public AbstractSingleIncomingNode(IBasicBlock prev) {
+	public AbstractSingleIncomingNode() {
 		super();
-		this.prev = prev;
 	}
 
 	public Iterator<IBasicBlock> getIncomingIterator() {
@@ -27,5 +26,14 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock
 
 	public IBasicBlock getIncoming() {
 		return prev;
+	}
+
+	public void setIncoming(IBasicBlock prev) {
+		this.prev = prev;
+	}
+
+	@Override
+	public void addIncoming(IBasicBlock node) {
+		setIncoming(node);
 	}
 }

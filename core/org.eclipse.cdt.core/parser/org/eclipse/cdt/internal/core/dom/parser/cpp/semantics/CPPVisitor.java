@@ -760,7 +760,7 @@ public class CPPVisitor extends ASTQueries {
         try {
         	IASTNode node = ASTInternal.getPhysicalNodeOfScope(containingScope);
         	if (node instanceof ICPPASTCompositeTypeSpecifier)
-        		clsTypeSpec = (ICPPASTCompositeTypeSpecifier)node;
+        		clsTypeSpec = (ICPPASTCompositeTypeSpecifier) node;
         	else
         		return false;
         } catch (DOMException e) {
@@ -768,7 +768,7 @@ public class CPPVisitor extends ASTQueries {
         }
         IASTName clsName = clsTypeSpec.getName();
         if (clsName instanceof ICPPASTQualifiedName) {
-	        IASTName[] names = ((ICPPASTQualifiedName)clsName).getNames(); 
+	        IASTName[] names = ((ICPPASTQualifiedName) clsName).getNames(); 
 	        clsName = names[names.length - 1];
 	    }
         return isConstructor(clsName, declarator);
@@ -795,7 +795,7 @@ public class CPPVisitor extends ASTQueries {
 			IASTDeclarator dtor= findTypeRelevantDeclarator((IASTDeclarator) parent);
 			if (dtor instanceof ICPPASTFunctionDeclarator) {
 				if (name instanceof ICPPASTQualifiedName) {
-					IASTName[] names = ((ICPPASTQualifiedName)name).getNames();
+					IASTName[] names = ((ICPPASTQualifiedName) name).getNames();
 					if (names.length >= 2) {
 						return CPPVisitor.isConstructor(names[names.length - 2], dtor);
 					}
@@ -927,7 +927,7 @@ public class CPPVisitor extends ASTQueries {
 			    		// the body of the ctor.
 				    	IASTNode temp = getContainingBlockItem(node);
 				    	if (temp instanceof IASTFunctionDefinition) {
-				    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)temp).getBody();
+				    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition) temp).getBody();
 				    		return body.getScope();
 				    	}
 				    	node= parent;
@@ -974,7 +974,7 @@ public class CPPVisitor extends ASTQueries {
 	    	    ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) node.getParent();
 	    	    IASTName n = compSpec.getName();
 	    	    if (n instanceof ICPPASTQualifiedName) {
-	    	        IASTName[] ns = ((ICPPASTQualifiedName)n).getNames();
+	    	        IASTName[] ns = ((ICPPASTQualifiedName) n).getNames();
 	    	        n = ns[ns.length - 1];
 	    	    }
 	    	    
@@ -1109,7 +1109,7 @@ public class CPPVisitor extends ASTQueries {
 			        parent = parent.getParent();
 			    }
 			    IASTFunctionDefinition fdef = (IASTFunctionDefinition) parent;
-			    return ((ICPPASTFunctionDeclarator)fdef.getDeclarator()).getFunctionScope();
+			    return ((ICPPASTFunctionDeclarator) fdef.getDeclarator()).getFunctionScope();
 			}
 		} catch (DOMException e) {
 			IProblemBinding problem = e.getProblem();
@@ -1189,14 +1189,14 @@ public class CPPVisitor extends ASTQueries {
 				name = ((IASTIdExpression) node).getName();
 				break;
 			} else if (node instanceof ICPPASTFieldReference) {
-				name = ((ICPPASTFieldReference)node).getFieldName();
+				name = ((ICPPASTFieldReference) node).getFieldName();
 				break;
 			} else if (node instanceof IASTFunctionCallExpression) {
-				node = ((IASTFunctionCallExpression)node).getFunctionNameExpression();
+				node = ((IASTFunctionCallExpression) node).getFunctionNameExpression();
 			} else if (node instanceof IASTUnaryExpression) {
-				node = ((IASTUnaryExpression)node).getOperand();
+				node = ((IASTUnaryExpression) node).getOperand();
 			} else if (node instanceof IASTBinaryExpression) {
-				node = ((IASTBinaryExpression)node).getOperand2();
+				node = ((IASTBinaryExpression) node).getOperand2();
 			} else {
 				node = null;
 			}
@@ -1266,7 +1266,7 @@ public class CPPVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTDeclaration declaration) {
 			if (declaration instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder)declaration).getProblem());
+				addProblem(((IASTProblemHolder) declaration).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
@@ -1287,7 +1287,7 @@ public class CPPVisitor extends ASTQueries {
 		@Override
 		public int visit(IASTStatement statement) {
 			if (statement instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder)statement).getProblem());
+				addProblem(((IASTProblemHolder) statement).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
@@ -1397,7 +1397,7 @@ public class CPPVisitor extends ASTQueries {
 					    	p= p.getParent();
 					    }
 					    if (p instanceof IASTSimpleDeclaration) {
-					        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)p).getDeclSpecifier();
+					        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) p).getDeclSpecifier();
 					        if (declSpec.getStorageClass() == IASTDeclSpecifier.sc_typedef)
 					            break;
 					    }
@@ -1544,7 +1544,7 @@ public class CPPVisitor extends ASTQueries {
 					} else if (prop == IASTElaboratedTypeSpecifier.TYPE_NAME)	{
 						IASTNode p = name.getParent().getParent();
 						if (!(p instanceof IASTSimpleDeclaration) ||
-							((IASTSimpleDeclaration)p).getDeclarators().length > 0)
+							((IASTSimpleDeclaration) p).getDeclarators().length > 0)
 						{
 							break;
 						}
@@ -1759,7 +1759,7 @@ public class CPPVisitor extends ASTQueries {
 		if (node instanceof IASTTypeId)
 			return createType(((IASTTypeId) node).getAbstractDeclarator());
 		if (node instanceof IASTParameterDeclaration)
-			return createType(((IASTParameterDeclaration)node).getDeclarator());
+			return createType(((IASTParameterDeclaration) node).getDeclarator());
 		return null;
 	}
 
@@ -1773,11 +1773,11 @@ public class CPPVisitor extends ASTQueries {
 		IASTDeclSpecifier declSpec = null;
 		boolean isPackExpansion= false;
 		if (parent instanceof IASTSimpleDeclaration) {
-			declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+			declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 		} else if (parent instanceof IASTFunctionDefinition) {
-			declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+			declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
 		} else if (parent instanceof ICPPASTTypeId) {
-			final ICPPASTTypeId typeId = (ICPPASTTypeId)parent;
+			final ICPPASTTypeId typeId = (ICPPASTTypeId) parent;
 			declSpec = typeId.getDeclSpecifier();
 			isPackExpansion= typeId.isPackExpansion();
 		} else {
@@ -1901,11 +1901,11 @@ public class CPPVisitor extends ASTQueries {
 	    if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			name = ((ICPPASTCompositeTypeSpecifier) declSpec).getName();
 	    } else if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
-	    	name = ((ICPPASTNamedTypeSpecifier)declSpec).getName();
+	    	name = ((ICPPASTNamedTypeSpecifier) declSpec).getName();
 		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
-			name = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName();
+			name = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName();
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
-			name = ((IASTEnumerationSpecifier)declSpec).getName();
+			name = ((IASTEnumerationSpecifier) declSpec).getName();
 		} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			ICPPASTSimpleDeclSpecifier spec = (ICPPASTSimpleDeclSpecifier) declSpec;
 			// Check for decltype(expr)
@@ -1959,7 +1959,7 @@ public class CPPVisitor extends ASTQueries {
 	 */
 	private static IType createType(IType baseType, IASTDeclarator declarator) {
 	    if (declarator instanceof ICPPASTFunctionDeclarator)
-	        return createType(baseType, (ICPPASTFunctionDeclarator)declarator);
+	        return createType(baseType, (ICPPASTFunctionDeclarator) declarator);
 		
 		IType type = baseType;
 		type = getPointerTypes(type, declarator);
@@ -2044,7 +2044,7 @@ public class CPPVisitor extends ASTQueries {
 					ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
 					IASTName funcName = findInnermostDeclarator(dtor).getName();
 					if (funcName instanceof ICPPASTQualifiedName) {
-					    IASTName[] ns = ((ICPPASTQualifiedName)funcName).getNames();
+					    IASTName[] ns = ((ICPPASTQualifiedName) funcName).getNames();
 					    funcName = ns[ns.length - 1];
 					}
 					IScope s = getContainingScope(funcName);
@@ -2175,7 +2175,7 @@ public class CPPVisitor extends ASTQueries {
 			if (node != null) {
 				IASTName name = null;
 				if (node instanceof IASTDeclarator) {
-					name = ((IASTDeclarator)node).getName();
+					name = ((IASTDeclarator) node).getName();
 				} else if (node instanceof IASTName) {
 					name = (IASTName) node;
 				}

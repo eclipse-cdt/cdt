@@ -2143,12 +2143,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * This function parses a declaration specifier sequence, as according to
      * the ANSI C++ specification. 
      * declSpecifier : 
-     * 		"auto" | "register" | "static" | "extern" | "mutable" | 
+     * 		"register" | "static" | "extern" | "mutable" | 
      * 		"inline" | "virtual" | "explicit" | 
      * 		"typedef" | "friend" | 
      * 		"const" | "volatile" | 
      * 		"short" | "long" | "signed" | "unsigned" | "int" |
-     * 		"char" | "wchar_t" | "bool" | "float" | "double" | "void" | 
+     * 		"char" | "wchar_t" | "bool" | "float" | "double" | "void" |
+     *      "auto" |
      * 		("typename")? name | 
      * 		{ "class" | "struct" | "union" } classSpecifier | 
      * 		{"enum"} enumSpecifier

@@ -191,7 +191,7 @@ public class CPPVisitor extends ASTQueries {
 	public static final String TYPE_INFO= "type_info"; //$NON-NLS-1$
 	private static final String INITIALIZER_LIST = "initializer_list"; //$NON-NLS-1$
 	// Thread-local set of DeclSpecifiers for which auto types are being created.
-	// Used for preventing infinite recursion while processing invalid self-referring
+	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
 	private static final ThreadLocal<Set<IASTDeclSpecifier>> autoTypeDeclSpecs =
 			new ThreadLocal<Set<IASTDeclSpecifier>>() {
@@ -1792,6 +1792,10 @@ public class CPPVisitor extends ASTQueries {
 		
 		if (declSpec instanceof ICPPASTSimpleDeclSpecifier &&
 				((ICPPASTSimpleDeclSpecifier) declSpec).getType() == IASTSimpleDeclSpecifier.t_auto) {
+			if (declarator instanceof ICPPASTFunctionDeclarator) {
+				return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
+			}
+
 			parent = parent.getParent();
 			if (parent instanceof ICPPASTNewExpression) {
 				IASTInitializer initializer = ((ICPPASTNewExpression) parent).getInitializer();
@@ -1799,6 +1803,10 @@ public class CPPVisitor extends ASTQueries {
 				if (arguments.length == 1) {
 					initClause = arguments[0];
 				} 
+			} else if (parent instanceof IASTCompositeTypeSpecifier &&
+					declSpec.getStorageClass() != IASTDeclSpecifier.sc_static) {
+				// Non-static auto-typed class members are not allowed.
+				return null;
 			}
 			return createAutoType(initClause, declSpec, declarator);
 		}
@@ -1825,10 +1833,6 @@ public class CPPVisitor extends ASTQueries {
 
 	private static IType createAutoType(IASTNode initClause, IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		//  C++0x: 7.1.6.4
-		if (declarator instanceof ICPPASTFunctionDeclarator) {
-			return createAutoFunctionType(declSpec, (ICPPASTFunctionDeclarator) declarator);
-		}
-
 		if (!autoTypeDeclSpecs.get().add(declSpec)) {
 			// Detected a self referring auto type, e.g.: auto x = x;
 			return null;

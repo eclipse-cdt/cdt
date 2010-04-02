@@ -8329,6 +8329,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNull(x.getType());
 	}
 
+	// struct A { auto a = 1; };         // Auto-typed non-static fields are not allowed.
+	// struct B { static auto b = 1; };  // Auto-typed static fields are ok.
+	public void testAutoType_305987() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPVariable a= bh.assertNonProblem("a =", 1);
+		assertNull(a.getType());
+		ICPPVariable b= bh.assertNonProblem("b =", 1);
+	}
+
 	// auto fpif1(int)->int(*)(int)
 	// auto fpif2(int)->int(*)(int) {}
 	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {

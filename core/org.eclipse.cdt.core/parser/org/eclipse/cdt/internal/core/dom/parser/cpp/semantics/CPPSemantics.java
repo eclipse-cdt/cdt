@@ -197,7 +197,6 @@ import org.eclipse.core.runtime.CoreException;
  * Name resolution
  */
 public class CPPSemantics {
-
 	/**
 	 * The maximum depth to search ancestors before assuming infinite looping.
 	 */
@@ -244,7 +243,6 @@ public class CPPSemantics {
         }
 		if (data.problem != null)
 		    return data.problem;
-        
 
 		// 3: resolve ambiguities
 		IBinding binding;
@@ -2700,17 +2698,15 @@ public class CPPSemantics {
 			}
 		};
     }
-  
-    
+
     public static ICPPFunction findOverloadedOperator(IASTArraySubscriptExpression exp) {
     	char[] name = OverloadableOperator.BRACKET.toCharArray();
     	IASTExpression[] args = {exp.getArrayExpression(), exp.getSubscriptExpression()};
-    	IType type1 = exp.getArrayExpression().getExpressionType();
-    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-    	return findOverloadedOperator(exp, args, ultimateType1, name, NonMemberMode.none);
+    	IType type = exp.getArrayExpression().getExpressionType();
+    	type = SemanticUtil.getUltimateTypeUptoPointers(type);
+    	return findOverloadedOperator(exp, args, type, name, NonMemberMode.none);
     }
-    
-    
+
     public static ICPPFunction findOverloadedOperator(IASTFunctionCallExpression exp, ICPPClassType type) {
     	char[] name = OverloadableOperator.PAREN.toCharArray();
     	IASTInitializerClause[] args = exp.getArguments();
@@ -2756,10 +2752,10 @@ public class CPPSemantics {
     }
     
     private static ICPPClassType getNestedClassType(ICPPASTDeleteExpression exp) {
-    	IType type1 = exp.getOperand().getExpressionType();
-    	IType ultimateType1 = SemanticUtil.getUltimateTypeUptoPointers(type1);
-    	if (ultimateType1 instanceof IPointerType) {
-    		IType classType = ((IPointerType)ultimateType1).getType();
+    	IType type = exp.getOperand().getExpressionType();
+    	type = SemanticUtil.getUltimateTypeUptoPointers(type);
+    	if (type instanceof IPointerType) {
+    		IType classType = ((IPointerType) type).getType();
 			if (classType instanceof ICPPClassType)
 				return (ICPPClassType) classType;
     	}
@@ -2774,7 +2770,7 @@ public class CPPSemantics {
     	IScope scope = null;
 		try {
 			scope = cls.getCompositeScope();
-		} catch (DOMException e1) {
+		} catch (DOMException e) {
 			return null;
 		}
 		if (scope == null)

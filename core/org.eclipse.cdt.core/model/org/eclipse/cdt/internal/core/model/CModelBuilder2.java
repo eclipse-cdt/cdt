@@ -162,13 +162,15 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			startTime= System.currentTimeMillis();
 			buildModel(ast);
 			elementInfo.setIsStructureKnown(true);
-			if (DEBUG) Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
-					+"children="+ elementInfo.internalGetChildren().size() //$NON-NLS-1$
-					+" time="+ (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
-					DebugLogConstants.MODEL, false);
+			if (DEBUG) {
+				Util.debugLog("CModelBuilder2: building " //$NON-NLS-1$
+						+ "children=" + elementInfo.internalGetChildren().size() //$NON-NLS-1$
+						+ " time=" + (System.currentTimeMillis() - startTime) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
+						DebugLogConstants.MODEL, false);
+			}
 
 			if (elementInfo instanceof ASTHolderTUInfo) {
-				((ASTHolderTUInfo)elementInfo).fAST= ast;
+				((ASTHolderTUInfo) elementInfo).fAST= ast;
 				// preserve index lock for AST receiver
 				index= null;
 			}
@@ -670,7 +672,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			for (final ICPPASTBaseSpecifier baseSpecifier : baseSpecifiers) {
 				final IASTName baseName= baseSpecifier.getName();
 				final ASTAccessVisibility visibility;
-				switch(baseSpecifier.getVisibility()) {
+				switch (baseSpecifier.getVisibility()) {
 				case ICPPASTBaseSpecifier.v_public:
 					visibility= ASTAccessVisibility.PUBLIC;
 					break;
@@ -1231,7 +1233,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @return the corresponding <code>ASTAccessVisibility</code>
 	 */
 	private ASTAccessVisibility adaptVisibilityConstant(int visibility) {
-		switch(visibility) {
+		switch (visibility) {
 		case ICPPASTVisibilityLabel.v_public:
 			return ASTAccessVisibility.PUBLIC;
 		case ICPPASTVisibilityLabel.v_protected:
@@ -1289,5 +1291,4 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 		return null;
 	}
-
 }

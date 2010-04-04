@@ -40,37 +40,36 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
     private IASTName name;
     private IASTDeclarator nested;
     private IASTPointerOperator[] pointerOps = null;
-    private boolean isPackExpansion; 
-   
+    private boolean isPackExpansion;
+
     public CPPASTDeclarator() {
 	}
 
 	public CPPASTDeclarator(IASTName name) {
 		setName(name);
 	}
-    
+
     public CPPASTDeclarator(IASTName name, IASTInitializer initializer) {
 		this(name);
 		setInitializer(initializer);
 	}
 
-    
     public CPPASTDeclarator copy() {
 		CPPASTDeclarator copy = new CPPASTDeclarator();
 		copyBaseDeclarator(copy);
 		return copy;
 	}
-    
+
     protected void copyBaseDeclarator(CPPASTDeclarator copy) {
     	copy.setName(name == null ? null : name.copy());
     	copy.setInitializer(initializer == null ? null : initializer.copy());
 		copy.setNestedDeclarator(nested == null ? null : nested.copy());
 		copy.isPackExpansion= isPackExpansion;
-		for(IASTPointerOperator pointer : getPointerOperators())
+		for (IASTPointerOperator pointer : getPointerOperators())
 			copy.addPointerOperator(pointer == null ? null : pointer.copy());
 		copy.setOffsetAndLength(this);
     }
-    
+
 	public boolean declaresParameterPack() {
 		return isPackExpansion;
 	}
@@ -128,7 +127,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
 			name.setPropertyInParent(DECLARATOR_NAME);
 		}
     }
-    
+
     public void setDeclaresParameterPack(boolean val) {
     	assertNotFrozen();
     	isPackExpansion= val;
@@ -137,13 +136,13 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
 	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitDeclarators) {
-		    switch(action.visit(this)) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default : break;
 	        }
 		}
-        
+
         if (pointerOps != null) {
         	for (IASTPointerOperator op : pointerOps) {
         		if (op == null)
@@ -152,34 +151,30 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
                 	return false;
         	}
         }
-        
+
         if (nested == null && name != null) {
         	IASTDeclarator outermost= ASTQueries.findOutermostDeclarator(this);
         	if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
         		if (!name.accept(action)) return false;
             }
 		}
-        
+
         if (nested != null) {
         	if (!nested.accept(action)) return false;
         }
-      
+
         if (!postAccept(action))
         	return false;
-        
+
         if (action.shouldVisitDeclarators && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
-        return true;  
-    }
-    
-    protected boolean postAccept(ASTVisitor action) {
-		if (initializer != null && !initializer.accept(action))
-			return false;
-		
-		return true;
+        return true;
     }
 
+    protected boolean postAccept(ASTVisitor action) {
+		return initializer == null || initializer.accept(action);
+    }
 
 	public int getRoleForName(IASTName n) {
 		// 3.1.2
@@ -188,7 +183,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
         	// a declaration is a definition unless ...
             if (parent instanceof IASTFunctionDefinition)
                 return r_definition;
-            
+
             if (parent instanceof IASTSimpleDeclaration) {
             	final IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) parent;
 
@@ -206,24 +201,24 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
             	if (storage == IASTDeclSpecifier.sc_static && CPPVisitor.getContainingScope(parent) instanceof ICPPClassScope) {
             		return r_declaration;
             	}
-            	// unless it is a class name declaration: no declarator in this case 
+            	// unless it is a class name declaration: no declarator in this case
             	// unless it is a typedef declaration
             	if (storage == IASTDeclSpecifier.sc_typedef)
             		return r_definition; // should actually be a declaration
-            	
-            	// unless it is a using-declaration or using-directive: no declarator in this case            	
+
+            	// unless it is a using-declaration or using-directive: no declarator in this case
             }
 
             // all other cases
         	return r_definition;
         }
-        
+
         if (parent instanceof IASTTypeId)
             return r_reference;
 
         if (parent instanceof IASTParameterDeclaration)
             return (n.getLookupKey().length > 0) ? r_definition : r_declaration;
-        
+
         return r_unclear;
 	}
 

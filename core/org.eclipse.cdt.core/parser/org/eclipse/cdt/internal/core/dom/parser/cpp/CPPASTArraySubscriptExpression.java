@@ -94,9 +94,9 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     }
     
     public IASTImplicitName[] getImplicitNames() {
-		if(implicitNames == null) {
+		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if(overload == null)
+			if (overload == null)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			// create separate implicit names for the two brackets
@@ -129,49 +129,47 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     }
     
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        if( arrayExpression != null ) 
-            if( !arrayExpression.accept( action ) ) return false;
+        if (arrayExpression != null && !arrayExpression.accept(action))
+        	return false;
         
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
         
-        if(implicits != null && implicits.length > 0)
-        	if(!implicits[0].accept(action)) return false;
+        if (implicits != null && implicits.length > 0 && !implicits[0].accept(action))
+        	return false;
         
-        if( subscriptExp != null )   
-            if( !subscriptExp.accept( action ) ) return false;
+        if (subscriptExp != null && !subscriptExp.accept(action))
+        	return false;
         
-        if(implicits != null && implicits.length > 0)
-        	if(!implicits[1].accept(action)) return false;
+        if (implicits != null && implicits.length > 0 && !implicits[1].accept(action))
+        	return false;
         
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == subscriptExp )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == subscriptExp) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             subscriptExp  = (IASTExpression) other;
         }
-        if( child == arrayExpression )
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == arrayExpression) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             arrayExpression  = (IASTExpression) other;
         }
     }

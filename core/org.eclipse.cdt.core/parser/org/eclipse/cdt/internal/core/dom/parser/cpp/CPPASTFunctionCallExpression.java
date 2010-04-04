@@ -107,9 +107,9 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     }
 
     public IASTImplicitName[] getImplicitNames() {
-    	if(implicitNames == null) {
+    	if (implicitNames == null) {
     		ICPPFunction overload = getOperator();
-			if(overload == null)
+			if (overload == null)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			// create separate implicit names for the two brackets
@@ -126,12 +126,12 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 					IToken lparen = functionName.getTrailingSyntax();
 					IToken rparen = lparen.getNext();
 					
-					if(lparen.getType() == IToken.tLPAREN)
+					if (lparen.getType() == IToken.tLPAREN)
 						n1.setOffsetAndLength(idEndOffset + lparen.getOffset(), 1);
 					else
 						n1.setOffsetAndLength(idEndOffset + lparen.getEndOffset(), 0);
 						
-					if(rparen.getType() == IToken.tRPAREN)
+					if (rparen.getType() == IToken.tRPAREN)
 						n2.setOffsetAndLength(idEndOffset + rparen.getOffset(), 1);
 					else
 						n2.setOffsetAndLength(idEndOffset + rparen.getEndOffset(), 0);
@@ -150,12 +150,12 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     }
     
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       
@@ -164,18 +164,16 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
         
         IASTImplicitName[] implicits = action.shouldVisitImplicitNames ? getImplicitNames() : null;
         
-		if (implicits != null && implicits.length > 0)
-			if (!implicits[0].accept(action))
-				return false;
+		if (implicits != null && implicits.length > 0 && !implicits[0].accept(action))
+			return false;
         
 		for (IASTInitializerClause arg : fArguments) {
 			if (!arg.accept(action))
 				return false;
 		}
 
-		if (implicits != null && implicits.length > 0)
-			if (!implicits[1].accept(action))
-				return false;
+		if (implicits != null && implicits.length > 0 && !implicits[1].accept(action))
+			return false;
         
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
@@ -252,7 +250,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     			if (op != null) {
     				// overload can be a surrogate function call, which consists of a conversion and a call to
     				// a dynamically computed function pointer.
-    				if(!(op instanceof CPPImplicitFunction))
+    				if (!(op instanceof CPPImplicitFunction))
     					overload = op;
     				return op.getType().getReturnType();
     			}

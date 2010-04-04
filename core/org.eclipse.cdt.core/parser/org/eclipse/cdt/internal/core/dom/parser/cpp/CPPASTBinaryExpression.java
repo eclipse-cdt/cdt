@@ -136,7 +136,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP:  return true;
-	            default : break;
+	            default: break;
 	        }
 		}
 

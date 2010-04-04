@@ -161,12 +161,11 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		IType t = CPPVisitor.createType(getTypeId());
 		return t instanceof IArrayType;
 	}
-	
-    
+
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
-		    switch(action.visit(this)) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP:  return true;
 	            default: break;
@@ -174,7 +173,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		}
         
         if (action.shouldVisitImplicitNames) { 
-        	for(IASTImplicitName name : getImplicitNames()) {
+        	for (IASTImplicitName name : getImplicitNames()) {
         		if (!name.accept(action)) return false;
         	}
         }

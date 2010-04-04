@@ -117,8 +117,8 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
     }
     
     public IASTImplicitName[] getImplicitNames() {
-    	if(implicitNames == null) {
-    		if(!isDeref)
+    	if (implicitNames == null) {
+    		if (!isDeref)
     			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
     		// collect the function bindings
@@ -128,7 +128,7 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 			} catch (DOMException e) {
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			}
-			if(functionBindings.isEmpty())
+			if (functionBindings.isEmpty())
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			// create a name to wrap each binding
@@ -154,15 +154,18 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 	        }
 		}
       
-        if (owner != null && !owner.accept(action)) return false;
+        if (owner != null && !owner.accept(action))
+        	return false;
         
-        if(action.shouldVisitImplicitNames) { 
-        	for(IASTImplicitName name : getImplicitNames()) {
-        		if(!name.accept(action)) return false;
+        if (action.shouldVisitImplicitNames) { 
+        	for (IASTImplicitName name : getImplicitNames()) {
+        		if (!name.accept(action))
+        			return false;
         	}
         }
         
-        if (name != null && !name.accept(action)) return false;
+        if (name != null && !name.accept(action))
+        	return false;
         
         if (action.shouldVisitExpressions) {
 		    switch (action.leave(this)) {

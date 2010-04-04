@@ -2761,12 +2761,12 @@ public class CPPSemantics {
     	}
 		return null;
     }
-    
+
     public static ICPPFunction findDestructor(ICPPASTDeleteExpression expr) {
     	ICPPClassType cls = getNestedClassType(expr);
     	if (cls == null)
     		return null;
-    	
+
     	IScope scope = null;
 		try {
 			scope = cls.getCompositeScope();
@@ -2775,16 +2775,16 @@ public class CPPSemantics {
 		}
 		if (scope == null)
 			return null;
-		
+
 		CPPASTName astName = new CPPASTName();
 		astName.setParent(expr);
 	    astName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
 	    astName.setName(CharArrayUtils.concat("~".toCharArray(), cls.getNameCharArray())); //$NON-NLS-1$
-	    
+
 	    LookupData data = new LookupData(astName);
 	    data.forceQualified = true;
 	    data.setFunctionArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
-	    
+
 	    try {
 		    lookup(data, scope);
 		    IBinding binding = resolveAmbiguities(data, astName);
@@ -2794,27 +2794,27 @@ public class CPPSemantics {
 		}
 		return null;
     }
-    
+
     public static ICPPFunction findOverloadedOperator(IASTUnaryExpression exp) {
     	if (exp.getOperand() == null)
     		return null;
-    	
+
     	OverloadableOperator op = OverloadableOperator.fromUnaryExpression(exp);
 		if (op == null)
 			return null;
-    	
+
 		IASTExpression[] args;
 		int operator = exp.getOperator();
 	    if (operator == IASTUnaryExpression.op_postFixDecr || operator == IASTUnaryExpression.op_postFixIncr)
 	    	args = new IASTExpression[] { exp.getOperand(), CPPASTLiteralExpression.INT_ZERO };
 	    else
 	    	args = new IASTExpression[] { exp.getOperand() };
-	    
+
     	IType type = exp.getOperand().getExpressionType();
 		type = SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE);
 		if (!isUserDefined(type))
 			return null;
-		
+
 		return findOverloadedOperator(exp, args, type, op.toCharArray(), NonMemberMode.limited);
     }
 

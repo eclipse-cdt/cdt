@@ -326,7 +326,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * <ul>
 	 * </ul>
 	 */
-	public List computeStackFrames() throws DebugException {
+	public synchronized List computeStackFrames() throws DebugException {
 		return computeStackFrames( refreshChildren() );
 	}
 

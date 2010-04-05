@@ -68,13 +68,13 @@ public abstract class ASTNode implements IASTNode {
 	}
 	
 	public void setInactive() {
-		if(frozen)
+		if (frozen)
 			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
 		active= false;
 	}
     
 	protected void assertNotFrozen() throws IllegalStateException {
-		if(frozen)
+		if (frozen)
 			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
 	}
 	
@@ -128,8 +128,7 @@ public abstract class ASTNode implements IASTNode {
             return locations;
         if (length == 0) {
         	locations= EMPTY_LOCATION_ARRAY;
-        }
-        else {
+        } else {
         	final IASTTranslationUnit tu= getTranslationUnit();
         	if (tu != null) {
         		ILocationResolver l= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
@@ -183,7 +182,7 @@ public abstract class ASTNode implements IASTNode {
     }
 
     public IASTFileLocation getFileLocation() {
-        if( fileLocation != null )
+        if (fileLocation != null)
             return fileLocation;
         if (offset <= 0 && (length == 0 || offset < 0)) {
         	return null;
@@ -193,8 +192,7 @@ public abstract class ASTNode implements IASTNode {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
         	if (lr != null) {
         		fileLocation= lr.getMappedFileLocation(offset, length);
-        	}
-        	else {
+        	} else {
         		// support for old location map
         		fileLocation= ast.flattenLocationsToFile(getNodeLocations());
         	}
@@ -318,7 +316,7 @@ public abstract class ASTNode implements IASTNode {
     	try {
 			Token result= null;	
 			Token last= null;
-			for(;;) {				
+			for (;;) {				
 				Token t= lex.nextToken();
 				switch (t.getType()) {
 				case IToken.tEND_OF_INPUT:

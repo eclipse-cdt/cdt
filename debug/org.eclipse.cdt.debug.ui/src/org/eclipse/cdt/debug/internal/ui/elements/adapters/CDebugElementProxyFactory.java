@@ -40,6 +40,11 @@ public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
                 return new ModulesViewModelProxy( mr );
             }
         }
+        else if ( IDebugUIConstants.ID_REGISTER_VIEW.equals( context.getId() ) ) {
+            if ( element instanceof CRegisterManagerProxy ) {
+                return new CRegisterManagerModelProxy( (CRegisterManagerProxy)element );
+            }
+        }
         else if ( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR.equals( context.getId() ) ) {
             if ( element instanceof DisassemblyRetrieval ) {
                 return new DisassemblyElementProxy( (DisassemblyRetrieval)element );

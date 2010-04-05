@@ -1339,6 +1339,9 @@
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
+         </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICThread"
@@ -1346,6 +1349,9 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
+         </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
@@ -1355,6 +1361,9 @@
          <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider"/>
          <adapter
                type="org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
          </adapter>
       </factory>
       <factory
@@ -1460,6 +1469,22 @@
             class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
          <adapter
                type="org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.internal.ui.elements.adapters.CRegisterManagerProxy"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
          </adapter>
       </factory>
    </extension>

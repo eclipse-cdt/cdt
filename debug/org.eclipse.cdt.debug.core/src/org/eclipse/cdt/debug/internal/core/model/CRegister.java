@@ -223,7 +223,10 @@ public class CRegister extends CVariable implements ICRegister {
 		}
 
 		public synchronized ICValue getValue() throws DebugException {
-			if ( fValue.equals( CValueFactory.NULL_VALUE ) ) {
+		    CStackFrame frame = getCurrentStackFrame();
+		    if ( frame == null || frame.isDisposed() )
+		        fValue = CValueFactory.NULL_VALUE;
+		    else if ( fValue.equals( CValueFactory.NULL_VALUE ) ) {
 				ICDIRegister reg = getCDIRegister();
 				if ( reg != null ) {
 					try {

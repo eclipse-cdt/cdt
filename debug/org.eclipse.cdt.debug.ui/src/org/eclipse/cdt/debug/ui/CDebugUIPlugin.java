@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebuggerPageAdapter;
+import org.eclipse.cdt.debug.internal.ui.CRegisterManagerProxies;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
@@ -331,6 +332,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	@Override
     public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
+		CRegisterManagerProxies.getInstance().dispose();
         fDisassemblyEditorManager.dispose();
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();

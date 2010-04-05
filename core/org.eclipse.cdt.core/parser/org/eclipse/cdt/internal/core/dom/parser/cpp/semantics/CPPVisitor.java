@@ -607,8 +607,8 @@ public class CPPVisitor extends ASTQueries {
 						findTypeRelevantDeclarator(fdtor) != fdtor)
 					return null;
 				IASTParameterDeclaration[] params = fdtor.getParameters();
-				int i=0;
-				for(;i<params.length; i++) {
+				int i= 0;
+				for (; i < params.length; i++) {
 					if (params[i] == param)
 						break;
 				}
@@ -800,7 +800,7 @@ public class CPPVisitor extends ASTQueries {
 						return CPPVisitor.isConstructor(names[names.length - 2], dtor);
 					}
 				} else {
-					while(parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier)) {
+					while (parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier)) {
 						parent= parent.getParent();
 					}
 					if (parent instanceof ICPPASTCompositeTypeSpecifier) {

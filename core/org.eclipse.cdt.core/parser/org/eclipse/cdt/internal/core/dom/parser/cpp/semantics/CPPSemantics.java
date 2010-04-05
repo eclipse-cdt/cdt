@@ -2263,7 +2263,7 @@ public class CPPSemantics {
 		if (implicitType == null) {
 			result= new FunctionCost(fn, sourceLen);
 		} else {
-			result= new FunctionCost(fn, sourceLen+1);
+			result= new FunctionCost(fn, sourceLen + 1);
 			
 			boolean sourceIsLValue= true;
 			final IType thisType = data.getImpliedObjectArgument();

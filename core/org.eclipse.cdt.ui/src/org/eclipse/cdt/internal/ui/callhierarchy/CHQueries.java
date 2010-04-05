@@ -51,7 +51,7 @@ public class CHQueries {
 			throws CoreException {
 		CalledByResult result= new CalledByResult();
 		ICElement callee= node.getRepresentedDeclaration();
-		if (! (callee instanceof ISourceReference)) {
+		if (!(callee instanceof ISourceReference)) {
 			return EMPTY_NODES;
 		}
 		boolean done= false;

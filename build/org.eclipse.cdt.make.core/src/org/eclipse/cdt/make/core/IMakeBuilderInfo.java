@@ -23,8 +23,10 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	public final static String BUILD_TARGET_CLEAN = ARGS_PREFIX + ".build.target.clean"; //$NON-NLS-1$
 
 	/** @deprecated */
+	@Deprecated
 	public final static String BUILD_TARGET_INCREAMENTAL = BUILD_TARGET_INCREMENTAL;
 	/** @deprecated */
+	@Deprecated
 	public final static String BUILD_TARGET_FULL = ARGS_PREFIX + ".build.target.full"; //$NON-NLS-1$
 	
 	boolean isAutoBuildEnable();
@@ -33,8 +35,12 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	String getAutoBuildTarget();
 
 	/**
+	 * @param target 
+	 * @throws CoreException 
+	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	void setAutoBuildTarget(String target) throws CoreException;
 
 	boolean isIncrementalBuildEnabled();
@@ -43,8 +49,12 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	String getIncrementalBuildTarget();
 
 	/**
+	 * @param target 
+	 * @throws CoreException 
+	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	void setIncrementalBuildTarget(String target) throws CoreException;
 
 	boolean isFullBuildEnabled();
@@ -53,15 +63,23 @@ public interface IMakeBuilderInfo extends IMakeCommonBuildInfo {
 	String getFullBuildTarget();
 
 	/**
+	 * @param target 
+	 * @throws CoreException 
+	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	void setFullBuildTarget(String target) throws CoreException;
 
 	String getCleanBuildTarget();
 
 	/**
+	 * @param target 
+	 * @throws CoreException 
+	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	void setCleanBuildTarget(String target) throws CoreException;
 
 	boolean isCleanBuildEnabled();

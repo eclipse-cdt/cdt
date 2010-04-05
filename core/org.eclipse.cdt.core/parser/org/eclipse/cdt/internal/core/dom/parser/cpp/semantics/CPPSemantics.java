@@ -220,7 +220,7 @@ public class CPPSemantics {
 		if (traceBindingResolution) {
 			for (int i = 0; i < traceIndent; i++) 
 				System.out.print("  "); //$NON-NLS-1$
-			System.out.println("Resolving " + name + ':' + ((ASTNode)name).getOffset()); //$NON-NLS-1$
+			System.out.println("Resolving " + name + ':' + ((ASTNode) name).getOffset()); //$NON-NLS-1$
 			traceIndent++;
 		}
 		if (name instanceof CPPASTNameBase) {
@@ -257,7 +257,7 @@ public class CPPSemantics {
 			traceIndent--;
 			for (int i = 0; i < traceIndent; i++) 
 				System.out.print("  "); //$NON-NLS-1$
-			System.out.println("Resolved  " + name + ':' + ((ASTNode)name).getOffset() +  //$NON-NLS-1$
+			System.out.println("Resolved  " + name + ':' + ((ASTNode) name).getOffset() +  //$NON-NLS-1$
 					" to " + DebugUtil.toStringWithClass(binding) + ':' + System.identityHashCode(binding)); //$NON-NLS-1$
 		}
 		return binding;
@@ -279,7 +279,7 @@ public class CPPSemantics {
         	while (parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier))
         		parent = parent.getParent();
         	if (parent instanceof ICPPASTCompositeTypeSpecifier) {
-        		IScope scope = ((ICPPASTCompositeTypeSpecifier)parent).getScope();
+        		IScope scope = ((ICPPASTCompositeTypeSpecifier) parent).getScope();
         		try {
 		    		lookup(data, scope);
 		    		binding = resolveAmbiguities(data, data.astName);
@@ -375,7 +375,7 @@ public class CPPSemantics {
         IASTNode nameParent= name.getParent();
 		if (nameParent instanceof ICPPASTTemplateId) {
 			if (binding instanceof ICPPTemplateInstance) {
-				final ICPPTemplateInstance instance = (ICPPTemplateInstance)binding;
+				final ICPPTemplateInstance instance = (ICPPTemplateInstance) binding;
 				binding = instance.getSpecializedBinding();
 				name.setBinding(binding);
 				((ICPPASTTemplateId) nameParent).setBinding(instance);
@@ -584,7 +584,7 @@ public class CPPSemantics {
 		}
 		
 		if (parent instanceof ICPPASTFunctionDeclarator) {
-			data.setFunctionParameters(((ICPPASTFunctionDeclarator)parent).getParameters());
+			data.setFunctionParameters(((ICPPASTFunctionDeclarator) parent).getParameters());
 		} else if (parent instanceof IASTIdExpression) {
 			IASTNode grand= parent.getParent();
 			while (grand instanceof IASTUnaryExpression
@@ -594,7 +594,7 @@ public class CPPSemantics {
 			}
 		    if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 		        parent = parent.getParent();
-				IASTInitializerClause[] args = ((IASTFunctionCallExpression)parent).getArguments();
+				IASTInitializerClause[] args = ((IASTFunctionCallExpression) parent).getArguments();
 				data.setFunctionArguments(args);
 			}
 		} else if (parent instanceof ICPPASTFieldReference) {
@@ -605,7 +605,7 @@ public class CPPSemantics {
 				grand = grand.getParent();
 			}
 			if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
-				IASTInitializerClause[] exp = ((IASTFunctionCallExpression)parent.getParent()).getArguments();
+				IASTInitializerClause[] exp = ((IASTFunctionCallExpression) parent.getParent()).getArguments();
 				data.setFunctionArguments(exp);
 			}
 		} else if (parent instanceof ICPPASTNamedTypeSpecifier && parent.getParent() instanceof IASTTypeId) {
@@ -715,10 +715,10 @@ public class CPPSemantics {
 	    	scope = CPPVisitor.getContainingScope(name, data);
 	    }
     	if (scope instanceof ICPPScope) {
-    		return (ICPPScope)scope;
+    		return (ICPPScope) scope;
     	} else if (scope instanceof IProblemBinding) {
     		return new CPPScope.CPPScopeProblem(((IProblemBinding) scope).getASTNode(),
-    				IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding)scope).getNameCharArray());
+    				IProblemBinding.SEMANTIC_BAD_SCOPE, ((IProblemBinding) scope).getNameCharArray());
     	}
     	return new CPPScope.CPPScopeProblem(name, IProblemBinding.SEMANTIC_BAD_SCOPE);
 	}
@@ -781,12 +781,12 @@ public class CPPSemantics {
 			        if (so instanceof IBinding || so instanceof IASTName)
 			            obj = ArrayUtil.append(Object.class, (Object[]) obj, so);
 			        else
-			            obj = ArrayUtil.addAll(Object.class, (Object[])obj, (Object[]) so);
+			            obj = ArrayUtil.addAll(Object.class, (Object[]) obj, (Object[]) so);
 			    } else {
 			        if (so instanceof IBinding || so instanceof IASTName) {
 			            obj = new Object[] { obj, so };
 			        } else {
-			            Object[] temp = new Object[((Object[])so).length + 1];
+			            Object[] temp = new Object[((Object[]) so).length + 1];
 			            temp[0] = obj;
 			            obj = ArrayUtil.addAll(Object.class, temp, (Object[]) so);
 			        }
@@ -842,7 +842,7 @@ public class CPPSemantics {
 		boolean friendInLocalClass = false;
 		if (nextScope instanceof ICPPClassScope && data.forFriendship()) {
 			try {
-				ICPPClassType cls = ((ICPPClassScope)nextScope).getClassType();
+				ICPPClassType cls = ((ICPPClassScope) nextScope).getClassType();
 				friendInLocalClass = !cls.isGloballyQualified();
 			} catch (DOMException e) {
 			}
@@ -938,7 +938,7 @@ public class CPPSemantics {
 			return false;
 		
 		final boolean[] result= {false};
-		final IASTExpression fieldOwner = ((IASTFieldReference)astName.getParent()).getFieldOwner();
+		final IASTExpression fieldOwner = ((IASTFieldReference) astName.getParent()).getFieldOwner();
 		fieldOwner.accept(new ASTVisitor() {
 			{
 				shouldVisitNames= true;
@@ -1169,7 +1169,7 @@ public class CPPSemantics {
 		if (parent instanceof IASTCompoundStatement) {
 			IASTNode p = parent.getParent();
 		    if (p instanceof IASTFunctionDefinition) {
-		        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition)p).getDeclarator();
+		        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition) p).getDeclarator();
 		        nodes = dtor.getParameters();
 		    } 
 		    if (p instanceof ICPPASTCatchHandler) {
@@ -1186,11 +1186,11 @@ public class CPPSemantics {
 			nodes = comp.getMembers();
 		} else if (parent instanceof ICPPASTNamespaceDefinition) {
 		    // need binding because namespaces can be split
-		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition)parent).getName().resolveBinding();
+		    CPPNamespace namespace = (CPPNamespace) ((ICPPASTNamespaceDefinition) parent).getName().resolveBinding();
 		    namespaceDefs = namespace.getNamespaceDefinitions();
-		    nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[++namespaceIdx].getParent()).getDeclarations();
+		    nodes = ((ICPPASTNamespaceDefinition) namespaceDefs[++namespaceIdx].getParent()).getDeclarations();
 			while (nodes.length == 0 && ++namespaceIdx < namespaceDefs.length) {
-				nodes= ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
+				nodes= ((ICPPASTNamespaceDefinition) namespaceDefs[namespaceIdx].getParent()).getDeclarations();
 			}
 		} else if (parent instanceof ICPPASTFunctionDeclarator) {
 		    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
@@ -1222,11 +1222,11 @@ public class CPPSemantics {
 		int nodeStackPos = -1;
 		while (item != null) {
 		    if (item instanceof ICPPASTLinkageSpecification) {
-		        IASTDeclaration[] decls = ((ICPPASTLinkageSpecification)item).getDeclarations();
+		        IASTDeclaration[] decls = ((ICPPASTLinkageSpecification) item).getDeclarations();
 		        if (decls != null && decls.length > 0) {
 			        nodeStack = (IASTNode[][]) ArrayUtil.append(IASTNode[].class, nodeStack, nodes);
 			        nodeIdxStack = ArrayUtil.setInt(nodeIdxStack, ++nodeStackPos, idx);
-			        nodes = ((ICPPASTLinkageSpecification)item).getDeclarations();
+			        nodes = ((ICPPASTLinkageSpecification) item).getDeclarations();
 			        idx = 0;
 				    item = nodes[idx];
 				    continue;
@@ -1235,10 +1235,10 @@ public class CPPSemantics {
 		    while (item instanceof IASTLabelStatement) 
 		    	item= ((IASTLabelStatement) item).getNestedStatement();
 		    if (item instanceof IASTDeclarationStatement)
-		        item = ((IASTDeclarationStatement)item).getDeclaration();
+		        item = ((IASTDeclarationStatement) item).getDeclaration();
 			if (item instanceof ICPPASTUsingDirective) {
 				if (scope instanceof ICPPNamespaceScope) {
-				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
+				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope) scope;
 					final ICPPASTUsingDirective usingDirective = (ICPPASTUsingDirective) item;
 					try {
 						nsscope.addUsingDirective(new CPPUsingDirective(usingDirective));
@@ -1247,9 +1247,9 @@ public class CPPSemantics {
 					}
 				}
 			} else if (item instanceof ICPPASTNamespaceDefinition &&
-					   ((ICPPASTNamespaceDefinition)item).getName().getLookupKey().length == 0) {
+					   ((ICPPASTNamespaceDefinition) item).getName().getLookupKey().length == 0) {
 				if (scope instanceof ICPPNamespaceScope) {
-				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope)scope;
+				    final ICPPNamespaceScope nsscope = (ICPPNamespaceScope) scope;
 				    final ICPPASTNamespaceDefinition nsdef= (ICPPASTNamespaceDefinition) item;
 					try {
 						nsscope.addUsingDirective(new CPPUsingDirective(nsdef));
@@ -1269,7 +1269,7 @@ public class CPPSemantics {
 				    if (namespaceDefs != null) {
 				        // check all definitions of this namespace
 					    while (++namespaceIdx < namespaceDefs.length) {
-					        nodes = ((ICPPASTNamespaceDefinition)namespaceDefs[namespaceIdx].getParent()).getDeclarations();
+					        nodes = ((ICPPASTNamespaceDefinition) namespaceDefs[namespaceIdx].getParent()).getDeclarations();
 						    if (nodes.length > 0) {
 						        idx = 0;
 						        item = nodes[0];
@@ -1286,9 +1286,9 @@ public class CPPSemantics {
 					        break;
 					    }  
 				    } else if (parent instanceof ICPPASTCatchHandler) {
-				    	parent = ((ICPPASTCatchHandler)parent).getCatchBody();
+				    	parent = ((ICPPASTCatchHandler) parent).getCatchBody();
 				    	if (parent instanceof IASTCompoundStatement) {
-				    		nodes = ((IASTCompoundStatement)parent).getStatements();
+				    		nodes = ((IASTCompoundStatement) parent).getStatements();
 				    		if (nodes.length > 0) {
 				    			idx = 0;
 				    			item = nodes[0];
@@ -1314,19 +1314,19 @@ public class CPPSemantics {
 	public static void populateCache(ICPPASTInternalScope scope, IASTNode node) {
 	    IASTDeclaration declaration = null;
 	    if (node instanceof ICPPASTTemplateDeclaration) {
-			declaration = ((ICPPASTTemplateDeclaration)node).getDeclaration();
+			declaration = ((ICPPASTTemplateDeclaration) node).getDeclaration();
 	    } else if (node instanceof IASTDeclaration) { 
 	        declaration = (IASTDeclaration) node;
 	    } else if (node instanceof IASTDeclarationStatement) {
-			declaration = ((IASTDeclarationStatement)node).getDeclaration();
+			declaration = ((IASTDeclarationStatement) node).getDeclaration();
 	    } else if (node instanceof ICPPASTCatchHandler) {
-			declaration = ((ICPPASTCatchHandler)node).getDeclaration();
+			declaration = ((ICPPASTCatchHandler) node).getDeclaration();
 	    } else if (node instanceof ICPPASTSwitchStatement) {
-        	declaration = ((ICPPASTSwitchStatement)node).getControllerDeclaration();
+        	declaration = ((ICPPASTSwitchStatement) node).getControllerDeclaration();
         } else if (node instanceof ICPPASTIfStatement) {
-        	declaration = ((ICPPASTIfStatement)node).getConditionDeclaration();
+        	declaration = ((ICPPASTIfStatement) node).getConditionDeclaration();
 	    } else if (node instanceof ICPPASTWhileStatement) {
-	    	declaration = ((ICPPASTWhileStatement)node).getConditionDeclaration();
+	    	declaration = ((ICPPASTWhileStatement) node).getConditionDeclaration();
 	    } else if (node instanceof IASTParameterDeclaration) {
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
 		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
@@ -1561,7 +1561,7 @@ public class CPPSemantics {
         IBinding[] result = null;
         for (Object binding : bindings) {
             if (binding instanceof IASTName)
-                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName)binding).resolveBinding());
+                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName) binding).resolveBinding());
             else if (binding instanceof IBinding)
                 result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
         }
@@ -1579,7 +1579,7 @@ public class CPPSemantics {
 
 	    ASTNode nd = null;
 	    if (obj instanceof ICPPSpecialization) {
-	        obj = ((ICPPSpecialization)obj).getSpecializedBinding();
+	        obj = ((ICPPSpecialization) obj).getSpecializedBinding();
 	    }
 	    
 	    int pointOfDecl= -1;
@@ -1627,9 +1627,9 @@ public class CPPSemantics {
                     dtor = (IASTDeclarator) dtor.getParent();
                 IASTInitializer init = dtor.getInitializer();
                 if (init != null)
-                    pointOfDecl = ((ASTNode)init).getOffset() - 1;
+                    pointOfDecl = ((ASTNode) init).getOffset() - 1;
                 else
-                    pointOfDecl = ((ASTNode)dtor).getOffset() + ((ASTNode)dtor).getLength();
+                    pointOfDecl = ((ASTNode) dtor).getOffset() + ((ASTNode) dtor).getLength();
             } else if (prop == IASTEnumerator.ENUMERATOR_NAME) {
                 // point of declaration for an enumerator is immediately after it enumerator-definition
                 IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
@@ -2479,7 +2479,7 @@ public class CPPSemantics {
                 }
                 return null;
             } else if (prop == IASTBinaryExpression.OPERAND_TWO && 
-                     ((IASTBinaryExpression)node.getParent()).getOperator() == IASTBinaryExpression.op_assign) {
+                     ((IASTBinaryExpression) node.getParent()).getOperator() == IASTBinaryExpression.op_assign) {
                 // target is the left side of an assignment
                 IASTBinaryExpression binaryExp = (IASTBinaryExpression) node.getParent();
                 IASTExpression exp = binaryExp.getOperand1();
@@ -2527,9 +2527,9 @@ public class CPPSemantics {
                 IBinding template =id.getTemplateName().resolveBinding();
                 if (template instanceof ICPPTemplateDefinition) {
                     try {
-                        ICPPTemplateParameter[] ps = ((ICPPTemplateDefinition)template).getTemplateParameters();
+                        ICPPTemplateParameter[] ps = ((ICPPTemplateDefinition) template).getTemplateParameters();
                         if (i < args.length && i < ps.length && ps[i] instanceof ICPPTemplateNonTypeParameter) {
-                            return ((ICPPTemplateNonTypeParameter)ps[i]).getType();
+                            return ((ICPPTemplateNonTypeParameter) ps[i]).getType();
                         }
                     } catch (DOMException e) {
                         return null;
@@ -2540,12 +2540,12 @@ public class CPPSemantics {
             	while (!(node instanceof IASTFunctionDefinition)) {
             		node = node.getParent();
             	}
-            	IASTDeclarator dtor = ((IASTFunctionDefinition)node).getDeclarator();
+            	IASTDeclarator dtor = ((IASTFunctionDefinition) node).getDeclarator();
             	dtor= ASTQueries.findInnermostDeclarator(dtor);
             	IBinding binding = dtor.getName().resolveBinding();
             	if (binding instanceof IFunction) {
             		try {
-	            		IFunctionType ft = ((IFunction)binding).getType();
+	            		IFunctionType ft = ((IFunction) binding).getType();
 	            		return ft.getReturnType();
             		} catch (DOMException e) {
             		}
@@ -2594,7 +2594,7 @@ public class CPPSemantics {
 	                
 	                try {
 		                if (temp instanceof IFunction) {
-		                    result = (IFunctionType[]) ArrayUtil.append(IFunctionType.class, result, ((IFunction)temp).getType());
+		                    result = (IFunctionType[]) ArrayUtil.append(IFunctionType.class, result, ((IFunction) temp).getType());
 		                } else if (temp instanceof IVariable) {
                             IType type = getUltimateType(((IVariable) temp).getType(), false);
                             if (type instanceof IFunctionType)
@@ -2668,8 +2668,8 @@ public class CPPSemantics {
     		CPPASTName x= new CPPASTName();
     		boolean isConst= false, isVolatile= false;
     		if (type instanceof IQualifierType) {
-    			isConst= ((IQualifierType)type).isConst();
-    			isVolatile= ((IQualifierType)type).isVolatile();
+    			isConst= ((IQualifierType) type).isConst();
+    			isVolatile= ((IQualifierType) type).isVolatile();
     		}
     		x.setBinding(createVariable(x, uTemp, isConst, isVolatile));
 
@@ -2726,7 +2726,7 @@ public class CPPSemantics {
 		IType type = exp.getExpressionType();
 		if (type instanceof IProblem)
 			return null;
-		type = ((IPointerType)type).getType();
+		type = ((IPointerType) type).getType();
 		
 		IASTTypeId typeId = exp.getTypeId().copy();
     	IASTExpression sizeExpression = new CPPASTTypeIdExpression(IASTTypeIdExpression.op_sizeof, typeId);
@@ -2871,7 +2871,7 @@ public class CPPSemantics {
     	if (methodLookupType instanceof IProblemBinding)
     		return null;
     	if (methodLookupType instanceof ICPPClassType) {
-			ICPPClassType classType = (ICPPClassType)methodLookupType;
+			ICPPClassType classType = (ICPPClassType) methodLookupType;
 
 			methodName = new CPPASTName(operatorName);
         	methodName.setParent(parent);
@@ -2952,7 +2952,7 @@ public class CPPSemantics {
 							}
 						}
 					}
-					while(j < items.length) {
+					while (j < items.length) {
 						items[j++]= null;
 					}
 				} 
@@ -2967,7 +2967,7 @@ public class CPPSemantics {
 						if (ft != null) {
 							IType rt= SemanticUtil.getNestedType(ft.getReturnType(), SemanticUtil.TDEF);
 							if (rt instanceof IPointerType) {
-								IType ptt= SemanticUtil.getNestedType(((IPointerType)rt).getType(), SemanticUtil.TDEF);
+								IType ptt= SemanticUtil.getNestedType(((IPointerType) rt).getType(), SemanticUtil.TDEF);
 								if (ptt instanceof IFunctionType) {
 									IFunctionType ft2= (IFunctionType) ptt;
 									IBinding sf= createSurrogateCallFunction(parent.getTranslationUnit().getScope(), ft2.getReturnType(), rt, ft2.getParameterTypes());
@@ -3004,13 +3004,13 @@ public class CPPSemantics {
     }
     
 	private static IBinding createSurrogateCallFunction(IScope scope, IType returnType, IType rt, IType[] parameterTypes) {
-		IType[] parms = new IType[parameterTypes.length+1];
+		IType[] parms = new IType[parameterTypes.length + 1];
 		ICPPParameter[] theParms = new ICPPParameter[parms.length];
 
 		parms[0] = rt;
 		theParms[0]= new CPPBuiltinParameter(rt);
 		for (int i = 1; i < parms.length; i++) {
-			IType t = parameterTypes[i-1];
+			IType t = parameterTypes[i - 1];
 			parms[i]= t;
 			theParms[i]= new CPPBuiltinParameter(t);
 		}

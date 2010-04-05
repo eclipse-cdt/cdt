@@ -47,7 +47,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     private IASTExpression functionName;
     private IASTInitializerClause[] fArguments;
 
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
     private IType type; // cached type of expression
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     
@@ -65,7 +65,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		IASTInitializerClause[] args = null;
 		if (fArguments.length > 0) {
 			args= new IASTInitializerClause[fArguments.length];
-			for (int i=0; i<fArguments.length; i++) {
+			for (int i = 0; i < fArguments.length; i++) {
 				args[i]= fArguments[i].copy();
 			}
 		}

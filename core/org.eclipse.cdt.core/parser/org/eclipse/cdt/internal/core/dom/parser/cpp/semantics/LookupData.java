@@ -85,7 +85,7 @@ public class LookupData {
 	
 	/** Used to ensure we don't visit things more than once. */
 	public ObjectSet<IScope> visited= new ObjectSet<IScope>(1);
-	
+
 	public boolean checkWholeClassScope = false;
 	public boolean ignoreUsingDirectives = false;
 	public boolean usingDirectivesOnly = false;
@@ -134,7 +134,7 @@ public class LookupData {
 	    if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return true;
 	    if ((astName != null && astName.getParent() instanceof IASTIdExpression) ||
 	    		item instanceof ICPPASTNamespaceDefinition  ||
-	    		(item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) ||
+	    		(item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration) item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) ||
 			    item instanceof ICPPASTTemplateDeclaration) {
 	        return true;
 	    }
@@ -149,7 +149,7 @@ public class LookupData {
 		    parent instanceof ICPPASTCompositeTypeSpecifier)
 		    return true;
 		if (parent instanceof ICPPASTQualifiedName) {
-		    IASTName[] ns = ((ICPPASTQualifiedName)parent).getNames();
+		    IASTName[] ns = ((ICPPASTQualifiedName) parent).getNames();
 		    return (name != ns[ns.length -1]);
 		}
 		return false;
@@ -192,7 +192,7 @@ public class LookupData {
 				if (p2.getParent() instanceof ICPPASTExplicitTemplateInstantiation)
 					return false;
 				if (astName instanceof ICPPASTTemplateId &&
-						((ICPPASTDeclSpecifier)((IASTSimpleDeclaration)p2).getDeclSpecifier()).isFriend())
+						((ICPPASTDeclSpecifier)((IASTSimpleDeclaration) p2).getDeclSpecifier()).isFriend())
 					return false;
 				
 				return true;
@@ -255,7 +255,7 @@ public class LookupData {
 		if (astName.getPropertyInParent() == CPPSemantics.STRING_LOOKUP_PROPERTY) return false;
 		IASTNode p1 = astName.getParent();
 		if (p1 instanceof ICPPASTQualifiedName) {
-			final IASTName[] qnames = ((ICPPASTQualifiedName)p1).getNames();
+			final IASTName[] qnames = ((ICPPASTQualifiedName) p1).getNames();
 			return qnames.length == 1 || qnames[0] != astName;
 		}
 		return p1 instanceof ICPPASTFieldReference;
@@ -323,9 +323,9 @@ public class LookupData {
         if (foundItems == null)
             return false;
         if (foundItems instanceof Object[])
-            return ((Object[])foundItems).length != 0;
+            return ((Object[]) foundItems).length != 0;
         if (foundItems instanceof CharArrayObjectMap)
-            return ((CharArrayObjectMap)foundItems).size() != 0;
+            return ((CharArrayObjectMap) foundItems).size() != 0;
         return false;
     }
 
@@ -333,7 +333,7 @@ public class LookupData {
     	if(foundItems == null)
     		return false;
     	if(foundItems instanceof Object[]) {
-    		for(Object item : (Object[])foundItems) {
+    		for(Object item : (Object[]) foundItems) {
     			if(item instanceof ICPPMethod || item instanceof IType) {
     				return true;
     			}
@@ -368,12 +368,12 @@ public class LookupData {
         			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
         			IType implied = fieldRef.getFieldOwner().getExpressionType();
         			if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
-        				return ((IPointerType)implied).getType();
+        				return ((IPointerType) implied).getType();
         			}
         			return implied;
         		}
         		if (tempNameParent instanceof IASTArraySubscriptExpression) {
-             		IASTExpression exp = ((IASTArraySubscriptExpression)tempNameParent).getArrayExpression();
+             		IASTExpression exp = ((IASTArraySubscriptExpression) tempNameParent).getArrayExpression();
              		return exp.getExpressionType();
              	} 
         		if (tempNameParent instanceof IASTFunctionCallExpression) {
@@ -385,7 +385,7 @@ public class LookupData {
         		if (tempNameParent instanceof ICPPASTDeleteExpression) {
         			IType implied = ((ICPPASTDeleteExpression) tempNameParent).getOperand().getExpressionType();
         			if(implied instanceof IPointerType) {
-        				return ((IPointerType)implied).getType();
+        				return ((IPointerType) implied).getType();
         			}
         			return implied;
         		}
@@ -397,19 +397,19 @@ public class LookupData {
         		if (fieldRef.isPointerDereference()) {
             		implied= SemanticUtil.getUltimateTypeUptoPointers(implied);
             		if (implied instanceof IPointerType)
-            			return ((IPointerType)implied).getType();
+            			return ((IPointerType) implied).getType();
     			}
         		return implied;
         	}
         	if (prop == IASTIdExpression.ID_NAME) {
         		IScope scope = CPPVisitor.getContainingScope(tempName);
         		if (scope instanceof ICPPClassScope) {
-        			return ((ICPPClassScope)scope).getClassType();
+        			return ((ICPPClassScope) scope).getClassType();
         		} 
 
         		IType implied = CPPVisitor.getThisType(scope);
         		if (implied instanceof IPointerType) {
-        			return ((IPointerType)implied).getType();
+        			return ((IPointerType) implied).getType();
         		}
         		return implied;
         	}
@@ -417,7 +417,7 @@ public class LookupData {
         		if (forExplicitFunctionInstantiation()) {
             		IScope scope = CPPVisitor.getContainingScope(astName);
             		if (scope instanceof ICPPClassScope) {
-            			return ((ICPPClassScope)scope).getClassType();
+            			return ((ICPPClassScope) scope).getClassType();
             		} 
         		}
         	}
@@ -450,14 +450,14 @@ public class LookupData {
 		}
 		if (decl instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration simple = (IASTSimpleDeclaration) decl;
-			if (!((ICPPASTDeclSpecifier)simple.getDeclSpecifier()).isFriend())
+			if (!((ICPPASTDeclSpecifier) simple.getDeclSpecifier()).isFriend())
 				return false;
 			if (dtor != null)
 				return true;
 			return simple.getDeclarators().length == 0;
 		} else if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fnDef = (IASTFunctionDefinition) decl;
-			if (!((ICPPASTDeclSpecifier)fnDef.getDeclSpecifier()).isFriend())
+			if (!((ICPPASTDeclSpecifier) fnDef.getDeclSpecifier()).isFriend())
 				return false;
 			return (dtor != null);
 		}
@@ -489,15 +489,15 @@ public class LookupData {
 			prop = p.getPropertyInParent();
 			if (prop == ICPPASTTemplateId.TEMPLATE_ID_ARGUMENT || prop == IASTDeclarator.DECLARATOR_NAME)
 				return false;
-			if (p instanceof IASTDeclarator && !(((IASTDeclarator)p).getName() instanceof ICPPASTQualifiedName))
+			if (p instanceof IASTDeclarator && !(((IASTDeclarator) p).getName() instanceof ICPPASTQualifiedName))
 				return false;
 			if (p instanceof IASTDeclaration) {
 				if (prop == IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
 					if (p instanceof IASTSimpleDeclaration) {
-						ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)p).getDeclSpecifier();
+						ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration) p).getDeclSpecifier();
 						return declSpec.isFriend();
 					} else if (p instanceof IASTFunctionDefinition) {
-						ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)p).getDeclSpecifier();
+						ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition) p).getDeclSpecifier();
 						return declSpec.isFriend();
 					}
 				} else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008  QNX Software Systems and others.
+ * Copyright (c) 2008, 2010  QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
+import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension;
+import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.core.runtime.CoreException;
@@ -49,6 +51,16 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	private boolean fIsInitializing = false;
 	private boolean fPageUpdated;
 
+    private IContentChangeListener fContentListener = new IContentChangeListener() {
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener#contentChanged()
+         */
+        public void contentChanged() {
+            contentsChanged();
+        }
+    };
+
 	protected void setDebugConfig(ICDebugConfiguration config) {
 		fCurrentDebugConfig = config;
 	}
@@ -62,7 +74,11 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	}
 
 	protected void setDynamicTab(ICDebuggerPage tab) {
-		fDynamicTab = tab;
+        if ( fDynamicTab instanceof ICDebuggerPageExtension )
+            ((ICDebuggerPageExtension)fDynamicTab).removeContentChangeListener( fContentListener );
+        fDynamicTab = tab;
+        if ( fDynamicTab instanceof ICDebuggerPageExtension )
+            ((ICDebuggerPageExtension)fDynamicTab).addContentChangeListener( fContentListener );
 	}
 
 	protected Composite getDynamicTabHolder() {

@@ -5,3 +5,4 @@ MemoryTestApp.exe
 ExpressionTestApp.exe
 MultiThread.exe
 TracepointTestApp.exe
+CatchpointTestApp.exe

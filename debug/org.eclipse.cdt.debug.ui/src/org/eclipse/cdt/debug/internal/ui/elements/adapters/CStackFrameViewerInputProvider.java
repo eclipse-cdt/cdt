@@ -11,35 +11,26 @@
 
 package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 
-import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.internal.ui.CRegisterManagerProxies;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.model.elements.ViewerInputProvider;
+import org.eclipse.debug.internal.ui.elements.adapters.StackFrameViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
-public class CViewerInputProvider extends ViewerInputProvider implements IViewerInputProvider {
+public class CStackFrameViewerInputProvider extends StackFrameViewerInputProvider {
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.elements.ViewerInputProvider#getViewerInput(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
+     * @see org.eclipse.debug.internal.ui.elements.adapters.StackFrameViewerInputProvider#getViewerInput(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
      */
     @Override
     protected Object getViewerInput( Object source, IPresentationContext context, IViewerUpdate update ) throws CoreException {
-        if ( IDebugUIConstants.ID_REGISTER_VIEW.equals( context.getId() ) && source instanceof ICDebugElement ) {
-            ICDebugTarget target = (ICDebugTarget)((ICDebugElement)source).getDebugTarget();
+        if ( IDebugUIConstants.ID_REGISTER_VIEW.equals( context.getId() ) && source instanceof ICStackFrame ) {
+            ICDebugTarget target = (ICDebugTarget)((ICStackFrame)source).getDebugTarget();
             return CRegisterManagerProxies.getInstance().getRegisterManagerProxy( target );
         }
-        return null;
+        return super.getViewerInput( source, context, update );
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.elements.ViewerInputProvider#supportsContextId(java.lang.String)
-     */
-    @Override
-    protected boolean supportsContextId( String id ) {
-        return IDebugUIConstants.ID_REGISTER_VIEW.equals( id );
-    }    
 }

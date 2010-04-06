@@ -57,7 +57,8 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
     private static IElementToggleBreakpointAdapter fgDisassemblyToggleBreakpointAdapter = new DisassemblyToggleBreakpointAdapter();
     private static ISourceDisplay fgSourceDisplayAdapter = new SourceDisplayAdapter();
 
-    private static IViewerInputProvider fgViewerInputProvider = new CViewerInputProvider();
+    private static IViewerInputProvider fgDefaultViewerInputProvider = new CDefaultViewerInputProvider();
+    private static IViewerInputProvider fgStackFrameViewerInputProvider = new CStackFrameViewerInputProvider();
     private static IColumnPresentationFactory fgRegistersViewColumnPresentationFactory = new RegistersViewColumnPresentationFactory();
     private static IElementMementoProvider fgRegisterManagerProxyMementoProvider = new CRegisterManagerProxyMementoProvider();
     
@@ -148,9 +149,10 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
         }
         if ( adapterType.equals( IViewerInputProvider.class ) ) {
             if ( adaptableObject instanceof ICDebugTarget 
-                    || adaptableObject instanceof ICThread 
-                    || adaptableObject instanceof ICStackFrame ) {
-                return fgViewerInputProvider;
+                    || adaptableObject instanceof ICThread )
+                return fgDefaultViewerInputProvider;
+            if ( adaptableObject instanceof ICStackFrame ) {
+                return fgStackFrameViewerInputProvider;
             }
         }
         if ( adapterType.equals( IColumnPresentationFactory.class ) ) {

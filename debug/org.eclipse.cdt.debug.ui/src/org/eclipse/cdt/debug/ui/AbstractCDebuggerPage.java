@@ -55,6 +55,7 @@ abstract public class AbstractCDebuggerPage
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension#addContentChangeListener(org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener)
      */
+    /** @since 7.0 */
     public void addContentChangeListener( IContentChangeListener listener ) {
         fContentListeners.add( listener );
     }
@@ -62,6 +63,7 @@ abstract public class AbstractCDebuggerPage
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension#removeContentChangeListener(org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener)
      */
+    /** @since 7.0 */
     public void removeContentChangeListener( IContentChangeListener listener ) {
         fContentListeners.remove( listener );
     }

@@ -28,6 +28,7 @@
  *  David McKnight     (IBM)   [302174] [dstore] shell init command can potentially get called too late
  *  David McKnight     (IBM)   [302724] problems with environment variable substitution
  *  David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
+ *  David McKnight     (IBM)   [308246] [dstore] fix for Bug 287305 breaks on z/OS due to "su" usage
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -174,13 +175,13 @@ public class CommandMinerThread extends MinerThread
 			String userHome = null;			
 			Client client = _dataStore.getClient();
 			
-			if (client != null){
+			if (client != null && !theOS.equals("z/OS")){ //$NON-NLS-1$
 				String clientActualUserId = client.getProperty("user.name");//$NON-NLS-1$
 				String clientUserId = client.getUserid();
 				
 				userHome = client.getProperty("user.home");//$NON-NLS-1$							
 				if (clientUserId != null && !clientActualUserId.equals(clientUserId)){
-					suCommand = "su " + clientUserId + " -c "; //$NON-NLS-1$					
+					suCommand = "su " + clientUserId + " -c "; //$NON-NLS-1$ //$NON-NLS-2$					
 				}					
 			}
 			else {					

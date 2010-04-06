@@ -29,15 +29,15 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
-import org.eclipse.cdt.dsf.debug.service.ICachingService;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -50,12 +50,13 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
-import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
@@ -134,7 +135,9 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		public StateChangeReason getReason() {
-			if (getMIEvent() instanceof MIBreakpointHitEvent) {
+			if (getMIEvent() instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
+				return StateChangeReason.EVENT_BREAKPOINT;
+			} else if (getMIEvent() instanceof MIBreakpointHitEvent) {
 				return StateChangeReason.BREAKPOINT;
 			} else if (getMIEvent() instanceof MISteppingRangeEvent) {
 				return StateChangeReason.STEP;

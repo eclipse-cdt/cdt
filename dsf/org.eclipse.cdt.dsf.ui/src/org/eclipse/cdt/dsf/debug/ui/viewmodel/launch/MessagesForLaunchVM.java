@@ -51,4 +51,5 @@ public class MessagesForLaunchVM extends NLS {
     public static String State_change_reason__Shared_lib__label;
     public static String State_change_reason__Error__label;
     public static String State_change_reason__Evaluation__label;
+    public static String State_change_reason__EventBreakpoint__label;
 }

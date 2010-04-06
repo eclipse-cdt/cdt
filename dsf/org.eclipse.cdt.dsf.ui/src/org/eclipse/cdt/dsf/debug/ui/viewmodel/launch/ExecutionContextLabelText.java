@@ -72,7 +72,12 @@ public class ExecutionContextLabelText extends LabelText {
                 reasonLabel = MessagesForLaunchVM.State_change_reason__User_request__label;
             } else if (StateChangeReason.WATCHPOINT.name().equals(reason)) {
                 reasonLabel = MessagesForLaunchVM.State_change_reason__Watchpoint__label;
+            } else if (StateChangeReason.EVENT_BREAKPOINT.name().equals(reason)) {
+            	reasonLabel = MessagesForLaunchVM.State_change_reason__EventBreakpoint__label;
+            } else {
+            	assert false : "unexpected state change reason: " + reason; //$NON-NLS-1$
             }
+            
             return reasonLabel;
         } else if ( ILaunchVMConstants.PROP_STATE_CHANGE_DETAILS.equals(propertyName) ) {
             return properties.get(propertyName);

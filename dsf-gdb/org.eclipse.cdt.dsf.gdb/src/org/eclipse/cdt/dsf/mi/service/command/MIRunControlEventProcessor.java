@@ -14,17 +14,17 @@ package org.eclipse.cdt.dsf.mi.service.command;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStep;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecStepInstruction;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIExecUntil;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
@@ -136,6 +138,21 @@ public class MIRunControlEventProcessor
     						}
     					}
     				}
+    				
+					// GDB < 7.0 does not provide a reason when stopping on a
+					// catchpoint. However, the reason is contained in the
+					// stream records that precede the exec async output one.
+					// This is ugly, but we don't really have an alternative.
+    				if (events.isEmpty()) {
+    					MIStreamRecord[] streamRecords = ((MIOutput)output).getStreamRecords();
+    					for (MIStreamRecord streamRecord : streamRecords) {
+    						String log = streamRecord.getString();
+    						if (log.startsWith("Catchpoint ")) { //$NON-NLS-1$
+    							events.add(MICatchpointHitEvent.parse(getExecutionContext(exec), exec.getToken(), results, streamRecord));
+    						}
+    					}
+    				}
+    				
         			// We were stopped for some unknown reason, for example
         			// GDB for temporary breakpoints will not send the
         			// "reason" ??? still fire a stopped event.
@@ -153,8 +170,13 @@ public class MIRunControlEventProcessor
     		}
     	}
     }
-    
-    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
+
+	/**
+	 * Create an execution context given an exec-async-output OOB record 
+	 * 
+	 * @since 3.0
+	 */
+    protected IExecutionDMContext getExecutionContext(MIExecAsyncOutput exec) {
     	String threadId = null; 
 
     	MIResult[] results = exec.getMIResults();
@@ -185,6 +207,11 @@ public class MIRunControlEventProcessor
    			execDmc = procService.createExecutionContext(processContainerDmc, threadDmc, threadId);
     	}
     	
+    	return execDmc;
+    }
+    
+    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
+    	IExecutionDMContext execDmc = getExecutionContext(exec);
     	MIEvent<?> event = null;
     	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
     		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());

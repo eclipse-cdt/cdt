@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIParser;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -604,12 +606,20 @@ public abstract class AbstractMIControl extends AbstractDsfService
         private final InputStream fInputStream;
         private final MIParser fMiParser = new MIParser();
 
-        /** 
-        * List of out of band records since the last result record.  Out of band records are 
-        * required for processing the results of CLI commands.   
-        */ 
-        private final List<MIOOBRecord> fAccumulatedOOBRecords = new ArrayList<MIOOBRecord>();
-        
+		/**
+		 * List of out of band records since the last result record. Out of band
+		 * records are required for processing the results of CLI commands.
+		 */
+        private final List<MIOOBRecord> fAccumulatedOOBRecords = new LinkedList<MIOOBRecord>();
+
+		/**
+		 * List of stream records since the last result record, not including
+		 * the record currently being processed (if it's a stream one). This is
+		 * a subset of {@link #fAccumulatedOOBRecords}, as a stream record is a
+		 * particular type of OOB record.
+		 */
+        private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<MIStreamRecord>();
+
         public RxThread(InputStream inputStream) {
             super("MI RX Thread"); //$NON-NLS-1$
             fInputStream = inputStream;
@@ -784,6 +794,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     final MIOutput response = new MIOutput(
                         rr, fAccumulatedOOBRecords.toArray(new MIOOBRecord[fAccumulatedOOBRecords.size()]) );
                     fAccumulatedOOBRecords.clear();
+                    fAccumulatedStreamRecords.clear();
                 	
                 	MIInfo result = commandHandle.getCommand().getResult(response);
 					DataRequestMonitor<MIInfo> rm = commandHandle.getRequestMonitor();
@@ -870,12 +881,28 @@ public abstract class AbstractMIControl extends AbstractDsfService
         	} else if (recordType == MIParser.RecordType.OOBRecord) {
 				// Process OOBs
         		final MIOOBRecord oob = fMiParser.parseMIOOBRecord(line);
-        		if (!fRxCommands.isEmpty()) {
-        			// This is for CLI commands, so only store if we are actually
-        			// waiting for a command reply
-        		    fAccumulatedOOBRecords.add(oob);
+
+        		fAccumulatedOOBRecords.add(oob);
+        		if (fAccumulatedOOBRecords.size() > 20) { // limit growth; see bug 302927
+        			fAccumulatedOOBRecords.remove(0);
         		}
-       	        final MIOutput response = new MIOutput(oob);
+
+				// The handling of this OOB record may need the stream records
+				// that preceded it. One such case is a stopped event caused by a
+				// catchpoint in gdb < 7.0. The stopped event provides no
+				// reason, but we can determine it was caused by a catchpoint by
+				// looking at the target stream.
+        		
+       	        final MIOutput response = new MIOutput(oob, fAccumulatedStreamRecords.toArray(new MIStreamRecord[fAccumulatedStreamRecords.size()]));
+
+				// If this is a stream record, add it to the accumulated bucket
+				// for possible use in handling a future OOB (see comment above)
+    			if (oob instanceof MIStreamRecord) {
+    				fAccumulatedStreamRecords.add((MIStreamRecord)oob);
+            		if (fAccumulatedStreamRecords.size() > 20) { // limit growth; see bug 302927
+            			fAccumulatedStreamRecords.remove(0);
+            		}
+    			}
 
             	/*
             	 *   OOBS are events. So we pass them to any event listeners who want to see them. Again this must

@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
@@ -90,6 +91,26 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
     public static final String EXPRESSION    = PREFIX + ".expression";  //$NON-NLS-1$
     public static final String READ          = PREFIX + ".read";        //$NON-NLS-1$
     public static final String WRITE         = PREFIX + ".write";       //$NON-NLS-1$
+    
+    // Catchpoint properties
+
+	/**
+	 * Property that indicates the kind of catchpoint (.e.g, fork call, C++
+	 * exception throw). Value is the gdb keyword associated with that type, as
+	 * listed in 'help catch'.
+	 * 
+	 * @since 3.0
+	 */
+    public static final String CATCHPOINT_TYPE = PREFIX + ".catchpoint_type";       //$NON-NLS-1$
+
+	/**
+	 * Property that holds arguments for the catchpoint. Value is an array of
+	 * Strings. Never null, but may be empty collection, as most catchpoints are
+	 * argument-less.
+	 * 
+	 * @since 3.0
+	 */
+    public static final String CATCHPOINT_ARGS = PREFIX + ".catchpoint_args";       //$NON-NLS-1$
 
 	// Services
 	private ICommandControl fConnection;
@@ -151,6 +172,8 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	public final static String TRACEPOINT_INSERTION_FAILURE = "Tracepoint insertion failure"; //$NON-NLS-1$
 	/** @since 3.0 */
 	public final static String INVALID_BREAKPOINT_TYPE      = "Invalid breakpoint type";      //$NON-NLS-1$
+	/** @since 3.0 */
+	public final static String CATCHPOINT_INSERTION_FAILURE = "Catchpoint insertion failure"; //$NON-NLS-1$
 
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -488,6 +511,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 		else if (type.equals(MIBreakpoints.TRACEPOINT)) {
 			addTracepoint(context, attributes, drm);
 		}
+		else if (type.equals(MIBreakpoints.CATCHPOINT)) {
+			addCatchpoint(context, attributes, drm);
+		}
 		else {
        		drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_TYPE, null));
    			drm.done();
@@ -526,6 +552,9 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	}
 
 	/**
+	 * Creates a gdb location string for a breakpoint/watchpoint/tracepoint
+	 * given its set of properties.
+	 * 
 	 * @param attributes
 	 * @return
 	 * @since 3.0
@@ -738,6 +767,86 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 
 			// Execute the command
 	        fConnection.queueCommand(fCommandFactory.createMIBreakWatch(context, isRead, isWrite, expression), addWatchpointDRM);
+	}
+
+	/**
+	 * @since 3.0
+	 */
+	protected void addCatchpoint(final IBreakpointsTargetDMContext context, final Map<String, Object> attributes, final DataRequestMonitor<IBreakpointDMContext> finalRm) {
+		// Select the context breakpoints map
+		final Map<Integer, MIBreakpointDMData> contextBreakpoints = getBreakpointMap(context);
+		if (contextBreakpoints == null) {
+       		finalRm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, UNKNOWN_BREAKPOINT_CONTEXT, null));
+       		finalRm.done();
+			return;
+		}
+
+		// Though CDT allows setting a temporary catchpoint, CDT never makes use of it
+		assert (Boolean) getProperty(attributes, MIBreakpointDMData.IS_TEMPORARY, false) == false;
+
+		// GDB has no support for hardware catchpoints
+		assert (Boolean) getProperty(attributes, MIBreakpointDMData.IS_HARDWARE,  false) == false;
+
+		final String event = (String) getProperty(attributes, CATCHPOINT_TYPE, NULL_STRING);
+		final String[] args = (String[]) getProperty(attributes, CATCHPOINT_ARGS, null);
+
+	    final Step insertBreakpointStep = new Step() {
+    		@Override
+    		public void execute(final RequestMonitor rm) {
+    				fConnection.queueCommand(
+    					fCommandFactory.createCLICatch(context, event, args == null ? new String[0] : args), 
+						new DataRequestMonitor<CLICatchInfo>(getExecutor(), rm) {
+							@Override
+							protected void handleSuccess() {
+
+								// Sanity check
+								MIBreakpoint miBkpt = getData().getMIBreakpoint();
+								if (miBkpt == null) {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, CATCHPOINT_INSERTION_FAILURE, null));
+									rm.done();
+									return;
+								}
+
+								// Create a breakpoint object and store it in the map
+								final MIBreakpointDMData newBreakpoint = new MIBreakpointDMData(miBkpt);
+								int reference = newBreakpoint.getNumber();
+								if (reference == -1) {
+									rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, CATCHPOINT_INSERTION_FAILURE, null));
+									rm.done();
+									return;
+								}
+								contextBreakpoints.put(reference, newBreakpoint);
+
+								// Format the return value
+								MIBreakpointDMContext dmc = new MIBreakpointDMContext(MIBreakpoints.this, new IDMContext[] { context }, reference);
+								finalRm.setData(dmc);
+
+								// Flag the event
+								getSession().dispatchEvent(new BreakpointAddedEvent(dmc), getProperties());
+
+								// Break/Watch/Catchpoints that are disabled when set are delayed (we
+								// don't tell gdb about them until the user enables them). So, we shouldn't 
+								// be here if this is a disabled breakpoint
+								assert ((Boolean)getProperty(attributes, IS_ENABLED, true)) == true;
+								
+			               		// Condition, ignore count and cannot be specified at creation time.
+			               		// Therefore, we have to update the catchpoint if any of these is present
+			               		Map<String,Object> delta = new HashMap<String,Object>();
+			               		delta.put(CONDITION,    getProperty(attributes, CONDITION, NULL_STRING));
+			               		delta.put(IGNORE_COUNT, getProperty(attributes, IGNORE_COUNT, 0 ));
+			               		modifyBreakpoint(dmc, delta, rm, false);
+							}
+
+							@Override
+							protected void handleError() {
+								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, CATCHPOINT_INSERTION_FAILURE, null));
+								rm.done();
+							}
+						});
+    		}
+		};
+
+		fRunControl.executeWithTargetAvailable(context, new Step[] { insertBreakpointStep }, finalRm);
 	}
 
 	//-------------------------------------------------------------------------

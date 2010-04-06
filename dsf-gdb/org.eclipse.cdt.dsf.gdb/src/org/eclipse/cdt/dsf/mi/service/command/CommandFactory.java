@@ -27,6 +27,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIDetach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIExecAbort;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIInfoSharedLibrary;
@@ -122,6 +123,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
@@ -176,6 +178,10 @@ public class CommandFactory {
 		return new CLIAttach(ctx, pid);
 	}
 
+	public ICommand<CLICatchInfo> createCLICatch(IBreakpointsTargetDMContext ctx, String event, String[] args) {
+		return new CLICatch(ctx, event, args);
+	}
+	
 	public ICommand<MIInfo> createCLIDetach(IDMContext ctx) {
 		return new CLIDetach(ctx);
 	}

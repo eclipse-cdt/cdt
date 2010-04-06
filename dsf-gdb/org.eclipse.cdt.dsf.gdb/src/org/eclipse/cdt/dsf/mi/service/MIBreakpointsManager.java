@@ -30,6 +30,7 @@ import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICTracepoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -42,13 +43,13 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
-import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
@@ -91,7 +92,6 @@ import org.osgi.framework.BundleContext;
  * 
  * It relies on MIBreakpoints for the actual back-end interface.
  */
-@SuppressWarnings("restriction")	// we use an internal platform type (BreakpointProblems)
 public class MIBreakpointsManager extends AbstractDsfService implements IBreakpointManagerListener, IBreakpointListener
 {
     // Note: Find a way to import this (careful of circular dependencies)
@@ -110,6 +110,30 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     IBreakpointManager fBreakpointManager;  // Platform breakpoint manager (not this!)
     BreakpointActionManager fBreakpointActionManager;
 
+	/**
+	 * A mapping of ICEventBreakpoint event types to their corresponding gdb
+	 * catchpoint keyword (as listed in gdb's 'help catch')
+	 */
+	private static final Map<String, String> sEventBkptTypeToGdb = new HashMap<String, String>();
+	static {
+		// these Ids are also referenced in mi.ui plugin as contribution
+		// to event breakpoints selector
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_CATCH,			 "catch"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THROW,			 "throw"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_SIGNAL_CATCH,	 "signal"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_EXEC,			 "exec"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_FORK,			 "fork"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_VFORK,			 "vfork"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_EXIT,			 "exit"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_PROCESS_START,	 "start"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_PROCESS_STOP,	 "stop"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THREAD_START,	 "thread_start"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THREAD_EXIT,	 "thread_exit"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THREAD_JOIN,	 "thread_join"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_LIBRARY_LOAD,	 "load"); //$NON-NLS-1$
+		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_LIBRARY_UNLOAD, "unload"); //$NON-NLS-1$
+	}
+    
     ///////////////////////////////////////////////////////////////////////////
     // Breakpoints tracking
     ///////////////////////////////////////////////////////////////////////////
@@ -1230,6 +1254,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     public void eventDispatched(SuspendedEvent e) {
 
 		if (e.getMIEvent() instanceof MIBreakpointHitEvent) {
+			// This covers catchpoints, too 
 			MIBreakpointHitEvent evt = (MIBreakpointHitEvent) e.getMIEvent();
 	        performBreakpointAction(evt.getDMContext(), evt.getNumber());
 	        return;
@@ -1673,8 +1698,24 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
                 properties.put(MIBreakpoints.PASS_COUNT, attributes.get(ICTracepoint.PASS_COUNT));
             }
-        } else {
-        	// catchpoint?
+        }
+        else if (breakpoint instanceof ICEventBreakpoint) {
+        	properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
+        	properties.put(MIBreakpoints.CATCHPOINT_TYPE, sEventBkptTypeToGdb.get(attributes.get(ICEventBreakpoint.EVENT_TYPE_ID)));
+
+        	String arg = (String)attributes.get(ICEventBreakpoint.EVENT_ARG);
+        	String[] args;
+        	if ((arg != null) && (arg.length() != 0)) {
+        		args = new String[1];
+        		args[0] = arg;
+        	}
+        	else {
+        		args = new String[0];
+        	}
+    		properties.put(MIBreakpoints.CATCHPOINT_ARGS, args);
+        }
+        else {
+        	assert false : "platform breakpoint is of an unexpected type: " + breakpoint.getClass().getName(); //$NON-NLS-1$
         }
 
         // Common fields

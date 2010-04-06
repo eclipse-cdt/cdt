@@ -28,11 +28,11 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
-import org.eclipse.cdt.dsf.debug.service.ICachingService;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
@@ -171,7 +172,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		}
 
 		public StateChangeReason getReason() {
-			if (getMIEvent() instanceof MIBreakpointHitEvent) {
+			if (getMIEvent() instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
+				return StateChangeReason.EVENT_BREAKPOINT;
+			} else if (getMIEvent() instanceof MIBreakpointHitEvent) {
 				return StateChangeReason.BREAKPOINT;
 			} else if (getMIEvent() instanceof MISteppingRangeEvent) {
 				return StateChangeReason.STEP;

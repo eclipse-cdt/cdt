@@ -17,11 +17,17 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 
 /**
- * ^stopped,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
- *
+ * Conveys that gdb reported the target stopped because of a breakpoint. This
+ * includes catchpoints, as gdb reports them as a breakpoint-hit. The
+ * async-exec-output record looks like this:
+ * 
+ * <code>
+ *    ^stopped,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
+ * </code>
  */
 @Immutable
 public class MIBreakpointHitEvent extends MIStoppedEvent {
@@ -38,9 +44,10 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
     }
     
     /**
-     * @since 1.1
+     * @param miStreamRecords 
+     * @since 3.0
      */
-    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
+    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, MIStreamRecord[] miStreamRecords) 
     { 
        int bkptno = -1;
 
@@ -60,6 +67,14 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
            }
        }
        MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+       
+		for (MIStreamRecord streamRecord : miStreamRecords) {
+			String log = streamRecord.getString();
+			if (log.startsWith("Catchpoint ")) { //$NON-NLS-1$
+				return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
+			}
+		}
+       
        return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
     }
 }

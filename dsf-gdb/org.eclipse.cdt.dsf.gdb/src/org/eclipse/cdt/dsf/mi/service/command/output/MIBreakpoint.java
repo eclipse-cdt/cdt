@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.util.StringTokenizer;
+
 /**
  * Contain info about the GDB/MI breakpoint.
  * 
@@ -78,7 +80,13 @@ public class MIBreakpoint  {
     // Indicate if we are dealing with a tracepoint. 
     // (if its a fast or slow tracepoint can be known through the 'type' field)
     boolean isTpt = false;
-    
+
+    /** See {@link #isCatchpoint()} */
+    boolean isCatchpoint;
+
+	/** See {@link #getCatchpointType()} */
+	private String catchpointType;
+	
     public MIBreakpoint() {
 	}
 
@@ -105,11 +113,79 @@ public class MIBreakpoint  {
         isWWpt   = other.isWWpt;
         isHdw    = other.isHdw;
         isTpt    = other.isTpt;
+        isCatchpoint = other.isCatchpoint;
+        catchpointType = other.catchpointType;
 	}
 
     public MIBreakpoint(MITuple tuple) {
         parse(tuple);
     }
+
+	/**
+	 * This constructor is used for catchpoints. Catchpoints are not yet
+	 * supported in MI, so we end up using CLI.
+	 * 
+	 * <p>
+	 * Note that this poses at least one challenge for us. Normally, upon
+	 * creating a breakpoint/watchpoint/tracepoint via mi, we get back a command
+	 * result from gdb that contains all the details of the newly created
+	 * object, and we use that detailed information to create the MIBreakpoint.
+	 * This is the same data we'll get back if we later ask gdb for the
+	 * breakpoint list. However, because we're using CLI for cathpoints, we
+	 * don't get that detailed information from gdb at creation time, but the
+	 * detail will be there if we later ask for the breakpoint list. What this
+	 * all means is that we can't compare the two MIBreakponts (the one we
+	 * construct at creation time, and the one we get by asking gdb for the
+	 * breakpoint list). The most we can do is compare the breakpoint number.
+	 * That for sure should be the same.
+	 * 
+	 * <p>
+	 * The detail we get from querying the breakpoint list, BTW, won't even
+	 * reveal that it's a catchpoint. gdb simply reports it as a breakpoint,
+	 * probably because that's what it really sets under the cover--an address
+	 * breakpoint. This is another thing we need to keep in mind and creatively
+	 * deal with. When we set the catchpoint, this constructor is used. When the
+	 * breakpoint list is queried, {@link #MIBreakpoint(MITuple)} is used for
+	 * that same breakpoint number, and a consumer of that MIBreakpoint won't be
+	 * able to tell it's a catchpoint. Quite the mess. Wish gdb would treat
+	 * catchpoints like first class citizens.
+	 * 
+	 * @param cliResult
+	 *            the output from the CLI command. Example:
+	 *            "Catchpoint 1 (catch)"
+	 * @since 3.0
+	 */
+    public MIBreakpoint(String cliResult) {
+		if (cliResult.startsWith("Catchpoint ")) { //$NON-NLS-1$ 
+			int bkptNumber = 0;
+	
+			StringTokenizer tokenizer = new StringTokenizer(cliResult);
+			for (int i = 0; tokenizer.hasMoreTokens(); i++) {
+				String sub = tokenizer.nextToken();
+				switch (i) {
+				case 0: // first token is "Catchpoint"
+					break;
+				case 1: // second token is the breakpoint number
+					bkptNumber = Integer.parseInt(sub);
+					break;
+				case 2: // third token is the event type; drop the parenthesis
+					if (sub.startsWith("(")) { //$NON-NLS-1$
+						sub = sub.substring(1, sub.length()-1);
+					}
+					catchpointType = sub;
+					break;
+				}
+			}
+			
+			number = bkptNumber;
+			isCatchpoint = true;
+			enabled = true;
+		}
+		else {
+			assert false : "unexpected CLI output: " + cliResult; //$NON-NLS-1$
+		}
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // Properties getters 
@@ -183,6 +259,17 @@ public class MIBreakpoint  {
         return exp;
     }
 
+	/**
+	 * If isCatchpoint is true, then this indicates the type of catchpoint
+	 * (event), as reported by gdb in its response to the CLI catch command.
+	 * E.g., 'catch' or 'fork'
+	 * 
+	 * @since 3.0
+	 */
+    public String getCatchpointType() {
+    	return catchpointType;
+    }
+
     public boolean isTemporary() {
         return getDisposition().equals("del"); //$NON-NLS-1$
     }
@@ -247,6 +334,15 @@ public class MIBreakpoint  {
     public boolean isTracepoint() {
         return isTpt;
     }
+    
+    /**
+     * Indicates if we are dealing with a catchpoint.
+     * 
+	 * @since 3.0
+	 */
+    public boolean isCatchpoint() {
+    	return isCatchpoint;
+    }
 
     /**
      * Returns the passcount of a tracepoint.  Will return 0 if this
@@ -303,6 +399,11 @@ public class MIBreakpoint  {
                 } catch (NumberFormatException e) {
                 }
             } else if (var.equals("type")) { //$NON-NLS-1$
+				// Note that catchpoints are reported by gdb as address
+				// breakpoints; there's really nothing we can go on to determine
+				// that it's actually a catchpoint (short of using a really ugly
+				// and fragile hack--looking at the 'what' field for specific values)
+            	
                 type = str;
                 //type="hw watchpoint"
                 if (type.startsWith("hw")) { //$NON-NLS-1$
@@ -370,5 +471,4 @@ public class MIBreakpoint  {
             }
         }
     }
-
 }

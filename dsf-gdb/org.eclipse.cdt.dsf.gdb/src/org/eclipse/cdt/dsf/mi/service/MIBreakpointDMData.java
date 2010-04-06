@@ -73,6 +73,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 			fNature = MIBreakpointNature.TRACEPOINT;
 		} else if (dsfMIBreakpoint.isWatchpoint()) {
 			fNature = MIBreakpointNature.WATCHPOINT;
+		} else if (dsfMIBreakpoint.isCatchpoint()) {
+			fNature = MIBreakpointNature.CATCHPOINT;
 		} else {
 			fNature = MIBreakpointNature.BREAKPOINT;
 		}
@@ -82,6 +84,9 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		
 			case BREAKPOINT:
 			{
+				// Note that this may in fact be a catchpoint. See comment below in
+				// CATCHPOINT case
+				
 				// Generic breakpoint attributes
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 				fProperties.put(MIBreakpoints.FILE_NAME,       dsfMIBreakpoint.getFile());
@@ -142,7 +147,27 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				fProperties.put(LOCATION,     formatLocation());
 				break;
 			}
-			
+
+			case CATCHPOINT:
+			{
+				// Because gdb doesn't support catchpoints in mi, we end up using
+				// CLI to set the catchpoint. The sort of MIBreakpoint we create
+				// at that time is minimal as the only information we get back from
+				// gdb is the breakpoint number and type of the catchpoint we just 
+				// set. See MIBreakpoint(String)
+				//
+				// The only type of MIBreakpoint that will be of this CATCHPOINT type
+				// is the instance we create from the response of the CLI command we 
+				// use to set the catchpoint. If we later query gdb for the breakpoint 
+				// list, we'll unfortunately end up creating an MIBreakpoint of type 
+				// BREAKPOINT. Maybe one day gdb will treats catchpoints like first
+				// class citizens and this messy situation will go away.
+				
+				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
+				fProperties.put(MIBreakpoints.CATCHPOINT_TYPE, dsfMIBreakpoint.getCatchpointType());
+				break;
+			}
+
 			// Not reachable
 			default:
 			{

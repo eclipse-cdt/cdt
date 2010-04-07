@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.tests"
       label="%featureName"
-      version="3.1.1.qualifier"
+      version="3.2.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -28,8 +28,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.2"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.2"/>
    </url>
 
    <requires>
@@ -56,7 +56,22 @@
       <import plugin="org.junit" version="3.8.1" match="compatible"/>
       <import plugin="org.apache.ant"/>
    </requires>
- <plugin        id="org.eclipse.ant.optional.junit"        download-size="0"        install-size="0"        version="0.0.0"        fragment="true"/>  <plugin        id="org.eclipse.test"        download-size="0"        install-size="0"        version="0.0.0"/>   <plugin
+
+   <plugin
+         id="org.eclipse.test"
+         download-size="26"
+         install-size="35"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.ant.optional.junit"
+         download-size="3"
+         install-size="4"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.rse.tests"
          download-size="70"
          install-size="186"

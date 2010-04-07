@@ -27,7 +27,6 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -127,12 +126,12 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	 * org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker#processModel
 	 * (java.lang.Object)
 	 */
+	@SuppressWarnings("restriction")
 	public void processModel(Object model) {
 		if (model instanceof IASTTranslationUnit) {
 			IASTTranslationUnit ast = (IASTTranslationUnit) model;
 			IPath location = new Path(ast.getFilePath());
-			IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
-					.getFileForLocation(location);
+			IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
 			file = astFile;
 			processAst(ast);
 		}

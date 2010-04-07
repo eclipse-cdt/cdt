@@ -79,6 +79,10 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 			return Kind.eChar;
 		case IASTSimpleDeclSpecifier.t_wchar_t:
 			return Kind.eWChar;
+		case IASTSimpleDeclSpecifier.t_char16_t:
+			return Kind.eChar16;
+		case IASTSimpleDeclSpecifier.t_char32_t:
+			return Kind.eChar32;
 		case IASTSimpleDeclSpecifier.t_double:
 			return Kind.eDouble;
 		case IASTSimpleDeclSpecifier.t_float:
@@ -218,6 +222,8 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		case eBoolean:
 			return t_bool;
 		case eChar:
+		case eChar16:
+		case eChar32:
 			return t_char;
 		case eWChar:
 			return t_wchar_t;

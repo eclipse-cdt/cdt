@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -323,6 +323,14 @@ public class ASTTypeUtil {
 			case eWChar:
 				if (needSpace) result.append(SPACE);
 				result.append(Keywords.WCHAR_T);
+				break;
+			case eChar16:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.CHAR16_T);
+				break;
+			case eChar32:
+				if (needSpace) result.append(SPACE);
+				result.append(Keywords.CHAR32_T);
 				break;
 			case eUnspecified:
 				break;

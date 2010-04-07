@@ -39,6 +39,10 @@ public class Keywords {
 	public static final String CASE = "case"; 
 	public static final String CATCH = "catch"; 
 	public static final String CHAR = "char"; 
+	/** @since 5.2 */
+	public static final String CHAR16_T = "char16_t"; 
+	/** @since 5.2 */
+	public static final String CHAR32_T = "char32_t"; 
 	public static final String CLASS = "class"; 
 	public static final String COMPL = "compl"; 
 	public static final String CONST = "const"; 
@@ -124,6 +128,10 @@ public class Keywords {
 	public static final char[] cCASE = "case".toCharArray(); 
 	public static final char[] cCATCH = "catch".toCharArray(); 
 	public static final char[] cCHAR = "char".toCharArray(); 
+	/** @since 5.2 */
+	public static final char[] cCHAR16_T = CHAR16_T.toCharArray(); 
+	/** @since 5.2 */
+	public static final char[] cCHAR32_T = CHAR32_T.toCharArray(); 
 	public static final char[] cCLASS = "class".toCharArray(); 
 	public static final char[] cCOMPL = "compl".toCharArray(); 
 	public static final char[] cCONST = "const".toCharArray(); 
@@ -335,6 +343,8 @@ public class Keywords {
 	private static void addCpp(CharArrayIntMap cppkeywords) {
         cppkeywords.put(Keywords.cBOOL, IToken.t_bool); 
         cppkeywords.put(Keywords.cCATCH, IToken.t_catch); 
+        cppkeywords.put(Keywords.cCHAR16_T, IToken.t_char16_t); 
+        cppkeywords.put(Keywords.cCHAR32_T, IToken.t_char32_t); 
         cppkeywords.put(Keywords.cCLASS, IToken.t_class); 
         cppkeywords.put(Keywords.cCONST_CAST, IToken.t_const_cast); 
         cppkeywords.put(Keywords.cDECLTYPE, IToken.t_decltype);

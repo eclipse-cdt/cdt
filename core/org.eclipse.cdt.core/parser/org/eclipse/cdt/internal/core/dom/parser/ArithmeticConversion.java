@@ -103,6 +103,8 @@ public abstract class ArithmeticConversion {
 			switch(kind) {
 			case eBoolean:
 			case eChar:
+			case eChar16:
+			case eChar32:
 			case eInt:
 			case eWChar:
 				return true;
@@ -199,7 +201,11 @@ public abstract class ArithmeticConversion {
 			case eBoolean:
 			case eChar:
 			case eWChar:
+			case eChar16:
 				return createBasicType(Kind.eInt, domain.getModifier());
+			case eChar32:
+				// Assuming 32 bits
+				return createBasicType(Kind.eInt, domain.getModifier() | IBasicType.IS_UNSIGNED);
 
 			case eInt:
 				if (bt.isShort())

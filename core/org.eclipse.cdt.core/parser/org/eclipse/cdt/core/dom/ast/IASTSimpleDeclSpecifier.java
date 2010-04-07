@@ -66,7 +66,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public static final int t_bool = 6;
 
 	/**
-	 * <code>t_wchar_t c;</code>
+	 * <code>wchar_t c;</code>
 	 * @since 5.2
 	 */
 	public static final int t_wchar_t = 7;
@@ -88,6 +88,19 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @since 5.2
 	 */
 	public static final int t_auto = 10;
+
+	/**
+	 * <code>char16_t c;</code>
+	 * @since 5.2
+	 */
+	public static final int t_char16_t = 11;
+
+	/**
+	 * <code>char32_t c;</code>
+	 * @since 5.2
+	 */
+	public static final int t_char32_t = 12;
+
 
 	/**
 	 * @since 5.1

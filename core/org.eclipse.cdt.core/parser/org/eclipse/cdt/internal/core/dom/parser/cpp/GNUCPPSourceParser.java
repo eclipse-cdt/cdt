@@ -417,6 +417,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	                // postfix expression
         	                case IToken.t_typename:
         	                case IToken.t_char:
+        	                case IToken.t_char16_t:
+        	                case IToken.t_char32_t:
         	                case IToken.t_wchar_t:
         	                case IToken.t_bool:
         	                case IToken.t_short:
@@ -1174,6 +1176,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         // simple-type-specifier braced-init-list
         case IToken.t_typename:
         case IToken.t_char:
+        case IToken.t_char16_t:
+        case IToken.t_char32_t:
         case IToken.t_wchar_t:
         case IToken.t_bool:
         case IToken.t_short:
@@ -2148,7 +2152,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * 		"typedef" | "friend" | 
      * 		"const" | "volatile" | 
      * 		"short" | "long" | "signed" | "unsigned" | "int" |
-     * 		"char" | "wchar_t" | "bool" | "float" | "double" | "void" |
+     * 		"char" | "wchar_t" | "bool" | "float" | "double" | "void" | 
      *      "auto" |
      * 		("typename")? name | 
      * 		{ "class" | "struct" | "union" } classSpecifier | 
@@ -2310,6 +2314,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			if (encounteredTypename)
         				break declSpecifiers;
         			simpleType = IASTSimpleDeclSpecifier.t_wchar_t;
+        			encounteredRawType= true;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IToken.t_char16_t:
+        			if (encounteredTypename)
+        				break declSpecifiers;
+        			simpleType = IASTSimpleDeclSpecifier.t_char16_t;
+        			encounteredRawType= true;
+        			endOffset= consume().getEndOffset();
+        			break;
+        		case IToken.t_char32_t:
+        			if (encounteredTypename)
+        				break declSpecifiers;
+        			simpleType = IASTSimpleDeclSpecifier.t_char32_t;
         			encounteredRawType= true;
         			endOffset= consume().getEndOffset();
         			break;

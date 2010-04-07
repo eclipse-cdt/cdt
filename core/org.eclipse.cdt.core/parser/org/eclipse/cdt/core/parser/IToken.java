@@ -109,6 +109,10 @@ public interface IToken {
 	int t_case = 62;
 	int t_catch = 63;
 	int t_char = 64;
+	/** @since 5.2 */ 
+	int t_char16_t= 5202;
+	/** @since 5.2 */ 
+	int t_char32_t= 5203;
 	int t_class = 65;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int tCOMPL= tBITCOMPLEMENT;
 	/** @deprecated use {@link #tBITCOMPLEMENT} */ @Deprecated int t_compl = 66;
@@ -117,7 +121,7 @@ public interface IToken {
 	int t_const_cast = 69;
 	int t_continue = 70;
 	/** @since 5.2 */ 
-	int t_decltype= 5202;
+	int t_decltype= 5204;
 	int t_default = 71;
 	int t_delete = 72;
 	int t_do = 73;
@@ -155,7 +159,7 @@ public interface IToken {
 	int t_sizeof = 105;
 	int t_static = 106;
 	/** @since 5.2 */ 
-	int t_static_assert = 5203;
+	int t_static_assert = 5205;
 	int t_static_cast = 107;
 	int t_signed = 108;
 	int t_struct = 109;

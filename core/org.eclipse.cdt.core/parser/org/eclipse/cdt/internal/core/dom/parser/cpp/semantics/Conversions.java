@@ -934,20 +934,31 @@ public class Conversions {
 				final IBasicType basicSrc = (IBasicType) src;
 				Kind sKind = basicSrc.getKind();
 				if (tKind == Kind.eInt) {
-					switch (sKind) {
-					case eInt: // short, and unsigned short
-						if (basicSrc.isShort()) {
-							canPromote= true;
+					if (!basicTgt.isLong() && !basicTgt.isLongLong() && !basicTgt.isShort()) {
+						switch (sKind) {
+						case eInt: // short, and unsigned short
+							if (basicSrc.isShort() && !basicTgt.isUnsigned()) {
+								canPromote= true;
+							}
+							break;
+						case eChar:
+						case eBoolean:
+						case eWChar:
+						case eChar16:
+						case eUnspecified: // treat unspecified as int
+							if (!basicTgt.isUnsigned()) {
+								canPromote= true;
+							}
+							break;
+
+						case eChar32:
+							if (basicTgt.isUnsigned()) {
+								canPromote= true;
+							}
+							break;
+						default:
+							break;
 						}
-						break;
-					case eChar:
-					case eBoolean:
-					case eWChar:
-					case eUnspecified: // treat unspecified as int
-						canPromote= true;
-						break;
-					default:
-						break;
 					}
 				} else if (tKind == Kind.eDouble && sKind == Kind.eFloat) {
 					canPromote= true;

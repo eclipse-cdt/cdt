@@ -626,6 +626,12 @@ public class ASTStringUtil {
 			case IASTSimpleDeclSpecifier.t_wchar_t:
 				buffer.append(Keywords.WCHAR_T).append(' ');
 				break;
+			case IASTSimpleDeclSpecifier.t_char16_t:
+				buffer.append(Keywords.CHAR16_T).append(' ');
+				break;
+			case IASTSimpleDeclSpecifier.t_char32_t:
+				buffer.append(Keywords.CHAR32_T).append(' ');
+				break;
 			default:
 			}
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {

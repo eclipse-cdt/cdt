@@ -737,6 +737,22 @@ public class ASTSignatureUtil {
 				result.append(Keywords.WCHAR_T);
 				needSpace = true;
 				break;
+			case IASTSimpleDeclSpecifier.t_char16_t:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.CHAR16_T);
+				needSpace = true;
+				break;
+			case IASTSimpleDeclSpecifier.t_char32_t:
+				if (needSpace) {
+					result.append(SPACE);
+					needSpace = false;
+				}
+				result.append(Keywords.CHAR32_T);
+				needSpace = true;
+				break;
 			case IASTSimpleDeclSpecifier.t_double:
 				if (needSpace) {
 					result.append(SPACE);

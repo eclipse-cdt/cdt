@@ -101,7 +101,6 @@ public class KeywordSets {
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords._COMPLEX);
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords._IMAGINARY);
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.CHAR);
-		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.WCHAR_T);
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords._BOOL);
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.INT);
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.FLOAT);
@@ -122,6 +121,10 @@ public class KeywordSets {
 		DECL_SPECIFIER_SEQUENCE_CPP.remove( Keywords._IMAGINARY);
 		DECL_SPECIFIER_SEQUENCE_CPP.remove( Keywords._BOOL);
 		// CPP specific stuff
+		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.WCHAR_T);
+		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.CHAR16_T);
+		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.CHAR32_T);
+
 		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.VIRTUAL);
 		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.MUTABLE);
 		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.EXPLICIT);
@@ -173,7 +176,6 @@ public class KeywordSets {
 	{
 		EXPRESSION_C = new TreeSet<String>();
 		EXPRESSION_C.add( Keywords.CHAR );
-		EXPRESSION_C.add( Keywords.WCHAR_T);
 		EXPRESSION_C.add( Keywords.SHORT);		
 		EXPRESSION_C.add( Keywords.INT);
 		EXPRESSION_C.add( Keywords.LONG);	
@@ -190,6 +192,9 @@ public class KeywordSets {
 	{
 		EXPRESSION_CPP = new TreeSet<String>(EXPRESSION_C);
 		EXPRESSION_CPP.add( Keywords.BOOL );
+		EXPRESSION_CPP.add( Keywords.CHAR16_T );
+		EXPRESSION_CPP.add( Keywords.CHAR32_T );
+		EXPRESSION_CPP.add( Keywords.WCHAR_T );
 		EXPRESSION_CPP.add( Keywords.NEW );
 		EXPRESSION_CPP.add( Keywords.DELETE );
 		EXPRESSION_CPP.add( Keywords.TYPENAME );
@@ -411,6 +416,8 @@ public class KeywordSets {
 		ALL_CPP.add( Keywords.CASE);
 		ALL_CPP.add( Keywords.CATCH);
 		ALL_CPP.add( Keywords.CHAR);
+		ALL_CPP.add( Keywords.CHAR16_T);
+		ALL_CPP.add( Keywords.CHAR32_T);
 		ALL_CPP.add( Keywords.CLASS);
 		ALL_CPP.add( Keywords.COMPL);
 		ALL_CPP.add( Keywords.CONST);
@@ -624,6 +631,8 @@ public class KeywordSets {
 		TYPES_CPP = new TreeSet<String>();
 		TYPES_CPP.add( Keywords.BOOL );
 		TYPES_CPP.add( Keywords.CHAR );
+		TYPES_CPP.add( Keywords.CHAR16_T );
+		TYPES_CPP.add( Keywords.CHAR32_T );
 		TYPES_CPP.add( Keywords.DOUBLE );
 		TYPES_CPP.add( Keywords.FLOAT );
 		TYPES_CPP.add( Keywords.INT );

@@ -2414,6 +2414,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		case IToken.tCOLONCOLON:
         case IToken.t_void:
 		case IToken.t_char:
+		case IToken.t_char16_t:
+		case IToken.t_char32_t:
 		case IToken.t_wchar_t:
 		case IToken.t_bool:
 		case IToken.t_short:

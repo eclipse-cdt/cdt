@@ -8526,4 +8526,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
+	
+	//	void f(int);
+	//	void f(unsigned int);
+	//	void test() {
+	//		char16_t c16= '1';
+	//		char32_t c32= '1';
+	//		f(c16);
+	//		f(c32);
+	//	}
+	public void testNewCharacterTypes_305976() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f1= bh.assertNonProblem("f(int)", 1);
+		IFunction f2= bh.assertNonProblem("f(unsigned int)", 1);
+		IBinding b= bh.assertNonProblem("f(c16)", 1);
+		assertSame(f1, b);
+		b= bh.assertNonProblem("f(c32)", 1);
+		assertSame(f2, b);
+	}
+
 }

@@ -87,6 +87,8 @@ public class CASTSimpleDeclSpecifier extends CASTBaseDeclSpecifier implements IC
     		return t_bool;
 		case eChar:
 		case eWChar:
+		case eChar16:
+		case eChar32:
 			return t_char;
 		case eDouble:
 			return t_double;

@@ -48,9 +48,9 @@
             id="org.eclipse.cdt.codan.ui.properties.buildPropertyPage"
             name="%CodeAnalysisPreferencesBuild.name">
         <enabledWhen>
-            <instanceof
-                  value="org.eclipse.core.resources.IProject">
-            </instanceof>
+		     <adapt type="org.eclipse.core.resources.IProject">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		     </adapt> 
          </enabledWhen>
       </page>
    </extension>

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Uwe Stieber (Wind River) - Fix stack overflow in canFlipToNextPage() and getNextPage()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -48,6 +49,13 @@ public class RSEDefaultNewConnectionWizardMainPage extends WizardPage implements
 
 	private SystemConnectionForm form;
 	private final RSEDialogPageMessageLine messageLine;
+	
+	// Remember in getNextPage() if we called form.verify(...) already once.
+	// As the form is coming back to this page to invoke setPageComplete(boolean),
+	// form.verify(...) triggers an update of the wizard buttons, which in turn invoke
+	// canFlipToNextPage(...) which does call getNextPage(...). If the page is not used
+	// with a RSEDefaultNewConnectionWizard, this will end up in a StackOverflowError.
+	private boolean formVerificationGateKeeper = false;
 	
 	/**
 	 * Constructor. Use this when you want to supply your own title and
@@ -138,7 +146,11 @@ public class RSEDefaultNewConnectionWizardMainPage extends WizardPage implements
 		// verify contents of page before going to main page
 		// this is done because the main page may have input that is not valid, but can
 		// only be verified when next is pressed since it requires a long running operation
-		if (!getSystemConnectionForm().verify(true)) return null;
+		if (!formVerificationGateKeeper) {
+			formVerificationGateKeeper = true;
+			if (!getSystemConnectionForm().verify(true)) return null;
+			formVerificationGateKeeper = false;
+		}
 
 		RSEDefaultNewConnectionWizard newConnWizard = getWizard() instanceof RSEDefaultNewConnectionWizard ? (RSEDefaultNewConnectionWizard)getWizard() : null;
 		if (newConnWizard != null) {

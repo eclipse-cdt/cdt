@@ -30,6 +30,7 @@ import org.junit.runners.Suite;
 	MIExpressionsTest.class,
 	MIMemoryTest.class,
 	MIBreakpointsTest.class,
+	MICatchpointsTest.class,
 	MIDisassemblyTest.class,
 	GDBProcessesTest.class
 	/* Add your suite class here */

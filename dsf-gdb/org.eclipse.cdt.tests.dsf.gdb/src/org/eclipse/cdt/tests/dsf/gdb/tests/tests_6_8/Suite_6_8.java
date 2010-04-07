@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.junit.runners.Suite;
 	MIExpressionsTest_6_8.class,
 	MIMemoryTest_6_8.class,
 	MIBreakpointsTest_6_8.class,
+	MICatchpointsTest_6_8.class,
 	MIDisassemblyTest_6_8.class,
 	GDBProcessesTest_6_8.class
 	/* Add your test class here */

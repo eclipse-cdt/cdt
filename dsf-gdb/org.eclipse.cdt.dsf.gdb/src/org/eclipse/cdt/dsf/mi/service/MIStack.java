@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -477,6 +477,10 @@ public class MIStack extends AbstractDsfService
 
         // If not, retrieve the full list of frame data.
         fMICommandCache.execute(
+            // We don't actually need to ask for the values in this case, but since
+        	// we will ask for them right after, it is more efficient to ask for them now
+            // so as to cache the result.  If the command fails, then we will ask for
+        	// the result without the values
         	fCommandFactory.createMIStackListArguments(execDmc, true),
             new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
                 @Override
@@ -496,6 +500,35 @@ public class MIStack extends AbstractDsfService
                     if (args == null) args = new MIArg[0]; 
                     rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args.length));
                     rm.done();
+                }
+                @Override
+                protected void handleFailure() {
+                	// If the command fails it can be because we asked for values.
+                	// This can happen with uninitialized values and pretty printers (bug 307614)
+                	// or when visualizing tracepoints.  Since asking for values was simply an optimization
+                	// to store the command in the cache, let's retry the command without asking for values.
+                    fMICommandCache.execute(
+                        	fCommandFactory.createMIStackListArguments(execDmc, false),
+                            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+                                @Override
+                                protected void handleSuccess() {
+                                    // Find the index to the correct MI frame object.
+                                    // Note: this is a short-cut, but it won't work once we implement retrieving
+                                    // partial lists of stack frames.
+                                    int idx = frameDmc.getLevel();
+                                    if (idx == -1 || idx >= getData().getMIFrames().length) {
+                                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid frame " + frameDmc, null));  //$NON-NLS-1$
+                                        rm.done();
+                                        return;
+                                    }
+                                    
+                                    // Create the variable array out of MIArg array.
+                                    MIArg[] args = getData().getMIFrames()[idx].getArgs();
+                                    if (args == null) args = new MIArg[0]; 
+                                    rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args.length));
+                                    rm.done();
+                                }
+                            }); 
                 }
             }); 
     }    
@@ -573,7 +606,33 @@ public class MIStack extends AbstractDsfService
 	                    // Create the data object.
 	                    rm.setData(new VariableData(getData().getMIFrames()[frameDmc.fLevel].getArgs()[miVariableDmc.fIndex]));
 	                    rm.done();
-	                }});
+	                }
+	                @Override
+	                protected void handleFailure() {
+	                	// Unable to get the values.  This can happen with uninitialized values and pretty printers (bug 307614)
+	                	// or when visualizing tracepoints.  Either way, we try to ask for the arguments without their values,
+	                	// which is better than nothing
+	                	fMICommandCache.execute(
+	                			fCommandFactory.createMIStackListArguments(execDmc, false),
+	                			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+	                				@Override
+	                				protected void handleSuccess() {
+	                					// Find the correct frame and argument
+	                					if ( frameDmc.fLevel >= getData().getMIFrames().length ||
+	                							miVariableDmc.fIndex >= getData().getMIFrames()[frameDmc.fLevel].getArgs().length )
+	                					{
+	                						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable " + miVariableDmc, null));  //$NON-NLS-1$
+	                						rm.done();
+	                						return;
+	                					}
+
+	                					// Create the data object.
+	                					rm.setData(new VariableData(getData().getMIFrames()[frameDmc.fLevel].getArgs()[miVariableDmc.fIndex]));
+	                					rm.done();
+	                				}
+	                			});	
+	                }
+	        	});
         }//if
         if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
             fMICommandCache.execute(
@@ -591,8 +650,29 @@ public class MIStack extends AbstractDsfService
 		                    }
 		                    rm.done();
                         }
+                        @Override
+                        protected void handleFailure() {
+                        	// Unable to get the value.  This can happen with uninitialized values and pretty printers (bug 307614)
+                        	// or when visualizing tracepoints.  Either way, we try to ask for the variables without their values,
+                        	// which is better than nothing
+                            fMICommandCache.execute(
+                            		fCommandFactory.createMIStackListLocals(frameDmc, false),
+                                    new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
+                                        @Override
+                                        protected void handleSuccess() {
+                   		                    
+                		                    // Create the data object.
+                		                    MIArg[] locals = getData().getLocals();
+                		                    if (locals.length > miVariableDmc.fIndex) {
+                		                    	rm.setData(new VariableData(locals[miVariableDmc.fIndex]));
+                		                    } else {
+                		                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable " + miVariableDmc, null));  //$NON-NLS-1$
+                		                    }
+                		                    rm.done();
+                                        }
+                            		});
+                        }
                     });
-
         }//if   
 
     }
@@ -639,6 +719,10 @@ public class MIStack extends AbstractDsfService
             }); 
         
 	    fMICommandCache.execute(
+	            // We don't actually need to ask for the values in this case, but since
+	        	// we will ask for them right after, it is more efficient to ask for them now
+	            // so as to cache the result.  If the command fails, then we will ask for
+	        	// the result without the values
 	    		fCommandFactory.createMIStackListLocals(frameDmc, true),
                 new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
                     @Override
@@ -646,6 +730,23 @@ public class MIStack extends AbstractDsfService
                         localsList.addAll( Arrays.asList(
                             makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length)) );
                         countingRm.done();
+                    }
+                    @Override
+                    protected void handleFailure() {
+                    	// If the command fails it can be because we asked for values.
+                    	// This can happen with uninitialized values and pretty printers (bug 307614)
+                    	// or when visualizing tracepoints.  Since asking for values was simply an optimization
+                    	// to store the command in the cache, let's retry the command without asking for values.
+                	    fMICommandCache.execute(
+                	    		fCommandFactory.createMIStackListLocals(frameDmc, false),
+                                new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
+                                    @Override
+                                    protected void handleSuccess() {
+                                        localsList.addAll( Arrays.asList(
+                                            makeVariableDMCs(frameDmc, MIVariableDMC.Type.LOCAL, getData().getLocals().length)) );
+                                        countingRm.done();
+                                    }
+                                }); 
                     }
                 }); 
     }

@@ -30,6 +30,9 @@ public class DsfDebugUITools {
 		return DsfUIPlugin.getDefault().getPreferenceStore();
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	@SuppressWarnings("unchecked")
 	public static void enableActivity(String activityID, boolean enableit)
 	{

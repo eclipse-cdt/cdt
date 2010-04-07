@@ -118,6 +118,9 @@ public class LaunchUtils {
 		return CommandLineUtil.argumentsToArray(args);
 	}
 	
+	/**
+	 * @since 6.1
+	 */
 	@SuppressWarnings("unchecked")
 	public static void enableActivity(String activityID, boolean enableit)
 	{

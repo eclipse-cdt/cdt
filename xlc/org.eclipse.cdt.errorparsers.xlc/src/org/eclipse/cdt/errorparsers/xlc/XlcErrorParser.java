@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class XlcErrorParser extends AbstractErrorParser {
 			 */
 			@Override
 			public String getDesc(Matcher matcher) {
-				return " Macro name " + matcher.group(4) + " originally defined in file " + getFileName(matcher);
+				return "Macro name " + matcher.group(4) + " originally defined in file " + getFileName(matcher);
 			}
 		},
 		new ErrorPattern(Messages.XlcErrorParser_CompilerErrorPattern, 1, 2, 5, 0, -1) {

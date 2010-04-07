@@ -23,7 +23,9 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -42,6 +44,9 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 
 	protected IFile getFile() {
 		return file;
+	}
+	protected IProject getProject() {
+		return file==null?null:file.getProject();
 	}
 
 	void processFile(IFile file) throws CoreException, InterruptedException {
@@ -81,11 +86,11 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 		return true;
 	}
 
+	@SuppressWarnings("restriction")
 	public void reportProblem(String id, IASTNode astNode, Object...  args) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
-		IFile astFile = ResourcesPlugin.getWorkspace().getRoot()
-				.getFileForLocation(location);
+		IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
 		if (astFile == null) {
 			astFile = file;
 		}

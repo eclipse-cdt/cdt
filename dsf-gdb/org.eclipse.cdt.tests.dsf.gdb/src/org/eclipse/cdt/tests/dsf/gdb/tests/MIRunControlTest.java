@@ -206,7 +206,7 @@ public class MIRunControlTest extends BaseTestCase {
 
 		// Context can not be null
 		Assert.assertNotNull(ctxts);
-		Assert.assertEquals("Unexpected number of threads for a simple program", ctxts.length, sProgramIsCygwin ? 2 : 1);
+		Assert.assertEquals("Unexpected number of threads for a simple program", sProgramIsCygwin ? 2 : 1, ctxts.length);
 
 		IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
 		// Thread id for the main thread should be one
@@ -268,7 +268,7 @@ public class MIRunControlTest extends BaseTestCase {
         	return;
         }
 
-        Assert.assertEquals("Thread created event is for wrong thread id", ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId(), sProgramIsCygwin ? 3 : 2);
+        Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
         
         /*
          * Test getExecutionContexts for a valid container DMC
@@ -293,7 +293,7 @@ public class MIRunControlTest extends BaseTestCase {
          */
        	Assert.assertNotNull(data);
 
-    	Assert.assertEquals("Unexpected number of threads", data.length, sProgramIsCygwin ? 3 : 2);
+    	Assert.assertEquals("Unexpected number of threads", sProgramIsCygwin ? 3 : 2, data.length);
      	IMIExecutionDMContext dmc1 = (IMIExecutionDMContext)data[0];
       	IMIExecutionDMContext dmc2 = (IMIExecutionDMContext)data[1];
       	// Context ids should be 1 & 2 

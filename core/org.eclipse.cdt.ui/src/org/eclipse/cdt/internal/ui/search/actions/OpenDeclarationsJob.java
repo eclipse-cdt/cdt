@@ -257,13 +257,13 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		IName[] declNames = findNames(fIndex, ast, kind, binding);
 		if (declNames.length == 0) {
 			if (binding instanceof ICPPSpecialization) {
-				// bug 207320, handle template instances
+				// Bug 207320, handle template instances.
 				IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
 				if (specialized != null && !(specialized instanceof IProblemBinding)) {
 					declNames = findNames(fIndex, ast, NameKind.DEFINITION, specialized);
 				}
 			} else if (binding instanceof ICPPMethod) {
-				// bug 86829, handle implicit methods.
+				// Bug 86829, handle implicit methods.
 				ICPPMethod method= (ICPPMethod) binding;
 				if (method.isImplicit()) {
 					try {
@@ -272,7 +272,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 							declNames= findNames(fIndex, ast, NameKind.REFERENCE, clsBinding);
 						}
 					} catch (DOMException e) {
-						// don't log problem bindings.
+						// Don't log problem bindings.
 					}
 				}
 			}
@@ -308,7 +308,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				i.remove();
 			}
 			if (binding != b2 && binding instanceof ICPPSpecialization) {
-				// make sure binding specializes b2 so that for instance we do not navigate from
+				// Make sure binding specializes b2 so that for instance we do not navigate from
 				// one partial specialization to another.
 				IBinding spec= binding;
 				while (spec instanceof ICPPSpecialization) {
@@ -325,7 +325,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			return declNames.toArray(new IASTName[declNames.size()]);
 		}
 
-		// 2. Try definition in index
+		// 2. Try definition in index.
 		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 	}
 
@@ -598,7 +598,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					secondaryBindings= defaultRemoveSecondaryBindings(primaryBindings, sourceName);
 				}
 
-				// Convert bindings to CElements
+				// Convert bindings to CElements.
 				Collection<IBinding> bs= primaryBindings;
 				for (int k = 0; k < 2; k++) {
 					for (IBinding binding : bs) {
@@ -641,7 +641,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 							iterator.remove();
 					}
 				} catch (DOMException e) {
-					// ignore
+					// Ignore
 				}
 			}
 		}
@@ -687,7 +687,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				}
 			}
 			if (funcArgCount != -1) {
-				// For c++ we can check the number of parameters
+				// For c++ we can check the number of parameters.
 				if (binding instanceof ICPPFunction) {
 					ICPPFunction f= (ICPPFunction) binding;
 					try {
@@ -709,7 +709,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 							}
 						}
 					} catch (DOMException e) {
-						// ignore problem bindings
+						// Ignore problem bindings.
 						continue;
 					}
 				}

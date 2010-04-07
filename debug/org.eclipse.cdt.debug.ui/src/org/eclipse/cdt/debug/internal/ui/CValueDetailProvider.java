@@ -42,6 +42,9 @@ public class CValueDetailProvider {
 					}
 				} );
 			}
+			else { // no valid stack frame, clear detail pane
+			    listener.detailComputed( value, "" ); //$NON-NLS-1$
+			}
 		}
 	}
 }

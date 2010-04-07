@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.internal.ui;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyBackendDsfFactory;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceDocumentProvider;
+import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -61,6 +62,8 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 		// Register the DSF backend for our disassembly view (the CDT debug UI
 		// plugin registers the CDI one)
         Platform.getAdapterManager().registerAdapters(new DisassemblyBackendDsfFactory(), IDMVMContext.class);
+
+        DsfDebugUITools.enableActivity("org.eclipse.cdt.debug.ui.cdtActivity", true); //$NON-NLS-1$
 	}
 
 	/*

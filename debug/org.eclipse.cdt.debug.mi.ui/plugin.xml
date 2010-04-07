@@ -136,4 +136,38 @@
      </breakpointLabels>
  </extension>
 
+    <extension
+         point="org.eclipse.ui.activities">
+ 
+      <category
+            name="CDT CDI-GDB - GDB Debugging (Legacy)"
+            description="C/C++ debugging with the CDI (legacy) GDB debugger"
+            id="org.eclipse.cdt.debug.cdigdbCategory">
+      </category>
+  
+       <categoryActivityBinding
+            activityId="org.eclipse.cdt.debug.cdigdbActivity"
+            categoryId="org.eclipse.cdt.debug.cdigdbCategory">
+      </categoryActivityBinding>
+  
+      <activity
+            name="CDT CDI-GDB - GDB Debugging (Legacy)"
+            description="C/C++ debugging with the CDI (legacy) GDB debugger"
+            id="org.eclipse.cdt.debug.cdigdbActivity">
+       </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.cdigdbActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.mi.ui/org.eclipse.cdt.debug.mi.ui.MIPreferencePage">
+      </activityPatternBinding>
+   
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.cdigdbActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.DebuggerTypesPreferencePage">
+      </activityPatternBinding>
+        
+     </extension>
+
 </plugin>

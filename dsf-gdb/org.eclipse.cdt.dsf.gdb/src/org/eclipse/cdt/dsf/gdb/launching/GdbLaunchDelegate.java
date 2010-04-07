@@ -58,7 +58,9 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
 	private boolean isNonStopSession = false;
 
+	@Override
 	public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
+		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.dsfgdbActivity", true); //$NON-NLS-1$
 		if ( monitor == null ) {
 			monitor = new NullProgressMonitor();
 		}

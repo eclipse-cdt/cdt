@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -118,7 +118,13 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
         }
     }
 
-    /* (non-Javadoc)
+    
+    public AbstractCLaunchDelegate() {
+		super();
+		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.cdigdbActivity", true); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
      */
     @Override

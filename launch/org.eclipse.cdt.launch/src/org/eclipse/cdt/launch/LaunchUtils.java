@@ -11,11 +11,13 @@
 package org.eclipse.cdt.launch;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IProject;
@@ -26,6 +28,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Utility methods.
@@ -112,4 +117,20 @@ public class LaunchUtils {
 	private static String[] parseArguments(String args) {
 		return CommandLineUtil.argumentsToArray(args);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static void enableActivity(String activityID, boolean enableit)
+	{
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+		Set<String> enabledActivityIds = new HashSet<String>(activityManager.getEnabledActivityIds());
+		boolean changed = false;
+		if (enableit)
+			changed = enabledActivityIds.add(activityID);		
+		else
+			changed = enabledActivityIds.remove(activityID);		
+		if (changed)
+			workbenchActivitySupport.setEnabledActivityIds(enabledActivityIds);
+	}
+
 }

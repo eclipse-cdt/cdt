@@ -495,7 +495,7 @@
       </page>
       <page
             class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferencePage"
-            category="org.eclipse.cdt.dsf.debug.ui.preferences"
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
             name="%disassemblyPreferencePage.name"
             id="org.eclipse.cdt.dsf.debug.ui.disassembly.preferencePage"/>
    </extension>
@@ -679,7 +679,36 @@
             activityId="org.eclipse.cdt.dsf.ui.activity.updateModes"
             pattern="org\.eclipse\.cdt\.dsf\.ui/org\.eclipse\.cdt\.dsf\.debug\.ui\.[A-Za-z]+\.viewmodel\.update\.actions\.refresh">
       </activityPatternBinding>
+      
    </extension>
+       <extension
+         point="org.eclipse.ui.activities">
+ 
+      <category
+            name="CDT-DSF Debug Services Framework"
+            description="Debug Services Framework"
+            id="org.eclipse.cdt.dsf.ui.dsfCategory">
+      </category>
+  
+       <categoryActivityBinding
+            activityId="org.eclipse.cdt.dsf.ui.dsfActivity"
+            categoryId="org.eclipse.cdt.dsf.ui.dsfCategory">
+      </categoryActivityBinding>
+  
+      <activity
+            name="CDT-DSF Debug Services Framework"
+            description="Debug Services Framework"
+            id="org.eclipse.cdt.dsf.ui.dsfActivity">
+       </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.dsf.ui/org.eclipse.cdt.dsf.debug.ui.preferences">
+      </activityPatternBinding>
+       
+     </extension>
+   
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
 	       	class="org.eclipse.cdt.dsf.debug.internal.ui.SuspendResumeAdapterFactory" 

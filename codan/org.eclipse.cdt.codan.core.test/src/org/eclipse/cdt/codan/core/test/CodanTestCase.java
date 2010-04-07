@@ -77,7 +77,6 @@ public class CodanTestCase extends BaseTestCase {
 		} catch (IOException e) {
 			fail("Cannot find java file: " + clazz + ": " + e.getMessage());
 		}
-	
 		try {
 			File testFile = new File(tmpDir, file);
 			tempFiles.add(testFile);
@@ -87,7 +86,7 @@ public class CodanTestCase extends BaseTestCase {
 			try {
 				cproject.getProject().refreshLocal(1, null);
 			} catch (CoreException e) {
-				//  hmm
+				// hmm
 			}
 			return testFile;
 		} catch (IOException e) {
@@ -103,6 +102,7 @@ public class CodanTestCase extends BaseTestCase {
 						IResource.FORCE
 								| IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
+			
 			} catch (CoreException e) {
 				throw e;
 			}
@@ -157,24 +157,18 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	protected void loadFiles() throws CoreException {
-		ModelJoiner mj = new ModelJoiner();
-		try {
-			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			workspace.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					cproject.getProject().refreshLocal(1, monitor);
-				}
-			}, null);
-			mj.join();
-			// Index the cproject
-			CCorePlugin.getIndexManager().setIndexerId(cproject,
-					IPDOMManager.ID_FAST_INDEXER);
-			// wait until the indexer is done
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000,
-					new NullProgressMonitor()));
-		} finally {
-			mj.dispose();
-		}
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				cproject.getProject().refreshLocal(1, monitor);
+			}
+		}, null);
+		// Index the cproject
+		CCorePlugin.getIndexManager().setIndexerId(cproject,
+				IPDOMManager.ID_FAST_INDEXER);
+		// wait until the indexer is done
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(1000*60, // 1 min
+				new NullProgressMonitor()));
 		return;
 	}
 

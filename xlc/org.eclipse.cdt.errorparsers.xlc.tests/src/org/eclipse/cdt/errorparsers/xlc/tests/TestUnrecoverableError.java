@@ -28,7 +28,7 @@ public class TestUnrecoverableError extends TestCase {
 		aix.parseLine(err_msg);
 		assertEquals("temp1.c", aix.getFileName());
 		assertEquals(5, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_BUILD, aix.getSeverity());
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
 		assertEquals("INTERNAL COMPILER ERROR",aix.getMessage());
 	}
 	public TestUnrecoverableError( String name)

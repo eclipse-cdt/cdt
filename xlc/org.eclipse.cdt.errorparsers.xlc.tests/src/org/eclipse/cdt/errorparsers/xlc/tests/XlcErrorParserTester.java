@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ package org.eclipse.cdt.errorparsers.xlc.tests;
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParserNamed;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
-import org.eclipse.cdt.errorparsers.xlc.XlcErrorParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.IPath;
  */
 
 public class XlcErrorParserTester {
+	public static final String XLC_ERROR_PARSER_ID = "org.eclipse.cdt.errorparsers.xlc.XlcErrorParser";
+
 	static private int counter=0;
 	IProject fTempProject = ResourcesPlugin.getWorkspace().getRoot().getProject("XlcErrorParserTester.temp." + counter++);
 
@@ -84,16 +86,19 @@ public class XlcErrorParserTester {
 		 */
 		@Override
 		public IFile findFileName(String fileName) {
-			return fTempProject.getFile(fileName);
+			if (fileName!=null && fileName.trim().length()>0)
+				return fTempProject.getFile(fileName);
+			return null;
 		}
 
 		/**
 		 * Called by ErrorPattern.RecordError() for external problem markers
 		 */
 		@Override
-		public void generateExternalMarker(IResource file, int lineNumb, String desc, int sev, String varName, IPath externalPath) {
-			if (file!=null) {
-				fileName = file.getName();
+		public void generateExternalMarker(IResource rc, int lineNumb, String desc, int sev, String varName, IPath externalPath) {
+			// if rc is this project it means that file was not found
+			if (rc!=null && rc!=fTempProject) {
+				fileName = rc.getName();
 			} else {
 				fileName="";
 			}
@@ -109,7 +114,8 @@ public class XlcErrorParserTester {
 	 * @return
 	 */
 	boolean parseLine(String line) {
-		XlcErrorParser errorParser = new XlcErrorParser();
+		IErrorParserNamed errorParser = ErrorParserManager.getErrorParserCopy(XLC_ERROR_PARSER_ID);
+		Assert.assertNotNull(errorParser);
 
 		MockErrorParserManager epManager = new MockErrorParserManager();
 		return errorParser.processLine(line, epManager);

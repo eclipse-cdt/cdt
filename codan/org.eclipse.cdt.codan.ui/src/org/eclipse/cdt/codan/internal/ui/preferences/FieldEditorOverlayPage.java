@@ -120,6 +120,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	public IAdaptable getElement() {
+		if (element==null) return element;
 		if (!(element instanceof IProject))
 			return (IAdaptable) element.getAdapter(IProject.class);
 		return element;

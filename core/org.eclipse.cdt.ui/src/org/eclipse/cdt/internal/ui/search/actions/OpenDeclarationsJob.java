@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		fTextSelection= textSelection;
 		fSelectedText= text;
 	}
-	
+
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
@@ -116,15 +116,15 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-	}	
-	
+	}
+
 	IStatus performNavigation(IProgressMonitor monitor) throws CoreException {
 		fAction.clearStatusLine();
 
 		assert fIndex == null;
 		if (fIndex != null)
 			return Status.CANCEL_STATUS;
-		
+
 		fMonitor= monitor;
 		fIndex= CCorePlugin.getIndexManager().getIndex(fTranslationUnit.getCProject(),
 				IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
@@ -150,19 +150,19 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		int selectionLength = fTextSelection.getLength();
 
 		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-		
+
 		IASTName sourceName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
 		if (sourceName == null) {
 			IASTName implicit = nodeSelector.findEnclosingImplicitName(selectionStart, selectionLength);
 			if (implicit != null) {
 				IASTImplicitNameOwner owner = (IASTImplicitNameOwner) implicit.getParent();
 				IASTImplicitName[] implicits = owner.getImplicitNames();
-				// There may be more than one name in the same spot
+				// There may be more than one name in the same spot.
 				if (implicits.length > 0) {
 					List<IName> allNames = new ArrayList<IName>();
 					for (IASTImplicitName name : implicits) {
 						if (((ASTNode) name).getOffset() == ((ASTNode) implicit).getOffset()) {
-							IBinding binding = name.resolveBinding(); // guaranteed to resolve
+							IBinding binding = name.resolveBinding(); // Guaranteed to resolve.
 							IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, binding);
 							allNames.addAll(Arrays.asList(declNames));
 						}
@@ -221,7 +221,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, declNames)) {
 				found= true;
 			} else {
-				// Leave old method as fallback for local variables, parameters and 
+				// Leave old method as fallback for local variables, parameters and
 				// everything else not covered by ICElementHandle.
 				found = navigateOneLocation(declNames);
 			}
@@ -229,7 +229,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				fAction.reportSymbolLookupFailure(new String(sourceName.toCharArray()));
 			}
 			return Status.OK_STATUS;
-		} 
+		}
 
 		// No enclosing name, check if we're in an include statement
 		IASTNode node= nodeSelector.findEnclosingNode(selectionStart, selectionLength);
@@ -250,9 +250,9 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (!navigationFallBack(ast, null, NameKind.REFERENCE)) {
 			fAction.reportSelectionMatchFailure();
 		}
-		return Status.OK_STATUS; 
+		return Status.OK_STATUS;
 	}
-	
+
 	private IName[] findDeclNames(IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
 		IName[] declNames = findNames(fIndex, ast, kind, binding);
 		if (declNames.length == 0) {
@@ -334,7 +334,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		IName[] declNames= ast.getDeclarationsInAST(binding);
 		for (int i = 0; i < declNames.length; i++) {
 			IName name = declNames[i];
-			if (name.isDefinition()) 
+			if (name.isDefinition())
 				declNames[i]= null;
 		}
 		declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
@@ -343,7 +343,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		}
 		return declNames;
 	}
-	
+
 	private static NameKind getNameKind(IName name) {
 		if (name.isDefinition()) {
 			if (getBinding(name) instanceof ICPPUsingDeclaration) {
@@ -373,7 +373,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	private boolean isSameName(IName n1, IName n2) {
 		if (n1 == n2)
 			return true;
-		
+
 		IASTFileLocation loc1 = n1.getFileLocation();
 		IASTFileLocation loc2 = n2.getFileLocation();
 		if (loc1 == null || loc2 == null)
@@ -465,7 +465,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 					}
 					ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
 					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, fAction.getSite().getShell(),
-							CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage, 
+							CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
 							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
 				}
 				if (target != null) {
@@ -497,7 +497,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	private boolean navigateToName(IName name) {
 		return navigateToLocation(name.getFileLocation());
 	}
-	
+
 	private boolean navigateToLocation(IASTFileLocation fileloc) {
 		if (fileloc == null) {
 			return false;
@@ -546,16 +546,16 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			fAction.reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
 		}
 	}
-	
+
 	private boolean navigationFallBack(IASTTranslationUnit ast, IASTName sourceName, NameKind kind) {
-		// bug 102643, as a fall-back we look up the selected word in the index
+		// Bug 102643, as a fall-back we look up the selected word in the index.
 		if (fSelectedText != null && fSelectedText.length() > 0) {
 			try {
 				final ICProject project = fTranslationUnit.getCProject();
 				final char[] name = fSelectedText.toCharArray();
 				List<ICElement> elems= new ArrayList<ICElement>();
-								
-				// bug 252549, search for names in the AST first
+	
+				// Bug 252549, search for names in the AST first.
 				Set<IBinding> primaryBindings= new HashSet<IBinding>();
 				Set<IBinding> ignoreIndexBindings= new HashSet<IBinding>();
 				ASTNameCollector nc= new ASTNameCollector(fSelectedText);
@@ -564,17 +564,16 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				for (IASTName astName : candidates) {
 					try {
 						IBinding b= astName.resolveBinding();
-						if (b != null && !(b instanceof IProblemBinding)) {
-							if (!ignoreIndexBindings.contains(b) && primaryBindings.add(b)) {
-								ignoreIndexBindings.add(fIndex.adaptBinding(b));
-							}
+						if (b != null && !(b instanceof IProblemBinding) &&
+								!ignoreIndexBindings.contains(b) && primaryBindings.add(b)) {
+							ignoreIndexBindings.add(fIndex.adaptBinding(b));
 						}
 					} catch (RuntimeException e) {
 						CUIPlugin.log(e);
 					}
 				}
-				
-				// Search the index, also
+
+				// Search the index, also.
 				final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
 				final IIndexBinding[] idxBindings = fIndex.findBindings(name, false, filter, fMonitor);
 				for (IIndexBinding idxBinding : idxBindings) {
@@ -582,8 +581,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 						primaryBindings.add(idxBinding);
 					}
 				}
-				
-				// Search for a macro in the index
+
+				// Search for a macro in the index.
 				IIndexMacro[] macros= fIndex.findMacros(name, filter, fMonitor);
 				for (IIndexMacro macro : macros) {
 					ICElement elem= IndexUI.getCElementForMacro(project, fIndex, macro);
@@ -598,10 +597,10 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				} else {
 					secondaryBindings= defaultRemoveSecondaryBindings(primaryBindings, sourceName);
 				}
-				
+
 				// Convert bindings to CElements
 				Collection<IBinding> bs= primaryBindings;
-				for (int k=0; k<2; k++) {
+				for (int k = 0; k < 2; k++) {
 					for (IBinding binding : bs) {
 						IName[] names = findNames(fIndex, ast, kind, binding);
 						// Exclude names of the same kind.
@@ -613,16 +612,16 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 						names = (IName[]) ArrayUtil.removeNulls(IName.class, names);
 						convertToCElements(project, fIndex, names, elems);
 					}
-					// in case we did not find anything, consider the secondary bindings
+					// In case we did not find anything, consider the secondary bindings.
 					if (!elems.isEmpty())
 						break;
 					bs= secondaryBindings;
-				} 
+				}
 				if (navigateCElements(elems)) {
 					return true;
 				}
 				if (sourceName != null && sourceName.isDeclaration()) {
-					// Select the name at the current location as the last resort. 
+					// Select the name at the current location as the last resort.
 					return navigateToName(sourceName);
 				}
 			} catch (CoreException e) {
@@ -651,16 +650,16 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 	private boolean checkOwnerNames(IBinding b1, IBinding b2) throws DOMException {
 		IBinding o1 = b1.getOwner();
-		IBinding o2= b2.getOwner();
-		if (o1 == o2) 
+		IBinding o2 = b2.getOwner();
+		if (o1 == o2)
 			return true;
-		
+
 		if (o1 == null || o2 == null)
 			return false;
-		
-		if (!CharArrayUtils.equals(o1.getNameCharArray(), o2.getNameCharArray())) 
+
+		if (!CharArrayUtils.equals(o1.getNameCharArray(), o2.getNameCharArray()))
 			return false;
-		
+
 		return checkOwnerNames(o1, o2);
 	}
 
@@ -688,7 +687,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				}
 			}
 			if (funcArgCount != -1) {
-				// for c++ we can check the number of parameters
+				// For c++ we can check the number of parameters
 				if (binding instanceof ICPPFunction) {
 					ICPPFunction f= (ICPPFunction) binding;
 					try {
@@ -716,7 +715,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 }

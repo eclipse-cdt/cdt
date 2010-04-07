@@ -130,7 +130,7 @@ public class MIRunControlEventProcessor
     					if (var.equals("reason")) { //$NON-NLS-1$
     						if (val instanceof MIConst) {
     							String reason = ((MIConst) val).getString();
-    							MIEvent<?> e = createEvent(reason, exec);
+    							MIEvent<?> e = createEvent(reason, exec, ((MIOutput)output).getStreamRecords());
     							if (e != null) {
     								events.add(e);
     								continue;
@@ -157,7 +157,7 @@ public class MIRunControlEventProcessor
         			// GDB for temporary breakpoints will not send the
         			// "reason" ??? still fire a stopped event.
         			if (events.isEmpty()) {
-        				MIEvent<?> e = createEvent(STOPPED_REASON, exec);
+        				MIEvent<?> e = createEvent(STOPPED_REASON, exec, ((MIOutput)output).getStreamRecords());
 						if (e != null) {
 							events.add(e);
 						}
@@ -209,12 +209,22 @@ public class MIRunControlEventProcessor
     	
     	return execDmc;
     }
-    
-    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
+
+    /**
+	 * @param miStreamRecords
+	 *            the stream records that preceded 'exec'. Determining which
+	 *            type of event to create may require additional insight
+	 *            available in those records. One example is catchpoint hits.
+	 *            They are reported by gdb (>= 7.0)as a simple breakpoint hit.
+	 *            However, gdb also sends a stream record that reveals that it's
+	 *            a catchpoint hit.
+	 * @since 3.0
+	 */            
+    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec, MIStreamRecord[] miStreamRecords) {
     	IExecutionDMContext execDmc = getExecutionContext(exec);
     	MIEvent<?> event = null;
     	if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
-    		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
+    		event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults(), miStreamRecords);
     	} else if (
     			"watchpoint-trigger".equals(reason) //$NON-NLS-1$
     			|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$

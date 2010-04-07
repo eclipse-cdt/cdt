@@ -502,7 +502,7 @@ public class MIStack extends AbstractDsfService
                     rm.done();
                 }
                 @Override
-                protected void handleFailure() {
+                protected void handleError() {
                 	// If the command fails it can be because we asked for values.
                 	// This can happen with uninitialized values and pretty printers (bug 307614)
                 	// or when visualizing tracepoints.  Since asking for values was simply an optimization
@@ -608,7 +608,7 @@ public class MIStack extends AbstractDsfService
 	                    rm.done();
 	                }
 	                @Override
-	                protected void handleFailure() {
+	                protected void handleError() {
 	                	// Unable to get the values.  This can happen with uninitialized values and pretty printers (bug 307614)
 	                	// or when visualizing tracepoints.  Either way, we try to ask for the arguments without their values,
 	                	// which is better than nothing
@@ -651,7 +651,7 @@ public class MIStack extends AbstractDsfService
 		                    rm.done();
                         }
                         @Override
-                        protected void handleFailure() {
+                        protected void handleError() {
                         	// Unable to get the value.  This can happen with uninitialized values and pretty printers (bug 307614)
                         	// or when visualizing tracepoints.  Either way, we try to ask for the variables without their values,
                         	// which is better than nothing
@@ -732,7 +732,7 @@ public class MIStack extends AbstractDsfService
                         countingRm.done();
                     }
                     @Override
-                    protected void handleFailure() {
+                    protected void handleError() {
                     	// If the command fails it can be because we asked for values.
                     	// This can happen with uninitialized values and pretty printers (bug 307614)
                     	// or when visualizing tracepoints.  Since asking for values was simply an optimization

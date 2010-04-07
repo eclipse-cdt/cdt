@@ -165,6 +165,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				
 				fProperties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 				fProperties.put(MIBreakpoints.CATCHPOINT_TYPE, dsfMIBreakpoint.getCatchpointType());
+				fProperties.put(NUMBER,       dsfMIBreakpoint.getNumber());				
 				break;
 			}
 

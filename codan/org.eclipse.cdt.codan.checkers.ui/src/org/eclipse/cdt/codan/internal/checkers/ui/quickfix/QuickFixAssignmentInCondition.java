@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
+import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -62,20 +63,26 @@ public class QuickFixAssignmentInCondition implements IMarkerResolution {
 			ITextEditor editor = (ITextEditor) editorPart;
 			IDocument doc = editor.getDocumentProvider().getDocument(
 					editor.getEditorInput());
-			int line = marker.getAttribute(IMarker.LINE_NUMBER, -1) - 1;
-			FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(doc);
 			try {
-				dad.find(doc.getLineOffset(line), "=", /* forwardSearch */ //$NON-NLS-1$
-				true, /* caseSensitive */false,
-				/* wholeWord */false, /* regExSearch */false);
+				int charStart = marker.getAttribute(IMarker.CHAR_START, -1);
+				int position;
+				if (charStart > 0) {
+					position = charStart;
+				} else {
+					int line = marker.getAttribute(IMarker.LINE_NUMBER, -1) - 1;
+					position = doc.getLineOffset(line);
+				}
+				FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(
+						doc);
+				dad.find(position, "=", /* forwardSearch *///$NON-NLS-1$
+						true, /* caseSensitive */false,
+						/* wholeWord */false, /* regExSearch */false);
 				dad.replace("==", /* regExReplace */false); //$NON-NLS-1$
 				marker.delete();
-			} catch (BadLocationException e) {
-				// TODO: log the error
-				e.printStackTrace();
 			} catch (CoreException e) {
-				// TODO: log the error
-				e.printStackTrace();
+				CheckersUiActivator.log(e);
+			} catch (BadLocationException e) {
+				CheckersUiActivator.log(e);
 			}
 		}
 	}

@@ -84,58 +84,6 @@
          </enablement>
       </consolePageParticipant>
    </extension>
-
-  <extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
-     <breakpointLabels markerType="org.eclipse.cdt.debug.core.cEventBreakpointMarker"> 
-     <attribute name="org.eclipse.cdt.debug.core.eventbreakpoint_event_id" label="%catchType.label" type="string">
-        <value value="org.eclipse.cdt.debug.gdb.catch" label="%catchCatch.label">
-        </value>
-        <value value="org.eclipse.cdt.debug.gdb.throw" label="%catchThrow.label"/>
-        <value value="org.eclipse.cdt.debug.gdb.signal" label="%catchSignal.label">
-            <attribute name="org.eclipse.cdt.debug.core.eventbreakpoint_event_arg" label="%catchSignal.arg.label" 
-                 type="integer" fieldEditor="org.eclipse.jface.preference.IntegerFieldEditor">
-            </attribute>
-        </value>
-        <value
-              label="%catchFork.label"
-              value="org.eclipse.cdt.debug.gdb.catch_fork">
-        </value>
-        <value
-              label="%catchVfork.label"
-              value="org.eclipse.cdt.debug.gdb.catch_vfork">
-        </value>
-        <value
-              label="%catchExec.label"
-              value="org.eclipse.cdt.debug.gdb.catch_exec">
-        </value>
-        <value label="%catchExit.label"
-              value="org.eclipse.cdt.debug.gdb.catch_exit">
-        </value>
-        <value label="%catchStop.label"
-              value="org.eclipse.cdt.debug.gdb.catch_stop">
-        </value>
-        <value label="%catchStart.label"
-              value="org.eclipse.cdt.debug.gdb.catch_start">
-        </value>
-        <value label="%catchThreadStart.label"
-              value="org.eclipse.cdt.debug.gdb.catch_thread_start">
-        </value>
-        <value label="%catchThreadExit.label"
-              value="org.eclipse.cdt.debug.gdb.catch_thread_exit">
-        </value>
-        <value label="%catchThreadJoin.label"
-              value="org.eclipse.cdt.debug.gdb.catch_thread_join">
-        </value>
-                <value label="%catchLoad.label"
-              value="org.eclipse.cdt.debug.gdb.catch_load">
-        </value>
-                <value label="%catchUnload.label"
-              value="org.eclipse.cdt.debug.gdb.catch_unload">
-        </value>
-     </attribute> 
-     </breakpointLabels>
- </extension>
-
     <extension
          point="org.eclipse.ui.activities">
  

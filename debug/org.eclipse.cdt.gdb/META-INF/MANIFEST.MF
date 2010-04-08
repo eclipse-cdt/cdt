@@ -11,4 +11,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.gdb.eventbkpts,
- org.eclipse.cdt.gdb.internal;x-internal:=true
+ org.eclipse.cdt.gdb.internal;x-internal:=true,
+ org.eclipse.cdt.gdb.internal.eventbkpts;x-friends:="org.eclipse.cdt.debug.mi.core,org.eclipse.cdt.dsf.gdb,org.eclipse.cdt.tests.dsf.gdb"

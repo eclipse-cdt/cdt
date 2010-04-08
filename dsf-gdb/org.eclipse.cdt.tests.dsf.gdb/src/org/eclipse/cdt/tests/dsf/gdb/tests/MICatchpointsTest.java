@@ -13,6 +13,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
@@ -51,6 +52,8 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.gdb.eventbkpts.IEventBreakpointConstants;
+import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
@@ -1189,6 +1192,20 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// Resume the target. Should miss the throw catchpoint and stop at the catch one
 		resumeAndExpectBkptHit(throwCatchpointNumber, null);
+	}
+
+	/**
+	 * Test some utiility methods we use to convert between event breakpoint ids
+	 * and gdb catchpoint keywords
+	 */
+	@Test
+	public void catchpointConversions() throws Throwable {
+		assertEquals("catch", GdbCatchpoints.eventToGdbCatchpointKeyword(IEventBreakpointConstants.EVENT_TYPE_CATCH));
+		assertEquals("signal", GdbCatchpoints.eventToGdbCatchpointKeyword(IEventBreakpointConstants.EVENT_TYPE_SIGNAL_CATCH));
+		assertEquals(IEventBreakpointConstants.EVENT_TYPE_CATCH, GdbCatchpoints.gdbCatchpointKeywordToEvent("catch"));
+		assertEquals(IEventBreakpointConstants.EVENT_TYPE_SIGNAL_CATCH, GdbCatchpoints.gdbCatchpointKeywordToEvent("signal"));
+		assertNull(GdbCatchpoints.gdbCatchpointKeywordToEvent("signa"));
+		assertNull(GdbCatchpoints.gdbCatchpointKeywordToEvent("signals"));
 	}
 
 	/**

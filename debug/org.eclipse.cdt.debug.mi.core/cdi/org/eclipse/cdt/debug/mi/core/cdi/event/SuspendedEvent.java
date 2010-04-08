@@ -37,6 +37,7 @@ import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointTriggerEvent;
+import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
 
 /**
  *
@@ -59,7 +60,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 			BreakpointManager bkptMgr = session.getBreakpointManager();
 			Breakpoint bkpt = bkptMgr.getBreakpoint(event.getMISession(), ((MIBreakpointHitEvent)event).getNumber());
 			if (bkpt instanceof EventBreakpoint) {
-				return new EventBreakpointHit(session, EventBreakpoint.getGdbEventFromId(((EventBreakpoint)bkpt).getEventType()));
+				return new EventBreakpointHit(session, GdbCatchpoints.eventToGdbCatchpointKeyword(((EventBreakpoint)bkpt).getEventType()));
 			}
 			else {
 				return new BreakpointHit(session, (MIBreakpointHitEvent)event);

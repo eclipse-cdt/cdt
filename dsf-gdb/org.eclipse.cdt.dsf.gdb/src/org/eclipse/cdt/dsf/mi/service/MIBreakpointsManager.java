@@ -66,6 +66,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointTriggerEvent;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -109,30 +110,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     IBreakpoints       fBreakpoints;
     IBreakpointManager fBreakpointManager;  // Platform breakpoint manager (not this!)
     BreakpointActionManager fBreakpointActionManager;
-
-	/**
-	 * A mapping of ICEventBreakpoint event types to their corresponding gdb
-	 * catchpoint keyword (as listed in gdb's 'help catch')
-	 */
-	private static final Map<String, String> sEventBkptTypeToGdb = new HashMap<String, String>();
-	static {
-		// these Ids are also referenced in mi.ui plugin as contribution
-		// to event breakpoints selector
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_CATCH,			 "catch"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THROW,			 "throw"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_SIGNAL_CATCH,	 "signal"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_EXEC,			 "exec"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_FORK,			 "fork"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_VFORK,			 "vfork"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_EXIT,			 "exit"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_PROCESS_START,	 "start"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_PROCESS_STOP,	 "stop"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THREAD_START,	 "thread_start"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THREAD_EXIT,	 "thread_exit"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_THREAD_JOIN,	 "thread_join"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_LIBRARY_LOAD,	 "load"); //$NON-NLS-1$
-		sEventBkptTypeToGdb.put(ICEventBreakpoint.EVENT_TYPE_LIBRARY_UNLOAD, "unload"); //$NON-NLS-1$
-	}
     
     ///////////////////////////////////////////////////////////////////////////
     // Breakpoints tracking
@@ -1701,7 +1678,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         }
         else if (breakpoint instanceof ICEventBreakpoint) {
         	properties.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
-        	properties.put(MIBreakpoints.CATCHPOINT_TYPE, sEventBkptTypeToGdb.get(attributes.get(ICEventBreakpoint.EVENT_TYPE_ID)));
+        	properties.put(MIBreakpoints.CATCHPOINT_TYPE, GdbCatchpoints.eventToGdbCatchpointKeyword((String)attributes.get(ICEventBreakpoint.EVENT_TYPE_ID)));
 
         	String arg = (String)attributes.get(ICEventBreakpoint.EVENT_ARG);
         	String[] args;

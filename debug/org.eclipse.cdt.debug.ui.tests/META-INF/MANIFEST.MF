@@ -4,7 +4,6 @@ Bundle-Name: org.eclipse.cdt.debug.ui.tests
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.tests;singleton:=true
 Bundle-Version: 6.0.0.qualifier
 Bundle-Activator: org.eclipse.core.internal.compatibility.PluginActivator
-Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.debug.core.tests,
  org.eclipse.cdt.debug.testplugin,
  org.eclipse.cdt.debug.testplugin.util
@@ -15,7 +14,8 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.cdt.debug.mi.core,
  org.eclipse.cdt.core,
  org.eclipse.ui,
- org.eclipse.core.runtime.compatibility
+ org.eclipse.core.runtime.compatibility,
+ org.eclipse.cdt.gdb;bundle-version="7.0.0"
 Bundle-ActivationPolicy: lazy
 Plugin-Class: org.eclipse.cdt.debug.testplugin.CTestPlugin
 Bundle-Vendor: Eclipse CDT

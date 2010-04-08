@@ -525,7 +525,7 @@ public class BreakpointTests extends AbstractDebugTest {
 
 	}
 	public void testCondBreak2() throws CoreException, MIException, IOException, CDIException, InterruptedException {
-		boolean caught = false;
+
 		ICDITarget cdiTarget = currentTarget;
 
 		/***********************************************************************
@@ -543,11 +543,17 @@ public class BreakpointTests extends AbstractDebugTest {
 		location = cdiTarget.createFunctionLocation(null, "func1");
 		assertNotNull(location);
 		cdiTarget.setFunctionBreakpoint(0, location, cond, false);
-
-		/***********************************************************************
+	}
+	
+	public void testCondBreakError() {
+		ICDITarget cdiTarget = currentTarget;
+	    ICDICondition cond;
+	    ICDIFunctionLocation location;
+	    /***********************************************************************
 		 * Create a break point on a generic function with an invalid condition
 		 * We expect to get a CDIException when we try to set the breakpoint.
 		 **********************************************************************/
+		boolean caught = false;
 		cond = cdiTarget.createCondition(0, "nonexist<10");
 		location = cdiTarget.createFunctionLocation(null, "func1");
 		assertNotNull(location);
@@ -557,12 +563,24 @@ public class BreakpointTests extends AbstractDebugTest {
 			caught = true;
 		}
 		assertTrue("Setting wrong condition should fail",caught);
-	}
+    }
 	
 	public void testHitCond() throws CoreException, MIException, IOException, CDIException, InterruptedException {
-		// this currently fails sometimes - after set bad breakpoint it does not hit any
 		setBreakOnMain();
 		testCondBreak2();
+		resumeCurrentTarget();
+		waitSuspend(currentTarget);
+	}
+	public void testHitCondWithError() throws CoreException, MIException, IOException, CDIException, InterruptedException {
+		// this currently fails sometimes - after set bad breakpoint it does not hit any
+		// only reproducible when setting invalid condition breakpoint, reason unknown
+		setBreakOnMain();
+		testCondBreak2();
+		testCondBreakError();
+		pause();
+		/* We should now have 3 breakpoints left. */
+		ICDIBreakpoint[] breakpoints = currentTarget.getBreakpoints();
+		assertTrue(breakpoints.length == 3);
 		resumeCurrentTarget();
 		waitSuspend(currentTarget);
 	}

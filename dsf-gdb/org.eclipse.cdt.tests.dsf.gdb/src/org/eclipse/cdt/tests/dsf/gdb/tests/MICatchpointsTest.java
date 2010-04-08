@@ -24,7 +24,6 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -570,7 +569,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		// Attempt to create a catchpoint with an invalid execution context (should fail)
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
-		breakpoint.put(MIBreakpoints.CATCHPOINT_TYPE, ICEventBreakpoint.EVENT_TYPE_THROW);
+		breakpoint.put(MIBreakpoints.CATCHPOINT_TYPE, "throw");
 		insertBreakpoint(null, breakpoint);
 
 		// Ensure it failed

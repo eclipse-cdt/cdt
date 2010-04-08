@@ -57,10 +57,11 @@ public class SaveConsoleAction extends Action {
 					Shell shell = fConsolePage.getControl().getShell();
 					String id = "org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build"; //$NON-NLS-1$
 					PreferenceDialog d = PreferencesUtil.createPropertyDialogOn(shell, project, id, new String[] { id }, null);
-					int result = d.open();
-					if ( result == Window.CANCEL ) {
-						setChecked(false);
-					}
+					d.open();
+					BuildOutputLogger.SaveBuildOutputPreferences newBp =
+						BuildOutputLogger.readSaveBuildOutputPreferences(project);
+					setChecked(newBp.isSaving);
+					return;
 				}
 			}
 			bp.isSaving = isChecked();

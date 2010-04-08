@@ -64,6 +64,8 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 	// so this constructor is private, and exists to avoid duplicating code.
 	private MIListThreadGroups(ICommandControlDMContext ctx, String groupId, boolean listAll) {
 		super(ctx, "-list-thread-groups"); //$NON-NLS-1$
+		
+		assert !((groupId != null) && listAll); // see comment above
         
 		final ArrayList<String> arguments = new ArrayList<String>();
 		if (listAll) {
@@ -71,6 +73,7 @@ public class MIListThreadGroups extends MICommand<MIListThreadGroupsInfo> {
 		}
 
 		if (groupId != null) {
+			assert groupId.trim().length() > 0;
 			arguments.add(groupId);
 		}
 

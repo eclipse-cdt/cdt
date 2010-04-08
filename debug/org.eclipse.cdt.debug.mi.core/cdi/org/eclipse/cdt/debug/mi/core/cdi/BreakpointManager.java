@@ -727,6 +727,12 @@ public class BreakpointManager extends Manager {
 						points[j].setFile(bkpt.getFile());
 					}					
 				}
+				if (bkpt.getLineNumber()>0)	{
+					for (int j = 0; j < points.length; j++) {
+						if (points[j].getLine() == 0)
+							points[j].setLine(bkpt.getLineNumber());
+					}				
+				}
 				// Make sure that if the breakpoint was disable we create them disable.
 				if (!enable) {
 					int[] numbers = new int[points.length];

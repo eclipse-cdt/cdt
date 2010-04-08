@@ -264,6 +264,9 @@ public class MIBreakpoint {
 		this.file = file;
 	}
 	
+	/**
+	 * @since 7.0
+	 */
 	public void setLine(int line) {
 		this.line = line;
 	}

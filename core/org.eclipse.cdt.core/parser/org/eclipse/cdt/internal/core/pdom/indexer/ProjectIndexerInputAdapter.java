@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,10 @@ import org.eclipse.core.runtime.content.IContentType;
  * @since 5.0
  */
 public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
+	/**
+	 * mstodo
+	 */
+	private static final AbstractLanguage[] NO_LANGUAGE = new AbstractLanguage[0];
 	private final ICProject fCProject;
 	private final HashMap<String, IIndexFileLocation> fIflCache;
 	private final FileExistsCache fExistsCache;
@@ -163,6 +167,9 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	
 	@Override
 	public AbstractLanguage[] getLanguages(Object tuo, boolean bothForHeaders) {
+		if (tuo instanceof PotentialTranslationUnit)
+			return NO_LANGUAGE;
+		
 		ITranslationUnit tu= (ITranslationUnit) tuo;
 		try {
 			ILanguage lang= tu.getLanguage();
@@ -184,7 +191,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		return new AbstractLanguage[0];
+		return NO_LANGUAGE;
 	}
 
 	@Override

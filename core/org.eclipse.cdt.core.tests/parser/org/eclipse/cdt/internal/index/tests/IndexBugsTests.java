@@ -71,6 +71,10 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
@@ -79,10 +83,12 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -2209,4 +2215,65 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	public void testUpdateNonSrcFolderHeader_283080() throws Exception {
+		IIndexBinding[] r;
+		
+		final IProject prj = fCProject.getProject();
+		final IFolder src= prj.getFolder("src");
+		final IFolder h= prj.getFolder("h");
+		src.create(true, false, null);
+		h.create(true, false, null);
+		assertTrue(src.exists());
+		assertTrue(h.exists());
+
+		ICProjectDescription desc= CCorePlugin.getDefault().getProjectDescription(prj);
+		assertNotNull(desc);
+		desc.getActiveConfiguration().setSourceEntries(new ICSourceEntry[] {
+				new CSourceEntry(src, new IPath[0], ICSettingEntry.SOURCE_PATH)
+		});
+		CCorePlugin.getDefault().setProjectDescription(prj, desc);
+		TestSourceReader.createFile(h, "a.h", "int version1;");
+		waitForIndexer(fCProject);
+		
+		final IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("version1".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(0, r.length);
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		IFile s= TestSourceReader.createFile(h, "a.h", "int version2;");
+		waitForIndexer(fCProject);
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("version2".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(0, r.length);
+		} finally {
+			index.releaseReadLock();
+		}
+
+		s= TestSourceReader.createFile(src, "source.cpp", "#include \"../h/a.h\"");
+		waitUntilFileIsIndexed(s, INDEX_WAIT_TIME);
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("version2".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(1, r.length);
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		s= TestSourceReader.createFile(h, "a.h", "int version3;");
+		waitUntilFileIsIndexed(s, INDEX_WAIT_TIME);
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("version2".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(0, r.length);
+			r = index.findBindings("version3".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(1, r.length);
+		} finally {
+			index.releaseReadLock();
+		}
+	}
 }

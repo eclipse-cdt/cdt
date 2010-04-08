@@ -263,4 +263,8 @@ public class MIBreakpoint {
 	public void setFile(String file) {
 		this.file = file;
 	}
+	
+	public void setLine(int line) {
+		this.line = line;
+	}
 }

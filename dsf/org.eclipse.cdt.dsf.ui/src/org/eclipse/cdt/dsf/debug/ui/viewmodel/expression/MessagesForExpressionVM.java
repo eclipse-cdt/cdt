@@ -30,6 +30,9 @@ public class MessagesForExpressionVM extends NLS {
 
     public static String ExpressionManagerLayoutNode__newExpression_label;
     
+    public static String DisabledExpressionVMNode_disabled_value;
+    public static String DisabledExpressionVMNode_disabled_no_columns;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, MessagesForExpressionVM.class);

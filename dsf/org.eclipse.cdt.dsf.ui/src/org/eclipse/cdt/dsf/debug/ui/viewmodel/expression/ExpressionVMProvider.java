@@ -226,6 +226,10 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
             addChildNodes(rootNode, new IVMNode[] {expressionManagerNode});
         }
         
+        // Disabled expression node intercepts disabled expressions and prevents them from being
+        // evaluated by other nodes.
+        IExpressionVMNode disabledExpressionNode = new DisabledExpressionVMNode(this);
+        
         /*
          *  The expression view wants to support fully all of the components of the register view.
          */
@@ -264,7 +268,7 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
          *  assume what it was passed was for it and the real node which wants to handle it would be
          *  left out in the cold.
          */
-        setExpressionNodes(new IExpressionVMNode[] {registerGroupNode, variableNode});
+        setExpressionNodes(new IExpressionVMNode[] {disabledExpressionNode, registerGroupNode, variableNode});
         
         /*
          *  Let the work know which is the top level node.

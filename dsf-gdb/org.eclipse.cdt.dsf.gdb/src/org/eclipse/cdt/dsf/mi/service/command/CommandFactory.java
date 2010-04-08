@@ -242,12 +242,12 @@ public class CommandFactory {
 		return new MIBreakAfter(ctx, breakpoint, ignoreCount);
 	}
 
-	public ICommand<MIInfo> createMIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
-		return new MIBreakCondition(ctx, breakpoint, condition);
-	}
-
 	public ICommand<MIInfo> createMIBreakCommands(IBreakpointsTargetDMContext ctx, int breakpoint, String[] commands) {
 		return new MIBreakCommands(ctx, breakpoint, commands);
+	}
+	
+	public ICommand<MIInfo> createMIBreakCondition(IBreakpointsTargetDMContext ctx, int breakpoint, String condition) {
+		return new MIBreakCondition(ctx, breakpoint, condition);
 	}
 
 	public ICommand<MIInfo> createMIBreakDelete(IBreakpointsTargetDMContext ctx, int[] array) {
@@ -381,20 +381,20 @@ public class CommandFactory {
 		return new MIExecJump(ctx, location);
 	}
 
+	public ICommand<MIInfo> createMIExecNext(IExecutionDMContext dmc) {
+		return new MIExecNext(dmc);
+	}
+	
+	public ICommand<MIInfo> createMIExecNext(IExecutionDMContext dmc, int count) {
+		return new MIExecNext(dmc, count);
+	}
+
 	public ICommand<MIInfo> createMIExecNextInstruction(IExecutionDMContext dmc) {
 		return new MIExecNextInstruction(dmc);
 	}
 
 	public ICommand<MIInfo> createMIExecNextInstruction(IExecutionDMContext dmc, int count) {
 		return new MIExecNextInstruction(dmc, count);
-	}
-
-	public ICommand<MIInfo> createMIExecNext(IExecutionDMContext dmc) {
-		return new MIExecNext(dmc);
-	}
-
-	public ICommand<MIInfo> createMIExecNext(IExecutionDMContext dmc, int count) {
-		return new MIExecNext(dmc, count);
 	}
 
 	public ICommand<MIInfo> createMIExecReturn(IFrameDMContext dmc) {
@@ -409,6 +409,14 @@ public class CommandFactory {
 		return new MIExecReverseContinue(dmc);
 	}
 
+	public ICommand<MIInfo> createMIExecReverseNext(IExecutionDMContext dmc) {
+		return new MIExecReverseNext(dmc);
+	}
+	
+	public ICommand<MIInfo> createMIExecReverseNext(IExecutionDMContext dmc, int count) {
+		return new MIExecReverseNext(dmc, count);
+	}
+	
 	public ICommand<MIInfo> createMIExecReverseNextInstruction(IExecutionDMContext dmc) {
 		return new MIExecReverseNextInstruction(dmc);
 	}
@@ -417,28 +425,20 @@ public class CommandFactory {
 		return new MIExecReverseNextInstruction(dmc, count);
 	}
 
-	public ICommand<MIInfo> createMIExecReverseNext(IExecutionDMContext dmc) {
-		return new MIExecReverseNext(dmc);
+	public ICommand<MIInfo> createMIExecReverseStep(IExecutionDMContext dmc) {
+		return new MIExecReverseStep(dmc);
 	}
-
-	public ICommand<MIInfo> createMIExecReverseNext(IExecutionDMContext dmc, int count) {
-		return new MIExecReverseNext(dmc, count);
+	
+	public ICommand<MIInfo> createMIExecReverseStep(IExecutionDMContext dmc, int count) {
+		return new MIExecReverseStep(dmc, count);
 	}
-
+	
 	public ICommand<MIInfo> createMIExecReverseStepInstruction(IExecutionDMContext dmc) {
 		return new MIExecReverseStepInstruction(dmc);
 	}
 
 	public ICommand<MIInfo> createMIExecReverseStepInstruction(IExecutionDMContext dmc, int count) {
 		return new MIExecReverseStepInstruction(dmc, count);
-	}
-
-	public ICommand<MIInfo> createMIExecReverseStep(IExecutionDMContext dmc) {
-		return new MIExecReverseStep(dmc);
-	}
-
-	public ICommand<MIInfo> createMIExecReverseStep(IExecutionDMContext dmc, int count) {
-		return new MIExecReverseStep(dmc, count);
 	}
 
 	public ICommand<MIInfo> createMIExecRun(IExecutionDMContext dmc) {
@@ -449,20 +449,20 @@ public class CommandFactory {
 		return new MIExecRun(dmc, args);
 	}
 
+	public ICommand<MIInfo> createMIExecStep(IExecutionDMContext dmc) {
+		return new MIExecStep(dmc);
+	}
+	
+	public ICommand<MIInfo> createMIExecStep(IExecutionDMContext dmc, int count) {
+		return new MIExecStep(dmc, count);
+	}
+	
 	public ICommand<MIInfo> createMIExecStepInstruction(IExecutionDMContext dmc) {
 		return new MIExecStepInstruction(dmc);
 	}
 
 	public ICommand<MIInfo> createMIExecStepInstruction(IExecutionDMContext dmc, int count) {
 		return new MIExecStepInstruction(dmc, count);
-	}
-
-	public ICommand<MIInfo> createMIExecStep(IExecutionDMContext dmc) {
-		return new MIExecStep(dmc);
-	}
-
-	public ICommand<MIInfo> createMIExecStep(IExecutionDMContext dmc, int count) {
-		return new MIExecStep(dmc, count);
 	}
 
 	public ICommand<MIInfo> createMIExecUncall(IFrameDMContext dmc) {
@@ -553,12 +553,12 @@ public class CommandFactory {
 		return new MIInferiorTTYSet(dmc, tty);
 	}
 
-	public ICommand<MIInfo> createMIInterpreterExecConsole(IDMContext ctx, String cmd) {
-		return new MIInterpreterExecConsole<MIInfo>(ctx, cmd);
-	}
-
 	public ICommand<MIInfo> createMIInterpreterExec(IDMContext ctx, String interpreter, String cmd) {
 		return new MIInterpreterExec<MIInfo>(ctx, interpreter, cmd);
+	}
+	
+	public ICommand<MIInfo> createMIInterpreterExecConsole(IDMContext ctx, String cmd) {
+		return new MIInterpreterExecConsole<MIInfo>(ctx, cmd);
 	}
 
 	public ICommand<MIListThreadGroupsInfo> createMIListThreadGroups(ICommandControlDMContext ctx) {

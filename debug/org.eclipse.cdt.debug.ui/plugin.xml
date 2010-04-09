@@ -404,6 +404,13 @@
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
          <action
+               label="%BreakpointTypes.label"
+               class="org.eclipse.debug.ui.actions.RulerBreakpointTypesActionDelegate"
+               id="org.eclipse.cdt.debug.ui.breakpointTypesAction"
+               menubarPath="debug"
+               style="pulldown">
+         </action>
+         <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
@@ -2269,20 +2276,6 @@
           </visibleWhen>
        </command>
     </menuContribution>
- </extension>
- <extension
-       point="org.eclipse.ui.popupMenus">
-    <viewerContribution
-          id="org.eclipse.cdt.debug.ui.breakpointTypeMenu"
-          targetID="#CEditorRulerContext">
-       <action
-          class="org.eclipse.debug.ui.actions.RulerBreakpointTypesActionDelegate"
-          id="org.eclipse.cdt.debug.ui.breakpointTypesAction"
-          label="%BreakpointTypes.label"
-          menubarPath="debug"
-          style="pulldown">
-       </action>
-    </viewerContribution>
  </extension>
  
  <!-- Cast to Type / Display as Array -->

@@ -569,7 +569,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				if (name == null) {
 					// We don't have the name in our map.  Should not happen.
 					name = "Unknown name"; //$NON-NLS-1$
+					assert false : "Don't have entry for process ID: " + id; //$NON-NLS-1$
 				} else if (name.length() == 0) {
+					// We end up here when the '-list-thread-groups --available'
+					// cmd failed after we first found out about the new process.
+					// (This seems to happen every time with MinGW 7.0)
 					// Return the default name of our program.
 					IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
 					name = backend.getProgramPath().toOSString();
@@ -958,7 +962,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
     						fDebuggedProcessesAndNames.put(groupId, ""); //$NON-NLS-1$
     					
-    						// GDB is debugging a new process.  Let's fetch its name and remember it.
+							// GDB is debugging a new process. Let's fetch its
+							// name and remember it. In order to get the name,
+							// we have to request all running processes, not
+							// just the ones being debugged. We got a lot more 
+    						// information when we request all processes.
         					final String finalGroupId = groupId;
     						fListThreadGroupsAvailableCache.execute(
     								fCommandFactory.createMIListThreadGroups(fCommandControl.getContext(), true),

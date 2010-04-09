@@ -256,12 +256,13 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 				} else if (cpp && childName.equals(vars[i].getType())) {
 					// it is a base class (which is returned by GDB as a field)
 					// (type of a child is the name of a child)
+					String childNameForCast = childName.contains("::") ? "'" + childName + "'" : childName; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					if (t instanceof ICDIPointerType) {
 						// fn -> casting to pointer base class
-						fn = "(" + childName + "*)" + fn;//$NON-NLS-1$ //$NON-NLS-2$
+						fn = "(struct " + childNameForCast + ")(*" + fn+")";//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} else {
 						// fn -> casting to base class
-						fn = "(" + childName + ")" + fn;//$NON-NLS-1$ //$NON-NLS-2$
+						fn = "(struct " + childNameForCast + ")" + fn;//$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} else if (t instanceof ICDIArrayType) {
 					// For Array gdb varobj only return the index, override here.

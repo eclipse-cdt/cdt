@@ -192,21 +192,28 @@ public class GDBProcessesTest extends BaseTestCase {
 		
 		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
 
-		fProcService.getProcessesBeingDebugged(fGdbCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fSession.getExecutor(), null) {
-            @Override
-            protected void handleCompleted() {
-               if (isSuccess()) {
-            	   IDMContext[] contexts = getData();
-            	   Assert.assertNotNull("invalid return value from service", contexts);
-            	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
-            	   IDMContext context = contexts[0];    
-            	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
-                   Assert.assertNotNull("unexpected process context type ", processContext);
-            	   waitor.setReturnInfo(processContext);
-                }
+		fProcService.getExecutor().submit(new Runnable() {
+            public void run() {
+        		fProcService.getProcessesBeingDebugged(fGdbCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fSession.getExecutor(), null) {
+                    @Override
+                    protected void handleCompleted() {
+                       if (isSuccess()) {
+                    	   IDMContext[] contexts = getData();
+                    	   Assert.assertNotNull("invalid return value from service", contexts);
+                    	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
+                    	   IDMContext context = contexts[0];    
+                    	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
+                           Assert.assertNotNull("unexpected process context type ", processContext);
+                    	   waitor.setReturnInfo(processContext);
+                        }
+                    }
+            		
+            	});
             }
-    		
-    	});
+        });
+		
+
+				
     	
     	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
     	Assert.assertTrue(fWait.getMessage(), fWait.isOK());

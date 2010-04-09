@@ -29,6 +29,7 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.jface"/>
+      <import plugin="com.ibm.icu"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.cdt.dsf.ui"/>
       <import plugin="org.eclipse.debug.ui"/>
@@ -37,7 +38,11 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.ui.console"/>
-      <import plugin="com.ibm.icu"/>
+      <import plugin="org.eclipse.cdt.launch" version="6.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.gdb" version="7.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.filesystem" version="1.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -49,13 +54,6 @@
 
    <plugin
          id="org.eclipse.cdt.dsf.gdb.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.cdt.gdb"
          download-size="0"
          install-size="0"
          version="0.0.0"

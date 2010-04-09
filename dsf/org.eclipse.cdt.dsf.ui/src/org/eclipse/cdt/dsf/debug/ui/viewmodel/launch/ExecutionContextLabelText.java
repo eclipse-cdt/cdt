@@ -74,6 +74,8 @@ public class ExecutionContextLabelText extends LabelText {
                 reasonLabel = MessagesForLaunchVM.State_change_reason__Watchpoint__label;
             } else if (StateChangeReason.EVENT_BREAKPOINT.name().equals(reason)) {
             	reasonLabel = MessagesForLaunchVM.State_change_reason__EventBreakpoint__label;
+            } else if (StateChangeReason.UNKNOWN.name().equals(reason)) {
+            	reasonLabel = MessagesForLaunchVM.State_change_reason__Unknown__label;
             } else {
             	assert false : "unexpected state change reason: " + reason; //$NON-NLS-1$
             }

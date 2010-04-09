@@ -36,6 +36,10 @@
    <includes
          id="org.eclipse.cdt.gnu.dsf.source"
          version="0.0.0"/>
+         
+   <includes
+         id="org.eclipse.cdt.gdb.source"
+         version="0.0.0"/>
 
    <includes
          id="org.eclipse.cdt"

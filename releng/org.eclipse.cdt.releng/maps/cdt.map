@@ -25,6 +25,9 @@ plugin@org.eclipse.cdt.doc.isv=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.
 
 plugin@org.eclipse.cdt=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt
 
+plugin@org.eclipse.cdt.gdb=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gdb
+plugin@org.eclipse.cdt.gdb.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gdb.ui
+
 ! CDT Features
 feature@org.eclipse.cdt.platform=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.platform-feature
 feature@org.eclipse.cdt.gnu.build=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.build-feature

@@ -397,9 +397,16 @@ public class MIRunControlTest extends BaseTestCase {
         	/*
         	 * getModelData should return StateChangeReason.  
         	 */
-	   	 	Assert.assertTrue(" State change reason for a normal execution should be USER_REQUEST instead of " + data.getStateChangeReason(), 
-                StateChangeReason.USER_REQUEST == data.getStateChangeReason());
+	   	 	Assert.assertEquals("Unexpected state change reason.", getExpectedMainThreadStopReason(), data.getStateChangeReason());
        } 
+	}
+	
+	/**
+	 * Allows subclasses to override the expected reason for the stop on main.    
+	 * @return
+	 */
+	protected StateChangeReason getExpectedMainThreadStopReason() {
+		return StateChangeReason.USER_REQUEST;
 	}
 
 	@Test

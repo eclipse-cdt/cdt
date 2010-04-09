@@ -11,17 +11,24 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests;
 
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
@@ -32,6 +39,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -165,6 +173,43 @@ public class MIRunControlTest extends BaseTestCase {
 	    }
 	}
 
+	/**
+	 * Utility method to return the process DM context. These tests launch a
+	 * single process, thus only one such context is available.
+	 * 
+	 * <p>
+	 * This must not be called from the DSF executor.
+	 * 
+	 * @return the process context
+	 * @throws InterruptedException
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	private IProcessDMContext getProcessContext() throws InterruptedException {
+		assert !fRunCtrl.getExecutor().isInExecutorThread();
+		
+		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
+
+		fProcService.getProcessesBeingDebugged(fGDBCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fRunCtrl.getExecutor(), null) {
+            @Override
+            protected void handleCompleted() {
+               if (isSuccess()) {
+            	   IDMContext[] contexts = getData();
+            	   Assert.assertNotNull("invalid return value from service", contexts);
+            	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
+            	   IDMContext context = contexts[0];    
+            	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
+                   Assert.assertNotNull("unexpected process context type ", processContext);
+            	   waitor.setReturnInfo(processContext);
+                }
+            }
+    		
+    	});
+    	
+    	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
+    	Assert.assertTrue(waitor.getMessage(), waitor.isOK());
+    	return (IProcessDMContext) waitor.getReturnInfo();
+	}
+	
 	/*
 	 * For Multi-threaded application - In case of one thread, Thread id should start with 1. 
 	 */
@@ -184,15 +229,15 @@ public class MIRunControlTest extends BaseTestCase {
                 wait.waitFinished(getStatus());
             }
         };
+
+        final IProcessDMContext processContext = getProcessContext();
         
         /*
          * Test getExecutionContexts() when only one thread exist. 
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());
             	fRunCtrl.getExecutionContexts(containerDmc, rm);
             }
         });
@@ -208,14 +253,17 @@ public class MIRunControlTest extends BaseTestCase {
 		Assert.assertNotNull(ctxts);
 		Assert.assertEquals("Unexpected number of threads for a simple program", sProgramIsCygwin ? 2 : 1, ctxts.length);
 
-		IMIExecutionDMContext dmc = (IMIExecutionDMContext) ctxts[0];
-		// Thread id for the main thread should be one
-		Assert.assertEquals(1, dmc.getThreadId());
 
-		if (sProgramIsCygwin) {
-			dmc = (IMIExecutionDMContext) ctxts[1];
-			Assert.assertEquals(2, dmc.getThreadId());
-		}
+      	// The ordering of the contexts is not deterministic
+    	LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] {1}));
+      	if (sProgramIsCygwin) {
+      		ids.add(new Integer(2));
+      	}
+
+    	assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)ctxts[0]).getThreadId())));
+      	if (sProgramIsCygwin) {
+      		assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)ctxts[1]).getThreadId())));
+      	}
 		
 		wait.waitReset();
 	}
@@ -270,14 +318,14 @@ public class MIRunControlTest extends BaseTestCase {
 
         Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
         
+        final IProcessDMContext processContext = getProcessContext();
+        
         /*
          * Test getExecutionContexts for a valid container DMC
          */
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());
             	fRunCtrl.getExecutionContexts(containerDmc, rmExecutionCtxts);
             }
         });
@@ -294,14 +342,17 @@ public class MIRunControlTest extends BaseTestCase {
        	Assert.assertNotNull(data);
 
     	Assert.assertEquals("Unexpected number of threads", sProgramIsCygwin ? 3 : 2, data.length);
-     	IMIExecutionDMContext dmc1 = (IMIExecutionDMContext)data[0];
-      	IMIExecutionDMContext dmc2 = (IMIExecutionDMContext)data[1];
-      	// Context ids should be 1 & 2 
-      	Assert.assertTrue(dmc1.getThreadId()==1 && dmc2.getThreadId() == 2);
-      	
+
+      	// The ordering of the contexts is not deterministic
+    	LinkedList<Integer> ids = new LinkedList<Integer>(Arrays.asList(new Integer[] {1,2}));
       	if (sProgramIsCygwin) {
-      		IMIExecutionDMContext dmc3 = (IMIExecutionDMContext)data[2];
-      		Assert.assertTrue(dmc3.getThreadId()== 3);
+      		ids.add(new Integer(3));
+      	}
+
+    	assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)data[0]).getThreadId())));
+    	assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)data[1]).getThreadId())));
+      	if (sProgramIsCygwin) {
+      		assertTrue(ids.remove(new Integer(((IMIExecutionDMContext)data[2]).getThreadId())));
       	}
      } 
 
@@ -324,14 +375,15 @@ public class MIRunControlTest extends BaseTestCase {
                 wait.waitFinished(getStatus());
             }
         };
+        
+        final IProcessDMContext processContext = getProcessContext();
+        
         /*
          * Call getModelData for Execution DMC
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	fRunCtrl.getExecutionData(((MIRunControl)fRunCtrl).createMIExecutionContext(containerDmc, 1), rm);
             }
         });
@@ -551,11 +603,11 @@ public class MIRunControlTest extends BaseTestCase {
                     getGDBLaunch().getSession(),
                     IResumedDMEvent.class);
         
+        final IProcessDMContext processContext = getProcessContext();
+        
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	fRunCtrl.resume(containerDmc, rm);
             }
         });
@@ -571,12 +623,10 @@ public class MIRunControlTest extends BaseTestCase {
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 		
 		wait.waitReset();
+		
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-				IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-				IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
-
+				IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());				
 				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
 				wait.waitFinished();
 			}
@@ -623,12 +673,12 @@ public class MIRunControlTest extends BaseTestCase {
 		Assert.assertTrue(wait.getMessage(), wait.isOK());
 		
 		wait.waitReset();
+		
+		final IProcessDMContext processContext = getProcessContext();
+		
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
-
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
             	wait.waitFinished();
             }
@@ -670,12 +720,11 @@ public class MIRunControlTest extends BaseTestCase {
 			return;
 		}
 		
+        final IProcessDMContext processContext = getProcessContext();
+        
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	String pid = MIProcesses.UNIQUE_GROUP_ID;
-            	IProcessDMContext procDmc = fProcService.createProcessContext(fGDBCtrl.getContext(), pid);
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(procDmc, pid);
-
+            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
             	wait.waitFinished();
             }

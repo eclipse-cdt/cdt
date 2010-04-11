@@ -797,7 +797,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertTrue(ICPPVariable.class.isInstance(b5));
 	}
 
-
 	////header content
 	//struct S {int i;};
 	//struct SS { S s, *sp; };
@@ -847,16 +846,15 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		IBinding b18 = getBindingFromASTName("i/*18*/", 1);
 	}
 
-
-	// // header file
+	//	// header file
 	//	class C {public: C* cp;};
 	//	C foo(C c);
 	//	C* foo(C* c);
 	//	int foo(int i);
 	//	int foo(int i, C c);
 
-	// // referencing content
-	// #include "header.h"
+	//	// referencing content
+	//	#include "header.h"
 	//	void references() {
 	//		C c, *cp;
 	//		foo/*a*/(cp[1]);                        // IASTArraySubscriptExpression

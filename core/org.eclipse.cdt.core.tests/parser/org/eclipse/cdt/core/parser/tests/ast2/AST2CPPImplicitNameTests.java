@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Mike Kucera (IBM)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -16,8 +17,10 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -277,7 +280,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	  bool b = true;
 	//	  x(b); // 1
 	//	  x(); // 2
-	//	  x(1,2); // 3
+	//	  x(1, 2); // 3
 	//	}
 	public void testFunctionCallOperator() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
@@ -301,7 +304,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertTrue(n2.isAlternate());
 		assertSame(col.getName(3).resolveBinding(), n1.resolveBinding());
 		
-		n1 = ba.assertImplicitName("(1,2); // 3", 1, ICPPMethod.class);
+		n1 = ba.assertImplicitName("(1, 2); // 3", 1, ICPPMethod.class);
 		n2 = ba.assertImplicitName("); // 3", 1, ICPPMethod.class);
 		assertSame(n1.resolveBinding(), n2.resolveBinding());
 		assertFalse(n1.isAlternate());
@@ -416,18 +419,18 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	int test() {
 	//	  X* fp = new (nothrow) X;
 	//	  int* p = new (nothrow) int[5];
-	//    int* p2 = new (5,6) int[5];
+	//    int* p2 = new (5, 6) int[5];
 	//	}
 	public void testNew() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTImplicitName n1 = ba.assertImplicitName("new (nothrow) X", 3, ICPPFunction.class);
 		IASTImplicitName n2 = ba.assertImplicitName("new (nothrow) int", 3, ICPPFunction.class);
-		IASTImplicitName n3 = ba.assertImplicitName("new (5,6) int", 3, ICPPFunction.class);
-		
+		IASTImplicitName n3 = ba.assertImplicitName("new (5, 6) int", 3, ICPPFunction.class);
+
 		IASTTranslationUnit tu = ba.getTranslationUnit();
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
-		
+
 		assertSame(col.getName(4).resolveBinding(), n1.resolveBinding());
 		assertSame(col.getName(9).resolveBinding(), n2.resolveBinding());
 		assertSame(col.getName(14).resolveBinding(), n3.resolveBinding());
@@ -439,5 +442,57 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	public void testEmptyThrow() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNoImplicitName("throw;", 5);
+	}
+
+	//	struct A {
+	//	  A() {}
+	//    A(int) {}
+	//	  template <typename T>
+	//    A(T, int) {}
+	//	};
+	//  typedef A B;
+	//
+	//	void test() {
+	//	  B a;
+	//	  B b(1);
+	//	  B c = 1;
+	//	  B d("", 1);
+	//	  extern B e;
+	//	}
+	//
+	//	struct C {
+	//	  static B s = 1;
+	//    static B t;
+	//	  B u;
+	//	  B v;
+	//	  C(int p) : u(), v(p) {}
+	//	};
+	//	B C::t = 1;
+	public void testConstructorCall() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		IASTTranslationUnit tu = ba.getTranslationUnit();
+		ICPPConstructor ctor0 = ba.assertNonProblem("A()", 1, ICPPConstructor.class);
+		ICPPConstructor ctor1 = ba.assertNonProblem("A(int)", 1, ICPPConstructor.class);
+		ICPPConstructor ctor2 = ba.assertNonProblem("A(T, int)", 1, ICPPConstructor.class);
+
+		IASTImplicitName a = ba.assertImplicitName("a;", 1, ICPPConstructor.class);
+		assertSame(ctor0, a.resolveBinding());
+		IASTImplicitName b = ba.assertImplicitName("b(", 1, ICPPConstructor.class);
+		assertSame(ctor1, b.resolveBinding());
+		IASTImplicitName c = ba.assertImplicitName("c =", 1, ICPPConstructor.class);
+		assertSame(ctor1, c.resolveBinding());
+		IASTImplicitName d = ba.assertImplicitName("d(", 1, ICPPConstructor.class);
+		assertSame(ctor2, ((ICPPTemplateInstance) d.resolveBinding()).getTemplateDefinition());
+		ba.assertNoImplicitName("e;", 1);
+		IASTImplicitName s = ba.assertImplicitName("s =", 1, ICPPConstructor.class);
+		assertSame(ctor1, s.resolveBinding());
+		ba.assertNoImplicitName("t;", 1);
+		IASTImplicitName t = ba.assertImplicitName("t =", 1, ICPPConstructor.class);
+		assertSame(ctor1, t.resolveBinding());
+		ba.assertNoImplicitName("u;", 1);
+		IASTImplicitName u = ba.assertImplicitName("u()", 1, ICPPConstructor.class);
+		assertSame(ctor0, u.resolveBinding());
+		IASTImplicitName v = ba.assertImplicitName("v(p)", 1, ICPPConstructor.class);
+		assertSame(ctor1, v.resolveBinding());
 	}
 }

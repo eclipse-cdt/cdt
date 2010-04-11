@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -17,6 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -26,22 +29,26 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
+public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IASTImplicitNameOwner {
     private IASTInitializer initializer;
     private IASTName name;
+	private IASTImplicitName[] implicitNames; 
     private IASTDeclarator nested;
-    private IASTPointerOperator[] pointerOps = null;
+    private IASTPointerOperator[] pointerOps;
     private boolean isPackExpansion;
-
+   
     public CPPASTDeclarator() {
 	}
 
@@ -139,7 +146,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
 		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default : break;
+	            default: break;
 	        }
 		}
 
@@ -155,13 +162,19 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
         if (nested == null && name != null) {
         	IASTDeclarator outermost= ASTQueries.findOutermostDeclarator(this);
         	if (outermost.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR) {
-        		if (!name.accept(action)) return false;
+        		if (!name.accept(action))
+        			return false;
+                if (action.shouldVisitImplicitNames) {
+                	for (IASTImplicitName implicitName : getImplicitNames()) {
+                		if (!implicitName.accept(action))
+                			return false;
+                	}
+                }
             }
 		}
 
-        if (nested != null) {
-        	if (!nested.accept(action)) return false;
-        }
+        if (nested != null && !nested.accept(action))
+        	return false;
 
         if (!postAccept(action))
         	return false;
@@ -232,5 +245,28 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @see IASTImplicitNameOwner#getImplicitNames()
+	 */
+	public IASTImplicitName[] getImplicitNames() {
+		if (implicitNames == null) {
+			ICPPConstructor ctor = CPPSemantics.findImplicitlyCalledConstructor(this);
+			if (ctor == null) {
+				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			} else {
+				CPPASTImplicitName ctorName = new CPPASTImplicitName(ctor.getNameCharArray(), this);
+				ctorName.setBinding(ctor);
+				IASTName id = name;
+				if (id instanceof ICPPASTQualifiedName) {
+					id = ((ICPPASTQualifiedName) id).getLastName();
+				}
+				ctorName.setOffsetAndLength((ASTNode) id);
+				implicitNames = new IASTImplicitName[] { ctorName };
+			}
+    	}
+
+    	return implicitNames;  
 	}
 }

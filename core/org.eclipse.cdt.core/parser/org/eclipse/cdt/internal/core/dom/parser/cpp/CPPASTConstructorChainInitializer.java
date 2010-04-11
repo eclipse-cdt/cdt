@@ -8,6 +8,7 @@
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -16,6 +17,8 @@ import java.util.Arrays;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -23,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -40,8 +44,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * {@code Base()} and {@code field()} are the constructor chain initializers.<br>
  */
 public class CPPASTConstructorChainInitializer extends ASTNode implements
-        ICPPASTConstructorChainInitializer, IASTCompletionContext {
+        ICPPASTConstructorChainInitializer, IASTImplicitNameOwner, IASTCompletionContext {
     private IASTName name;
+	private IASTImplicitName[] implicitNames; 
     private IASTInitializer initializer;
 	private boolean fIsPackExpansion;
 
@@ -101,6 +106,13 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
         if (name != null && !name.accept(action))
         	return false;
 
+        if (action.shouldVisitImplicitNames) {
+        	for (IASTImplicitName implicitName : getImplicitNames()) {
+        		if (!implicitName.accept(action))
+        			return false;
+        	}
+        }
+
         if (initializer != null && !initializer.accept(action))
         	return false;
 
@@ -154,7 +166,6 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		for (IASTNode parent = name.getParent(); parent != null; parent = parent.getParent()) {
 			if (parent instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier specifier = (ICPPASTCompositeTypeSpecifier) parent;
-
 				return specifier.getBaseSpecifiers();
 			}
 		}
@@ -201,4 +212,27 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
         	setInitializer(ctorInit);
         }
     }
+
+	/**
+	 * @see IASTImplicitNameOwner#getImplicitNames()
+	 */
+	public IASTImplicitName[] getImplicitNames() {
+		if (implicitNames == null) {
+			ICPPConstructor ctor = CPPSemantics.findImplicitlyCalledConstructor(this);
+			if (ctor == null) {
+				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			} else {
+				CPPASTImplicitName ctorName = new CPPASTImplicitName(ctor.getNameCharArray(), this);
+				ctorName.setBinding(ctor);
+				IASTName id = name;
+				if (id instanceof ICPPASTQualifiedName) {
+					id = ((ICPPASTQualifiedName) id).getLastName();
+				}
+				ctorName.setOffsetAndLength((ASTNode) id);
+				implicitNames = new IASTImplicitName[] { ctorName };
+			}
+    	}
+
+    	return implicitNames;  
+	}
 }

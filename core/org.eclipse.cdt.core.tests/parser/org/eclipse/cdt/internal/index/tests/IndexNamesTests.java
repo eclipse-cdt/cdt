@@ -174,10 +174,11 @@ public class IndexNamesTests extends BaseTestCase {
 			
 			assertNull(main.getEnclosingDefinition());
 			IIndexName[] enclosed= main.getEnclosedNames();
-			assertLength(3, enclosed);
-			assertName("C", enclosed[0]);
-			assertName("func", enclosed[1]);
-			assertName("var", enclosed[2]);
+			assertLength(4, enclosed);
+			assertName("C", enclosed[0]); // Class reference
+			assertName("C", enclosed[1]); // Implicit ctor call
+			assertName("func", enclosed[2]);
+			assertName("var", enclosed[3]);
 			
 			IIndexName enclosing= enclosed[0].getEnclosingDefinition();
 			assertNotNull(enclosing);
@@ -189,9 +190,13 @@ public class IndexNamesTests extends BaseTestCase {
 
 			enclosing= enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
+			assertName("main", enclosing);
+
+			enclosing= enclosed[3].getEnclosingDefinition();
+			assertNotNull(enclosing);
 			assertName("main", enclosing);			
 
-			IIndexBinding funcB= fIndex.findBinding(enclosed[1]);
+			IIndexBinding funcB= fIndex.findBinding(enclosed[2]);
 			assertNotNull(funcB);
 			names= fIndex.findDefinitions(funcB);
 			assertLength(1, names);

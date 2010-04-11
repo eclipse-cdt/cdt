@@ -89,7 +89,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	    	List<IASTImplicitName> names = new ArrayList<IASTImplicitName>();
 	    	
 	    	if (!isVectored) {
-		    	ICPPFunction destructor = CPPSemantics.findDestructor(this);
+		    	ICPPFunction destructor = CPPSemantics.findImplicitlyCalledDestructor(this);
 		    	if (destructor != null) {
 		    		CPPASTImplicitName destructorName = new CPPASTImplicitName(destructor.getNameCharArray(), this);
 		    		destructorName.setBinding(destructor);
@@ -121,7 +121,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     @Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
-		    switch(action.visit(this)) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default: break;
@@ -129,7 +129,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		}
 
         if (action.shouldVisitImplicitNames) { 
-        	for(IASTImplicitName name : getImplicitNames()) {
+        	for (IASTImplicitName name : getImplicitNames()) {
         		if (!name.accept(action))
         			return false;
         	}

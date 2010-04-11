@@ -158,6 +158,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
@@ -2762,7 +2763,76 @@ public class CPPSemantics {
 		return null;
     }
 
-    public static ICPPFunction findDestructor(ICPPASTDeleteExpression expr) {
+    /**
+     * Returns constructor called by a declarator, or <code>null</code> if no constructor is called.
+     */
+    public static ICPPConstructor findImplicitlyCalledConstructor(CPPASTDeclarator declarator) {
+		if (declarator.getInitializer() == null) {
+			IASTNode parent = declarator.getParent();
+			if (parent instanceof IASTSimpleDeclaration) {
+				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+				parent = parent.getParent();
+				if (parent instanceof IASTCompositeTypeSpecifier ||
+						declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
+					// No initialization is performed for class members and extern declarations
+					// without an initializer.
+					return null;
+				}
+			}
+		}
+    	return findImplicitlyCalledConstructor(declarator.getName(), declarator.getInitializer());
+    }
+
+    /**
+     * Returns constructor called by a class member initializer in a constructor initializer chain.
+     * Returns <code>null</code> if no constructor is called.
+     */
+    public static ICPPConstructor findImplicitlyCalledConstructor(ICPPASTConstructorChainInitializer initializer) {
+    	return findImplicitlyCalledConstructor(initializer.getMemberInitializerId(), initializer.getInitializer());
+    }
+
+    /**
+     * Returns constructor called by a variable declarator or an initializer in a constructor initializer
+     * chain. Returns <code>null</code> if no constructor is called.
+     */
+    private static ICPPConstructor findImplicitlyCalledConstructor(IASTName name, IASTInitializer initializer) {
+    	IBinding binding = name.resolveBinding();
+    	if (!(binding instanceof ICPPVariable))
+    		return null;
+    	IType type;
+		try {
+			type = SemanticUtil.getSimplifiedType(((ICPPVariable) binding).getType());
+	    	if (!(type instanceof ICPPClassType))
+	    		return null;
+	    	ICPPClassType classType = (ICPPClassType) type;
+			CPPASTName astName = new CPPASTName();
+		    astName.setName(classType.getNameCharArray());
+		    astName.setOffsetAndLength((ASTNode) name);
+			CPPASTIdExpression idExp = new CPPASTIdExpression(astName);
+			idExp.setParent(name.getParent());
+			idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
+
+		    LookupData data = new LookupData(astName);
+			if (initializer == null) {
+				data.setFunctionArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
+		    } else if (initializer instanceof IASTEqualsInitializer) {
+		    	data.setFunctionArguments(((IASTEqualsInitializer) initializer).getInitializerClause());
+			} else if (initializer instanceof ICPPASTConstructorInitializer) {
+				data.setFunctionArguments(((ICPPASTConstructorInitializer) initializer).getArguments());
+			} else {
+				return null;
+			}
+		    data.forceQualified = true;
+		    data.foundItems = classType.getConstructors();
+		    binding = resolveAmbiguities(data, astName);
+		    if (binding instanceof ICPPConstructor)
+		    	return (ICPPConstructor) binding;
+		} catch (DOMException e) {
+		}
+		return null;
+    }
+
+    public static ICPPFunction findImplicitlyCalledDestructor(ICPPASTDeleteExpression expr) {
     	ICPPClassType cls = getNestedClassType(expr);
     	if (cls == null)
     		return null;

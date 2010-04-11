@@ -175,7 +175,7 @@ public class TemplateArgumentDeduction {
 							return false; 	
 						
 						par= fnParPack= ((ICPPParameterPackType) par).getType();
-						deduct= new TemplateArgumentDeduction(deduct, fnArgs.length-j);
+						deduct= new TemplateArgumentDeduction(deduct, fnArgs.length - j);
 					} 
 				} else {
 					break;
@@ -422,11 +422,11 @@ public class TemplateArgumentDeduction {
 		fPackOffset= packSize > 0 ? 0 : -1;
 	}
 
-
 	private void incPackOffset() {
 		fPackOffset++;
 		assert fPackOffset < fPackSize;
 	}
+
 	/**
 	 * Deduces the template parameter mapping from one pair of template arguments.
 	 */
@@ -573,16 +573,16 @@ public class TemplateArgumentDeduction {
 		
 		// Check for being a non-deduced context.
 		final ICPPTemplateArgument[] pArgs = pInst.getTemplateArguments();
-		for (int i = 0; i < pArgs.length-1; i++) {
+		for (int i = 0; i < pArgs.length - 1; i++) {
 			if (pArgs[i].isPackExpansion()) 
 				return true; // non-deduced context
 		}
 		
 		final ICPPTemplateArgument[] aArgs = aInst.getTemplateArguments();
 		if (pArgs.length != aArgs.length) {
-			if (pArgs.length == 0 || pArgs.length > aArgs.length+1)
+			if (pArgs.length == 0 || pArgs.length > aArgs.length + 1)
 				return false;
-			ICPPTemplateArgument lastPParam= pArgs[pArgs.length-1];
+			ICPPTemplateArgument lastPParam= pArgs[pArgs.length - 1];
 			if (!lastPParam.isPackExpansion())
 				return false;
 		}
@@ -620,9 +620,9 @@ public class TemplateArgumentDeduction {
 		IType[] pParams = ftp.getParameterTypes();
 		IType[] aParams = fta.getParameterTypes();
 		if (pParams.length != aParams.length) {
-			if (pParams.length == 0 || pParams.length > aParams.length+1)
+			if (pParams.length == 0 || pParams.length > aParams.length + 1)
 				return false;
-			IType lastPParam= pParams[pParams.length-1];
+			IType lastPParam= pParams[pParams.length - 1];
 			if (!(lastPParam instanceof ICPPParameterPackType))
 				return false;
 		}

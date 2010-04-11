@@ -27,6 +27,6 @@ public class CPPConstructorInstance extends CPPMethodInstance implements ICPPCon
 	}
 	
 	public boolean isExplicit() throws DOMException {
-		return ((ICPPConstructor)getTemplateDefinition()).isExplicit();
+		return ((ICPPConstructor) getTemplateDefinition()).isExplicit();
 	}
 }

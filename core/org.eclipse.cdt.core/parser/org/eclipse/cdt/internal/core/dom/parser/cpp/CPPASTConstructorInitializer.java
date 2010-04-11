@@ -67,15 +67,15 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitInitializers ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitInitializers) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
-        
+
         for (IASTInitializerClause arg : fArguments) {
         	if (!arg.accept(action))
         		return false;
@@ -107,7 +107,7 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
     			return (IASTExpression) arg;
     		return null;
     	}
-    		
+
     	CPPASTExpressionList result= new CPPASTExpressionList();
     	for (IASTInitializerClause arg : fArguments) {
     		if (arg instanceof IASTExpression) {

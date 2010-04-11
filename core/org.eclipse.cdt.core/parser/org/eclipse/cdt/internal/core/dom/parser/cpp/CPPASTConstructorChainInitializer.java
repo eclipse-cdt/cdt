@@ -41,12 +41,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  */
 public class CPPASTConstructorChainInitializer extends ASTNode implements
         ICPPASTConstructorChainInitializer, IASTCompletionContext {
-
     private IASTName name;
     private IASTInitializer initializer;
 	private boolean fIsPackExpansion;
 
-    
     public CPPASTConstructorChainInitializer() {
 	}
 
@@ -63,7 +61,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		copy.fIsPackExpansion= fIsPackExpansion;
 		return copy;
 	}
-	
+
 	public IASTName getMemberInitializerId() {
         return name;
     }
@@ -71,7 +69,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     public void setMemberInitializerId(IASTName name) {
         assertNotFrozen();
         this.name = name;
-        if(name != null) {
+        if (name != null) {
 			name.setParent(this);
 			name.setPropertyInParent(MEMBER_ID);
 		}
@@ -84,7 +82,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     public void setInitializer(IASTInitializer init) {
         assertNotFrozen();
         initializer = init;
-        if(init != null) {
+        if (init != null) {
         	init.setParent(this);
         	init.setPropertyInParent(INITIALIZER);
 		}
@@ -93,7 +91,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     @Override
 	public boolean accept(ASTVisitor action) {
     	if (action.shouldVisitInitializers) {
-    		switch(action.visit(this)) {
+    		switch (action.visit(this)) {
     		case ASTVisitor.PROCESS_ABORT:
     			return false;
     		case ASTVisitor.PROCESS_SKIP:
@@ -102,13 +100,13 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     	}
         if (name != null && !name.accept(action))
         	return false;
-        
+
         if (initializer != null && !initializer.accept(action))
         	return false;
-        
+
 		if (action.shouldVisitInitializers && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
-		
+
         return true;
     }
 
@@ -127,7 +125,6 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 			if ((bindings[i] instanceof ICPPField) || (bindings[i] instanceof ICPPNamespace)) {
 				continue;
 			} else if (bindings[i] instanceof ICPPConstructor) {
-
 				if (baseClasses == null) {
 					baseClasses = getBaseClasses(n);
 				}
@@ -161,10 +158,9 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 				return specifier.getBaseSpecifiers();
 			}
 		}
-
 		return null;
 	}
-	
+
 	public boolean isPackExpansion() {
 		return fIsPackExpansion;
 	}
@@ -173,7 +169,7 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 		assertNotFrozen();
 		fIsPackExpansion= val;
 	}
-	
+
 	@Deprecated
     public IASTExpression getInitializerValue() {
         if (initializer == null || initializer instanceof IASTExpression) {

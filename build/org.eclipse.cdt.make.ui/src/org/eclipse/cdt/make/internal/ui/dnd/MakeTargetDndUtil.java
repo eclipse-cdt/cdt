@@ -411,10 +411,12 @@ public class MakeTargetDndUtil {
 		// IMakeCommonBuildInfo attributes
 		// Ignore IMakeCommonBuildInfo.BUILD_LOCATION in order not to pick
 		// location of another project (or another folder)
-		destination.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
-			source.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, DEFAULT_BUILD_COMMAND));
-		destination.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
-			source.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		if (!source.isDefaultBuildCmd()){
+			destination.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND,
+					source.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, DEFAULT_BUILD_COMMAND));
+			destination.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS,
+					source.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, "")); //$NON-NLS-1$
+		}
 		destination.setStopOnError(source.isStopOnError());
 		destination.setUseDefaultBuildCmd(source.isDefaultBuildCmd());
 		destination.setEnvironment(source.getEnvironment());

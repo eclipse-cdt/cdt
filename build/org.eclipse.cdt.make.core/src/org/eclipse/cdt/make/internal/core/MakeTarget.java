@@ -127,6 +127,14 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public String getBuildArguments() {
+		if (isDefaultBuildCmd()) {
+			IMakeBuilderInfo info;
+			try {
+				info = MakeCorePlugin.createBuildInfo(getProject(), manager.getBuilderID(targetBuilderID));
+				return info.getBuildArguments();
+			} catch (CoreException e) {
+			}
+		}		
 		String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
 		try {
 			result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);

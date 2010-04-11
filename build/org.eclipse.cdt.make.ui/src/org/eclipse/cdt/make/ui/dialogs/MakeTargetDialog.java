@@ -78,6 +78,7 @@ public class MakeTargetDialog extends Dialog {
 
 	private IPath buildCommand;
 	private final String defaultBuildCommand;
+	private final String defaultBuildArguments;
 	private boolean isDefaultCommand;
 	private boolean isStopOnError;
 	private boolean runAllBuilders = true;
@@ -169,6 +170,7 @@ public class MakeTargetDialog extends Dialog {
 		buildCommand = buildInfo.getBuildCommand();
 		defaultBuildCommand = buildCommand.toString();
 		buildArguments = buildInfo.getBuildArguments();
+		defaultBuildArguments = buildArguments;
 		targetString = buildInfo.getIncrementalBuildTarget();
 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -279,7 +281,13 @@ public class MakeTargetDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
-					commandText.setText(defaultBuildCommand);
+					StringBuffer cmd = new StringBuffer(defaultBuildCommand);
+					String args = defaultBuildArguments;
+					if (args != null && !args.equals("")) { //$NON-NLS-1$
+						cmd.append(" "); //$NON-NLS-1$
+						cmd.append(args);
+					}
+					commandText.setText(cmd.toString());
 					commandText.setEnabled(false);
 					stopOnErrorButton.setEnabled(true);
 				} else {
@@ -384,12 +392,10 @@ public class MakeTargetDialog extends Dialog {
 		targetNameText.selectAll();
 		if (buildCommand != null) {
 			StringBuffer cmd = new StringBuffer(buildCommand.toOSString());
-			if (!isDefaultCommand) {
-				String args = buildArguments;
-				if (args != null && !args.equals("")) { //$NON-NLS-1$
-					cmd.append(" "); //$NON-NLS-1$
-					cmd.append(args);
-				}
+			String args = buildArguments;
+			if (args != null && !args.equals("")) { //$NON-NLS-1$
+				cmd.append(" "); //$NON-NLS-1$
+				cmd.append(args);
 			}
 			commandText.setText(cmd.toString());
 		}
@@ -504,6 +510,7 @@ public class MakeTargetDialog extends Dialog {
 			target.setUseDefaultBuildCmd(useDefaultBuildCmd());
 			if (useDefaultBuildCmd()) {
 				target.setBuildAttribute(IMakeTarget.BUILD_COMMAND, defaultBuildCommand);
+				target.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, defaultBuildArguments);
 			} else {
 				String bldLine = getBuildLine();
 				int start = 0;

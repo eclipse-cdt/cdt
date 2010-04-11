@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
- *
+ * Tests for classes implementing IASTImplicitNameOwner interface.
  */
 public class AST2CPPImplicitNameTests extends AST2BaseTest {
 
@@ -45,26 +45,25 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTImplicitName[] implicits = owner.getImplicitNames();
 		return implicits;
 	}
-	
-	
-	// class point {
-	//	   int x,y;
-	// public:
-	//	   point operator+(point);
-	//	   point operator-(point);
-	//     point operator-();
-	//     point operator+=(int);
-	// };
-	// point operator*(point,point);
-	// point operator/(point,point);
+
+	//	class point {
+	//	  int x,y;
+	//	public:
+	//	  point operator+(point);
+	//	  point operator-(point);
+	//	  point operator-();
+	//	  point operator+=(int);
+	//	};
+	//	point operator*(point,point);
+	//	point operator/(point,point);
 	//
-	// point test(point p) {
-	//     p += 5;
-	//	   p + p - p * p / p;
-	//     p << 6;
-	//     -p;
-	//     +p;
-	// }
+	//	point test(point p) {
+	//	  p += 5;
+	//	  p + p - p * p / p;
+	//	  p << 6;
+	//	  -p;
+	//	  +p;
+	//	}
 	public void testBinaryExpressions() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
@@ -93,42 +92,40 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		ba.assertNoImplicitName("<< 6", 2);
 		ba.assertNoImplicitName("+p;", 1);
 	}
-	
-	
-	//struct X {};
+
+	//	struct X {};
 	//
-	//template <class T> class auto_ptr {
-	//	    T* ptr;
-	//public:
-	//	    explicit auto_ptr(T* p = 0) : ptr(p) {}
-	//	    T& operator*()              {return *ptr;}
-	//};
+	//	template <class T> class auto_ptr {
+	//	  T* ptr;
+	//	public:
+	//	  explicit auto_ptr(T* p = 0) : ptr(p) {}
+	//	  T& operator*() { return *ptr; }
+	//	};
 	//
-	//void test() {
-	//		auto_ptr<X> x(new X());
-	//		*x; //1
-	//		int *y;
-	//		*y; //2
-	//}
+	//	void test() {
+	//	  auto_ptr<X> x(new X());
+	//	  *x; //1
+	//	  int *y;
+	//	  *y; //2
+	//	}
 	public void testPointerDereference() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertImplicitName("*x;", 1, ICPPFunction.class);
 		ba.assertNoImplicitName("*y; //2", 1);
 	}
-	
 
-	// struct X {};
-	// struct Y {
+	//	struct X {};
+	//	struct Y {
 	//	  X x;
-	// };
+	//	};
 	//
-	// X* operator&(X);
-	// X* operator&(Y);
+	//	X* operator&(X);
+	//	X* operator&(Y);
 	//
-	// void test(X x, Y y) {
+	//	void test(X x, Y y) {
 	//	  X (Y::*px1) = &Y::x;  // not the overloaded operator
 	//	  X *px2 = &y; // overloaded
-	// }
+	//	}
 	public void testPointerToMember() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
@@ -140,29 +137,27 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTImplicitName n = ba.assertImplicitName("&y;", 1, ICPPFunction.class);
 		assertSame(n.resolveBinding(), col.getName(9).resolveBinding());
 	}
-	
-	
-	
+
 	//	class A {
-	//		public:
-	//			void doA() {}
+	//	public:
+	//	  void doA() {}
 	//	};
 	//
 	//	class FirstLevelProxy {
-	//		public:
-	//			A* operator->() {A *a = new A(); return a;} // leaky
-	//			void doFLP() {}
+	//	public:
+	//	  A* operator->() {A *a = new A(); return a;} // leaky
+	//	  void doFLP() {}
 	//	};
 	//
 	//	class SecondLevelProxy {
-	//		public:
-	//			FirstLevelProxy operator->() {FirstLevelProxy p; return p;}
-	//			void doSLP() {}
+	//	public:
+	//	  FirstLevelProxy operator->() {FirstLevelProxy p; return p;}
+	//	  void doSLP() {}
 	//	};
 	//
 	//	int main(int argc, char **argv) {
-	//		SecondLevelProxy p2;
-	//		p2->doA();
+	//	  SecondLevelProxy p2;
+	//	  p2->doA();
 	//	}
 	public void testArrowOperator() throws Exception {
 		String contents = getAboveComment();		
@@ -179,56 +174,54 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertSame(implicits[0].getBinding(), col.getName(12).resolveBinding());
 	}
 	
-	
-	// struct A {
-	//   int x;
-	// };
+	//	struct A {
+	//	  int x;
+	//	};
 	//
-	// struct B {
+	//	struct B {
 	//    A& operator++(); // prefix
-	// };
-	// A operator++(B, int); // postfix
+	//	};
+	//	A operator++(B, int); // postfix
 	//
-	// void test(B p1, B p2) {
-	//    (p1++).x; //1
-	//    (++p1).x; //2
-	// }
+	//	void test(B p1, B p2) {
+	//	  (p1++).x; //1
+	//	  (++p1).x; //2
+	//	}
 	public void testUnaryPrefixAndPostfix() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertImplicitName("++).x; //1", 2, ICPPFunction.class);
 		ba.assertImplicitName("++p1).x; //2", 2, ICPPMethod.class);
 	}
-	
-	
-	// struct A {};
-	// struct B {};
-	// struct C {};
-	// struct D {};
+
+	//	struct A {};
+	//	struct B {};
+	//	struct C {};
+	//	struct D {};
 	//
-	// C operator,(A,B);
-	// D operator,(C,C);
+	//	C operator,(A, B);
+	//	D operator,(C, C);
 	//
-	// int test(A a, B b, C c, D d) {
-	//   // should be treated like (((a , b) , c) , d)
-	//	 a , b , c , d; // expr
-	// }
+	//	int test(A a, B b, C c, D d) {
+	//	  // should be treated like (((a, b), c), d)
+	//	  a, b, c, d; // expr
+	//	}
 	//
-	// int main(int argc, char **argv) {
-	//	 A a;
-	//	 B b;
-	//	 C c;
-	//	 D d;
-	//	 test(a , b , c , d); // func
-	// }
+	//	int main(int argc, char** argv) {
+	//	  A a;
+	//	  B b;
+	//	  C c;
+	//	  D d;
+	//	  test(a, b, c, d); // func
+	//	}
 	public void testCommaOperator1() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		// expression lists are used in function calls but they should not resolve to the comma operator
-		ba.assertNoImplicitName(", b , c , d); // func", 1);
-		ba.assertNoImplicitName(", c , d); // func", 1);
+		ba.assertNoImplicitName(", b, c, d); // func", 1);
+		ba.assertNoImplicitName(", c, d); // func", 1);
 		ba.assertNoImplicitName(", d); // func", 1);
 		
-		IASTImplicitName opAB = ba.assertImplicitName(", b , c , d; // expr", 1, ICPPFunction.class);
-		IASTImplicitName opCC = ba.assertImplicitName(", c , d; // expr", 1, ICPPFunction.class);
+		IASTImplicitName opAB = ba.assertImplicitName(", b, c, d; // expr", 1, ICPPFunction.class);
+		IASTImplicitName opCC = ba.assertImplicitName(", c, d; // expr", 1, ICPPFunction.class);
 		ba.assertNoImplicitName(", d; // expr", 1);
 		
 		IASTTranslationUnit tu = ba.getTranslationUnit();
@@ -238,31 +231,28 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertSame(opAB.resolveBinding(), col.getName(5).resolveBinding());
 		assertSame(opCC.resolveBinding(), col.getName(11).resolveBinding());
 	}
-	
-	
-	
+
 	//	struct B {};
 	//	struct C {};
 	//	struct E {
-	//		int ee;
+	//	  int ee;
 	//	};
 	//	struct A {
-	//		 C operator,(B);
+	//	  C operator,(B);
 	//	};
 	//	struct D {
-	//		 E operator,(D);
+	//	  E operator,(D);
 	//	};
 	//	D operator,(C,C);
 	//
-	//
 	//	int test(A a, B b, C c, D d) {
-	//	   (a , b , c , d).ee; // expr
+	//	  (a, b, c, d).ee; // expr
 	//	}
 	public void testCommaOperator2() throws Exception {
 		BindingAssertionHelper ba = new BindingAssertionHelper(getAboveComment(), true);
 		
-		IASTImplicitName opAB = ba.assertImplicitName(", b , c , d", 1, ICPPMethod.class);
-		IASTImplicitName opCC = ba.assertImplicitName(", c , d", 1, ICPPFunction.class);
+		IASTImplicitName opAB = ba.assertImplicitName(", b, c, d", 1, ICPPMethod.class);
+		IASTImplicitName opCC = ba.assertImplicitName(", c, d", 1, ICPPFunction.class);
 		IASTImplicitName opDD = ba.assertImplicitName(", d", 1, ICPPMethod.class);
 		
 		IASTTranslationUnit tu = ba.getTranslationUnit();
@@ -276,20 +266,19 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		
 		ba.assertNonProblem("ee;", 2);
 	}
-	
-	
-	// struct X {
-	//	 int operator()(bool);
-	//   int operator()();
-	//   int operator()(int,int);
-	// };
+
+	//	struct X {
+	//	  int operator()(bool);
+	//	  int operator()();
+	//	  int operator()(int,int);
+	//	};
 	//
-	// int test(X x) {
-	//   bool b = true;
-	//	 x(b); // 1
-	//   x(); // 2
-	//   x(1,2); // 3
-	// }
+	//	int test(X x) {
+	//	  bool b = true;
+	//	  x(b); // 1
+	//	  x(); // 2
+	//	  x(1,2); // 3
+	//	}
 	public void testFunctionCallOperator() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
@@ -319,38 +308,36 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertTrue(n2.isAlternate());
 		assertSame(col.getName(4).resolveBinding(), n1.resolveBinding());
 	}
-	
-	
-	// struct A {};
-	// struct B {};
+
+	//	struct A {};
+	//	struct B {};
 	//
-	// // error operator= must be a non-static member function
-	// A& operator=(const B&, const A&);
+	//	// Error: operator= must be a non-static member function
+	//	A& operator=(const B&, const A&);
 	//
-	// int main(int argc, char **argv) {
-	//	 A a;
-	//	 B b;
-	//	 b = a; // should not resolve
-	// }
+	//	int main(int argc, char **argv) {
+	//	  A a;
+	//	  B b;
+	//	  b = a; // should not resolve
+	//	}
 	public void testCopyAssignmentOperator() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNoImplicitName("= a;", 1);
 	}
-	
-	
-	// struct A {
-	//   const char& operator[](int pos) const;
-	//   char& operator[](int pos);
-	// };
+
+	//	struct A {
+	//	  const char& operator[](int pos) const;
+	//	  char& operator[](int pos);
+	//	};
 	//
-	// void func(const char& c);
-	// void func(char& c);
+	//	void func(const char& c);
+	//	void func(char& c);
 	//
-	// void test(const A& x, A& y) {
-	//	 int q;
-	//   func(x[0]); //1
-	//   func(y[q]); //2
-	// }
+	//	void test(const A& x, A& y) {
+	//	  int q;
+	//	  func(x[0]); //1
+	//	  func(y[q]); //2
+	//	}
 	public void testArraySubscript() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		IASTTranslationUnit tu = ba.getTranslationUnit();
@@ -373,19 +360,18 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertTrue(n2.isAlternate());
 		assertSame(col.getName(3).resolveBinding(), n1.resolveBinding());
 	}
-	
-	
+
 	//	struct X {
-	//		~X();
-	//		void operator delete();
-	//		void operator delete[]();
+	//	  ~X();
+	//	  void operator delete();
+	//	  void operator delete[]();
 	//	};
 	//
 	//	int test(X* x) {
-	//		delete x;
-	//		X* xs = new X[5];
-	//		delete[] x;
-	//      delete 1;
+	//	  delete x;
+	//	  X* xs = new X[5];
+	//	  delete[] x;
+	//    delete 1;
 	//	}
 	public void testDelete() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
@@ -408,18 +394,16 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		ba.assertNoImplicitName("delete 1;", 6);
 	}
 	
-	
 	//	struct X {}
 	//	int test(X *x) {
-	//		X* xs = new X[5];
-	//		delete[] x;
+	//	  X* xs = new X[5];
+	//	  delete[] x;
 	//	}
 	public void _testImplicitNewAndDelete() throws Exception {
 		BindingAssertionHelper ba = new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNoImplicitName("new X", 3);
 		ba.assertNoImplicitName("delete[]", 6); // fails because its picking up the implicit global delete[]
 	}
-	
 	
 	//  typedef long unsigned int size_t
 	//	struct nothrow_t {};
@@ -449,10 +433,9 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		assertSame(col.getName(14).resolveBinding(), n3.resolveBinding());
 	}
 	
-	
-	// int test() {
-	//     throw;
-	// }
+	//	int test() {
+	//	  throw;
+	//	}
 	public void testEmptyThrow() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNoImplicitName("throw;", 5);

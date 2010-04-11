@@ -70,15 +70,13 @@ public class ASTNodeSelector implements IASTNodeSelector {
     	}
 		if (lengthInFile > 0) {
 			sequenceLength= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile+lengthInFile-1) + 1 - sequenceNumber;
-		}
-		else {
+		} else {
 			sequenceLength= 0;
 			if (offsetInFile > 0) {
 				altSequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile-1);
 				if (altSequenceNumber+1 == sequenceNumber) {
 					altSequenceNumber= -1;
-				}
-				else {
+				} else {
 					// we are on a context boundary and we need to check the variant to the left and
 					// the one to the right
  					sequenceLength= 1;
@@ -168,5 +166,4 @@ public class ASTNodeSelector implements IASTNodeSelector {
 	public IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTPreprocessorMacroExpansion.class);
 	}
- 
 }

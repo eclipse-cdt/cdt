@@ -47,15 +47,15 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	}
 
 	//	class point {
-	//	  int x,y;
+	//	  int x, y;
 	//	public:
 	//	  point operator+(point);
 	//	  point operator-(point);
 	//	  point operator-();
 	//	  point operator+=(int);
 	//	};
-	//	point operator*(point,point);
-	//	point operator/(point,point);
+	//	point operator*(point, point);
+	//	point operator/(point, point);
 	//
 	//	point test(point p) {
 	//	  p += 5;
@@ -105,7 +105,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	void test() {
 	//	  auto_ptr<X> x(new X());
 	//	  *x; //1
-	//	  int *y;
+	//	  int* y;
 	//	  *y; //2
 	//	}
 	public void testPointerDereference() throws Exception {
@@ -124,7 +124,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//
 	//	void test(X x, Y y) {
 	//	  X (Y::*px1) = &Y::x;  // not the overloaded operator
-	//	  X *px2 = &y; // overloaded
+	//	  X* px2 = &y; // overloaded
 	//	}
 	public void testPointerToMember() throws Exception {
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
@@ -145,7 +145,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//
 	//	class FirstLevelProxy {
 	//	public:
-	//	  A* operator->() {A *a = new A(); return a;} // leaky
+	//	  A* operator->() {A* a = new A(); return a;} // leaky
 	//	  void doFLP() {}
 	//	};
 	//
@@ -155,7 +155,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	  void doSLP() {}
 	//	};
 	//
-	//	int main(int argc, char **argv) {
+	//	int main(int argc, char** argv) {
 	//	  SecondLevelProxy p2;
 	//	  p2->doA();
 	//	}
@@ -270,7 +270,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	struct X {
 	//	  int operator()(bool);
 	//	  int operator()();
-	//	  int operator()(int,int);
+	//	  int operator()(int, int);
 	//	};
 	//
 	//	int test(X x) {
@@ -315,7 +315,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	// Error: operator= must be a non-static member function
 	//	A& operator=(const B&, const A&);
 	//
-	//	int main(int argc, char **argv) {
+	//	int main(int argc, char** argv) {
 	//	  A a;
 	//	  B b;
 	//	  b = a; // should not resolve
@@ -395,7 +395,7 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	}
 	
 	//	struct X {}
-	//	int test(X *x) {
+	//	int test(X* x) {
 	//	  X* xs = new X[5];
 	//	  delete[] x;
 	//	}
@@ -408,13 +408,13 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//  typedef long unsigned int size_t
 	//	struct nothrow_t {};
 	//	extern const nothrow_t nothrow;
-	//	void *operator new(size_t, const nothrow_t&);
-	//	void *operator new[](size_t, const nothrow_t&);
-	//  void *operator new[](size_t, int, int);
+	//	void* operator new(size_t, const nothrow_t&);
+	//	void* operator new[](size_t, const nothrow_t&);
+	//  void* operator new[](size_t, int, int);
 	//	struct X {};
 	//
 	//	int test() {
-	//	  X *fp = new (nothrow) X;
+	//	  X* fp = new (nothrow) X;
 	//	  int* p = new (nothrow) int[5];
 	//    int* p2 = new (5,6) int[5];
 	//	}

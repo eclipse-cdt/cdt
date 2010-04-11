@@ -23,10 +23,10 @@ public class SelectionTestSuite extends TestSuite {
         super(SelectionTestSuite.class.getName());
         
         // selection tests
-        addTest( ResolveBindingTests.suite() );
-        addTest( CPPSelectionTestsNoIndexer.suite() );
-		addTest( CSelectionTestsNoIndexer.suite() );
-		addTest( CPPSelectionTestsFastIndexer.suite() );
-		addTest( CSelectionTestsFastIndexer.suite() );
+        addTest(ResolveBindingTests.suite());
+        addTest(CPPSelectionTestsNoIndexer.suite());
+		addTest(CSelectionTestsNoIndexer.suite());
+		addTest(CPPSelectionTestsFastIndexer.suite());
+		addTest(CSelectionTestsFastIndexer.suite());
     }
 }

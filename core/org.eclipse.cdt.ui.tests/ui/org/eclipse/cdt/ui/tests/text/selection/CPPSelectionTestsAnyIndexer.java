@@ -50,8 +50,8 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		//Create temp project
-		fCProject= createProject("CPPSelectionTestsDOMIndexerProject"); //$NON-NLS-1$
+		// Create temp project
+		fCProject= createProject("CPPSelectionTestsDOMIndexerProject");
 		assertNotNull("Unable to create project", fCProject);
 //		MakeProjectNature.addNature(project, new NullProgressMonitor());
 //		ScannerConfigNature.addScannerConfigNature(project);
@@ -69,7 +69,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	}
 
 	private ICProject createProject(String projectName) throws CoreException {
-		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$
+		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin", IPDOMManager.ID_NO_INDEXER);
 		return cPrj;
 	}
 	
@@ -89,8 +89,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	protected void waitUntilFileIsIndexed(IIndex index, IFile file, int maxmillis) throws Exception {
 		TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
 	}
-	
-	
+
 	// // header
     // class Point{ 
     //  public:    
@@ -126,19 +125,19 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         IFile file = importFile("test93281.cpp", scode); 
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         
-        int offset = scode.indexOf("p2->operator") + 6; //$NON-NLS-1$
+        int offset = scode.indexOf("p2->operator") + 6;
         IASTNode node = testF3(file, offset);
         
         assertTrue(node instanceof IASTName);
-        assertEquals(((IASTName)node).toString(), "operator new[]"); //$NON-NLS-1$
+        assertEquals(((IASTName)node).toString(), "operator new[]");
         assertEquals(((ASTNode)node).getOffset(), hcode.indexOf("operator new"));
         assertEquals(((ASTNode)node).getLength(), 16);
         
-        offset = scode.indexOf("p2->    operator") + 11; //$NON-NLS-1$
+        offset = scode.indexOf("p2->    operator") + 11;
         node = testF3(file, offset);
         
         assertTrue(node instanceof IASTName);
-        assertEquals(((IASTName)node).toString(), "operator ="); //$NON-NLS-1$
+        assertEquals(((IASTName)node).toString(), "operator =");
         assertEquals(((ASTNode)node).getOffset(), hcode.indexOf("operator="));
         assertEquals(((ASTNode)node).getLength(), 9);
     }
@@ -172,7 +171,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int soffset = scode.indexOf("testTemplate"); 
         IASTNode def = testF3(file, soffset+2);
         assertTrue(def instanceof IASTName);
-        assertEquals("testTemplate", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("testTemplate", ((IASTName) def).toString());
         assertEquals(hoffset, ((ASTNode) def).getOffset());
         assertEquals(12, ((ASTNode) def).getLength());
 	}
@@ -190,15 +189,15 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        IFile hfile = importFile("test.h", hcode); //$NON-NLS-1$ 
-        IFile file = importFile("test.cpp", scode); //$NON-NLS-1$
+        IFile hfile = importFile("test.h", hcode); 
+        IFile file = importFile("test.cpp", scode);
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         
-        int hoffset= hcode.indexOf("assign");  //$NON-NLS-1$
-        int soffset = scode.indexOf("assign");  //$NON-NLS-1$
+        int hoffset= hcode.indexOf("assign"); 
+        int soffset = scode.indexOf("assign"); 
         IASTNode def = testF3(file, soffset + 2);
         assertTrue(def instanceof IASTName);
-        assertEquals("assign", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("assign", ((IASTName) def).toString());
         assertEquals(hoffset, ((ASTNode) def).getOffset());
         assertEquals(6, ((ASTNode) def).getLength());
 	}
@@ -231,10 +230,10 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         IASTNode def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals("MyInt", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals("MyInt", ((IASTName) decl).toString());
         assertEquals(hoffset, ((ASTNode) decl).getOffset());
         assertEquals(5, ((ASTNode) decl).getLength());
-        assertEquals("MyInt", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("MyInt", ((IASTName) def).toString());
         assertEquals(soffset, def.getFileLocation().getNodeOffset());
         assertEquals(5, ((ASTNode) def).getLength());
         
@@ -244,10 +243,10 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals("MyConst", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals("MyConst", ((IASTName) decl).toString());
         assertEquals(hoffset, ((ASTNode) decl).getOffset());
         assertEquals(7, ((ASTNode) decl).getLength());
-        assertEquals("MyConst", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("MyConst", ((IASTName) def).toString());
         assertEquals(soffset, def.getFileLocation().getNodeOffset());
         assertEquals(7, ((ASTNode) def).getLength());
         
@@ -257,10 +256,10 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals("MyFunc", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals("MyFunc", ((IASTName) decl).toString());
         assertEquals(hoffset, ((ASTNode) decl).getOffset());
         assertEquals(6, ((ASTNode) decl).getLength());
-        assertEquals("MyFunc", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("MyFunc", ((IASTName) def).toString());
         assertEquals(soffset, def.getFileLocation().getNodeOffset());
         assertEquals(6, ((ASTNode) def).getLength());
         
@@ -270,10 +269,10 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals("MyStruct", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals("MyStruct", ((IASTName) decl).toString());
         assertEquals(hoffset, ((ASTNode) decl).getOffset());
         assertEquals(8, ((ASTNode) decl).getLength());
-        assertEquals("MyStruct", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("MyStruct", ((IASTName) def).toString());
         assertEquals(hoffset, def.getFileLocation().getNodeOffset());
         assertEquals(8, ((ASTNode) def).getLength());
         
@@ -283,10 +282,10 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         def = testF3(hfile, hoffset+2);
         assertTrue(def instanceof IASTName);
         assertTrue(decl instanceof IASTName);
-        assertEquals("MyClass", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals("MyClass", ((IASTName) decl).toString());
         assertEquals(hoffset, ((ASTNode) decl).getOffset());
         assertEquals(7, ((ASTNode) decl).getLength());
-        assertEquals("MyClass", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("MyClass", ((IASTName) def).toString());
         assertEquals(hoffset, def.getFileLocation().getNodeOffset());
         assertEquals(7, ((ASTNode) def).getLength());
     }
@@ -307,15 +306,15 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         
         int hoffset= hcode.indexOf("AAA"); 
-        int soffset = scode.indexOf("AAA<int>"); //$NON-NLS-1$
+        int soffset = scode.indexOf("AAA<int>");
         IASTNode decl1 = testF3(file, soffset, 3);
         assertTrue(decl1 instanceof IASTName);
-        assertEquals("AAA", ((IASTName) decl1).toString()); //$NON-NLS-1$
+        assertEquals("AAA", ((IASTName) decl1).toString());
         assertEquals(hoffset, decl1.getFileLocation().getNodeOffset());
         assertEquals(3, ((ASTNode) decl1).getLength());
 		
         IASTNode decl2 = testF3(file, soffset, 8);
-        assertEquals("AAA", ((IASTName) decl2).toString()); //$NON-NLS-1$
+        assertEquals("AAA", ((IASTName) decl2).toString());
         assertEquals(hoffset, decl2.getFileLocation().getNodeOffset());
         assertEquals(3, ((ASTNode) decl2).getLength());
 	}
@@ -344,7 +343,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int doffset= hcode.indexOf("X(int)");
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals("X", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals("X", ((IASTName) decl).toString());
         assertEquals(doffset, decl.getFileLocation().getNodeOffset());
         assertEquals(1, ((ASTNode) decl).getLength());
 	}
@@ -1127,7 +1126,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int offset2 = code.indexOf("+ x;");
         IASTNode decl = testF3(file, offset2);
         assertNode("operator +", offset1, decl);
-        decl = testF3(file, offset2+1);
+        decl = testF3(file, offset2 + 1);
         assertNode("operator +", offset1, decl);
         
         offset1 = code.indexOf("operator []");
@@ -1137,7 +1136,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         offset2 = code.indexOf("];");
         decl = testF3(file, offset2);
         assertNode("operator []", offset1, decl);
-        decl = testF3(file, offset2+1);
+        decl = testF3(file, offset2 + 1);
         assertNode("operator []", offset1, decl);
         
         offset1 = code.indexOf("~X()");
@@ -1160,30 +1159,30 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 		StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        IFile hfile = importFile("test.h", hcode); //$NON-NLS-1$ 
-        IFile file = importFile("test.cpp", scode); //$NON-NLS-1$
+        IFile hfile = importFile("test.h", hcode); 
+        IFile file = importFile("test.cpp", scode);
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         
-        int hoffset= hcode.indexOf("operator+");  //$NON-NLS-1$
-        int soffset = scode.indexOf("+");  //$NON-NLS-1$
+        int hoffset= hcode.indexOf("operator+"); 
+        int soffset = scode.indexOf("+"); 
         IASTNode def = testF3(file, soffset + 1);
         assertTrue(def instanceof IASTName);
-        assertEquals("operator +", ((IASTName) def).toString()); //$NON-NLS-1$
+        assertEquals("operator +", ((IASTName) def).toString());
         assertEquals(hoffset, ((ASTNode) def).getOffset());
         assertEquals(9, ((ASTNode) def).getLength());
 	}
 	
-    //    void  test( ABC* p);
-    //    void  test( ABC* q) {}
+    //    void  test(ABC* p);
+    //    void  test(ABC* q) {}
     //    void call_test(){
-    //    	test( 0 );
+    //    	test(0);
     //    }
     public void testBug305487() throws Exception {
     	String code = getAboveComment();
-        IFile file = importFile("testBug305487.cpp", code); //$NON-NLS-1$
+        IFile file = importFile("testBug305487.cpp", code);
         waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         
-        int offset= code.indexOf("test( 0 )");  //$NON-NLS-1$
+        int offset= code.indexOf("test(0)"); 
         IASTNode def = testF3(file, offset + 1);
         assertTrue(def instanceof IASTName);
     }

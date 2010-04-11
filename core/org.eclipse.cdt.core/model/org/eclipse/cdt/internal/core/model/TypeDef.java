@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITypeDef;
 
-public class TypeDef extends SourceManipulation implements ITypeDef{
-	
+public class TypeDef extends SourceManipulation implements ITypeDef {
 	String typeName= ""; //$NON-NLS-1$
+
 	public TypeDef(ICElement parent, String name) {
 		super(parent, name, ICElement.C_TYPEDEF);
 	}
+
 	/**
 	 * Returns the typeName.
 	 * @return String
@@ -35,5 +35,4 @@ public class TypeDef extends SourceManipulation implements ITypeDef{
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
-
 }

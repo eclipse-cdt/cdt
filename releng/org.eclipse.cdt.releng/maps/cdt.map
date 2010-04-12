@@ -32,6 +32,7 @@ plugin@org.eclipse.cdt.gdb.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.e
 feature@org.eclipse.cdt.platform=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.platform-feature
 feature@org.eclipse.cdt.gnu.build=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.build-feature
 feature@org.eclipse.cdt.gnu.debug=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gnu.debug-feature
+feature@org.eclipse.cdt.gdb=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.gdb-feature
 feature@org.eclipse.cdt=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt-feature
 
 ! Platform specific

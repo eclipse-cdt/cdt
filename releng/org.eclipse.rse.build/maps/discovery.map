@@ -1,4 +1,4 @@
-feature@org.eclipse.tm.discovery=v201004072040,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery-feature
+feature@org.eclipse.tm.discovery=v201004120755,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery-feature
 plugin@org.eclipse.rse.discovery=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.rse.discovery
 plugin@org.eclipse.tm.discovery.doc.isv=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.doc.isv
 plugin@org.eclipse.tm.discovery.engine=v200905272300,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.core/discovery/org.eclipse.tm.discovery.engine

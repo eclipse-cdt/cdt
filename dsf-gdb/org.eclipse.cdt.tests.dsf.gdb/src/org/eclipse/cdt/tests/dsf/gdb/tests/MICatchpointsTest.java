@@ -1201,9 +1201,9 @@ public class MICatchpointsTest extends BaseTestCase {
 	@Test
 	public void catchpointConversions() throws Throwable {
 		assertEquals("catch", GdbCatchpoints.eventToGdbCatchpointKeyword(IEventBreakpointConstants.EVENT_TYPE_CATCH));
-		assertEquals("signal", GdbCatchpoints.eventToGdbCatchpointKeyword(IEventBreakpointConstants.EVENT_TYPE_SIGNAL_CATCH));
+		assertEquals("syscall", GdbCatchpoints.eventToGdbCatchpointKeyword(IEventBreakpointConstants.EVENT_TYPE_SYSCALL));
 		assertEquals(IEventBreakpointConstants.EVENT_TYPE_CATCH, GdbCatchpoints.gdbCatchpointKeywordToEvent("catch"));
-		assertEquals(IEventBreakpointConstants.EVENT_TYPE_SIGNAL_CATCH, GdbCatchpoints.gdbCatchpointKeywordToEvent("signal"));
+		assertEquals(IEventBreakpointConstants.EVENT_TYPE_SYSCALL, GdbCatchpoints.gdbCatchpointKeywordToEvent("syscall"));
 		assertNull(GdbCatchpoints.gdbCatchpointKeywordToEvent("signa"));
 		assertNull(GdbCatchpoints.gdbCatchpointKeywordToEvent("signals"));
 	}

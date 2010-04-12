@@ -12,11 +12,11 @@
 	        	label="%catchThrow.label"
 	        	value="org.eclipse.cdt.debug.gdb.throw"/>
 			<value 
-				label="%catchSignal.label"
-				value="org.eclipse.cdt.debug.gdb.signal">
+				label="%catchSyscall.label"
+				value="org.eclipse.cdt.debug.gdb.catch_syscall">
 				<attribute 
-					name="org.eclipse.cdt.debug.core.eventbreakpoint_event_arg" label="%catchSignal.arg.label" 
-					type="integer" fieldEditor="org.eclipse.jface.preference.IntegerFieldEditor"/>
+					name="org.eclipse.cdt.debug.core.eventbreakpoint_event_arg" label="%catchSyscall.arg.label" 
+					type="string" fieldEditor="org.eclipse.jface.preference.StringFieldEditor"/>
 			</value>
 			<value
 				label="%catchFork.label"
@@ -27,30 +27,6 @@
 			<value
 				label="%catchExec.label"
 				value="org.eclipse.cdt.debug.gdb.catch_exec"/>
-			<value 
-				label="%catchExit.label"
-				value="org.eclipse.cdt.debug.gdb.catch_exit"/>
-			<value 
-				label="%catchStop.label"
-				value="org.eclipse.cdt.debug.gdb.catch_stop"/>
-			<value 
-				label="%catchStart.label"
-				value="org.eclipse.cdt.debug.gdb.catch_start"/>
-			<value 
-				label="%catchThreadStart.label"
-				value="org.eclipse.cdt.debug.gdb.catch_thread_start"/>
-			<value 
-				label="%catchThreadExit.label"
-				value="org.eclipse.cdt.debug.gdb.catch_thread_exit"/>
-			<value 
-				label="%catchThreadJoin.label"
-				value="org.eclipse.cdt.debug.gdb.catch_thread_join"/>
-			<value 
-				label="%catchLoad.label"
-				value="org.eclipse.cdt.debug.gdb.catch_load"/>
-			<value 
-				label="%catchUnload.label"
-				value="org.eclipse.cdt.debug.gdb.catch_unload"/>
 		</attribute> 
 	</breakpointLabels>
 </extension>

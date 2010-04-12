@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Freescale Semiconductor and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     Freescale Semiconductor - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.gdb.eventbkpts;
 
 public interface IEventBreakpointConstants {
@@ -16,15 +26,6 @@ public interface IEventBreakpointConstants {
 	 * @since 7.0
 	 */
 	public static final String EVENT_TYPE_THROW = "org.eclipse.cdt.debug.gdb.throw"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when it
-	 * catches a signal (POSIX). This type of event has a single parameter of
-	 * type in, indicating the specific signal.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_SIGNAL_CATCH = "org.eclipse.cdt.debug.gdb.signal"; //$NON-NLS-1$
 
 	/**
 	 * An event breakpoint of this type suspends the target program when it
@@ -52,67 +53,10 @@ public interface IEventBreakpointConstants {
 
 	/**
 	 * An event breakpoint of this type suspends the target program when it
-	 * calls exit() (POSIX). This type of event has no parameters.
+	 * makes a system call (POSIX). This type of event takes a single parameter:
+	 * the name or number of the system call.
 	 * 
 	 * @since 7.0
 	 */
-	public static final String EVENT_TYPE_EXIT = "org.eclipse.cdt.debug.gdb.catch_exit"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when a new
-	 * process starts. This type of event has no parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_PROCESS_START = "org.eclipse.cdt.debug.gdb.catch_start"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when a
-	 * process exits. This type of event has no parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_PROCESS_STOP = "org.eclipse.cdt.debug.gdb.catch_stop"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when a new
-	 * thread starts. This type of event has no parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_THREAD_START = "org.eclipse.cdt.debug.gdb.catch_thread_start"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when a
-	 * thread exits. This type of event has no parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_THREAD_EXIT = "org.eclipse.cdt.debug.gdb.catch_thread_exit"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when a
-	 * thread joins another one (waits for it to exit) This type of event has no
-	 * parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_THREAD_JOIN = "org.eclipse.cdt.debug.gdb.catch_thread_join"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when it
-	 * loads a library. This type of event has no parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_LIBRARY_LOAD = "org.eclipse.cdt.debug.gdb.catch_load"; //$NON-NLS-1$
-
-	/**
-	 * An event breakpoint of this type suspends the target program when it
-	 * unloads a library. This type of event has no parameters.
-	 * 
-	 * @since 7.0
-	 */
-	public static final String EVENT_TYPE_LIBRARY_UNLOAD = "org.eclipse.cdt.debug.gdb.catch_unload"; //$NON-NLS-1$
-
+	public static final String EVENT_TYPE_SYSCALL = "org.eclipse.cdt.debug.gdb.catch_syscall"; //$NON-NLS-1$
 }

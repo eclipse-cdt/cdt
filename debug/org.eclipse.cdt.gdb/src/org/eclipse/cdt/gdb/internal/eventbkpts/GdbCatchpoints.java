@@ -24,18 +24,10 @@ public class GdbCatchpoints {
 		// to event breakpoints selector
 		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_CATCH, "catch"); //$NON-NLS-1$
 		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_THROW, "throw"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_SIGNAL_CATCH, "signal"); //$NON-NLS-1$
 		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_EXEC, "exec"); //$NON-NLS-1$
 		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_FORK, "fork"); //$NON-NLS-1$
 		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_VFORK, "vfork"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_EXIT, "exit"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_PROCESS_START, "start"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_PROCESS_STOP, "stop"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_THREAD_START, "thread_start"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_THREAD_EXIT, "thread_exit"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_THREAD_JOIN, "thread_join"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_LIBRARY_LOAD, "load"); //$NON-NLS-1$
-		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_LIBRARY_UNLOAD, "unload"); //$NON-NLS-1$
+		sIdToKeyword.put(IEventBreakpointConstants.EVENT_TYPE_SYSCALL, "syscall"); //$NON-NLS-1$
 	}
 
 	/**

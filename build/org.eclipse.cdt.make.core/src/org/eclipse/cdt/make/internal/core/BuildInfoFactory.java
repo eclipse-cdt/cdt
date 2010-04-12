@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,14 @@ package org.eclipse.cdt.make.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.core.resources.ICommand;
@@ -38,7 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.osgi.service.environment.*;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class BuildInfoFactory {
 
@@ -99,20 +98,18 @@ public class BuildInfoFactory {
 			putString(name, value);
 		}
 
-		public Map getExpandedEnvironment() {
-			Map env = getEnvironment();
-			HashMap envMap = new HashMap(env.entrySet().size());
-			Iterator iter = env.entrySet().iterator();
+		public Map<String, String> getExpandedEnvironment() {
+			Map<String, String> env = getEnvironment();
+			HashMap<String, String> envMap = new HashMap<String, String>(env.entrySet().size());
 			boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry)iter.next();
-				String key = (String)entry.getKey();
+			for (Map.Entry<String, String> entry : env.entrySet()) {
+				String key = entry.getKey();
 				if (win32) {
 					// Win32 vars are case insensitive. Uppercase everything so
 					// that (for example) "pAtH" will correctly replace "PATH"
 					key = key.toUpperCase();
 				}
-				String value = (String)entry.getValue();
+				String value = entry.getValue();
 				// translate any string substitution variables
 				String translated = value;
 				try {
@@ -297,11 +294,11 @@ public class BuildInfoFactory {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
 			if (parsers != null && parsers.length() > 0) {
 				StringTokenizer tok = new StringTokenizer(parsers, ";"); //$NON-NLS-1$
-				List list = new ArrayList(tok.countTokens());
+				List<String> list = new ArrayList<String>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
-				return (String[])list.toArray(new String[list.size()]);
+				return list.toArray(new String[list.size()]);
 			}
 			return new String[0];
 		}
@@ -314,11 +311,11 @@ public class BuildInfoFactory {
 			putString(ErrorParserManager.PREF_ERROR_PARSER, buf.toString());
 		}
 
-		public Map getEnvironment() {
+		public Map<String, String> getEnvironment() {
 			return decodeMap(getString(ENVIRONMENT));
 		}
 
-		public void setEnvironment(Map env) throws CoreException {
+		public void setEnvironment(Map<String, String> env) throws CoreException {
 			putString(ENVIRONMENT, encodeMap(env));
 		}
 
@@ -337,8 +334,8 @@ public class BuildInfoFactory {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}
 
-		protected Map decodeMap(String value) {
-			Map map = new HashMap();
+		protected Map<String, String> decodeMap(String value) {
+			Map<String, String> map = new HashMap<String, String>();
 			if (value != null) {
 				StringBuffer envStr = new StringBuffer(value);
 				String escapeChars = "|\\"; //$NON-NLS-1$
@@ -382,14 +379,12 @@ public class BuildInfoFactory {
 			return map;
 		}
 
-		protected String encodeMap(Map values) {
+		protected String encodeMap(Map<String, String> values) {
 			StringBuffer str = new StringBuffer();
-			Iterator entries = values.entrySet().iterator();
-			while (entries.hasNext()) {
-				Entry entry = (Entry)entries.next();
-				str.append(escapeChars((String)entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
+			for (Entry<String, String> entry : values.entrySet()) {
+				str.append(escapeChars(entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
 				str.append("="); //$NON-NLS-1$
-				str.append(escapeChars((String)entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
+				str.append(escapeChars(entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
 				str.append("|"); //$NON-NLS-1$
 			}
 			return str.toString();
@@ -422,6 +417,7 @@ public class BuildInfoFactory {
 			this.useDefaults = useDefaults;
 		}
 
+		@Override
 		protected void putString(String name, String value) {
 			if (useDefaults) {
 				if (value != null) {
@@ -436,6 +432,7 @@ public class BuildInfoFactory {
 			}
 		}
 
+		@Override
 		protected String getString(String property) {
 			if (!prefs.contains(property)) {
 				return null;
@@ -446,6 +443,7 @@ public class BuildInfoFactory {
 			return prefs.getString(property);
 		}
 
+		@Override
 		protected String getBuilderID() {
 			return builderID;
 		}
@@ -455,7 +453,7 @@ public class BuildInfoFactory {
 
 		private IProject project;
 		private String builderID;
-		private Map args;
+		private Map<String, String> args;
 
 		BuildInfoProject(IProject project, String builderID) throws CoreException {
 			this.project = project;
@@ -466,11 +464,14 @@ public class BuildInfoFactory {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
 						MakeMessages.getString("BuildInfoFactory.Missing_Builder") + builderID, null)); //$NON-NLS-1$
 			}
-			args = builder.getArguments();
+			@SuppressWarnings("unchecked")
+			Map<String, String> builderArgs = builder.getArguments();
+			args = builderArgs;
 		}
 
+		@Override
 		protected void putString(String name, String value) throws CoreException {
-			String curValue = (String)args.get(name);
+			String curValue = args.get(name);
 			if (curValue != null && curValue.equals(value)) {
 				return;
 			}
@@ -490,10 +491,12 @@ public class BuildInfoFactory {
 			project.setDescription(description, null);
 		}
 
+		@Override
 		protected String getString(String name) {
-			return (String)args.get(name);
+			return args.get(name);
 		}
 
+		@Override
 		protected String getBuilderID() {
 			return builderID;
 		}
@@ -501,14 +504,15 @@ public class BuildInfoFactory {
 
 	private static class BuildInfoMap extends AbstractBuildInfo {
 
-		private Map args;
+		private Map<String, String> args;
 		private String builderID;
 
-		BuildInfoMap(Map args, String builderID) {
+		BuildInfoMap(Map<String, String> args, String builderID) {
 			this.args = args;
 			this.builderID = builderID;
 		}
 
+		@Override
 		protected void putString(String name, String value) {
 			if (value == null) {
 				args.remove(name);
@@ -517,10 +521,12 @@ public class BuildInfoFactory {
 			}
 		}
 
+		@Override
 		protected String getString(String name) {
-			return (String)args.get(name);
+			return args.get(name);
 		}
 
+		@Override
 		protected String getBuilderID() {
 			return builderID;
 		}
@@ -534,7 +540,7 @@ public class BuildInfoFactory {
 		return new BuildInfoFactory.BuildInfoProject(project, builderID);
 	}
 
-	public static IMakeBuilderInfo create(Map args, String builderID) {
+	public static IMakeBuilderInfo create(Map<String, String> args, String builderID) {
 		return new BuildInfoFactory.BuildInfoMap(args, builderID);
 	}
 }

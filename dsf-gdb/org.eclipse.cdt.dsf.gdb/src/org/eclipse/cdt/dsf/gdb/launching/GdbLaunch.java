@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,8 @@ public class GdbLaunch extends DsfLaunch
     				}
     			}).get();
 
-            DebugPlugin.newProcess(this, cliProc, label);
+            GDBProcess gdbProcess = new GDBProcess(this, cliProc, label, null);
+            addProcess(gdbProcess);
         } catch (InterruptedException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {

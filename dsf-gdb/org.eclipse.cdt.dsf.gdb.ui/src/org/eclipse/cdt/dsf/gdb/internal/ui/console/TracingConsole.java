@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.tracing;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,6 +39,9 @@ import org.eclipse.ui.console.IOConsole;
  * Any input to this console is read and discarded, since this console should be
  * read-only.  We don't actually make the console read-only because it is nice
  * for the user to be able to add delimiters such as empty lines within the traces.
+ * 
+ * @since 2.1
+ * This class was moved from package org.eclipse.cdt.dsf.gdb.internal.ui.tracing
  */
 public class TracingConsole extends IOConsole {
 	private ILaunch fLaunch;
@@ -123,7 +126,7 @@ public class TracingConsole extends IOConsole {
         }
 
         if (fLaunch.isTerminated()) {
-        	return "<terminated> " + label; 
+        	return ConsoleMessages.ConsoleMessages_trace_console_terminated + label; 
         }
         
         return label;

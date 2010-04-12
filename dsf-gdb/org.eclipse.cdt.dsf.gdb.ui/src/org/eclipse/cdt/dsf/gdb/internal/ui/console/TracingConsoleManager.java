@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2009, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui.tracing;
+package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -26,6 +26,9 @@ import org.eclipse.ui.console.IConsoleManager;
 /**
  * A tracing console manager which adds and removes tracing consoles
  * based on launch events and preference events.
+ * 
+ * @since 2.1
+ * This class was moved from package org.eclipse.cdt.dsf.gdb.internal.ui.tracing
  */
 public class TracingConsoleManager implements ILaunchesListener2, IPropertyChangeListener {
 
@@ -117,7 +120,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 			if (getConsole(launch) == null) {
 				if (launch.isTerminated() == false) {
 					// Create and  new tracing console.
-					TracingConsole console = new TracingConsole(launch, "gdb traces");
+					TracingConsole console = new TracingConsole(launch, ConsoleMessages.ConsoleMessages_trace_console_name);
 					ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{console});
 				} // else we don't display a new console for a terminated launch
 			}

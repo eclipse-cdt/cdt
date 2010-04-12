@@ -544,5 +544,17 @@
       </activityPatternBinding>
          
      </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsolePageParticipant"
+            id="org.eclipse.cdt.dsf.gdb.ui.dsfGdbConsolePageParticipant">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.console.IOConsole">
+            </instanceof>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
    
 </plugin>

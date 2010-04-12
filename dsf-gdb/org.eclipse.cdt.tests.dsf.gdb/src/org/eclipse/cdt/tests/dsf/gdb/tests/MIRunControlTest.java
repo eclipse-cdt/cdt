@@ -23,9 +23,6 @@ import java.util.LinkedList;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -172,49 +169,6 @@ public class MIRunControlTest extends BaseTestCase {
 			}
 	    }
 	}
-
-	/**
-	 * Utility method to return the process DM context. These tests launch a
-	 * single process, thus only one such context is available.
-	 * 
-	 * <p>
-	 * This must not be called from the DSF executor.
-	 * 
-	 * @return the process context
-	 * @throws InterruptedException
-	 */
-	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	private IProcessDMContext getProcessContext() throws InterruptedException {
-		assert !fRunCtrl.getExecutor().isInExecutorThread();
-
-		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
-		
-        fRunCtrl.getExecutor().submit(new Runnable() {
-            public void run() {
-        		fProcService.getProcessesBeingDebugged(fGDBCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fRunCtrl.getExecutor(), null) {
-                    @Override
-                    protected void handleCompleted() {
-                       if (isSuccess()) {
-                    	   IDMContext[] contexts = getData();
-                    	   Assert.assertNotNull("invalid return value from service", contexts);
-                    	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
-                    	   IDMContext context = contexts[0];    
-                    	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
-                           Assert.assertNotNull("unexpected process context type ", processContext);
-                    	   waitor.setReturnInfo(processContext);
-                        }
-                    }
-            		
-            	});
-            }
-        });
-		
-
-    	
-    	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
-    	Assert.assertTrue(waitor.getMessage(), waitor.isOK());
-    	return (IProcessDMContext) waitor.getReturnInfo();
-	}
 	
 	/*
 	 * For Multi-threaded application - In case of one thread, Thread id should start with 1. 
@@ -236,7 +190,7 @@ public class MIRunControlTest extends BaseTestCase {
             }
         };
 
-        final IProcessDMContext processContext = getProcessContext();
+        final IProcessDMContext processContext = SyncUtil.getProcessContext();
         
         /*
          * Test getExecutionContexts() when only one thread exist. 
@@ -324,7 +278,7 @@ public class MIRunControlTest extends BaseTestCase {
 
         Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
         
-        final IProcessDMContext processContext = getProcessContext();
+        final IProcessDMContext processContext = SyncUtil.getProcessContext();
         
         /*
          * Test getExecutionContexts for a valid container DMC
@@ -382,7 +336,7 @@ public class MIRunControlTest extends BaseTestCase {
             }
         };
         
-        final IProcessDMContext processContext = getProcessContext();
+        final IProcessDMContext processContext = SyncUtil.getProcessContext();
         
         /*
          * Call getModelData for Execution DMC
@@ -616,7 +570,7 @@ public class MIRunControlTest extends BaseTestCase {
                     getGDBLaunch().getSession(),
                     IResumedDMEvent.class);
         
-        final IProcessDMContext processContext = getProcessContext();
+        final IProcessDMContext processContext = SyncUtil.getProcessContext();
         
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
@@ -687,7 +641,7 @@ public class MIRunControlTest extends BaseTestCase {
 		
 		wait.waitReset();
 		
-		final IProcessDMContext processContext = getProcessContext();
+		final IProcessDMContext processContext = SyncUtil.getProcessContext();
 		
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
@@ -733,7 +687,7 @@ public class MIRunControlTest extends BaseTestCase {
 			return;
 		}
 		
-        final IProcessDMContext processContext = getProcessContext();
+        final IProcessDMContext processContext = SyncUtil.getProcessContext();
         
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {

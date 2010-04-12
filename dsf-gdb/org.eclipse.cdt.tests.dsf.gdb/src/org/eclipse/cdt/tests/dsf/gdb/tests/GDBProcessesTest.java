@@ -20,19 +20,16 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
+import org.eclipse.cdt.tests.dsf.gdb.framework.SyncUtil;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.junit.After;
 import org.junit.Assert;
@@ -56,7 +53,6 @@ public class GDBProcessesTest extends BaseTestCase {
 	private DsfSession fSession;
     private DsfServicesTracker fServicesTracker;	
 	
-    private IGDBControl fGdbCtrl; 
 	private IMIProcesses fProcService; 
 	
 	/*
@@ -73,7 +69,6 @@ public class GDBProcessesTest extends BaseTestCase {
          *  Get the GDBProcesses & MIRunControl service.
          */
 		fProcService = fServicesTracker.getService(IMIProcesses.class);
-        fGdbCtrl = fServicesTracker.getService(IGDBControl.class);
 	}
 
 	@After
@@ -112,7 +107,7 @@ public class GDBProcessesTest extends BaseTestCase {
          * Ask the service to get model data for the process. 
          * There is only one process in case of GDB back end. 
          */
-		final IProcessDMContext processContext = getProcessContext();
+		final IProcessDMContext processContext = SyncUtil.getProcessContext();
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
 				fProcService.getExecutionData(processContext, rm);
@@ -151,7 +146,7 @@ public class GDBProcessesTest extends BaseTestCase {
         };
 
 
-		final IProcessDMContext processContext = getProcessContext();
+		final IProcessDMContext processContext = SyncUtil.getProcessContext();
         fProcService.getExecutor().submit(new Runnable() {
             public void run() {
             	IThreadDMContext threadDmc = fProcService.createThreadContext(processContext, THREAD_ID);
@@ -174,49 +169,5 @@ public class GDBProcessesTest extends BaseTestCase {
     	assertEquals("Thread name is should have been blank for GDB Back end", "", threadData.getName());
     	
     	fWait.waitReset(); 
-	}
-
-	/**
-	 * Utility method to return the process DM context. These tests launch a
-	 * single process, thus only one such context is available.
-	 * 
-	 * <p>
-	 * This must not be called from the DSF executor.
-	 * 
-	 * @return the process context
-	 * @throws InterruptedException
-	 */
-	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	private IProcessDMContext getProcessContext() throws InterruptedException {
-		assert !fSession.getExecutor().isInExecutorThread();
-		
-		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
-
-		fProcService.getExecutor().submit(new Runnable() {
-            public void run() {
-        		fProcService.getProcessesBeingDebugged(fGdbCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fSession.getExecutor(), null) {
-                    @Override
-                    protected void handleCompleted() {
-                       if (isSuccess()) {
-                    	   IDMContext[] contexts = getData();
-                    	   Assert.assertNotNull("invalid return value from service", contexts);
-                    	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
-                    	   IDMContext context = contexts[0];    
-                    	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
-                           Assert.assertNotNull("unexpected process context type ", processContext);
-                    	   waitor.setReturnInfo(processContext);
-                        }
-                    }
-            		
-            	});
-            }
-        });
-		
-
-				
-    	
-    	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
-    	Assert.assertTrue(fWait.getMessage(), fWait.isOK());
-    	return (IProcessDMContext) waitor.getReturnInfo();
 	}
 }

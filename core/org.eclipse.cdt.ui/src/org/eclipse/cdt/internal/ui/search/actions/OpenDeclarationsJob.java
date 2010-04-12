@@ -7,8 +7,12 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/
+ *	  Sergey Prigogin (Google)
+******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,24 +156,11 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 
 		IASTName sourceName= nodeSelector.findEnclosingName(selectionStart, selectionLength);
+		IName[] implicitTargets = findImplicitTargets(ast, nodeSelector, selectionStart, selectionLength);
 		if (sourceName == null) {
-			IASTName implicit = nodeSelector.findEnclosingImplicitName(selectionStart, selectionLength);
-			if (implicit != null) {
-				IASTImplicitNameOwner owner = (IASTImplicitNameOwner) implicit.getParent();
-				IASTImplicitName[] implicits = owner.getImplicitNames();
-				// There may be more than one name in the same spot.
-				if (implicits.length > 0) {
-					List<IName> allNames = new ArrayList<IName>();
-					for (IASTImplicitName name : implicits) {
-						if (((ASTNode) name).getOffset() == ((ASTNode) implicit).getOffset()) {
-							IBinding binding = name.resolveBinding(); // Guaranteed to resolve.
-							IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, binding);
-							allNames.addAll(Arrays.asList(declNames));
-						}
-					}
-					if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, allNames.toArray(new IName[0])))
-						return Status.OK_STATUS;
-				}
+			if (implicitTargets.length > 0) {
+				if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, implicitTargets))
+					return Status.OK_STATUS;
 			}
 		} else {
 			boolean found= false;
@@ -192,7 +183,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				navigateToName(sourceName);
 				return Status.OK_STATUS;
 			}
-			List<IName> nameList= new ArrayList<IName>();
+			IName[] targets = IName.EMPTY_ARRAY;
 			String filename = ast.getFilePath();
 			for (IBinding binding : bindings) {
 				if (binding != null && !(binding instanceof IProblemBinding)) {
@@ -201,29 +192,29 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 						if (name instanceof IIndexName &&
 								filename.equals(((IIndexName) name).getFileLocation().getFileName())) {
 							// Exclude index names from the current file.
-						} else if (isSameName(name, sourceName)) {
+						} else if (areOverlappingNames(name, sourceName)) {
 							// Exclude the current location.
 						} else if (binding instanceof IParameter) {
 							if (isInSameFunction(sourceName, name)) {
-								nameList.add(name);
+								targets = ArrayUtil.append(targets, name);
 							}
 						} else if (binding instanceof ICPPTemplateParameter) {
 							if (isInSameTemplate(sourceName, name)) {
-								nameList.add(name);
+								targets = ArrayUtil.append(targets, name);
 							}
 						} else if (name != null) {
-							nameList.add(name);
+							targets = ArrayUtil.append(targets, name);
 						}
 					}
 				}
 			}
-			IName[] declNames = nameList.toArray(new IName[nameList.size()]);
-			if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, declNames)) {
+			targets = ArrayUtil.trim(ArrayUtil.addAll(targets, implicitTargets));
+			if (navigateViaCElements(fTranslationUnit.getCProject(), fIndex, targets)) {
 				found= true;
 			} else {
 				// Leave old method as fallback for local variables, parameters and
 				// everything else not covered by ICElementHandle.
-				found = navigateOneLocation(declNames);
+				found = navigateOneLocation(targets);
 			}
 			if (!found && !navigationFallBack(ast, sourceName, kind)) {
 				fAction.reportSymbolLookupFailure(new String(sourceName.toCharArray()));
@@ -255,25 +246,24 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 
 	private IName[] findDeclNames(IASTTranslationUnit ast, NameKind kind, IBinding binding) throws CoreException {
 		IName[] declNames = findNames(fIndex, ast, kind, binding);
-		if (declNames.length == 0) {
-			if (binding instanceof ICPPSpecialization) {
-				// Bug 207320, handle template instances.
-				IBinding specialized= ((ICPPSpecialization) binding).getSpecializedBinding();
-				if (specialized != null && !(specialized instanceof IProblemBinding)) {
-					declNames = findNames(fIndex, ast, NameKind.DEFINITION, specialized);
-				}
-			} else if (binding instanceof ICPPMethod) {
-				// Bug 86829, handle implicit methods.
-				ICPPMethod method= (ICPPMethod) binding;
-				if (method.isImplicit()) {
-					try {
-						IBinding clsBinding= method.getClassOwner();
-						if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-							declNames= findNames(fIndex, ast, NameKind.REFERENCE, clsBinding);
-						}
-					} catch (DOMException e) {
-						// Don't log problem bindings.
+		// Bug 207320, handle template instances.
+		while (declNames.length == 0 && binding instanceof ICPPSpecialization) {
+			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
+			if (binding != null && !(binding instanceof IProblemBinding)) {
+				declNames = findNames(fIndex, ast, NameKind.DEFINITION, binding);
+			}
+		}
+		if (declNames.length == 0 && binding instanceof ICPPMethod) {
+			// Bug 86829, handle implicit methods.
+			ICPPMethod method= (ICPPMethod) binding;
+			if (method.isImplicit()) {
+				try {
+					IBinding clsBinding= method.getClassOwner();
+					if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
+						declNames= findNames(fIndex, ast, NameKind.REFERENCE, clsBinding);
 					}
+				} catch (DOMException e) {
+					// Don't log problem bindings.
 				}
 			}
 		}
@@ -329,8 +319,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 	}
 
-	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast,
-			IBinding binding) throws CoreException {
+	private IName[] findDeclarations(IIndex index, IASTTranslationUnit ast, IBinding binding) throws CoreException {
 		IName[] declNames= ast.getDeclarationsInAST(binding);
 		for (int i = 0; i < declNames.length; i++) {
 			IName name = declNames[i];
@@ -342,6 +331,26 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		}
 		return declNames;
+	}
+
+	/**
+	 * Returns definitions of bindings referenced by implicit name at the given location.
+	 */
+	private IName[] findImplicitTargets(IASTTranslationUnit ast, IASTNodeSelector nodeSelector,
+			int offset, int length) throws CoreException {
+		IName[] definitions = IName.EMPTY_ARRAY;
+		IASTName firstName = nodeSelector.findEnclosingImplicitName(offset, length);
+		if (firstName != null) {
+			IASTImplicitNameOwner owner = (IASTImplicitNameOwner) firstName.getParent();
+			for (IASTImplicitName name : owner.getImplicitNames()) {
+				if (((ASTNode) name).getOffset() == ((ASTNode) firstName).getOffset()) {
+					IBinding binding = name.resolveBinding(); // Guaranteed to resolve.
+					IName[] declNames = findDeclNames(ast, NameKind.REFERENCE, binding);
+					definitions = ArrayUtil.addAll(definitions, declNames);
+				}
+			}
+		}
+		return ArrayUtil.trim(definitions);
 	}
 
 	private static NameKind getNameKind(IName name) {
@@ -370,7 +379,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return null;
 	}
 
-	private boolean isSameName(IName n1, IName n2) {
+	private boolean areOverlappingNames(IName n1, IName n2) {
 		if (n1 == n2)
 			return true;
 
@@ -379,8 +388,8 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (loc1 == null || loc2 == null)
 			return false;
 		return loc1.getFileName().equals(loc2.getFileName()) &&
-				loc1.getNodeOffset() == loc2.getNodeOffset() &&
-				loc1.getNodeLength() == loc2.getNodeLength();
+				max(loc1.getNodeOffset(), loc2.getNodeOffset()) <
+				min(loc1.getNodeOffset() + loc1.getNodeLength(), loc2.getNodeOffset() + loc2.getNodeLength());
 	}
 
 	private static boolean isInSameFunction(IASTName name1, IName name2) {

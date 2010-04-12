@@ -22,6 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  */
 public interface IName {
 	/**
+	 * @since 5.2
+	 */
+	IName[] EMPTY_ARRAY= {};
+
+	/**
 	 * Returns the name without qualification and without template arguments.
 	 * @since 5.1
 	 */

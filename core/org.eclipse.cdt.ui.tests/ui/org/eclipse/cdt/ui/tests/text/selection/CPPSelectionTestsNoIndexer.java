@@ -524,7 +524,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 	enum { up, down }; // defines up and down
 	namespace N { int d; } // defines N and N::d
 	namespace N1 = N; // defines N1
-	X anX; // defines anX
+	X anX; // defines anX, implicitly calls X()
 	// whereas these are just declarations:
 	extern int a; // declares a
 	extern const int c; // declares c
@@ -732,9 +732,9 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 		offset = code.indexOf("anX; // defines anX"); //$NON-NLS-1$
         decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
-        assertEquals("anX", ((IASTName) decl).toString()); //$NON-NLS-1$
-        assertEquals(481, ((ASTNode) decl).getOffset());
-        assertEquals(3, ((ASTNode) decl).getLength());
+        assertEquals("X", ((IASTName) decl).toString()); //$NON-NLS-1$
+        assertEquals(code.indexOf("X()"), ((ASTNode) decl).getOffset());
+        assertEquals("X".length(), ((ASTNode) decl).getLength());
 		
 		offset = code.indexOf("a; // declares a"); //$NON-NLS-1$
         def = testF3(file, offset);
@@ -1000,7 +1000,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	for (int i= 0; i < 2; i++) {
     		IFile file = importFile(filenames[i], code);
     		int od1 = code.indexOf("functionPointer");
-    		int or1 = code.indexOf("functionPointer", od1+1);
+    		int or1 = code.indexOf("functionPointer", od1 + 1);
 
     		IASTNode decl = testF3(file, or1);
     		assertTrue(decl instanceof IASTName);
@@ -1013,7 +1013,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     		IDocument doc= ((ITextEditor) editor).getDocumentProvider().getDocument(editor.getEditorInput());
     		doc.replace(doc.getLength(), 0, appendCode);
     		int od2 = appendCode.indexOf("functionPointerArray");
-    		int or2 = appendCode.indexOf("functionPointerArray", od2+1);
+    		int or2 = appendCode.indexOf("functionPointerArray", od2 + 1);
 
     		decl = testF3(file, code.length() + or2);
     		assertTrue(decl instanceof IASTName);
@@ -1030,7 +1030,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	for (int i= 0; i < 2; i++) {
     		IFile file = importFile(filenames[i], code);
     		int od1 = code.indexOf("EMPTY");
-    		int or1 = code.indexOf("EMPTY", od1+1);
+    		int or1 = code.indexOf("EMPTY", od1 + 1);
 
     		IASTNode decl = testF3(file, or1);
     		assertTrue(decl instanceof IASTName);
@@ -1104,11 +1104,10 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 		int offset= code.indexOf("func();");
 		try {
 			IASTNode node= testF3(file, offset);
+			fail("Didn't expect navigation to succeed due to multiple choices.");
 		} catch (RuntimeException e) {
 			assertEquals("ambiguous input: 3", e.getMessage());
-			return;
 		}
-		fail("Expected exception not caught");
     }
     
     // namespace nm {
@@ -1126,13 +1125,13 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	assertContents(code, node.getFileLocation().getNodeOffset(), "func(T a, T b)");
     }
 
-    //    template<typename T>  void func(T a){}
-    //    template<typename T>  void func(T a, T b){}
+    //	template<typename T>  void func(T a){}
+    //	template<typename T>  void func(T a, T b){}
     //
-    //    template<typename Tmp> void testFunc() {
-    //      Tmp val;
-    //      func(val, val);  // F3 could know that 'func(T a)' cannot be a correct match.
-    //    }
+    //	template<typename Tmp> void testFunc() {
+    //	  Tmp val;
+    //	  func(val, val);  // F3 could know that 'func(T a)' cannot be a correct match.
+    //	}
     public void testDependentNameTwoChoices_281736() throws Exception {
     	String code= getContentsForTest(1)[0].toString();
     	IFile file = importFile("testDependentNameTwoChoices_281736.cpp", code); 

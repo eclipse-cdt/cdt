@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.tests.text.selection;
 
@@ -398,14 +399,14 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	// #include "testCPPSpecDeclsDefs.h"
 	// int a; 						// defines 
 	// int X::y = 1; 				// defines 
-	// X anX; 						// defines 
+	// X anX; 						// defines variable, implicitly calls ctor
 	// extern const int c; 			// declares
 	// int f(int x) {return x+a;}   // defines
 	// struct S; 					// declares
 	// typedef int Int; 			// declares 
 	// using N::d; 					// declares 
 	// S s;
-	// Int lhs= s.a+s.b+up+down+anX+0;			
+	// Int lhs= s.a+s.b+up+down+anX+0;
 	public void testCPPSpecDeclsDefs() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
@@ -474,7 +475,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 
         offset0= hcode.indexOf("X");
         offset1= scode.indexOf("X");
-        offset2= scode.indexOf("X", offset1+1);
+        offset2= scode.indexOf("X", offset1 + 1);
         decl= testF3(hfile, offset0);
         assertNode("X", offset0, decl);
         decl= testF3(file, offset1);
@@ -483,7 +484,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertNode("X", offset0, decl);
 
         offset0= hcode.indexOf("x;");
-        offset1= hcode.indexOf("x", offset0+1);
+        offset1= hcode.indexOf("x", offset0 + 1);
         decl= testF3(hfile, offset0);
         assertNode("x", offset0, decl);
         decl= testF3(hfile, offset1);
@@ -515,7 +516,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertNode("down", offset0, decl);
 
         offset0= hcode.indexOf("N");
-        offset1= hcode.indexOf("N;", offset0+1);
+        offset1= hcode.indexOf("N;", offset0 + 1);
         offset2= scode.indexOf("N");
         decl= testF3(hfile, offset0);
         assertNode("N", offset0, decl);
@@ -537,14 +538,14 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertNode("N1", offset0, decl);
 
         offset0= scode.indexOf("anX");
-        offset1= scode.indexOf("anX", offset0+1);
+        offset1= scode.indexOf("anX", offset0 + 1);
         decl= testF3(file, offset0);
-        assertNode("anX", offset0, decl);
+        assertNode("X", hcode.indexOf("X()"), decl);
         decl= testF3(file, offset1);
         assertNode("anX", offset0, decl);
 
         offset0= scode.indexOf("Int");
-        offset1= scode.indexOf("Int", offset0+1);
+        offset1= scode.indexOf("Int", offset0 + 1);
         decl= testF3(file, offset0);
         assertNode("Int", offset0, decl);
         decl= testF3(file, offset1);
@@ -625,7 +626,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertNode("x", offset0, decl);
     }
 	
-    // struct A { }; // implicitlydeclared A::operator=
+    // struct A { }; // implicitly declared A::operator=
     // struct B : A {
     //    B& operator=(const B &);
     // };
@@ -646,7 +647,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int offset0, offset1;
 
         offset0= scode.indexOf("s)"); 
-        offset1= scode.indexOf("s);", offset0+1); 
+        offset1= scode.indexOf("s);", offset0 + 1); 
         decl = testF3(file, offset0);
         assertNode("s", offset0, decl);
         decl = testF3(file, offset1);
@@ -1023,7 +1024,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int offset1, offset2;
 
         offset1 = scode.indexOf("cxcpp");
-        offset2 = scode.indexOf("cxcpp", offset1+1);
+        offset2 = scode.indexOf("cxcpp", offset1 + 1);
         testF3(cppfile, offset1);
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
@@ -1061,7 +1062,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int offset1, offset2;
 
         offset1 = ccode.indexOf("cxcpp");
-        offset2 = ccode.indexOf("cxcpp", offset1+1);
+        offset2 = ccode.indexOf("cxcpp", offset1 + 1);
         testF3(cfile, offset1);
         IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
         IEditorInput input = part.getEditorInput();
@@ -1094,12 +1095,12 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         int offset1, offset2;
 
         offset1 = code.indexOf("ADD_TEXT");
-        offset2 = code.indexOf("ADD_TEXT", offset1+1);
+        offset2 = code.indexOf("ADD_TEXT", offset1 + 1);
         decl= testF3(file, offset2);
         assertNode("ADD_TEXT", offset1, decl);
         
-        offset1 = code.indexOf("ADD", offset1+1);
-        offset2 = code.indexOf("ADD", offset2+1);
+        offset1 = code.indexOf("ADD", offset1 + 1);
+        offset2 = code.indexOf("ADD", offset2 + 1);
         decl= testF3(file, offset2);
         assertNode("ADD", offset1, decl);
     }
@@ -1131,7 +1132,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         
         offset1 = code.indexOf("operator []");
         offset2 = code.indexOf("[6];");
-        decl = testF3(file, offset2+1);
+        decl = testF3(file, offset2 + 1);
         assertNode("operator []", offset1, decl);
         offset2 = code.indexOf("];");
         decl = testF3(file, offset2);
@@ -1186,4 +1187,46 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         IASTNode def = testF3(file, offset + 1);
         assertTrue(def instanceof IASTName);
     }
+
+	//	struct A {
+	//	  A();
+	//	  A(int x);
+	//	};
+
+    //	#include "testImplicitConstructorCall_248855.h"
+	//	void func() {
+	//	  A a1;
+	//	  A a2(5);
+	//	}
+	//	struct B {
+	//	  B() : a3(1) {}
+	//	  A a3;
+	//	};
+	public void testImplicitConstructorCall_248855() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testImplicitConstructorCall_248855.h", hcode); 
+        IFile file = importFile("testImplicitConstructorCall_248855.cpp", scode); 
+        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        IASTNode target = testF3(file, scode.indexOf("a1"));
+        assertTrue(target instanceof IASTName);
+        assertEquals("A", ((IASTName) target).toString());
+        assertEquals(hcode.indexOf("A()"), target.getFileLocation().getNodeOffset());
+        assertEquals("A".length(), ((ASTNode) target).getLength());
+
+        target = testF3(file, scode.indexOf("a2"));
+        assertTrue(target instanceof IASTName);
+        assertEquals("A", ((IASTName) target).toString());
+        assertEquals(hcode.indexOf("A(int x)"), target.getFileLocation().getNodeOffset());
+        assertEquals("A".length(), ((ASTNode) target).getLength());
+
+		try {
+	        target = testF3(file, scode.indexOf("a3"));
+			fail("Didn't expect navigation to succeed due to multiple choices: B::a3, A::A(int x).");
+		} catch (RuntimeException e) {
+			assertEquals("ambiguous input: 2", e.getMessage());
+		}
+	}
 }

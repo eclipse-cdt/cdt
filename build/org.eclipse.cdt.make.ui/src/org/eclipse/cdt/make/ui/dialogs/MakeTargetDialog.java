@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Andrew Gvozdev (Quoin Inc) - bunch of improvements and bug fixes
  *******************************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -44,6 +46,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * The class represents Create/Modify Make Target Dialog in Make Targets View.
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -67,28 +71,28 @@ public class MakeTargetDialog extends Dialog {
 	private static final String MAKE_CMD_LABEL = SETTING_PREFIX + ".makeCmd.label"; //$NON-NLS-1$
 
 	private Text targetNameText;
-	private Button stopOnErrorButton;
-	private Button runAllBuildersButton;
-	private Text commandText;
-	private Button defButton;
+	private Button sameAsNameCheckBox;
 	private Text targetText;
+	private Button useBuilderCommandCheckBox;
+	private Text commandText;
+	private Button stopOnErrorCheckBox;
+	private Button runAllBuildersCheckBox;
 
 	private final IMakeTargetManager fTargetManager;
 	private final IContainer fContainer;
 
-	private IPath buildCommand;
-	private final String defaultBuildCommand;
-	private final String defaultBuildArguments;
-	private boolean isDefaultCommand;
+	private final IPath builderCommand;
+	private final String builderArguments;
+	private boolean isUsingBuilderCommand = true;
 	private boolean isStopOnError;
 	private boolean runAllBuilders = true;
-	private String buildArguments;
+	private IPath targetBuildCommand;
+	private String targetBuildArguments;
 	private String targetString;
 	private String targetName;
 	private String targetBuildID;
 	private IMakeTarget fTarget;
 	private boolean initializing = true;
-	private Button sameAsNameCheck;
 
 	/**
 	 * A Listener class to verify correctness of input and display an error message
@@ -136,9 +140,11 @@ public class MakeTargetDialog extends Dialog {
 		this(parentShell, target.getContainer());
 		fTarget = target;
 		isStopOnError = target.isStopOnError();
-		isDefaultCommand = target.isDefaultBuildCmd();
-		buildCommand = target.getBuildCommand();
-		buildArguments = target.getBuildArguments();
+		isUsingBuilderCommand = target.isDefaultBuildCmd();
+		if (!isUsingBuilderCommand) {
+			targetBuildCommand = target.getBuildCommand();
+			targetBuildArguments = target.getBuildArguments();
+		}
 		targetName = target.getName();
 		targetString = target.getBuildAttribute(IMakeTarget.BUILD_TARGET, ""); //$NON-NLS-1$
 		targetBuildID = target.getTargetBuilderID();
@@ -166,11 +172,11 @@ public class MakeTargetDialog extends Dialog {
 		IMakeBuilderInfo buildInfo = MakeCorePlugin.createBuildInfo(container.getProject(),
 				fTargetManager.getBuilderID(targetBuildID));
 		isStopOnError = buildInfo.isStopOnError();
-		isDefaultCommand = true;
-		buildCommand = buildInfo.getBuildCommand();
-		defaultBuildCommand = buildCommand.toString();
-		buildArguments = buildInfo.getBuildArguments();
-		defaultBuildArguments = buildArguments;
+		isUsingBuilderCommand = true;
+		builderCommand = buildInfo.getBuildCommand();
+		targetBuildCommand = builderCommand;
+		builderArguments = buildInfo.getBuildArguments();
+		targetBuildArguments = builderArguments;
 		targetString = buildInfo.getIncrementalBuildTarget();
 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -234,9 +240,9 @@ public class MakeTargetDialog extends Dialog {
 
 	protected void createSettingControls(Composite parent) {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_SETTING_GROUP), 1);
-		stopOnErrorButton = new Button(group, SWT.CHECK);
-		stopOnErrorButton.setText(MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR));
-		stopOnErrorButton.addSelectionListener(new SelectionAdapter() {
+		stopOnErrorCheckBox = new Button(group, SWT.CHECK);
+		stopOnErrorCheckBox.setText(MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR));
+		stopOnErrorCheckBox.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -245,16 +251,16 @@ public class MakeTargetDialog extends Dialog {
 		});
 
 		if (isStopOnError) {
-			stopOnErrorButton.setSelection(true);
+			stopOnErrorCheckBox.setSelection(true);
 		}
-		if (isDefaultCommand) {
-			stopOnErrorButton.setEnabled(true);
+		if (isUsingBuilderCommand) {
+			stopOnErrorCheckBox.setEnabled(true);
 		} else {
-			stopOnErrorButton.setEnabled(false);
+			stopOnErrorCheckBox.setEnabled(false);
 		}
-		runAllBuildersButton = new Button(group, SWT.CHECK);
-		runAllBuildersButton.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.runAllBuilders")); //$NON-NLS-1$
-		runAllBuildersButton.addSelectionListener(new SelectionAdapter() {
+		runAllBuildersCheckBox = new Button(group, SWT.CHECK);
+		runAllBuildersCheckBox.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.runAllBuilders")); //$NON-NLS-1$
+		runAllBuildersCheckBox.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -262,7 +268,7 @@ public class MakeTargetDialog extends Dialog {
 			}
 		});
 		if (runAllBuilders) {
-			runAllBuildersButton.setSelection(true);
+			runAllBuildersCheckBox.setSelection(true);
 		}
 	}
 
@@ -275,31 +281,30 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		group.setLayoutData(gd);
-		defButton = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_BUILDER_SETTINGS));
-		defButton.addSelectionListener(new SelectionAdapter() {
+		useBuilderCommandCheckBox = ControlFactory.createCheckBox(group, MakeUIPlugin.getResourceString(MAKE_CMD_USE_BUILDER_SETTINGS));
+		useBuilderCommandCheckBox.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (defButton.getSelection() == true) {
-					StringBuffer cmd = new StringBuffer(defaultBuildCommand);
-					String args = defaultBuildArguments;
-					if (args != null && !args.equals("")) { //$NON-NLS-1$
+				if (useBuilderCommandCheckBox.getSelection() == true) {
+					StringBuffer cmd = new StringBuffer(builderCommand.toString());
+					if (builderArguments != null && !builderArguments.equals("")) { //$NON-NLS-1$
 						cmd.append(" "); //$NON-NLS-1$
-						cmd.append(args);
+						cmd.append(builderArguments);
 					}
 					commandText.setText(cmd.toString());
 					commandText.setEnabled(false);
-					stopOnErrorButton.setEnabled(true);
+					stopOnErrorCheckBox.setEnabled(true);
 				} else {
 					commandText.setEnabled(true);
-					stopOnErrorButton.setEnabled(false);
+					stopOnErrorCheckBox.setEnabled(false);
 				}
 				updateButtons();
 			}
 		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		defButton.setLayoutData(gd);
+		useBuilderCommandCheckBox.setLayoutData(gd);
 		Label label = ControlFactory.createLabel(group, MakeUIPlugin.getResourceString(MAKE_CMD_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
@@ -309,12 +314,12 @@ public class MakeTargetDialog extends Dialog {
 
 		commandText.addListener(SWT.Modify, new UpdateStatusLineListener());
 
-		if (isDefaultCommand) {
+		if (isUsingBuilderCommand) {
 			commandText.setEnabled(false);
 		} else {
 			commandText.setEnabled(true);
 		}
-		defButton.setSelection(isDefaultCommand);
+		useBuilderCommandCheckBox.setSelection(isUsingBuilderCommand);
 	}
 
 	private void createTargetControl(Composite parent) {
@@ -327,16 +332,16 @@ public class MakeTargetDialog extends Dialog {
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		group.setLayoutData(gd);
 
-		sameAsNameCheck = new Button(group, SWT.CHECK);
+		sameAsNameCheckBox = new Button(group, SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		sameAsNameCheck.setLayoutData(gd);
-		sameAsNameCheck.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.sameAsTarget")); //$NON-NLS-1$
+		sameAsNameCheckBox.setLayoutData(gd);
+		sameAsNameCheckBox.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.sameAsTarget")); //$NON-NLS-1$
 
 		/* Add a listener to the target name text to update the targetText */
 		targetNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (sameAsNameCheck.getSelection()) {
+				if (sameAsNameCheckBox.getSelection()) {
 					targetText.setText(targetNameText.getText());
 				}
 			}
@@ -355,20 +360,20 @@ public class MakeTargetDialog extends Dialog {
 			}
 		});
 
-		sameAsNameCheck.addSelectionListener(new SelectionAdapter() {
+		sameAsNameCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				sameAsNameSelected();
 			}
 		});
 		/* set sameAsNameCheck if targetName and targetString are equal */
-		sameAsNameCheck.setSelection(targetString.equals(targetName) || (targetString.length()==0 && targetName==null));
+		sameAsNameCheckBox.setSelection(targetString.equals(targetName) || (targetString.length()==0 && targetName==null));
 		sameAsNameSelected();
 	}
 
 	protected void sameAsNameSelected() {
-		targetText.setEnabled(!sameAsNameCheck.getSelection());
-		if (sameAsNameCheck.getSelection()) {
+		targetText.setEnabled(!sameAsNameCheckBox.getSelection());
+		if (sameAsNameCheckBox.getSelection()) {
 			targetText.setText(targetNameText.getText());
 		}
 	}
@@ -390,12 +395,11 @@ public class MakeTargetDialog extends Dialog {
 			targetNameText.setText(generateUniqueName(targetString));
 		}
 		targetNameText.selectAll();
-		if (buildCommand != null) {
-			StringBuffer cmd = new StringBuffer(buildCommand.toOSString());
-			String args = buildArguments;
-			if (args != null && !args.equals("")) { //$NON-NLS-1$
+		if (targetBuildCommand != null) {
+			StringBuffer cmd = new StringBuffer(targetBuildCommand.toOSString());
+			if (targetBuildArguments != null && !targetBuildArguments.equals("")) { //$NON-NLS-1$
 				cmd.append(" "); //$NON-NLS-1$
-				cmd.append(args);
+				cmd.append(targetBuildArguments);
 			}
 			commandText.setText(cmd.toString());
 		}
@@ -417,7 +421,7 @@ public class MakeTargetDialog extends Dialog {
 		if (runAllBuilders != runAllBuilders()) {
 			return true;
 		}
-		if (isDefaultCommand != useDefaultBuildCmd()) {
+		if (isUsingBuilderCommand != isUsingBuilderCommand()) {
 			return true;
 		}
 		if (!targetName.equals(getTargetName())) {
@@ -426,8 +430,8 @@ public class MakeTargetDialog extends Dialog {
 		if (!targetString.equals(getTarget())) {
 			return true;
 		}
-		if (!isDefaultCommand) {
-			StringBuffer cmd = new StringBuffer(buildCommand.toOSString()).append(buildArguments);
+		if (!isUsingBuilderCommand) {
+			StringBuffer cmd = new StringBuffer(targetBuildCommand.toOSString()).append(targetBuildArguments);
 			if (!getBuildLine().equals(cmd.toString())) {
 				return true;
 			}
@@ -449,15 +453,15 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	private boolean isStopOnError() {
-		return stopOnErrorButton.getSelection();
+		return stopOnErrorCheckBox.getSelection();
 	}
 
 	private boolean runAllBuilders() {
-		return runAllBuildersButton.getSelection();
+		return runAllBuildersCheckBox.getSelection();
 	}
 
-	private boolean useDefaultBuildCmd() {
-		return defButton.getSelection();
+	private boolean isUsingBuilderCommand() {
+		return useBuilderCommandCheckBox.getSelection();
 	}
 
 	private String getBuildLine() {
@@ -501,16 +505,16 @@ public class MakeTargetDialog extends Dialog {
 						container.setSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"), //$NON-NLS-1$
 								path.toString());
 					}
-					
+
 					fTargetManager.renameTarget(target, targetName);
 				}
 			}
 			target.setStopOnError(isStopOnError());
 			target.setRunAllBuilders(runAllBuilders());
-			target.setUseDefaultBuildCmd(useDefaultBuildCmd());
-			if (useDefaultBuildCmd()) {
-				target.setBuildAttribute(IMakeTarget.BUILD_COMMAND, defaultBuildCommand);
-				target.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, defaultBuildArguments);
+			target.setUseDefaultBuildCmd(isUsingBuilderCommand());
+			if (isUsingBuilderCommand()) {
+				target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, builderCommand.toString());
+				target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, builderArguments);
 			} else {
 				String bldLine = getBuildLine();
 				int start = 0;
@@ -527,12 +531,12 @@ public class MakeTargetDialog extends Dialog {
 				} else {
 					path = new Path(bldLine.substring(start, end));
 				}
-				target.setBuildAttribute(IMakeTarget.BUILD_COMMAND, path.toString());
+				target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, path.toString());
 				String args = ""; //$NON-NLS-1$
 				if (end != -1) {
 					args = bldLine.substring(end + 1);
 				}
-				target.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, args);
+				target.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, args);
 			}
 			target.setBuildAttribute(IMakeTarget.BUILD_TARGET, getTarget());
 

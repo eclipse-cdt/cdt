@@ -119,7 +119,6 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	 */
 	public IASTName[] getReferences(IBinding binding);
 	
-	
 	/**
 	 * Returns an IASTNodeSelector object for finding nodes by file offsets.
 	 * The object is suitable for working in one of the files that is part of

@@ -305,7 +305,7 @@
             <action
                definitionId="org.eclipse.cdt.make.ui.targetBuildLastCommand"
                label="%LastTargetBuild.name"
-               class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"               
+               class="org.eclipse.cdt.make.ui.actions.BuildLastTargetAction"
                menubarPath="project/org.eclipse.cdt.make.ui.prjmenu/gm1"
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.actions.buildLastTargetAction">
@@ -322,6 +322,9 @@
                   </objectClass>
                   <objectClass
                         name="org.eclipse.cdt.core.model.ICProject">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.cdt.make.core.IMakeTarget">
                   </objectClass>
                </or>
             </enablement>
@@ -348,7 +351,7 @@
                         name="org.eclipse.cdt.core.model.ICProject">
                   </objectClass>
                   <objectClass
-                        name="org.eclipse.cdt.MakeTarget">
+                        name="org.eclipse.cdt.make.core.IMakeTarget">
                   </objectClass>
                </or>
             </enablement>

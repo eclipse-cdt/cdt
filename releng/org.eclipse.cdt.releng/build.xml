@@ -684,5 +684,14 @@
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.codan-feature"/>
 		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.gdb-feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.gdb"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/codan/org.eclipse.cdt.gdb.ui"/>
+		</antcall>
 	</target>
 </project>

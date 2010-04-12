@@ -5,7 +5,9 @@
 	<property name="cdt-debug-ui-loc" value="${eclipse-home}/cdt_debug_ui_folder"/>
 	<property name="cdt-mbs-core-loc" value="${eclipse-home}/cdt_mbs_core_folder"/>
 	<property name="cdt-mbs-ui-loc" value="${eclipse-home}/cdt_mbs_ui_folder"/>
-
+	<property name="cdt-lr-parser-loc" value="${eclipse-home}/cdt_lr_parser_folder"/>
+	<property name="cdt-upc-parser-loc" value="${eclipse-home}/cdt_upc_parser_folder"/>
+	
 	<target name="init">
 		<echo message="library file: ${library-file}"/>
 	</target>
@@ -25,6 +27,7 @@
 			<property name="data-dir" value="${cdt-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
 			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
@@ -34,6 +37,7 @@
 			<property name="data-dir" value="${cdt-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
 			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
@@ -43,6 +47,7 @@
 			<property name="data-dir" value="${cdt-debug-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.debug.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.debug.core.tests.AllDebugTests"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
 			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
@@ -52,6 +57,7 @@
 			<property name="data-dir" value="${cdt-mbs-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.tests.suite.AllManagedBuildTests"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
 			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
@@ -61,6 +67,27 @@
 			<property name="data-dir" value="${cdt-mbs-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.ui.tests.suite.AllManagedBuildUITests"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+		</ant>
+	</target>
+	
+	<target name="cdt-lr-parser" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-lr-parser-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.core.lrparser.tests"/>
+			<property name="classname" value="org.eclipse.cdt.core.lrparser.tests.LRParserTestSuite"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+		</ant>
+	</target>
+	
+	<target name="cdt-upc-parser" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-upc-parser-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.core.parser.upc.tests"/>
+			<property name="classname" value="org.eclipse.cdt.core.parser.upc.tests.UPCParserTestSuite"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
 			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 		</ant>
 	</target>
@@ -71,6 +98,10 @@
 		<antcall target="cdt-debug-ui"/>
 		<antcall target="cdt-mbs-core"/>
 		<antcall target="cdt-mbs-ui"/>
+		<!--
+		<antcall target="cdt-lr-parser"/>
+		<antcall target="cdt-upc-parser"/>
+		-->
 	</target>
 
 </project>

@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.ui.breakpoints;
 import org.eclipse.cdt.debug.core.DebugCoreMessages;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -30,8 +31,6 @@ import com.ibm.icu.text.MessageFormat;
  * Factory for event breakpoint label provider
  */
 public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
-	public static final String IMG_OBJS_EVENTBREAKPOINT_ENABLED =  "icons/obj16/eventbreakpoint_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_EVENTBREAKPOINT_DISABLED = "icons/obj16/eventbreakpointd_obj.gif";	//$NON-NLS-1$
 	private static ILabelProvider fLabelProvider = new LabelProvider() {
 		@Override
 		public String getText(Object element) {
@@ -75,19 +74,19 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 			return null;
 		}
 
+		/**
+		 * Returns null. We do not provide the image because it would require
+		 * duplicating centralized code in {@link CDebugModelPresentation},
+		 * particularly the code that determines the proper overlays. This
+		 * adapter is actually only called from within CDebugModelPresentation
+		 * and we know it will do the right thing for an event breakpoint if we
+		 * return null here. 
+		 * 
+		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+		 */
 		@Override
 		public Image getImage(Object element) {
-			try {
-				if (element instanceof ICEventBreakpoint) {
-					ICEventBreakpoint eventBkpt = (ICEventBreakpoint) element;
-					if (eventBkpt.isEnabled())
-						return CDebugUIPlugin.getDefault().getImage(IMG_OBJS_EVENTBREAKPOINT_ENABLED);
-					else 
-						return CDebugUIPlugin.getDefault().getImage(IMG_OBJS_EVENTBREAKPOINT_DISABLED);
-				}
-			} catch (CoreException e) {
-				CDebugUIPlugin.log(e);
-			}
+ 
 			return null;
 		}
 	};

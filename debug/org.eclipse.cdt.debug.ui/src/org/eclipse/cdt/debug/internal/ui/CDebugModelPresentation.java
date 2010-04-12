@@ -38,6 +38,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -332,6 +333,10 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			if ( breakpoint instanceof ICWatchpoint ) {
 				return getWatchpointImage( (ICWatchpoint)breakpoint );
 			}
+			if ( breakpoint instanceof ICEventBreakpoint ) {
+				return getEventBreakpointImage( (ICEventBreakpoint)breakpoint );
+			}
+			
 		}
 		catch( CoreException e ) {
 		}
@@ -381,6 +386,11 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeOverlays( watchpoint ) ) );
 	}
 
+	protected Image getEventBreakpointImage( ICEventBreakpoint evtBreakpoint ) throws CoreException {
+		ImageDescriptor descriptor = evtBreakpoint.isEnabled() ? CDebugImages.DESC_OBJS_EVENTBREAKPOINT_ENABLED : CDebugImages.DESC_OBJS_EVENTBREAKPOINT_DISABLED;  
+		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeOverlays( evtBreakpoint ) ) );
+	}
+	
 	@Override
 	public String getText( Object element ) {
 		String bt = getBaseText( element );

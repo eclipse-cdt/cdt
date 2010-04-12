@@ -79,6 +79,8 @@ public class CDebugImages {
 	public static final String IMG_OBJS_TRACEPOINT_DISABLED = NAME_PREFIX + "trcpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_ENABLED = NAME_PREFIX + "readwrite_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WATCHPOINT_DISABLED = NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_EVENTBREAKPOINT_ENABLED = NAME_PREFIX + "eventbreakpoint_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_EVENTBREAKPOINT_DISABLED = NAME_PREFIX + "eventbreakpointd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_READ_WATCHPOINT_ENABLED = NAME_PREFIX + "read_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_READ_WATCHPOINT_DISABLED = NAME_PREFIX + "read_obj_disabled.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WRITE_WATCHPOINT_ENABLED = NAME_PREFIX + "write_obj.gif";	//$NON-NLS-1$
@@ -161,6 +163,8 @@ public class CDebugImages {
 	public static final ImageDescriptor DESC_OBJS_TRACEPOINT_DISABLED = createManaged( T_DLCL, IMG_OBJS_TRACEPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
+	public static final ImageDescriptor DESC_OBJS_EVENTBREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_EVENTBREAKPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_EVENTBREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_EVENTBREAKPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WRITE_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WRITE_WATCHPOINT_ENABLED );

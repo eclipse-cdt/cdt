@@ -29,38 +29,6 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	private List<IDecisionArc> next = new ArrayList<IDecisionArc>(2);
 	private IConnectorNode conn;
 
-	class DecisionArc implements IDecisionArc {
-		int index;
-		IBasicBlock node;
-
-		DecisionArc(int i, IBasicBlock node) {
-			this.index = i;
-			this.node = node;
-		}
-
-		public int getIndex() {
-			return index;
-		}
-
-		public IBasicBlock getOutgoing() {
-			return node;
-		}
-
-		public IDecisionNode getDecisionNode() {
-			return DecisionNode.this;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			return index + "";
-		}
-	}
-
 	/**
 	 * @param prev
 	 */
@@ -75,7 +43,11 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 
 	@Override
 	public void addOutgoing(IBasicBlock node) {
-		DecisionArc arc = new DecisionArc(getDecisionArcSize(), node);
+		DecisionArc arc = new DecisionArc(this, getDecisionArcSize(), node);
+		next.add(arc);
+	}
+
+	public void addOutgoing(IDecisionArc arc) {
 		next.add(arc);
 	}
 

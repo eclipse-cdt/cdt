@@ -10,21 +10,133 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 
-public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionGenerator {
+public class CodanProblemMarkerResolutionGenerator implements
+		IMarkerResolutionGenerator {
+	private static final String EXTENSION_POINT_NAME = "codanMarkerResolution"; //$NON-NLS-1$
+	private static Map<String, Collection<ConditionalResolution>> resolutions = new HashMap<String, Collection<ConditionalResolution>>();
+	private static boolean resolutionsLoaded = false;
+
+	static class ConditionalResolution {
+		IMarkerResolution res;
+		String messagePattern;
+
+		public ConditionalResolution(IMarkerResolution res2,
+				String messagePattern2) {
+			res = res2;
+			messagePattern = messagePattern2;
+		}
+	}
+
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		final Pattern patternBuildDependsAdd = Pattern.compile("Possible assignment in condition.*");
-		String description = marker.getAttribute(IMarker.MESSAGE, "no message");
-		Matcher matcherBuildDependsAdd = patternBuildDependsAdd.matcher(description);
-		if (matcherBuildDependsAdd.matches()) {
-			return new IMarkerResolution[] { new QuickFixAssignmentInCondition() };
+		if (resolutionsLoaded == false) {
+			readExtensions();
+		}
+		String id = marker.getAttribute(IMarker.PROBLEM, null);
+		if (id == null)
+			return new IMarkerResolution[0];
+		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+		Collection<ConditionalResolution> collection = resolutions.get(id);
+		if (collection != null) {
+			ArrayList<IMarkerResolution> list = new ArrayList<IMarkerResolution>();
+			for (Iterator<ConditionalResolution> iterator = collection
+					.iterator(); iterator.hasNext();) {
+				ConditionalResolution res = iterator.next();
+				if (res.messagePattern != null) {
+					if (message.matches(res.messagePattern))
+						list.add(res.res);
+				} else {
+					list.add(res.res);
+				}
+			}
+			if (list.size() > 0)
+				return list.toArray(new IMarkerResolution[list.size()]);
 		}
 		return new IMarkerResolution[0];
+	}
+
+	private static synchronized void readExtensions() {
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
+				CheckersUiActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
+		if (ep == null)
+			return;
+		try {
+			IConfigurationElement[] elements = ep.getConfigurationElements();
+			// process categories
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement configurationElement = elements[i];
+				processResolution(configurationElement);
+			}
+		} finally {
+			resolutionsLoaded = true;
+		}
+	}
+
+	/**
+	 * @param configurationElement
+	 */
+	private static void processResolution(
+			IConfigurationElement configurationElement) {
+		if (configurationElement.getName().equals("resolution")) { //$NON-NLS-1$
+			String id = configurationElement.getAttribute("problemId"); //$NON-NLS-1$
+			if (id == null) {
+				CheckersUiActivator.log("Extension for " + EXTENSION_POINT_NAME
+						+ " problemId is not defined");
+				return;
+			}
+			IMarkerResolution res;
+			try {
+				res = (IMarkerResolution) configurationElement
+						.createExecutableExtension("class");//$NON-NLS-1$
+			} catch (CoreException e) {
+				CheckersUiActivator.log(e);
+				return;
+			}
+			String messagePattern = configurationElement
+					.getAttribute("messagePattern"); //$NON-NLS-1$
+			if (messagePattern != null) {
+				try {
+					Pattern.compile(messagePattern);
+				} catch (Exception e) {
+					// bad pattern log and ignore
+					CheckersUiActivator.log("Extension for "
+							+ EXTENSION_POINT_NAME
+							+ " messagePattern is invalid: " + e.getMessage());
+					return;
+				}
+			}
+			ConditionalResolution co = new ConditionalResolution(res,
+					messagePattern);
+			addResolution(id, co);
+		}
+	}
+
+	public static void addResolution(String id, IMarkerResolution res,
+			String messagePattern) {
+		addResolution(id, new ConditionalResolution(res, messagePattern));
+	}
+
+	private static void addResolution(String id, ConditionalResolution res) {
+		Collection<ConditionalResolution> collection = resolutions.get(id);
+		if (collection == null) {
+			collection = new ArrayList<ConditionalResolution>();
+			resolutions.put(id, collection);
+		}
+		collection.add(res);
 	}
 }

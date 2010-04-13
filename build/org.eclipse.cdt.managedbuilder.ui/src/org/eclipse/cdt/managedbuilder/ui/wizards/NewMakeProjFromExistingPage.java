@@ -91,8 +91,8 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	}
 	
 	public void validateProjectName() {
-		String projectName = location.getText();
-		IProject project = root.getProject(projectName);
+		String name = projectName.getText();
+		IProject project = root.getProject(name);
 		if (project.exists())
 			setErrorMessage(Messages.NewMakeProjFromExistingPage_4);
 		else

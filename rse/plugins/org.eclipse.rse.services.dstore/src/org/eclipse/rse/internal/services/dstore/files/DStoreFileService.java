@@ -62,6 +62,7 @@
  * David McKnight   (IBM)        - [284056] Sychronize Cache causes the UI to hang with no way out
  * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
  * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
+ * David McKnight   (IBM)        - [308770] [dstore] Remote Search using old server fails with NPE
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1244,11 +1245,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			if (isOldIBMMiner()){
 				// only accepts filters for file queries
 				if (!de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)){
-					StringBuffer buf = new StringBuffer(remoteParent);
-					String sep = getSeparator(remoteParent);
-					if (sep.length()>0 && !remoteParent.endsWith(sep)) {
-					    buf.append(sep);
+					StringBuffer buf = new StringBuffer();
+					if (remoteParent != null){
+						buf.append(remoteParent);
+						String sep = getSeparator(remoteParent);
+						if (sep.length()>0 && !remoteParent.endsWith(sep)) {
+						    buf.append(sep);
+						}
 					}
+										
 					buf.append(name);
 					String fullPath = buf.toString();
 					de.setAttribute(DE.A_NAME, fullPath);

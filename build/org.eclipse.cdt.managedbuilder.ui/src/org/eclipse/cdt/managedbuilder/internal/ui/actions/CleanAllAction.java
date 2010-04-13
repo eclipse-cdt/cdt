@@ -9,11 +9,10 @@
  *     Intel Corporation - initial API and implementation
  *     LSI Corporation	 - added symmetric project clean action
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.actions.CommonBuildCleanAllAction;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,37 +23,28 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @since 7.0
  */
-public class BuildAllAction extends CommonBuildCleanAllAction {
-	/** @since 7.0 */
+public class CleanAllAction extends CommonBuildCleanAllAction {
 	@Override
-	protected String getTIP_ALL() { return Messages.getString("BuildAllAction.0");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getTIP_ALL() { return Messages.getString("CleanAllAction.0");}//$NON-NLS-1$
 	@Override
-	protected String getLBL_ALL() { return Messages.getString("BuildAllAction.1");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getLBL_ALL() { return Messages.getString("CleanAllAction.1");}//$NON-NLS-1$
 	@Override
-	protected String getJOB_MSG() { return Messages.getString("BuildAllAction.2");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getJOB_MSG() { return Messages.getString("CleanAllAction.2");}//$NON-NLS-1$
 	@Override
-	protected String getERR_MSG() { return Messages.getString("BuildAllAction.3");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getERR_MSG() { return Messages.getString("CleanAllAction.3");}//$NON-NLS-1$
 	@Override
-	protected String getLBL_SEL() { return Messages.getString("BuildAllAction.4");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getLBL_SEL() { return Messages.getString("CleanAllAction.4");}//$NON-NLS-1$
 	@Override
-	protected String getTIP_SEL() {	return Messages.getString("BuildAllAction.5");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getTIP_SEL() {	return Messages.getString("CleanAllAction.5");}//$NON-NLS-1$
 	@Override
-	protected String getDLG_TEXT(){ return Messages.getString("BuildAllAction.6"); }//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getDLG_TEXT(){ return Messages.getString("CleanAllAction.6"); }//$NON-NLS-1$
 	@Override
-	protected String getDLG_TITLE(){ return Messages.getString("BuildAllAction.7");}//$NON-NLS-1$
-	/** @since 7.0 */
+	protected String getDLG_TITLE(){ return Messages.getString("CleanAllAction.7");}//$NON-NLS-1$
 	@Override
 	protected void performAction(IConfiguration[] configs,
 			IProgressMonitor monitor) throws CoreException {
-		ManagedBuildManager.buildConfigurations(configs, monitor);
+		ManagedBuildManager.cleanConfigurations(configs, monitor);
 	}
 }
-

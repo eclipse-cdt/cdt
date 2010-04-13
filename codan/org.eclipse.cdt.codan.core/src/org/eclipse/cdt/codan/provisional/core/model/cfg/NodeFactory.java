@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.core.model;
+package org.eclipse.cdt.codan.provisional.core.model.cfg;
 
 import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
@@ -16,14 +16,6 @@ import org.eclipse.cdt.codan.internal.core.cfg.ExitNode;
 import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.codan.internal.core.cfg.PlainNode;
 import org.eclipse.cdt.codan.internal.core.cfg.StartNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 
 /**
  * TODO: add description

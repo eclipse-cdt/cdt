@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import java.text.MessageFormat;
+
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
@@ -92,6 +93,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 			marker.setAttribute(IMarker.PROBLEM, id);
 			marker.setAttribute(IMarker.CHAR_END, endChar);
 			marker.setAttribute(IMarker.CHAR_START, startChar);
+			marker.setAttribute("org.eclipse.cdt.core.problem", 42);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

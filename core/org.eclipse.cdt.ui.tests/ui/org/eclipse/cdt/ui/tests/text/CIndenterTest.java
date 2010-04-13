@@ -814,9 +814,11 @@ public class CIndenterTest extends BaseUITestCase {
 	//}
 
 	//void t() const
-	//{
-	//}
+	//	{
+	//	}
 	public void testIndentationOfConstMethodBody_Bug298282() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION, 
+				DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED);
 		assertIndenterResult();
 	}
 	

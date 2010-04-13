@@ -847,7 +847,7 @@ public final class CIndenter {
 					} else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) &&
 							!fPrefs.prefIndentBracesForArrays) {
 						cancelIndent= true;
-					} else if (prevToken == Symbols.TokenRPAREN && fPrefs.prefIndentBracesForMethods) {
+					} else if ((prevToken == Symbols.TokenRPAREN || prevToken == Symbols.TokenCONST) && fPrefs.prefIndentBracesForMethods) {
 						extraIndent= 1;
 					} else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes) {
 						extraIndent= 1;

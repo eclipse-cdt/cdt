@@ -44,14 +44,14 @@
       </checker>
 
       <checker
-            class="org.eclipse.cdt.codan.internal.checkers.CatchUsesReference"
-            id="org.eclipse.cdt.codan.internal.checkers.CatchUsesReference"
-            name="CatchUsesReferenceChecker">
+            class="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
+            id="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
+            name="CatchByReferenceChecker">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            description="Catching by reference is recommended by C++ experts, &quot;Throw by value, catch by reference&quot;. &#x0A;  For one thing, this avoids copying and potentially slicing the exception."
-            id="org.eclipse.cdt.codan.internal.checkers.CatchUsesReference"
+            description="Catching by reference is recommended by C++ experts, &quot;Throw by value, catch by reference&quot;. For one thing, this avoids copying and potentially slicing the exception."
+            id="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
             name="Catching by reference is recommended"
             messagePattern="Catching by reference is recommended for non-basic types">
       </problem>

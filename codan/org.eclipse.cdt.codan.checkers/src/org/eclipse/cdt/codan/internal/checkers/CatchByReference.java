@@ -34,8 +34,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
  * For one thing, this avoids copying and potentially slicing the exception.
  *
  */
-public class CatchUsesReference extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CatchUsesReference";
+public class CatchByReference extends AbstractIndexAstChecker {
+	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CatchByReference";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.

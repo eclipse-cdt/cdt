@@ -204,10 +204,11 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	@SuppressWarnings("nls")
 	protected void printEvent(int kind, Map<String, String> args) {
 		if (DEBUG_EVENTS) {
+			String ids = args!=null ? args.get(CONTENTS_CONFIGURATION_IDS) : null;
 			System.out.println("t"+Thread.currentThread().getId()+": "
 					+ kindToString(kind)
 					+ ", " +  getProject()
-					+ (args!=null ? "[" + cfgIdToNames(args.get(CONTENTS_CONFIGURATION_IDS)) +"]" : "")
+					+ "[" + cfgIdToNames(ids) +"]"
 					+ ", " + this.getClass().getSimpleName()
 				);
 		}

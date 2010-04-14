@@ -11,14 +11,11 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionArc;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 
 /**
@@ -26,7 +23,7 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
  */
 public class DecisionNode extends AbstractSingleIncomingNode implements
 		IDecisionNode {
-	private List<IDecisionArc> next = new ArrayList<IDecisionArc>(2);
+	private List<IBasicBlock> next = new ArrayList<IBasicBlock>(2);
 	private IConnectorNode conn;
 
 	/**
@@ -36,39 +33,10 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 		super();
 	}
 
-	public void setDecisionArcs(Collection<IDecisionArc> next) {
-		this.next = Collections.unmodifiableList(new ArrayList<IDecisionArc>(
-				next));
-	}
-
 	@Override
 	public void addOutgoing(IBasicBlock node) {
-		DecisionArc arc = new DecisionArc(this, getDecisionArcSize(), node);
-		next.add(arc);
-	}
-
-	public void addOutgoing(IDecisionArc arc) {
-		next.add(arc);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode#
-	 * getDecisionArcs()
-	 */
-	public Iterator<IDecisionArc> getDecisionArcs() {
-		return next.iterator();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode#
-	 * getDecisionArcSize()
-	 */
-	public int getDecisionArcSize() {
-		return next.size();
+		IConnectorNode cnode = (IConnectorNode) node; // cast to throw CCE
+		next.add(cnode);
 	}
 
 	/*
@@ -78,25 +46,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	 * getOutgoingIterator()
 	 */
 	public Iterator<IBasicBlock> getOutgoingIterator() {
-		return new Iterator<IBasicBlock>() {
-			private Iterator<IDecisionArc> it;
-			{
-				it = next.iterator();
-			}
-
-			public boolean hasNext() {
-				return it.hasNext();
-			}
-
-			public IBasicBlock next() {
-				IDecisionArc arc = it.next();
-				return arc.getOutgoing();
-			}
-
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
+		return next.iterator();
 	}
 
 	/*
@@ -116,11 +66,11 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode#
 	 * getConnectionNode()
 	 */
-	public IConnectorNode getConnectionNode() {
+	public IConnectorNode getMergeNode() {
 		return conn;
 	}
 
-	public void setConnectorNode(IConnectorNode conn) {
+	public void setMergeNode(IConnectorNode conn) {
 		this.conn = conn;
 	}
 }

@@ -46,7 +46,7 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	}
 
 	public void setJump(IConnectorNode jump, boolean backward) {
-		if (this.jump != null)
+		if (this.jump != null && this.jump != jump)
 			throw new IllegalArgumentException(
 					"Cannot modify exiting connector"); //$NON-NLS-1$
 		this.jump = jump;
@@ -59,8 +59,6 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 
 	@Override
 	public void addOutgoing(IBasicBlock node) {
-		if (node == jump)
-			return;
-		throw new UnsupportedOperationException();
+		setJump((IConnectorNode) node, backward);
 	}
 }

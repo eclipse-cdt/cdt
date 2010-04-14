@@ -11,20 +11,12 @@
 package org.eclipse.cdt.codan.provisional.core.model.cfg;
 
 /**
- * Control Flow Graph Node factory
+ * Node that represent empty operator with label, such as case branch or label
  */
-public interface INodeFactory {
-	IPlainNode createPlainNode();
+public interface ILabeledNode extends IConnectorNode {
+	public static String THEN = "then"; //$NON-NLS-1$
+	public static String ELSE = "else"; //$NON-NLS-1$
+	public static String DEFAULT = "default"; //$NON-NLS-1$
 
-	IJumpNode createJumpNode();
-
-	IDecisionNode createDecisionNode();
-
-	IConnectorNode createConnectorNode();
-
-	ILabeledNode createLabeledNode(String label);
-
-	IStartNode createStartNode();
-
-	IExitNode createExitNode();
+	String getLabel();
 }

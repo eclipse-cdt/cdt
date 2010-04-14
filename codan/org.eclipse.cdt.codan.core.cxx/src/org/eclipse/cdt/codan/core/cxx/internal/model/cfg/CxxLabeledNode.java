@@ -10,26 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
-import org.eclipse.cdt.codan.internal.core.cfg.DecisionArc;
-import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.internal.core.cfg.LabeledNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * TODO: add description
  */
-public class CxxDecisionArc extends DecisionArc {
-	private IASTNode label;
+public class CxxLabeledNode extends LabeledNode {
+	private IASTNode labelData;
 
-	/**
-	 * @param decisionNode
-	 * @param i
-	 * @param node
-	 */
-	public CxxDecisionArc(DecisionNode decisionNode, int i, IBasicBlock node,
-			IASTNode label) {
-		super(decisionNode, i, node);
-		this.label = label;
+
+    CxxLabeledNode(IASTNode label) {
+		super(label.getRawSignature());
+		this.labelData = label;
 	}
 
 	/*
@@ -39,6 +32,6 @@ public class CxxDecisionArc extends DecisionArc {
 	 */
 	@Override
 	public String toString() {
-		return label.getRawSignature();
+		return labelData.getRawSignature()+":";
 	}
 }

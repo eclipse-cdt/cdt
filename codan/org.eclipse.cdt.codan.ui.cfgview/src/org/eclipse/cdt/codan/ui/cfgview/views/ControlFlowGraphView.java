@@ -3,16 +3,17 @@ package org.eclipse.cdt.codan.ui.cfgview.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionArc;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.ILabeledNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.ui.cfgview.ControlFlowGraphPlugin;
@@ -120,22 +121,19 @@ public class ControlFlowGraphView extends ViewPart {
 				return blocks.toArray();
 			} else if (parent instanceof IDecisionNode) {
 				ArrayList blocks = new ArrayList();
-				Iterator<IDecisionArc> iter = ((IDecisionNode) parent)
-						.getDecisionArcs();
+				Iterator<IBasicBlock> iter = ((IDecisionNode) parent)
+						.getOutgoingIterator();
 				if (iter.hasNext()) {
-					IDecisionArc arc0 = iter.next();
 					for (; iter.hasNext();) {
-						IDecisionArc arc = iter.next();
+						IBasicBlock arc = iter.next();
 						blocks.add(arc);
 					}
-					blocks.add(arc0);// people naturally expect false branch
-										// after true
 				}
-				blocks.add(((IDecisionNode) parent).getConnectionNode());
+				blocks.add(((IDecisionNode) parent).getMergeNode());
 				return blocks.toArray();
-			} else if (parent instanceof IDecisionArc) {
+			} else if (parent instanceof ILabeledNode) {
 				Collection<IBasicBlock> blocks = getFlat(
-						((IDecisionArc) parent).getOutgoing(),
+						((ILabeledNode) parent).getOutgoing(),
 						new ArrayList<IBasicBlock>());
 				return blocks.toArray();
 			}
@@ -156,23 +154,13 @@ public class ControlFlowGraphView extends ViewPart {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
 			if (strdata == null || strdata.length() == 0) {
-				if (obj instanceof IConnectorNode) {
+				if (obj instanceof ILabeledNode) {
+					strdata = strdata+blockHexLabel(obj);
+				} else if (obj instanceof IConnectorNode) {
 					strdata = blockHexLabel(obj);
 				} else if (obj instanceof IJumpNode) {
 					strdata = blockHexLabel(((IJumpNode) obj).getJumpNode());
-				} else if (obj instanceof IDecisionArc) {
-					IDecisionArc arc = (IDecisionArc) obj;
-					int index = arc.getIndex();
-					if (arc.getDecisionNode().getDecisionArcSize() == 2) {
-						if (index == 0)
-							strdata = "false";
-						else
-							strdata = "true";
-					} else if (index == 0)
-						strdata = "default";
-					else
-						strdata = "" + index;
-				}
+				} 
 			}
 			return obj.getClass().getSimpleName() + ": " + strdata;
 		}
@@ -196,6 +184,8 @@ public class ControlFlowGraphView extends ViewPart {
 				imageKey = "start.png";
 			else if (obj instanceof IJumpNode)
 				imageKey = "jump.png";
+			else if (obj instanceof ILabeledNode)
+				imageKey = "labeled.png";
 			else if (obj instanceof IConnectorNode)
 				imageKey = "connector.png";
 			return ControlFlowGraphPlugin.getDefault().getImage(
@@ -210,26 +200,26 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	/**
-	 * @param prev
+	 * @param list
 	 * @param startNode
 	 * @return
 	 */
 	public Collection<IBasicBlock> getFlat(IBasicBlock node,
-			Collection<IBasicBlock> prev) {
-		prev.add(node);
+			Collection<IBasicBlock> list) {
+		list.add(node);
 		if (node instanceof IConnectorNode
-				&& !((IConnectorNode) node).hasBackwardIncoming()) {
-			return prev;
+				&& !((IConnectorNode) node).hasBackwardIncoming() &&
+				!(node instanceof ILabeledNode)) {
+			return list;
 		}
 		if (node instanceof IJumpNode)
-			return prev;
+			return list;
 		if (node instanceof ISingleOutgoing) {
-			getFlat(((ISingleOutgoing) node).getOutgoing(), prev);
+			getFlat(((ISingleOutgoing) node).getOutgoing(), list);
 		} else if (node instanceof IDecisionNode) {
-			getFlat(((IDecisionNode) node).getConnectionNode().getOutgoing(),
-					prev);
+			getFlat(((IDecisionNode) node).getMergeNode().getOutgoing(), list);
 		}
-		return prev;
+		return list;
 	}
 
 	/**

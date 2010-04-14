@@ -16,12 +16,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionArc;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.ILabeledNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 
@@ -71,22 +72,21 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	public void print(IBasicBlock node) {
 		System.out.println(node.getClass().getSimpleName() + ": "
 				+ ((AbstractBasicBlock) node).toStringData());
-		if (node instanceof IConnectorNode)
-			if (((IConnectorNode) node).hasBackwardIncoming() == false)
-				return;
 		if (node instanceof IDecisionNode) {
 			// todo
-			Iterator<IDecisionArc> decisionArcs = ((IDecisionNode) node)
-					.getDecisionArcs();
-			for (; decisionArcs.hasNext();) {
-				IDecisionArc arc = decisionArcs.next();
-				System.out.println("{" + arc.getIndex() + ":");
-				print(arc.getOutgoing());
+			Iterator<IBasicBlock> branches = ((IDecisionNode) node)
+					.getOutgoingIterator();
+			for (; branches.hasNext();) {
+				IBasicBlock brNode = branches.next();
+				System.out.println("{");
+				print(brNode);
 				System.out.println("}");
 			}
-			print(((IDecisionNode) node).getConnectionNode());
+			print(((IDecisionNode) node).getMergeNode());
 		} else if (node instanceof ISingleOutgoing) {
-			print(((ISingleOutgoing) node).getOutgoing());
+			IBasicBlock next = ((ISingleOutgoing) node).getOutgoing();
+			if (!(next instanceof IConnectorNode && !(next instanceof ILabeledNode)))
+				print(next);
 		}
 	}
 

@@ -20,6 +20,8 @@ import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.ILabeledNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -27,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -89,6 +92,8 @@ public class ControlFlowGraphBuilder {
 			return createWhile(prev, (IASTWhileStatement) body);
 		} else if (body instanceof IASTForStatement) {
 			return createFor(prev, (IASTForStatement) body);
+		} else if (body instanceof IASTDoStatement) {
+			return createDoWhile(prev, (IASTDoStatement) body);
 		} else if (body instanceof IASTReturnStatement) {
 			CxxExitNode node = factory.createExitNode(body);
 			node.setStartNode(start);
@@ -106,18 +111,20 @@ public class ControlFlowGraphBuilder {
 	 * @return
 	 */
 	protected IBasicBlock createIf(IBasicBlock prev, IASTIfStatement body) {
-		DecisionNode node = factory.createDecisionNode(body
+		DecisionNode ifNode = factory.createDecisionNode(body
 				.getConditionExpression());
-		addOutgoing(prev, node);
-		ConnectorNode conn = new ConnectorNode();
-		node.setConnectorNode(conn);
-		IBasicBlock els = createSubGraph(node, body.getElseClause());
-		conn.addIncoming(els);
-		addOutgoing(els, conn);
-		IBasicBlock then = createSubGraph(node, body.getThenClause());
-		conn.addIncoming(then);
-		addOutgoing(then, conn);
-		return conn;
+		addOutgoing(prev, ifNode);
+		IConnectorNode mergeNode = factory.createConnectorNode();
+		ifNode.setMergeNode(mergeNode);
+		ILabeledNode thenNode = factory.createLabeledNode(ILabeledNode.THEN);
+		addOutgoing(ifNode, thenNode);
+		IBasicBlock then = createSubGraph(thenNode, body.getThenClause());
+		addOutgoing(then, mergeNode);
+		ILabeledNode elseNode = factory.createLabeledNode(ILabeledNode.ELSE);
+		addOutgoing(ifNode, elseNode);
+		IBasicBlock els = createSubGraph(elseNode, body.getElseClause());
+		addOutgoing(els, mergeNode);
+		return mergeNode;
 	}
 
 	/**
@@ -130,7 +137,7 @@ public class ControlFlowGraphBuilder {
 				.getControllerExpression());
 		addOutgoing(prev, node);
 		ConnectorNode conn = new ConnectorNode();
-		node.setConnectorNode(conn);
+		node.setMergeNode(conn);
 		createSwitchBody(node, conn, body.getBody());
 		return conn;
 	}
@@ -148,20 +155,15 @@ public class ControlFlowGraphBuilder {
 		IASTCompoundStatement comp = (IASTCompoundStatement) body;
 		IASTNode[] children = comp.getChildren();
 		IBasicBlock prev = switchNode;
-		int labelNum = 1;
 		for (int i = 0; i < children.length; i++) {
 			IASTNode elem = children[i];
 			if (elem instanceof IASTCaseStatement) {
 				IASTCaseStatement caseSt = (IASTCaseStatement) elem;
-				IPlainNode nextSt = factory
-						.createPlainNode();
+				ILabeledNode lbl = factory.createLabeledNode(caseSt);
 				if (!(prev instanceof IExitNode) && prev != switchNode)
-					addOutgoing(prev, nextSt);
-				switchNode.addOutgoing(new CxxDecisionArc(switchNode, labelNum,
-						nextSt, caseSt));
-				labelNum++;
-				((AbstractBasicBlock)nextSt).addIncoming(switchNode);
-				prev = nextSt;
+					addOutgoing(prev, lbl);
+				addOutgoing(switchNode, lbl);
+				prev = lbl;
 				continue;
 			}
 			if (elem instanceof IASTBreakStatement) {
@@ -173,15 +175,12 @@ public class ControlFlowGraphBuilder {
 				continue;
 			}
 			if (elem instanceof IASTDefaultStatement) {
-				IASTDefaultStatement caseSt = (IASTDefaultStatement) elem;
-				IPlainNode nextSt = factory
-				.createPlainNode();
+				ILabeledNode lbl = factory
+						.createLabeledNode(ILabeledNode.DEFAULT);
 				if (!(prev instanceof IExitNode) && prev != switchNode)
-					addOutgoing(prev, nextSt);
-				switchNode.addOutgoing(new CxxDecisionArc(switchNode, 0,
-						nextSt, caseSt));
-				((AbstractBasicBlock)nextSt).addIncoming(switchNode);
-				prev = nextSt;
+					addOutgoing(prev, lbl);
+				addOutgoing(switchNode, lbl);
+				prev = lbl;
 				continue;
 			}
 			IBasicBlock last = createSubGraph(prev, elem);
@@ -209,19 +208,24 @@ public class ControlFlowGraphBuilder {
 		addOutgoing(nContinue2, decision);
 		// add break connector
 		IConnectorNode nBreak = factory.createConnectorNode();
-		addOutgoing(decision, nBreak);
-		decision.setConnectorNode(nBreak);
+		decision.setMergeNode(nBreak);
 		// create body and jump to continue node
-		IBasicBlock nBody = createSubGraph(decision, forNode.getBody());
+		ILabeledNode loopStart = factory.createLabeledNode(ILabeledNode.THEN);
+		addOutgoing(decision, loopStart);
+		IBasicBlock endBody = createSubGraph(loopStart, forNode.getBody());
 		// inc
 		IPlainNode inc = factory.createPlainNode(forNode
 				.getIterationExpression());
-		addOutgoing(nBody, inc);
+		addOutgoing(endBody, inc);
 		JumpNode jumpContinue = new JumpNode();
 		addOutgoing(inc, jumpContinue);
 		jumpContinue.setJump(nContinue2, true);
 		// connect with backward link
 		addOutgoing(jumpContinue, nContinue2);
+		// add "else" branch
+		ILabeledNode loopEnd = factory.createLabeledNode(ILabeledNode.ELSE);
+		addOutgoing(decision, loopEnd);
+		addOutgoing(loopEnd, nBreak);
 		return nBreak;
 	}
 
@@ -240,15 +244,50 @@ public class ControlFlowGraphBuilder {
 		addOutgoing(nContinue, decision);
 		// add break connector
 		IConnectorNode nBreak = factory.createConnectorNode();
-		addOutgoing(decision, nBreak);
-		decision.setConnectorNode(nBreak);
+		decision.setMergeNode(nBreak);
 		// create body and jump to continue node
-		IBasicBlock nBody = createSubGraph(decision, body.getBody());
+		ILabeledNode loopStart = factory.createLabeledNode(ILabeledNode.THEN);
+		addOutgoing(decision, loopStart);
+		IBasicBlock endBody = createSubGraph(loopStart, body.getBody());
 		JumpNode jumpContinue = new JumpNode();
-		addOutgoing(nBody, jumpContinue);
+		addOutgoing(endBody, jumpContinue);
 		jumpContinue.setJump(nContinue, true);
 		// connect with backward link
 		addOutgoing(jumpContinue, nContinue);
+		// connect with else branch
+		ILabeledNode loopEnd = factory.createLabeledNode(ILabeledNode.ELSE);
+		addOutgoing(decision, loopEnd);
+		addOutgoing(loopEnd, nBreak);
+		return nBreak;
+	}
+
+	protected IBasicBlock createDoWhile(IBasicBlock prev, IASTDoStatement body) {
+		// create body and jump to continue node
+		IConnectorNode loopStart = factory.createConnectorNode();
+		addOutgoing(prev, loopStart);
+		IBasicBlock endBody = createSubGraph(loopStart, body.getBody());
+		// add continue connector
+		IConnectorNode nContinue = factory.createLabeledNode("continue");
+		addOutgoing(endBody, nContinue);
+		// decision node
+		CxxDecisionNode decision = factory.createDecisionNode(body
+				.getCondition());
+		addOutgoing(nContinue, decision);
+		// then branch
+		ILabeledNode thenNode = factory.createLabeledNode(ILabeledNode.THEN);
+		addOutgoing(decision, thenNode);
+		IJumpNode jumpToStart = factory.createJumpNode();
+		addOutgoing(thenNode, jumpToStart);
+		((JumpNode)jumpToStart).setBackward(true);
+		// connect with backward link
+		addOutgoing(jumpToStart, loopStart);
+		// connect with else branch
+		ILabeledNode loopEnd = factory.createLabeledNode(ILabeledNode.ELSE);
+		addOutgoing(decision, loopEnd);
+		// add break connector
+		IConnectorNode nBreak = factory.createConnectorNode();
+		decision.setMergeNode(nBreak);
+		addOutgoing(loopEnd, nBreak);
 		return nBreak;
 	}
 

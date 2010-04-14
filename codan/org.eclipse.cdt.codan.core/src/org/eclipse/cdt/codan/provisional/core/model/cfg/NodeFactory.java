@@ -14,6 +14,7 @@ import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
 import org.eclipse.cdt.codan.internal.core.cfg.ExitNode;
 import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
+import org.eclipse.cdt.codan.internal.core.cfg.LabeledNode;
 import org.eclipse.cdt.codan.internal.core.cfg.PlainNode;
 import org.eclipse.cdt.codan.internal.core.cfg.StartNode;
 
@@ -98,5 +99,9 @@ public class NodeFactory implements INodeFactory {
 	 */
 	public IExitNode createExitNode() {
 		return new ExitNode();
+	}
+
+	public ILabeledNode createLabeledNode(String label) {
+		return new LabeledNode(label);
 	}
 }

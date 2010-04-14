@@ -115,7 +115,7 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		}
 		if (node instanceof IDecisionNode) {
 			assertTrue("decision node outgping size",node.getOutgoingSize()>1);
-			assertNotNull(((IDecisionNode) node).getConnectionNode());
+			assertNotNull(((IDecisionNode) node).getMergeNode());
 		}
 	}
 

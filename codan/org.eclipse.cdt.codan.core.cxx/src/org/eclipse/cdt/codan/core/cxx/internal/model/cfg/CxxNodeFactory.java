@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.ILabeledNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.NodeFactory;
@@ -37,6 +38,7 @@ public class CxxNodeFactory extends NodeFactory implements INodeFactory {
 	public IExitNode createExitNode() {
 		return new CxxExitNode();
 	}
+
 	public CxxPlainNode createPlainNode(IASTNode ast) {
 		IPlainNode node = createPlainNode();
 		((AbstractBasicBlock) node).setData(ast);
@@ -48,9 +50,20 @@ public class CxxNodeFactory extends NodeFactory implements INodeFactory {
 		((AbstractBasicBlock) node).setData(ast);
 		return (CxxDecisionNode) node;
 	}
+
 	public CxxExitNode createExitNode(IASTNode ast) {
 		IExitNode node = createExitNode();
 		((AbstractBasicBlock) node).setData(ast);
 		return (CxxExitNode) node;
-	}	
+	}
+
+	/**
+	 * @param caseSt
+	 * @return
+	 */
+	public ILabeledNode createLabeledNode(IASTNode caseSt) {
+		ILabeledNode node = createLabeledNode(caseSt.getRawSignature());
+		((AbstractBasicBlock) node).setData(caseSt);
+		return node;
+	}
 }

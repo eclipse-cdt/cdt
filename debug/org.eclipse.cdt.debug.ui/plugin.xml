@@ -326,6 +326,13 @@
             </menu>         
        </menuContribution>
        <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
+            <command
+            	commandId="org.eclipse.cdt.debug.ui.commands.viewMemory"
+            	label="%command.viewMemory.name">
+            </command>
+       </menuContribution>
+       <menuContribution
             locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
             <menu 
                  id="org.eclipse.cdt.debug.ui.registerView_CVariableFormatMenu" 
@@ -550,20 +557,6 @@
          </action>
       </viewerContribution>
  
-      <objectContribution
-            objectClass="org.eclipse.cdt.debug.core.model.ICVariable"
-            id="org.eclipse.cdt.debug.ui.CVariableActions">
-         <action
-               label="%viewMemory.label"
-               helpContextId="view_memory_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ViewMemoryActionDelegate"
-               menubarPath="variableGroup"
-               enablesFor="+"
-               id="org.eclipse.cdt.debug.ui.actions.ViewMemoryAction">
-         </action>
-      </objectContribution>
-
-
       <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICSignal"
             id="org.eclipse.cdt.debug.ui.SignalActions">
@@ -1886,6 +1879,12 @@
           id="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
           name="%ResumeWithoutSignal.name">
     </command>
+    <command
+          id="org.eclipse.cdt.debug.ui.commands.viewMemory"
+          description="%command.viewMemory.description"
+          helpContextId="view_memory_context"
+          name="%command.viewMemory.name">
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -1925,6 +1924,20 @@
             class="org.eclipse.cdt.debug.internal.ui.commands.ResumeWithoutSignalCommandHandler"
             commandId="org.eclipse.cdt.debug.ui.command.resumeWithoutSignal"
             helpContextId="resume_without_signal_action_context">
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.debug.internal.ui.commands.ViewMemoryHandler"
+      		commandId="org.eclipse.cdt.debug.ui.commands.viewMemory">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.debug.core.model.ICVariable">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
       </handler>
  </extension>
  <extension

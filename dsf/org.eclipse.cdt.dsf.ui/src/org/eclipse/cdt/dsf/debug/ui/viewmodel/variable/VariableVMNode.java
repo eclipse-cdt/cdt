@@ -32,16 +32,16 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IExpressions2;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMLocation;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IVariableDMData;
@@ -149,10 +149,21 @@ public class VariableVMNode extends AbstractExpressionVMNode
             super(dmc);
         }
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getExpression()
+		 */
+		public String getExpression() {
+			final IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getDMContext(), IExpressionDMContext.class);
+			if (exprDmc != null) {
+				return exprDmc.getExpression();
+			}
+			return ""; //$NON-NLS-1$
+		}
+
         public void setExpression(IExpression expression) {
             fExpression = expression;
         }
-        
+
         @SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
         public Object getAdapter(Class adapter) {

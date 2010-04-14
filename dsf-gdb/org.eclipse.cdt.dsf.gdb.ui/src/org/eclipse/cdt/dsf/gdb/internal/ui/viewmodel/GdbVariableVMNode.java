@@ -45,18 +45,6 @@ public class GdbVariableVMNode extends VariableVMNode {
         }
         
 		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getExpression()
-		 */
-		public String getExpression() {
-			final IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(getDMContext(), IExpressionDMContext.class);
-			if (exprDmc != null) {
-				return exprDmc.getExpression();
-			}
-								
-			return ""; //$NON-NLS-1$
-		}
-
-		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getSize()
 		 */
 		public void getSize(final ICWatchpointTarget.GetSizeRequest request) {

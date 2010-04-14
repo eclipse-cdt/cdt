@@ -288,6 +288,20 @@
             <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
          </activeWhen>
       </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.DsfViewMemoryHandler"
+      		commandId="org.eclipse.cdt.debug.ui.commands.viewMemory">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode$VariableExpressionVMC">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
    </extension>
 
    <extension point="org.eclipse.core.expressions.definitions">

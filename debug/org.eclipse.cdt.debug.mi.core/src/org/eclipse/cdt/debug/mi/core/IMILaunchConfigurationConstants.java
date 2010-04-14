@@ -90,6 +90,7 @@ public interface IMILaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration default attribute value. The key is ATTR_DEBUGGER_FULLPATH_BREAKPOINTS.
+	 * To see why this default is FALSE, see bug 176636
 	 */
-	public static final boolean DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT = true;
+	public static final boolean DEBUGGER_FULLPATH_BREAKPOINTS_DEFAULT = false;
 }

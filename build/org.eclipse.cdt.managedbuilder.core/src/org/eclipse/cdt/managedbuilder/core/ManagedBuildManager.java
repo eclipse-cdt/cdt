@@ -4586,65 +4586,68 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return new Configuration[0];
 	}
 
+	/**
+	 * Build the specified build configurations
+	 * @param configs - configurations to build
+	 * @param monitor - progress monitor
+	 * @throws CoreException
+	 */
 	public static void buildConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException{
 		buildConfigurations(configs, null, monitor);
 	}
 
+	/**
+	 * Build the specified build configurations
+	 * @param configs - configurations to build
+	 * @param builder - builder to retrieve build arguments
+	 * @param monitor - progress monitor
+	 * @throws CoreException
+	 */
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor) throws CoreException{
 		buildConfigurations(configs, builder, monitor, true);
 	}
 
+	/**
+	 * Build the specified build configurations.
+	 * 
+	 * @param configs - configurations to build
+	 * @param builder - builder to retrieve build arguments
+	 * @param monitor - progress monitor
+	 * @param allBuilders - {@code true} if all builders need to be building
+	 *    or {@code false} to build with {@link CommonBuilder}
+	 * 
+	 * @throws CoreException
+	 */
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor, boolean allBuilders) throws CoreException{
-		buildOrCleanConfigurations(configs, builder, monitor, allBuilders, IncrementalProjectBuilder.FULL_BUILD);
+		buildConfigurations(configs, builder, monitor, allBuilders, IncrementalProjectBuilder.FULL_BUILD);
 	}
-
+	
 	/**
-	 * Clean the specified build configurations
-	 * @param configs
-	 * @param monitor
+	 * Build the specified build configurations.
+	 * 
+	 * @param configs - configurations to build
+	 * @param builder - builder to retrieve build arguments
+	 * @param monitor - progress monitor
+	 * @param allBuilders - {@code true} if all builders need to be building
+	 *    or {@code false} to build with {@link CommonBuilder}
+	 * @param buildKind - one of
+	 *    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
+	 *    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
+	 *    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
+	 * 
 	 * @throws CoreException
+	 * 
 	 * @since 7.0
 	 */
-	public static void cleanConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException{
-		cleanConfigurations(configs, null, monitor);
-	}
+	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor,
+			boolean allBuilders, int buildKind) throws CoreException{
 
-	/**
-	 * Clean the specified build configurations using the given builder
-	 * @param configs
-	 * @param builder
-	 * @param monitor
-	 * @throws CoreException
-	 * @since 7.0
-	 */
-	public static void cleanConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor) throws CoreException{
-		cleanConfigurations(configs, builder, monitor, true);
-	}
-
-	/**
-	 * Clean the specified configurations
-	 * @param configs
-	 * @param builder
-	 * @param monitor
-	 * @param allBuilders
-	 * @throws CoreException
-	 * @since 7.0
-	 */
-	public static void cleanConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor, boolean allBuilders) throws CoreException{
-		buildOrCleanConfigurations(configs, builder, monitor, allBuilders, IncrementalProjectBuilder.CLEAN_BUILD);
-	}
-
-	private static void buildOrCleanConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor, boolean allBuilders, int buildKind) throws CoreException{
 		Map map = sortConfigs(configs);
 		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 			Map.Entry entry = (Map.Entry)iter.next();
 			IProject proj = (IProject)entry.getKey();
 			IConfiguration[] cfgs = (IConfiguration[])entry.getValue();
-			if(buildKind == IncrementalProjectBuilder.CLEAN_BUILD) {
-				cleanConfigurations(proj, cfgs, builder, monitor, allBuilders);
-			} else {
-				buildConfigurations(proj, cfgs, builder, monitor, allBuilders);
-			}
+			buildConfigurations(proj, cfgs, builder, monitor, allBuilders, buildKind);
 		}
 	}
 
@@ -4673,83 +4676,99 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return cfgMap;
 	}
 
-	private static void buildConfigurations(final IProject project, IConfiguration[] configs, IBuilder builder, final IProgressMonitor monitor, boolean allBuilders) throws CoreException{
-		final boolean runAllBuidlers = allBuilders;
-		final Map map = builder != null ?
-				BuilderFactory.createBuildArgs(configs, builder)
-				: BuilderFactory.createBuildArgs(configs);
+	/**
+	 * Build the specified build configurations for a given project.
+	 * 
+	 * @param project - project the configurations belong to
+	 * @param configs - configurations to build
+	 * @param builder - builder to retrieve build arguments
+	 * @param monitor - progress monitor
+	 * @param allBuilders - {@code true} if all builders need to be building
+	 *    or {@code false} to build with {@link CommonBuilder}
+	 * @param buildKind - one of
+	 *    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
+	 *    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
+	 *    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
+	 * 
+	 * @throws CoreException
+	 */
+	private static void buildConfigurations(final IProject project, final IConfiguration[] configs,
+			final IBuilder builder, final IProgressMonitor monitor, final boolean allBuilders, final int buildKind) throws CoreException{
 
 		IWorkspaceRunnable op = new IWorkspaceRunnable() {
-
 			/*
 			 * (non-Javadoc)
 			 *
 			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public void run(IProgressMonitor monitor) throws CoreException {
-				if (runAllBuidlers) {
-					ICommand[] commands = project.getDescription().getBuildSpec();
-					monitor.beginTask("", commands.length); //$NON-NLS-1$
-					for (int i = 0; i < commands.length; i++) {
-						Map newArgs = map;
-						if (!commands[i].getBuilderName().equals(CommonBuilder.BUILDER_ID)) {
-							newArgs = new HashMap(map);
-							newArgs.putAll(commands[i].getArguments());
-						}
-						project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(), newArgs, new SubProgressMonitor(monitor, 1));
+				int ticks = 1;
+				if (buildKind==IncrementalProjectBuilder.CLEAN_BUILD) {
+					if (allBuilders) {
+						ICommand[] commands = project.getDescription().getBuildSpec();
+						ticks = commands.length;
 					}
-					monitor.done();
+					ticks = ticks*configs.length;
+				}
+				monitor.beginTask(project.getName(), ticks);
+				
+				if (buildKind==IncrementalProjectBuilder.CLEAN_BUILD) {
+					// It is not possible to pass arguments to clean() method of a builder
+					// So we iterate setting active configuration
+					IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
+					IConfiguration savedCfg = buildInfo.getDefaultConfiguration();
+					
+					try {
+						for (IConfiguration config : configs) {
+							if (monitor.isCanceled())
+								break;
+							
+							buildInfo.setDefaultConfiguration(config);
+							buildProject(project, null, allBuilders, buildKind, monitor);
+						}
+					} finally {
+						buildInfo.setDefaultConfiguration(savedCfg);
+					}
 				} else {
-					project.build(IncrementalProjectBuilder.FULL_BUILD, CommonBuilder.BUILDER_ID, map, monitor);
+					// configuration IDs are passed in args to CDT builder
+					Map args = builder!=null ? BuilderFactory.createBuildArgs(configs, builder)
+							: BuilderFactory.createBuildArgs(configs);
+					buildProject(project, args, allBuilders, buildKind, monitor);
+				}
+
+				monitor.done();
+			}
+
+			private void buildProject(IProject project, Map args, boolean allBuilders, int buildKind, IProgressMonitor monitor)
+					throws CoreException {
+				
+				if (allBuilders) {
+					ICommand[] commands = project.getDescription().getBuildSpec();
+					for (ICommand command : commands) {
+						if (monitor.isCanceled())
+							break;
+						
+						String builderName = command.getBuilderName();
+						Map newArgs = null;
+						if (buildKind!=IncrementalProjectBuilder.CLEAN_BUILD) {
+							newArgs = new HashMap(args);
+							if (!builderName.equals(CommonBuilder.BUILDER_ID)) {
+								newArgs.putAll(command.getArguments());
+							}
+						}
+						project.build(buildKind, builderName, newArgs, new SubProgressMonitor(monitor, 1));
+					}
+				} else {
+					project.build(buildKind, CommonBuilder.BUILDER_ID, args, new SubProgressMonitor(monitor, 1));
 				}
 			}
 		};
+
 		try {
 			ResourcesPlugin.getWorkspace().run(op, monitor);
 		} finally {
 			monitor.done();
 		}
-
-	}
-
-	private static void cleanConfigurations(final IProject project, final IConfiguration[] configs, IBuilder builder, final IProgressMonitor monitor, boolean allBuilders) throws CoreException{
-		final boolean runAllBuidlers = allBuilders;		
-		final IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
-		IConfiguration savedCfg = buildInfo.getDefaultConfiguration();		
-		IWorkspaceRunnable op = new IWorkspaceRunnable() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public void run(IProgressMonitor monitor) throws CoreException {				
-				ICommand[] commands = project.getDescription().getBuildSpec();										
-				int totalWork = (runAllBuidlers) ? commands.length * configs.length : configs.length;
-				
-				// iterate through all configurations and clean them
-				monitor.beginTask("", totalWork); //$NON-NLS-1$
-				for (IConfiguration config : configs) {
-					buildInfo.setDefaultConfiguration(config);
-					if (runAllBuidlers) {																			
-						for (int i = 0; i < commands.length; i++) {							
-							// currently the platform doesn't accept arguments for a builder to clean a project, thus arguments are null
-							project.build(IncrementalProjectBuilder.CLEAN_BUILD, commands[i].getBuilderName(), null, new SubProgressMonitor(monitor, 1));							
-						}						
-					} else {
-						project.build(IncrementalProjectBuilder.CLEAN_BUILD, CommonBuilder.BUILDER_ID, null, new SubProgressMonitor(monitor, 1));
-					}
-				}								
-			}
-		};
-		try {
-			ResourcesPlugin.getWorkspace().run(op, monitor);
-		} finally {
-			// complete the progress monitor and restore default configuration
-			monitor.done();
-			buildInfo.setDefaultConfiguration(savedCfg);
-		}
-
 	}
 
 	public static IBuilder getInternalBuilder(){

@@ -85,7 +85,7 @@
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.cdt.managedbuilder.ui.ConvertTargetAction">
-         </action>         
+         </action>
          <filter
                name="projectNature"
                value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
@@ -96,19 +96,23 @@
             adaptable="true"
             id="org.eclipse.cdt.managedbuilder.ui.popupMenu.BuildAll">
         <action
-              class="org.eclipse.cdt.managedbuilder.internal.ui.actions.CleanAllAction"
+              class="org.eclipse.cdt.managedbuilder.ui.actions.CleanAndBuildAction"
               enablesFor="+"
-              id="org.eclipse.cdt.managedbuilder.ui.cleanAllAction"
-              label="%CleanMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"
-              style="pulldown"/>
+              id="org.eclipse.cdt.managedbuilder.ui.rebuildConfigurationsAction"
+              label="%RebuildConfigurationsMenu.label"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"/>
         <action
-              class="org.eclipse.cdt.managedbuilder.ui.actions.BuildAllAction"
+              class="org.eclipse.cdt.managedbuilder.ui.actions.CleanAllConfigurationsAction"
               enablesFor="+"
-              id="org.eclipse.cdt.managedbuilder.ui.buildAllAction1"
-              label="%BuildMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"
-              style="pulldown"/>
+              id="org.eclipse.cdt.managedbuilder.ui.cleanAllConfigurationsAction"
+              label="%CleanAllConfigurationsMenu.label"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"/>
+        <action
+              class="org.eclipse.cdt.managedbuilder.ui.actions.BuildAllConfigurationsAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.managedbuilder.ui.buildAllConfigurationsAction"
+              label="%BuildAllConfigurationsMenu.label"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"/>
         <visibility>
            <objectState
               name="projectNature"

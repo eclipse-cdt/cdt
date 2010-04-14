@@ -8,20 +8,15 @@
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import org.eclipse.osgi.util.NLS;
 
 /**
  * Message bundle class for externalizing messages.
- * 
- * @noextend This interface is not intended to be extended by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * 
- * @since 7.0
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.ui.actions.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.ui.actions.messages"; //$NON-NLS-1$
 	public static String BuildConfigurationsJob_BuildError;
 	public static String BuildConfigurationsJob_Building;
 	public static String BuildConfigurationsJob_Cleaning;

@@ -6,11 +6,11 @@ Bundle-Version: 7.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.cdt.managedbuilder.internal.ui.workingsets;x-internal:=true,
- org.eclipse.cdt.managedbuilder.ui.actions,
- org.eclipse.cdt.managedbuilder.ui.preferences,
+Export-Package: org.eclipse.cdt.managedbuilder.ui.preferences,
  org.eclipse.cdt.managedbuilder.ui.properties,
- org.eclipse.cdt.managedbuilder.ui.wizards
+ org.eclipse.cdt.managedbuilder.ui.wizards,
+ org.eclipse.cdt.managedbuilder.internal.ui.actions;x-internal:=true,
+ org.eclipse.cdt.managedbuilder.internal.ui.workingsets;x-internal:=true
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)",

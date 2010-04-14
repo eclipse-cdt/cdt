@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +49,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Dialog to let the user to clean and rebuild configurations of the selected projects.
- * 
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * 
- * @since 7.0
  */
 public class CleanAndBuildDialog extends MessageDialog {
 	private static final String DIALOG_SETTINGS_SECTION = "RebuildConfigurationsDialogSettings"; //$NON-NLS-1$

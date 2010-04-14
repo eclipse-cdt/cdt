@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -25,11 +25,6 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * A job to build CDT build configurations.
- * 
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * 
- * @since 7.0
  */
 public class BuildConfigurationsJob extends Job {
 	private ICConfigurationDescription[] cfgDescriptions;
@@ -83,7 +78,7 @@ public class BuildConfigurationsJob extends Job {
 				ManagedBuildManager.buildConfigurations(cfgs, null, monitor, true, buildKind);
 			}
 		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, org.eclipse.cdt.managedbuilder.ui.actions.Messages.BuildConfigurationsJob_BuildError, e.getLocalizedMessage());
+			return new Status(IStatus.ERROR, org.eclipse.cdt.managedbuilder.internal.ui.actions.Messages.BuildConfigurationsJob_BuildError, e.getLocalizedMessage());
 		}
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;

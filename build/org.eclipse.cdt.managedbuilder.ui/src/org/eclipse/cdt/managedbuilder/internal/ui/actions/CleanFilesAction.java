@@ -8,7 +8,7 @@
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -40,10 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * @author crecoskie
- *
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * Action to clean build output for selected files
  */
 public class CleanFilesAction extends ActionDelegate implements
 		IWorkbenchWindowActionDelegate {

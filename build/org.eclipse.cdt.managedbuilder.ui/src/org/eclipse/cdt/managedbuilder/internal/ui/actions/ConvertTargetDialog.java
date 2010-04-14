@@ -8,7 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +38,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- */
 public class ConvertTargetDialog extends Dialog {
 
 	final private String title;

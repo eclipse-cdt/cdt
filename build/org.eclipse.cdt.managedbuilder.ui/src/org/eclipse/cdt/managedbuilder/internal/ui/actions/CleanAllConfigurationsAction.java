@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import java.util.ArrayList;
 
@@ -25,14 +25,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
- * Action which builds all configurations of the selected projects
- * 
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * 
- * @since 7.0
+ * Action which cleans all configurations of the selected projects
  */
-public class BuildAllConfigurationsAction implements IObjectActionDelegate {
+public class CleanAllConfigurationsAction implements IObjectActionDelegate {
 	private ArrayList<IProject> projects = null;
 
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -49,7 +44,7 @@ public class BuildAllConfigurationsAction implements IObjectActionDelegate {
 					// save all dirty editors
 					BuildUtilities.saveEditors(null);
 					
-					Job buildFilesJob = new BuildConfigurationsJob(cfgds, 0, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+					Job buildFilesJob = new BuildConfigurationsJob(cfgds, IncrementalProjectBuilder.CLEAN_BUILD, 0);
 					buildFilesJob.schedule();
 				}
 			}

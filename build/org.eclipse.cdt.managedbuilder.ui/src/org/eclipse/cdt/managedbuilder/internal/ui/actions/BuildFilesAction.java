@@ -8,7 +8,7 @@
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.actions;
+package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,10 +43,7 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
- * @author crecoskie
- *
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * Action to build selected files.
  */
 public class BuildFilesAction extends ActionDelegate implements
 		IWorkbenchWindowActionDelegate {

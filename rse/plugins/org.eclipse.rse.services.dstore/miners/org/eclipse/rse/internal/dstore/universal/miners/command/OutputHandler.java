@@ -20,6 +20,7 @@
  * David McKnight     (IBM)   [287305] [dstore] Need to set proper uid for commands when using SecuredThread and single server for multiple clients[
  * Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
  * David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
+ * David McKnight   (IBM)     [309338] [dstore] z/OS USS - invocation of 'env' shell command returns inconsistently organized output
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -95,15 +96,26 @@ public class OutputHandler extends Handler {
 	public void handle() {
 		String[] lines = readLines();
 		if (lines != null) {
-
+						
 			/*
 			 * if (lines.length == 0) { _reader. }
 			 *  // don't do anything unless we require output if (_newCommand &&
 			 * !_isTerminal) { doPrompt(); } } else
 			 */
 			for (int i = 0; i < lines.length; i++) {
-				String line = convertSpecialCharacters(lines[i]);
-				_commandThread.interpretLine(line, _isStdError);
+				// first make sure it's not a multiline line
+				String ln = lines[i];
+				if (ln.indexOf('\n') > 0){
+					String[] lns = ln.split("\n"); //$NON-NLS-1$
+					for (int j = 0; j < lns.length; j++){
+						String line = convertSpecialCharacters(lns[j]);
+						_commandThread.interpretLine(line, _isStdError);
+					}
+				}
+				else {
+					String line = convertSpecialCharacters(ln);
+					_commandThread.interpretLine(line, _isStdError);
+				}
 			}
 
 			if (!_isTerminal){

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 
@@ -35,7 +36,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 
 	@Override
 	public void addOutgoing(IBasicBlock node) {
-		IConnectorNode cnode = (IConnectorNode) node; // cast to throw CCE
+		IBranchNode cnode = (IBranchNode) node; // cast to throw CCE
 		next.add(cnode);
 	}
 

@@ -8,30 +8,33 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
+package org.eclipse.cdt.codan.internal.core.cfg;
 
-import org.eclipse.cdt.codan.internal.core.cfg.LabeledNode;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
 
 /**
  * TODO: add description
  */
-public class CxxLabeledNode extends LabeledNode {
-	private IASTNode labelData;
+public class BranchNode extends PlainNode implements IBranchNode {
+	protected String label;
 
-
-    CxxLabeledNode(IASTNode label) {
-		super(label.getRawSignature());
-		this.labelData = label;
+	public BranchNode(String label) {
+		super();
+		this.label = label;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.codan.internal.core.cfg.DecisionArc#toString()
+	 * @see
+	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode#getLabel()
 	 */
+	public String getLabel() {
+		return label;
+	}
+
 	@Override
-	public String toString() {
-		return labelData.getRawSignature()+":";
+	public String toStringData() {
+		return label;
 	}
 }

@@ -13,7 +13,7 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.ILabeledNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.ui.cfgview.ControlFlowGraphPlugin;
@@ -131,10 +131,9 @@ public class ControlFlowGraphView extends ViewPart {
 				}
 				blocks.add(((IDecisionNode) parent).getMergeNode());
 				return blocks.toArray();
-			} else if (parent instanceof ILabeledNode) {
-				Collection<IBasicBlock> blocks = getFlat(
-						((ILabeledNode) parent).getOutgoing(),
-						new ArrayList<IBasicBlock>());
+			} else if (parent instanceof IBranchNode) {
+				Collection<IBasicBlock> blocks = getFlat(((IBranchNode) parent)
+						.getOutgoing(), new ArrayList<IBasicBlock>());
 				return blocks.toArray();
 			}
 			return new Object[0];
@@ -142,6 +141,25 @@ public class ControlFlowGraphView extends ViewPart {
 
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
+		}
+
+		/**
+		 * @param list
+		 * @param startNode
+		 * @return
+		 */
+		public Collection<IBasicBlock> getFlat(IBasicBlock node,
+				Collection<IBasicBlock> list) {
+			list.add(node);
+			if (node instanceof IJumpNode)
+				return list;
+			if (node instanceof ISingleOutgoing) {
+				getFlat(((ISingleOutgoing) node).getOutgoing(), list);
+			} else if (node instanceof IDecisionNode) {
+				getFlat(((IDecisionNode) node).getMergeNode().getOutgoing(),
+						list);
+			}
+			return list;
 		}
 	}
 
@@ -154,13 +172,11 @@ public class ControlFlowGraphView extends ViewPart {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
 			if (strdata == null || strdata.length() == 0) {
-				if (obj instanceof ILabeledNode) {
-					strdata = strdata+blockHexLabel(obj);
-				} else if (obj instanceof IConnectorNode) {
+				if (obj instanceof IConnectorNode) {
 					strdata = blockHexLabel(obj);
 				} else if (obj instanceof IJumpNode) {
 					strdata = blockHexLabel(((IJumpNode) obj).getJumpNode());
-				} 
+				}
 			}
 			return obj.getClass().getSimpleName() + ": " + strdata;
 		}
@@ -184,7 +200,7 @@ public class ControlFlowGraphView extends ViewPart {
 				imageKey = "start.png";
 			else if (obj instanceof IJumpNode)
 				imageKey = "jump.png";
-			else if (obj instanceof ILabeledNode)
+			else if (obj instanceof IBranchNode)
 				imageKey = "labeled.png";
 			else if (obj instanceof IConnectorNode)
 				imageKey = "connector.png";
@@ -197,29 +213,6 @@ public class ControlFlowGraphView extends ViewPart {
 	 * The constructor.
 	 */
 	public ControlFlowGraphView() {
-	}
-
-	/**
-	 * @param list
-	 * @param startNode
-	 * @return
-	 */
-	public Collection<IBasicBlock> getFlat(IBasicBlock node,
-			Collection<IBasicBlock> list) {
-		list.add(node);
-		if (node instanceof IConnectorNode
-				&& !((IConnectorNode) node).hasBackwardIncoming() &&
-				!(node instanceof ILabeledNode)) {
-			return list;
-		}
-		if (node instanceof IJumpNode)
-			return list;
-		if (node instanceof ISingleOutgoing) {
-			getFlat(((ISingleOutgoing) node).getOutgoing(), list);
-		} else if (node instanceof IDecisionNode) {
-			getFlat(((IDecisionNode) node).getMergeNode().getOutgoing(), list);
-		}
-		return list;
 	}
 
 	/**

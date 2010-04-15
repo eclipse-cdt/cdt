@@ -13,7 +13,8 @@ package org.eclipse.cdt.codan.provisional.core.model.cfg;
 /**
  * Node that represent empty operator with label, such as case branch or label
  */
-public interface ILabeledNode extends IConnectorNode {
+public interface IBranchNode extends IBasicBlock, ISingleIncoming,
+		ISingleOutgoing {
 	public static String THEN = "then"; //$NON-NLS-1$
 	public static String ELSE = "else"; //$NON-NLS-1$
 	public static String DEFAULT = "default"; //$NON-NLS-1$

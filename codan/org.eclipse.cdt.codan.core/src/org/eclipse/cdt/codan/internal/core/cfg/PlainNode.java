@@ -1,6 +1,7 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
+
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
 
@@ -9,7 +10,7 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
  * 
  */
 public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode {
-	IBasicBlock next;
+	protected IBasicBlock next;
 
 	public PlainNode() {
 		super();
@@ -28,9 +29,6 @@ public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode 
 	}
 
 	public void setOutgoing(IBasicBlock exit) {
-		if (this.next != null)
-			throw new IllegalArgumentException(
-					"Cannot modify already exiting connector"); //$NON-NLS-1$
 		this.next = exit;
 	}
 

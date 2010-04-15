@@ -22,7 +22,7 @@ import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.ILabeledNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 
@@ -85,7 +85,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 			print(((IDecisionNode) node).getMergeNode());
 		} else if (node instanceof ISingleOutgoing) {
 			IBasicBlock next = ((ISingleOutgoing) node).getOutgoing();
-			if (!(next instanceof IConnectorNode && !(next instanceof ILabeledNode)))
+			if (!(next instanceof IConnectorNode && !(next instanceof IBranchNode)))
 				print(next);
 		}
 	}

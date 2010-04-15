@@ -149,7 +149,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 		        		try {
 		        			prevSession.getExecutor().execute(new DsfRunnable() {
 		        				public void run() {
-		        					prevSession.removeServiceEventListener(this);
+		        					prevSession.removeServiceEventListener(DisassemblyBackendDsf.this);
 		        				}
 		        			});
 		        		} catch (RejectedExecutionException e) {
@@ -171,7 +171,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 	        		try {
 	        			newSession.getExecutor().execute(new DsfRunnable() {
 	        				public void run() {
-	        					newSession.removeServiceEventListener(this);
+	        					newSession.addServiceEventListener(DisassemblyBackendDsf.this, null);
 	        				}
 	        			});
 	        		} catch (RejectedExecutionException e) {
@@ -208,7 +208,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 			try {
 				session.getExecutor().execute(new DsfRunnable() {
 					public void run() {
-						session.removeServiceEventListener(this);
+						session.removeServiceEventListener(DisassemblyBackendDsf.this);
 					}
 				});
     		} catch (RejectedExecutionException e) {

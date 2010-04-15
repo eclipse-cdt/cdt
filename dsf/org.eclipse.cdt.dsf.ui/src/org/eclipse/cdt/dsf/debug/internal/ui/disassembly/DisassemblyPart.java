@@ -1785,6 +1785,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		if (context != null) {
 			if (fBackend == null || !fBackend.supportsDebugContext(context)) {
 				if (fBackend != null) {
+					fBackend.clearDebugContext();
 					fBackend.dispose();
 				}
 				fBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,20 +216,7 @@ public class GDBProcesses extends MIProcesses {
 	    	inferiorProcess != null && 
 	    	inferiorProcess.getState() != MIInferiorProcess.State.TERMINATED) {
 
-	    	final IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
-			if (containerDmc == null) {
-				// This service version only handles a single process to debug, therefore, we can simply
-				// create the context describing this process ourselves.
-				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-				String groupId = MIProcesses.UNIQUE_GROUP_ID;
-				IProcessDMContext procDmc = createProcessContext(controlDmc, groupId);
-				IMIContainerDMContext newContainerDmc = createContainerContext(procDmc, groupId);
-				rm.setData(new IContainerDMContext[] {newContainerDmc});
-				rm.done();
-			} else {
-				// List of threads
-    	    	super.getProcessesBeingDebugged(dmc, rm);
-			}
+   	    	super.getProcessesBeingDebugged(dmc, rm);
 	    } else {
 	    	rm.setData(new IDMContext[0]);
 	    	rm.done();

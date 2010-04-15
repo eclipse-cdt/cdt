@@ -111,15 +111,15 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		}
 	}
 
-	private ISelectionListener fDebugViewListener = null;
-	private String fDebugSessionId = null;
-	private DsfServicesTracker fServicesTracker = null;
-	private volatile ITraceTargetDMContext fTargetContext = null;
+	private ISelectionListener fDebugViewListener;
+	private String fDebugSessionId;
+	private DsfServicesTracker fServicesTracker;
+	private volatile ITraceTargetDMContext fTargetContext;
 
-	private StyledText fStatusText = null;
-	protected Action fActionRefreshView = null;
-	protected Action fOpenTraceVarDetails = null;
-	private boolean fTracingSupported = false;
+	private StyledText fStatusText;
+	protected Action fActionRefreshView;
+	protected Action fOpenTraceVarDetails;
+	private boolean fTracingSupported;
 
 	public TraceControlView() {
 	}
@@ -182,7 +182,8 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 	
 	@Override
 	public void dispose() {
-		getSite().getPage().removeSelectionListener(fDebugViewListener);
+		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener);
+		fStatusText = null;  // Indicate that we have been disposed
 		setDebugContext(null);
 		super.dispose();
 	}
@@ -205,7 +206,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 	}
 		
 	protected String retrieveStatus() {
-		if (fDebugSessionId == null) {
+		if (fDebugSessionId == null || getSession() == null) {
 			return EMPTY_STRING;
 		}
 		
@@ -304,7 +305,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		// updateContent() will fix it
 		fTracingSupported = false;
 		
-		if (fDebugSessionId != null) {
+		if (fDebugSessionId != null && getSession() != null) {
 			try {
 				final DsfSession session = getSession();
 				session.getExecutor().execute(new DsfRunnable() {
@@ -402,7 +403,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 	 * @return null when the list cannot be obtained.
 	 */
 	public ITraceVariableDMData[] getTraceVarList() {
-		if (fDebugSessionId == null) {
+		if (fDebugSessionId == null || getSession() == null) {
 			return null;
 		}
 		
@@ -453,7 +454,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 	 *         will contain the error message to display to the user.
 	 */
 	protected void createVariable(final String name, final String value) throws FailedTraceVariableCreationException {
-		if (fDebugSessionId == null) {
+		if (fDebugSessionId == null || getSession() == null) {
 			throw new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_create_variable_error);
 		}
 		

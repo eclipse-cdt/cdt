@@ -48,8 +48,6 @@ public class TranslateAction extends ProvisioningAction {
 		
 		// The replacement map
 		String mapString = (String)parameters.get(PARM_MAP);
-		Activator.getDefault().getLog().log(new Status(IStatus.INFO, Activator.PLUGIN_ID,
-				"mapString:" + mapString));
 		String[] mapStrings = mapString.split("!");
 		Map<String, String> map = new HashMap<String, String>();
 		for (int i = 0; i < mapStrings.length; i += 2) {
@@ -57,8 +55,6 @@ public class TranslateAction extends ProvisioningAction {
 				// Odd number of strings
 				break;
 			map.put(mapStrings[i], mapStrings[i + 1]);
-			Activator.getDefault().getLog().log(new Status(IStatus.INFO, Activator.PLUGIN_ID,
-					"map:" + mapStrings[i] + ":" + mapStrings[i + 1]));
 		}
 		
 		
@@ -71,8 +67,6 @@ public class TranslateAction extends ProvisioningAction {
 			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 				Matcher matcher = pattern.matcher(line);
 				while (matcher.find()) {
-					Activator.getDefault().getLog().log(new Status(IStatus.INFO, Activator.PLUGIN_ID,
-							"match:" + matcher.group() + ":" + matcher.group(1))); 
 					String value = map.get(matcher.group(1));
 					if (value != null) {
 						line = line.replace(matcher.group(), value);

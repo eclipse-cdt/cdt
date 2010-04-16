@@ -21,5 +21,15 @@
             version="1.0.0">
       </action>
    </extension>
+   <extension
+         point="org.eclipse.equinox.p2.engine.actions">
+      <action
+            class="org.eclipse.cdt.internal.p2.touchpoint.natives.actions.TranslateAction"
+            name="org.eclipse.equinox.p2.touchpoint.natives.translate"
+            touchpointType="org.eclipse.equinox.p2.native"
+            touchpointVersion="1.0.0"
+            version="1.0.0">
+      </action>
+   </extension>
 
 </plugin>

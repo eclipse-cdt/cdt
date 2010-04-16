@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,12 @@
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  *  David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
+ *  Noriaki Takatsu (IBM)  - [289678][api][breaking] ServerSocket creation in multiple IP addresses
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
 
+import java.net.InetAddress;
 import java.util.StringTokenizer;
 
 import org.eclipse.dstore.internal.core.server.ServerReturnCodes;
@@ -157,6 +159,23 @@ public class Server implements Runnable
 	{
 		_establisher = new ConnectionEstablisher(port, timeout, ticket);
 	}
+	
+	/**
+	 * Creates a new Server that waits on the specified socket port and
+	 * the specified IP address with the backlog for
+	 * the specified time interval before shutting down.
+	 *
+	 * @param port the number of the socket port to wait on
+	 * @param backlog listen backlog
+	 * @param bindAddr the local IP address to bind to
+	 * @param timeout the idle time to wait before shutting down
+	 * @param ticket the ticket that the client needs to interact with the DataStore
+	 */
+	public Server(String port, int backlog, InetAddress bindAddr, String timeout, String ticket)
+	{
+		_establisher = new ConnectionEstablisher(port, backlog, bindAddr, timeout, ticket);
+	}
+
 
 
 	/**

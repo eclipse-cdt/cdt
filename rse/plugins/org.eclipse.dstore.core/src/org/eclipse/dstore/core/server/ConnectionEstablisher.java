@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * Noriaki Takatsu  (IBM) - [242968] [multithread] serverSocket must be closed when an exception happens in Accept
  * David McKnight   (IBM) - [257321] [dstore] "Error binding socket" should include port of the failed socket
  * Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
+ * Noriaki Takatsu  (IBM) - [289678][api][breaking] ServerSocket creation in multiple IP addresses
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -138,6 +139,24 @@ public class ConnectionEstablisher
 	public ConnectionEstablisher(String port, String timeout, String ticket)
 	{
 		setup(port, timeout, ticket);
+	}
+	
+	/**
+	 * Creates a ConnectionEstablisher.  Communication occurs
+	 * on the specified port and the specified IP address, 
+	 * a timeout value indicates the idle wait time
+	 * before shutting down, and ticket specified the required
+	 * ticket for a client to present in order to work with the DataStore.
+	 *
+	 * @param port the number of the socket port
+	 * @param backlog listen backlog
+	 * @param bindAddr the local IP address to bind to
+	 * @param timeout the idle duration to wait before shutting down
+	 * @param ticket validation id required by the client to access the DataStore
+	 */
+	public ConnectionEstablisher(String port, int backlog, InetAddress bindAddr, String timeout, String ticket)
+	{
+		setup(port, backlog, bindAddr, timeout, ticket);
 	}
 
 
@@ -282,7 +301,7 @@ public class ConnectionEstablisher
 
 
 
-	private ServerSocket createSocket(String portStr) throws UnknownHostException
+	private ServerSocket createSocket(String portStr, int backlog, InetAddress bindAddr) throws UnknownHostException
 	{
 		ServerSocket serverSocket = null;
 		SSLContext sslContext = null;
@@ -328,7 +347,7 @@ public class ConnectionEstablisher
 					{
 						try
 						{
-							serverSocket = sslContext.getServerSocketFactory().createServerSocket(i);
+							serverSocket = sslContext.getServerSocketFactory().createServerSocket(i, backlog, bindAddr);
 						}
 						catch (Exception e)
 						{
@@ -336,7 +355,7 @@ public class ConnectionEstablisher
 					}
 					else
 					{
-						serverSocket = new ServerSocket(i);
+						serverSocket = new ServerSocket(i, backlog, bindAddr);
 					}
 				}
 				catch (Exception e)
@@ -363,7 +382,7 @@ public class ConnectionEstablisher
 			{
 				try
 				{
-					serverSocket = sslContext.getServerSocketFactory().createServerSocket(port);
+					serverSocket = sslContext.getServerSocketFactory().createServerSocket(port, backlog, bindAddr);
 				}
 				catch (BindException e){
 					_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -378,7 +397,7 @@ public class ConnectionEstablisher
 			{
 				try
 				{
-					serverSocket = new ServerSocket(port);
+					serverSocket = new ServerSocket(port, backlog, bindAddr);
 				}
 				catch (BindException e){
 					_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -392,7 +411,7 @@ public class ConnectionEstablisher
 		}
 		return serverSocket;
 	}
-
+	
 	/**
 	 * Create the DataStore and initializes it's handlers and communications.
 	 *
@@ -401,6 +420,20 @@ public class ConnectionEstablisher
 	 * @param ticketStr validation id required by the client to access the DataStore
 	 */
 	private void setup(String portStr, String timeoutStr, String ticketStr)
+	{
+		setup(portStr, 50, null, timeoutStr, ticketStr);
+	}
+
+	/**
+	 * Create the DataStore and initializes it's handlers and communications.
+	 *
+	 * @param portStr the number of the socket port
+	 * @param backlog listen backlog
+	 * @param bindAddr the local IP address to bind to
+	 * @param timeoutStr the idle duration to wait before shutting down
+	 * @param ticketStr validation id required by the client to access the DataStore
+	 */
+	private void setup(String portStr, int backlog, InetAddress bindAddr, String timeoutStr, String ticketStr)
 	{
 		_maxConnections = 1;
 
@@ -435,7 +468,7 @@ public class ConnectionEstablisher
 		try
 		{
 
-			_serverSocket = createSocket(portStr);
+			_serverSocket = createSocket(portStr, backlog, bindAddr);
 			if (_serverSocket == null)
 			{
 				_continue = false;

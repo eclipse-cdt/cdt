@@ -130,7 +130,7 @@ public class MingwEnvironmentVariableSupplier implements
 	
 	public static IPath getMsysBinDir() {
 		// Just look in the install location parent dir
-		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile()).removeLastSegments(1);
+		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 		IPath msysBinPath = installPath.append("msys\\bin"); //$NON-NLS-1$
 		return msysBinPath.toFile().isDirectory() ? msysBinPath : null;
 	}

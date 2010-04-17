@@ -15,10 +15,12 @@ import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -69,15 +71,37 @@ public class CRegisterManagerProxy implements IDebugEventSetListener, IDebugCont
         CRegisterManagerModelProxy modelProxy = getModelProxy();
         for( int i = 0; i < events.length; i++ ) {
             DebugEvent event = events[i];
+            if ( !containsEvent( event ) )
+                continue;
             Object source = event.getSource();
             if ( source instanceof ICDebugTarget 
-                    && fRegisterManager.getDebugTarget().equals( source ) 
-                    && (( event.getKind() == DebugEvent.SUSPEND ) || event.getKind() == DebugEvent.TERMINATE ) ) {
+                    && (( event.getKind() == DebugEvent.SUSPEND ) 
+                            || event.getKind() == DebugEvent.TERMINATE ) ) {
+                if ( modelProxy != null )
+                    modelProxy.update();
+            }
+            else if ( source instanceof ICDebugTarget 
+                    && (( event.getKind() == DebugEvent.CHANGE ) 
+                            && event.getDetail() == DebugEvent.CONTENT ) ) {
+                if ( modelProxy != null )
+                    modelProxy.update();
+            }
+            else if ( source instanceof IRegisterGroup 
+                    && event.getKind() == DebugEvent.CHANGE ) {
+                if ( modelProxy != null )
+                    modelProxy.update();
+            }
+            else if ( source instanceof IRegister 
+                    && event.getKind() == DebugEvent.CHANGE ) {
+                if ( modelProxy != null )
+                    modelProxy.update();
+            }
+            else if ( source instanceof ICVariable 
+                    && event.getKind() == DebugEvent.CHANGE ) {
                 if ( modelProxy != null )
                     modelProxy.update();
             }
             else if ( source instanceof ICThread 
-                    && fRegisterManager.getDebugTarget().equals( ((ICThread)source).getDebugTarget() ) 
                     && event.getKind() == DebugEvent.SUSPEND ) {
                 if ( modelProxy != null )
                     modelProxy.update();
@@ -114,5 +138,13 @@ public class CRegisterManagerProxy implements IDebugEventSetListener, IDebugCont
             if ( modelProxy != null )
                 modelProxy.update();
         }
+    }
+
+    private boolean containsEvent( DebugEvent event ) {
+        Object source = event.getSource();
+        if ( source instanceof ICDebugElement ) {
+            return fRegisterManager.getDebugTarget().equals( ((ICDebugElement)source).getDebugTarget() );
+        }
+        return false;
     }
 }

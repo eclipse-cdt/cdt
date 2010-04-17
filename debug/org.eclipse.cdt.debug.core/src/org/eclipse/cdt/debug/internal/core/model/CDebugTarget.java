@@ -1563,6 +1563,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	}
 
 	public CRegisterManager getRegisterManager() {
+	    // Workaround for bug #309212. gdb 7.0 returns "No registers" error 
+	    // at the beginning of the session.   
+	    fRegisterManager.initialize();
 		return fRegisterManager;
 	}
 

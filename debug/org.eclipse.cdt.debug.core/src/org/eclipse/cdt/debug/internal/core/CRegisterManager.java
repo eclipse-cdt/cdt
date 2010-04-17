@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -68,6 +69,10 @@ public class CRegisterManager {
 	private boolean fUseDefaultRegisterGroups = true;
 
 	private CStackFrame fCurrentFrame;
+	
+	private ReentrantLock fInitializationLock = new ReentrantLock();
+	
+	private boolean fInitialized = false;
 
 	/** 
 	 * Constructor for CRegisterManager. 
@@ -123,27 +128,40 @@ public class CRegisterManager {
     }
 
 	public void initialize() {
-		ICDIRegisterGroup[] groups = new ICDIRegisterGroup[0];
-		try {
-			groups = getDebugTarget().getCDITarget().getRegisterGroups();
-		}
-		catch( CDIException e ) {
-			CDebugCorePlugin.log( e );
-		}
-		List list = new ArrayList();
-		for( int i = 0; i < groups.length; ++i ) {
-			try {
-				ICDIRegisterDescriptor[] cdiDescriptors = groups[i].getRegisterDescriptors();
-				for ( int j = 0; j < cdiDescriptors.length; ++j ) {
-					list.add( new CRegisterDescriptor( groups[i], cdiDescriptors[j] ) );
-				}
-			}
-			catch( CDIException e ) {
-				CDebugCorePlugin.log( e );
-			}
-		}
-		fRegisterDescriptors = (IRegisterDescriptor[])list.toArray( new IRegisterDescriptor[list.size()] );
-		createRegisterGroups();
+	    if ( !fInitialized ) {
+	        synchronized( fInitializationLock ) {
+	            if ( !fInitialized ) {
+	                boolean failed = false;
+    	            ICDIRegisterGroup[] groups = new ICDIRegisterGroup[0];
+    	            try {
+    	                groups = getDebugTarget().getCDITarget().getRegisterGroups();
+    	            }
+    	            catch( CDIException e ) {
+    	                CDebugCorePlugin.log( e );
+    	                failed = true;
+    	            }
+    	            List<CRegisterDescriptor> list = new ArrayList<CRegisterDescriptor>();
+    	            for( int i = 0; i < groups.length; ++i ) {
+    	                try {
+    	                    ICDIRegisterDescriptor[] cdiDescriptors = groups[i].getRegisterDescriptors();
+    	                    for ( int j = 0; j < cdiDescriptors.length; ++j ) {
+    	                        list.add( new CRegisterDescriptor( groups[i], cdiDescriptors[j] ) );
+    	                    }
+    	                }
+    	                catch( CDIException e ) {
+    	                    CDebugCorePlugin.log( e );
+    	                    failed = true;
+    	                }
+    	            }
+    	            fRegisterDescriptors = list.toArray( new IRegisterDescriptor[list.size()] );
+                    fInitialized = !failed;
+                    if ( failed )
+                        fRegisterGroups = Collections.emptyList();
+                    else
+                        createRegisterGroups();
+	            }                
+            }
+	    }
 	}
 
 	public void addRegisterGroup( final String name, final IRegisterDescriptor[] descriptors ) {

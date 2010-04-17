@@ -18,11 +18,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 
@@ -53,6 +53,11 @@ public class ControlFlowGraph implements IControlFlowGraph {
 					"Cannot modify already exiting connector"); //$NON-NLS-1$
 		this.exitNodes = Collections.unmodifiableList(new ArrayList<IExitNode>(
 				exitNodes));
+	}
+
+	public void setUnconnectedNodes(Collection<IBasicBlock> nodes) {
+		this.deadNodes = Collections
+				.unmodifiableList(new ArrayList<IBasicBlock>(nodes));
 	}
 
 	/*
@@ -97,8 +102,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * getUnconnectedNodeIterator()
 	 */
 	public Iterator<IBasicBlock> getUnconnectedNodeIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return deadNodes.iterator();
 	}
 
 	/*
@@ -108,8 +112,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * getUnconnectedNodeSize()
 	 */
 	public int getUnconnectedNodeSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return deadNodes.size();
 	}
 
 	/*

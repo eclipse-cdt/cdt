@@ -171,12 +171,10 @@ public class ControlFlowGraphView extends ViewPart {
 			if (obj instanceof AbstractBasicBlock) {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
-			if (strdata == null || strdata.length() == 0) {
-				if (obj instanceof IConnectorNode) {
-					strdata = blockHexLabel(obj);
-				} else if (obj instanceof IJumpNode) {
-					strdata = blockHexLabel(((IJumpNode) obj).getJumpNode());
-				}
+			if (obj instanceof IConnectorNode) {
+				strdata = blockHexLabel(obj) ;
+			} else if (obj instanceof IJumpNode) {
+				strdata = "jump to "+blockHexLabel(((IJumpNode) obj).getJumpNode());
 			}
 			return obj.getClass().getSimpleName() + ": " + strdata;
 		}

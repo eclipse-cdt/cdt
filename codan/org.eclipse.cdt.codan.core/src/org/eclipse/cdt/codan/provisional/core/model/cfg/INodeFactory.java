@@ -22,7 +22,7 @@ public interface INodeFactory {
 
 	IConnectorNode createConnectorNode();
 
-	IBranchNode createLabeledNode(String label);
+	IBranchNode createBranchNode(String label);
 
 	IStartNode createStartNode();
 

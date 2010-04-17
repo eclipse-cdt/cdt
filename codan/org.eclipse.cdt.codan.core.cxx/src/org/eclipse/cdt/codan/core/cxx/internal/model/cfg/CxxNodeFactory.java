@@ -61,8 +61,8 @@ public class CxxNodeFactory extends NodeFactory implements INodeFactory {
 	 * @param caseSt
 	 * @return
 	 */
-	public IBranchNode createLabeledNode(IASTNode caseSt) {
-		IBranchNode node = createLabeledNode(caseSt.getRawSignature());
+	public IBranchNode createBranchNode(IASTNode caseSt) {
+		IBranchNode node = createBranchNode(caseSt.getRawSignature());
 		((AbstractBasicBlock) node).setData(caseSt);
 		return node;
 	}

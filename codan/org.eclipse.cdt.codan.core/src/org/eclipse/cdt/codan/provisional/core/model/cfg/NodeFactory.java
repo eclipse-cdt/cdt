@@ -101,7 +101,7 @@ public class NodeFactory implements INodeFactory {
 		return new ExitNode();
 	}
 
-	public IBranchNode createLabeledNode(String label) {
+	public IBranchNode createBranchNode(String label) {
 		return new BranchNode(label);
 	}
 }

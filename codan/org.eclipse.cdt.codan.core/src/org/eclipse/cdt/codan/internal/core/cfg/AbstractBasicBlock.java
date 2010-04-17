@@ -44,7 +44,7 @@ public abstract class AbstractBasicBlock implements IBasicBlock {
 	 */
 	public String toStringData() {
 		if (getData() == null)
-			return "";
+			return "0x" + Integer.toHexString(System.identityHashCode(this));
 		return getData().toString();
 	}
 

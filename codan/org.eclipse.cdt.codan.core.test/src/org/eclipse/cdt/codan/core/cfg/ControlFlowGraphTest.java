@@ -15,9 +15,17 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
 import org.eclipse.cdt.codan.core.test.CodanTestCase;
+import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
+import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -36,6 +44,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ControlFlowGraphTest extends CodanTestCase {
 	ControlFlowGraph graph;
+
 	void processFile(IFile file) throws CoreException, InterruptedException {
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
@@ -64,28 +73,30 @@ public class ControlFlowGraphTest extends CodanTestCase {
 			{
 				shouldVisitDeclarations = true;
 			}
+
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof IASTFunctionDefinition) {
-					graph = new ControlFlowGraphBuilder().build((IASTFunctionDefinition) decl);
+					graph = new ControlFlowGraphBuilder()
+							.build((IASTFunctionDefinition) decl);
 					return PROCESS_ABORT;
 				}
 				return PROCESS_CONTINUE;
 			}
 		};
 		ast.accept(visitor);
-	
 	}
+
 	void buildCfg() {
 		try {
-		
-			IResource el = cproject.getProject().findMember(currentFile.getName());
+			IResource el = cproject.getProject().findMember(
+					currentFile.getName());
 			processFile((IFile) el);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -93,28 +104,32 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		assertNotNull(graph);
 		assertNotNull(graph.getStartNode());
 		Collection<IBasicBlock> nodes = graph.getNodes();
-		for (Iterator<IBasicBlock> iterator = nodes.iterator(); iterator.hasNext();) {
-		    IBasicBlock node = iterator.next();
+		for (Iterator<IBasicBlock> iterator = nodes.iterator(); iterator
+				.hasNext();) {
+			IBasicBlock node = iterator.next();
 			checkNode(node);
 		}
-		
 	}
+
 	/**
 	 * @param node
 	 */
 	private void checkNode(IBasicBlock node) {
-		for (Iterator<IBasicBlock> iterator = node.getIncomingIterator(); iterator.hasNext();) {
+		for (Iterator<IBasicBlock> iterator = node.getIncomingIterator(); iterator
+				.hasNext();) {
 			IBasicBlock b = iterator.next();
 			if (!contains(node, b.getOutgoingIterator()))
-				fail("Block "+node+" inconsitent prev/next "+b);
+				fail("Block " + node + " inconsitent prev/next " + b);
 		}
-		for (Iterator<IBasicBlock> iterator = node.getOutgoingIterator(); iterator.hasNext();) {
+		for (Iterator<IBasicBlock> iterator = node.getOutgoingIterator(); iterator
+				.hasNext();) {
 			IBasicBlock b = iterator.next();
 			if (!contains(node, b.getIncomingIterator()))
-				fail("Block "+node+" inconsitent next/prev "+b);
+				fail("Block " + node + " inconsitent next/prev " + b);
 		}
 		if (node instanceof IDecisionNode) {
-			assertTrue("decision node outgping size",node.getOutgoingSize()>1);
+			assertTrue("decision node outgping size",
+					node.getOutgoingSize() > 1);
 			assertNotNull(((IDecisionNode) node).getMergeNode());
 		}
 	}
@@ -124,13 +139,60 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	 * @param outgoingIterator
 	 * @return
 	 */
-	private boolean contains(IBasicBlock node,
-			Iterator<IBasicBlock> iterator) {
+	private boolean contains(IBasicBlock node, Iterator<IBasicBlock> iterator) {
 		for (; iterator.hasNext();) {
 			IBasicBlock b = iterator.next();
-			if (b.equals(node)) return true;
+			if (b.equals(node))
+				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * @param file
+	 */
+	protected void buildAndCheck(String file) {
+		load(file);
+		buildCfg();
+		checkCfg();
+	}
+
+	/**
+	 * @param des
+	 * @return
+	 */
+	private String data(IBasicBlock des) {
+		return ((AbstractBasicBlock) des).toStringData();
+	}
+
+	/**
+	 * Return first node after the branch
+	 * 
+	 * @param des
+	 * @return
+	 */
+	private IBasicBlock branchEnd(IDecisionNode des, String label) {
+		for (Iterator<IBasicBlock> iterator = des.getOutgoingIterator(); iterator
+				.hasNext();) {
+			IBranchNode bn = (IBranchNode) iterator.next();
+			if (label.equals(bn.getLabel()))
+				return bn.getOutgoing();
+		}
+		return null;
+	}
+
+	/**
+	 * Return node where control jumps, following the chain until jump is hit
+	 * 
+	 * @param a
+	 * @return
+	 */
+	private IBasicBlock jumpEnd(IBasicBlock a) {
+		if (a instanceof IJumpNode)
+			return ((IJumpNode) a).getOutgoing();
+		if (a instanceof ISingleOutgoing)
+			return jumpEnd(((ISingleOutgoing) a).getOutgoing());
+		return null;
 	}
 
 	/*-
@@ -141,11 +203,8 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	 }
 	 </code>
 	 */
-	public void test1() {
-		load("test1.c");
-		buildCfg();
-		checkCfg();
-		
+	public void test_basic() {
+		buildAndCheck("test1.c");
 	}
 
 	/*-
@@ -159,10 +218,110 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	 </code>
 	 */
 	public void test_while() {
-		load("test2.c");
-		buildCfg();
-		checkCfg();
-		
+		buildAndCheck("test2.c");
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IConnectorNode conn = (IConnectorNode) decl.getOutgoing();
+		IDecisionNode des = (IDecisionNode) conn.getOutgoing();
+		assertEquals("a--", data(des));
+		IPlainNode bThen = (IPlainNode) branchEnd(des, IBranchNode.THEN);
+		assertEquals("a=a-2;", data(bThen));
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+		IBasicBlock m2 = jumpEnd(bThen);
+		IBasicBlock m1 = jumpEnd(bElse);
+		assertSame(conn, m2);
+		IExitNode ret = (IExitNode) ((IConnectorNode) m1).getOutgoing();
 	}
 
+	/*-
+	 <code file="test3.c">
+	 main() {
+	   int a=10;
+	   if (a--) {
+	      a=a-2;
+	   }
+	 }
+	 </code>
+	 */
+	public void test_if() {
+		buildAndCheck("test3.c");
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
+		assertEquals("a--", data(des));
+		IPlainNode bThen = (IPlainNode) branchEnd(des, IBranchNode.THEN);
+		assertEquals("a=a-2;", data(bThen));
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+		IBasicBlock m2 = jumpEnd(bThen);
+		IBasicBlock m1 = jumpEnd(bElse);
+		assertSame(m1, m2);
+	}
+
+	/*-
+	 <code file="test4.c">
+	 main() {
+	   int a=10;
+	   if (a--) {
+	      return;
+	   }
+	 }
+	 </code>
+	 */
+	public void test_if_ret() {
+		buildAndCheck("test4.c");
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
+		assertEquals("a--", data(des));
+		IExitNode bThen = (IExitNode) branchEnd(des, IBranchNode.THEN);
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+		IBasicBlock m1 = jumpEnd(bElse);
+	}
+	/*-
+	 <code file="test5.c">
+	 main() {
+	   int a=10;
+	   if (a--) {
+	      return;
+	      a++;
+	   }
+	 }
+	 </code>
+	 */
+	public void test_if_dead() {
+		buildAndCheck("test5.c");
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
+		assertEquals("a--", data(des));
+		IExitNode bThen = (IExitNode) branchEnd(des, IBranchNode.THEN);
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+		IBasicBlock m1 = jumpEnd(bElse);
+		assertEquals(1,graph.getUnconnectedNodeSize());
+	}
+	/*-
+	 <code file="test_ifif.c">
+	 foo() {
+	   int a=10, x=5;
+	   if (a--) {
+	      if (x<0)
+	         a++;
+	   }
+	 }
+	 </code>
+	 */
+	public void test_ifif() {
+		buildAndCheck("test_ifif.c");
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
+		assertEquals("a--", data(des));
+		IDecisionNode bThen = (IDecisionNode) branchEnd(des, IBranchNode.THEN);
+		assertEquals("x<0", data(bThen));
+		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
+		IBasicBlock m2 = jumpEnd(branchEnd(bThen,IBranchNode.THEN));
+		IBasicBlock m1 = jumpEnd(bElse);
+		IBasicBlock m3 = jumpEnd(m2);
+		assertSame(m1, m3);
+	}
 }

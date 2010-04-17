@@ -39,10 +39,13 @@ import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
  * TODO: add description
@@ -91,7 +94,8 @@ public class ControlFlowGraphBuilder {
 				prev = last;
 			}
 		} else if (body instanceof IASTExpressionStatement
-				|| body instanceof IASTDeclarationStatement) {
+				|| body instanceof IASTDeclarationStatement
+				|| body instanceof IASTNullStatement) {
 			CxxPlainNode node = factory.createPlainNode(body);
 			addOutgoing(prev, node);
 			return node;
@@ -134,19 +138,29 @@ public class ControlFlowGraphBuilder {
 			}
 			return createSubGraph(conn, ast.getNestedStatement());
 		} else if (body instanceof IASTGotoStatement) {
-			IASTGotoStatement ast = (IASTGotoStatement)body;
+			IASTGotoStatement ast = (IASTGotoStatement) body;
 			String labelName = ast.getName().toString();
 			IConnectorNode conn;
 			IBranchNode labNode = (IBranchNode) labels.get(labelName);
-			if (labNode!=null) {
+			if (labNode != null) {
 				conn = (IConnectorNode) labNode.getOutgoing();
 			} else {
 				conn = createLabelNodes(null, labelName);
 			}
 			IJumpNode gotoNode = factory.createJumpNode();
-			((JumpNode) gotoNode).setJump(conn, labNode!=null);
+			((JumpNode) gotoNode).setJump(conn, labNode != null);
 			addOutgoing(prev, gotoNode);
 			return gotoNode;
+		} else if (body instanceof IASTProblemStatement) {
+			System.err.println("problem");
+			CxxPlainNode node = factory.createPlainNode(body);
+			addOutgoing(prev, node);
+			return node;
+			
+		} else if (body instanceof IASTAmbiguousStatement) {
+			System.err.println("amb");
+		} else {
+			System.err.println("unknown statement for cfg: "+body);
 		}
 		return prev;
 	}
@@ -158,7 +172,8 @@ public class ControlFlowGraphBuilder {
 	 */
 	protected IConnectorNode createLabelNodes(IBasicBlock prev, String labelName) {
 		IBranchNode branch = factory.createBranchNode(labelName);
-		if (prev!=null) addOutgoing(prev, branch);
+		if (prev != null)
+			addOutgoing(prev, branch);
 		labels.put(labelName, branch);
 		IConnectorNode conn = factory.createConnectorNode();
 		addOutgoing(branch, conn);
@@ -221,8 +236,7 @@ public class ControlFlowGraphBuilder {
 				IASTCaseStatement caseSt = (IASTCaseStatement) elem;
 			}
 			if (elem instanceof IASTDefaultStatement) {
-				IBranchNode lbl = factory
-						.createBranchNode(IBranchNode.DEFAULT);
+				IBranchNode lbl = factory.createBranchNode(IBranchNode.DEFAULT);
 				if (!(prev instanceof IExitNode) && prev != switchNode)
 					addOutgoing(prev, lbl);
 				addOutgoing(switchNode, lbl);

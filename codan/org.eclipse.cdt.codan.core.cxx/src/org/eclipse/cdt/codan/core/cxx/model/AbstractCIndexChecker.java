@@ -34,7 +34,7 @@ public abstract class AbstractCIndexChecker extends AbstractChecker implements I
 		return file;
 	}
 
-	void processFile(IFile file) throws CoreException, InterruptedException {
+	void  processFile(IFile file) throws CoreException, InterruptedException {
 		// create translation unit and access index
 		ICElement model = CoreModel.getDefault().create(file);
 		if (!(model instanceof ITranslationUnit)) return; // not a C/C++ file
@@ -52,7 +52,7 @@ public abstract class AbstractCIndexChecker extends AbstractChecker implements I
 		}
 	}
 
-	public boolean processResource(IResource resource) {
+	public synchronized boolean processResource(IResource resource) {
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			try {

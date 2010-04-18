@@ -61,6 +61,7 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 			// create index based ast
 			IASTTranslationUnit ast = tu.getAST(index,
 					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+			if (ast==null) return;//
 			// traverse the ast using the visitor pattern.
 			this.file = file;
 			processAst(ast);
@@ -70,7 +71,7 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 		}
 	}
 
-	public boolean processResource(IResource resource) {
+	public synchronized boolean processResource(IResource resource) {
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			try {

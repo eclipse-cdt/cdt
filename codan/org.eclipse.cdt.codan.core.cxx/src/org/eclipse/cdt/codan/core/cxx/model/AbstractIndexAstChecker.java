@@ -15,14 +15,10 @@ import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractChecker;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -44,24 +40,19 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	protected IFile getFile() {
 		return file;
 	}
+
 	protected IProject getProject() {
-		return file==null?null:file.getProject();
+		return file == null ? null : file.getProject();
 	}
 
 	void processFile(IFile file) throws CoreException, InterruptedException {
-		// create translation unit and access index
-		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit))
-			return; // not a C/C++ file
-		ITranslationUnit tu = (ITranslationUnit) model;
-		IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
+		IASTTranslationUnit ast = CxxModelsCache.getInstance().getAst(file);
+		if (ast == null)
+			return;
 		// lock the index for read access
+		IIndex index = CxxModelsCache.getInstance().getIndex(file);
 		index.acquireReadLock();
 		try {
-			// create index based ast
-			IASTTranslationUnit ast = tu.getAST(index,
-					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-			if (ast==null) return;//
 			// traverse the ast using the visitor pattern.
 			this.file = file;
 			processAst(ast);
@@ -87,21 +78,21 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	}
 
 	@SuppressWarnings("restriction")
-	public void reportProblem(String id, IASTNode astNode, Object...  args) {
+	public void reportProblem(String id, IASTNode astNode, Object... args) {
 		IASTFileLocation astLocation = astNode.getFileLocation();
 		IPath location = new Path(astLocation.getFileName());
-		IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
+		IFile astFile = ResourceLookup.selectFileForLocation(location,
+				getProject());
 		if (astFile == null) {
 			astFile = file;
 		}
 		if (astFile == null) {
-			Activator.log("Cannot resolve location: "+location); //$NON-NLS-1$
+			Activator.log("Cannot resolve location: " + location); //$NON-NLS-1$
 			return;
 		}
 		IProblemLocation loc;
 		int line = astLocation.getStartingLineNumber();
-		if (line == astLocation
-				.getEndingLineNumber())
+		if (line == astLocation.getEndingLineNumber())
 			loc = getRuntime().getProblemLocationFactory()
 					.createProblemLocation(
 							astFile,
@@ -110,8 +101,7 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 									+ astLocation.getNodeLength(), line);
 		else
 			loc = getRuntime().getProblemLocationFactory()
-					.createProblemLocation(astFile,
-							line);
+					.createProblemLocation(astFile, line);
 		getProblemReporter().reportProblem(id, loc, args);
 	}
 
@@ -128,11 +118,12 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 	 * (java.lang.Object)
 	 */
 	@SuppressWarnings("restriction")
-	public void processModel(Object model) {
+	public synchronized void processModel(Object model) {
 		if (model instanceof IASTTranslationUnit) {
 			IASTTranslationUnit ast = (IASTTranslationUnit) model;
 			IPath location = new Path(ast.getFilePath());
-			IFile astFile = ResourceLookup.selectFileForLocation(location, getProject());
+			IFile astFile = ResourceLookup.selectFileForLocation(location,
+					getProject());
 			file = astFile;
 			processAst(ast);
 		}

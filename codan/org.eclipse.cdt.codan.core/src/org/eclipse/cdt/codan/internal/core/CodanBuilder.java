@@ -115,6 +115,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		CheckersRegisry chegistry = CheckersRegisry.getInstance();
 		for (IChecker checker : chegistry) {
 			try {
+				if (monitor.isCanceled())
+					return;
 				if (chegistry.isCheckerEnabled(checker, resource)
 						&& checker.enabledInContext(resource)) {
 					checker.processResource(resource);

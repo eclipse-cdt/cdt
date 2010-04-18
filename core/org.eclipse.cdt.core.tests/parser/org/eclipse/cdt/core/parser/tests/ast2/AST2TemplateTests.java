@@ -2276,7 +2276,20 @@ public class AST2TemplateTests extends AST2BaseTest {
 		parseAndCheckBindings(code);		
 	}
 
-	
+	//	template<typename T, typename U>
+	//	T f(U* f) {}
+	//
+	//	template<typename T, typename U>
+	//	T f(U& f) {}
+	//
+	//	void test(int* x) {
+	//	  f<int>(x);
+	//	}
+	public void _testFunctionTemplate_309564() throws Exception {
+		final String code = getAboveComment();
+		parseAndCheckBindings(code);		
+	}
+
 	//	template<class U> void f1(void(*f)(const U&)) {}
 	//	void f2(const int& b){}
 	//	void test() {
@@ -4713,7 +4726,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 
 	//	template<typename... Types>	void f(Types... rest);
 	//	template<typename... Types> void g(Types... rest) {
-	//	   f(&rest...); // ‘‘&rest...’’ is a pack expansion, ‘‘&rest’’ is its pattern
+	//	   f(&rest...); // ï¿½ï¿½&rest...ï¿½ï¿½ is a pack expansion, ï¿½ï¿½&restï¿½ï¿½ is its pattern
 	//	}
 	public void testVariadicTemplateExamples_280909r() throws Exception {
 		final String code= getAboveComment();
@@ -4735,10 +4748,10 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	template<typename... Args> void f(Args... args) {}
 	//	template<typename... Args> void h(Args... args) {}
 	//	template<typename... Args> void g(Args... args) {
-	//	  f(const_cast<const Args*>(&args)...); // okay: ‘‘Args’’ and ‘‘args’’ are expanded
+	//	  f(const_cast<const Args*>(&args)...); // okay: ï¿½ï¿½Argsï¿½ï¿½ and ï¿½ï¿½argsï¿½ï¿½ are expanded
 	//	  f(5 ...); // error: pattern does not contain any parameter packs
-	//	  f(args); // error: parameter pack ”args” is not expanded
-	//	  f(h(args...) + args...); // okay: first ‘‘args’’ expanded within h, second ‘‘args’’ expanded within f.
+	//	  f(args); // error: parameter pack ï¿½argsï¿½ is not expanded
+	//	  f(h(args...) + args...); // okay: first ï¿½ï¿½argsï¿½ï¿½ expanded within h, second ï¿½ï¿½argsï¿½ï¿½ expanded within f.
 	//	}
 	public void testVariadicTemplateExamples_280909s() throws Exception {
 		final String code= getAboveComment();

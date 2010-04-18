@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -84,6 +85,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 		}
 
 		/**
+		 * If it uses reference or ponter
 		 * @param catchHandler
 		 * @return
 		 */
@@ -97,6 +99,9 @@ public class CatchByReference extends AbstractIndexAstChecker {
 					for (int j = 0; j < pointerOperators.length; j++) {
 						IASTPointerOperator po = pointerOperators[j];
 						if (po instanceof ICPPASTReferenceOperator) {
+							return true;
+						}
+						if (po instanceof IASTPointer) {
 							return true;
 						}
 					}

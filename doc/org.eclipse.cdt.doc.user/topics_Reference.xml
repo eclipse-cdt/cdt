@@ -52,11 +52,14 @@
 	<!-- PREFERENCE TOPICS -->
 	<topic label="C/C++ preferences" href="reference/cdt_u_c_pref.htm">
 		<topic label="Appearance" href="reference/cdt_u_appearance_pref.htm"/>
-		<topic label="Console" href="reference/cdt_u_build_pref.htm"/>
-		<topic label="Make" href="reference/cdt_u_make_pref.htm" />
-		<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm" >
-			<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>			
-		</topic>
+	  <topic href="reference/cdt_u_pref_build.htm" label="Build preferences">
+			<topic label="Console" href="reference/cdt_u_console_pref.htm"/>
+			<topic label="Environment" href="reference/cdt_u_environment_pref.htm"/>
+			<topic label="Make" href="reference/cdt_u_make_pref.htm" />
+			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm" >
+				<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>			
+			</topic>
+	  </topic>
 		
 		<topic label="Code Style preferences" href="reference/cdt_u_c_code_style_pref.htm">
 			<topic label="Code Templates" href="reference/cdt_u_c_code_templates_pref.htm"/>
@@ -68,7 +71,6 @@
 			<topic label="GDB MI" href="reference/cdt_u_gdb_mi.htm"/>
 		</topic>
 		
-		<topic label="Environment" href="reference/cdt_u_environment_pref.htm"/>
 		
 		<topic label="Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
 			<topic label="General preferences" href="reference/cdt_u_c_editor_gen.htm"/>

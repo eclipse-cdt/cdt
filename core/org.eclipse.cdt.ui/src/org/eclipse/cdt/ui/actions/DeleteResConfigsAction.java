@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,8 +46,8 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 
 /**
- * Action which changes active build configuration of the current project to 
- * the given one.
+ * Action which deletes resource description. (If resource description is missing
+ * one from parent is normally used)
  */
 public class DeleteResConfigsAction 
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
@@ -60,7 +60,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		outData = null;
 		
 		if (!selection.isEmpty()) {
-	    	// case for context menu
+			// case for context menu
 			if (selection instanceof IStructuredSelection) {
 				Object[] obs = ((IStructuredSelection)selection).toArray();
 				if (obs.length > 0) {

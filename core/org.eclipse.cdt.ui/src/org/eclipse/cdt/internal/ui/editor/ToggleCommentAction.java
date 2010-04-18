@@ -130,9 +130,9 @@ public final class ToggleCommentAction extends TextEditorAction {
 			// For each partition in the text selection, figure out the startline and endline.
 			// Count the number of lines that are selected.
 			for (int i = 0, j = 0; i < regions.length; i++, j+= 2) {
-				// start line of region
+				// Start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i], document);
-				// end line of region
+				// End line of region
 				int length= regions[i].getLength();
 				int offset= regions[i].getOffset() + length;
 				if (length > 0)
@@ -158,9 +158,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 						return false;
 			}
 			return true;
-		} catch (BadLocationException x) {
-			// should not happen
-			CUIPlugin.log(x);
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);  // Should not happen
 		}
 
 		return false;
@@ -180,9 +179,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 			int length= selection.getLength() == 0 ? line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
 			return new Region(line.getOffset(), length);
 
-		} catch (BadLocationException x) {
-			// should not happen
-			CUIPlugin.log(x);
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);  // Should not happen
 		}
 		return null;
 	}
@@ -204,9 +202,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 			offset= document.getLineOffset(startLine + 1);
 			return (offset > region.getOffset() + region.getLength() ? -1 : startLine + 1);
-		} catch (BadLocationException x) {
-			// should not happen
-			CUIPlugin.log(x);
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);  // Should not happen
 		}
 
 		return -1;
@@ -246,9 +243,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 				}
 			}
 			return true;
-		} catch (BadLocationException x) {
-			// should not happen
-			CUIPlugin.log(x);
+		} catch (BadLocationException e) {
+			CUIPlugin.log(e);  // Should not happen
 		}
 
 		return false;

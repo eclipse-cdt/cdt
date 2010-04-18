@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2009 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2010 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -57,7 +56,6 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 
-import org.eclipse.cdt.internal.ui.dialogs.MessageLine;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
@@ -222,11 +220,6 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 
 		if (fEditable) {
 			createButtons(composite);
-
-			// TODO: remove the warning before 7.0
-			MessageLine errorImageLabel = new MessageLine(composite, SWT.NONE);
-			errorImageLabel.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
-			errorImageLabel.setText("Error Parser Options user entries may be lost on CDT update as persistence will be finalized with CDT 7.0 final release."); //$NON-NLS-1$
 		}
 
 		setControl(group);

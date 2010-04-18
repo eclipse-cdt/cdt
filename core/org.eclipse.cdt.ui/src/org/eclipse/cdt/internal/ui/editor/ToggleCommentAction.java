@@ -124,7 +124,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		try {
 			IRegion block= getTextBlockFromSelection(textSelection, document);
-			ITypedRegion[] regions= TextUtilities.computePartitioning(document, fDocumentPartitioning, block.getOffset(), block.getLength(), false);
+			ITypedRegion[] regions= TextUtilities.computePartitioning(document, fDocumentPartitioning,
+					block.getOffset(), block.getLength(), false);
 
 			int lineCount= 0;
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
@@ -179,7 +180,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) {
 		try {
 			IRegion line= document.getLineInformationOfOffset(selection.getOffset());
-			int length= selection.getLength() == 0 ? line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
+			int length= selection.getLength() == 0 ?
+					line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
 			return new Region(line.getOffset(), length);
 
 		} catch (BadLocationException e) {
@@ -272,7 +274,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 		if (fOperationTarget == null && editor != null)
 			fOperationTarget= (ITextOperationTarget) editor.getAdapter(ITextOperationTarget.class);
 
-		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(ITextOperationTarget.PREFIX) && fOperationTarget.canDoOperation(ITextOperationTarget.STRIP_PREFIX));
+		boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(ITextOperationTarget.PREFIX) &&
+				fOperationTarget.canDoOperation(ITextOperationTarget.STRIP_PREFIX));
 		setEnabled(isEnabled);
 	}
 

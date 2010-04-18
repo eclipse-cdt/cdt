@@ -40,22 +40,22 @@ For information on working sets, see <strong>Workbench User Guide &gt; Concepts 
   considerations to note when searching for a given element type. You can search 
   for some or all of the element types matching a search string that you 
   specify. If you choose to search for matching elements, all types, macros, and typdefs are included in the search.</p>
-<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="60%">
+<table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
   <tr>
-    <td width="19%"><strong>Element</strong></td>
-    <td width="81%"><strong>Note</strong></td>
+    <td width="25%"><strong>Element</strong></td>
+    <td width="75%"><strong>Note</strong></td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Class/Struct</td>
-    <td width="81%">Searches for classes and structs.<p>You can further qualify 
+    <td width="25%" valign="top">&nbsp;Class/Struct</td>
+    <td width="75%">Searches for classes and structs.<p>You can further qualify 
     the search by specifying &quot;class&quot; or &quot;struct&quot; in front of the name 
     that you are 
     searching for. Specifying &quot;class&quot; or &quot;struct&quot; also allows you to 
     search for anonymous classes and structures.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Function</td>
-    <td width="81%">Searches for global functions or functions in a namespace 
+    <td width="25%" valign="top">&nbsp;Function</td>
+    <td width="75%">Searches for global functions or functions in a namespace 
     (functions that are not members of a class, struct, or union).<p>You can 
     specify parameters to further qualify your search. When specifying a 
     parameter list, everything between the parentheses should be valid C/C++ 
@@ -63,37 +63,37 @@ For information on working sets, see <strong>Workbench User Guide &gt; Concepts 
     <p>Do not specify the return type of the function.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Variable</td>
-    <td width="81%">Searches for variables that are not members of a class, 
+    <td width="25%" valign="top">&nbsp;Variable</td>
+    <td width="75%">Searches for variables that are not members of a class, 
     struct, or union.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Union</td>
-    <td width="81%">Searches for unions.<p>Anonymous unions can be searched for by 
+    <td width="25%" valign="top">&nbsp;Union</td>
+    <td width="75%">Searches for unions.<p>Anonymous unions can be searched for by 
     specifying &quot;union&quot; as the search pattern.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Method</td>
-    <td width="81%">Searches for methods that are members of a class, struct, or 
+    <td width="25%" valign="top">&nbsp;Method</td>
+    <td width="75%">Searches for methods that are members of a class, struct, or 
     union.<p>Searching for methods also finds constructors and destructors. See 
     above note for functions.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Field </td>
-    <td width="81%">Searches for fields that are members of a class, struct, or 
+    <td width="25%" valign="top">&nbsp;Field </td>
+    <td width="75%">Searches for fields that are members of a class, struct, or 
     union.
   </tr>
   <tr>
-    <td width="19%">&nbsp;Enumeration</td>
-    <td width="81%">Searches for enumerations.</td>
+    <td width="25%" valign="top">&nbsp;Enumeration</td>
+    <td width="75%">Searches for enumerations.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Enumerator</td>
-    <td width="81%">Searches for enumerators.</td>
+    <td width="25%" valign="top">&nbsp;Enumerator</td>
+    <td width="75%">Searches for enumerators.</td>
   </tr>
   <tr>
-    <td width="19%">&nbsp;Namespace</td>
-    <td width="81%">Searches for namespaces.</td>
+    <td width="25%" valign="top">&nbsp;Namespace</td>
+    <td width="75%">Searches for namespaces.</td>
   </tr>
 </table>
 
@@ -117,24 +117,24 @@ is to be searched:</p>
 
 <h2>Wildcard characters</h2>
 <p>You can use wildcard characters to further refine your search.</p>
-<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="60%">
+<table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
   <tr>
-    <td width="49%"><strong>Use this wildcard character</strong></td>
-    <td width="51%"><strong>To search for this</strong></td>
+    <td width="30%" valign="top"><strong>Use this wildcard character</strong></td>
+    <td width="70%"><strong>To search for this</strong></td>
   </tr>
   <tr>
-    <td width="49%">&nbsp;<samp>*</samp></td>
-    <td width="51%">Any string<p><strong>Tip:<br>
+    <td width="30%" valign="top">&nbsp;<samp>*</samp></td>
+    <td width="70%">Any string<p><strong>Tip:<br>
     </strong> Use the character sequence <samp>\*</samp> to search for 
     operators that begin with *. See syntax examples in the table below.</td>
   </tr>
   <tr>
-    <td width="49%">&nbsp;<samp>?</samp></td>
-    <td width="51%">A single character</td>
+    <td width="30%" valign="top">&nbsp;<samp>?</samp></td>
+    <td width="70%">A single character</td>
   </tr>
   <tr>
-    <td width="49%">&nbsp;<samp>::</samp></td>
-    <td width="51%">Nested elements</td>
+    <td width="30%" valign="top">&nbsp;<samp>::</samp></td>
+    <td width="70%">Nested elements</td>
   </tr>
 </table>
 <!-- no support for function parameters
@@ -147,69 +147,69 @@ the asterisk is interpreted as a pointer rather than a wild card.</p>
 <h2>Syntax examples</h2>
 <p>The table below provides syntax examples and an explanation for each example 
 to help you conduct an effective search.</p>
-<table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="60%" height="400">
+<table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
   <tr>
-    <td width="64%" height="16"><strong>Syntax</strong></td>
-    <td width="36%" height="16"><strong>Searches for this</strong></td>
+    <td width="30%"><strong>Syntax</strong></td>
+    <td width="70%"><strong>Searches for this</strong></td>
   </tr>
   <tr>
-    <td width="64%" height="17">&nbsp; <samp>::*::*::A</samp></td>
-    <td width="36%" height="17">A nested element two levels deep</td>
+    <td width="30%">&nbsp; <samp>::*::*::A</samp></td>
+    <td width="70%">A nested element two levels deep</td>
   </tr>
   <tr>
-    <td width="64%" height="32">&nbsp; <samp>::*::*::A?</samp></td>
-    <td width="36%" height="32">Any two-letter name that begins with A and is two levels 
+    <td width="30%">&nbsp; <samp>::*::*::A?</samp></td>
+    <td width="70%">Any two-letter name that begins with A and is two levels 
     deep</td>
   </tr>
   <tr>
-    <td width="64%" height="32">&nbsp; <samp>::A</samp> </td>
-    <td width="36%" height="32">Searches for A not nested in anything</td>
+    <td width="30%">&nbsp; <samp>::A</samp> </td>
+    <td width="70%">Searches for A not nested in anything</td>
   </tr>
 <!-- no support for function parameters
   <tr>
-    <td width="64%" height="17">&nbsp; <samp>*()</samp></td>
-    <td width="36%" height="17">Any function taking no parameters</td>
+    <td width="30%">&nbsp; <samp>*()</samp></td>
+    <td width="70%">Any function taking no parameters</td>
   </tr>
   <tr>
-    <td width="64%" height="32">&nbsp;&nbsp;<samp>*( A * )</samp> </td>
-    <td width="36%" height="32">Any function taking 1 parameter that is a pointer to type 
+    <td width="30%">&nbsp;&nbsp;<samp>*( A * )</samp> </td>
+    <td width="70%">Any function taking 1 parameter that is a pointer to type 
     A</td>
   </tr>
   <tr>
-    <td width="64%" height="33">&nbsp;&nbsp;<samp>f( int * )</samp></td>
-    <td width="36%" height="33">Will search for function f taking 1 parameter that is an 
+    <td width="30%">&nbsp;&nbsp;<samp>f( int * )</samp></td>
+    <td width="60%">Will search for function f taking 1 parameter that is an 
     int *</td>
   </tr>
   <tr>
-    <td width="64%" height="64">&nbsp;&nbsp;<samp>f( const char [ 
+    <td width="30%">&nbsp;&nbsp;<samp>f( const char [ 
     ], A &amp; )</samp></td>
-    <td width="36%" height="64">Will search for a function f, taking 2 parameters; one is a 
+    <td width="60%">Will search for a function f, taking 2 parameters; one is a 
     const char array, the other is a reference to type A</td>
   </tr>
 -->
   <tr>
-    <td width="64%" height="32">&nbsp;<samp>operator \*</samp></td>
-    <td width="36%" height="32">Finds only operator *</td>
+    <td width="30%">&nbsp;<samp>operator \*</samp></td>
+    <td width="60%">Finds only operator *</td>
   </tr>
   <tr>
-    <td width="64%" height="32">&nbsp;<samp>operator \*=</samp></td>
-    <td width="36%" height="32">Finds only operator *=</td>
+    <td width="30%">&nbsp;<samp>operator \*=</samp></td>
+    <td width="60%">Finds only operator *=</td>
   </tr>
   <tr>
-    <td width="64%" height="16">&nbsp;<samp>operator *</samp></td>
-    <td width="36%" height="16">Finds all operators</td>
+    <td width="30%">&nbsp;<samp>operator *</samp></td>
+    <td width="60%">Finds all operators</td>
   </tr>
   <tr>
-    <td width="64%" height="15">&nbsp;<samp>class</samp></td>
-    <td width="36%" height="15">Searches for anonymous classes</td>
+    <td width="30%">&nbsp;<samp>class</samp></td>
+    <td width="60%">Searches for anonymous classes</td>
   </tr>
   <tr>
-    <td width="64%" height="16"> &nbsp;<samp>struct</samp></td>
-    <td width="36%" height="16">Searches for anonymous structs</td>
+    <td width="30%"> &nbsp;<samp>struct</samp></td>
+    <td width="60%">Searches for anonymous structs</td>
   </tr>
   <tr>
-    <td width="64%" height="16"> &nbsp;<samp>union</samp></td>
-    <td width="36%" height="16">Searches for anonymous unions</td>
+    <td width="30%"> &nbsp;<samp>union</samp></td>
+    <td width="60%">Searches for anonymous unions</td>
   </tr>
   </table>
 <h2>Search results</h2>

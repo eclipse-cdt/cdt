@@ -127,8 +127,8 @@ public final class ToggleCommentAction extends TextEditorAction {
 			int lineCount= 0;
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
 			
-			// For each partition in the text selection, figure out what are the startlines and endlines for
-			// each partition.  Count the number of lines that are selected.
+			// For each partition in the text selection, figure out the startline and endline.
+			// Count the number of lines that are selected.
 			for (int i = 0, j = 0; i < regions.length; i++, j+= 2) {
 				// start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i], document);

@@ -88,8 +88,10 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		Shell shell= editor.getSite().getShell();
 		if (!fOperationTarget.canDoOperation(operationCode)) {
-			if (shell != null)
-				MessageDialog.openError(shell, CEditorMessages.ToggleComment_error_title, CEditorMessages.ToggleComment_error_message);  
+			if (shell != null) {
+				MessageDialog.openError(shell, CEditorMessages.ToggleComment_error_title,
+						CEditorMessages.ToggleComment_error_message);
+			}
 			return;
 		}
 
@@ -126,7 +128,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 			int lineCount= 0;
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
-			
+
 			// For each partition in the text selection, figure out the startline and endline.
 			// Count the number of lines that are selected.
 			for (int i = 0, j = 0; i < regions.length; i++, j+= 2) {
@@ -137,25 +139,26 @@ public final class ToggleCommentAction extends TextEditorAction {
 				int offset= regions[i].getOffset() + length;
 				if (length > 0)
 					offset--;
-				
+
 				// If there is no startline for this region (startline = -1),
 				// then there is no endline,
 				// otherwise, get the line number of the endline and store it in the array.
 				lines[j + 1]= (lines[j] == -1 ? -1 : document.getLineOfOffset(offset));
-				
+
 				// Count the number of lines that are selected in this region
 				lineCount += lines[j + 1] - lines[j] + 1;
-				
+
 				assert i < regions.length;
 				assert j < regions.length * 2;
 			}
-				
+
 			// Perform the check
 			for (int i = 0, j = 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= fPrefixesMap.get(regions[i].getType());
-				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0)
-					if (!isBlockCommented(lines[j], lines[j + 1], prefixes, document))
-						return false;
+				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0 &&
+						!isBlockCommented(lines[j], lines[j + 1], prefixes, document)) {
+					return false;
+				}
 			}
 			return true;
 		} catch (BadLocationException e) {
@@ -223,7 +226,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 */
 	private boolean isBlockCommented(int startLine, int endLine, String[] prefixes, IDocument document) {
 		try {
-			// check for occurrences of prefixes in the given lines
+			// Check for occurrences of prefixes in the given lines
 			for (int i= startLine; i <= endLine; i++) {
 				IRegion line= document.getLineInformation(i);
 				String text= document.get(line.getOffset(), line.getLength());
@@ -231,14 +234,14 @@ public final class ToggleCommentAction extends TextEditorAction {
 				int[] found= TextUtilities.indexOf(prefixes, text, 0);
 
 				if (found[0] == -1) {
-					// found a line which is not commented
+					// Found a line which is not commented
 					return false;
 				}
 
 				String s= document.get(line.getOffset(), found[0]);
 				s= s.trim();
 				if (s.length() != 0) {
-					// found a line which is not commented
+					// Found a line which is not commented
 					return false;
 				}
 			}
@@ -281,7 +284,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 		super.setEditor(editor);
 		fOperationTarget= null;
 	}
-	
+
 	/**
 	 * For the different content types, get its default comment prefix and store the prefixes.
 	 * @param sourceViewer

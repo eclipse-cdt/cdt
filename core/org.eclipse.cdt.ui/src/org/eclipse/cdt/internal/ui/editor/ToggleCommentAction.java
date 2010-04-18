@@ -42,7 +42,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * @since 4.0.0
  */
 public final class ToggleCommentAction extends TextEditorAction {
-
 	/** The text operation target */
 	private ITextOperationTarget fOperationTarget;
 	/** The document partitioning */
@@ -122,15 +121,14 @@ public final class ToggleCommentAction extends TextEditorAction {
 		IDocument document= getTextEditor().getDocumentProvider().getDocument(getTextEditor().getEditorInput());
 
 		try {
-
 			IRegion block= getTextBlockFromSelection(textSelection, document);
 			ITypedRegion[] regions= TextUtilities.computePartitioning(document, fDocumentPartitioning, block.getOffset(), block.getLength(), false);
 
 			int lineCount= 0;
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
 			
-			//For each partition in the text selection, figure out what are the startlines and endlines for
-			//each partition.  Count the number of lines that are selected.
+			// For each partition in the text selection, figure out what are the startlines and endlines for
+			// each partition.  Count the number of lines that are selected.
 			for (int i = 0, j = 0; i < regions.length; i++, j+= 2) {
 				// start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i], document);
@@ -140,12 +138,12 @@ public final class ToggleCommentAction extends TextEditorAction {
 				if (length > 0)
 					offset--;
 				
-				//if there is no startline for this region (startline = -1)
-				//then there is no endline
-				//otherwise, get the line number of the endline and store it in the array
+				// If there is no startline for this region (startline = -1),
+				// then there is no endline,
+				// otherwise, get the line number of the endline and store it in the array.
 				lines[j + 1]= (lines[j] == -1 ? -1 : document.getLineOfOffset(offset));
 				
-				//count the number of lines that are selected in this region
+				// Count the number of lines that are selected in this region
 				lineCount += lines[j + 1] - lines[j] + 1;
 				
 				assert i < regions.length;
@@ -159,9 +157,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 					if (!isBlockCommented(lines[j], lines[j + 1], prefixes, document))
 						return false;
 			}
-
 			return true;
-
 		} catch (BadLocationException x) {
 			// should not happen
 			CUIPlugin.log(x);
@@ -179,7 +175,6 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * @return the region describing the text block comprising the given selection
 	 */
 	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) {
-
 		try {
 			IRegion line= document.getLineInformationOfOffset(selection.getOffset());
 			int length= selection.getLength() == 0 ? line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
@@ -189,7 +184,6 @@ public final class ToggleCommentAction extends TextEditorAction {
 			// should not happen
 			CUIPlugin.log(x);
 		}
-
 		return null;
 	}
 
@@ -201,9 +195,7 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * @return the first line whose start index is in the given range, -1 if there is no such line
 	 */
 	private int getFirstCompleteLineOfRegion(IRegion region, IDocument document) {
-
 		try {
-
 			int startLine= document.getLineOfOffset(region.getOffset());
 
 			int offset= document.getLineOffset(startLine);
@@ -212,7 +204,6 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 			offset= document.getLineOffset(startLine + 1);
 			return (offset > region.getOffset() + region.getLength() ? -1 : startLine + 1);
-
 		} catch (BadLocationException x) {
 			// should not happen
 			CUIPlugin.log(x);
@@ -234,31 +225,27 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 *             begin of line
 	 */
 	private boolean isBlockCommented(int startLine, int endLine, String[] prefixes, IDocument document) {
-
 		try {
-
 			// check for occurrences of prefixes in the given lines
 			for (int i= startLine; i <= endLine; i++) {
-
 				IRegion line= document.getLineInformation(i);
 				String text= document.get(line.getOffset(), line.getLength());
 
 				int[] found= TextUtilities.indexOf(prefixes, text, 0);
 
-				if (found[0] == -1)
+				if (found[0] == -1) {
 					// found a line which is not commented
 					return false;
+				}
 
 				String s= document.get(line.getOffset(), found[0]);
 				s= s.trim();
-				if (s.length() != 0)
+				if (s.length() != 0) {
 					// found a line which is not commented
 					return false;
-
+				}
 			}
-
 			return true;
-
 		} catch (BadLocationException x) {
 			// should not happen
 			CUIPlugin.log(x);
@@ -314,9 +301,10 @@ public final class ToggleCommentAction extends TextEditorAction {
 			String[] prefixes= configuration.getDefaultPrefixes(sourceViewer, type);
 			if (prefixes != null && prefixes.length > 0) {
 				int emptyPrefixes= 0;
-				for (int j= 0; j < prefixes.length; j++)
+				for (int j= 0; j < prefixes.length; j++) {
 					if (prefixes[j].length() == 0)
 						emptyPrefixes++;
+				}
 
 				if (emptyPrefixes > 0) {
 					String[] nonemptyPrefixes= new String[prefixes.length - emptyPrefixes];

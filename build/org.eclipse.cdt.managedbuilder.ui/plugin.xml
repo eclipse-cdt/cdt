@@ -100,24 +100,24 @@
               enablesFor="+"
               id="org.eclipse.cdt.managedbuilder.ui.rebuildConfigurationsAction"
               label="%RebuildConfigurationsMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"/>
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/build"/>
         <action
               class="org.eclipse.cdt.managedbuilder.internal.ui.actions.CleanAllConfigurationsAction"
               enablesFor="+"
               id="org.eclipse.cdt.managedbuilder.ui.cleanAllConfigurationsAction"
               label="%CleanAllConfigurationsMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"/>
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/build"/>
         <action
               class="org.eclipse.cdt.managedbuilder.internal.ui.actions.BuildAllConfigurationsAction"
               enablesFor="+"
               id="org.eclipse.cdt.managedbuilder.ui.buildAllConfigurationsAction"
               label="%BuildAllConfigurationsMenu.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"/>
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/build"/>
         <visibility>
            <objectState
               name="projectNature"
               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
-        </visibility>      
+        </visibility>
       </objectContribution>
       <objectContribution
            adaptable="true"

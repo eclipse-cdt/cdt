@@ -1017,68 +1017,74 @@
            adaptable="true"
            id="org.eclipse.cdt.ui.buildConfigContribution"
            objectClass="org.eclipse.core.resources.IResource">
-        <action
-              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigContextAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.buildConfigPulldownAction"
-              label="%BuildConfigContextAction.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm1"
-              style="pulldown"
-              tooltip="%BuildConfigAction.tooltip"/>
+        <visibility>
+           <and>
+              <objectState
+                 name="projectNature"
+                 value="org.eclipse.cdt.core.cnature"/>
+              <objectClass name="org.eclipse.core.resources.IProject"/>
+           </and>
+        </visibility>
         <action
               class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction0"
               label="%ManageConfigAction.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm2"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/manage"
               />
+        <action
+              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigContextAction"
+              enablesFor="+"
+              id="org.eclipse.cdt.ui.buildConfigPulldownAction"
+              label="%BuildConfigContextAction.label"
+              menubarPath="org.eclipse.cdt.ui.cfgmenu/manage"
+              style="pulldown"
+              tooltip="%BuildConfigAction.tooltip"/>
         <menu
               id="org.eclipse.cdt.ui.cfgmenu"
               label="%Configurations.menu"
               path="buildGroup">
-           <groupMarker name="gm1"/>
-           <groupMarker name="gm3"/>
-           <separator
-                 name="sep1">
-           </separator>
-           <groupMarker
-                 name="gm2">
-           </groupMarker>
+           <groupMarker name="manage"/>
+           <separator name="sep1"/>
+           <groupMarker name="build"/>
         </menu>
-        
-        <visibility>
-              <objectState
-                 name="projectNature"
-                 value="org.eclipse.cdt.core.cnature"/>
-        </visibility>
      </objectContribution>
-
      <objectContribution
            adaptable="true"
            id="org.eclipse.cdt.ui.buildConfigContributionM"
            objectClass="org.eclipse.core.resources.IResource">
+        <visibility>
+           <and>
+              <objectState
+                 name="projectNature"
+                 value="org.eclipse.cdt.core.cnature"/>
+              <or>
+                 <objectClass name="org.eclipse.core.resources.IFolder"/>
+                 <objectClass name="org.eclipse.core.resources.IFile"/>
+              </or>
+           </and>
+        </visibility>
         <action
               class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.deleteConfigsAction0"
               label="%DeleteRcConfigAction.label"
-              menubarPath="org.eclipse.cdt.ui.cfgmenu/gm3"
+              menubarPath="org.eclipse.cdt.ui.rescfgmenu/gm1"
               />
         <action
               class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.excludeAction0"
               label="%ExcludeAction.label"
-              menubarPath="buildGroup"
+              menubarPath="org.eclipse.cdt.ui.rescfgmenu/gm1"
               />
-        
-        <visibility>
-              <objectState
-                 name="projectNature"
-                 value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
-        </visibility>
+        <menu
+              id="org.eclipse.cdt.ui.rescfgmenu"
+              label="%ResourceConfigurations.menu"
+              path="buildGroup">
+           <groupMarker name="gm1"/>
+        </menu>
      </objectContribution>
-     
    </extension>
    
    <extension

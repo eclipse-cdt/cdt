@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.ICSourceNotFoundDescription;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
@@ -130,7 +131,13 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		else {
 			if (context == null)
 				return super.getText();
-			return MessageFormat.format(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.3" ), new String[] { context.toString() });  //$NON-NLS-1$		
+			String contextDescription;
+			ICSourceNotFoundDescription description = (ICSourceNotFoundDescription) context.getAdapter(ICSourceNotFoundDescription.class);
+			if (description != null)
+				contextDescription = description.getDescription();
+			else
+				contextDescription = context.toString();
+			return MessageFormat.format(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.3" ), new String[] { contextDescription });  //$NON-NLS-1$		
 		}
 	}
 

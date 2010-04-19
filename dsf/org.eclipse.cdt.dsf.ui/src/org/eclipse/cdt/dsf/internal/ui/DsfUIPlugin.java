@@ -11,8 +11,10 @@
 package org.eclipse.cdt.dsf.internal.ui;
 
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
+import org.eclipse.cdt.dsf.debug.internal.ui.CSourceNotFoundDescriptionFactory;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyBackendDsfFactory;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceDocumentProvider;
+import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.ui.DsfDebugUITools;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IStatus;
@@ -62,6 +64,9 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 		// Register the DSF backend for our disassembly view (the CDT debug UI
 		// plugin registers the CDI one)
         Platform.getAdapterManager().registerAdapters(new DisassemblyBackendDsfFactory(), IDMVMContext.class);
+		// Register the factory that provides descriptions of stack frames
+        // to the CSourceNotFoundEditor.
+        Platform.getAdapterManager().registerAdapters(new CSourceNotFoundDescriptionFactory(), IFrameDMContext.class);
 
         DsfDebugUITools.enableActivity("org.eclipse.cdt.debug.ui.cdtActivity", true); //$NON-NLS-1$
 	}

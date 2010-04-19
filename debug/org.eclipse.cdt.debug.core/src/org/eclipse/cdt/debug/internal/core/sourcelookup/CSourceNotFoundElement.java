@@ -46,4 +46,12 @@ public class CSourceNotFoundElement {
 		return file;
 	}
 
+	public String getDescription() {
+		ICSourceNotFoundDescription description = (ICSourceNotFoundDescription) element.getAdapter(ICSourceNotFoundDescription.class);
+		if (description != null)
+			return description.getDescription();
+		else
+			return element.toString();
+	}
+
 }

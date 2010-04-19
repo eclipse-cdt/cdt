@@ -1148,28 +1148,13 @@
          <menu
                id="org.eclipse.cdt.ui.prjmenu"
                label="%Configurations.menu">
-            <separator
-                  name="gm1" visible="false">
-            </separator>
-            <separator
-                  name="s2" visible="true">
-            </separator>
-            <separator
-                  name="gm2" visible="false">
-            </separator>
-            <separator
-                  name="s3" visible="true">
-            </separator>
-            <separator
-                  name="gm3" visible="false">
-            </separator>
-            <separator
-                  name="gm4" visible="false">
-            </separator>
+            <separator name="manage" visible="false"/>
+            <separator name="sep1" visible="true"/>
+            <separator name="wrksets" visible="false"/>
          </menu>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.cdt.ui.prjmenu?before=gm4">
+            locationURI="menu:org.eclipse.cdt.ui.prjmenu?before=wrksets">
          <menu
                id="org.eclipse.cdt.ui.workingSets.buildMenu"
                label="%buildWorkingSetConfig.label">
@@ -1529,14 +1514,6 @@
               toolbarPath="buildConfig"
               tooltip="%BuildConfigAction.tooltip2"/>
         <action
-              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.buildConfigMenuAction"
-              label="%BuildConfigMenuAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
-              style="pulldown"
-              tooltip="%BuildConfigAction.tooltip"/>
-       <action
               class="org.eclipse.cdt.ui.actions.BuildActiveConfigMenuAction"
               disabledIcon="icons/dlcl16/build_exec.png"
               enablesFor="+"
@@ -1546,25 +1523,26 @@
               style="pulldown"
               toolbarPath="buildConfig"
               tooltip="%BuildActiveConfiguration.tooltip"/>
-         <action
+        <action
               class="org.eclipse.cdt.ui.actions.ManageConfigsAction"
               enablesFor="+"
               id="org.eclipse.cdt.ui.manageConfigsAction2"
               label="%ManageConfigAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm2"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/manage"
               />
         <action
-              class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
+              class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
               enablesFor="+"
-              id="org.eclipse.cdt.ui.deleteConfigsAction2"
-              label="%DeleteRcConfigAction.label"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
-              />
+              id="org.eclipse.cdt.ui.buildConfigMenuAction"
+              label="%BuildConfigMenuAction.label"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/manage"
+              style="pulldown"
+              tooltip="%BuildConfigAction.tooltip"/>
         <action
               class="org.eclipse.cdt.ui.actions.WorkingSetConfigAction"
               id="org.eclipse.cdt.ui.wsselection"
               label="%wsselection"
-              menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm4"
+              menubarPath="project/org.eclipse.cdt.ui.prjmenu/wrksets"
               style="push"
               />
      </actionSet>

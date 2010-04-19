@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDebugElement;
-import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
@@ -34,6 +37,8 @@ import org.eclipse.ui.IViewPart;
  * the view has no CDT content.
  */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
+	
+	protected final static String IS_SET_SUFFIX = ".isSet"; //$NON-NLS-1$
 	
 	private IViewPart fView;
 	private IAction fAction;
@@ -90,6 +95,11 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		viewer.refresh();
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
+		// We must first set a special key, to be able to tell that our preference is really set
+		// This is because when we set a boolean preference to false, the key is automatically
+		// removed, because the default value is 'false'
+		String isSetKey = key + IS_SET_SUFFIX;
+		store.setValue(isSetKey, true);
 		store.setValue(key, action.isChecked());
 		CDebugUIPlugin.getDefault().savePluginPreferences();
 	}
@@ -110,11 +120,11 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
-		Object input = getStructuredViewer().getInput();
+		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
 		
 		// Debug view
-		if (input instanceof ILaunchManager) {
-			ILaunchManager launchmgr = (ILaunchManager)input;
+		if (view instanceof LaunchView) {
+			ILaunchManager launchmgr = DebugPlugin.getDefault().getLaunchManager();
 			IDebugTarget[] debugTargets = launchmgr.getDebugTargets();
 			for (IDebugTarget debugTarget : debugTargets) {
 				if (debugTarget instanceof ICDebugElement) {
@@ -124,8 +134,8 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 			}
 		}
 		// Breakpoints view
-		else if (input instanceof IBreakpointManager) {
-			IBreakpointManager bkptmgr = (IBreakpointManager)input;
+		else if (view instanceof BreakpointsView) {
+			IBreakpointManager bkptmgr = DebugPlugin.getDefault().getBreakpointManager();
 			IBreakpoint[] bkpts = bkptmgr.getBreakpoints();
 			for (IBreakpoint bkpt : bkpts) {
 				if (bkpt instanceof ICBreakpoint) {
@@ -156,9 +166,10 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		String baseKey = getPreferenceKey();
 		String viewKey = part.getSite().getId();
 		String compositeKey = viewKey + "." + baseKey; //$NON-NLS-1$
+		String isSetCompositeKey = compositeKey + IS_SET_SUFFIX;
 		IPreferenceStore store = getPreferenceStore();
 		boolean value = false;
-		if (store.contains(compositeKey)) {
+		if (store.contains(isSetCompositeKey)) {
 			value = store.getBoolean(compositeKey);
 		} else {
 			value = store.getBoolean(baseKey);

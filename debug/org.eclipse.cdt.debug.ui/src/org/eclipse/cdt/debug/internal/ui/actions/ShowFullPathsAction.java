@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		final StructuredViewer viewer = getStructuredViewer();
 		IDebugView view = (IDebugView)getView().getAdapter( IDebugView.class );
@@ -61,6 +62,11 @@ public class ShowFullPathsAction extends ViewFilterAction {
 												viewer.refresh();
 												IPreferenceStore store = getPreferenceStore();
 												String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
+												// We must first set a special key, to be able to tell that our preference is really set
+												// This is because when we set a boolean preference to false, the key is automatically
+												// removed, because the default value is 'false'
+												String isSetKey = key + IS_SET_SUFFIX;
+												store.setValue( isSetKey, true );
 												store.setValue( key, getValue() );
 												CDebugUIPlugin.getDefault().savePluginPreferences();						
 											}

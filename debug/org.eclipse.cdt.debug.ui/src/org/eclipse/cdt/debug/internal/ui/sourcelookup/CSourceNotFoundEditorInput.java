@@ -27,4 +27,13 @@ public class CSourceNotFoundEditorInput extends CommonSourceNotFoundEditorInput 
 		return super.getName();
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof CSourceNotFoundEditorInput)
+		{
+			return super.equals(other) || (this.getName().equals(((CSourceNotFoundEditorInput) other).getName()));
+		}
+		return super.equals(other);
+	}
+
 }

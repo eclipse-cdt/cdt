@@ -68,12 +68,22 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
        }
        MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
        
-		for (MIStreamRecord streamRecord : miStreamRecords) {
-			String log = streamRecord.getString();
-			if (log.startsWith("Catchpoint ")) { //$NON-NLS-1$
-				return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
-			}
-		}
+       // We might be here because of a catchpoint hit; in gdb >= 7.0,
+       // catchpoints are reported as breakpoints. Unfortunately, there's
+       // nothing in the stopped event indicating it's a catchpoint, and unlike
+       // gdb < 7.0, there are no stream records that reveal it's a catchpoint.
+       // The only way to determine it's a catchpoint is to map the gdb breakpoint
+       // number back to the CBreakpoint (platform) instance, and that *will* reveal
+       // whether it's a catchpoint or not, and even which kind of catchpoint
+       // TODO: 
+       /*
+       CBreakpoint cbkpt = FromSomewhere.getCBreakpointForGdbBreakpoint(bkptno); <== this method doesn't exist yet
+       if (cbkpt instanceof CEventBreakpoint) {
+	       String eventTypeID = ((CEventBreakpoint)cbkpt).getEventType();
+	       String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID)
+	       return MICatchpointHitEvent.parse(stoppedEvent.getDMContext(), token, results, gdbKeyword);
+       }
+       */
        
        return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
     }

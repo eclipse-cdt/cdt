@@ -12,9 +12,25 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
  */
 public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 
+	/**
+	 * See {@link #getReason()}
+	 */
+	private String fReason;
+	
 	protected MICatchpointHitEvent(IExecutionDMContext ctx, int token,
-			MIResult[] results, MIFrame frame, int bkptno) {
+			MIResult[] results, MIFrame frame, int bkptno, String reason) {
 		super(ctx, token, results, frame, bkptno);
+		fReason = reason;
+	}
+
+	/**
+	 * Returns the event the cachpoint caught. E.g., a C++ exception was thrown.
+	 * This string comes either from gdb when the catchpoint is hit, or it's the
+	 * gdb catchpoint keyword ('catch', 'throw', 'fork', etc) that was used to
+	 * set the catchpoint (to be done for gdb >= 7.0)
+	 */
+	public String getReason() {
+		return fReason;
 	}
 	
 	/**
@@ -31,9 +47,27 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
         StringTokenizer tokenizer = new StringTokenizer(streamRecord.getString());
         tokenizer.nextToken(); // "Catchpoint"
         try {
-        	int bkptNumber = Integer.parseInt(tokenizer.nextToken()); // "1" (e.g.,)
+        	int bkptNumber = Integer.parseInt(tokenizer.nextToken()); // "1"
+        	StringBuilder reason = new StringBuilder();
+        	boolean first = true;
+        	while (tokenizer.hasMoreElements()) {
+        		if (!first) {
+        			reason.append(" "); //$NON-NLS-1$ ok; technically, the delim could be any whitespace, but we know it's s a space char
+        		}
+        		reason.append(tokenizer.nextElement());
+    			first = false;
+        	}
+
+        	// remove the parentheses
+        	if (reason.charAt(0) == '(') {
+        		reason.deleteCharAt(0);
+        	}
+        	if (reason.charAt(reason.length()-1) == ')') {
+        		reason.deleteCharAt(reason.length()-1);
+        	}
+        	
             MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-            return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptNumber);
+            return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptNumber, reason.toString());
         }
         catch (NumberFormatException exc) {
         	assert false : "unexpected catchpoint stream record format: " + streamRecord.getString(); //$NON-NLS-1$

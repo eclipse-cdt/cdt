@@ -130,12 +130,15 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	}
 
 	@Immutable
-	private static class ExecutionData implements IExecutionDMData {
+	private static class ExecutionData implements IExecutionDMData2 {
 		private final StateChangeReason fReason;
-		ExecutionData(StateChangeReason reason) {
+		private final String fDetails;
+		ExecutionData(StateChangeReason reason, String details) {
 			fReason = reason;
+			fDetails = details;
 		}
 		public StateChangeReason getStateChangeReason() { return fReason; }
+		public String getDetails() { return fDetails; }
 	}
 
 	/**
@@ -189,6 +192,26 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			}else {
 				return StateChangeReason.USER_REQUEST;
 			}
+		}
+		
+		/**
+		 * @since 3.0
+		 */
+		public String getDetails() {
+			MIStoppedEvent event = getMIEvent();
+			if (event instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
+				return ((MICatchpointHitEvent)event).getReason();
+			} else if (event instanceof MISharedLibEvent) {
+				 return ((MISharedLibEvent)event).getLibrary();
+			} else if (event instanceof MISignalEvent) {
+				return ((MISignalEvent)event).getName() + ':' + ((MISignalEvent)event).getMeaning(); 
+			} else if (event instanceof MIWatchpointTriggerEvent) {
+				return ((MIWatchpointTriggerEvent)event).getExpression();
+			} else if (event instanceof MIErrorEvent) {
+				return ((MIErrorEvent)event).getMessage();
+			}
+
+			return null;
 		}
 	}
 
@@ -324,7 +347,20 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	private boolean fStepping = false;
 	private boolean fTerminated = false;
 	
+	
+	/**
+	 * What caused the state change. E.g., a signal was thrown.
+	 */
 	private StateChangeReason fStateChangeReason;
+
+	/**
+	 * Further detail on what caused the state change. E.g., the specific signal
+	 * that was throw was a SIGINT. The exact string comes from gdb in the mi
+	 * event. May be null, as not all types of state change have additional
+	 * detail of interest.
+	 */
+	private String fStateChangeDetails;
+	
 	private IExecutionDMContext fStateChangeTriggeringContext;
 	/** 
 	 * Indicates that the next MIRunning event should be silenced.
@@ -526,6 +562,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         fSuspended = false;
         fResumePending = false;
         fStateChangeReason = e.getReason();
+        fStateChangeDetails = null; // we have no details of interest for a resume
         fMICommandCache.setContextAvailable(e.getDMContext(), false);
         //fStateChangeTriggeringContext = e.getTriggeringContext();
         if (e.getReason().equals(StateChangeReason.STEP)) {
@@ -544,6 +581,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
         fMICommandCache.setContextAvailable(e.getDMContext(), true);
         fMICommandCache.reset();
         fStateChangeReason = e.getReason();
+        fStateChangeDetails = e.getDetails();
         fStateChangeTriggeringContext = e.getTriggeringContexts().length != 0
             ? e.getTriggeringContexts()[0] : null;
         fSuspended = true;
@@ -793,10 +831,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	
 	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm){
         if (dmc instanceof IContainerDMContext) {
-            rm.setData( new ExecutionData(fStateChangeReason) );
+            rm.setData( new ExecutionData(fStateChangeReason, fStateChangeDetails) );
         } else if (dmc instanceof IMIExecutionDMContext) {
-    	    StateChangeReason reason = dmc.equals(fStateChangeTriggeringContext) ? fStateChangeReason : StateChangeReason.CONTAINER;
-    		rm.setData(new ExecutionData(reason));
+        	boolean thisThreadCausedStateChange = dmc.equals(fStateChangeTriggeringContext);
+    	    StateChangeReason reason = thisThreadCausedStateChange ? fStateChangeReason : StateChangeReason.CONTAINER;
+    	    String details = thisThreadCausedStateChange ? fStateChangeDetails : null;
+    		rm.setData(new ExecutionData(reason, details));
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Given context: " + dmc + " is not an execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
         }

@@ -23,13 +23,28 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 @Immutable
 public class MISharedLibEvent extends MIStoppedEvent {
 
-    protected MISharedLibEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame) {
+	/** See {@link #getLibrary()} */
+	private String fLibrary;
+	
+    /**
+	 * @since 3.0
+	 */
+    protected MISharedLibEvent(IExecutionDMContext ctx, int token, MIResult[] results, MIFrame frame, String library) {
         super(ctx, token, results, frame);
+        fLibrary = library;
+    }
+    
+    /** The library that was loaded, as reported by gdb. 
+     * @since 3.0*/
+    public String getLibrary() {
+    	return fLibrary;
     }
 
-    public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) 
-    {
+    /**
+	 * @since 3.0
+	 */
+    public static MIStoppedEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, String library) {
        MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-       return new MISharedLibEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame());
+       return new MISharedLibEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), library);
     }
 }

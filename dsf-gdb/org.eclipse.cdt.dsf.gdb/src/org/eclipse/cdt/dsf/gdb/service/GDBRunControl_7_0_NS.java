@@ -93,12 +93,16 @@ import org.osgi.framework.BundleContext;
 public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunControl, ICachingService
 {
 	@Immutable
-	private static class ExecutionData implements IExecutionDMData {
+	private static class ExecutionData implements IExecutionDMData2 {
 		private final StateChangeReason fReason;
-		ExecutionData(StateChangeReason reason) {
+		private final String fDetails;
+		
+		ExecutionData(StateChangeReason reason, String details) {
 			fReason = reason;
+			fDetails = details;
 		}
 		public StateChangeReason getStateChangeReason() { return fReason; }
+		public String getDetails() { return fDetails; }
 	}
 
 	/**
@@ -152,6 +156,23 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			}else {
 				return StateChangeReason.USER_REQUEST;
 			}
+		}
+		
+		public String getDetails() {
+			MIStoppedEvent event = getMIEvent();
+			if (event instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
+				return ((MICatchpointHitEvent)event).getReason();
+			} else if (event instanceof MISharedLibEvent) {
+				 return ((MISharedLibEvent)event).getLibrary();
+			} else if (event instanceof MISignalEvent) {
+				return ((MISignalEvent)event).getName() + ':' + ((MISignalEvent)event).getMeaning(); 
+			} else if (event instanceof MIWatchpointTriggerEvent) {
+				return ((MIWatchpointTriggerEvent)event).getExpression();
+			} else if (event instanceof MIErrorEvent) {
+				return ((MIErrorEvent)event).getMessage();
+			}
+
+			return null;
 		}
 	}
 
@@ -227,7 +248,19 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		boolean fSuspended = false;
 		boolean fResumePending = false;
 		boolean fStepping = false;
+
+		/**
+		 * What caused the state change. E.g., a signal was thrown.
+		 */
 		StateChangeReason fStateChangeReason;
+
+		/**
+		 * Further detail on what caused the state change. E.g., the specific signal
+		 * that was throw was a SIGINT. The exact string comes from gdb in the mi
+		 * event. May be null, as not all types of state change have additional
+		 * detail of interest.
+		 */
+		String fStateChangeDetails;
 	}
 
 	private static class RunToLineActiveOperation {
@@ -783,7 +816,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		}
 
 		if (dmc instanceof IMIExecutionDMContext) {
-			rm.setData(new ExecutionData(threadState.fSuspended ? threadState.fStateChangeReason : null));
+			rm.setData(new ExecutionData(threadState.fSuspended ? threadState.fStateChangeReason : null, threadState.fStateChangeDetails));
 		} else {
 			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
 				"Given context: " + dmc + " is not a recognized execution context.", null)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -817,6 +850,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		threadState.fSuspended = false;
 		threadState.fResumePending = false;
 		threadState.fStateChangeReason = reason;
+		threadState.fStateChangeDetails = null;	// we have no details of interest for a resume
 		threadState.fStepping = isStepping;
 	}
 
@@ -831,6 +865,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		threadState.fResumePending = false;
 		threadState.fStepping = false;
 		threadState.fStateChangeReason = reason;
+		threadState.fStateChangeDetails = event.getDetails();		
 	}
 
 	

@@ -76,7 +76,9 @@ public class ThreadVMNode extends AbstractThreadVMNode
                         IGdbLaunchVMConstants.PROP_OS_ID, 
                         ILaunchVMConstants.PROP_IS_SUSPENDED, 
                         ExecutionContextLabelText.PROP_STATE_CHANGE_REASON_KNOWN, 
-                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON }),
+                        ILaunchVMConstants.PROP_STATE_CHANGE_REASON,
+                        ExecutionContextLabelText.PROP_STATE_CHANGE_DETAILS_KNOWN,
+                        ILaunchVMConstants.PROP_STATE_CHANGE_DETAILS}),
                 new LabelText(MessagesForGdbLaunchVM.ThreadVMNode_No_columns__Error__label, new String[0]),
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING)) {
                     { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }

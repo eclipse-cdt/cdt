@@ -48,11 +48,7 @@ public class CLICatchInfo extends MIInfo {
 	}
 
 	private MIBreakpoint parseCatchpoint(String str) {
-		if (str.startsWith("Catchpoint ")) { //$NON-NLS-1$
-			return new MIBreakpoint(str);
-		}
-		assert false : "CLI catch command had an unexpected result: " + str; //$NON-NLS-1$
-		return null;
+		return str.startsWith("Catchpoint ") ? new MIBreakpoint(str) : null; //$NON-NLS-1$
 	}
 
 	/**

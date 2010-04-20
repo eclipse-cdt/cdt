@@ -32,9 +32,9 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupParticipant;
@@ -647,16 +647,22 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
-    public void displaySource(Object context, final IWorkbenchPage page, final boolean force) {
+	public void displaySource(Object context, final IWorkbenchPage page,
+			final boolean force) {
 		fStepCount = 0;
 
-        if (!(context instanceof IDMVMContext)) return;
-        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
+		IFrameDMContext displayFrame = null;
+		if (context instanceof IDMVMContext) {
+			IDMContext dmc = ((IDMVMContext) context).getDMContext();
+			if (dmc instanceof IFrameDMContext)
+				displayFrame = (IFrameDMContext) dmc;
+		} else if (context instanceof IFrameDMContext)
+			displayFrame = (IFrameDMContext) context;
 
-        // Quick test.  DMC is checked again in source lookup participant, but 
-        // it's much quicker to test here. 
-        if (!(dmc instanceof IFrameDMContext)) return;
-        doDisplaySource((IFrameDMContext) dmc, page, force, false);
+		// Quick test. DMC is checked again in source lookup participant, but
+		// it's much quicker to test here.
+		if (displayFrame != null)
+			doDisplaySource(displayFrame, page, force, false);
 	}
 
 	private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {

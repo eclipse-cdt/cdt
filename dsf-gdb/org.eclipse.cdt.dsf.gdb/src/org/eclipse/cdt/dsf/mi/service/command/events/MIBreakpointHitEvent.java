@@ -78,7 +78,6 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
                }
            }
        }
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
 
        // We might be here because of a catchpoint hit; in gdb >= 7.0,
        // catchpoints are reported as breakpoints. Unfortunately, there's
@@ -90,18 +89,26 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
        if (bpsTarget != null) {
     	   MIBreakpointDMContext bkpt = new MIBreakpointDMContext(dmc.getSessionId(), new IDMContext[] {bpsTarget}, bkptno);
     	   DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), dmc.getSessionId());
-    	   MIBreakpointsManager bkptMgr = tracker.getService(MIBreakpointsManager.class);
-    	   IBreakpoint platformBkpt = bkptMgr.findPlatformBreakpoint(bkpt);
-    	   if (platformBkpt instanceof CEventBreakpoint) {
-    		   try {
-    			   String eventTypeID = ((CEventBreakpoint)platformBkpt).getEventType();
-    			   String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID);
-    			   return MICatchpointHitEvent.parse(stoppedEvent.getDMContext(), token, results, bkptno, gdbKeyword);
-    		   } catch (DebugException e) {
-    		   }
+    	   try {
+	    	   MIBreakpointsManager bkptMgr = tracker.getService(MIBreakpointsManager.class);
+	    	   if (bkptMgr != null) {
+		    	   IBreakpoint platformBkpt = bkptMgr.findPlatformBreakpoint(bkpt);
+		    	   if (platformBkpt instanceof CEventBreakpoint) {
+		    		   try {
+		    			   String eventTypeID = ((CEventBreakpoint)platformBkpt).getEventType();
+		    			   String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID);
+		    			   return MICatchpointHitEvent.parse(dmc, token, results, bkptno, gdbKeyword);
+		    		   } catch (DebugException e) {
+		    		   }
+		    	   }
+	    	   }
+    	   }
+    	   finally {
+    		   tracker.dispose();
     	   }
        }
-       
+
+       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
        return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
     }
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.core.runtime.CoreException;
@@ -38,14 +39,14 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	public static final String TYPE_ID = CDebugCorePlugin.getUniqueIdentifier() + ".containerType.mapping";	 //$NON-NLS-1$
 
 	private String fName;
-	private ArrayList fContainers;
+	private ArrayList<MapEntrySourceContainer> fContainers;
 
 	/** 
 	 * Constructor for MappingSourceContainer. 
 	 */
 	public MappingSourceContainer( String name ) {
 		fName = name;
-		fContainers = new ArrayList();
+		fContainers = new ArrayList<MapEntrySourceContainer>();
 	}
 
 	/* (non-Javadoc)
@@ -77,11 +78,11 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	}
 
 	protected Object[] findSourceElements( String name, ISourceContainer[] containers ) throws CoreException {
-		List results = null;
+		List<Object> results = null;
 		CoreException single = null;
 		MultiStatus multiStatus = null;
 		if ( isFindDuplicates() ) {
-			results = new ArrayList();
+			results = new ArrayList<Object>();
 		}
 		for( int i = 0; i < containers.length; i++ ) {
 			ISourceContainer container = containers[i];
@@ -131,7 +132,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer#getSourceContainers()
 	 */
 	public ISourceContainer[] getSourceContainers() throws CoreException {
-		return (MapEntrySourceContainer[])fContainers.toArray( new MapEntrySourceContainer[fContainers.size()] );
+		return fContainers.toArray( new MapEntrySourceContainer[fContainers.size()] );
 	}
 
 	public void addMapEntry( MapEntrySourceContainer entry ) {
@@ -151,7 +152,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	}
 
 	public void clear() {
-		Iterator it = fContainers.iterator();
+		Iterator<MapEntrySourceContainer> it = fContainers.iterator();
 		while( it.hasNext() ) {
 			((ISourceContainer)it.next()).dispose();
 		}
@@ -163,7 +164,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 	 */
 	public void dispose() {
 		super.dispose();
-		Iterator it = fContainers.iterator();
+		Iterator<MapEntrySourceContainer> it = fContainers.iterator();
 		while( it.hasNext() ) {
 			((ISourceContainer)it.next()).dispose();
 		}
@@ -174,7 +175,7 @@ public class MappingSourceContainer extends AbstractSourceContainer {
 		MappingSourceContainer copy = new MappingSourceContainer( fName );
 		MapEntrySourceContainer[] entries = new MapEntrySourceContainer[fContainers.size()];
 		for ( int i = 0; i < entries.length; ++i ) {
-			copy.addMapEntry( ((MapEntrySourceContainer)fContainers.get( i )).copy() );
+			copy.addMapEntry( fContainers.get( i ).copy() );
 		}
 		return copy;
 	}

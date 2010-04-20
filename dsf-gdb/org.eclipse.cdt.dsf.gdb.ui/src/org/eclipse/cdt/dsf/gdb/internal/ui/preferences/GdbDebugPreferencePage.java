@@ -42,7 +42,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IGdbDebugPreferenceConstants.PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), GdbUIPlugin.PLUGIN_ID + ".dsfgdb_preference_page"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -105,5 +105,10 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 	@Override
 	protected void adjustGridLayout() {
 		// do nothing
+	}
+	
+	public void performHelp() {
+		// jjjjjjjjjjjjjjjj
+		super.performHelp();
 	}
 }

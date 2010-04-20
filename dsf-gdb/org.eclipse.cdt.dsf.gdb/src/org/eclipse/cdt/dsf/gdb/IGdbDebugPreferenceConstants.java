@@ -40,7 +40,5 @@ public interface IGdbDebugPreferenceConstants {
      * Help prefixes.
      */
     public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
-    
-    public static final String PREFERENCE_PAGE= PREFIX + "preference_page_context"; //$NON-NLS-1$
 }
 

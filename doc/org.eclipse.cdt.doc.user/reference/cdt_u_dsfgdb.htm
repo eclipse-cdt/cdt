@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>GDB Debugging Preferences</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+
+<h1>GDB Debugging Preferences</h1>
+
+<p>This preferences page lets you control how the CDT debugger behaves when debugging with GDB, 
+specifically when using a <i>GDB (DSF)</i> launcher. 
+The page is accessible at:
+<strong>Window &gt; Preferences &gt; C/C++ &gt; Debug &gt; GDB</strong>.</p>
+
+<img src="../images/cdt_dsfgdb_preferences_page.png"  alt="GDB preferences page">
+<dl>
+  <dt>Enable GDB traces</dt>
+  <dd>When checked, the debug session will produce an additional console which will contain all the gdb/mi activity. Basically, this details the 
+  interaction between the CDT debugger and GDB. This information is often critical when the debugger is not behaving as you expect. Turn this on and submit
+  the console output when submitting a bugzilla report against the CDT debugger. 
+  </dd>
+  <dt>Terminate GDB when last process exits</dt>
+  <dd>When checked, the CDT debugger will terminate the GDB host processs after all the target processes it is debugging have terminated. Otherwise it will leave it running.</dd>
+  <dt>Use Inspector Debug Hover</dt>
+  <dd>When checked, hovering over an expression in the editor during a debug session will bring up an <i>enhanced</i> expression evaluation control. Otherwise, a more basic control is used. This, of course, assumes that you have the debugger's hovering capability turned on in C/C++ > Editor > Hovers. If not, this checkbox has no effect. </dd>
+</dl>
+
+</body>
+
+</html>

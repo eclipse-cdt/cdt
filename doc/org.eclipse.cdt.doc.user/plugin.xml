@@ -80,6 +80,13 @@
             plugin="org.eclipse.cdt.launch">
       </contexts>
    </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CDT_DEBUGGER_DSFGDB.xml"
+            plugin="org.eclipse.cdt.dsf.gdb.ui">
+      </contexts>
+   </extension>
    
 <!-- ============================================================================= -->
 <!-- KEYWORD INDEX EXTENSION                                                       -->

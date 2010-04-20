@@ -19,60 +19,45 @@ import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
-import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class CodanBuilder extends IncrementalProjectBuilder implements
 		ICodanBuilder {
 	public static final String BUILDER_ID = "org.eclipse.cdt.codan.core.codanBuilder"; //$NON-NLS-1$
 
 	public class CodanDeltaVisitor implements IResourceDeltaVisitor {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse
-		 * .core.resources.IResourceDelta)
+		private IProgressMonitor monitor;
+
+		/**
+		 * @param monitor
 		 */
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.cdt.codan.internal.core.ICodanBuilder#visit(org.eclipse
-		 * .core.resources.IResourceDelta)
-		 */
+		public CodanDeltaVisitor(IProgressMonitor monitor) {
+			this.monitor = monitor;
+		}
+
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				// handle added resource
-				processResource(resource, new NullProgressMonitor());
+				processResource(resource, monitor);
 				break;
 			case IResourceDelta.REMOVED:
 				// handle removed resource
 				break;
 			case IResourceDelta.CHANGED:
 				// handle changed resource
-				processResource(resource, new NullProgressMonitor());
+				processResource(resource, monitor);
 				break;
 			}
-			// return true to continue visiting children.
-			return true;
-		}
-	}
-
-	public class CodanResourceVisitor implements IResourceVisitor {
-		public boolean visit(IResource resource) {
-			if (!(resource instanceof IProject))
-				processResource(resource, new NullProgressMonitor());
 			// return true to continue visiting children.
 			return true;
 		}
@@ -102,89 +87,94 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 	}
 
 	public void processResource(IResource resource, IProgressMonitor monitor) {
-		// String string = Platform.getPreferencesService().getString(
-		// CodanCorePlugin.PLUGIN_ID, "problems", "", null);
-		// System.err.println("set = " + string);
-		// delete general markers
-		IProblemReporter problemReporter = CodanRuntime.getInstance()
-				.getProblemReporter();
-		if (problemReporter instanceof CodanMarkerProblemReporter) {
-			((CodanMarkerProblemReporter) problemReporter)
-					.deleteProblems(resource);
-		}
+		processResource(resource, monitor, null, false);
+	}
+
+	protected void processResource(IResource resource,
+			IProgressMonitor monitor, Object model, boolean inEditor) {
 		CheckersRegisry chegistry = CheckersRegisry.getInstance();
-		for (IChecker checker : chegistry) {
+		int checkers = chegistry.getCheckersSize();
+		int memsize = 0;
+		if (resource instanceof IContainer) {
 			try {
-				if (monitor.isCanceled())
-					return;
-				if (chegistry.isCheckerEnabled(checker, resource)
-						&& checker.enabledInContext(resource)) {
-					checker.processResource(resource);
-				}
-			} catch (Throwable e) {
-				CodanCorePlugin.log(e);
-			}
-		}
-		if (resource instanceof IProject) {
-			try {
-				resource.accept(getResourceVisitor());
+				IResource[] members = ((IContainer) resource).members();
+				memsize = members.length;
 			} catch (CoreException e) {
 				CodanCorePlugin.log(e);
 			}
+		}
+		int tick = 1000;
+		// System.err.println("processing " + resource);
+		monitor.beginTask("Code analysis on " + resource, checkers + memsize
+				* tick);
+		try {
+			IProblemReporter problemReporter = CodanRuntime.getInstance()
+					.getProblemReporter();
+			for (IChecker checker : chegistry) {
+				try {
+					if (monitor.isCanceled())
+						return;
+					if (checker.enabledInContext(resource)) {
+						// delete markers if checker can possibly run on this
+						// resource
+						// this way if checker is not enabled markers would be
+						// deleted too
+						if (problemReporter instanceof IProblemReporterPersistent) {
+							// delete general markers
+							((IProblemReporterPersistent) problemReporter)
+									.deleteProblems(resource, checker);
+						}
+						if (chegistry.isCheckerEnabled(checker, resource)) {
+							if (inEditor) {
+								if (checker.runInEditor()
+										&& checker instanceof IRunnableInEditorChecker) {
+									((IRunnableInEditorChecker) checker)
+											.processModel(model);
+								}
+							} else {
+								checker.processResource(resource);
+							}
+						}
+					}
+					monitor.worked(1);
+				} catch (Throwable e) {
+					CodanCorePlugin.log(e);
+				}
+			}
+			if (resource instanceof IContainer) {
+				try {
+					IResource[] members = ((IContainer) resource).members();
+					for (int i = 0; i < members.length; i++) {
+						if (monitor.isCanceled())
+							return;
+						IResource member = members[i];
+						processResource(member, new SubProgressMonitor(monitor,
+								tick));
+					}
+				} catch (CoreException e) {
+					CodanCorePlugin.log(e);
+				}
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 
 	protected void fullBuild(final IProgressMonitor monitor)
 			throws CoreException {
-		try {
-			getProject().accept(new CodanResourceVisitor());
-		} catch (CoreException e) {
-		}
+		processResource(getProject(), monitor);
 	}
 
 	protected void incrementalBuild(IResourceDelta delta,
 			IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
-		delta.accept(new CodanDeltaVisitor());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.ICodanBuilder#getResourceVisitor()
-	 */
-	public CodanResourceVisitor getResourceVisitor() {
-		return new CodanResourceVisitor();
+		delta.accept(new CodanDeltaVisitor(monitor));
 	}
 
 	public void runInEditor(Object model, IResource resource,
 			IProgressMonitor monitor) {
 		if (model == null)
 			return;
-		IProblemReporter problemReporter = CodanRuntime.getInstance()
-				.getProblemReporter();
-		// TODO: this is wrong - should not delete all markers -
-		// only those that contributed by the checker that we run now
-		if (problemReporter instanceof IProblemReporterPersistent) {
-			((IProblemReporterPersistent) problemReporter)
-					.deleteProblems(resource);
-		}
-		CheckersRegisry chegistry = CheckersRegisry.getInstance();
-		for (IChecker checker : chegistry) {
-			try {
-				boolean run = false;
-				if (checker.enabledInContext(resource)
-						&& chegistry.isCheckerEnabled(checker, resource)) {
-					run = true;
-				}
-				if (run && checker.runInEditor()
-						&& checker instanceof IRunnableInEditorChecker)
-					((IRunnableInEditorChecker) checker).processModel(model);
-				if (monitor.isCanceled())
-					break;
-			} catch (Throwable e) {
-				CodanCorePlugin.log(e);
-			}
-		}
+		processResource(resource, monitor, model, true);
 	}
 }

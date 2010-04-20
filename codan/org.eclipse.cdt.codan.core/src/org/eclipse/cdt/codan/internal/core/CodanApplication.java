@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 
@@ -25,7 +26,8 @@ public class CodanApplication implements IApplication {
 	private boolean all = false;
 
 	public Object start(IApplicationContext context) throws Exception {
-		String[] args = (String[]) context.getArguments().get("application.args"); //$NON-NLS-1$
+		String[] args = (String[]) context.getArguments().get(
+				"application.args"); //$NON-NLS-1$
 		if (args == null || args.length == 0) {
 			help();
 			return EXIT_OK;
@@ -35,24 +37,27 @@ public class CodanApplication implements IApplication {
 		CodanRuntime runtime = CodanRuntime.getInstance();
 		runtime.setProblemReporter(new CodanMarkerProblemReporter() {
 			@Override
-			public void reportProblem(String id, int severity, IFile file, int lineNumber, int startChar, int endChar,
-					String message) {
-				System.out.println(file.getLocation() + ":" + lineNumber + ": " + message);
+			public void reportProblem(String id, int severity, IFile file,
+					int lineNumber, int startChar, int endChar, String message) {
+				System.out.println(file.getLocation() + ":" + lineNumber + ": "
+						+ message);
 			}
 		});
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if (all) {
 			log("Launching analysis on workspace");
-			root.accept(codanBuilder.new CodanResourceVisitor());
+			codanBuilder.processResource(root, new NullProgressMonitor());
 		} else {
 			for (String project : projects) {
 				log("Launching analysis on project " + project);
 				IProject wProject = root.getProject(project);
 				if (!wProject.exists()) {
-					System.err.println("Error: project " + project + " does not exist");
+					System.err.println("Error: project " + project
+							+ " does not exist");
 					continue;
 				}
-				wProject.accept(codanBuilder.new CodanResourceVisitor());
+				codanBuilder.processResource(wProject,
+						new NullProgressMonitor());
 			}
 		}
 		return EXIT_OK;
@@ -62,7 +67,8 @@ public class CodanApplication implements IApplication {
 	 * @param string
 	 */
 	private void log(String string) {
-		if (verbose) System.err.println(string);
+		if (verbose)
+			System.err.println(string);
 	}
 
 	/**

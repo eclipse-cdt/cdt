@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
@@ -419,5 +420,12 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		}
 		// no problem is enabled for this checker, skip the checker
 		return false;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getCheckersSize() {
+		return checkers.size();
 	}
 }

@@ -45,7 +45,7 @@ public class CxxModelsCache {
 		if (!(celement instanceof ITranslationUnit))
 			return null; // not a C/C++ file
 		this.file = file;
-		System.err.println("Making ast for "+file);
+		//System.err.println("Making ast for "+file);
 		tu = (ITranslationUnit) celement;
 		index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
 		// lock the index for read access

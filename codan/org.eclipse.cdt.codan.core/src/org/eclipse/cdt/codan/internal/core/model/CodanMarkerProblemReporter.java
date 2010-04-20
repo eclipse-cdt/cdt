@@ -11,8 +11,13 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Iterator;
 
+import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IChecker;
+import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
@@ -101,7 +106,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 
 	public void deleteProblems(IResource file) {
 		try {
-			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, false,
+			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
 					IResource.DEPTH_ZERO);
 		} catch (CoreException ce) {
 			ce.printStackTrace();
@@ -110,13 +115,11 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 
 	public void deleteAllProblems() {
 		try {
-			// TODO delete contributed markers too
 			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(
-					GENERIC_CODE_ANALYSIS_MARKER_TYPE, false,
+					GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
 					IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CodanCorePlugin.log(e);
 		}
 	}
 
@@ -129,6 +132,25 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 	 * org.eclipse.cdt.codan.core.model.IChecker)
 	 */
 	public void deleteProblems(IResource file, IChecker checker) {
-		deleteProblems(file);
+		try {
+			IMarker[] markers = file.findMarkers(
+					GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+					IResource.DEPTH_INFINITE);
+			ICheckersRegistry reg = CodanRuntime.getInstance()
+					.getChechersRegistry();
+			for (int i = 0; i < markers.length; i++) {
+				IMarker m = markers[i];
+				String id = m.getAttribute(IMarker.PROBLEM, ""); //$NON-NLS-1$
+				Collection<IProblem> problems = reg.getRefProblems(checker);
+				for (Iterator<IProblem> iterator = problems.iterator(); iterator
+						.hasNext();) {
+					IProblem iProblem = iterator.next();
+					if (iProblem.getId().equals(id))
+						m.delete();
+				}
+			}
+		} catch (CoreException e) {
+			CodanCorePlugin.log(e);
+		}
 	}
 }

@@ -30,7 +30,8 @@
             file="topics_Tasks.xml">
       </toc>
       <toc
-            file="topics_Reference.xml">
+            file="topics_Reference.xml"
+            primary="true">
       </toc>
    </extension>
 <!-- ============================================================================= -->

@@ -67,45 +67,43 @@
 		
 		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
 			<topic label="Breakpoint Actions" href="reference/cdt_u_dbg_brkpt_actions.htm"/>
-			<topic label="Source Code Locations preferences" href="reference/cdt_u_dbg_src.htm"/>
+			<topic label="Common Source Lookup Path" href="reference/cdt_u_dbg_src.htm"/>
 			<topic label="GDB MI" href="reference/cdt_u_gdb_mi.htm"/>
 		</topic>
 		
 		
-		<topic label="Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
-			<topic label="General preferences" href="reference/cdt_u_c_editor_gen.htm"/>
-			<topic label="Content Assist preferences" href="reference/cdt_u_c_editor_con_assist.htm" >
-				<topic label="Advanced preferences" href="reference/cdt_u_c_editor_con_assist_adv.htm"/>
+		<topic label="Editor preferences" href="reference/cdt_u_c_editor_gen.htm">
+			<topic label="Content Assist" href="reference/cdt_u_c_editor_con_assist.htm" >
+				<topic label="Advanced" href="reference/cdt_u_c_editor_con_assist_adv.htm"/>
 			</topic>
-			<topic label="Folding preferences" href="reference/cdt_u_c_editor_folding.htm"/>
-			<topic label="Hovers preferences" href="reference/cdt_u_c_editor_hov.htm"/>
-			<topic label="Mark Occurrences preferences" href="reference/cdt_u_c_editor_mark_occurrences.htm"/>
-			<topic label="Save Actions preferences" href="reference/cdt_u_c_editor_save_actions.htm"/>
-			<topic label="Scalability preferences" href="reference/cdt_u_c_editor_scalability.htm"/>
-			<topic label="Syntax Coloring preferences" href="reference/cdt_u_c_editor_color.htm"/>
-			<topic label="Templates preferences" href="reference/cdt_u_code_temp.htm"/>
-			<topic label="Typing preferences" href="reference/cdt_u_c_editor_typing.htm"/>
+			<topic label="Folding" href="reference/cdt_u_c_editor_folding.htm"/>
+			<topic label="Hovers" href="reference/cdt_u_c_editor_hov.htm"/>
+			<topic label="Mark Occurrences" href="reference/cdt_u_c_editor_mark_occurrences.htm"/>
+			<topic label="Save Actions" href="reference/cdt_u_c_editor_save_actions.htm"/>
+			<topic label="Scalability" href="reference/cdt_u_c_editor_scalability.htm"/>
+			<topic label="Syntax Coloring" href="reference/cdt_u_c_editor_color.htm"/>
+			<topic label="Templates" href="reference/cdt_u_code_temp.htm"/>
+			<topic label="Typing" href="reference/cdt_u_c_editor_typing.htm"/>
 		</topic>
 		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
 
 		<topic label="Language Mappings" href="reference/cdt_u_language_mapping_pref.htm"/>
-
 		
 		<topic label="New CDT project wizard">
-                        <topic label="Preferred Toolchains tab" href="reference/cdt_u_pref_wizard_toolchains.htm"/> 
-                        <topic label="Wizard Defaults tab" href="reference/cdt_u_pref_wizard_defaults.htm"/> 
+            <topic label="Preferred Toolchains tab" href="reference/cdt_u_pref_wizard_toolchains.htm"/> 
+            <topic label="Wizard Defaults tab" href="reference/cdt_u_pref_wizard_defaults.htm"/> 
 			<topic label="Makefile Project pages" >
 				<topic label="Binary parsers" href="reference/cdt_u_newproj_parser_binary.htm"/>
 				<topic label="Error parsers" href="reference/cdt_u_newproj_parser_error.htm"/>
 				<topic label="Discovery options" href="reference/cdt_u_newproj_discovery_options.htm"/>
 				<topic label="Builder settings" href="reference/cdt_u_newproj_buildset.htm"/>
-				<topic label="Behaviour" href="reference/cdt_u_newproj_behavior.htm"/>
+				<topic label="Behavior" href="reference/cdt_u_newproj_behavior.htm"/>
 			</topic>
 		</topic>
 		<topic label="Property Pages Settings" href="reference/cdt_u_pref_prop_pages.htm">
 			<topic label="Multiple Configurations Edit" href="reference/cdt_u_pref_multi_cfg.htm"/>
-	        </topic>
+	    </topic>
 	</topic>
 	
 	<!-- PROJECT PROPERTIES TOPICS -->

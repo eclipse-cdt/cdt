@@ -6,19 +6,27 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Typing preferences</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 <body>
 
 <h1>Typing preferences</h1>
 
-<p>Use the <strong>Typing</strong> preference panel to assist in formatting input as you type. Click <strong>Window &gt; Preferences &gt; C/C++ &gt; Editor &gt; Typing</strong> to make changes.</p>
-<img src="../images/editor_typing_preferences.png"  alt="Typing Preferences">
-	<table width="600px" cellpadding="5" cellspacing="0" border="1" >
+<p>Use the <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.internal.ui.preferences.SmartTypingPreferencePage)")'>Typing</a> preference panel to assist in formatting input as you type.</p>
+<p><img src="../images/editor_typing_preferences.png"  alt="Typing Preferences"></p>
+
+<table width="600px" cellpadding="5" cellspacing="0" border="1" >
 	<caption><strong>Typing Preference Options</strong></caption>
 	<colgroup>
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
 	</colgroup>
+	<thead>
+		<tr>
+			<th><b>Option</b></th>
+			<th><b>Description</b></th>
+		</tr>
+	</thead>
 	<tbody>
 		<tr>
 			<td><strong>"Strings"</strong></td>
@@ -37,7 +45,7 @@
 			<td>If enabled, automatically close curly braces.</td>
 		</tr>
 		<tr>
-			<td><strong>Tab key indents the current line</strong></td>
+			<td><strong>Tab key adjusts indentation of the current line</strong></td>
 			<td>If enabled, indent the current line when the tab key is pressed.</td>
 		</tr>
 		<tr>
@@ -53,7 +61,7 @@
 			<td>If enabled, special characters in pasted strings are escaped when pasted into an existing string literal.</td>
 		</tr>
 		<tr>
-			<td><strong>Automatically indent - New lines and braces</strong></td>
+			<td><strong>New lines and braces</strong></td>
 			<td>If enabled, a new line or brace will be indented according to the <a href="cdt_u_c_code_style_pref.htm">Code Style preferences</a>. 
 			If disabled, the default Text Editor indentation strategy is applied (copy indent from previous line)</td>
 		</tr>

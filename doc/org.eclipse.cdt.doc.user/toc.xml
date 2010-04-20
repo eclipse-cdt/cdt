@@ -8,20 +8,26 @@
 
 	<topic label="Getting Started" href="getting_started/cdt_o_tutorial.htm">
 		<link toc="topics_Getting_Started.xml" />
+        <anchor id="cdt_GettingStarted_Anchor"/>
 	</topic>
 	
 	<topic label="Concepts" href="concepts/cdt_o_concepts.htm">
 		<link toc="topics_Concepts.xml" />
+        <anchor id="cdt_Concepts_Anchor"/>
 	</topic>
 	
 	<topic label="Tasks"  href="tasks/cdt_o_tasks.htm">
 		<link toc="topics_Tasks.xml" />
+        <anchor id="cdt_Tasks_Anchor"/>
 	</topic>
 	
 	<topic label="Reference"  href="reference/cdt_o_ref.htm">
 		<link toc="topics_Reference.xml" />
+        <anchor id="cdt_Reference_Anchor"/>
 	</topic>
 	
+    <anchor id="cdt_Appendum_Anchor"/>
+    
 	<topic label="What's new in CDT 6.0"  href="concepts/cdt_c_whatsnew.htm"/>
 	
 	<topic label="Legal" href="notices.html"/>

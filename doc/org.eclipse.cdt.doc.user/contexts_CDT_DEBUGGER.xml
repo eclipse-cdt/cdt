@@ -17,6 +17,7 @@
     <!ENTITY importExe "Import C/C++ Executable Files">
     <!ENTITY chooseProj "Choose Project">
 	<!ENTITY consoleView "Console view">
+	<!ENTITY executablesView "Executables view">
 ]>
 <contexts>
 
@@ -117,6 +118,12 @@
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_console_view.htm"
    	label="&consoleView;"/>
+</context>
+
+<context id ="executables_View_context">
+   <description>The Executables view provides a dynamic list of executables and their related source files.</description>
+   <topic href="reference/cdt_u_view_executables.htm.htm"
+   	label="&executablesView;"/>
 </context>
 
 </contexts>

@@ -12,13 +12,25 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.events;
 
+import org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint;
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * Conveys that gdb reported the target stopped because of a breakpoint. This
@@ -47,8 +59,8 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
      * @param miStreamRecords 
      * @since 3.0
      */
-    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, MIStreamRecord[] miStreamRecords) 
-    { 
+    @ConfinedToDsfExecutor("")    
+    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, MIStreamRecord[] miStreamRecords) {
        int bkptno = -1;
 
        for (int i = 0; i < results.length; i++) {
@@ -66,24 +78,29 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
                }
            }
        }
-       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
-       
+       MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results);
+
        // We might be here because of a catchpoint hit; in gdb >= 7.0,
        // catchpoints are reported as breakpoints. Unfortunately, there's
        // nothing in the stopped event indicating it's a catchpoint, and unlike
-       // gdb < 7.0, there are no stream records that reveal it's a catchpoint.
-       // The only way to determine it's a catchpoint is to map the gdb breakpoint
-       // number back to the CBreakpoint (platform) instance, and that *will* reveal
-       // whether it's a catchpoint or not, and even which kind of catchpoint
-       // TODO: 
-       /*
-       CBreakpoint cbkpt = FromSomewhere.getCBreakpointForGdbBreakpoint(bkptno); <== this method doesn't exist yet
-       if (cbkpt instanceof CEventBreakpoint) {
-	       String eventTypeID = ((CEventBreakpoint)cbkpt).getEventType();
-	       String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID)
-	       return MICatchpointHitEvent.parse(stoppedEvent.getDMContext(), token, results, gdbKeyword);
+		// gdb < 7.0, there are no stream records that tell us so. The only way
+		// to determine it's a catchpoint is to map the gdb breakpoint number
+		// back to the CBreakpoint (platform) object.
+       IBreakpointsTargetDMContext bpsTarget = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
+       if (bpsTarget != null) {
+    	   MIBreakpointDMContext bkpt = new MIBreakpointDMContext(dmc.getSessionId(), new IDMContext[] {bpsTarget}, bkptno);
+    	   DsfServicesTracker tracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), dmc.getSessionId());
+    	   MIBreakpointsManager bkptMgr = tracker.getService(MIBreakpointsManager.class);
+    	   IBreakpoint platformBkpt = bkptMgr.findPlatformBreakpoint(bkpt);
+    	   if (platformBkpt instanceof CEventBreakpoint) {
+    		   try {
+    			   String eventTypeID = ((CEventBreakpoint)platformBkpt).getEventType();
+    			   String gdbKeyword = GdbCatchpoints.eventToGdbCatchpointKeyword(eventTypeID);
+    			   return MICatchpointHitEvent.parse(stoppedEvent.getDMContext(), token, results, bkptno, gdbKeyword);
+    		   } catch (DebugException e) {
+    		   }
+    	   }
        }
-       */
        
        return new MIBreakpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptno);
     }

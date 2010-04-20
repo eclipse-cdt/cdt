@@ -27,12 +27,12 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * Returns the event the cachpoint caught. E.g., a C++ exception was thrown.
 	 * This string comes either from gdb when the catchpoint is hit, or it's the
 	 * gdb catchpoint keyword ('catch', 'throw', 'fork', etc) that was used to
-	 * set the catchpoint (to be done for gdb >= 7.0)
+	 * set the catchpoint
 	 */
 	public String getReason() {
 		return fReason;
 	}
-	
+
 	/**
 	 * This variant is for catchpoint-hit in gdb < 7.0. For those versions, gdb
 	 * sends us a stopped event, but it doesn't include a reason in it.
@@ -40,7 +40,8 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * catchpoint was hit, but what its breakpoint number is.
 	 * 
 	 * @param streamRecord
-	 *            the stream record that reveals that a catchpoint was hit
+	 *            the stream record that reveals that a catchpoint was hit and
+	 *            what the event was
 	 */
     public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, MIStreamRecord streamRecord) {
         // stream record example: "Catchpoint 1 (exception caught)"
@@ -73,5 +74,20 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
         	assert false : "unexpected catchpoint stream record format: " + streamRecord.getString(); //$NON-NLS-1$
         	return null;
         }
+    }
+
+	/**
+	 * This variant is for a catchpoint-hit in gdb >= 7.0.
+	 * {@link MIBreakpointHitEvent#parse(IExecutionDMContext, int, MIResult[], MIStreamRecord[])
+	 * delegates to us if it determines that the breakpoint hit was actually
+	 * caused by catchpoint. In this case, we use the event keyword used to set
+	 * the catchpoint as the reason (e.g., "catch", "throw"), whereas in the gdb
+	 * < 7.0 case we use the reason provided in the stream record (e.g.,
+	 * "exception caught"). The inconsistency is fine. The user will get the
+	 * insight he needs either way.
+	 */
+    public static MICatchpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, int bkptNumber, String gdbKeyword) {
+    	MIStoppedEvent stoppedEvent = MIStoppedEvent.parse(dmc, token, results); 
+    	return new MICatchpointHitEvent(stoppedEvent.getDMContext(), token, results, stoppedEvent.getFrame(), bkptNumber, gdbKeyword);
     }
 }

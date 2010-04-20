@@ -14,6 +14,7 @@ package org.eclipse.cdt.dsf.mi.service.command;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -219,7 +220,8 @@ public class MIRunControlEventProcessor
 	 *            However, gdb also sends a stream record that reveals that it's
 	 *            a catchpoint hit.
 	 * @since 3.0
-	 */            
+	 */
+    @ConfinedToDsfExecutor("")
     protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec, MIStreamRecord[] miStreamRecords) {
     	IExecutionDMContext execDmc = getExecutionContext(exec);
     	MIEvent<?> event = null;

@@ -106,9 +106,4 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 	protected void adjustGridLayout() {
 		// do nothing
 	}
-	
-	public void performHelp() {
-		// jjjjjjjjjjjjjjjj
-		super.performHelp();
-	}
 }

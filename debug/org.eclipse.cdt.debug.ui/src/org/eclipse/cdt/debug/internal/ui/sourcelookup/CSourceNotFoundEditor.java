@@ -291,16 +291,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			if (newPath.lastSegment().equalsIgnoreCase(missingPath.lastSegment())) {
 				
 				if (missingPath.segmentCount() > 1) {
-					int missingPathSegCount = missingPath.segmentCount() - 2;
-					int newPathSegCount = newPath.segmentCount() - 2;
-					while (missingPathSegCount >= 0 && newPathSegCount >= 0) {
-						if (!newPath.segment(newPathSegCount).equalsIgnoreCase(missingPath.segment(missingPathSegCount)))
-							break;
-						newPathSegCount--;
-						missingPathSegCount--;
-					}
-					IPath compPath = missingPath.removeLastSegments(missingPath.segmentCount() - missingPathSegCount - 1);
-					IPath newSourcePath = newPath.removeLastSegments(newPath.segmentCount() - newPathSegCount - 1);
+					IPath compPath = missingPath.removeLastSegments(1);
+					IPath newSourcePath = newPath.removeLastSegments(1);
 					try {
 						if (isDebugElement)
 							addSourceMappingToLaunch(compPath, newSourcePath);

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 
 /**
  * TODO: add description
@@ -27,7 +27,7 @@ public class BranchNode extends PlainNode implements IBranchNode {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode#getLabel()
+	 * org.eclipse.cdt.codan.core.model.cfg.IBranchNode#getLabel()
 	 */
 	public String getLabel() {
 		return label;

@@ -8,13 +8,23 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.provisional.core.model.cfg;
+package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
- * Exit node of the graph. Usually return from the function, can also be throw
- * or abort, such at exit(0) call.
- * 
+ * Control Flow Graph Node factory
  */
-public interface IExitNode extends IBasicBlock, ISingleIncoming {
-	IStartNode getStartNode();
+public interface INodeFactory {
+	IPlainNode createPlainNode();
+
+	IJumpNode createJumpNode();
+
+	IDecisionNode createDecisionNode();
+
+	IConnectorNode createConnectorNode();
+
+	IBranchNode createBranchNode(String label);
+
+	IStartNode createStartNode();
+
+	IExitNode createExitNode();
 }

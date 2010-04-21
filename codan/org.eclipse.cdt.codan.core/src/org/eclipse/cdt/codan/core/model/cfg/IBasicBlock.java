@@ -1,4 +1,4 @@
-package org.eclipse.cdt.codan.provisional.core.model.cfg;
+package org.eclipse.cdt.codan.core.model.cfg;
 
 import java.util.Iterator;
 

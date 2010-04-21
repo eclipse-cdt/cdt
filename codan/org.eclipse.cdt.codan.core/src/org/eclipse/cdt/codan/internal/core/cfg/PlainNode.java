@@ -2,8 +2,8 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IPlainNode;
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 
 /**
  * Plain node has one incoming arc and one outgoing arc
@@ -37,7 +37,7 @@ public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode 
 	 * 
 	 * @see
 	 * org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock#addOutgoing
-	 * (org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock)
+	 * (org.eclipse.cdt.codan.core.model.cfg.IBasicBlock)
 	 */
 	@Override
 	public void addOutgoing(IBasicBlock node) {

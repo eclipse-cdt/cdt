@@ -12,9 +12,10 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
+
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 
 /**
  * TODO: add description
@@ -46,7 +47,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#getIncomingSize
+	 * org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getIncomingSize
 	 * ()
 	 */
 	public int getIncomingSize() {

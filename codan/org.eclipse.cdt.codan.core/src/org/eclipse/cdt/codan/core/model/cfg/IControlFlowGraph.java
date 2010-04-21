@@ -8,23 +8,28 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.provisional.core.model.cfg;
+package org.eclipse.cdt.codan.core.model.cfg;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
- * Control Flow Graph Node factory
+ * TODO: add description
  */
-public interface INodeFactory {
-	IPlainNode createPlainNode();
+public interface IControlFlowGraph {
+	IStartNode getStartNode();
 
-	IJumpNode createJumpNode();
+	/**
+	 * 
+	 * @return
+	 */
+	Iterator<IExitNode> getExitNodeIterator();
 
-	IDecisionNode createDecisionNode();
+	int getExitNodeSize();
 
-	IConnectorNode createConnectorNode();
+	Iterator<IBasicBlock> getUnconnectedNodeIterator();
 
-	IBranchNode createBranchNode(String label);
+	int getUnconnectedNodeSize();
 
-	IStartNode createStartNode();
-
-	IExitNode createExitNode();
+	Collection<IBasicBlock> getNodes();
 }

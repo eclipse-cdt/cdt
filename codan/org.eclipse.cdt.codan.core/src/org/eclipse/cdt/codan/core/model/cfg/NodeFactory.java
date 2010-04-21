@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.provisional.core.model.cfg;
+package org.eclipse.cdt.codan.core.model.cfg;
 
 import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
@@ -41,7 +41,7 @@ public class NodeFactory implements INodeFactory {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#createPlainNode
+	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createPlainNode
 	 * ()
 	 */
 	public IPlainNode createPlainNode() {
@@ -52,7 +52,7 @@ public class NodeFactory implements INodeFactory {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#createJumpNode
+	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createJumpNode
 	 * ()
 	 */
 	public IJumpNode createJumpNode() {
@@ -83,7 +83,7 @@ public class NodeFactory implements INodeFactory {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#createStartNode
+	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createStartNode
 	 * ()
 	 */
 	public IStartNode createStartNode() {
@@ -94,7 +94,7 @@ public class NodeFactory implements INodeFactory {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.INodeFactory#createExitNode
+	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createExitNode
 	 * ()
 	 */
 	public IExitNode createExitNode() {

@@ -12,9 +12,9 @@ package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 
 /**

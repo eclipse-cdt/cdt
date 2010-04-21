@@ -2,9 +2,9 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode;
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 
 /**
  * Jump node is node that connects unusual control pass, such as goto, break and
@@ -31,7 +31,7 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IJumpNode#getJumpNode()
+	 * org.eclipse.cdt.codan.core.model.cfg.IJumpNode#getJumpNode()
 	 */
 	public IConnectorNode getJumpNode() {
 		return jump;

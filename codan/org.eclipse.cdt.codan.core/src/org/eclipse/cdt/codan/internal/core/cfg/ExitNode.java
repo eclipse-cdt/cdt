@@ -2,9 +2,10 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Collections;
 import java.util.Iterator;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
+
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
 /**
  * Plain node has one prev one jump

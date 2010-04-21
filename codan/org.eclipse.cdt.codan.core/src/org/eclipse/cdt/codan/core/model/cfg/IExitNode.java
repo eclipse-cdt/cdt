@@ -8,28 +8,13 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.provisional.core.model.cfg;
-
-import java.util.Collection;
-import java.util.Iterator;
+package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
- * TODO: add description
+ * Exit node of the graph. Usually return from the function, can also be throw
+ * or abort, such at exit(0) call.
+ * 
  */
-public interface IControlFlowGraph {
+public interface IExitNode extends IBasicBlock, ISingleIncoming {
 	IStartNode getStartNode();
-
-	/**
-	 * 
-	 * @return
-	 */
-	Iterator<IExitNode> getExitNodeIterator();
-
-	int getExitNodeSize();
-
-	Iterator<IBasicBlock> getUnconnectedNodeIterator();
-
-	int getUnconnectedNodeSize();
-
-	Collection<IBasicBlock> getNodes();
 }

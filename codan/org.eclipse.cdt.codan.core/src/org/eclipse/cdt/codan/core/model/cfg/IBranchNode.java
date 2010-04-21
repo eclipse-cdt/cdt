@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.provisional.core.model.cfg;
+package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
  * Node that represent empty operator with label, such as case branch or label

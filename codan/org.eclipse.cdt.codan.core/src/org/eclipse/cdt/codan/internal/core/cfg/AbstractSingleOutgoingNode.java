@@ -1,8 +1,9 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.Iterator;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
+
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 
 /**
  * Abstract impl of basic block with single outgoing arc
@@ -40,7 +41,7 @@ public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock
 	 * 
 	 * @see
 	 * org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock#addOutgoing
-	 * (org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock)
+	 * (org.eclipse.cdt.codan.core.model.cfg.IBasicBlock)
 	 */
 	@Override
 	public void addOutgoing(IBasicBlock node) {

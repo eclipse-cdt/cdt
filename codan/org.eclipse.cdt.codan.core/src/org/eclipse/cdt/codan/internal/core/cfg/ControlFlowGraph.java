@@ -17,14 +17,14 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.ISingleOutgoing;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IStartNode;
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
+import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
+import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
+import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
 /**
  * TODO: add description
@@ -119,7 +119,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#getNodes
+	 * org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph#getNodes
 	 * ()
 	 */
 	public Collection<IBasicBlock> getNodes() {

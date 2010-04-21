@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IBranchNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode;
-import org.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode;
+import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
+import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 
 /**
  * @see {@link IDecisionNode}
@@ -54,7 +54,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#getOutgoingSize
+	 * org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getOutgoingSize
 	 * ()
 	 */
 	public int getOutgoingSize() {

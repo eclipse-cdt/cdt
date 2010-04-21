@@ -84,7 +84,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			setMessage(null);
 		}
 		else {
-			setErrorMessage(LaunchUIMessages.getString("GDBDebuggerPage.0")); //$NON-NLS-1$
+			setErrorMessage(LaunchUIMessages.getString("GDBDebuggerPage.gdb_executable_not_specified")); //$NON-NLS-1$
 			setMessage(null);
 		}
 		return valid;
@@ -149,7 +149,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	}
 
 	public String getName() {
-		return LaunchUIMessages.getString("GDBDebuggerPage.1"); //$NON-NLS-1$
+		return LaunchUIMessages.getString("GDBDebuggerPage.tab_name"); //$NON-NLS-1$
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	public void createMainTab(TabFolder tabFolder) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.2")); //$NON-NLS-1$
+		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.main_tab_name")); //$NON-NLS-1$
 		Composite comp = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
 		comp.setFont(tabFolder.getFont());
@@ -199,7 +199,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		Composite subComp = ControlFactory.createCompositeEx(comp, 3, GridData.FILL_HORIZONTAL);
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
 		subComp.setFont(tabFolder.getFont());
-		Label label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.3")); //$NON-NLS-1$
+		Label label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_debugger")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		//		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -211,7 +211,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 					updateLaunchConfigurationDialog();
 			}
 		});
-		Button button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.4"), null); //$NON-NLS-1$
+		Button button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse"), null); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -222,7 +222,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 			private void handleGDBButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(LaunchUIMessages.getString("GDBDebuggerPage.5")); //$NON-NLS-1$
+				dialog.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdb_browse_dlg_title")); //$NON-NLS-1$
 				String gdbCommand = fGDBCommandText.getText().trim();
 				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -235,7 +235,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				fGDBCommandText.setText(res);
 			}
 		});
-		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.6")); //$NON-NLS-1$
+		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_command_file")); //$NON-NLS-1$
 		gd = new GridData();
 		//		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -249,7 +249,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 					updateLaunchConfigurationDialog();
 			}
 		});
-		button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.7"), null); //$NON-NLS-1$
+		button = createPushButton(subComp, LaunchUIMessages.getString("GDBDebuggerPage.gdb_cmdfile_browse"), null); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -260,7 +260,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 			private void handleGDBInitButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(LaunchUIMessages.getString("GDBDebuggerPage.8")); //$NON-NLS-1$
+				dialog.setText(LaunchUIMessages.getString("GDBDebuggerPage.gdb_cmdfile_dlg_title")); //$NON-NLS-1$
 				String gdbCommand = fGDBInitText.getText().trim();
 				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -274,7 +274,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			}
 		});
 
-		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.9"), //$NON-NLS-1$
+		label = ControlFactory.createLabel(subComp, LaunchUIMessages.getString("GDBDebuggerPage.cmdfile_warning"), //$NON-NLS-1$
 				200, SWT.DEFAULT, SWT.WRAP);
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -284,7 +284,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		
 		// TODO: Ideally, this field should be disabled if the back-end doesn't support non-stop debugging
 		// TODO: Find a way to determine if non-stop is supported (i.e. find the GDB version) then grey out the check box if necessary 
-		fNonStopCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.13")); //$NON-NLS-1$
+		fNonStopCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.nonstop_mode")); //$NON-NLS-1$
 		fNonStopCheckBox.addSelectionListener( new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -294,7 +294,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 		// TODO: Ideally, this field should be disabled if the back-end doesn't support reverse debugging
 		// TODO: Find a way to determine if reverse is supported (i.e. find the GDB version) then grey out the check box if necessary 
-		fReverseCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.14")); //$NON-NLS-1$
+		fReverseCheckBox = ControlFactory.createCheckBox(subComp, LaunchUIMessages.getString("GDBDebuggerPage.reverse_Debugging")); //$NON-NLS-1$
 		fReverseCheckBox.addSelectionListener( new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -314,7 +314,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	public void createSolibTab(TabFolder tabFolder) {
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.10")); //$NON-NLS-1$
+		tabItem.setText(LaunchUIMessages.getString("GDBDebuggerPage.shared_libraries")); //$NON-NLS-1$
 		Composite comp = ControlFactory.createCompositeEx(fTabFolder, 1, GridData.FILL_BOTH);
 		comp.setFont(tabFolder.getFont());
 		tabItem.setControl(comp);

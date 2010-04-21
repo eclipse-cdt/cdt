@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
  * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  * David McKnight   (IBM)        - [280466] File download keeps running in case sensitive case
+ * David McKnight   (IBM)        - [309813] RSE permits opening of file after access removed
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -200,6 +201,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.NumberFormat;
+import com.ibm.icu.util.ULocale;
+
 
 /**
  * Adapter for displaying remote file system objects in tree views.
@@ -1289,8 +1292,9 @@ public class SystemViewRemoteFileAdapter
 			{
 				if (formatted)
 				{
-					DateFormat datefmt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
-					String formattedDate = datefmt.format(date);
+					ULocale locale = ULocale.getDefault();					
+					DateFormat  icufmt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);
+					String formattedDate = icufmt.format(date);
 					return formattedDate;
 				}
 				else
@@ -3401,9 +3405,13 @@ public class SystemViewRemoteFileAdapter
 			boolean usedBinary = properties.getUsedBinaryTransfer();
 			boolean isBinary = remoteFile.isBinary();
 
+			boolean usedReadOnly = properties.getReadOnly();
+			boolean isReadOnly = !remoteFile.canWrite();
+						
 			return (!dirty &&
 					!remoteNewer &&
 					usedBinary == isBinary &&
+					usedReadOnly == isReadOnly && 
 					!encodingChanged);
 		}
 		return false;

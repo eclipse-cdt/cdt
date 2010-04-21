@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
+ * David McKnight   (IBM)        - [309813] RSE permits opening of file after access removed
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -133,9 +134,13 @@ public class SystemEditFileAction extends SystemBaseAction {
 			boolean usedBinary = properties.getUsedBinaryTransfer();
 			boolean isBinary = remoteFile.isBinary();
 			
+			boolean usedReadOnly = properties.getReadOnly();
+			boolean isReadOnly = !remoteFile.canWrite();
+			
 			return (!dirty && 
 					!remoteNewer && 
 					usedBinary == isBinary &&
+					usedReadOnly == isReadOnly && 
 					!encodingChanged);
 		}
 		return false;

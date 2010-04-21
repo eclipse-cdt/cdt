@@ -7,5 +7,37 @@
       <startup
             class="org.eclipse.cdt.codan.internal.ui.cxx.Startup"></startup>
    </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+            <command
+                  commandId="org.eclipse.cdt.codan.commands.runCodanCommand"
+                  id="org.eclipse.cdt.codan.ui.cxx.menus.runCodanCxxCommand"
+                  label="%command.name"
+                  mnemonic="C">
+             <visibleWhen checkEnabled="false">
+               <iterate ifEmpty="false">
+		       <adapt type="org.eclipse.core.resources.IResource">
+		          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+		       </adapt> 
+		       </iterate>
+             </visibleWhen>
+            </command>
+      </menuContribution>
+     <!-- <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.eclipse.cdt.codan.ui.cxx.toolbars.sampleToolbar">
+            <command
+                  commandId="org.eclipse.cdt.codan.ui.cxx.commands.runCodanCxxCommand"
+                  icon="icons/sample.gif"
+                  id="org.eclipse.cdt.codan.ui.cxx.toolbars.sampleCommand"
+                  tooltip="%command.name">
+            </command>
+         </toolbar>
+      </menuContribution> -->
+   </extension>
   
 </plugin>

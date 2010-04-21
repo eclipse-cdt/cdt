@@ -13,4 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.codan.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.cdt.codan.internal.ui;x-friends:="org.eclipse.cdt.codan.ui.cxx",
+ org.eclipse.cdt.codan.internal.ui.actions;x-friends:="org.eclipse.cdt.codan.ui.cxx",
+ org.eclipse.cdt.codan.internal.ui.dialogs;x-friends:="org.eclipse.cdt.codan.ui.cxx",
+ org.eclipse.cdt.codan.internal.ui.preferences;x-friends:="org.eclipse.cdt.codan.ui.cxx"
 

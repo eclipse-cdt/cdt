@@ -695,6 +695,10 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 							startLookupJob(frameData, page, eventTriggered);
 						}
 					}
+					@Override
+					protected void handleFailure() {
+					    doneStepping(context);
+					}
     			});
         }});
 	}

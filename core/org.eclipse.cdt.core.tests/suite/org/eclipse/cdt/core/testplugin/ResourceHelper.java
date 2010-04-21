@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -295,6 +296,8 @@ public class ResourceHelper {
 	 * Creates new file from workspace root with empty content. The filename
 	 * can include relative path as a part of the name but the the path
 	 * has to be present on disk.
+	 * The intention of the method is to create files which do not belong to any project.
+	 * 
 	 * @param name - filename.
 	 * @return full path of the created file.
 	 *
@@ -318,8 +321,8 @@ public class ResourceHelper {
 
 	/**
 	 * Creates new folder from project root. The folder name
-	 * can include relative path as a part of the name but the the path
-	 * has to be present on disk.
+	 * can include relative path as a part of the name.
+	 * Nonexistent parent directories are being created.
 	 *
 	 * @param project - project where to create the folder.
 	 * @param name - folder name.
@@ -340,8 +343,9 @@ public class ResourceHelper {
 
 	/**
 	 * Creates new folder from workspace root. The folder name
-	 * can include relative path as a part of the name but the the path
-	 * has to be present on disk.
+	 * can include relative path as a part of the name.
+	 * Nonexistent parent directories are being created as per {@link File#mkdirs()}.
+	 * The intention of the method is to create folders which do not belong to any project.
 	 *
 	 * @param name - folder name.
 	 * @return full folder path.
@@ -362,6 +366,16 @@ public class ResourceHelper {
 		return fullPath;
 	}
 
+	/**
+	 * Creates new temporary folder with generated name from workspace root.
+	 *
+	 * @return full folder path.
+	 * @throws IOException if something goes wrong.
+	 */
+	public static IPath createTemporaryFolder() throws CoreException, IOException {
+		return ResourceHelper.createWorkspaceFolder("tmp/"+System.currentTimeMillis()+'.'+UUID.randomUUID());
+	}
+	
 	/**
 	 * Creates new eclipse file-link from project root to file system file. The filename
 	 * can include relative path as a part of the name but the the path

@@ -329,7 +329,18 @@ public class OutputHandler extends Handler {
 									else
 									{
 										lastBytes[lastIndex] = (byte)c;
-										if (lastBytes[lastIndex] == '\r' || lastBytes[lastIndex] == '\n'){
+										
+										String osname = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+										char lf = '\r';
+										char nl = '\n';
+										
+										// in ebcdic, the following chars are used
+										if (osname.startsWith("z")){ //$NON-NLS-1$
+											lf = '\25';
+											nl = '\15';
+										}
+										
+										if (lastBytes[lastIndex] == lf || lastBytes[lastIndex] == nl){
 											// we've hit the end of line;
 											String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
 											output[index - 1] = lastLine + suffix.substring(0, suffix.length() - 1);

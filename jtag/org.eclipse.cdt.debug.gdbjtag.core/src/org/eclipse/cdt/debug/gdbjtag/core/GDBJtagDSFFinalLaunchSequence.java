@@ -71,7 +71,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 
 	/** utility method; cuts down on clutter */
 	private void queueCommands(List<String> commands, RequestMonitor rm) {
-		if (commands.size() > 0) { 
+		if (!commands.isEmpty()) { 
 			fCommandControl.queueCommand(
 	    		new CLICommand<MIInfo>(fCommandControl.getContext(), composeCommand(commands)),
 	        	new DataRequestMonitor<MIInfo>(getExecutor(), rm));

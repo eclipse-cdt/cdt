@@ -59,6 +59,9 @@ public class Activator extends Plugin {
 		return PLUGIN_ID;
 	}
 
+	/**
+	 * @since 6.0
+	 */
 	public static BundleContext getBundleContext() {
 		return getDefault().getBundle().getBundleContext();
 	}

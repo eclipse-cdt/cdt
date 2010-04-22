@@ -12,6 +12,9 @@ package org.eclipse.cdt.debug.gdbjtag.ui;
 
 import org.eclipse.cdt.launch.ui.CMainTab;
 
+/**
+ * @since 6.0
+ */
 public class GDBJtagCDICMainTab extends CMainTab {
 
 	public GDBJtagCDICMainTab() {

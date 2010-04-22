@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * It extends the standard DSF/GDB launch delegate <code>GdbLaunchDelegate</code>
  * but overrides the <code>getFinalLaunchSequence</code> method to return the Jtag
  * hardware debugging specific launch sequence.
+ * @since 6.0
  */
 @ThreadSafe
 public class GDBJtagDSFLaunchConfigurationDelegate extends GdbLaunchDelegate {

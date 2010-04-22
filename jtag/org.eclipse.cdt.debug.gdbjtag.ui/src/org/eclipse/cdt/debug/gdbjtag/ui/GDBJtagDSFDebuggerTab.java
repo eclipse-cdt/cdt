@@ -46,11 +46,14 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * @since 6.0
+ */
 public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 	private static final String TAB_NAME = "Debugger";
 	private static final String TAB_ID = "org.eclipse.cdt.debug.gdbjtag.ui.debuggertab.dsf";
-	
+
 	private Text gdbCommand;
 	private Button useRemote;
 	private Text ipAddress;
@@ -58,7 +61,6 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	private Combo jtagDevice;
 	private String savedJtagDevice;
 
-	
 	public String getName() {
 		return TAB_NAME;
 	}
@@ -66,7 +68,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	public Image getImage() {
 		return GDBJtagImages.getDebuggerTabImage();
 	}
-	
+
 	public void createControl(Composite parent) {
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -77,14 +79,14 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		sc.setContent(comp);
 		GridLayout layout = new GridLayout();
 		comp.setLayout(layout);
-		
+
 		Group group = new Group(comp, SWT.NONE);
 		layout = new GridLayout();
 		group.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
 		group.setText(Messages.getString("GDBJtagDebuggerTab.gdbSetupGroup_Text"));
-		
+
 		createCommandControl(group);
 		createRemoteControl(comp);
 	}
@@ -94,21 +96,18 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		dialog.setText(title);
 		String str = text.getText().trim();
 		int lastSeparatorIndex = str.lastIndexOf(File.separator);
-		if (lastSeparatorIndex != -1)
-			dialog.setFilterPath(str.substring(0, lastSeparatorIndex));
+		if (lastSeparatorIndex != -1) dialog.setFilterPath(str.substring(0, lastSeparatorIndex));
 		str = dialog.open();
-		if (str != null)
-			text.setText(str);
+		if (str != null) text.setText(str);
 	}
-	
+
 	private void variablesButtonSelected(Text text) {
-		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(
-				getShell());
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 		if (dialog.open() == StringVariableSelectionDialog.OK) {
 			text.append(dialog.getVariableExpression());
 		}
 	}
-	
+
 	private void createCommandControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -117,13 +116,13 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		comp.setLayoutData(gd);
-		
+
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandLabel"));
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
-		
+
 		gdbCommand = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gdbCommand.setLayoutData(gd);
@@ -140,7 +139,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				browseButtonSelected(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse_Title"), gdbCommand);
 			}
 		});
-		
+
 		button = new Button(comp, SWT.NONE);
 		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandVariable"));
 		button.addSelectionListener(new SelectionAdapter() {
@@ -149,7 +148,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
-	
+
 	private void createRemoteControl(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -157,7 +156,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
 		group.setText(Messages.getString("GDBJtagDebuggerTab.remoteGroup_Text"));
-		
+
 		useRemote = new Button(group, SWT.CHECK);
 		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text"));
 		useRemote.addSelectionListener(new SelectionAdapter() {
@@ -166,23 +165,23 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		Composite comp = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		comp.setLayout(layout);
-		
+
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceLabel"));
-		
+
 		jtagDevice = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
-		
-		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
-			getInstance().getGDBJtagDeviceContribution();
+
+		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance()
+				.getGDBJtagDeviceContribution();
 		for (int i = 0; i < availableDevices.length; i++) {
 			jtagDevice.add(availableDevices[i].getDeviceName());
 		}
-		
+
 		jtagDevice.select(0);
 		jtagDevice.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -190,7 +189,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		label = new Label(comp, SWT.NONE);
 		label.setText(Messages.getString("GDBJtagDebuggerTab.ipAddressLabel"));
 		ipAddress = new Text(comp, SWT.BORDER);
@@ -202,7 +201,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		label = new Label(comp, SWT.NONE);
 		label.setText(Messages.getString("GDBJtagDebuggerTab.portNumberLabel"));
 		portNumber = new Text(comp, SWT.BORDER);
@@ -220,14 +219,12 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
-	
+
 	/**
 	 * @param text
 	 */
 	protected void updateDeviceIpPort(String selectedDeviceName) {
-		if (selectedDeviceName.equals(savedJtagDevice)) {
-			return;
-		}
+		if (selectedDeviceName.equals(savedJtagDevice)) { return; }
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance()
 				.getGDBJtagDeviceContribution();
 		IGDBJtagDevice selectedDevice = null;
@@ -253,22 +250,26 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		ipAddress.setEnabled(enabled);
 		portNumber.setEnabled(enabled);
 	}
-	
+
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			String gdbCommandAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+			String gdbCommandAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME,
+					IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
 			gdbCommand.setText(gdbCommandAttr);
-			
-			boolean useRemoteAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+
+			boolean useRemoteAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
+					IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 			useRemote.setSelection(useRemoteAttr);
 			useRemoteChanged();
-			
-			String ipAddressAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+
+			String ipAddressAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS,
+					IGDBJtagConstants.DEFAULT_IP_ADDRESS);
 			ipAddress.setText(ipAddressAttr);
-			
-			int portNumberAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+
+			int portNumberAttr = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER,
+					IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 			portNumber.setText(String.valueOf(portNumberAttr));
-			
+
 			savedJtagDevice = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
 			for (int i = 0; i < jtagDevice.getItemCount(); i++) {
 				if (jtagDevice.getItem(i).equals(savedJtagDevice)) {
@@ -278,7 +279,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -288,7 +289,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	public String getId() {
 		return TAB_ID;
 	}
-	
+
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim()); // DSF
@@ -297,20 +298,24 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ipAddress.getText().trim());
 		try {
-			configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, Integer.parseInt(portNumber.getText().trim()));
+			configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, Integer
+					.parseInt(portNumber.getText().trim()));
 		} catch (NumberFormatException e) {
 			configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
 		}
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME,
+				IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
 		CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();
 		CommandFactoryDescriptor defDesc = cfManager.getDefaultDescriptor(IGDBJtagConstants.DEBUGGER_ID);
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_COMMAND_FACTORY, defDesc.getName());
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_PROTOCOL, defDesc.getMIVersions()[0]);
-		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE, IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
-		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
+		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_VERBOSE_MODE,
+				IMILaunchConfigurationConstants.DEBUGGER_VERBOSE_MODE_DEFAULT);
+		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET,
+				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 	}

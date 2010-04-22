@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
@@ -66,6 +67,7 @@ public class BaseTestCase extends TestCase {
 	
 	@Override
 	protected void tearDown() throws Exception {
+		ResourceHelper.cleanUp();
 		TestScannerProvider.clear();
 	}
 

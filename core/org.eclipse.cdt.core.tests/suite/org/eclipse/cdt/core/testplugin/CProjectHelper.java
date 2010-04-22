@@ -427,19 +427,18 @@ public class CProjectHelper {
 	}
 
 	/**
-	 * Returns the location of a newly created directory in the systems temp. area.
-	 * @return the location of a newly created directory in the systems temp. area
+	 * @return the location of a newly created directory in temporary area.
+	 *    Note that cleanup should be done with {@link ResourceHelper#cleanUp()}.
 	 * @throws IOException
+	 * @throws CoreException 
 	 */
-	public static File freshDir() throws IOException {
-		File tempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();		
-		for(int i=0; i<Integer.MAX_VALUE; i++) {
-			File candidate = new File(tempDir, "__testData/"+i);
-			if(!candidate.exists()) {
-				candidate.mkdirs();
-				return candidate;
-			}
-		}
-		return null;
+	public static File freshDir() throws IOException, CoreException {
+		IPath folderPath = ResourceHelper.createTemporaryFolder();
+		File folder = new File(folderPath.toOSString());
+		Assert.assertTrue(folder.exists());
+		Assert.assertTrue(folder.isDirectory());
+		Assert.assertTrue(folder.canWrite());
+		
+		return folder;
 	}
 }

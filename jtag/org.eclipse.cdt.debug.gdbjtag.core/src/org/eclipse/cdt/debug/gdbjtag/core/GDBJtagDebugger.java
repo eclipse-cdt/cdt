@@ -15,8 +15,7 @@ package org.eclipse.cdt.debug.gdbjtag.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -110,7 +109,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 				return;
 			}
 
-			ArrayList commands = new ArrayList();
+			List<String> commands = new ArrayList<String>();
 
 			// hook up to remote target
 			if (submonitor.isCanceled()) {
@@ -134,7 +133,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
 			// Run device-specific code to reset the board
 			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, true)) {
-				commands = new ArrayList();
+				commands.clear();
 				gdbJtagDevice.doReset(commands);
 				int defaultDelay = gdbJtagDevice.getDefaultDelay();
 				gdbJtagDevice.doDelay(config.getAttribute(IGDBJtagConstants.ATTR_DELAY, defaultDelay), commands);
@@ -144,7 +143,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
 			// Run device-specific code to halt the board
 			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
-				commands = new ArrayList();
+				commands.clear();
 				gdbJtagDevice.doHalt(commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
 			}
@@ -162,7 +161,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 					monitor.beginTask(Messages.getString("GDBJtagDebugger.5"), 1); //$NON-NLS-1$
 					imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName).replace("\\", "\\\\");
 					String imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""); //$NON-NLS-2$ //$NON-NLS-4$
-					commands = new ArrayList();
+					commands.clear();
 					gdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
 					executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
 				}
@@ -176,7 +175,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 				if (symbolsFileName.length() > 0) {
 					symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName).replace("\\", "\\\\");
 					String symbolsOffset = "0x" + config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, ""); //$NON-NLS-2$
-					commands = new ArrayList();
+					commands.clear();
 					gdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
 					executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
 				}
@@ -209,7 +208,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 				throw new OperationCanceledException();
 			}
 			submonitor.worked(20);
-			ArrayList commands = new ArrayList();
+			List<String> commands = new ArrayList<String>();
 			// Set program counter
 			boolean setPc = config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER);
 			if (setPc) {
@@ -224,7 +223,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			boolean setStopAt = config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT);
 			if (setStopAt) {
 				String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, ""); //$NON-NLS-1$
-				commands = new ArrayList();
+				commands.clear();
 				gdbJtagDevice.doStopAt(stopAt, commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
 			}
@@ -232,7 +231,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
 			boolean setResume = config.getAttribute(IGDBJtagConstants.ATTR_SET_RESUME, IGDBJtagConstants.DEFAULT_SET_RESUME);
 			if (setResume) {
-				commands = new ArrayList();
+				commands.clear();
 				gdbJtagDevice.doContinue(commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
 			}
@@ -305,13 +304,12 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 		return gdbJtagDevice;
 	}
 	
-	private String getGDBScript(Collection commands) {
+	private String getGDBScript(List<String> commands) {
 		if (commands.isEmpty())
 			return null;
 		StringBuffer sb = new StringBuffer();
-		Iterator it = commands.iterator();
-		while (it.hasNext()) {
-			sb.append(it.next());
+		for (String cmd : commands) {
+			sb.append(cmd);
 		}
 		return sb.toString();
 	}

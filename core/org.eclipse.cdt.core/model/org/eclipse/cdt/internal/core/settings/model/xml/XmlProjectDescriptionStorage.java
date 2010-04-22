@@ -48,9 +48,9 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionStorageManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType;
-import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType.CProjectDescriptionStorageTypeProxy;
 import org.eclipse.cdt.internal.core.settings.model.SettingsContext;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
+import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType.CProjectDescriptionStorageTypeProxy;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -61,7 +61,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -121,8 +120,6 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		super(type, project, version);
 	}
 
-	private int desSerialTotalCount;
-	private volatile int desSerialCurrent;
 
 	/**
 	 * The workspace runnable that actually goes about serializing the project description
@@ -130,22 +127,20 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	private class DesSerializationRunnable implements IWorkspaceRunnable {
 		private final ICProjectDescription fDes;
 		private final ICStorageElement fElement;
-		private final int serializingNumber;
 
 		public DesSerializationRunnable(ICProjectDescription des, ICStorageElement el) {
 			fDes = des;
 			fElement = el;
-			serializingNumber = desSerialTotalCount++;
 		}
 
 		public void run(IProgressMonitor monitor) throws CoreException {
-			// Asserting that the platform job API stands by its committment to run jobs
-			// with conflicting scheduling rules in strict order -- so the project configuration
-			// at the end of a batch of changes is consistent.
-			Assert.isTrue(serializingNumber == desSerialCurrent);
-			desSerialCurrent++;
-			projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
-			((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
+			try {
+				serializingLock.acquire();
+				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
+				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
+			} finally {
+				serializingLock.release();
+			}
 		}
 
 	}

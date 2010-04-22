@@ -30,6 +30,8 @@
 		<topic label="Building projects" href="tasks/cdt_o_build_task.htm">
 			<topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
 			<topic label="Defining Project Build settings" href="tasks/cdt_t_proj_build_set.htm"/>
+   <topic href="tasks/cdt_t_add_build_var.htm" label="Adding and Editing Build Variables">
+   </topic>
 			<topic label="Filtering Errors" href="tasks/cdt_t_proj_error_parser.htm"/>
 			<topic label="Selecting a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
 			<topic label="Adding Include paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>

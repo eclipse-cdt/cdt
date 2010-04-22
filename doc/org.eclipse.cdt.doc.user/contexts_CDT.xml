@@ -371,6 +371,7 @@
 <context id="cdt_u_prop_build_variables">
    <description></description>
    <topic href="reference/cdt_u_prop_build_variables.htm" label="Build Variables"/> 
+   <topic href="tasks/cdt_t_add_build_var.htm" label="Adding and Editing Build Variables"/> 
 </context>
 <context id="cdt_u_prop_build_discovery">
    <description></description>

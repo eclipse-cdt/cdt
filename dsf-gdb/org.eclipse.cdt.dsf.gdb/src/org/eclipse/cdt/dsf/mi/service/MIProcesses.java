@@ -33,6 +33,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -305,6 +307,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
     private ICommandControlService fCommandControl;
 	private CommandCache fContainerCommandCache;
 	private CommandFactory fCommandFactory;
+	private IGDBBackend fGdbBackend;
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 	// The unique id should be an empty string so that the views know not to display the fake id
@@ -349,6 +352,8 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(fCommandControl, getExecutor(), 2);
 		
 		fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
+		
+		fGdbBackend = getServicesTracker().getService(IGDBBackend.class);
 		
 		// This cache stores the result of a command when received; also, this cache
 		// is manipulated when receiving events.  Currently, events are received after
@@ -638,12 +643,21 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
      */
     @DsfServiceEventHandler
     public void eventDispatched(ISuspendedDMEvent e) {
-       	if (e instanceof IContainerSuspendedDMEvent) {
-    		// This will happen in all-stop mode
-       		fContainerCommandCache.setContextAvailable(e.getDMContext(), true);
-       	} else {
-       		// This will happen in non-stop mode
-       	}
+		// This assert may turn out to be overzealous. Refer to
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=280631#c26
+       	assert e instanceof IContainerSuspendedDMEvent : "Unexpected type of suspended event: " + e.getClass().toString(); //$NON-NLS-1$
+       	
+   		fContainerCommandCache.setContextAvailable(e.getDMContext(), true);
+   		
+		// If user is debugging a gdb target that doesn't send thread
+		// creation events, make sure we don't use cached thread
+		// information. Reset the cache after every suspend. See bugzilla
+		// 280631
+   		try {
+			if (fGdbBackend.getUpdateThreadListOnSuspend()) {
+				fContainerCommandCache.reset(e.getDMContext());
+			}
+		} catch (CoreException exc) {}
     }
 
     /**

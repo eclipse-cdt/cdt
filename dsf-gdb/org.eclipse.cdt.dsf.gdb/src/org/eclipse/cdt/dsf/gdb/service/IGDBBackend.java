@@ -133,4 +133,18 @@ public interface IGDBBackend extends IMIBackend {
 	 * @return true if the ongoing session is attaching to a remote target.
 	 */	
 	public boolean getIsAttachSession();
+
+	/**
+	 * Indicates whether the CDT debugger should ask gdb for the target
+	 * program's thread list on each suspend event (breakpoint-hit, step, etc).
+	 * Normally, this isn't necessary, as GDB sends notifications in realtime
+	 * when a thread is created or destroyed. However, some lightweight GDB
+	 * remote stubs won't send these notifications. As such, the CDT debugger
+	 * doesn't find out about new or destroyed threads unless it polls gdb. The
+	 * user will enable this behavior if he is debugging such a target
+	 * (typically an embedded one)
+	 * 
+	 * @since 3.0
+	 */
+	public boolean getUpdateThreadListOnSuspend() throws CoreException;
 }

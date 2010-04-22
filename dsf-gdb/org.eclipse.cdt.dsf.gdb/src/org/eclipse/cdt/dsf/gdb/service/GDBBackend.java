@@ -335,6 +335,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 		return !fLaunchConfiguration.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 	}
 	
+	/** @since 3.0 */
+	public boolean getUpdateThreadListOnSuspend() throws CoreException {
+		return fLaunchConfiguration
+				.getAttribute(
+						IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+						IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
+	}
+	
 	/*
 	 * Launch GDB process. 
 	 * Allow subclass to override.

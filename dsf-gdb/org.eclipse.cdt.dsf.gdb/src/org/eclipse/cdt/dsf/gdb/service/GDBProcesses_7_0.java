@@ -65,6 +65,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThr
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
@@ -882,6 +883,16 @@ public class GDBProcesses_7_0 extends AbstractDsfService
        	} else {
        		// This will happen in non-stop mode
        	}
+
+       	// If user is debugging a gdb target that doesn't send thread
+		// creation events, make sure we don't use cached thread
+		// information. Reset the cache after every suspend. See bugzilla
+		// 280631
+   		try {
+			if (fBackend.getUpdateThreadListOnSuspend()) {
+				fThreadCommandCache.reset(e.getDMContext());
+			}
+		} catch (CoreException exc) {}
     }
     
     // Event handler when a thread or threadGroup starts

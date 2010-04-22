@@ -81,6 +81,14 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 2.0
 	 */
 	public static final String ATTR_DEBUGGER_REVERSE = GdbPlugin.PLUGIN_ID + ".REVERSE"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. Boolean value. See
+	 * IGDBBackend.getUpdateThreadListOnSuspend()
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND = GdbPlugin.PLUGIN_ID + ".UPDATE_THREADLIST_ON_SUSPEND"; //$NON-NLS-1$	
 
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
@@ -114,4 +122,13 @@ public class IGDBLaunchConfigurationConstants {
 	 * @since 2.0
 	 */
 	public static final boolean DEBUGGER_REVERSE_DEFAULT = false;
+
+	/**
+	 * Launch configuration attribute value. The key is
+	 * ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND
+	 * 
+	 * @since 3.0
+	 */
+	public static final boolean DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT = false;
+	
 }

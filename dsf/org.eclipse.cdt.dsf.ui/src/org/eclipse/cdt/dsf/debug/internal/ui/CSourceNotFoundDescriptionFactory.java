@@ -60,13 +60,18 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		                        tracker.dispose();
 		                    }
 		                };	                
-		                DsfSession.getSession(frameDMC.getSessionId()).getExecutor().execute(query);
-		                try {
-		                	IFrameDMData dmData = query.get();
-							return getFrameDescription(dmData);
-						} catch (Exception e) {
-							return frameDMC.toString();
-						}
+		                DsfSession session = DsfSession.getSession(frameDMC.getSessionId());
+		                if (session != null && session.getExecutor() != null)
+		                {
+			                session.getExecutor().execute(query);
+			                try {
+			                	IFrameDMData dmData = query.get();
+								return getFrameDescription(dmData);
+							} catch (Exception e) {
+								return frameDMC.toString();
+							}
+		                }
+		                return frameDMC.toString();
 				}};
 		}
 		return null;

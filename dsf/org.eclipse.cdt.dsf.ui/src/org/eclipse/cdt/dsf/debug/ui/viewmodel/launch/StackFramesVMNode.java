@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,12 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
@@ -55,7 +55,9 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
@@ -432,7 +434,15 @@ public class StackFramesVMNode extends AbstractDMVMNode
         if (address != null) {
             update.setProperty(ILaunchVMConstants.PROP_FRAME_ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
         }
-        update.setProperty(ILaunchVMConstants.PROP_FRAME_FILE, data.getFile());
+
+        IPath filePath = new Path(data.getFile());
+        String fileName = filePath.toOSString();
+        Object showFullPathPreference = getVMProvider().getPresentationContext().getProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY);
+        if (showFullPathPreference instanceof Boolean && (Boolean)showFullPathPreference == false) {
+        	fileName = filePath.lastSegment();
+        }
+        update.setProperty(ILaunchVMConstants.PROP_FRAME_FILE, fileName);
+        
         update.setProperty(ILaunchVMConstants.PROP_FRAME_FUNCTION, data.getFunction());
         update.setProperty(ILaunchVMConstants.PROP_FRAME_LINE, data.getLine());
         update.setProperty(ILaunchVMConstants.PROP_FRAME_COLUMN, data.getColumn());
@@ -562,6 +572,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 || IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) 
             {
                 return IModelDelta.CONTENT;
+            } else if (IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY.equals(property)) {
+                return IModelDelta.STATE;
             }
         } else {
     	}
@@ -610,6 +622,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
                 || IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) 
             {
                 buildDeltaForStackFrameLimitPreferenceChangedEvent(parent, rm);                
+            } else if (IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY.equals(property)) {
+                buildDeltaForShowFullPathPreferenceChangedEvent(parent, rm);                
             } else {
             	rm.done();
             }
@@ -724,6 +738,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
         rm.done();
     }
 
+    private void buildDeltaForShowFullPathPreferenceChangedEvent(final VMDelta parentDelta, final RequestMonitor rm) {
+        parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.STATE);
+        rm.done();
+    }
+    
     private String produceFrameElementName( String viewName , IFrameDMContext frame ) {
     	/*
     	 *  We are addressing Bugzilla 211490 which wants the Register View  to keep the same expanded

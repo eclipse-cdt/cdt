@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui;
 
+import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * @noimplement This interface is not intended to be implemented by clients.
@@ -86,4 +88,12 @@ public interface IDsfDebugUIConstants {
      * @since 2.1
      */
 	public static final String ID_EXPRESSION_HOVER= PLUGIN_ID + ".expression_hover"; //$NON-NLS-1$
+	
+	/** 
+	 * Property id to know if we should show full paths in the debug view.
+	 * The value of this id must match what is being used as a full key in ShowFullPathsAction.run()
+	 * 
+	 * @since 2.1 */
+	public  static final String DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY = IDebugUIConstants.ID_DEBUG_VIEW + "." + ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS; //$NON-NLS-1$
+
 }

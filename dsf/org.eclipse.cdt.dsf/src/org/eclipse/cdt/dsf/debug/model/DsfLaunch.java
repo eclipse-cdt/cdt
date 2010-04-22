@@ -28,6 +28,13 @@ import org.eclipse.debug.core.model.ISourceLocator;
  */
 public class DsfLaunch extends Launch {
 
+	/*
+	 * Used to indicate that this launch supports the "Show Full Path" action in the debug view.
+	 * This constant must have the same value as ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS
+	 * We have our own copy to avoid a dependency.
+	 */
+	private static final String PREF_SHOW_FULL_PATHS = "org.eclipse.cdt.debug.ui.cDebug.show_full_paths"; //$NON-NLS-1$
+
     private class EventSchedulingRule implements ISchedulingRule {
         
         DsfLaunch fLaunch = DsfLaunch.this;
@@ -51,6 +58,11 @@ public class DsfLaunch extends Launch {
     
     public DsfLaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
         super(launchConfiguration, mode, locator);
+        
+        // Just set this attribute to any value.  It's presence indicates that the
+        // "Show Full Path" action is supported in the debug view.
+        // see org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction
+        setAttribute(PREF_SHOW_FULL_PATHS, ""); //$NON-NLS-1$
     }
     
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
@@ -85,7 +86,11 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 				handlePropertyChanged(store, event);
 			}};
         store.addPropertyChangeListener(fPreferencesListener);
-        
+
+        final IPreferenceStore cStore= CDebugUIPlugin.getDefault().getPreferenceStore();
+       	getPresentationContext().setProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY, cStore.getBoolean(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY));
+		cStore.addPropertyChangeListener(fPreferencesListener);
+ 
         // Register the LaunchVM provider as a listener to debug and launch 
         // events.  These events are used by the launch and processes nodes.
         DebugPlugin.getDefault().addDebugEventListener(this);
@@ -209,6 +214,9 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
         final IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
         store.removePropertyChangeListener(fPreferencesListener);
 
+        final IPreferenceStore cStore= CDebugUIPlugin.getDefault().getPreferenceStore();
+        cStore.removePropertyChangeListener(fPreferencesListener);
+
         super.dispose();
     }
     
@@ -275,6 +283,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {
 		String property = event.getProperty();
+		boolean processEvent = false;
+		
 		if (IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE.equals(property)
 				|| IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT.equals(property)) {
 			if (store.getBoolean(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT_ENABLE)) {
@@ -282,6 +292,13 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 			} else {
 		    	getPresentationContext().setProperty(IDsfDebugUIConstants.PREF_STACK_FRAME_LIMIT, null);
 			}
+			processEvent = true;
+		} else if (IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY.equals(property)) {
+			getPresentationContext().setProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY, event.getNewValue());
+			processEvent = true;
+		}
+		
+		if (processEvent) {
 			getExecutor().execute(new DsfRunnable() {
 			    public void run() {
 			        handleEvent(event);

@@ -115,7 +115,12 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * content. Closing those gaps would not be easy, and thus not worth the
 	 * effort as no harm is done by an unintentional enablement.
 	 * 
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
+	 * For the Debug view case, we check debugTargets in the base method to
+	 * be backwards compatible as this was the criteria from the start.
+ 	 * A specific action can specialize this method but should call super.selectionChanged
+ 	 * to maintain backwards compatibility.
+	 * 
+	 *  @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -200,11 +205,20 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	}
 	
 	/**
-	 * Returns whether this action is seleted/checked.
+	 * Returns whether this action is selected/checked.
 	 * 
-	 * @return whether this action is seleted/checked
+	 * @return whether this action is selected/checked
 	 */
 	protected boolean getValue() {
 		return fAction.isChecked();
+	}
+	
+	/**
+	 * Sets whether the action should be enabled or not.
+	 * 
+	 * @since 7.0
+	 */
+	protected void setEnabled(boolean enabled) {
+		fAction.setEnabled(enabled);
 	}
 }

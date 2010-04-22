@@ -372,6 +372,7 @@ public class DsfSession
      */
     @ThreadSafe
     public void dispatchEvent(final Object event, final Dictionary<?,?> serviceProperties) {
+    	assert event != null;
         if (DEBUG_SESSION_DISPATCHES) {
         	String msg = new Formatter().format(
         			"%s Dispatching event %s to session %s from thread \"%s\" (%d)", //$NON-NLS-1$

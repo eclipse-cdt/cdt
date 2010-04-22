@@ -443,7 +443,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			monitor = new NullProgressMonitor();
 
 		// Should the rule be scheduled, or run immediately
-		boolean scheduleRule =  ResourcesPlugin.getWorkspace().isTreeLocked();
+		// Bug 310007 - Always unsafe to modify resources while data structure lock is held
+		boolean scheduleRule = true;
+//		boolean scheduleRule =  ResourcesPlugin.getWorkspace().isTreeLocked();
 
 		// Check whether current job contains rule 'rule'
 		// If not, we must schedule another job to execute the runnable

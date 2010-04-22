@@ -113,9 +113,10 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 			return 0;
 		}
 
-		public String getId(){
-			return fThreadId;
-		}
+		// Enable if need arises
+//		public String getId(){
+//			return fThreadId;
+//		}
 
 		@Override
 		public String toString() { return baseToString() + ".thread[" + fThreadId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$

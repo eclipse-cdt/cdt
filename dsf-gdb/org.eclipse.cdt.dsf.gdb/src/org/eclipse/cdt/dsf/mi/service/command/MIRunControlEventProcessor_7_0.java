@@ -207,6 +207,9 @@ public class MIRunControlEventProcessor_7_0
     		    		} else if ("thread-exited".equals(miEvent)) { //$NON-NLS-1$
     		    			event = new MIThreadExitEvent(processContainerDmc, exec.getToken(), threadId);
     		    		}
+    		    		else {
+    		    			assert false;	// earlier check should have guaranteed this isn't possible
+    		    		}
 
     		    		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     		    	}

@@ -695,10 +695,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 
         @Override
         protected IStatus run(IProgressMonitor monitor) {
-        	fInterruptFailedJob = null;
         	getExecutor().submit(
                     new DsfRunnable() {
                         public void run() {
+                        	fInterruptFailedJob = null;
                         	fRequestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "Interrupt failed.", null)); //$NON-NLS-1$
                         	fRequestMonitor.done();
                         }

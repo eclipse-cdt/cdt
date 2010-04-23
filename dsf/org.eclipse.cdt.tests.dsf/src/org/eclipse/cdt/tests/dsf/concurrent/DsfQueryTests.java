@@ -19,13 +19,14 @@ import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.RequestMonitor.ICanceledListener;
 import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
 import org.eclipse.cdt.tests.dsf.TestDsfExecutor;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,6 +77,65 @@ public class DsfQueryTests {
     }
 
     @Test 
+    public void getErrorTest() throws InterruptedException, ExecutionException {
+        final String error_message = "Test Error";
+        
+        Query<Integer> q = new Query<Integer>() { 
+            @Override
+            protected void execute(DataRequestMonitor<Integer> rm) {
+                rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, error_message, null)); //$NON-NLS-1$
+                rm.done();
+            }
+        };
+
+        // Check initial state
+        Assert.assertTrue(!q.isDone());
+        Assert.assertTrue(!q.isCancelled());
+        
+        fExecutor.execute(q);
+        
+        try {
+            q.get();
+            Assert.fail("Expected exception");
+        } catch (ExecutionException e) {
+            Assert.assertEquals(e.getCause().getMessage(), error_message);
+        }
+        
+        // Check final state
+        Assert.assertTrue(q.isDone());
+        Assert.assertTrue(!q.isCancelled());
+
+    }
+
+    @Test 
+    public void doneExceptionTest() throws InterruptedException, ExecutionException {
+        Query<Integer> q = new Query<Integer>() { 
+            @Override
+            protected void execute(DataRequestMonitor<Integer> rm) {
+                doneException(new Throwable());
+            }
+        };
+
+        // Check initial state
+        Assert.assertTrue(!q.isDone());
+        Assert.assertTrue(!q.isCancelled());
+        
+        fExecutor.execute(q);
+        
+        try {
+            q.get();
+            Assert.fail("Expected exception");
+        } catch (ExecutionException e) {
+        }
+        
+        // Check final state
+        Assert.assertTrue(q.isDone());
+        Assert.assertTrue(!q.isCancelled());
+
+    }
+
+    
+    @Test 
     public void getWithMultipleDispatchesTest() throws InterruptedException, ExecutionException {
         Query<Integer> q = new Query<Integer>() { 
             @Override
@@ -117,44 +177,6 @@ public class DsfQueryTests {
     }
 
     @Test
-    public void cancelWhileWaitingTest() throws InterruptedException, ExecutionException {
-        final Query<Integer> q = new Query<Integer>() { 
-            @Override
-            protected void execute(final DataRequestMonitor<Integer> rm) {
-                // Call done with a delay of 1 second, to avoid stalling the tests.
-                fExecutor.schedule(
-                    new DsfRunnable() {
-                        public void run() { rm.done(); }
-                    }, 
-                    1, TimeUnit.SECONDS);
-            }
-        };
-
-        fExecutor.execute(q);
-
-        // Note: no point in checking isDone() and isCancelled() here, because
-        // the value could change on timing.
-        
-        // This does not really guarantee that the cancel will be called after
-        // the call to Fugure.get(), but the 1ms delay in call to schedule should
-        // help.
-        new Job("DsfQueryTests cancel job") { @Override public IStatus run(IProgressMonitor monitor) { //$NON-NLS-1$
-            q.cancel(false);
-            return Status.OK_STATUS;
-        }}.schedule(1);
-        
-        try {
-            q.get();
-        } catch (CancellationException e) {
-            return; // Success
-        } finally {
-            Assert.assertTrue(q.isDone());
-            Assert.assertTrue(q.isCancelled());            
-        }            
-        Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
-    }
-
-    @Test
     public void cancelBeforeWaitingTest() throws InterruptedException, ExecutionException {
         final Query<Integer> q = new Query<Integer>() { 
             @Override protected void execute(final DataRequestMonitor<Integer> rm) {
@@ -172,6 +194,8 @@ public class DsfQueryTests {
         // Start the query.
         fExecutor.execute(q);
         
+        
+        
         // Block to retrieve data
         try {
             q.get();
@@ -183,6 +207,62 @@ public class DsfQueryTests {
         }            
         Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
     }
+
+    @Test
+    public void cancelWhileWaitingTest() throws InterruptedException, ExecutionException {
+        final DataRequestMonitor<?>[] rmHolder = new DataRequestMonitor<?>[1];   
+        final Boolean[] cancelCalled = new Boolean[] { Boolean.FALSE };
+        
+        final Query<Integer> q = new Query<Integer>() { 
+            @Override protected void execute(final DataRequestMonitor<Integer> rm) {
+                synchronized (rmHolder) {
+                    rmHolder[0] = rm;
+                    rmHolder.notifyAll();
+                }
+            }
+        };
+        
+        // Start the query.
+        fExecutor.execute(q);
+
+        // Wait until the query is started
+        synchronized (rmHolder) {
+            while(rmHolder[0] == null) {
+                rmHolder.wait();
+            }
+        }        
+        
+        // Add a cancel listener to the query RM
+        rmHolder[0].addCancelListener(new ICanceledListener() {
+            
+            public void requestCanceled(RequestMonitor rm) {
+                cancelCalled[0] = Boolean.TRUE;
+            }
+        });
+        
+        // Cancel running request.
+        q.cancel(false);
+        
+        Assert.assertTrue(cancelCalled[0]);
+        Assert.assertTrue(rmHolder[0].isCanceled());
+        Assert.assertTrue(q.isCancelled());
+        Assert.assertFalse(q.isDone());
+        
+        // Complete rm and query.
+        rmHolder[0].done();
+        
+        // Retrieve data
+        try {
+            q.get();
+        } catch (CancellationException e) {
+            return; // Success
+        } finally {
+            Assert.assertTrue(q.isDone());
+            Assert.assertTrue(q.isCancelled());            
+        }            
+        Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
+    }
+
     
     @Test
     public void getTimeoutTest() throws InterruptedException, ExecutionException {
@@ -194,7 +274,7 @@ public class DsfQueryTests {
                     new DsfRunnable() {
                         public void run() { rm.done(); }
                     }, 
-                    1, TimeUnit.SECONDS);
+                    60, TimeUnit.SECONDS);
             }
         };
 

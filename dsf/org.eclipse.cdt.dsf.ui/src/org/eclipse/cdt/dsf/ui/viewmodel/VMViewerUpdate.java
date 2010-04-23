@@ -12,7 +12,6 @@ package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
@@ -52,31 +51,69 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
     final private IViewerUpdate fClientUpdate;
     
     /**
-     * The flag indicating whether this update was cancelled.  This flag is not used
-     * if the {@link #fClientUpdate} is initialized.
+     * Place holder for the client update.  It is only used if the client update is
+     * not specified.
      */
-    final private AtomicBoolean fCanceled;
-    
-    /**
-     * The viewer input object for this update.
-     */
-    final private Object fViewerInput;
-    
-    /**
-     * The element object of this update.
-     */
-    final private Object fElement;
-    
-    /**
-     * The element path of this update.
-     */
-    final private TreePath fElementPath;
-    
-    /**
-     * The presentation context of this update.
-     */
-    final private IPresentationContext fPresentationContext;
+    private class ClientUpdatePlaceHolder implements IViewerUpdate {
+        
+        ClientUpdatePlaceHolder(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext)
+        {
+            fViewerInput = viewerInput;
+            fElementPath = elementPath;
+            fPresentationContext = presentationContext;
+        }
+        /**
+         * The flag indicating whether this update was cancelled.  This flag is not used
+         * if the {@link #fClientUpdate} is initialized.
+         */
+        final private AtomicBoolean fCanceled = new AtomicBoolean(false);
+        
+        /**
+         * The viewer input object for this update.
+         */
+        final private Object fViewerInput;
+        
+        /**
+         * The element path of this update.
+         */
+        final private TreePath fElementPath;
+        
+        /**
+         * The presentation context of this update.
+         */
+        final private IPresentationContext fPresentationContext;
 
+        public void cancel() {
+            fCanceled.set(true);
+        }
+        
+        public boolean isCanceled() { 
+            return fCanceled.get(); 
+        }
+
+        public IPresentationContext getPresentationContext() {
+            return fPresentationContext;
+        }
+
+        public Object getElement() {
+            return fElementPath.getSegmentCount() != 0 ? fElementPath.getLastSegment() : fViewerInput;
+        }
+
+        public TreePath getElementPath() {
+            return fElementPath;
+        }
+
+        public Object getViewerInput() {
+            return fViewerInput;
+        }
+        
+        public void done() { assert false; } // not used
+        public void setStatus(IStatus status) {assert false; } // not used
+        public IStatus getStatus() { assert false; return null; } // not used
+
+
+    }
+    
     /**
      * Creates a viewer update based on a higher-level update.  The update element
      * information as well as cancel requests are delegated to the given client
@@ -90,13 +127,8 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
      * @param requestMonitor Call-back invoked when this update completes.  
      */
     public VMViewerUpdate(IViewerUpdate clientUpdate, RequestMonitor requestMonitor) {
-        fViewerInput = clientUpdate.getViewerInput();
-        fElement = clientUpdate.getElement();
-        fElementPath = clientUpdate.getElementPath();
-        fPresentationContext = clientUpdate.getPresentationContext();
         fRequestMonitor = requestMonitor;
         fClientUpdate = clientUpdate;
-        fCanceled = null;
     }
 
     /**
@@ -115,14 +147,9 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
             listDelta = listDelta.getParentDelta();
             elementList.add(0, listDelta.getElement());
         }
-        fViewerInput = elementList.get(0);
-        fElement = elementList.get(elementList.size() - 1);
-        elementList.remove(0);
-        fElementPath = new TreePath(elementList.toArray());
-        fPresentationContext = presentationContext;
+        fClientUpdate = new ClientUpdatePlaceHolder(
+            new TreePath(elementList.toArray()), elementList.get(elementList.size() - 1), presentationContext);
         fRequestMonitor = requestMonitor;
-        fClientUpdate = null;
-        fCanceled = new AtomicBoolean(false);
     }
 
     /**
@@ -134,56 +161,35 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
      * @param requestMonitor Call-back invoked when this update completes.  
      */
     public VMViewerUpdate(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext, RequestMonitor requestMonitor) {
-        fViewerInput = viewerInput;
-        fElement = elementPath.getSegmentCount() != 0 ? elementPath.getLastSegment() : viewerInput;
-        fElementPath = elementPath;
-        fPresentationContext = presentationContext;
         fRequestMonitor = requestMonitor;
-        fClientUpdate = null;
-        fCanceled = new AtomicBoolean(false);
+        fClientUpdate = new ClientUpdatePlaceHolder(elementPath, viewerInput, presentationContext);
     }
     
     protected RequestMonitor getRequestMonitor() {
         return fRequestMonitor;
     }
     
-    public Object getViewerInput() { return fViewerInput; }
-    public Object getElement() { return fElement; }
-    public TreePath getElementPath() { return fElementPath; }
-    public IPresentationContext getPresentationContext() { return fPresentationContext; }
+    public Object getViewerInput() { return fClientUpdate.getViewerInput(); }
+    public Object getElement() { return fClientUpdate.getElement(); }
+    public TreePath getElementPath() { return fClientUpdate.getElementPath(); }
+    public IPresentationContext getPresentationContext() { return fClientUpdate.getPresentationContext(); }
     public IStatus getStatus() { return fRequestMonitor.getStatus(); }
     public void setStatus(IStatus status) { fRequestMonitor.setStatus(status); }
     
     public boolean isCanceled() { 
-        if (fClientUpdate != null) {
-            return fClientUpdate.isCanceled();
-        } else {
-            return fCanceled.get();
-        }
+        return fClientUpdate.isCanceled();
     }
     public void cancel() {
-        if (fClientUpdate != null) {
-            fClientUpdate.cancel();
-        } else {
-            fCanceled.set(true);
-        }
+        fClientUpdate.cancel();
     }
 
     public void done() { 
     	setSubmitted();
-        try {
-            if ( isCanceled() ) {
-                fRequestMonitor.cancel();
-                fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was cancelled") ); //$NON-NLS-1$
-            }
-            fRequestMonitor.done();
-        } catch (RejectedExecutionException e) {
-            // If the request monitor cannot be invoked still, try to complete the update to avoid
-            // leaving the viewer in an inconsistent state.
-            if (fClientUpdate != null) {
-                fClientUpdate.done();
-            }
+        if ( isCanceled() ) {
+            fRequestMonitor.cancel();
+            fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was cancelled") ); //$NON-NLS-1$
         }
+        fRequestMonitor.done();
     }
 
 }

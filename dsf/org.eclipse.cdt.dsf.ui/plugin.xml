@@ -672,15 +672,6 @@
       </colorDefinition>
    </extension>
    <extension
-         point="org.eclipse.cdt.ui.textHovers">
-      <hover
-            label="%editorTextHover.label"
-            description="%editorTextHover.description"
-            class="org.eclipse.cdt.dsf.debug.ui.DsfDebugTextHover"
-            id="org.eclipse.cdt.dsf.debug.ui.DsfDebugTextHover">
-      </hover>
-   </extension>
-   <extension
          point="org.eclipse.ui.activities">
       <activity
             id="org.eclipse.cdt.dsf.ui.activity.updateModes"
@@ -747,6 +738,18 @@
             <instanceof value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart"/>
          </enablement>
       </toggleTargetFactory>
+   </extension>
+
+   <!-- Adpater factory for common DSF debug text hover support.
+        This can be overridden by inidividual session adapters. 
+   -->
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+       <factory
+            adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.DebugTextHoverAdapterFactory">
+         <adapter type="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
+      </factory>
    </extension>
 
 </plugin>

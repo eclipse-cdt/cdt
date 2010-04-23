@@ -1081,10 +1081,19 @@
       <hover
             label="%DebugTextHover.label"
             description="%DebugTextHover.description"
-            class="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover"
+            class="org.eclipse.cdt.debug.internal.ui.editors.DelegatingDebugTextHover"
             id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">
       </hover>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+       <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICStackFrame"
+            class="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHoverAdapterFactory">
+         <adapter type="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
+      </factory>
+   </extension>
+   
    <extension
          point="org.eclipse.debug.core.statusHandlers">
       <statusHandler

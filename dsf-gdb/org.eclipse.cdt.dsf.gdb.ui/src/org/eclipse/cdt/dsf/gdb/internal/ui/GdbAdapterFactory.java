@@ -58,6 +58,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbViewModelAdapter;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -118,7 +119,8 @@ public class GdbAdapterFactory
         final GdbStartTracingCommand fStartTracingTarget;
         final GdbStopTracingCommand fStopTracingTarget;
         final GdbSaveTraceDataCommand fSaveTraceDataTarget;
-
+        final GdbDebugTextHover fDebugTextHover;
+        
         SessionAdapterSet(GdbLaunch launch) {
             fLaunch = launch;
             DsfSession session = launch.getSession();
@@ -196,6 +198,12 @@ public class GdbAdapterFactory
              * session.
              */
             session.registerModelAdapter(ILaunch.class, fLaunch);
+            
+            /*
+             * Register debug hover adapter (bug 309001).
+             */
+            fDebugTextHover = new GdbDebugTextHover();
+            session.registerModelAdapter(ICEditorTextHover.class, fDebugTextHover);
         }
         
         void dispose() {
@@ -231,6 +239,8 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IStopTracingHandler.class);
             session.unregisterModelAdapter(ISaveTraceDataHandler.class);
             
+            session.unregisterModelAdapter(ICEditorTextHover.class);
+
             fSteppingModeTarget.dispose();
             fStepIntoCommand.dispose();
             fReverseStepIntoCommand.dispose();

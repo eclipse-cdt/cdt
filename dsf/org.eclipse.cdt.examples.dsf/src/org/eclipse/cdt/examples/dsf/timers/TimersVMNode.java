@@ -23,6 +23,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelForeground;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
@@ -33,6 +34,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.swt.graphics.RGB;
 
 
 /**
@@ -55,7 +57,8 @@ class TimersVMNode extends AbstractDMVMNode
 
         LabelColumnInfo idCol = new LabelColumnInfo(
             new LabelAttribute[] { 
-                new LabelText("Timer #{0}", new String[] { PROP_TIMER_NUMBER }), 
+                new LabelText("Timer #{0}", new String[] { PROP_TIMER_NUMBER }),
+                new LabelForeground(new RGB(0, 0, 255)),
                 new LabelImage(DsfExamplesPlugin.getDefault().getImageRegistry().
                     getDescriptor(DsfExamplesPlugin.IMG_TIMER))
             });

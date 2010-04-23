@@ -59,6 +59,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -68,9 +69,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -128,18 +131,48 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		private final ICProjectDescription fDes;
 		private final ICStorageElement fElement;
 
+		/*
+		 * See Bug 249951 & Bug 310007
+		 * Notification run with the workspace lock (which clients can't acquire explicitly)
+		 * The result is deadlock if:
+		 *   1) Notification listener does getProjectDescription  (workspaceLock -> serializingLock)
+		 *   2) setProjectDescription does IFile write  (serializingLock -> workspaceLock)
+		 * This workaround stops the periodic notification job while we're persisting the project description
+		 * which prevents notification (1) from occurring while we do (2)
+		 */
+		private class NotifyJobCanceller extends JobChangeAdapter {
+			@Override
+			public void aboutToRun(IJobChangeEvent event) {
+				final Job job = event.getJob();
+				if ("org.eclipse.core.internal.events.NotificationManager$NotifyJob".equals(job.getClass().getName())) {
+					job.cancel();
+				}
+			}
+		}
+
 		public DesSerializationRunnable(ICProjectDescription des, ICStorageElement el) {
 			fDes = des;
 			fElement = el;
 		}
 
 		public void run(IProgressMonitor monitor) throws CoreException {
+			JobChangeAdapter notifyJobCanceller = new NotifyJobCanceller();
 			try {
+				// See Bug 249951 & Bug 310007
+				Job.getJobManager().addJobChangeListener(notifyJobCanceller);
+				// Ensure we can check a null-job into the workspace 
+				// i.e. if notification is currently in progress wait for it to finish...
+				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+					}
+				}, null, IWorkspace.AVOID_UPDATE, null);
+				// end Bug 249951 & Bug 310007
 				serializingLock.acquire();
 				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
 			} finally {
 				serializingLock.release();
+				Job.getJobManager().removeJobChangeListener(notifyJobCanceller);				
 			}
 		}
 

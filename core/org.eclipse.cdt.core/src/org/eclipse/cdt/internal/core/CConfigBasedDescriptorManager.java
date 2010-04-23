@@ -315,6 +315,8 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * @throws CoreException
 	 */
 	private CConfigBasedDescriptor findDescriptor(IProject project, boolean create) throws CoreException {
+		if (!project.isAccessible() && !create)
+			return null;
 		CConfigBasedDescriptor dr = null;
 		Reference<CConfigBasedDescriptor> ref = fProjectDescriptorMap.get(project);
 		if (ref != null)

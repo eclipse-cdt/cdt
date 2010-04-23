@@ -95,7 +95,14 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	}
 
 	@Override
+	protected void setUp() throws Exception {
+		DPT.enabled = true;
+		super.setUp();
+	}
+
+	@Override
 	protected void tearDown() throws Exception {
+		DPT.enabled = false;
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
 		ipm.reset(); ipm.startup();
 	}

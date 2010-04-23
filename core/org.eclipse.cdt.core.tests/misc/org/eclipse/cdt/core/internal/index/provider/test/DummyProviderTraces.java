@@ -20,7 +20,10 @@ public class DummyProviderTraces {
 	static DummyProviderTraces instance = new DummyProviderTraces();
 	
 	public static DummyProviderTraces getInstance() { return instance; }
-	
+
+	/** Flag indicates if test is enabled, so we should trace projects and configs */
+	public volatile boolean enabled;
+
 	private DummyProviderTraces() {}
 	
 	Map/*<String, List>*/ id2prjTrace= new HashMap();

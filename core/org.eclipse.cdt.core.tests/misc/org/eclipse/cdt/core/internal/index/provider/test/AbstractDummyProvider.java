@@ -24,11 +24,15 @@ public class AbstractDummyProvider implements IReadOnlyPDOMProvider {
 	public AbstractDummyProvider() {}
 	
 	public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
+		if (!DummyProviderTraces.getInstance().enabled)
+			return new IPDOMDescriptor[0];
 		DummyProviderTraces.getInstance().getCfgsTrace(getClass()).add(config);
 		return new IPDOMDescriptor[0];
 	}
 	
 	public boolean providesFor(ICProject project) throws CoreException {
+		if (!DummyProviderTraces.getInstance().enabled)
+			return true;
 		DummyProviderTraces.getInstance().getProjectsTrace(getClass()).add(project);
 		return true;
 	}

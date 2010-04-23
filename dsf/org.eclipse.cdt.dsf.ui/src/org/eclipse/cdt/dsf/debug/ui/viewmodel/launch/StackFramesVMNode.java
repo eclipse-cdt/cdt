@@ -564,7 +564,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
     	} else if (e instanceof IExitedDMEvent) {
     	    // Do not generate a delta for this event, but do clear the
     	    // internal stack frame limit to avoid a memory leak.
-    	    clearStackFrameLimit( ((IExitedDMEvent)e).getDMContext() );
+    	    resetStackFrameLimit( ((IExitedDMEvent)e).getDMContext() );
             return IModelDelta.NO_CHANGE;
         } else if (e instanceof PropertyChangeEvent) {
             String property = ((PropertyChangeEvent)e).getProperty();
@@ -588,7 +588,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
     public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
             // Clear the limit on the stack frames for all stack frames under a given container.
-            clearStackFrameLimit( ((IContainerSuspendedDMEvent)e).getDMContext() );
+            resetStackFrameLimit( ((IContainerSuspendedDMEvent)e).getDMContext() );
 
             IContainerSuspendedDMEvent csEvent = (IContainerSuspendedDMEvent)e;
             
@@ -606,7 +606,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
             IExecutionDMContext execDmc = ((FullStackRefreshEvent)e).getDMContext();
             buildDeltaForFullStackRefreshEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof ISuspendedDMEvent) {
-            clearStackFrameLimit( ((ISuspendedDMEvent)e).getDMContext() );
+            resetStackFrameLimit( ((ISuspendedDMEvent)e).getDMContext() );
             IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
             buildDeltaForSuspendedEvent(execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof SteppingTimedOutEvent) {
@@ -632,7 +632,16 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-	private void buildDeltaForSuspendedEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    /**
+     * Builds the delta in response to a suspended event.
+     * <p>
+     * Default behavior is to expand the thread, repaint <strong>only</strong> 
+     * the top stack frame and select it.  The rest of the frames will be 
+     * repainted after a short delay. 
+     *   
+     * @since 2.1
+     */
+	protected void buildDeltaForSuspendedEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Check if we are building a delta for the thread that triggered the event.
         // Only then expand the stack frames and select the top one.
         if (executionCtx.equals(triggeringCtx)) {
@@ -659,7 +668,16 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-	private void buildDeltaForFullStackRefreshEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+	/**
+	 * Builds a delta in response to automatic refresh event generated after 
+	 * every suspend event.  
+	 * <p>
+	 * The default behavior is to check if the thread is
+	 * still stepping or suspended and refresh the stack trace.
+	 *   
+	 * @since 2.1
+	 */
+	protected void buildDeltaForFullStackRefreshEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
 	    try {
     	    getSession().getExecutor().execute(new DsfRunnable() {
     	        public void run() {
@@ -687,14 +705,30 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	    }
 	}
 	
-    private void buildDeltaForSteppingTimedOutEvent(final SteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    /**
+     * Builds the delta in response to a time-out after stepping over a long 
+     * executing function. 
+     * <p>
+     * The default behavior is to repainting the stack frame images to 
+     * show the running symbol.
+     * 
+     * @since 2.1
+     */
+    protected void buildDeltaForSteppingTimedOutEvent(final SteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         //parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();
     }
     
-    private void buildDeltaForModelProxyInstalledEvent(final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
-        // Retrieve the list of stack frames, and mark the top frame to be selected.  
+    /**
+     * Builds the delta in response the debug view being opened.
+     * <p>
+     * The default behavior is to retrieve the list of stack frames,
+     * and mark the top frame to be selected.
+     * 
+     * @since 2.1
+     */
+    protected void buildDeltaForModelProxyInstalledEvent(final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         getVMProvider().updateNode(
             this, 
             new VMChildrenUpdate(
@@ -711,7 +745,16 @@ public class StackFramesVMNode extends AbstractDMVMNode
             );
     }
 
-    private void buildDeltaForExpandStackEvent(IExecutionDMContext execDmc, final VMDelta parentDelta, final RequestMonitor rm) {
+    /**
+     * Builds the delta in response to the user requesting to retrieve 
+     * additional stack frames (changing the current stack frames limit).
+     * <p>
+     * The default behavior is to refresh the stack frames, and to select the
+     * first frame of the new frames that are retrieved.
+     * 
+     * @since 2.1
+     */
+    protected void buildDeltaForExpandStackEvent(IExecutionDMContext execDmc, final VMDelta parentDelta, final RequestMonitor rm) {
     	parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         // Retrieve the list of new stack frames, and mark the first frame to be selected.
         final int offset = getStackFrameLimit(execDmc) / 2;
@@ -733,7 +776,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
     }
 
 
-    private void buildDeltaForStackFrameLimitPreferenceChangedEvent(final VMDelta parentDelta, final RequestMonitor rm) {
+    /**
+     * Builds the delta in response to the stack frame limit preference changing.
+     * <p>
+     * Default behavior is to refresh the stack frames.
+     * 
+     * @since 2.1
+     */
+    protected void buildDeltaForStackFrameLimitPreferenceChangedEvent(final VMDelta parentDelta, final RequestMonitor rm) {
         parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();
     }
@@ -835,7 +885,15 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		return Integer.MAX_VALUE;
 	}
 
-    private void clearStackFrameLimit(IExecutionDMContext execCtx) {
+	/**
+	 * Resets the temporary stack frame limit for the given execution context.  
+	 * The stack frame limit should be reset when the a thread is suspended.
+	 * 
+	 * @param execCtx
+	 * 
+	 * @since 2.1
+	 */
+    protected void resetStackFrameLimit(IExecutionDMContext execCtx) {
         if (execCtx instanceof IContainerDMContext) {
             for (Iterator<IExecutionDMContext> itr = fTemporaryLimits.keySet().iterator(); itr.hasNext();) {
                 IExecutionDMContext limitCtx = itr.next();

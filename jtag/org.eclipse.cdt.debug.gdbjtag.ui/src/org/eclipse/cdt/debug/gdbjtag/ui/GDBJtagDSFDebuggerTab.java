@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 6.0
@@ -60,6 +61,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	private Text portNumber;
 	private Combo jtagDevice;
 	private String savedJtagDevice;
+	protected Button fUpdateThreadlistOnSuspend;
 
 	public String getName() {
 		return TAB_NAME;
@@ -89,6 +91,17 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		createCommandControl(group);
 		createRemoteControl(comp);
+		
+		fUpdateThreadlistOnSuspend = new Button(comp, SWT.CHECK);
+		fUpdateThreadlistOnSuspend.setText(Messages.getString("GDBJtagDebuggerTab.update_thread_list_on_suspend"));
+		fUpdateThreadlistOnSuspend .addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		// This checkbox needs an explanation. Attach context help to it.
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fUpdateThreadlistOnSuspend, "org.eclipse.cdt.dsf.gdb.ui.update_threadlist_button_context"); //$NON-NLS-1$
 	}
 
 	private void browseButtonSelected(String title, Text text) {
@@ -276,6 +289,9 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 					jtagDevice.select(i);
 				}
 			}
+			boolean updateThreadsOnSuspend = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+					IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
+			fUpdateThreadlistOnSuspend.setSelection(updateThreadsOnSuspend);			
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());
 		}
@@ -303,6 +319,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		} catch (NumberFormatException e) {
 			configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
 		}
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+                fUpdateThreadlistOnSuspend.getSelection());
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
@@ -318,6 +336,8 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 				IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND,
+				   IGDBLaunchConfigurationConstants.DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT);
 	}
 
 }

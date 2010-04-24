@@ -95,7 +95,7 @@
 		<topic label="Indexer" href="reference/cdt_u_indexer_preference.html"/>
 		<topic label="Language Mappings" href="reference/cdt_u_language_mapping_pref.htm"/>
 		
-		<topic label="New CDT project wizard">
+		<topic label="New CDT Project Wizard">
             <topic label="Preferred Toolchains tab" href="reference/cdt_u_pref_wizard_toolchains.htm"/> 
             <topic label="Wizard Defaults tab" href="reference/cdt_u_pref_wizard_defaults.htm"/> 
 			<topic label="Makefile Project pages" >

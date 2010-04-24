@@ -4,36 +4,59 @@
 <head>
 	<meta http-equiv="Content-Language" content="en-us">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>CDT Project Wizard Toolchains preferences</title>
+	<title>New CDT Project Wizard preferences</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 <body>
 
-<h1>CDT Project Wizard Toolchains preferences</h1>
+<h1>New CDT Project Wizard preferences</h1>
 
-<p>These settings define which toolchains are selected in CDT New Project Wizard by default.<p>
+<p>Use the <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTWizard)")'>New CDT Project Wizard</a> to define which toolchains are selected in <b>New CDT Project Wizard</b> by default.<p>
 <p><img src="../images/cdt_pref-wizard-toolchains.png" alt="CDT Project Wizard Toolchains preferences tab"></p>
-<dl>
-  <dt>Project types:</dt>
-  <dd>The same project types list as shown in Project Wizard.</dd>
-  <dt>Toolchain:</dt>
-  <dd>The same list of toolchains as shown in Project Wizard.</dd>
-  <dt>Make toolchain(s) preferred</dt>
-  <dd>Makes selected toolchain(s) preferred.<br>
-     In this tab, preferred toolchains are marked by arrow icon ("&gt;").<br>
-     In Project Wizard dialog, preferred toolchain is selected by default.<br>
-     If there are more than one toolchain preferred, the first of them will be selected.<br>
-     If there are no toolchains preferred, the first in the whole list will be selected.
-  </dd>
-  <dt>Make toolchain(s) not preferred</dt>
-  <dd>Removes preference mark from selected toolchain(s).</dd>
-  <dt>Show project types and toolchains only if they are supported on the platform</dt>
-  <dd>The same control as on Project Wizard page. Defines whether unsupported project types and toolchains are hidden or shown.</dd>
-  <dt>Restore Defaults</dt>
-  <dd>Sets all parameters to default values</dd>
-  <dt>Apply</dt>
-  <dd>Saves current settings.</dd>
-</dl>
+
+
+<table width="600px" cellpadding="5" cellspacing="0" border="1" fgcolor="DDD" >
+	<caption><strong>New CDT Project Wizard Preference Options</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<thead>
+		<tr>
+			<th><b>Option</b></th>
+			<th><b>Description</b></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr valign="top" >
+			<td><b>Project types</b></td>
+			<td>The same project types list as shown in <a href="cdt_u_new_proj_wiz.htm">Project Wizard</a>.</td>
+		</tr>
+		<tr valign="top" >
+			<td><b>Toolchain</b></td>
+			<td>The same list of toolchains as shown in Project Wizard.</td>
+		</tr>
+		<tr valign="top" >
+			<td><b>Make toolchain(s) preferred</b></td>
+			<td>Makes the selected toolchain(s) preferred.<br>
+			<ul>
+		     <li>Preferred toolchains are marked by arrow icon ("&gt;").</li>
+		     <li>In the Project Wizard dialog, preferred toolchain is selected by default.</li>
+		     <li>If there are more than one toolchain preferred, the first of them is selected.</li>
+		     <li>If there are no toolchains preferred, the first in the whole list is selected.</li>
+		     </ul></td>
+		</tr>
+		<tr valign="top" >
+			<td><b>Make toolchain(s) not preferred</b></td>
+			<td>Removes preference mark from selected toolchain(s).</td>
+		</tr>
+		<tr valign="top" >
+			<td><b>Show project types and toolchains only if they are supported on the platform</b></td>
+			<td>The same control as on Project Wizard page. Defines whether unsupported project types and toolchains are hidden or shown.</td>
+		</tr>
+	</tbody>
+</table>
 
 </body>
 

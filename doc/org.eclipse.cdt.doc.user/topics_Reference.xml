@@ -110,6 +110,8 @@
 		<topic label="Property Pages Settings" href="reference/cdt_u_pref_prop_pages.htm">
 			<topic label="Multiple Configurations Edit" href="reference/cdt_u_pref_multi_cfg.htm"/>
 	    </topic>
+  <topic href="reference/cdt_u_pref_task_tags.htm" label="Task Tags">
+  </topic>
 	</topic>
 	
 	<!-- PROJECT PROPERTIES TOPICS -->

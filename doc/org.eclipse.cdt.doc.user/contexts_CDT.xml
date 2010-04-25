@@ -535,4 +535,7 @@
    <description>The Project Explorer displays project information.</description>
    <topic href="reference/cdt_u_project_explorer_view.htm" label="Project Explorer view"/>
 </context>
+<context id="content_outline_context" title="Outline">
+   <topic href="reference/cdt_u_outline_view.htm" label="Outline view"/>
+</context>
 </contexts>

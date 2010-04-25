@@ -70,7 +70,7 @@
 <context id ="c_editor_gen">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_gen.htm"
-   	label="C/C++ Editor Preferences"/>
+   	label="C/C++ Editor Advanced Preferences"/>
 </context>
 <context id ="c_editor_color">
    <description>Click below to see help.</description>
@@ -404,7 +404,7 @@
 </context>       
 <context id="cdt_u_prop_build_setting_errparser">
    <description></description>
-   <topic href="reference/cdt_u_prop_build_setting_errparser.htm"    	
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"    	
    label="Error Parsers"/> 
 </context>       
 <context id="cdt_u_prop_build_toolchain">
@@ -496,6 +496,10 @@
    <description></description>
    <topic href="reference/cdt_u_pref_prop_pages.htm"    	
    label="Property Pages Settins tab"/> 
+</context>
+<context id="tasktags_preference_page_context" title="Task Tags (C/C++)">
+   <description>Create todo task tags.</description>
+   <topic href="reference/cdt_u_pref_task_tags.htm" label="Task Tags preference"/>
 </context>                   
 <context id="cdt_u_pref_wizard_defaults">
    <description></description>

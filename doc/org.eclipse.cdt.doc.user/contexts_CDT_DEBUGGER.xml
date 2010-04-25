@@ -125,5 +125,14 @@
    <topic href="reference/cdt_u_view_executables.htm.htm"
    	label="&executablesView;"/>
 </context>
+<context id="breakpoint_actions_page_help" title="Breakpoint Actions">
+   <description>Manage breakpoint actions.</description>
+   <topic href="reference/cdt_u_dbg_brkpt_actions.htm" label="Breakpoint Actions preferences"/>
+   <topic href="tasks/cdt_t_addrmv_brk_action.htm" label="Attaching and Removing Breakpoint Actions"/>
+</context>
+<context id="source_preference_page_context" title="Common Source Lookup Path">
+   <description>Manage common source paths.</description>
+   <topic href="reference/cdt_u_dbg_src.htm" label="Common Source Lookup Path"/>
+</context>
 
 </contexts>

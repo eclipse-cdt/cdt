@@ -531,4 +531,8 @@
 <context id="cdt_creating_cpp_file_context" title="Creating your C++ file">
    <topic href="getting_started/cdt_w_creating_cpp_file.html" label="Creating your C++ file"/>
 </context>
+<context id="project_explorer_context" title="Project Explorer">
+   <description>The Project Explorer displays project information.</description>
+   <topic href="reference/cdt_u_project_explorer_view.htm" label="Project Explorer view"/>
+</context>
 </contexts>

@@ -6,11 +6,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>C/C++ Project View</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 <body>
 
 <h1>C/C++ Projects view</h1>
-<p>The C/C++ Projects view displays, in a tree structure, only elements relevant to C and C++ project files.  In this view you can do the following: 
+<p>The <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.ui.CView)")'>C/C++ Project</a> view displays, in a tree structure, only elements relevant to C and C++ project files, similar to the <a href="cdt_u_project_explorer_view.htm">Project Explorer</a> view.  In this view you can do the following: 
 <ul>
 	<li>Browse the elements of C/C++ source files</li>
 	<li>Open files in the editor view</li>
@@ -21,13 +22,20 @@
 	<li>Import or Export files and projects</li>
 </ul>
 
-Files that you select in the C/C++ Projects view  affect the information that is displayed in other views.<p></p>
+<p>Files that you select in the <b>C/C++ Projects</b> view  affect the information that is displayed in other views.</p>
+<p>Right-click on any resource in the Project Explorer view to open a pop-up menu that allows you to perform operations such as copying, moving, creating new resources, comparing resources with each other, or performing team operations.</p>
 <p><img img src="../images/view_projects.png" alt="C/C++ Projects View"></p>
 
 
-<h2>Toolbar</h2>
+<h2>C/C++ Projects toolbar</h2>
+<p>The table below lists the toolbar options displayed in the C/C++ Projects view.</p>
 
-<p><table border="1" cellpadding="3" cellspacing="0">
+<p><table border="1" cellpadding="3" cellspacing="0" width="600px" bordercolor="#DDDDDD" >
+	<colgroup>
+		<col width="5%" valign="top" >
+		<col width="20%" valign="top" >
+		<col width="75%" valign="top" >
+	</colgroup>
  	<tr>
 		<th>Icon</th>
 		<th>Name</th>	
@@ -85,12 +93,6 @@ Files that you select in the C/C++ Projects view  affect the information that is
 											<dd>Deselects the current working set. </dd><p></p>
 										<p><dt>Edit Active Working Set</dt>
 											<dd>Opens the <strong>Edit Working Set</strong> dialog to allow changing the current working set.</dd><p></p>
-										<p><dt>Sort</dt>
-											<dd>This command sorts the resources in the view according to the selected schema:<br>
-												<ul>
-													<li><strong>By Name</strong>:&nbsp; Resources are sorted alphabetically, according to the full name of the resource (e.g., A.TXT, then B.DOC, then C.HTML, etc.)</li>
-													<li><strong>By Type</strong>:&nbsp; Resources are sorted alphabetically by file type/extension (e.g., all DOC files, then all HTML files, then all TXT files, etc.).</li>
-												</ul><p></p>
 										<p><dt>Filters</dt>
 											<dd>This command allows you to select filters to apply to the view so that you can show or hide various resources as needed. 
 													File types selected in the list will not be shown in the C/C++ Projects view.<dd><p></p>
@@ -105,103 +107,118 @@ Files that you select in the C/C++ Projects view  affect the information that is
 
 <p>The table below lists the icons displayed in the C/C++ Projects view.</p>
 
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="34%">
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#DDDDDD" width="34%">
   <tr>
-    <td width="19%" align="left"><strong>Icon</strong></td>
+    <td width="19%" align="center"><strong>Icon</strong></td>
     <td width="81%"><strong>Description</strong></td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/c_file_obj.gif" width="16" height="16" alt="C or C++ file Icon"></td>
     <td width="81%">C or C++ file</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
+    <img border="0" src="../images/c_exe_obj.png" width="16" height="16" alt="Executable file icon"></td>
+    <td width="81%">Debuggable executable file</td>
+  </tr>
+  <tr>
+    <td width="19%" align="center">
+    <img border="0" src="../images/c_object_file.png" width="16" height="17" alt="C or C++ object file icon"></td>
+    <td width="81%">Object file</td>
+  </tr>
+  <tr>
+    <td width="19%" align="center">
     <img border="0" src="../images/class_obj.gif" width="16" height="16" alt="Class Icon"></td>
     <td width="81%">Class</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/define_obj.gif" width="16" height="16" alt="Macro Definition Icon"></td>
     <td width="81%">Macro Definition</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/enum_obj.gif" width="16" height="16" alt="Enum Icon"></td>
     <td width="81%">Enum</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/enumerator_obj.gif" width="16" height="16" alt="Enumerator Icon"></td>
     <td width="81%">Enumerator</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/var_declaration_obj.gif" width="16" height="16" alt="Variable Icon"></td>
     <td width="81%">Variable</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/field_private_obj.gif" width="16" height="16" alt="Field private icon"></td>
     <td width="81%">Field private</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/field_protected_obj.gif" width="16" height="16" alt="Field protected icon"></td>
     <td width="81%">Field protected</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/field_public_obj.gif" width="16" height="16" alt="Field public icon"></td>
     <td width="81%">Field public</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/include_obj.gif" width="16" height="16" alt="Include icon"></td>
     <td width="81%">Include</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/makefile.gif" width="16" height="16" alt="Makefile icon"></td>
     <td width="81%">Makefile</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/method_private_obj.gif" width="16" height="16" alt="Method private icon"></td>
     <td width="81%">Method private</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/method_protected_obj.gif" width="16" height="16" alt="Method protected icon"></td>
     <td width="81%">Method protected</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/method_public_obj.gif" width="16" height="16" alt="Method public icon"></td>
     <td width="81%">Method public</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/namespace_obj.gif" width="16" height="16" alt="Namespace icon"></td>
     <td width="81%">Namespace</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
+    <img border="0" src="../images/namespace_declared_obj.png" width="17" height="16" alt="Namespace declared icon"></td>
+    <td width="81%">Namespace declared</td>
+  </tr>
+  <tr>
+    <td width="19%" align="center">
     <img border="0" src="../images/struct_obj.gif" width="16" height="16" alt="Struct icon"></td>
     <td width="81%">Struct</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/typedef_obj.gif" width="16" height="16" alt="Type definition icon"></td>
     <td width="81%">Type definition</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/union_obj.gif" width="16" height="16" alt="Union icon"></td>
     <td width="81%">Union</td>
   </tr>
   <tr>
-    <td width="19%" align="left">
+    <td width="19%" align="center">
     <img border="0" src="../images/function_obj.gif" width="16" height="16" alt="Function icon"></td>
     <td width="81%">Function</td>
   </tr>
@@ -215,7 +232,9 @@ Files that you select in the C/C++ Projects view  affect the information that is
 <br><a href="../tasks/cdt_t_show_proj_files.htm">Displaying C/C++ file components in the C/C++ Projects view</a>
 <br><a href="../tasks/cdt_t_prvw_hide_files.htm">Hiding files by type in the C/C++ Projects view</a></p>
 
-
+<p><img src="../images/ngref.gif" ALT="Related references" width="143" height="21">
+<br><a href="../reference/cdt_u_project_explorer_view.htm">Project Explorer view</a></p>
+<hr />
 <p>
 <img img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement">  <br>
 <img img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" >  

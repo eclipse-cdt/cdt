@@ -43,7 +43,11 @@
             file="contexts_CDT.xml"
             plugin="org.eclipse.cdt.ui">
       </contexts>
-   </extension>
+      <contexts
+            file="contexts_CDT.xml"
+            plugin="org.eclipse.ui">
+      </contexts>
+    </extension>
    <extension
          point="org.eclipse.help.contexts">
       <contexts

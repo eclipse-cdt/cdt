@@ -1188,6 +1188,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_float:
         case IToken.t_double:
         case IToken.t_decltype:
+        case IToken.t_void:
         case IGCCToken.t_typeof:
 			firstExpression = simpleTypeConstructorExpression(simpleTypeSpecifier());
         	break;

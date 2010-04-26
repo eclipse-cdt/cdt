@@ -2893,17 +2893,16 @@ public class CPPSemantics {
 		if (op == null)
 			return null;
 		
-		IType op1type = SemanticUtil.getUltimateTypeUptoPointers(exp.getOperand1().getExpressionType());
-		IASTExpression[] args = new IASTExpression[] { exp.getOperand1(), exp.getOperand2() } ;
+		final IASTExpression op1 = exp.getOperand1();
+		final IASTExpression op2 = exp.getOperand2();
+		IType op1type = getNestedType(op1.getExpressionType(), TDEF | REF | CVTYPE);
+		IType op2type = getNestedType(op2.getExpressionType(), TDEF | REF | CVTYPE);
+		if (!isUserDefined(op1type) && !isUserDefined(op2type))
+			return null;
 		
+		IASTExpression[] args = new IASTExpression[] { op1, op2 };
 		NonMemberMode lookupNonMember = NonMemberMode.none;
 		if (exp.getOperator() != IASTBinaryExpression.op_assign) {
-			IType op2type = SemanticUtil.getUltimateTypeUptoPointers(exp.getOperand2().getExpressionType());
-			if (op2type instanceof IProblemBinding)
-				return null;
-			if (!isUserDefined(op1type) && !isUserDefined(op2type))
-				return null;
-			
 			lookupNonMember= NonMemberMode.limited;
 		}
 		
@@ -3089,6 +3088,9 @@ public class CPPSemantics {
 	}
 
 	private static boolean isUserDefined(IType type) {
+		if (type instanceof IProblemBinding)
+			return false;
+		
     	return type instanceof ICPPClassType || type instanceof IEnumeration;
     }
     

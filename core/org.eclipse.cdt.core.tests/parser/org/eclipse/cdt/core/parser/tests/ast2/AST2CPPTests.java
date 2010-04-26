@@ -8545,5 +8545,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		b= bh.assertNonProblem("f(c32)", 1);
 		assertSame(f2, b);
 	}
-
+	
+	//	int test() {
+	//	    void (11);
+	//	    return 42;
+	//	}
+	public void testCastToVoid_309155() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}		
 }

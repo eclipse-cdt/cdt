@@ -123,7 +123,19 @@ public class MIProcessAdapter implements MIProcess {
 		if (fGDBProcess instanceof Spawner) {
 			if (inferior.isRunning()) {
 				Spawner gdbSpawner = (Spawner) fGDBProcess;
-				gdbSpawner.interruptCTRLC();
+				
+				// Cygwin gdb 6.8 is capricious when it comes to interrupting the
+				// target. The same logic here will work with MinGW, though. And on
+				// linux it's irrelevant since interruptCTRLC()==interrupt(). So,
+				// one odd size fits all.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c54
+				if (inferior.getIsRemoteInferior()) {
+					gdbSpawner.interrupt();
+				}
+				else {
+					gdbSpawner.interruptCTRLC();
+				}
+				
 				waitForInterrupt(inferior);
 			}
 			// If we are still running try to drop the sig to the PID

@@ -109,6 +109,7 @@ public class GDBServerCDIDebugger2 extends GDBCDIDebugger2 {
 			// @@@ We have to set the suspended state manually
 			miSession.getMIInferior().setSuspended();
 			miSession.getMIInferior().update();
+			miSession.getMIInferior().setIsRemoteInferior(true);
 		}
 	}
 

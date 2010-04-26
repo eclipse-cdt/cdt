@@ -378,7 +378,18 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     public void interrupt() {
         if (fProcess instanceof Spawner) {
             Spawner gdbSpawner = (Spawner) fProcess;
-           	gdbSpawner.interruptCTRLC();
+            
+			// Cygwin gdb 6.8 is capricious when it comes to interrupting the
+			// target. The same logic here will work with MinGW, though. And on
+			// linux it's irrelevant since interruptCTRLC()==interrupt(). So,
+			// one odd size fits all.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c54
+            if (getSessionType() == SessionType.REMOTE) { 
+               	gdbSpawner.interrupt();
+            }
+            else {
+            	gdbSpawner.interruptCTRLC();
+            }
         }
     }
 
@@ -388,7 +399,18 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     public void interruptAndWait(int timeout, RequestMonitor rm) {
         if (fProcess instanceof Spawner) {
             Spawner gdbSpawner = (Spawner) fProcess;
-           	gdbSpawner.interruptCTRLC();
+
+			// Cygwin gdb 6.8 is capricious when it comes to interrupting the
+			// target. The same logic here will work with MinGW, though. And on
+			// linux it's irrelevant since interruptCTRLC()==interrupt(). So,
+			// one odd size fits all.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c54            
+            if (getSessionType() == SessionType.REMOTE) { 
+               	gdbSpawner.interrupt();
+            }
+            else {
+            	gdbSpawner.interruptCTRLC();
+            }
             fInterruptFailedJob = new MonitorInterruptJob(timeout, rm);
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Cannot interrupt.", null)); //$NON-NLS-1$

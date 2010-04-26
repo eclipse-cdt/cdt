@@ -55,6 +55,10 @@ public class MIInferior extends Process {
 	IMITTY tty;
 
 	int inferiorPID;
+	
+	
+	/** See {@link #getIsRemoteInferior()} */
+	private boolean fIsRemoteInferior;
 
 	public MIInferior(MISession mi, IMITTY p) {
 		session = mi;
@@ -377,5 +381,24 @@ public class MIInferior extends Process {
 
 	public int getInferiorPID() {
 		return inferiorPID;
+	}
+
+	/**
+	 * Called early on in the debug session to mark the inferior process as being
+	 * under the control of a gdbserver.
+	 * 
+	 * @since 7.0
+	 */
+	public void setIsRemoteInferior(boolean value) {
+		fIsRemoteInferior = value;
+	}
+
+	/**
+	 * Is the inferior process being debugged remotely through gdbserver?
+	 * 
+	 * @since 7.0
+	 */
+	public boolean getIsRemoteInferior() {
+		return fIsRemoteInferior; 
 	}
 }

@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 
 public class Spawner extends Process {
@@ -29,6 +30,15 @@ public class Spawner extends Process {
 	public int INT = 2;
 	public int KILL = 9;
 	public int TERM = 15;
+
+	/**
+	 * A fabricated signal number for use on Windows only. Tells the starter program to send a CTRL-C to the
+	 * inferior regardless of whether the inferior is a Cygiwn process or not. With {@link #INT}, the starter
+	 * does a 'kill -SIGINT' if the inferior is a Cygwin process.
+	 * 
+	 * @since 5.2
+	 */
+	public int CTRLC = 1000;  // arbitrary high number to avoid collision
 
 	int pid = 0;
 	int status;
@@ -206,6 +216,26 @@ public class Spawner extends Process {
 	 **/
 	public int interrupt() {
 		return raise(pid, INT);
+	}
+
+	/**
+	 * On Windows, this differs from interrupt() in that it will always send a CTRL-C event to the inferior,
+	 * whereas {@link #interrupt()} will do a Cygwin 'kill -SIGINT' if the inferior is a Cygwin process
+	 * (otherwise it sends a CTRL-C). In some cases, CDT needs to send CTRL-C regardless of whether the
+	 * inferior is a cygwin process or not, e.g., when interrupting gdb on Windows (see bug 304096).
+	 * 
+	 * <p>
+	 * On non-Windows hosts, this simply calls {@link #interrupt()}
+	 * 
+	 * @since 5.2
+	 */
+	public int interruptCTRLC() {
+        if (Platform.getOS().equals(Platform.OS_WIN32)) {
+        	return raise(pid, CTRLC);
+        }
+        else {
+        	return interrupt();
+        }
 	}
 
 	public int hangup() {

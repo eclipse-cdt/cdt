@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,6 @@ public class StandardWinCommandFactory extends StandardCommandFactory {
 	public MIGDBSetNewConsole createMIGDBSetNewConsole() {
 		// By default in Windows, turn off new console so that the
 		// Ctrl-C's get propogated automatically to the inferior.
-		// Overriden by Cygwin.
-		return new MIGDBSetNewConsole(getMIVersion(), "off");
+		return new MIGDBSetNewConsole(getMIVersion(), "off"); //$NON-NLS-1$
 	}
 }

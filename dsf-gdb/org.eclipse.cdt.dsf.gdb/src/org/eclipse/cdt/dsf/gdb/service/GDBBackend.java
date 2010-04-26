@@ -378,7 +378,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     public void interrupt() {
         if (fProcess instanceof Spawner) {
             Spawner gdbSpawner = (Spawner) fProcess;
-            gdbSpawner.interrupt();
+           	gdbSpawner.interruptCTRLC();
         }
     }
 
@@ -388,7 +388,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     public void interruptAndWait(int timeout, RequestMonitor rm) {
         if (fProcess instanceof Spawner) {
             Spawner gdbSpawner = (Spawner) fProcess;
-            gdbSpawner.interrupt();
+           	gdbSpawner.interruptCTRLC();
             fInterruptFailedJob = new MonitorInterruptJob(timeout, rm);
         } else {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Cannot interrupt.", null)); //$NON-NLS-1$

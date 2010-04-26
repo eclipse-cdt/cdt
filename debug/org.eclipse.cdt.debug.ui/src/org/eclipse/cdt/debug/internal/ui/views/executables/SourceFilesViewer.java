@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Nokia and others.
+ * Copyright (c) 2010 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,7 +219,7 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				Object input = getInput();
 				if (input != null && input instanceof Executable) {
-					((Executable)input).setRefreshSourceFiles(true);
+					((Executable)input).setRemapSourceFiles(true);
 					refresh(true);
 				}
 				return Status.OK_STATUS;

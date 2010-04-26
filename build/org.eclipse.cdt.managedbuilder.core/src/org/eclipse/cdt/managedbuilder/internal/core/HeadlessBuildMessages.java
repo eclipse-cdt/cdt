@@ -20,12 +20,14 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_cant_be_found;
 	public static String HeadlessBuilder_clean_failed;
 	public static String HeadlessBuilder_cleaning_all_projects;
+	public static String HeadlessBuilder_CouldntLockWorkspace;
 	public static String HeadlessBuilder_Directory;
 	public static String HeadlessBuilder_Error;
 	public static String HeadlessBuilder_importAll;
 	public static String HeadlessBuilder_invalid_argument;
 	public static String HeadlessBuilder_is_not_accessible;
 	public static String HeadlessBuilder_is_not_valid_in_workspace;
+	public static String HeadlessBuilder_MustSpecifyWorkspace;
 	public static String HeadlessBuilder_no_arguments;
 	public static String HeadlessBuilder_NoConfigMatched;
 	public static String HeadlessBuilder_NoProjectMatched;
@@ -40,8 +42,10 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_usage;
 	public static String HeadlessBuilder_usage_build;
 	public static String HeadlessBuilder_usage_clean_build;
+	public static String HeadlessBuilder_invalid_uri;
 	public static String HeadlessBuilder_usage_import;
 	public static String HeadlessBuilder_Workspace;
+	public static String HeadlessBuilder_WorkspaceInUse;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, HeadlessBuildMessages.class);

@@ -8,6 +8,8 @@
  * Contributors:
  *     Broadcom Corporation - initial API and implementation
  *     Clare Richardson (Motorola) - Bug 281397 building specific configs
+ *     Dmitry Kozlov (CodeSourcery) - Bug 309909 Headless build import fails
+ *                                    silently with relative pathname
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -46,11 +48,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.service.datalocation.Location;
 
 /**
  * A headless builder for CDT with additional features.
@@ -58,7 +62,7 @@ import org.eclipse.equinox.app.IApplicationContext;
  * IApplication ID: org.eclipse.cdt.managedbuilder.core.headlessbuild
  * Provides:
  *   - Import projects :                       -import     {[uri:/]/path/to/project}
- *   - Import all projects in the tree :       -importAll  {[uri:/]/path/to/projectTreeURI} 
+ *   - Import all projects in the tree :       -importAll  {[uri:/]/path/to/projectTreeURI}
  *   - Build projects / the workspace :        -build      {project_name_reg_ex/config_name_reg_ex | all}
  *   - Clean build projects / the workspace :  -cleanBuild {project_name_reg_ex/config_name_reg_ex | all}
  *
@@ -218,6 +222,18 @@ public class HeadlessBuilder implements IApplication {
 			if (project_uri == null || project_uri.getScheme() == null) {
 				IPath p = new Path(projURIStr).addTrailingSeparator();
 				project_uri = URIUtil.toURI(p);
+
+				// Handle relative paths as relative to cwd
+				if (project_uri.getScheme() == null) {
+					String cwd = System.getProperty("user.dir");  //$NON-NLS-1$
+					p = new Path(cwd).addTrailingSeparator();
+					p = p.append(projURIStr);
+					project_uri = URIUtil.toURI(p);
+				}
+				if (project_uri.getScheme() == null) {
+					System.err.println(HeadlessBuildMessages.HeadlessBuilder_invalid_uri + project_uri);
+					return ERROR;
+				}
 			}
 
 			if (recurse) {
@@ -285,6 +301,10 @@ public class HeadlessBuilder implements IApplication {
 	}
 
 	public Object start(IApplicationContext context) throws Exception {
+		// Check its OK to use this workspace as IDEApplication does
+		if (!checkInstanceLocation())
+			return ERROR;
+
 		IProgressMonitor monitor = new PrintingProgressMonitor();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -383,6 +403,38 @@ public class HeadlessBuilder implements IApplication {
 
 		return OK;
 	}
+
+    /**
+     * Verify that it's safe to use the specified workspace. i.e. that
+     * we can write to it and that it's not already locked / in-use.
+     *
+     * Return true if a valid workspace path has been set and false otherwise.
+     *
+     * @return true if a valid instance location has been set and false
+     *         otherwise
+     */
+    private boolean checkInstanceLocation() {
+        // -data @none was specified but an ide requires workspace
+        Location instanceLoc = Platform.getInstanceLocation();
+        if (instanceLoc == null || !instanceLoc.isSet()) {
+        	System.err.println(HeadlessBuildMessages.HeadlessBuilder_MustSpecifyWorkspace);
+            return false;
+        }
+
+        // -data "/valid/path", workspace already set
+        try {
+            // at this point its valid, so try to lock it to prevent concurrent use
+            if (!instanceLoc.lock()) {
+            	System.err.println(HeadlessBuildMessages.HeadlessBuilder_WorkspaceInUse);
+                return false;
+            }
+            return true;
+        } catch (IOException e) {
+        	System.err.println(HeadlessBuildMessages.HeadlessBuilder_CouldntLockWorkspace);
+        }
+        return false;
+    }
+
 
 	/**
 	 * Helper method to process expected arguments

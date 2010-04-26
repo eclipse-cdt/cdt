@@ -715,7 +715,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		private boolean isInsideStringInPreprocessorDirective(ITypedRegion partition, IDocument document, int offset) throws BadLocationException {
-			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType())) {
+			if (ICPartitions.C_PREPROCESSOR.equals(partition.getType()) && offset < document.getLength()) {
 				// use temporary document to test whether offset is inside non-default partition
 				String directive = document.get(partition.getOffset(), offset - partition.getOffset() + 1);
 				int hashIdx = directive.indexOf('#');

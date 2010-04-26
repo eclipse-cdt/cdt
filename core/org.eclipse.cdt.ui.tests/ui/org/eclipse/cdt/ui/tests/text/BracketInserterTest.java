@@ -376,6 +376,16 @@ public class BracketInserterTest extends TestCase {
 		assertSingleLinkedPosition(INCLUDE_OFFSET + 1);
 	}
 
+	public void testInsertClosingQuoteInIncludeAtDocumentEnd_Bug309099() throws Exception {
+		int startOffset = TU_CONTENTS.length();
+		setCaret(startOffset);
+		type("#include ");
+		type('"');
+		assertEquals(startOffset + 11, fDocument.getLength());
+		assertEquals("#include \"\"", fDocument.get(startOffset, 11));
+		assertSingleLinkedPosition(startOffset + 10);
+	}
+
 	public void testAngleBrackets_165837() throws Exception {
 		setCaret(BODY_OFFSET);
 		type("cout << \n\"aaa\" ");

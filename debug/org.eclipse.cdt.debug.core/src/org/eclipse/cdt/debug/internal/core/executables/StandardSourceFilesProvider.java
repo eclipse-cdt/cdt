@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.core.executables.ISourceFilesProvider;
 import org.eclipse.cdt.internal.core.model.BinaryParserConfig;
@@ -118,7 +118,7 @@ public class StandardSourceFilesProvider extends PlatformObject implements ISour
 		if (bin != null) {
 			ISymbolReader symbolreader = (ISymbolReader) bin.getAdapter(ISymbolReader.class);
 			if (symbolreader != null) {
-				return symbolreader.getSourceFiles();
+				return symbolreader.getSourceFiles(monitor);
 			}
 
 		}

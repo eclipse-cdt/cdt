@@ -20,12 +20,13 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
-import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Section;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -479,4 +480,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		if (stmtList > -1)	// this CU has "stmt_list" attribute
 			parseSourceInCULineInfo(cuCompDir, stmtList);
 	}
+	
+	/**
+	 * @since 5.2
+	 */
+	public String[] getSourceFiles(IProgressMonitor monitor) {
+		return getSourceFiles();
+	}
+
 }

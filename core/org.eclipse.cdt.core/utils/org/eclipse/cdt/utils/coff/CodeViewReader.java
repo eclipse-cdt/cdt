@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.ISymbolReader;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CodeViewReader implements ISymbolReader {
 
@@ -163,5 +164,12 @@ public class CodeViewReader implements ISymbolReader {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @since 5.2
+	 */
+	public String[] getSourceFiles(IProgressMonitor monitor) {
+		return getSourceFiles();
 	}
 }

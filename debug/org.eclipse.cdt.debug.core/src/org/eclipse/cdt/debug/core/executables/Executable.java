@@ -89,7 +89,9 @@ public class Executable extends PlatformObject {
 	private final Map<ITranslationUnit, String> remappedPaths;
 	private final ArrayList<ITranslationUnit> sourceFiles;
 	private boolean refreshSourceFiles;
+	private boolean remapSourceFiles;
 	private ISourceFileRemapping[] remappers;
+	private String[] symReaderSources;
 
 	public IPath getPath() {
 		return executablePath;
@@ -111,6 +113,7 @@ public class Executable extends PlatformObject {
 		remappedPaths = new HashMap<ITranslationUnit, String>();
 		sourceFiles = new ArrayList<ITranslationUnit>();
 		refreshSourceFiles = true;
+		remapSourceFiles = true;
 	}
 
 	public IResource getResource() {
@@ -154,7 +157,7 @@ public class Executable extends PlatformObject {
 	 */
 	public synchronized ITranslationUnit[] getSourceFiles(IProgressMonitor monitor) {
 		
-		if (!refreshSourceFiles)
+		if (!refreshSourceFiles && !remapSourceFiles)
 			return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
 		
 		// Try to get the list of source files used to build the binary from the
@@ -168,7 +171,10 @@ public class Executable extends PlatformObject {
 
 		ICProject cproject = factory.create(project);
 
-		String[] symReaderSources = ExecutablesManager.getExecutablesManager().getSourceFiles(this, monitor);
+		if (refreshSourceFiles)
+		{
+			symReaderSources = ExecutablesManager.getExecutablesManager().getSourceFiles(this, monitor);
+		}
 		if (symReaderSources != null && symReaderSources.length > 0) {
 			for (String filename : symReaderSources) {
 				String orgPath = filename;
@@ -245,6 +251,7 @@ public class Executable extends PlatformObject {
 		}
 		
 		refreshSourceFiles = false;
+		remapSourceFiles = false;
 		return sourceFiles.toArray(new TranslationUnit[sourceFiles.size()]) ;
 	}
 
@@ -260,6 +267,13 @@ public class Executable extends PlatformObject {
 		if (orgLocation == null)
 			orgLocation = tu.getLocation().toOSString();
 		return orgLocation;
+	}
+
+	/**
+	 * @since 7.0
+	 */
+	public void setRemapSourceFiles(boolean remapSourceFiles) {
+		this.remapSourceFiles = remapSourceFiles;
 	}
 
 }

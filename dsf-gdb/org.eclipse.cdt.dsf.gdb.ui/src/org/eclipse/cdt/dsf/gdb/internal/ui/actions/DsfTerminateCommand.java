@@ -105,6 +105,8 @@ public class DsfTerminateCommand implements ITerminateHandler {
                                 request.done();
                             };
                         });
+                    } else {
+                    	request.done();
                     }
                  }
             });

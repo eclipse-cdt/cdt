@@ -346,9 +346,9 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 					return 0;
 				}});
 			
-			monitor.beginTask("Finding source files in " + executable.getName(), sourceFileProviders.size()); //$NON-NLS-1$
+			monitor.beginTask("Finding source files in " + executable.getName(), sourceFileProviders.size() * 1000); //$NON-NLS-1$
 			for (ISourceFilesProvider provider : sourceFileProviders) {
-				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1));
+				String[] sourceFiles = provider.getSourceFiles(executable, new SubProgressMonitor(monitor, 1000));
 				if (sourceFiles.length > 0) {
 					result = sourceFiles;
 

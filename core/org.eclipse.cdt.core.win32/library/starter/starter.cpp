@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,7 +151,7 @@ int main() {
 	szCmdLine[0]= 0;
 	int nPos = 0;
 
-	for(int i = 7; i < argc; ++i)
+	for(int i = 8; i < argc; ++i)
 	{
 		int nCpyLen;
 		int len= wcslen(argv[i]);
@@ -192,11 +192,13 @@ int main() {
 
 	BOOL exitProc = FALSE;
 	HANDLE waitEvent = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[4]);
-	HANDLE h[4];
-	h[0] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[3]);	// simulated SIGINT
+	HANDLE h[5];
+	h[0] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[3]);	// simulated SIGINT (CTRL-C or Cygwin 'kill -SIGINT')
 //  h[1] we reserve for the process handle
 	h[2] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[5]); // simulated SIGTERM
 	h[3] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[6]); // simulated SIGKILL
+	h[4] = OpenEventW(EVENT_ALL_ACCESS, TRUE, argv[7]); // CTRL-C, in all cases
+	
 	SetConsoleCtrlHandler(HandlerRoutine, TRUE);
 
 	int parentPid = wcstol(argv[1], NULL, 10);
@@ -308,15 +310,16 @@ int main() {
 		{
 			// Wait for the spawned-process to die or for the event
 			// indicating that the processes should be forcibly killed.
-			DWORD event = WaitForMultipleObjects(4, h, FALSE, INFINITE);
+			DWORD event = WaitForMultipleObjects(5, h, FALSE, INFINITE);
 			switch (event)
 			{
 			case WAIT_OBJECT_0 + 0: // SIGINT
+			case WAIT_OBJECT_0 + 4: // CTRL-C
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, _T("starter (PID %i) received CTRL-C event\n"), currentPID);
 				OutputDebugStringW(buffer);
 #endif
-				if (isCygwin(h[1])) {
+				if ((event == (WAIT_OBJECT_0 + 0)) && isCygwin(h[1])) {
 					// Need to issue a kill command
 					wchar_t kill[1024];
 					swprintf(kill, L"kill -SIGINT %d", pi.dwProcessId);
@@ -410,6 +413,7 @@ int main() {
 	CloseHandle(h[1]);
 	CloseHandle(h[2]);
 	CloseHandle(h[3]);
+	CloseHandle(h[4]);
 
 	return(dwExitCode);
 }

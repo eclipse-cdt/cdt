@@ -44,6 +44,7 @@ typedef struct _procInfo {
 	HANDLE eventWait;
 	HANDLE eventTerminate;		// signaled when Spawner.terminate() is called; more forceful terminate request (SIGTERM signal in UNIX world)
 	HANDLE eventKill;			// signaled when Spawner.kill() is called; most forceful terminate request (SIGKILL signal in UNIX world)
+	HANDLE eventCtrlc;			// signaled when Spawner.interruptCTRLC() is called; like interrupt() but sends CTRL-C in all cases, even when inferior is a Cygwin program
 } procInfo_t, * pProcInfo_t;
 
 static int procCounter = 0; // Number of running processes
@@ -75,6 +76,7 @@ typedef enum {
 	SIG_INT,
 	SIG_KILL = 9,
 	SIG_TERM = 15,
+	CTRLC = 1000 // special, Windows only. Sends CTRL-C in all cases, even when inferior is a Cygwin program
 } signals;
 
 extern CRITICAL_SECTION cs;
@@ -148,6 +150,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	wchar_t eventWaitName[20];
 	wchar_t eventTerminateName[20];
 	wchar_t eventKillName[20];
+	wchar_t eventCtrlcName[20];
 #ifdef DEBUG_MONITOR
 	wchar_t buffer[1000];
 #endif
@@ -220,13 +223,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	swprintf(eventWaitName, L"SAWait%p", pCurProcInfo);
 	swprintf(eventTerminateName, L"SATerm%p", pCurProcInfo);
 	swprintf(eventKillName, L"SAKill%p", pCurProcInfo);
+	swprintf(eventCtrlcName, L"SACtrlc%p", pCurProcInfo);
 
 	pCurProcInfo->eventBreak     = CreateEventW(NULL, FALSE, FALSE, eventBreakName);
 	pCurProcInfo->eventWait      = CreateEventW(NULL, TRUE,  FALSE, eventWaitName);
 	pCurProcInfo->eventTerminate = CreateEventW(NULL, FALSE, FALSE, eventTerminateName);
 	pCurProcInfo->eventKill      = CreateEventW(NULL, FALSE, FALSE, eventKillName);
+	pCurProcInfo->eventCtrlc     = CreateEventW(NULL, FALSE, FALSE, eventCtrlcName);
 
-	swprintf(szCmdLine, L"\"%sstarter.exe\" %i %i %s %s %s %s ", path, pid, nLocalCounter, eventBreakName, eventWaitName, eventTerminateName, eventKillName);
+	swprintf(szCmdLine, L"\"%sstarter.exe\" %i %i %s %s %s %s %s ", path, pid, nLocalCounter, eventBreakName, eventWaitName, eventTerminateName, eventKillName, eventCtrlcName);
 	nPos = wcslen(szCmdLine);
 
 	// Prepare command line
@@ -699,6 +704,11 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 			SetEvent(pCurProcInfo -> eventBreak);
 			ret = (WaitForSingleObject(pCurProcInfo -> eventWait, 100) == WAIT_OBJECT_0);
 			break;
+		case CTRLC:
+		    ResetEvent(pCurProcInfo -> eventWait);
+			SetEvent(pCurProcInfo -> eventCtrlc);
+			ret = (WaitForSingleObject(pCurProcInfo -> eventWait, 100) == WAIT_OBJECT_0);
+			break;
 		default:
 			break;
 		}
@@ -859,6 +869,12 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo)
 		{
 		CloseHandle(pCurProcInfo -> eventKill);
 		pCurProcInfo -> eventKill = 0;
+		}
+
+	if(0 != pCurProcInfo -> eventCtrlc)
+		{
+		CloseHandle(pCurProcInfo -> eventCtrlc);
+		pCurProcInfo -> eventCtrlc = 0;
 		}
 
 	pCurProcInfo -> pid = 0;

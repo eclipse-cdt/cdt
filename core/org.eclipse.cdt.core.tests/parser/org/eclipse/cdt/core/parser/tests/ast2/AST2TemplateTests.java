@@ -2285,7 +2285,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(int* x) {
 	//	  f<int>(x);
 	//	}
-	public void _testFunctionTemplate_309564() throws Exception {
+	public void testFunctionTemplate_309564() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code);		
 	}

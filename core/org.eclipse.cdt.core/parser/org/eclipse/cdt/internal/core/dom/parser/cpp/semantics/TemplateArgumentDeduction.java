@@ -211,7 +211,7 @@ public class TemplateArgumentDeduction {
 					// 14.8.2.1-2
 					if (par instanceof ICPPReferenceType) {
 						// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
-						// lvalue, the type A& �lvalue reference to A� is used in place of A for type deduction.
+						// lvalue, the type "lvalue reference to A" is used in place of A for type deduction.
 						isReferenceTypeParameter= true;
 						final ICPPReferenceType refPar = (ICPPReferenceType) par;
 						if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && argIsLValue.get(j)) {
@@ -275,6 +275,10 @@ public class TemplateArgumentDeduction {
 					}
 				}
 			}
+			// Bug 309564: For partial ordering not all arguments need to be deduced
+			if (checkExactMatch)
+				return true;
+			
 			if (!deduct.fExplicitArgs.mergeToExplicit(deduct.fDeducedArgs))
 				return false;
 			

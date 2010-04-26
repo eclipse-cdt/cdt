@@ -647,7 +647,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 
 		try {
-			if(checkProjectRefChange(eDes, newCfg, oldCfg, monitor))
+			if(checkProjectRefChange(eDes, newDes, newCfg, oldCfg, monitor))
 				modified = true;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -678,32 +678,50 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return set;
 	}
 
-	private boolean checkProjectRefChange(IProjectDescription des, ICConfigurationDescription newCfg, ICConfigurationDescription oldCfg, IProgressMonitor monitor) throws CoreException{
+	/**
+	 * Fix up platform references having changed CDT configuration references
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean checkProjectRefChange(IProjectDescription des, ICProjectDescription newCDesc, ICConfigurationDescription newCfg, ICConfigurationDescription oldCfg, IProgressMonitor monitor) throws CoreException{
 		if(newCfg == null)
 			return false;
 
-		Map<String, String> oldMap = oldCfg != null ? oldCfg.getReferenceInfo() : null;
+		Map<String, String> oldMap = oldCfg != null ? oldCfg.getReferenceInfo() : Collections.EMPTY_MAP;
 		Map<String, String> newMap = newCfg.getReferenceInfo();
-		Collection<IProject> oldProjSet = oldMap != null ? projSetFromProjNameSet(oldMap.keySet()) : new HashSet<IProject>(0);
-		Collection<IProject> newProjSet = newMap != null ? projSetFromProjNameSet(newMap.keySet()) : new HashSet<IProject>(0);
 
-		// Referenced projects are set in the CDT RefsTab.  These settings override those set in the Platform tab.
-		if (oldProjSet.size() != newProjSet.size()) {
-			des.setReferencedProjects(newProjSet.toArray(new IProject[newProjSet.size()]));
-			return true;
+		// If there's been no change nothing to do
+		if (newMap.equals(oldMap))
+			return false;
+
+		// We're still looking at the same configuration - any refs removed?
+		HashSet<String> removedRefs = new HashSet<String>();
+		if (oldCfg != null && oldCfg.getId().equals(newCfg.getId())) {
+			removedRefs.addAll(oldMap.keySet());
+			removedRefs.removeAll(newMap.keySet());
 		}
 
-		Iterator<IProject> oldIt = oldProjSet.iterator();
-		Iterator<IProject> newIt = newProjSet.iterator();
-		while (oldIt.hasNext() && newIt.hasNext()) {
-			IProject oldP = oldIt.next();
-			IProject newP = newIt.next();
-			if (!oldP.equals(newP)) {
-				des.setReferencedProjects(newProjSet.toArray(new IProject[newProjSet.size()]));
-				return true;
-			}
-		}
-		return false;
+		// Get the full set of references from all configuration
+		LinkedHashSet<String> allRefs = new LinkedHashSet<String>();
+		for (ICConfigurationDescription cfg : newCDesc.getConfigurations())
+			allRefs.addAll(cfg.getReferenceInfo().keySet());
+
+		// Don't remove a reference if it's referenced by any configuration in the project description
+		removedRefs.removeAll(allRefs);
+
+		Collection<IProject> oldProjects = new LinkedHashSet<IProject>(Arrays.asList(des.getReferencedProjects()));
+		Collection<IProject> newProjects = projSetFromProjNameSet(allRefs);
+
+		// If there are no changes, just return
+		if (removedRefs.isEmpty() && oldProjects.containsAll(newProjects))
+			return false;
+
+		// Ensure the Eclipse configuration references all projects we reference
+		oldProjects.addAll(newProjects);
+		// Removing any projects we no longer referece
+		oldProjects.removeAll(projSetFromProjNameSet(removedRefs));
+
+		des.setReferencedProjects(oldProjects.toArray(new IProject[oldProjects.size()]));
+		return true;
 	}
 
 

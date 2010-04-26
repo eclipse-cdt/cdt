@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.eclipse.cdt.dsf.concurrent.DsfExecutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -54,7 +52,7 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
      * Place holder for the client update.  It is only used if the client update is
      * not specified.
      */
-    private class ClientUpdatePlaceHolder implements IViewerUpdate {
+    private static class ClientUpdatePlaceHolder implements IViewerUpdate {
         
         ClientUpdatePlaceHolder(TreePath elementPath, Object viewerInput, IPresentationContext presentationContext)
         {
@@ -63,10 +61,9 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
             fPresentationContext = presentationContext;
         }
         /**
-         * The flag indicating whether this update was cancelled.  This flag is not used
-         * if the {@link #fClientUpdate} is initialized.
+         * The flag indicating whether this update was canceled.
          */
-        final private AtomicBoolean fCanceled = new AtomicBoolean(false);
+        private volatile boolean fCanceled;
         
         /**
          * The viewer input object for this update.
@@ -84,11 +81,11 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
         final private IPresentationContext fPresentationContext;
 
         public void cancel() {
-            fCanceled.set(true);
+            fCanceled = true;
         }
         
         public boolean isCanceled() { 
-            return fCanceled.get(); 
+            return fCanceled; 
         }
 
         public IPresentationContext getPresentationContext() {
@@ -110,7 +107,6 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
         public void done() { assert false; } // not used
         public void setStatus(IStatus status) {assert false; } // not used
         public IStatus getStatus() { assert false; return null; } // not used
-
 
     }
     
@@ -187,7 +183,7 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
     	setSubmitted();
         if ( isCanceled() ) {
             fRequestMonitor.cancel();
-            fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was cancelled") ); //$NON-NLS-1$
+            fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was canceled") ); //$NON-NLS-1$
         }
         fRequestMonitor.done();
     }

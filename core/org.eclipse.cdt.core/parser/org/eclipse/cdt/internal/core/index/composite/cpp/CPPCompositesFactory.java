@@ -204,6 +204,9 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	}
 	
 	public IValue getCompositeValue(IValue v) {
+		if (v == null)
+			return null;
+		
 		IBinding[] b= v.getUnknownBindings();
 		if (b.length == 0)
 			return v;

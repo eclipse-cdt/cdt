@@ -968,14 +968,18 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		final IASTInitializerClause right= operator.fExpression;
 		switch(operator.fOperatorToken) {
         case IToken.tQUESTION:
+        	final IASTInitializerClause negative;
         	if (operator.fNext == null || operator.fNext.fOperatorToken != IToken.tCOLON) {
-				assert false;
-	        	ASTNode node= (ASTNode) left;
-	        	throwBacktrack(node.getOffset(), node.getLength());
-	        	return null; // Will never be reached.
-        	} 
-        	IASTInitializerClause negative= operator.fNext.fExpression;
-        	operator.fNext= operator.fNext.fNext;
+        		if (LTcatchEOF(1) != IToken.tEOC || operator.fNext != null) {
+        			assert false;
+    	        	ASTNode node= (ASTNode) left;
+    	        	throwBacktrack(node.getOffset(), node.getLength());
+        		}
+        		negative= null;
+        	} else {
+        		negative= operator.fNext.fExpression;
+            	operator.fNext= operator.fNext.fNext;
+        	}
             IASTConditionalExpression conditionalEx = nodeFactory.newConditionalExpession(left, (IASTExpression) right, (IASTExpression) negative);
             setRange(conditionalEx, left);
             if (negative != null) {

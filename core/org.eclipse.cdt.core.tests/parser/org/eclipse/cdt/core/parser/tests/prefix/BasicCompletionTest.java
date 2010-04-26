@@ -205,14 +205,23 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkCompletion(code, true, expectedCpp);
 	}
 	
-//	typedef int MyType;
-//	void func(){
-//	    static_cast<My
+	//	typedef int MyType;
+	//	void func(){
+	//	    static_cast<My
 	public void testCastExpression_Bug301933() throws Exception {
 		String code = getAboveComment();
 		String[] expectedCpp= {"MyType"};
 		checkCompletion(code, true, expectedCpp);
 	}
 
+	//	int v1, v2;
+	//	void func() {
+	//     v1= 0 ? v
+	public void testConditionalOperator_Bug308611() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"v1", "v2"};
+		checkCompletion(code, true, expected);
+		checkCompletion(code, false, expected);
+	}
 	
 }

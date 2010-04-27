@@ -26,8 +26,10 @@ public class Messages extends NLS {
 	public static String TeamProjectIndexExportWizardPage_destinationMessage;
 	public static String TeamProjectIndexExportWizardPage_errorDlgTitle;
 	public static String TeamProjectIndexExportWizardPage_errorExporting;
+	public static String TeamProjectIndexExportWizardPage_errorInOperation;
 	public static String TeamProjectIndexExportWizardPage_labelProjectTable;
 	public static String TeamProjectIndexExportWizardPage_noProjectError;
+	public static String TeamProjectIndexExportWizardPage_resourceSnapshotButton;
 	public static String TeamProjectIndexExportWizardPage_selectAll;
 	public static String TeamProjectIndexExportWizardPage_title;
 	public static String TeamProjectIndexExportWizardPage_variableButton;

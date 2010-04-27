@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
@@ -35,11 +35,14 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -48,11 +51,23 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 
+	/**
+	 * Option constant (value:1) to indicate that a resource snapshot
+	 * should be saved along with the exported PDOM.
+	 * @since 5.2
+	 */
+	public static int EXPORT_OPTION_RESOURCE_SNAPSHOT = 1;
+
+	private static final String RESOURCE_PREFIX = "res-"; //$NON-NLS-1$
+	private static final String CDT_PREFIX = "cdt-"; //$NON-NLS-1$
+	private static final String RESOURCE_SNAP_EXTENSION = "snap.zip"; //$NON-NLS-1$
+	
 	private ICProject fProject; 
 	private String fTargetLocation;
 	private File fTargetLocationFile;
 	private MessageDigest fMessageDigest;
-
+	private int fOptions;
+	
 	public TeamPDOMExportOperation(ICProject project) {
 		fProject= project;
 	}
@@ -62,6 +77,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	}
 
 	public void setOptions(int options) {
+		fOptions = options;
 	}
 	
 	public void setAlgorithm(MessageDigest md) {
@@ -114,6 +130,14 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			// store preferences
 			monitor.setTaskName(Messages.TeamPDOMExportOperation_taskExportIndex);
 			IndexerPreferences.setIndexImportLocation(fProject.getProject(), fTargetLocation.toString());
+			
+			// store resource snapshot
+			if ((fOptions & EXPORT_OPTION_RESOURCE_SNAPSHOT) != 0) {
+	        	IPath p = Path.fromOSString(fTargetLocationFile.getAbsolutePath());
+	        	p = computeSnapshotPath(p); 
+	        	URI snapURI = URIUtil.toURI(p);
+				fProject.getProject().saveSnapshot(IProject.SNAPSHOT_TREE | /*Project.SNAPSHOT_SET_AUTOLOAD*/2, snapURI, null);
+			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return;
@@ -126,6 +150,14 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 				tmpChecksums.delete();
 			}
 		}
+	}
+
+	private IPath computeSnapshotPath(IPath p) {
+		final String fileName = p.lastSegment();
+		if (fileName.startsWith(CDT_PREFIX)) {
+			return p.removeLastSegments(1).append(RESOURCE_PREFIX + fileName.substring(4));
+		}
+		return p.removeFileExtension().addFileExtension(RESOURCE_SNAP_EXTENSION);
 	}
 
 	private void getTargetLocation() throws CoreException {
@@ -152,8 +184,8 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		}
 		try {
 			IIndexFile[] ifiles= pdom.getAllFiles();
-			for (int i = 0; i < ifiles.length; i++) {
-				String fullPath= ifiles[i].getLocation().getFullPath();
+			for (IIndexFile ifile : ifiles) {
+				String fullPath= ifile.getLocation().getFullPath();
 				if (fullPath != null) {
 					fullPaths.add(fullPath);
 				}
@@ -165,8 +197,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		int i=0;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IFile[] files= new IFile[fullPaths.size()];
-		for (Iterator<String> iterator = fullPaths.iterator(); iterator.hasNext();) {
-			String fullPath= iterator.next();
+		for (String fullPath : fullPaths) {
 			files[i++]= root.getFile(new Path(fullPath));
  		}
 		Map<String, Object> map= Checksums.createChecksumMap(files, fMessageDigest, monitor);
@@ -223,8 +254,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			close(out);
 		}
 		IFile[] wsResource= ResourceLookup.findFilesForLocation(new Path(fTargetLocationFile.getAbsolutePath()));
-		for (int i = 0; i < wsResource.length; i++) {
-			IFile file = wsResource[i];
+		for (IFile file : wsResource) {
 			file.refreshLocal(0, new NullProgressMonitor());
 		}
 	}

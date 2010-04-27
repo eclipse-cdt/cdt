@@ -69,6 +69,17 @@
             commandId="org.eclipse.cdt.codan.commands.runCodanCommand">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+         category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.codan.ui.views.ProblemDetails"
+            icon="icons/sample.gif"
+            id="org.eclipse.cdt.codan.ui.views.ProblemDetails"
+            name="Problem Details">
+      </view>
+   </extension>
+
    <!--
    <extension
          point="org.eclipse.ui.bindings">

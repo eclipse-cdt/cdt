@@ -51,6 +51,7 @@ public class LaunchUtilsTest extends TestCase {
     	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-696) (Sat Oct 20 18:20:28 GMT 2007)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"696");
     	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-966) (Tue Mar 10 02:43:13 UTC 2009)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"966");
     	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-1346) (Fri Sep 18 20:40:51 UTC 2009)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"1346");
+    	versions.put("GNU gdb 6.3.50-20050815 (Apple version gdb-1461.2) (Fri Mar  5 04:43:10 UTC 2010)", "6.3.50"+LaunchUtils.MACOS_GDB_MARKER+"1461.2");
     	versions.put("GNU gdb 7.0 (Apple version gdb-1) (Fri Sep 18 20:40:51 UTC 2009)", "7.0"+LaunchUtils.MACOS_GDB_MARKER+"1");
     	versions.put("GNU gdb 7.0-20050815 (Apple version gdb-01) (Fri Sep 18 20:40:51 UTC 2009)", "7.0"+LaunchUtils.MACOS_GDB_MARKER+"01");
 

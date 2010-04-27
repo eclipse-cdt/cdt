@@ -246,6 +246,7 @@ public class LaunchUtils {
         // GNU gdb 6.3.50-20050815 (Apple version gdb-696) (Sat Oct 20 18:20:28 GMT 2007)
         // GNU gdb 6.3.50-20050815 (Apple version gdb-966) (Tue Mar 10 02:43:13 UTC 2009)
         // GNU gdb 6.3.50-20050815 (Apple version gdb-1346) (Fri Sep 18 20:40:51 UTC 2009)
+		// GNU gdb 6.3.50-20050815 (Apple version gdb-1461.2) (Fri Mar  5 04:43:10 UTC 2010)
         // It seems the version that changes is the "Apple version" but we still use both. 
 		// The Mac OS prefix and version are appended to the normal version so the 
 		// returned string has this format: 6.3.50-20050815APPLE1346. The normal version and the 
@@ -253,8 +254,7 @@ public class LaunchUtils {
         if (versionOutput.indexOf("Apple") != -1) {  //$NON-NLS-1$
         	// Add a prefix to indicate we are dealing with an Apple GDB
         	version += MACOS_GDB_MARKER;
-    		Pattern aPattern = Pattern.compile(" \\(Apple version gdb-(\\d*)\\)",  Pattern.MULTILINE); //$NON-NLS-1$
-
+    		Pattern aPattern = Pattern.compile(" \\(Apple version gdb-(\\d+(\\.\\d+)*)\\)",  Pattern.MULTILINE); //$NON-NLS-1$
     		Matcher aMatcher = aPattern.matcher(versionOutput);
     		if (aMatcher.find()) {
     			version += aMatcher.group(1);

@@ -26,8 +26,11 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.cdt.debug.mi.core"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.swt"/>
@@ -42,14 +45,15 @@
       <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.cdt.make.core"/>
       <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.ltk.core.refactoring"/>
-      <import plugin="org.eclipse.ltk.ui.refactoring"/>
-      <import plugin="org.eclipse.cdt.debug.core"/>
-      <import plugin="org.eclipse.cdt.debug.mi.core"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
-      <import plugin="org.eclipse.core.filesystem"/>
       <import plugin="org.eclipse.cdt.managedbuilder.core"/>
       <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
+      <import plugin="org.eclipse.cdt.gdb" version="7.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ltk.core.refactoring" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.filesystem" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.core.tests" version="5.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.core.lrparser" version="4.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.core.parser.upc"/>
+      <import plugin="org.eclipse.cdt.core.lrparser.tests" version="4.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -100,5 +104,19 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.lrparser.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.parser.upc.tests"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

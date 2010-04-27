@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.SWTUtil;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

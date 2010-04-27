@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -56,7 +57,6 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 

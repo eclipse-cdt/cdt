@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui; 
 
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;

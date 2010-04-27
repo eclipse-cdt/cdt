@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,7 +37,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * Configures C/C++ Editor mark occurrences preferences.

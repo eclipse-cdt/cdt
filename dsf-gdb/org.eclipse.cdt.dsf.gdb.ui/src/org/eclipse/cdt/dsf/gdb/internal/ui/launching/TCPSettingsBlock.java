@@ -13,7 +13,6 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.util.Observable;
 
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;

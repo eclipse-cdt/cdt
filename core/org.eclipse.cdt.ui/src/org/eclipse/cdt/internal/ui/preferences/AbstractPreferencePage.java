@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
@@ -45,7 +46,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * AbstractPreferencePage

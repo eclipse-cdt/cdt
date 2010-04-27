@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -80,7 +81,6 @@ import org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * Information control for macro expansion exploration.

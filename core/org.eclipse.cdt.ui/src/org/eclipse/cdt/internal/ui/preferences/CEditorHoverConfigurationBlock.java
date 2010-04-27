@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -61,7 +62,6 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 

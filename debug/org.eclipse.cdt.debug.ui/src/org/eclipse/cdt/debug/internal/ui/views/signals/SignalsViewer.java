@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.signals;
 
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

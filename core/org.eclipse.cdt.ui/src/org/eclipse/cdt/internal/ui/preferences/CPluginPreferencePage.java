@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,7 +40,6 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**

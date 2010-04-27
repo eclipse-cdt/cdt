@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -54,7 +55,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.cdt.core.model.CoreModel;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /*

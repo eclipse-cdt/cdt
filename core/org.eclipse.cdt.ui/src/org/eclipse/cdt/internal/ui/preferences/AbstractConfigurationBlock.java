@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
@@ -45,7 +46,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * Abstract implementation of a generic {@link IPreferenceConfigurationBlock}.

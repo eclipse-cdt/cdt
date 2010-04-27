@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.util.Observable;
+
 import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.mi.internal.ui.dialogfields.DialogField;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -69,11 +70,10 @@ import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedRange;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * Configures C/C++ Editor code coloring preferences.

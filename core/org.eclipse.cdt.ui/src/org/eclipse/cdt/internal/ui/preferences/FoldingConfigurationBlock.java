@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -49,7 +50,6 @@ import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
 import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderDescriptor;
 import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * Configures C Editor folding preferences.

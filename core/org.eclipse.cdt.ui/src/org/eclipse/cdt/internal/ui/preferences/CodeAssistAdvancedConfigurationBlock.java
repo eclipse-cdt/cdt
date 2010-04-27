@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -68,7 +69,6 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
 import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
 import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 

@@ -21,11 +21,12 @@ import java.util.Observer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -49,7 +50,6 @@ import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 public abstract class ProfileConfigurationBlock {

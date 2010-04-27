@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences; 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
-import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -35,6 +35,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The "Debugger Types" preference page.

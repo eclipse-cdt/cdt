@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -38,7 +39,6 @@ import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 public abstract class AbstractOpenWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 

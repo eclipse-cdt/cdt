@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -48,7 +49,6 @@ import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.PixelConverter;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

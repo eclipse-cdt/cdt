@@ -65,7 +65,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * It adds Jtag hardware debugging specific steps to initialize remote target
  * and start the remote Jtag debugging.
  * <p>
- * @since 6.0
+ * @since 7.0
  */
 public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 

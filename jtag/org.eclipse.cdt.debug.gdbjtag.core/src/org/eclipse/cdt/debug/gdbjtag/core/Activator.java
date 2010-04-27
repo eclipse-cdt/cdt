@@ -60,7 +60,7 @@ public class Activator extends Plugin {
 	}
 
 	/**
-	 * @since 6.0
+	 * @since 7.0
 	 */
 	public static BundleContext getBundleContext() {
 		return getDefault().getBundle().getBundleContext();

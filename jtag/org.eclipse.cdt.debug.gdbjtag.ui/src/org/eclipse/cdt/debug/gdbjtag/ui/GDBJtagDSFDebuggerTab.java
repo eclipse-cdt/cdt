@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * @since 6.0
+ * @since 7.0
  */
 public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 

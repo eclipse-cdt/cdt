@@ -18,7 +18,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 
 /**
- * @since 6.0
+ * @since 7.0
  */
 public class GDBJtagDSFCMainTab extends CMainTab {
 

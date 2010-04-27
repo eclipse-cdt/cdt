@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Nokia Corporation and others.
+ * Copyright (c) 2009, 2010 Nokia Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Nokia Corporation - initial API and implementation
+ *     Wind River Systems - Added support for advanced expression hover
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.debug.ui.editors.AbstractDebugTextHover;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.debug.internal.ui.ExpressionInformationControlCreator;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
@@ -71,6 +73,11 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
         protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
             DsfSession session = DsfSession.getSession(frame.getSessionId());
 			IExpressions expressions = dsfServicesTracker.getService(IExpressions.class);
+			if (expressions == null) {
+			    rm.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.REQUEST_FAILED, "No expression service", null)); //$NON-NLS-1$
+			    rm.done();
+			    return;
+			}
     		IExpressionDMContext expressionDMC = expressions.createExpression(frame, expression);
     		FormattedValueDMContext formattedValueContext = expressions.getFormattedValueContext(expressionDMC, getHoverFormat());
         	expressions.getFormattedExpressionValue(formattedValueContext,
@@ -141,17 +148,30 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	}
 
     /**
-     * Returns whether the expression explorer information control should be used.
+     * Returns whether the "advanced" expression information control should be used.
      * The default implementation returns <code>false</code>.
      */
     protected boolean useExpressionExplorer() {
     	return false;
     }
     
+    /**
+     * Create an information control creator for the "advanced" hover.
+     * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()} 
+     * returns <code>true</code>.
+     * 
+     * @param showDetailPane  whether the detail pane should be visible
+     * @param defaultExpansionLevel  automatically expand the expression to this level
+     * @return the information control creator
+     */
+    protected final IInformationControlCreator createExpressionInformationControlCreator(boolean showDetailPane, int defaultExpansionLevel) {
+        return new ExpressionInformationControlCreator(showDetailPane, defaultExpansionLevel);
+    }
+    
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (useExpressionExplorer()) {
-			return new ExpressionInformationControlCreator();
+			return createExpressionInformationControlCreator(true, 1);
 		} else {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {

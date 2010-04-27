@@ -226,6 +226,15 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			return super.computeSizeHint();
 		}
 
+		@Override
+		public void setSize(int width, int height) {
+		    if (!isResizable() && fDetailPaneComposite != null) {
+		        // add height of details pane
+		        height += fDetailPaneComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		    }
+		    super.setSize(width, height);
+		}
+
 		/**
 		 * Returns the dialog settings for this hover or <code>null</code> if none
 		 * 
@@ -273,9 +282,14 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 					Point size = shell.getSize();
 					settings.put(WIDTH, size.x);
 					settings.put(HEIGHT, size.y);
-					int[] weights = fSashForm.getWeights();
-					settings.put(SASH_WEIGHT_TREE, weights[0]);
-					settings.put(SASH_WEIGHT_DETAILS, weights[1]);
+                    int[] weights = fSashForm.getWeights();
+                    if (weights.length == 1) {
+                        settings.put(SASH_WEIGHT_TREE, weights[0]);
+                    }
+                    else if (weights.length == 2) {
+                        settings.put(SASH_WEIGHT_TREE,    weights[0]);
+                        settings.put(SASH_WEIGHT_DETAILS, weights[1]);
+                    }
 				}
 			}
 		}
@@ -312,7 +326,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			}
 
 			fViewer = new TreeModelViewer(fSashForm, SWT.MULTI | SWT.VIRTUAL | SWT.FULL_SELECTION, context);
-			fViewer.setAutoExpandLevel(1);
+			fViewer.setAutoExpandLevel(fExpansionLevel);
 			
 			if (view != null) {
 				// copy over filters
@@ -325,26 +339,28 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 				}
 			}
 			fInputService = new ViewerInputService(fViewer, this);
+            fTree = fViewer.getTree();
 
-			fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
-			Layout layout = fDetailPaneComposite.getLayout();
-			if (layout instanceof GridLayout) {
-				GridLayout gl = (GridLayout) layout;
-				gl.marginHeight = 0;
-				gl.marginWidth = 0;
-			}
-
-			fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
-			fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
-
-			fTree = fViewer.getTree();
-			fTree.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					fDetailPane.display((IStructuredSelection)fViewer.getSelection());
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {}
-			});
-
+            if (fShowDetailPane) {
+    			fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
+    			Layout layout = fDetailPaneComposite.getLayout();
+    			if (layout instanceof GridLayout) {
+    				GridLayout gl = (GridLayout) layout;
+    				gl.marginHeight = 0;
+    				gl.marginWidth = 0;
+    			}
+    
+    			fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
+    			fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
+    
+    			fTree.addSelectionListener(new SelectionListener() {
+    				public void widgetSelected(SelectionEvent e) {
+    					fDetailPane.display((IStructuredSelection)fViewer.getSelection());
+    				}
+    				public void widgetDefaultSelected(SelectionEvent e) {}
+    			});
+            }
+            
 			initSashWeights();
 
 			// add update listener to auto-select and display details of root expression
@@ -357,7 +373,9 @@ public class ExpressionInformationControlCreator implements IInformationControlC
                                 selection = new TreeSelection(fViewer.getTopElementPath());
                             }
                             fViewer.setSelection(selection);
-                            fDetailPane.display(selection);
+                            if (fDetailPane != null) {
+                                fDetailPane.display(selection);
+                            }
                         }});
 				}
 				public void viewerUpdatesBegin() {
@@ -402,10 +420,16 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			if (settings != null) {
 				int tree = getIntSetting(settings, SASH_WEIGHT_TREE);
 				if (tree > 0) {
-					int details = getIntSetting(settings, SASH_WEIGHT_DETAILS);
-					if (details > 0) {
-						fSashForm.setWeights(new int[]{tree, details});
-					}
+                    if (fDetailPane != null) {
+                        int details = getIntSetting(settings, SASH_WEIGHT_DETAILS);
+                        if (details <= 0) {
+                            details = tree / 2;
+                        }
+                        fSashForm.setWeights(new int[]{tree, details});
+                    }
+                    else {
+                        fSashForm.setWeights(new int[]{tree});
+                    }
 				}
 			}
 		}
@@ -413,7 +437,9 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		@Override
 		public void setBackgroundColor(Color background) {
 			super.setBackgroundColor(background);
-			fDetailPaneComposite.setBackground(background);
+			if (fDetailPaneComposite != null) {
+			    fDetailPaneComposite.setBackground(background);
+			}
 			fTree.setBackground(background);
 		}
 
@@ -445,7 +471,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
-			return new ExpressionInformationControlCreator() {
+			return new ExpressionInformationControlCreator(fShowDetailPane, fExpansionLevel) {
 				@Override
 				public IInformationControl createInformationControl(Shell shell) {
 					return new ExpressionInformationControl(shell, true);
@@ -459,7 +485,31 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 	}
 
-	/*
+    protected final boolean fShowDetailPane;
+    protected final int fExpansionLevel;
+
+    /**
+     * Create default expression information control creator.
+     * <p>
+     * Same as {@link ExpressionInformationControlCreator(true, 1)}.
+     * </p>
+     */
+    public ExpressionInformationControlCreator() {
+        this(true, 1);
+    }
+
+	/**
+	 * Create expression information control creator with customization options.
+	 * 
+     * @param showDetailPane  if <code>true</code> the detail pane will be shown
+     * @param expansionLevel  tree level to which the expression should be expanded by default
+     */
+    public ExpressionInformationControlCreator(boolean showDetailPane, int expansionLevel) {
+        fShowDetailPane = showDetailPane;
+        fExpansionLevel = expansionLevel;
+    }
+
+    /*
 	 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
 	 */
 	public IInformationControl createInformationControl(Shell parent) {

@@ -21,6 +21,7 @@ public class BadDirective extends Directive implements IBadDirective {
 		line = s;
 	}
 
+	@Override
 	public String toString() {
 		return line;
 	}

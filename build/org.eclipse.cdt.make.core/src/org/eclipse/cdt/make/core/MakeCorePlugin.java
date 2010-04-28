@@ -129,7 +129,7 @@ public class MakeCorePlugin extends Plugin {
 		return BuildInfoFactory.create(project, builderID);
 	}
 
-	public static IMakeBuilderInfo createBuildInfo(Map args, String builderID) {
+	public static IMakeBuilderInfo createBuildInfo(Map<String, String> args, String builderID) {
 		return BuildInfoFactory.create(args, builderID);
 	}
 
@@ -149,11 +149,11 @@ public class MakeCorePlugin extends Plugin {
 	public String[] getMakefileDirs() {
 		String stringList = getPluginPreferences().getString(MAKEFILE_DIRS);
 		StringTokenizer st = new StringTokenizer(stringList, File.pathSeparator + "\n\r");//$NON-NLS-1$
-		ArrayList v = new ArrayList();
+		ArrayList<String> v = new ArrayList<String>();
 		while (st.hasMoreElements()) {
-			v.add(st.nextElement());
+			v.add(st.nextToken());
 		}
-		return (String[])v.toArray(new String[v.size()]);		
+		return v.toArray(new String[v.size()]);		
 	}
 
 	/**
@@ -163,15 +163,16 @@ public class MakeCorePlugin extends Plugin {
 	 * @param makefileDirs
 	 * @return
 	 */
+	@Deprecated
 	static public IMakefile createMakefile(File file, boolean isGnuStyle, String[] makefileDirs) {
 		IMakefile makefile;
 		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
-			ArrayList includeList = new ArrayList();
+			ArrayList<String> includeList = new ArrayList<String>();
 			includeList.add(new Path(file.getAbsolutePath()).removeLastSegments(1).toOSString());
 			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
 			includeList.addAll(Arrays.asList(makefileDirs));
-			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
+			String[] includes = includeList.toArray(new String[includeList.size()]);
 			gnu.setIncludeDirectories(includes);
 			try {
 				gnu.parse(file.getAbsolutePath(), new FileReader(file));
@@ -208,11 +209,11 @@ public class MakeCorePlugin extends Plugin {
 		IMakefile makefile;
 		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
-			ArrayList includeList = new ArrayList();
+			ArrayList<String> includeList = new ArrayList<String>();
 			includeList.add(new Path(fileURI.getPath()).removeLastSegments(1).toString());
 			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
 			includeList.addAll(Arrays.asList(makefileDirs));
-			String[] includes = (String[]) includeList.toArray(new String[includeList.size()]);
+			String[] includes = includeList.toArray(new String[includeList.size()]);
 			gnu.setIncludeDirectories(includes);
 			try {
 				gnu.parse(fileURI, makefileReaderProvider);
@@ -247,6 +248,7 @@ public class MakeCorePlugin extends Plugin {
 		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs());
 	}
 	
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			if ( fTargetManager != null) {
@@ -278,7 +280,7 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	public static IScannerConfigBuilderInfo createScannerConfigBuildInfo(
-			Map args, String builderID) {
+			Map<String, String> args, String builderID) {
 		return ScannerConfigInfoFactory.create(args, builderID);
 	}
 	
@@ -336,7 +338,7 @@ public class MakeCorePlugin extends Plugin {
         IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID, SI_CONSOLE_PARSER_SIMPLE_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			List parserIds = new ArrayList(extensions.length);
+			List<String> parserIds = new ArrayList<String>(extensions.length);
 			for (int i = 0; i < extensions.length; i++) {
 				String parserId = extensions[i].getUniqueIdentifier();
 				if (parserId != null) {
@@ -347,7 +349,7 @@ public class MakeCorePlugin extends Plugin {
 					}
 				}							
 			}
-			return (String[])parserIds.toArray(empty);
+			return parserIds.toArray(empty);
 		}
 		return empty;
 	}

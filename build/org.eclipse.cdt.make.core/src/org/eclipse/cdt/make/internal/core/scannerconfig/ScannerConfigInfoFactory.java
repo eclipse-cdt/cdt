@@ -13,6 +13,11 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -25,12 +30,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.MakeProjectNature;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
-import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 
 /**
  * Creates a ScannerConfigBuilderInfo variant
@@ -227,24 +226,6 @@ public class ScannerConfigInfoFactory {
 			putString(SI_PROBLEM_GENERATION_ENABLED, Boolean.toString(enabled));
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#getProfileId()
-		 */
-		public String getProfileId() {
-			String profileId = getString(SI_PROFILE_ID);
-			if (profileId == null || profileId.length() == 0) {
-				profileId = ScannerConfigProfileManager.getDefaultSIProfileId();
-				// the default is the first one in the registry
-			}
-			return profileId;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setProfileId(java.lang.String)
-		 */
-		public void setProfileId(String profileId) throws CoreException {
-			putString(SI_PROFILE_ID, profileId);
-		}
-		
 		protected boolean getBoolean(String property) {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}
@@ -287,6 +268,7 @@ public class ScannerConfigInfoFactory {
 			this.useDefaults = useDefaults;
 		}
 
+		@Override
 		protected void putString(String name, String value) {
 			if (useDefaults) {
 				prefs.setDefault(name, value);
@@ -295,6 +277,7 @@ public class ScannerConfigInfoFactory {
 			}
 		}
 
+		@Override
 		protected String getString(String property) {
 			if (useDefaults) {
 				return prefs.getDefaultString(property);
@@ -302,6 +285,7 @@ public class ScannerConfigInfoFactory {
 			return prefs.getString(property);
 		}
 
+		@Override
 		protected String getBuilderID() {
 			return builderID;
 		}
@@ -310,7 +294,7 @@ public class ScannerConfigInfoFactory {
 	private static class BuildProperty extends Store {
 		private IProject project;
 		private String builderID;
-		private Map args;
+		private Map<String, String> args;
 
 		BuildProperty(IProject project, String builderID) throws CoreException {
 			this.project = project;
@@ -322,11 +306,14 @@ public class ScannerConfigInfoFactory {
 						MakeMessages.getString("ScannerConfigInfoFactory.Missing_Builder")//$NON-NLS-1$
 							+ builderID, null)); 
 			}
-			args = builder.getArguments();
+			@SuppressWarnings("unchecked")
+			Map<String,String> bArgs = builder.getArguments();
+			args = bArgs;
 		}
 
+		@Override
 		protected void putString(String name, String value) throws CoreException {
-			String curValue = (String) args.get(name);
+			String curValue = args.get(name);
 			if (curValue != null && curValue.equals(value)) {
 				return;
 			}
@@ -338,33 +325,38 @@ public class ScannerConfigInfoFactory {
 			project.setDescription(description, null);
 		}
 
+		@Override
 		protected String getString(String name) {
-			String value = (String) args.get(name);
+			String value = args.get(name);
 			return value == null ? "" : value; //$NON-NLS-1$
 		}
 
+		@Override
 		protected String getBuilderID() {
 			return builderID;
 		}
 	}
 
 	private static class BuildArguments extends Store {
-		private Map args;
+		private Map<String, String> args;
 		private String builderID;
 
-		BuildArguments(Map args, String builderID) {
+		BuildArguments(Map<String, String> args, String builderID) {
 			this.args = args;
 			this.builderID = builderID;
 		}
 
+		@Override
 		protected void putString(String name, String value) {
 			args.put(name, value);
 		}
 
+		@Override
 		protected String getString(String name) {
-			return (String) args.get(name);
+			return args.get(name);
 		}
 
+		@Override
 		protected String getBuilderID() {
 			return builderID;
 		}
@@ -378,7 +370,7 @@ public class ScannerConfigInfoFactory {
 		return new ScannerConfigInfoFactory.BuildProperty(project, builderID);
 	}
 
-	public static IScannerConfigBuilderInfo create(Map args, String builderID) {
+	public static IScannerConfigBuilderInfo create(Map<String, String> args, String builderID) {
 		return new ScannerConfigInfoFactory.BuildArguments(args, builderID);
 	}
 }

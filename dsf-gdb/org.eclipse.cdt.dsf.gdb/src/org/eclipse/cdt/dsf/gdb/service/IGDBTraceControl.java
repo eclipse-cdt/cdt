@@ -22,6 +22,9 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * The TraceControl service provides access to the debugger Tracing functionality.
  * It is used to do such things as start and stop tracing.
  * 
+ * As this functionality is very new to GDB itself, this interface is likely 
+ * to change a little in the next release of CDT.
+ * 
  * @since 3.0
  */
 public interface IGDBTraceControl extends IDsfService {
@@ -98,41 +101,17 @@ public interface IGDBTraceControl extends IDsfService {
      * {@link saveTraceData} should have the correct format to be loaded by this call.
      */
     public void loadTraceData(ITraceTargetDMContext context,
-    											 String file,
-    											 RequestMonitor rm);
+    						  String file,
+    						  RequestMonitor rm);
 
     
-//    /**
-//     * Request that the backend use the specified trace record.
-//     */
-//    public void selectTraceRecord(ITraceRecordDMContext context, RequestMonitor rm);
-//    /**
-//     * Returns the trace record data of the specified trace record.
-//     */
-//    public void getTraceRecordData(ITraceRecordDMContext context,
-//    							   DataRequestMonitor<ITraceRecordDMData> rm);
-//    
-//	/**
-//	 * Save all tracepoint definitions to the specified file in a
-//	 * format suitable for {@link loadTracepoints}.
-//	 */
-//    // This should probably be part of the GDB Breakpoints service
-//    public void saveTracepoints(ITraceTargetDMContext context, 
-//                                String file, 
-//    							RequestMonitor rm);
-//	
-//	/**
-//	 * Load all tracepoint definitions from the specified file.
-//	 * A file created from a call to {@link saveTracepoints} should have
-//	 * the correct format to be loaded by this call.
-//	 */
-//    // This should probably be part of the GDB Breakpoints service
-//    public void loadTracepoints(ITraceTargetDMContext context, 
-//                                String file, 
-//                                RequestMonitor rm);
-//
-
+    /**
+     * Request that the backend use the specified trace record.
+     */
+    public void selectTraceRecord(ITraceRecordDMContext context, RequestMonitor rm);
     
+    public void getTraceRecordData(ITraceRecordDMContext context, DataRequestMonitor<ITraceRecordDMData> rm);
+
     /////////////////////////////////////////////////
     // GDB specific part
     /////////////////////////////////////////////////
@@ -179,12 +158,8 @@ public interface IGDBTraceControl extends IDsfService {
      */
     public void getTraceVariables(ITraceTargetDMContext context, DataRequestMonitor<ITraceVariableDMData[]> rm);
 
-//	public ITraceRecordDMContext createTraceRecordContext(IDMContext ctx, int index);
-//	public void getCurrentTraceRecordContext(ITraceTargetDMContext context, DataRequestMonitor<ITraceRecordDMContext> drm);
-//	public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx);
-//	public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx);
-//	
-//	public void setDefaultCollect(ITraceTargetDMContext context, String[] expressions, RequestMonitor rm);
-//	public void getDefaultCollect(ITraceTargetDMContext context, DataRequestMonitor<String> rm);
-
+	public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, int index);
+	public void getCurrentTraceRecordContext(ITraceTargetDMContext context, DataRequestMonitor<ITraceRecordDMContext> drm);
+	public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx);
+	public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx);
 }

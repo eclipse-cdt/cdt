@@ -105,6 +105,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadListIds;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadSelect;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceDefineVariable;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFind;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceListVariables;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceSave;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStart;
@@ -145,6 +146,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITraceFindInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceListVariablesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStatusInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceStopInfo;
@@ -660,6 +662,10 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMITraceDefineVariable(ITraceTargetDMContext ctx, String varName, String varValue) {
 		return new MITraceDefineVariable(ctx, varName, varValue);
 	}
+	
+    public ICommand<MITraceFindInfo> createMITraceFind(ITraceTargetDMContext ctx, int frameReference) {
+        return new MITraceFind(ctx, frameReference);
+    }
 
 	public ICommand<MITraceListVariablesInfo> createMITraceListVariables(ITraceTargetDMContext ctx) {
 		return new MITraceListVariables(ctx);

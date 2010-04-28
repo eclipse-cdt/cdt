@@ -26,16 +26,17 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -61,7 +62,6 @@ public class MIStack extends AbstractDsfService
         implements IFrameDMContext
     {
         private final int fLevel;
-        // public MIFrameDMC(MIStack service, int level) {
         public MIFrameDMC(String sessionId, IExecutionDMContext execDmc, int level) {
             super(sessionId, new IDMContext[] { execDmc });
             fLevel = level;
@@ -166,6 +166,12 @@ public class MIStack extends AbstractDsfService
     private MIStoppedEvent fCachedStoppedEvent;
     private IRunControl fRunControl;
 
+	/** 
+	 * Indicates that we are currently visualizing trace data.
+	 * In this case, some errors should not be reported.
+	 */
+	private boolean fTraceVisualization;
+
 	public MIStack(DsfSession session) 
 	{
 		super(session);
@@ -250,20 +256,19 @@ public class MIStack extends AbstractDsfService
 		final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
 	    
 	    if (execDmc == null) {
-            //rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "No frame context found in " + ctx, null)); //$NON-NLS-1$
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context " + ctx, null)); //$NON-NLS-1$
             rm.done();
             return;
         }
 
-	    // Make sure the thread is stopped
-	    if (!fRunControl.isSuspended(execDmc)) {
+	    // Make sure the thread is stopped but only if we are not visualizing trace data
+	    if (!fTraceVisualization && !fRunControl.isSuspended(execDmc)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context is running: " + ctx, null)); //$NON-NLS-1$
 	    	rm.done();
 	    	return;
 	    }
 
-	    if (startIndex == 0 && endIndex == 0) {
+	    if (fTraceVisualization || (startIndex == 0 && endIndex == 0)) {
 	        // Try to retrieve the top stack frame from the cached stopped event.
 	        if (fCachedStoppedEvent != null && 
 	            fCachedStoppedEvent.getFrame() != null && 
@@ -329,7 +334,6 @@ public class MIStack extends AbstractDsfService
             });
     }
     
-    //private MIFrameDMC[] getFrames(DsfMIStackListFramesInfo info) {
     private IFrameDMContext[] getFrames(IMIExecutionDMContext execDmc, MIStackListFramesInfo info, int firstIndex, int lastIndex, int startIndex) {
         int length = info.getMIFrames().length;
         if (lastIndex > 0) {
@@ -408,15 +412,15 @@ public class MIStack extends AbstractDsfService
         
         // Retrieve the top stack frame from the stopped event only if the selected thread is the one on which stopped event 
         // is raised
-        if (fCachedStoppedEvent != null && 
-            execDmc.equals(fCachedStoppedEvent.getDMContext()) && 
-            miFrameDmc.fLevel == 0 && 
-            fCachedStoppedEvent.getFrame() != null) 
-        {
-            rm.setData(new FrameDataFromStoppedEvent(fCachedStoppedEvent));
-            rm.done();
-            return;
-        } 
+        if (fTraceVisualization || miFrameDmc.fLevel == 0) {
+        	if (fCachedStoppedEvent != null && fCachedStoppedEvent.getFrame() != null && 
+        		(execDmc.equals(fCachedStoppedEvent.getDMContext()) || fTraceVisualization))
+        	{
+                rm.setData(new FrameDataFromStoppedEvent(fCachedStoppedEvent));
+                rm.done();
+                return;
+        	}
+        }
 
         // If not, retrieve the full list of frame data.
         class FrameDataFromMIStackFrameListInfo extends FrameData {
@@ -475,13 +479,24 @@ public class MIStack extends AbstractDsfService
             return;
         }
 
-        // If not, retrieve the full list of frame data.
+        if (fTraceVisualization) {
+        	// For the pre-release of GDB that supports tracepoints, we cannot ask
+        	// for the list of arguments for all stack frames, but only for available
+        	// ones.  Again, I'm hoping that GDB 7.2 will be smarter than that.
+        	getArgumentsForTraceVisualization(frameDmc, rm);
+        	return;
+        }
+        
+        // If not, retrieve the full list of frame data.  Although we only need one frame
+        // for this call, it will be stored the cache and made available for other calls.
         fMICommandCache.execute(
             // We don't actually need to ask for the values in this case, but since
         	// we will ask for them right after, it is more efficient to ask for them now
             // so as to cache the result.  If the command fails, then we will ask for
         	// the result without the values
-        	fCommandFactory.createMIStackListArguments(execDmc, true),
+       		// Don't ask for value when we are visualizing trace data, since some
+       		// data will not be there, and the command will fail
+       		fCommandFactory.createMIStackListArguments(execDmc, true),
             new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
                 @Override
                 protected void handleSuccess() {
@@ -504,8 +519,8 @@ public class MIStack extends AbstractDsfService
                 @Override
                 protected void handleError() {
                 	// If the command fails it can be because we asked for values.
-                	// This can happen with uninitialized values and pretty printers (bug 307614)
-                	// or when visualizing tracepoints.  Since asking for values was simply an optimization
+                	// This can happen with uninitialized values and pretty printers (bug 307614).
+                	// Since asking for values was simply an optimization
                 	// to store the command in the cache, let's retry the command without asking for values.
                     fMICommandCache.execute(
                         	fCommandFactory.createMIStackListArguments(execDmc, false),
@@ -533,6 +548,43 @@ public class MIStack extends AbstractDsfService
             }); 
     }    
     
+	// For the pre-release of GDB that supports tracepoints, we cannot ask
+	// for the list of arguments for all stack frames, but only for available
+	// ones.  Again, I'm hoping that GDB 7.2 will be smarter than that.
+	private void getArgumentsForTraceVisualization(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
+        final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
+
+        getStackDepth(execDmc, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+            @Override
+            protected void handleSuccess() {
+            	int bottomFrame = getData() - 1;
+            	fMICommandCache.execute(
+            			// Don't ask for values for tracepoints
+            			fCommandFactory.createMIStackListArguments(execDmc, false, 0, bottomFrame),
+            			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+            				@Override
+            				protected void handleSuccess() {
+            					// Find the index to the correct MI frame object.
+            					// Note: this is a short-cut, but it won't work once we implement retrieving
+            					// partial lists of stack frames.
+            					int idx = frameDmc.getLevel();
+            					if (idx == -1 || idx >= getData().getMIFrames().length) {
+            						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid frame " + frameDmc, null));  //$NON-NLS-1$
+            						rm.done();
+            						return;
+            					}
+
+            					// Create the variable array out of MIArg array.
+            					MIArg[] args = getData().getMIFrames()[idx].getArgs();
+            					if (args == null) args = new MIArg[0]; 
+            					rm.setData(makeVariableDMCs(frameDmc, MIVariableDMC.Type.ARGUMENT, args.length));
+            					rm.done();
+            				}
+            			});
+            }
+        });
+	}
+	
     public void getVariableData(IVariableDMContext variableDmc, final DataRequestMonitor<IVariableDMData> rm) {
         if (!(variableDmc instanceof MIVariableDMC)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context type " + variableDmc, null)); //$NON-NLS-1$
@@ -589,8 +641,13 @@ public class MIStack extends AbstractDsfService
         }
 
         if (miVariableDmc.fType == MIVariableDMC.Type.ARGUMENT){
+        	if (fTraceVisualization) {
+        		getArgumentsDataForTraceVisualization(miVariableDmc, rm);
+        	} else {
 	        fMICommandCache.execute(
-	        	fCommandFactory.createMIStackListArguments(execDmc, true),
+	            // Don't ask for value when we are visualizing trace data, since some
+	            // data will not be there, and the command will fail
+	    	    fCommandFactory.createMIStackListArguments(execDmc, true),
 	            new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
 	                @Override
 	                protected void handleSuccess() {
@@ -610,8 +667,7 @@ public class MIStack extends AbstractDsfService
 	                @Override
 	                protected void handleError() {
 	                	// Unable to get the values.  This can happen with uninitialized values and pretty printers (bug 307614)
-	                	// or when visualizing tracepoints.  Either way, we try to ask for the arguments without their values,
-	                	// which is better than nothing
+	                	// Let's try to ask for the arguments without their values, which is better than nothing
 	                	fMICommandCache.execute(
 	                			fCommandFactory.createMIStackListArguments(execDmc, false),
 	                			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
@@ -633,10 +689,13 @@ public class MIStack extends AbstractDsfService
 	                			});	
 	                }
 	        	});
+        	}
         }//if
         if (miVariableDmc.fType == MIVariableDMC.Type.LOCAL){
             fMICommandCache.execute(
-            		fCommandFactory.createMIStackListLocals(frameDmc, true),
+                	// Don't ask for value when we are visualizing trace data, since some
+                	// data will not be there, and the command will fail
+            		fCommandFactory.createMIStackListLocals(frameDmc, !fTraceVisualization),
                     new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
                         @Override
                         protected void handleSuccess() {
@@ -652,9 +711,8 @@ public class MIStack extends AbstractDsfService
                         }
                         @Override
                         protected void handleError() {
-                        	// Unable to get the value.  This can happen with uninitialized values and pretty printers (bug 307614)
-                        	// or when visualizing tracepoints.  Either way, we try to ask for the variables without their values,
-                        	// which is better than nothing
+                        	// Unable to get the value.  This can happen with uninitialized values and pretty printers (bug 307614).
+                        	// Let's try to ask for the variables without their values, which is better than nothing
                             fMICommandCache.execute(
                             		fCommandFactory.createMIStackListLocals(frameDmc, false),
                                     new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), rm) { 
@@ -676,6 +734,52 @@ public class MIStack extends AbstractDsfService
         }//if   
 
     }
+
+	// For the pre-release of GDB that supports tracepoints, we cannot ask
+	// for the list of arguments for all stack frames, but only for available
+	// ones.  Again, I'm hoping that GDB 7.2 will be smarter than that.
+	private void getArgumentsDataForTraceVisualization(final MIVariableDMC miVariableDmc, final DataRequestMonitor<IVariableDMData> rm) {
+        final MIFrameDMC frameDmc = DMContexts.getAncestorOfType(miVariableDmc, MIFrameDMC.class);
+        final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
+
+    	class VariableData implements IVariableDMData {
+    		private MIArg dsfMIArg;
+    		VariableData(MIArg arg){
+    			dsfMIArg = arg;
+    		}
+    		public String getName() { return dsfMIArg.getName(); }
+    		public String getValue() { return dsfMIArg.getValue(); }
+    		@Override
+    		public String toString() { return dsfMIArg.toString(); }	
+    	}    	
+
+        getStackDepth(execDmc, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
+            @Override
+            protected void handleSuccess() {
+            	int bottomFrame = getData() - 1;
+            	fMICommandCache.execute(
+            			// Don't ask for values for tracepoints
+            			fCommandFactory.createMIStackListArguments(execDmc, false, 0, bottomFrame),
+            			new DataRequestMonitor<MIStackListArgumentsInfo>(getExecutor(), rm) { 
+            				@Override
+            				protected void handleSuccess() {
+            					// Find the correct frame and argument
+            					if ( frameDmc.fLevel >= getData().getMIFrames().length ||
+            							miVariableDmc.fIndex >= getData().getMIFrames()[frameDmc.fLevel].getArgs().length )
+            					{
+            						rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid variable " + miVariableDmc, null));  //$NON-NLS-1$
+            						rm.done();
+            						return;
+            					}
+
+            					// Create the data object.
+            					rm.setData(new VariableData(getData().getMIFrames()[frameDmc.fLevel].getArgs()[miVariableDmc.fIndex]));
+            					rm.done();
+            				}
+            			});
+            }
+        });
+	}
 
     private MIVariableDMC[] makeVariableDMCs(IFrameDMContext frame, MIVariableDMC.Type type, int count) {
         MIVariableDMC[] variables = new MIVariableDMC[count];
@@ -723,7 +827,9 @@ public class MIStack extends AbstractDsfService
 	        	// we will ask for them right after, it is more efficient to ask for them now
 	            // so as to cache the result.  If the command fails, then we will ask for
 	        	// the result without the values
-	    		fCommandFactory.createMIStackListLocals(frameDmc, true),
+	        	// Don't ask for value when we are visualizing trace data, since some
+	        	// data will not be there, and the command will fail
+	    		fCommandFactory.createMIStackListLocals(frameDmc, !fTraceVisualization),
                 new DataRequestMonitor<MIStackListLocalsInfo>(getExecutor(), countingRm) { 
                     @Override
                     protected void handleSuccess() {
@@ -734,8 +840,8 @@ public class MIStack extends AbstractDsfService
                     @Override
                     protected void handleError() {
                     	// If the command fails it can be because we asked for values.
-                    	// This can happen with uninitialized values and pretty printers (bug 307614)
-                    	// or when visualizing tracepoints.  Since asking for values was simply an optimization
+                    	// This can happen with uninitialized values and pretty printers (bug 307614).
+                    	// Since asking for values was simply an optimization
                     	// to store the command in the cache, let's retry the command without asking for values.
                 	    fMICommandCache.execute(
                 	    		fCommandFactory.createMIStackListLocals(frameDmc, false),
@@ -755,7 +861,7 @@ public class MIStack extends AbstractDsfService
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
 	    if (execDmc != null) {
 	    	// Make sure the thread is stopped
-	    	if (!fRunControl.isSuspended(execDmc)) {
+	    	if (!fTraceVisualization && !fRunControl.isSuspended(execDmc)) {
 	    		rm.setData(0);
 	    		rm.done();
 	    		return;
@@ -786,6 +892,25 @@ public class MIStack extends AbstractDsfService
 	    					
 	    					rm.setData(getData().getDepth());
 	    					rm.done();
+	    				}
+	    				@Override
+	    				protected void handleError() {
+	    					if (fTraceVisualization) {
+	    				    	// when visualizing trace data, the pre-release GDB, the command
+	    				    	// -stack-info-depth will return an error if we ask for any level
+	    				    	// that GDB does not know about.  We would have to iteratively
+	    				    	// try different depths until we found the deepest that succeeds.
+	    				    	// That is too much of a hack for a pre-release.  Let's hope
+	    				    	// GDB 7.2 will properly answer -stack-info-depth when visualizing
+	    				    	// trace data.  Until then, we can safely say we have one stack
+	    				    	// frame, which is going to be the case for 95% of the cases.
+	    				    	// To have more stack frames, the user would have to have collected
+	    				    	// the registers and enough stack memory for GDB to build another frame.
+	    						rm.setData(1);
+	    						rm.done();	    				    	
+	    					} else {
+	    						super.handleError();
+	    					}
 	    				}
 	    			});
         } else {
@@ -833,6 +958,13 @@ public class MIStack extends AbstractDsfService
     	}
     }
 
+    /** @since 3.0 */
+    @DsfServiceEventHandler
+    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+    	// Once we start looking at a trace record, we remain in 
+    	// trace visualization mode.
+    	fTraceVisualization = true;
+    }
     /**
      * {@inheritDoc}
      * @since 1.1

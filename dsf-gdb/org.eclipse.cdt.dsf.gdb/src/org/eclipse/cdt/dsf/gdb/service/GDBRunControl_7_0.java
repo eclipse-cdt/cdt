@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -80,6 +81,14 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	private boolean fReverseSupported = true;
 	private boolean fReverseStepping = false;
 	private boolean fReverseModeEnabled = false;
+	
+	/**
+	 * This variable allows us to know if run control operation
+	 * should be enabled or disabled.  Run control operations are
+	 * always enabled except when dealing with post-mortem debug
+	 * session, or when visualizing tracepoints.
+	 */
+	private boolean fRunControlOperationsEnabled = true;
 
 	private RunToLineActiveOperation fRunToLineActiveOperation = null;
 
@@ -105,6 +114,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 
 		if (fGdb.getSessionType() == SessionType.CORE) {
 			// No execution for core files, so no support for reverse
+			fRunControlOperationsEnabled = false;
 			fReverseSupported = false;
 		}
 
@@ -176,7 +186,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	 */
 	@Override
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-		if (fGdb.getSessionType() == SessionType.CORE) {
+		if (fRunControlOperationsEnabled == false) {
 			rm.setData(false);
 			rm.done();
 			return;
@@ -189,7 +199,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	 */
 	@Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-		if (fGdb.getSessionType() == SessionType.CORE) {
+		if (fRunControlOperationsEnabled == false) {
 			rm.setData(false);
 			rm.done();
 			return;
@@ -202,7 +212,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	 */
 	@Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
-		if (fGdb.getSessionType() == SessionType.CORE) {
+		if (fRunControlOperationsEnabled == false) {
 			rm.setData(false);
 			rm.done();
 			return;
@@ -590,6 +600,16 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     	}
 
     	super.eventDispatched(e);
+    }
+    
+    /**
+	 * @since 3.0
+	 */
+    @DsfServiceEventHandler 
+    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+    	// We have started looking at trace records.  We can no longer
+    	// do run control operations.
+    	fRunControlOperationsEnabled = false;
     }
 
     /** @since 2.0 */

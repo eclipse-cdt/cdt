@@ -40,6 +40,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.events.IMIDMEvent;
@@ -177,6 +178,8 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		public StateChangeReason getReason() {
 			if (getMIEvent() instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
 				return StateChangeReason.EVENT_BREAKPOINT;
+			} else if (getMIEvent() instanceof MITracepointSelectedEvent) {	// must precede MIBreakpointHitEvent
+				return StateChangeReason.UNKNOWN;  // Don't display anything here, the details will take care of it
 			} else if (getMIEvent() instanceof MIBreakpointHitEvent) {
 				return StateChangeReason.BREAKPOINT;
 			} else if (getMIEvent() instanceof MISteppingRangeEvent) {
@@ -201,6 +204,8 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 			MIStoppedEvent event = getMIEvent();
 			if (event instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
 				return ((MICatchpointHitEvent)event).getReason();
+			} else if (event instanceof MITracepointSelectedEvent) {	// must precede MIBreakpointHitEvent
+				return ((MITracepointSelectedEvent)event).getReason();
 			} else if (event instanceof MISharedLibEvent) {
 				 return ((MISharedLibEvent)event).getLibrary();
 			} else if (event instanceof MISignalEvent) {

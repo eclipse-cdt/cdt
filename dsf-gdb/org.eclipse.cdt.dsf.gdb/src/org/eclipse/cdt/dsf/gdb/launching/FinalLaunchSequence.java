@@ -21,6 +21,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -29,6 +30,8 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
@@ -370,31 +373,60 @@ public class FinalLaunchSequence extends Sequence {
         		if (fSessionType == SessionType.CORE) {
         			try {
         				String coreFile = fLaunch.getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, ""); //$NON-NLS-1$
-
+        				final String coreType = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
+        						                                                              IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
         				if (coreFile.length() == 0) {
         					new PromptForCoreJob(
-        							"Prompt for core file",  //$NON-NLS-1$
+        							"Prompt for post mortem file",  //$NON-NLS-1$
         							new DataRequestMonitor<String>(getExecutor(), requestMonitor) {
         								@Override
         								protected void handleSuccess() {
         									String newCoreFile = getData();
         									if (newCoreFile == null || newCoreFile.length()== 0) {
-        										requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", null)); //$NON-NLS-1$
+        										requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get post mortem file path", null)); //$NON-NLS-1$
         										requestMonitor.done();
         									} else {
-        			        					fCommandControl.queueCommand(
-        			        							fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), newCoreFile), 
-        			        							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        			        					if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+        			        						fCommandControl.queueCommand(
+        			        								fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), newCoreFile), 
+        			        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        			        					} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+        			        						IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+        			        						if (traceControl != null) {
+        			        							ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
+        			        							traceControl.loadTraceData(targetDmc, newCoreFile, requestMonitor);
+        			        						} else {
+        			        							requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
+        			        							requestMonitor.done();                                  
+        			        						}
+        			        					} else {
+        			        						requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
+    			        							requestMonitor.done();
+        			        					}
         									}
         								}
         							}).schedule();
         				} else {
-        					fCommandControl.queueCommand(
-        							fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), coreFile), 
-        							new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        					if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_CORE_FILE)) {
+        						fCommandControl.queueCommand(
+        								fCommandFactory.createMITargetSelectCore(fCommandControl.getContext(), coreFile),
+        								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        					} else if (coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE)) {
+        						IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
+        						if (traceControl != null) {
+        							ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(fCommandControl.getContext(), ITraceTargetDMContext.class);
+        							traceControl.loadTraceData(targetDmc, coreFile, requestMonitor);
+        						} else {
+        							requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Tracing not supported", null));
+        							requestMonitor.done();
+        						}
+        					} else {
+        						requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Invalid post-mortem type", null));
+    							requestMonitor.done();
+        					}
         				}
         			} catch (CoreException e) {
-        				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get core file path", e)); //$NON-NLS-1$
+        				requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get post mortem file path", e));
         				requestMonitor.done();
         			}
         		} else {

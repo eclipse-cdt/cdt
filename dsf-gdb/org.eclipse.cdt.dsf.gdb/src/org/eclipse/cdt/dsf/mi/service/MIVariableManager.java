@@ -15,6 +15,7 @@ package org.eclipse.cdt.dsf.mi.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,25 +27,26 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -1505,7 +1507,7 @@ public class MIVariableManager implements ICommandControl {
 					    // The variable object is out-of-scope and we
 						// should not use it.
 						if (shouldCreateNew) {
-							/**
+							/*
 							 * It may happen that when accessing a varObject we find it to be
 							 * out-of-scope.  The expression for which we are trying to access a varObject
 							 * could still be valid, and therefore we should try to create a new varObject for
@@ -1849,5 +1851,23 @@ public class MIVariableManager implements ICommandControl {
     	// which one is affected.  Mark them all as out of date.
     	// The views will fully refresh on a MemoryChangedEvent
     	markAllOutOfDate();
+    }
+    
+    /**
+	 * @since 3.0
+	 */
+    @DsfServiceEventHandler 
+    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+    	// We have a big limitation with tracepoints!
+    	// GDB usually only reports a depth of 1, for every trace record, no
+    	// matter where it occurred.  This means that our naming scheme for VariableObjectId 
+    	// fails miserably because all objects will have the same depth and we will confuse
+    	// them.  Until we find a good solution, we have to clear our entire list of
+    	// of variable objects (and delete them in GDB to avoid having too many).
+    	Iterator<Map.Entry<VariableObjectId, MIVariableObject>> iterator = lruVariableList.entrySet().iterator();
+    	while (iterator.hasNext()){
+    		iterator.next();
+    		iterator.remove();
+    	}
     }
 }

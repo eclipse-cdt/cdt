@@ -782,6 +782,18 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	}
 
 	private IMIContainerDMContext[] makeContainerDMCs(ICommandControlDMContext controlDmc, IThreadGroupInfo[] groups) {
+		// This is a workaround for post-mortem tracing because the early GDB release
+		// does not report a process when we do -list-thread-group
+		// GDB 7.2 will properly report the process so this
+		// code can be removed when GDB 7.2 is released
+		// START OF WORKAROUND
+		if (groups.length == 0 && fBackend.getSessionType() == SessionType.CORE) {
+			String groupId = MIProcesses.UNIQUE_GROUP_ID;
+			IProcessDMContext processDmc = createProcessContext(controlDmc, groupId);
+			return new IMIContainerDMContext[] {createContainerContext(processDmc, groupId)};
+		}
+		// END OF WORKAROUND to be removed when GDB 7.2 is available
+		
 		IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[groups.length];
 		for (int i = 0; i < groups.length; i++) {
 			String groupId = groups[i].getGroupId();

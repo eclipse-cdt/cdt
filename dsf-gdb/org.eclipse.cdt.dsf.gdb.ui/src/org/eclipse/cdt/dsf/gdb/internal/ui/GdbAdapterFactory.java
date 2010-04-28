@@ -40,6 +40,8 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.DefaultRefreshAllTarget;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.actions.IRefreshAllTarget;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.DefaultDsfModelSelectionPolicyFactory;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
+import org.eclipse.cdt.dsf.gdb.internal.commands.ISelectNextTraceRecordHandler;
+import org.eclipse.cdt.dsf.gdb.internal.commands.ISelectPrevTraceRecordHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfTerminateCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbConnectCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.actions.GdbDisconnectCommand;
@@ -51,6 +53,8 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepIntoCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseStepOverCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbReverseToggleCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbSaveTraceDataCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbSelectNextTraceRecordCommand;
+import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbSelectPrevTraceRecordCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStartTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbStopTracingCommand;
 import org.eclipse.cdt.dsf.gdb.internal.ui.commands.GdbUncallCommand;
@@ -119,6 +123,8 @@ public class GdbAdapterFactory
         final GdbStartTracingCommand fStartTracingTarget;
         final GdbStopTracingCommand fStopTracingTarget;
         final GdbSaveTraceDataCommand fSaveTraceDataTarget;
+        final GdbSelectNextTraceRecordCommand fSelectNextRecordTarget;
+        final GdbSelectPrevTraceRecordCommand fSelectPrevRecordTarget;
         final GdbDebugTextHover fDebugTextHover;
         
         SessionAdapterSet(GdbLaunch launch) {
@@ -161,6 +167,8 @@ public class GdbAdapterFactory
             fStartTracingTarget = new GdbStartTracingCommand(session);
             fStopTracingTarget = new GdbStopTracingCommand(session);
             fSaveTraceDataTarget = new GdbSaveTraceDataCommand(session);
+            fSelectNextRecordTarget = new GdbSelectNextTraceRecordCommand(session);
+            fSelectPrevRecordTarget = new GdbSelectPrevTraceRecordCommand(session);
 
             session.registerModelAdapter(ISteppingModeTarget.class, fSteppingModeTarget);
             session.registerModelAdapter(IStepIntoHandler.class, fStepIntoCommand);
@@ -183,6 +191,8 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IStartTracingHandler.class, fStartTracingTarget);
             session.registerModelAdapter(IStopTracingHandler.class, fStopTracingTarget);
             session.registerModelAdapter(ISaveTraceDataHandler.class, fSaveTraceDataTarget);
+            session.registerModelAdapter(ISelectNextTraceRecordHandler.class, fSelectNextRecordTarget);
+            session.registerModelAdapter(ISelectPrevTraceRecordHandler.class, fSelectPrevRecordTarget);
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
@@ -238,7 +248,9 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IStartTracingHandler.class);
             session.unregisterModelAdapter(IStopTracingHandler.class);
             session.unregisterModelAdapter(ISaveTraceDataHandler.class);
-            
+            session.unregisterModelAdapter(ISelectNextTraceRecordHandler.class);
+            session.unregisterModelAdapter(ISelectPrevTraceRecordHandler.class);
+
             session.unregisterModelAdapter(ICEditorTextHover.class);
 
             fSteppingModeTarget.dispose();
@@ -261,6 +273,8 @@ public class GdbAdapterFactory
             fStartTracingTarget.dispose();
             fStopTracingTarget.dispose();
             fSaveTraceDataTarget.dispose();
+            fSelectNextRecordTarget.dispose();
+            fSelectPrevRecordTarget.dispose();
         }
     }
 

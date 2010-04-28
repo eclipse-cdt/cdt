@@ -80,7 +80,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     
     // MI did not always support the --thread/--frame options
     // This boolean is used to know if we should use -thread-select and -stack-select-frame instead
-    private final boolean fUseThreadAndFrameOptions;
+    private boolean fUseThreadAndFrameOptions;
     // currentStackLevel and currentThreadId are only necessary when
     // we must use -thread-select and -stack-select-frame
     private int fCurrentStackLevel  = -1;
@@ -155,6 +155,13 @@ public abstract class AbstractMIControl extends AbstractDsfService
      */
     private synchronized OutputStream getMITracingStream() {
     	return fTracingStream;
+    }
+    
+    /**
+	 * @since 3.0
+	 */
+    protected void setUseThreadAndFrameOptions(boolean shouldUse) {
+    	fUseThreadAndFrameOptions = shouldUse;
     }
     
     /**

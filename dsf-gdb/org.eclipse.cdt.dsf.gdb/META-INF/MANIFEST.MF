@@ -20,6 +20,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.cdt.dsf.gdb,
  org.eclipse.cdt.dsf.gdb.actions,
  org.eclipse.cdt.dsf.gdb.breakpoints,
+ org.eclipse.cdt.dsf.gdb.internal.commands,
  org.eclipse.cdt.dsf.gdb.launching,
  org.eclipse.cdt.dsf.gdb.service,
  org.eclipse.cdt.dsf.gdb.service.command,

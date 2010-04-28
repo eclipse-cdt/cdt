@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008  Ericsson and others.
+ * Copyright (c) 2008, 2010  Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,13 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND = GdbPlugin.PLUGIN_ID + ".UPDATE_THREADLIST_ON_SUSPEND"; //$NON-NLS-1$	
 
+	/**         
+	 * Launch configuration attribute key. The value is a String specifying the type of post mortem launch.
+	 * @since 3.0
+	 */     
+	public static final String ATTR_DEBUGGER_POST_MORTEM_TYPE = GdbPlugin.PLUGIN_ID + ".POST_MORTEM_TYPE"; //$NON-NLS-1$
+	
+	
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUG_NAME.
 	 */
@@ -131,4 +138,26 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	public static final boolean DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT = false;
 	
+	/**  
+	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
+	 * Indicates a core file.
+	 *   
+	 * @since 3.0                        
+	 */                                                 
+	public static final String DEBUGGER_POST_MORTEM_CORE_FILE = "CORE_FILE"; //$NON-NLS-1$
+
+	/**
+	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
+	 * Indicates a trace data file.
+	 *      
+	 * @since 3.0 
+	 */     
+	public static final String DEBUGGER_POST_MORTEM_TRACE_FILE = "TRACE_FILE"; //$NON-NLS-1$
+
+	/**  
+	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
+	 * @since 3.0
+	 */
+	public static final String DEBUGGER_POST_MORTEM_TYPE_DEFAULT = DEBUGGER_POST_MORTEM_CORE_FILE;
+
 }

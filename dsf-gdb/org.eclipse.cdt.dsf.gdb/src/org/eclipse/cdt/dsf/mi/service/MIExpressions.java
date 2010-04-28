@@ -35,6 +35,7 @@ import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.ExprMetaGetChildCount;
@@ -436,6 +437,12 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 	private MIVariableManager varManager;
 	private CommandFactory fCommandFactory;
 	
+	/** 
+	 * Indicates that we are currently visualizing trace data.
+	 * In this case, some errors should not be reported.
+	 */
+	private boolean fTraceVisualization;
+	
 	public MIExpressions(DsfSession session) {
 		super(session);
 	}
@@ -754,6 +761,15 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 								rm.setData(new FormattedValueDMData(getData().getValue()));
 	        					rm.done();
 							}
+							@Override
+							protected void handleError() {
+								if (fTraceVisualization) {
+									rm.setData(new FormattedValueDMData("")); //$NON-NLS-1$
+									rm.done();
+								} else {
+									super.handleError();
+								}
+							}
 						});
         	} else {
         		fExpressionCache.execute(
@@ -1004,6 +1020,14 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
         // MIVariableManager separately traps this event
     }
 
+    /** @since 3.0 */
+    @DsfServiceEventHandler
+    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+    	// Once we start looking at a trace record, we remain in 
+    	// trace visualization mode.
+    	fTraceVisualization = true;
+    }
+    
     /**
      * {@inheritDoc}
      * @since 1.1

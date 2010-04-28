@@ -43,7 +43,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
 	// This should eventually be "7.0" once GDB 7.0 is released
-	private static final String GDB_7_0_VERSION = "6.8.50.20090218"; //$NON-NLS-1$
+	private static final String GDB_7_0_VERSION = "6.8.50.20090218"; //$NON-NLS-1$	
+	private static final String GDB_7_2_VERSION = "7.1.50"; //$NON-NLS-1$
 	
 	private final String fVersion;
 	
@@ -163,12 +164,15 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	/** @since 3.0 */
 	protected IGDBTraceControl createTraceControlService(DsfSession session, ILaunchConfiguration config) {
-		// This service is available for GDB 7.1. But until that GDB is itself available
+		// This service is available for GDB 7.2. But until that GDB is itself available
 		// there is a pre-release that has a version of 6.8.50.20090414
-		if ("6.8.50.20090414".compareTo(fVersion) <= 0) {
-			return new GDBTraceControl_7_1(session, config);
+		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0 || "6.8.50.20090414".equals(fVersion)) { //$NON-NLS-1$
+			return new GDBTraceControl_7_2(session, config);
 		}
-		// There is no implementation of the TraceControl service before GDB 7.1
+		// There is currently no implementation of the TraceControl service before GDB 7.2
+		// It could be done with restricted functionality for GDB 7.1 and maybe even 7.0
+		// but the service would have to be properly coded, as some MI commands don't exists
+		// in those older GDB versions.  Also, gdbserver only supports tracing starting with 7.2
 		return null;		
 	}
 }

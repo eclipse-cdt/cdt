@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 QNX Software Systems and others.
+ * Copyright (c) 2008, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Windriver and Ericsson - Updated for DSF
  * IBM Corporation 
  * Ericsson               - Added support for Mac OS
+ * Ericsson               - Added support for post-mortem trace files
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -57,7 +58,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 
     private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
 	private boolean isNonStopSession = false;
-
+	
+    private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
+	private boolean fIsPostMortemTracingSession;
+	
 	@Override
 	public void launch( ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor ) throws CoreException {
 		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.dsfgdbActivity", true); //$NON-NLS-1$
@@ -127,6 +131,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // First make sure non-stop is supported, if the user want to use this mode
         if (isNonStopSession && !isNonStopSupported(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Non-stop mode is only supported starting with GDB " + NON_STOP_FIRST_VERSION, null)); //$NON-NLS-1$        	
+        }
+
+        if (fIsPostMortemTracingSession && !isPostMortemTracingSupported(gdbVersion)) {
+            throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Post-mortem tracing is only supported starting with GDB " + TRACING_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
         launch.setServiceFactory(newServiceFactory(gdbVersion));
@@ -254,6 +262,18 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     	return false;
     }
 
+	private boolean isPostMortemTracingSession(ILaunchConfiguration config) {
+		SessionType sessionType = LaunchUtils.getSessionType(config);
+		if (sessionType == SessionType.CORE) {
+			try {
+				String coreType = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
+						                              IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+				return coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
+			} catch (CoreException e) {    		
+			}
+		}
+    	return false;
+    }
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
@@ -271,6 +291,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // the source lookup adapter.
         
 		isNonStopSession = isNonStopSession(configuration);
+		fIsPostMortemTracingSession = isPostMortemTracingSession(configuration);
 
         GdbLaunch launch = new GdbLaunch(configuration, mode, null);
         launch.initialize();
@@ -300,7 +321,22 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		}
 		return false;
 	}
-	
+
+	private boolean isPostMortemTracingSupported(String version) {
+		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
+			// Mac OS's GDB does not support post-mortem tracing
+			return false;
+		}
+		
+		if (TRACING_FIRST_VERSION.compareTo(version) <= 0
+			// This feature will be available for GDB 7.2. But until that GDB is itself available
+			// there is a pre-release that has a version of 6.8.50.20090414
+			|| "6.8.50.20090414".equals(version)) {
+			return true;
+		}
+		return false;
+	}
+
 	// A subclass can override this method and provide its own ServiceFactory.
 	protected IDsfDebugServicesFactory newServiceFactory(String version) {
 

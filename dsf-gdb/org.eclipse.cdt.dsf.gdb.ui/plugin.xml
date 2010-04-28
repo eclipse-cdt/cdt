@@ -354,6 +354,30 @@
       </perspectiveExtension>
    </extension>
    <extension
+       point="org.eclipse.ui.commands">
+      <command
+          description="%command.nextTraceRecord.description"
+          id="org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord"
+          name="%command.nextTraceRecord.name">
+      </command>
+      <command
+          description="%command.prevTraceRecord.description"
+          id="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord"
+          name="%command.prevTraceRecord.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.SelectNextTraceRecordCommandHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.SelectPrevTraceRecordCommandHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord">
+      </handler>
+   </extension>
+   <extension
          point="org.eclipse.ui.menus">
          <menuContribution
             locationURI="toolbar:org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view?after=additions">
@@ -367,6 +391,18 @@
                commandId="org.eclipse.cdt.debug.ui.command.stopTracing"
                icon="icons/full/obj16/stoptracing.gif"
                label="%toolbar.stopTracing.name"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord"
+               icon="icons/full/obj16/next_trace_record_nav.gif"
+               label="%toolbar.nextTraceRecord.label"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord"
+               icon="icons/full/obj16/prev_trace_record_nav.gif"
+               label="%toolbar.prevTraceRecord.label"
                style="push">
          </command>
       </menuContribution>

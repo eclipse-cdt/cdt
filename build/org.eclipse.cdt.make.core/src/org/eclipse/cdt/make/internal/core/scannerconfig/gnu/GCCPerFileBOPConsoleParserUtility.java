@@ -15,7 +15,6 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +33,10 @@ import org.eclipse.core.runtime.Path;
  * @author vhirsl
  */
 public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsoleParserUtility {
-    private Map directoryCommandListMap;
-    private List compiledFileList;
+    private Map<String, List<Map<String, List<String>>>> directoryCommandListMap;
+    private List<String> compiledFileList;
     
-    private List commandsList2;
+    private List<CCommandDSC> commandsList2;
     
     private int workingDirsN = 0;
     private int commandsN = 0;
@@ -66,16 +65,16 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         compiledFileList.add(longFileName);
         
         String workingDir = getWorkingDirectory().toString();
-        List directoryCommandList = (List) directoryCommandListMap.get(workingDir);
+        List<Map<String, List<String>>> directoryCommandList = directoryCommandListMap.get(workingDir);
         if (directoryCommandList == null) {
-            directoryCommandList = new ArrayList();
+            directoryCommandList = new ArrayList<Map<String, List<String>>>();
             directoryCommandListMap.put(workingDir, directoryCommandList);
             ++workingDirsN;
         }
-        Map command21FileListMap = null;
-        for (Iterator i = directoryCommandList.iterator(); i.hasNext(); ) {
-            command21FileListMap = (Map) i.next();
-            List fileList = (List) command21FileListMap.get(genericCommand);
+        Map<String, List<String>> command21FileListMap = null;
+        for (Map<String, List<String>> map : directoryCommandList) {
+            command21FileListMap = map;
+            List<String> fileList = command21FileListMap.get(genericCommand);
             if (fileList != null) {
                 if (!fileList.contains(longFileName)) {
                     fileList.add(longFileName);
@@ -84,10 +83,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                 return;
             }
         }
-        command21FileListMap = new HashMap(1);
+        command21FileListMap = new HashMap<String, List<String>>(1);
         directoryCommandList.add(command21FileListMap);
         ++commandsN;
-        List fileList = new ArrayList();
+        List<String> fileList = new ArrayList<String>();
         command21FileListMap.put(genericCommand, fileList);
         fileList.add(longFileName);
         ++filesN;
@@ -122,7 +121,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
             ++commandsN;
         }
         else {
-            command = (CCommandDSC) commandsList2.get(index);
+            command = commandsList2.get(index);
         }
 //        // add a file
 //        command.addFile(longFileName);
@@ -135,8 +134,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @return CCommandDSC compile command description 
      */
     public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
-		ArrayList dirafter = new ArrayList();
-		ArrayList includes = new ArrayList();
+		ArrayList<KVStringPair> dirafter = new ArrayList<KVStringPair>();
+		ArrayList<String> includes = new ArrayList<String>();
         CCommandDSC command = new CCommandDSC(cppFileType, getProject());
         command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[idxOfCompilerCommand]));
         for (int i = idxOfCompilerCommand+1; i < tokens.length; ++i) {
@@ -169,12 +168,12 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                         // ex. -I/dir
                     }
                     else if (optionKind.equals(SCDOptionsEnum.IDASH)) {
-                    	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
-                    		option = (String)iter.next();
+                        for (String inc : includes) {
+                            option = inc;
                             KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
-                        	command.addSCOption(pair);                    		
-                    	}
-                    	includes = new ArrayList();
+                            command.addSCOption(pair);
+                        }
+                        includes = new ArrayList<String>();
                         // -I- has no parameter
                     }
                     else {
@@ -216,15 +215,13 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                 }
             }
         }
-        String option;
-    	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
-    		option = (String)iter.next();
+        for (String option : includes) {
             KVStringPair pair = new KVStringPair(SCDOptionsEnum.INCLUDE.toString(), option);
-        	command.addSCOption(pair);                    		
-    	}
-    	for (Iterator iter=dirafter.iterator(); iter.hasNext(); ) {
-        	command.addSCOption((KVStringPair)iter.next());                    		
-    	}
+            command.addSCOption(pair);
+        }
+        for (KVStringPair kvStringPair : dirafter) {
+            command.addSCOption(kvStringPair);
+        }
         return command;
     }
 
@@ -297,8 +294,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * Currently this list is not filled, so it will always return an empty list.
      * @return List of CCommandDSC
      */
-    public List getCCommandDSCList() {
-        return new ArrayList(commandsList2);
+    public List<CCommandDSC> getCCommandDSCList() {
+        return new ArrayList<CCommandDSC>(commandsList2);
     }
 
 }

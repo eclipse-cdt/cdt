@@ -116,8 +116,7 @@
 <!-- Note: context id for console view is defined in org.eclipse.ui.console -->
 <context id ="console_view_context">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_console_view.htm"
-   	label="&consoleView;"/>
+   <topic href="reference/cdt_u_console_view.htm" label="Console view (C/C++)"/>
 </context>
 
 <context id ="executables_View_context">

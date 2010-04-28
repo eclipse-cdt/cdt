@@ -6,10 +6,12 @@
  <meta name="LASTUPDATED" content="06/17/05 11:09:43" />
  <title>Executables view</title>
  <link rel="StyleSheet" href="../help.css" type="text/css"/>
+ <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
  </head>
+ 
  <body bgcolor="#FFFFFF">
  <h2>Executables view </h2>
- <p>  The <strong>Executables</strong> view provides a dynamic list of executables and their related source files. The Executables view makes it easy to:</p>
+ <p>The <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.debug.ui.executablesView)")'>Executables</a> view provides a dynamic list of executables and their related source files. The <strong>Executables</strong> view makes it easy to:</p>
  <ul>
    <li>target all binaries for debugging because the symbolics are automatically loaded when a bld.inf is imported or a project is created from a template</li>
    <li>debug a binary that is not part of a project in the workspace by importing it into the Executables view to load the symbolics</li>
@@ -21,16 +23,16 @@
    <li>view routines and header files used by the source file. Click the tree control to expand or collapse a list of included header files and routine names for fast navigation. </li>
    <li>find and set breakpoints, watchpoints, and eventpoints in source files. Double-click a source file to open it in an editor view and to review the status of its breakpoints. </li>
  </ul>
- <p>In addition, an <strong>Executables</strong> project is created in the <a href="cdt_u_cproj_view.htm">C/C++ Projects</a> view. The binaries shown in the Executables project can be deleted which also removes them from the Executables view. For binaries outside the workspace you must import them into the Executables view so their symbolics can be used during the debug session. <span class="note">You can also drag and drop executables into the view. </span></p>
+ <p>In addition, an <strong>Executables</strong> project is created in the <a href="cdt_u_project_explorer_view.htmview_ex">Project Explorer</a> view. The binaries shown in the Executables project can be deleted which also removes them from the Executables view. For binaries outside the workspace you must import them into the Executables view so their symbolics can be used during the debug session. <span class="note">You can also drag and drop executables into the view. </span></p>
  <p><img src="../images/view_executables.png" width="813" height="309" alt="Executables view"/></p>
  <p>The <strong>Executables</strong> view consists of the Executable Name and Source File Name panes described in the table below. Use the Columns button in the toolbar to show or hide specific columns in each pane. Columns can be sorted and rearranged in the order desired. </p>
- <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#DDD" width="600">
+ <table border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse" bordercolor="#DDD" width="600">
    <caption><strong>Executables View Options</strong></caption>
    <tr>
-     <th width="17%" scope="col">Pane</th>
-     <th width="83%" scope="col">Explanation</th>
+     <th width="20%" scope="col">Pane</th>
+     <th width="80%" scope="col">Explanation</th>
    </tr>
-   <tr>
+   <tr valign="top" >
      <td><strong>Executable Name </strong></td>
      <td><p>Displays a list of  executables in the workspace as well as other files added by the user. Select an executable to update the Source File Name pane with related files. The executable information shown  can include: </p>
        <ul>
@@ -43,7 +45,7 @@
        </ul>
        <p>Click the Columns icon (<img src="../images/btn_columns.png" width="14" height="14" align="absmiddle" alt="columns icon"/>) to set which columns to show in this pane.</p></td>
    </tr>
-   <tr>
+   <tr valign="top" >
      <td><strong>Source File Name </strong></td>
      <td><p>Displays a list of  source files for the selected executable as extracted from the symbol table. The source file information shown can include: </p>
        <ul>
@@ -53,6 +55,7 @@
          <li><strong>Source File Size</strong> - The executable size shown in bytes.</li>
          <li><strong>Source File </strong><strong>Date </strong>- The source file&prime;s modification date.</li>
          <li><strong>Source File Type</strong> - The source type (.h, .inc, etc.) </li>
+         <li><strong>Missing Source Files</strong> - Gray text indicates files not found. Double-click the file to browse for the missing file. </li>
        </ul>
        <p>Expand a file&prime;s tree control to view the functions and header files used by the file. Double-click to open the source file for editing or to set breakpoints. </p>
        <p>Click the Columns icon (<img src="../images/btn_columns.png" width="14" height="14" align="absmiddle" alt="columns icon"/>) to set which columns to show in this pane.</p></td>
@@ -78,6 +81,11 @@
        <td>Click to import an executable not in the workspace into the executables list. </td>
      </tr>
      <tr>
+       <td><div align="center"><img src="../images/icon_remove.png" width="22" height="22" alt="remove executables icon"/></div></td>
+       <td>Remove the selected executables </td>
+       <td>Click to remove the selected executables from the executables list. </td>
+     </tr>
+     <tr>
        <td><div align="center"><img src="../images/btn_columns.png" width="14" height="14" alt="columns icon"/></div></td>
        <td>Columns</td>
        <td>Opens the  <strong>Configure Columns</strong> dialog for configuring which columns  appear in the Executable and Source File panes. </td>
@@ -87,5 +95,6 @@
       <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
       <a href="cdt_o_views.htm">Views</a>
     </p>
+ <hr />
  <img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement" width="375" height="12" ></body>
  </html>

@@ -11,13 +11,14 @@
 package org.eclipse.cdt.make.core.scannerconfig;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
@@ -29,16 +30,17 @@ import org.eclipse.core.runtime.CoreException;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class DiscoveredScannerInfo implements IScannerInfo {
 	private IProject project;
-	private LinkedHashMap discoveredPaths;
-	private LinkedHashMap discoveredSymbols;
+	private LinkedHashMap<String, Boolean> discoveredPaths;
+	private LinkedHashMap<String, SymbolEntry> discoveredSymbols;
 
-	private ArrayList activePaths;
-	private ArrayList removedPaths;
+	private ArrayList<String> activePaths;
+	private ArrayList<String> removedPaths;
 	
-	private ArrayList activeSymbols;
-	private ArrayList removedSymbols;
+	private ArrayList<String> activeSymbols;
+	private ArrayList<String> removedSymbols;
 
 	private  org.eclipse.cdt.make.core.MakeScannerInfo userInfo;
 	
@@ -56,8 +58,8 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerInfo#getDefinedSymbols()
 	 */
-	public synchronized Map getDefinedSymbols() {
-		Map dSymbols = ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols);
+	public synchronized Map<String, String> getDefinedSymbols() {
+		Map<String, String> dSymbols = ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols);
 		dSymbols.putAll(userInfo.getDefinedSymbols());
 		return dSymbols;
 	}
@@ -79,14 +81,14 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		userInfo = info;
 	}
 	
-	public LinkedHashMap getDiscoveredIncludePaths() {
+	public LinkedHashMap<String, Boolean> getDiscoveredIncludePaths() {
 		if (discoveredPaths == null) {
-			return new LinkedHashMap();
+			return new LinkedHashMap<String, Boolean>();
 		}
-		return new LinkedHashMap(discoveredPaths);
+		return new LinkedHashMap<String, Boolean>(discoveredPaths);
 	}
-	public synchronized void setDiscoveredIncludePaths(LinkedHashMap paths) {
-		discoveredPaths = new LinkedHashMap(paths);
+	public synchronized void setDiscoveredIncludePaths(LinkedHashMap<String, Boolean> paths) {
+		discoveredPaths = new LinkedHashMap<String, Boolean>(paths);
 		createPathLists();
 	}
 	
@@ -94,14 +96,14 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	 * Populates active and removed include path lists
 	 */
 	private void createPathLists() {
-		List aPaths = getActivePathList();
+		List<String> aPaths = getActivePathList();
 		aPaths.clear();
-		List rPaths = getRemovedPathList();
+		List<String> rPaths = getRemovedPathList();
 		rPaths.clear();
 		
-		for (Iterator i = discoveredPaths.keySet().iterator(); i.hasNext(); ) {
-			String path = (String) i.next();
-			Boolean removed = (Boolean) discoveredPaths.get(path);
+		Set<String> paths = discoveredPaths.keySet();
+		for (String path : paths) {
+			Boolean removed = discoveredPaths.get(path);
 			if (removed == null || removed.booleanValue() == false) {
 				aPaths.add(path);
 			}
@@ -111,14 +113,14 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		}
 	}
 
-	public LinkedHashMap getDiscoveredSymbolDefinitions() {
+	public LinkedHashMap<String, SymbolEntry> getDiscoveredSymbolDefinitions() {
 		if (discoveredSymbols == null) {
-			return new LinkedHashMap();
+			return new LinkedHashMap<String, SymbolEntry>();
 		}
-		return new LinkedHashMap(discoveredSymbols);
+		return new LinkedHashMap<String, SymbolEntry>(discoveredSymbols);
 	}
-	public synchronized void setDiscoveredSymbolDefinitions(LinkedHashMap symbols) {
-		discoveredSymbols = new LinkedHashMap(symbols);
+	public synchronized void setDiscoveredSymbolDefinitions(LinkedHashMap<String, SymbolEntry> symbols) {
+		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>(symbols);
 		createSymbolsLists();
 	}
 	
@@ -126,9 +128,9 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	 * Populates active and removed defined symbols sets
 	 */
 	private void createSymbolsLists() {
-		List aSymbols = getActiveSymbolsList();
+		List<String> aSymbols = getActiveSymbolsList();
 		aSymbols.clear();
-		List rSymbols = getRemovedSymbolsList();
+		List<String> rSymbols = getRemovedSymbolsList();
 		rSymbols.clear();
 		
 		aSymbols.addAll(ScannerConfigUtil.scSymbolsSymbolEntryMap2List(discoveredSymbols, true));
@@ -142,10 +144,10 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		return userInfo.getIncludePaths();
 	}
 	public String[] getActiveIncludePaths() {
-		return (String[]) getActivePathList().toArray(new String[getActivePathList().size()]); 
+		return getActivePathList().toArray(new String[getActivePathList().size()]); 
 	}
 	public String[] getRemovedIncludePaths() {
-		return (String[])getRemovedPathList().toArray(new String[getRemovedPathList().size()]);
+		return getRemovedPathList().toArray(new String[getRemovedPathList().size()]);
 	}
 	
 	public String[] getUserSymbolDefinitions() {
@@ -155,10 +157,10 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		return userInfo.getPreprocessorSymbols();
 	}
 	public String[] getActiveSymbolDefinitions() {
-		return (String[]) getActiveSymbolsList().toArray(new String[getActiveSymbolsList().size()]); 
+		return getActiveSymbolsList().toArray(new String[getActiveSymbolsList().size()]); 
 	}
 	public String[] getRemovedSymbolDefinitions() {
-		return (String[]) getRemovedSymbolsList().toArray(new String[getRemovedSymbolsList().size()]); 
+		return getRemovedSymbolsList().toArray(new String[getRemovedSymbolsList().size()]); 
 	}
 	public String[] getPreprocessorSymbols() {
 		// user specified + active
@@ -170,30 +172,30 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		return rv;
 	}
 	
-	private List getActivePathList() {
+	private List<String> getActivePathList() {
 		if (activePaths == null) {
-			activePaths = new ArrayList();
+			activePaths = new ArrayList<String>();
 		}
 		return activePaths;
 	}
 
-	private List getRemovedPathList() {
+	private List<String> getRemovedPathList() {
 		if (removedPaths == null) {
-			removedPaths = new ArrayList();
+			removedPaths = new ArrayList<String>();
 		}
 		return removedPaths;
 	}
 
-	private List getActiveSymbolsList() {
+	private List<String> getActiveSymbolsList() {
 		if (activeSymbols == null) {
-			activeSymbols = new ArrayList();
+			activeSymbols = new ArrayList<String>();
 		}
 		return activeSymbols;
 	}
 	
-	private List getRemovedSymbolsList() {
+	private List<String> getRemovedSymbolsList() {
 		if (removedSymbols == null) {
-			removedSymbols = new ArrayList();
+			removedSymbols = new ArrayList<String>();
 		}
 		return removedSymbols;
 	}
@@ -205,15 +207,15 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	/**
 	 * @param userPaths
 	 */
-	public void setUserIncludePaths(List userPaths) {
-		userInfo.setIncludePaths((String[]) userPaths.toArray(new String[userPaths.size()]));
+	public void setUserIncludePaths(List<String> userPaths) {
+		userInfo.setIncludePaths(userPaths.toArray(new String[userPaths.size()]));
 	}
 
 	/**
 	 * @param userSymbols
 	 */
-	public void setUserDefinedSymbols(List userSymbols) {
-		userInfo.setPreprocessorSymbols((String[]) userSymbols.toArray(new String[userSymbols.size()]));
+	public void setUserDefinedSymbols(List<String> userSymbols) {
+		userInfo.setPreprocessorSymbols(userSymbols.toArray(new String[userSymbols.size()]));
 	}
 
 }

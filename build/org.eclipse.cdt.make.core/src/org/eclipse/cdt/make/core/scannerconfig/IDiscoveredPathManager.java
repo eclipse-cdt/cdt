@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -43,11 +44,11 @@ public interface IDiscoveredPathManager {
 	}
     
     interface IPerProjectDiscoveredPathInfo extends IDiscoveredPathInfo {
-        void setIncludeMap(LinkedHashMap map);
-        void setSymbolMap(LinkedHashMap map);
+        void setIncludeMap(LinkedHashMap<String, Boolean> map);
+        void setSymbolMap(LinkedHashMap<String, SymbolEntry> map);
 
-        LinkedHashMap getIncludeMap();
-        LinkedHashMap getSymbolMap();
+        LinkedHashMap<String, Boolean> getIncludeMap();
+        LinkedHashMap<String, SymbolEntry> getSymbolMap();
     }
 
     interface IPerFileDiscoveredPathInfo extends IDiscoveredPathInfo {

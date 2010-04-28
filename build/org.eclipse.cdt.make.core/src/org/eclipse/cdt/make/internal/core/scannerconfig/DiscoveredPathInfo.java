@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
@@ -37,27 +37,27 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	public static final String REMOVED = "removed"; //$NON-NLS-1$
 
 	final private IProject project;
-	private LinkedHashMap discoveredPaths;
-	private LinkedHashMap discoveredSymbols;
+	private LinkedHashMap<String, Boolean> discoveredPaths;
+	private LinkedHashMap<String, SymbolEntry> discoveredSymbols;
 
-	private List activePaths;
-	private Map activeSymbols;
+	private List<Path> activePaths;
+	private Map<String, String> activeSymbols;
 
 	public DiscoveredPathInfo(IProject project) {
 		this.project = project;
-		discoveredPaths = new LinkedHashMap();
-		discoveredSymbols = new LinkedHashMap();
+		discoveredPaths = new LinkedHashMap<String, Boolean>();
+		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>();
 	}
 
 	public IProject getProject() {
 		return project;
 	}
 
-	public synchronized Map getSymbols() {
+	public synchronized Map<String, String> getSymbols() {
 		if (activeSymbols == null) {
 			createSymbolsMap();
 		}
-		Map dSymbols = ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols);
+		Map<String, String> dSymbols = ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols);
 		return dSymbols;
 	}
 
@@ -65,15 +65,15 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		if ( activePaths == null) {
 			createPathLists();
 		}
-		return (IPath[])activePaths.toArray(new IPath[activePaths.size()]);
+		return activePaths.toArray(new IPath[activePaths.size()]);
 	}
 
-	public LinkedHashMap getIncludeMap() {
-		return new LinkedHashMap(discoveredPaths);
+	public LinkedHashMap<String, Boolean> getIncludeMap() {
+		return new LinkedHashMap<String, Boolean>(discoveredPaths);
 	}
 
-	public synchronized void setIncludeMap(LinkedHashMap paths) {
-		discoveredPaths = new LinkedHashMap(paths);
+	public synchronized void setIncludeMap(LinkedHashMap<String, Boolean> paths) {
+		discoveredPaths = new LinkedHashMap<String, Boolean>(paths);
 		activePaths = null;
 	}
 	
@@ -81,24 +81,24 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	 * Populates active and removed include path lists
 	 */
 	private void createPathLists() {
-		List aPaths = getActivePathList();
+		List<Path> aPaths = getActivePathList();
 		aPaths.clear();
 		
-		for (Iterator i = discoveredPaths.keySet().iterator(); i.hasNext(); ) {
-			String path = (String) i.next();
-			Boolean removed = (Boolean) discoveredPaths.get(path);
+		Set<String> paths = discoveredPaths.keySet();
+		for (String path : paths) {
+			Boolean removed = discoveredPaths.get(path);
 			if (removed == null || removed.booleanValue() == false) {
 				aPaths.add(new Path(path));
 			}
 		}
 	}
 
-	public LinkedHashMap getSymbolMap() {
-		return new LinkedHashMap(discoveredSymbols);
+	public LinkedHashMap<String, SymbolEntry> getSymbolMap() {
+		return new LinkedHashMap<String, SymbolEntry>(discoveredSymbols);
 	}
 	
-	public synchronized void setSymbolMap(LinkedHashMap symbols) {
-		discoveredSymbols = new LinkedHashMap(symbols);
+	public synchronized void setSymbolMap(LinkedHashMap<String, SymbolEntry> symbols) {
+		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>(symbols);
 		activeSymbols = null;
 	}
 	
@@ -106,22 +106,22 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	 * Populates active symbols sets
 	 */
 	private void createSymbolsMap() {
-		Map aSymbols = getActiveSymbolsMap();
+		Map<String, String> aSymbols = getActiveSymbolsMap();
 		aSymbols.clear();
 		
 		aSymbols.putAll(ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols));
 	}
 
-	private List getActivePathList() {
+	private List<Path> getActivePathList() {
 		if (activePaths == null) {
-			activePaths = new ArrayList();
+			activePaths = new ArrayList<Path>();
 		}
 		return activePaths;
 	}
 
-	private Map getActiveSymbolsMap() {
+	private Map<String, String> getActiveSymbolsMap() {
 		if (activeSymbols == null) {
-			activeSymbols = new HashMap();
+			activeSymbols = new HashMap<String, String>();
 		}
 		return activeSymbols;
 	}
@@ -132,32 +132,30 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	public void serialize(Element collectorElem) {
 		Document doc = collectorElem.getOwnerDocument(); 
 		
-		Map includes = getIncludeMap();
-		Iterator iter = includes.keySet().iterator();
-		while (iter.hasNext()) {
+		Map<String, Boolean> includes = getIncludeMap();
+		Set<String> includesSet = includes.keySet();
+		for (String include : includesSet) {
 			Element pathElement = doc.createElement(INCLUDE_PATH);
-			String include = (String)iter.next();
 			pathElement.setAttribute(PATH, include);
-			Boolean removed = (Boolean)includes.get(include);
+			Boolean removed = includes.get(include);
 			if (removed != null && removed.booleanValue() == true) {
 				pathElement.setAttribute(REMOVED, "true"); //$NON-NLS-1$
 			}
 			collectorElem.appendChild(pathElement);
 		}
 		// Now do the same for the symbols
-		Map symbols = getSymbolMap();
-		iter = symbols.keySet().iterator();
-		while (iter.hasNext()) {
-			String symbol = (String)iter.next();
-			SymbolEntry se = (SymbolEntry)symbols.get(symbol);
-			for (Iterator i = se.getActiveRaw().iterator(); i.hasNext();) {
-				String value = (String)i.next();
+		Map<String, SymbolEntry> symbols = getSymbolMap();
+		Set<String> symbolsSet = includes.keySet();
+		for (String symbol : symbolsSet) {
+			SymbolEntry se = symbols.get(symbol);
+			List<String> activeValues = se.getActiveRaw();
+			for (String value : activeValues) {
 				Element symbolElement = doc.createElement(DEFINED_SYMBOL);
 				symbolElement.setAttribute(SYMBOL, value);
 				collectorElem.appendChild(symbolElement);
 			}
-			for (Iterator i = se.getRemovedRaw().iterator(); i.hasNext();) {
-				String value = (String)i.next();
+			List<String> removedValues = se.getRemovedRaw();
+			for (String value : removedValues) {
 				Element symbolElement = doc.createElement(DEFINED_SYMBOL);
 				symbolElement.setAttribute(SYMBOL, value);
 				symbolElement.setAttribute(REMOVED, "true"); //$NON-NLS-1$
@@ -170,8 +168,8 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#deserialize(org.w3c.dom.Element)
 	 */
 	public void deserialize(Element collectorElem) {
-		LinkedHashMap includes = getIncludeMap();
-		LinkedHashMap symbols = getSymbolMap();
+		LinkedHashMap<String, Boolean> includes = getIncludeMap();
+		LinkedHashMap<String, SymbolEntry> symbols = getSymbolMap();
 
 		Node child = collectorElem.getFirstChild();
 		while (child != null) {

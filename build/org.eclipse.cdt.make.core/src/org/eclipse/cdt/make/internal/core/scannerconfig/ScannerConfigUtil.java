@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
@@ -34,10 +34,9 @@ public final class ScannerConfigUtil {
 	 * @param symbols
 	 * @return boolean
 	 */
-	public static boolean scAddSymbolsList2SymbolEntryMap(Map sumSymbols, List symbols, boolean active) {
+	public static boolean scAddSymbolsList2SymbolEntryMap(Map<String, SymbolEntry> sumSymbols, List<String> symbols, boolean active) {
 		boolean rc = false;
-		for (Iterator i = symbols.iterator(); i.hasNext(); ) {
-			String symbol = (String) i.next();
+		for (String symbol : symbols) {
 			String key;
 			String value = null;
 			int index = symbol.indexOf("="); //$NON-NLS-1$
@@ -47,7 +46,7 @@ public final class ScannerConfigUtil {
 			} else {
 				key = symbol.trim();
 			}
-			SymbolEntry sEntry = (SymbolEntry) sumSymbols.get(key);
+			SymbolEntry sEntry = sumSymbols.get(key);
 			if (sEntry == null) {
 				// make only the first one to be active
 				sEntry = new SymbolEntry(key, value, true);
@@ -67,11 +66,11 @@ public final class ScannerConfigUtil {
 	 * @param active - false = removed
 	 * @return
 	 */
-	public static List scSymbolsSymbolEntryMap2List(Map sumSymbols, boolean active) {
-		Set symbols = sumSymbols.entrySet();
-		List rv = new ArrayList(symbols.size());
-		for (Iterator i = symbols.iterator(); i.hasNext(); ) {
-			SymbolEntry sEntry = (SymbolEntry) ((Map.Entry) i.next()).getValue();
+	public static List<String> scSymbolsSymbolEntryMap2List(Map<String, SymbolEntry> sumSymbols, boolean active) {
+		Set<Entry<String, SymbolEntry>> symbols = sumSymbols.entrySet();
+		List<String> rv = new ArrayList<String>(symbols.size());
+		for (Entry<String, SymbolEntry> symbol : symbols) {
+			SymbolEntry sEntry = symbol.getValue();
 			if (active) {
 				rv.addAll(sEntry.getActiveRaw());
 			}
@@ -88,13 +87,13 @@ public final class ScannerConfigUtil {
 	 * @param sumSymbols (in) - discovered symbols in SymbolEntryMap
 	 * @return - active symbols as a plain Map
 	 */
-	public static Map scSymbolEntryMap2Map(Map sumSymbols) {
-		Map rv = new HashMap();
-		for (Iterator i = sumSymbols.keySet().iterator(); i.hasNext(); ) {
-			String key = (String) i.next();
-			SymbolEntry values = (SymbolEntry) sumSymbols.get(key);
-			for (Iterator j = values.getValuesOnly(true).iterator(); j.hasNext(); ) {
-				String value = (String) j.next();
+	public static Map<String, String> scSymbolEntryMap2Map(Map<String, SymbolEntry> sumSymbols) {
+		Map<String, String> rv = new HashMap<String, String>();
+		Set<String> keys = sumSymbols.keySet();
+		for (String key : keys) {
+			SymbolEntry entries = sumSymbols.get(key);
+			List<String> values = entries.getValuesOnly(true);
+			for (String value : values) {
 				rv.put(key, value); // multiple active values will be condensed to one !!!
 			}
 		}
@@ -108,7 +107,7 @@ public final class ScannerConfigUtil {
 	 * @param symbol
 	 * @param active
 	 */
-	public static boolean scAddSymbolString2SymbolEntryMap(Map symbols, String symbol, boolean active) {
+	public static boolean scAddSymbolString2SymbolEntryMap(Map<String, SymbolEntry> symbols, String symbol, boolean active) {
 		boolean rc = false;
 		String key;
 		String value = null;
@@ -119,7 +118,7 @@ public final class ScannerConfigUtil {
 		} else {
 			key = symbol.trim();
 		}
-		SymbolEntry sEntry = (SymbolEntry) symbols.get(key);
+		SymbolEntry sEntry = symbols.get(key);
 		if (sEntry == null) {
 			// make only the first one to be active
 			sEntry = new SymbolEntry(key, value, active);
@@ -137,25 +136,23 @@ public final class ScannerConfigUtil {
 	 * @param addend (in)
 	 * @return
 	 */
-	public static boolean scAddSymbolEntryMap2SymbolEntryMap(Map result, Map addend) {
+	public static boolean scAddSymbolEntryMap2SymbolEntryMap(Map<String, SymbolEntry> result, Map<String, SymbolEntry> addend) {
 		boolean rc = false;
-		for (Iterator i = addend.keySet().iterator(); i.hasNext(); ) {
-			String key = (String) i.next();
+		Set<String> keySet = addend.keySet();
+		for (String key : keySet) {
 			if (result.keySet().contains(key)) {
-				SymbolEntry rSE = (SymbolEntry) result.get(key);
-				SymbolEntry aSE = (SymbolEntry) addend.get(key);
-				List activeValues = rSE.getActiveRaw();
-				for (Iterator j = aSE.getActiveRaw().iterator(); j.hasNext(); ) {
-					String aValue = (String) j.next();
+				SymbolEntry rSE = result.get(key);
+				SymbolEntry aSE = addend.get(key);
+				List<String> activeValues = rSE.getActiveRaw();
+				for (String aValue : aSE.getActiveRaw()) {
 					if (!activeValues.contains(aValue)) {
 						// result does not contain addend's value; add it
 						rSE.add(getSymbolValue(aValue), true);
 						rc |= true;
 					}
 				}
-				List removedValues = rSE.getRemovedRaw();
-				for (Iterator j = aSE.getRemovedRaw().iterator(); j.hasNext(); ) {
-					String aValue = (String) j.next();
+				List<String> removedValues = rSE.getRemovedRaw();
+				for (String aValue : aSE.getRemovedRaw()) {
 					if (!removedValues.contains(aValue)) {
 						// result does not contain addend's value; add it
 						rSE.add(getSymbolValue(aValue), false);
@@ -166,7 +163,7 @@ public final class ScannerConfigUtil {
 			else {
 				// result does not contain the symbol; add it
 				// shallow copy
-				SymbolEntry aSymbolEntry = (SymbolEntry) addend.get(key);
+				SymbolEntry aSymbolEntry = addend.get(key);
 				result.put(key, aSymbolEntry);
 				rc |= true;
 			}
@@ -209,11 +206,11 @@ public final class ScannerConfigUtil {
 	 * @param symbol
 	 * @param symbolEntryMap map of [symbol's key, symbolEntry]
 	 */
-	public static void removeSymbolEntryValue(String symbol, Map symbolEntryMap) {
+	public static void removeSymbolEntryValue(String symbol, Map<String, SymbolEntry> symbolEntryMap) {
 		String key = getSymbolKey(symbol);
 		String value = getSymbolValue(symbol);
 		// find it in the discoveredSymbols Map of SymbolEntries
-		SymbolEntry se = (SymbolEntry) symbolEntryMap.get(key);
+		SymbolEntry se = symbolEntryMap.get(key);
 		if (se != null) {
 			se.remove(value);
 			if (se.numberOfValues() == 0) {
@@ -231,22 +228,21 @@ public final class ScannerConfigUtil {
 	 * @param index2
 	 * @return new map of include paths
 	 */
-	public static LinkedHashMap swapIncludePaths(LinkedHashMap sumPaths, int index1, int index2) {
+	public static LinkedHashMap<String, SymbolEntry> swapIncludePaths(LinkedHashMap<String, SymbolEntry> sumPaths, int index1, int index2) {
 		int size = sumPaths.size();
 		if (index1 == index2 ||
 			!(index1 >= 0 && index1 < size && 
 			  index2 >= 0 && index2 < size)) {
 			return sumPaths;
 		}
-		ArrayList pathKeyList = new ArrayList(sumPaths.keySet());
-		String temp1 = (String) pathKeyList.get(index1);
-		String temp2 = (String) pathKeyList.get(index2);
+		ArrayList<String> pathKeyList = new ArrayList<String>(sumPaths.keySet());
+		String temp1 = pathKeyList.get(index1);
+		String temp2 = pathKeyList.get(index2);
 		pathKeyList.set(index1, temp2);
 		pathKeyList.set(index2, temp1);
 		
-		LinkedHashMap newSumPaths = new LinkedHashMap(sumPaths.size());
-		for (Iterator i = pathKeyList.iterator(); i.hasNext(); ) {
-			String key = (String) i.next();
+		LinkedHashMap<String, SymbolEntry> newSumPaths = new LinkedHashMap<String, SymbolEntry>(sumPaths.size());
+		for (String key : pathKeyList) {
 			newSumPaths.put(key, sumPaths.get(key));
 		}
 		return newSumPaths;
@@ -259,18 +255,18 @@ public final class ScannerConfigUtil {
 	 * @return String[] 
 	 */
 	public static String[] tokenizeStringWithQuotes(String line, String quoteStyle) {
-		ArrayList allTokens = new ArrayList();
+		ArrayList<String> allTokens = new ArrayList<String>();
 		String[] tokens = line.split(quoteStyle);
 		for (int i = 0; i < tokens.length; ++i) {
 			if (i % 2 == 0) { // even tokens need further tokenization
 				String[] sTokens = tokens[i].split("\\s+"); //$NON-NLS-1$
-				for (int j = 0; j < sTokens.length; allTokens.add(sTokens[j++]));
+				for (int j = 0; j < sTokens.length; allTokens.add(sTokens[j++])) {}
 			}
 			else {
 				allTokens.add(tokens[i]);
 			}
 		}
-		return (String[]) allTokens.toArray(new String[allTokens.size()]);
+		return allTokens.toArray(new String[allTokens.size()]);
 	}
 
 	/**

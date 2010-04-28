@@ -57,7 +57,7 @@ public class MIInferior extends Process {
 	int inferiorPID;
 	
 	
-	/** See {@link #getIsRemoteInferior()} */
+	/** See {@link #isRemoteInferior()} */
 	private boolean fIsRemoteInferior;
 
 	public MIInferior(MISession mi, IMITTY p) {
@@ -394,11 +394,24 @@ public class MIInferior extends Process {
 	}
 
 	/**
-	 * Is the inferior process being debugged remotely through gdbserver?
+	 * Is the inferior process being debugged remotely through gdbserver? This
+	 * is mutually exclusive with {@link #isAttachedLocalInferior()}.
 	 * 
 	 * @since 7.0
 	 */
-	public boolean getIsRemoteInferior() {
+	public boolean isRemoteInferior() {
 		return fIsRemoteInferior; 
+	}
+
+	/**
+	 * Is this inferior process being debugged through a local attach session?
+	 * I.e., is it a process running on "this" machine that was not launched by
+	 * gdb but which gdb attached to? This is mutually exclusive with
+	 * {@link #isRemoteInferior()
+	 *
+	 * @since 7.0	 
+	 */
+	public boolean isAttachedLocalInferior() {
+		return session.isAttachSession();
 	}
 }

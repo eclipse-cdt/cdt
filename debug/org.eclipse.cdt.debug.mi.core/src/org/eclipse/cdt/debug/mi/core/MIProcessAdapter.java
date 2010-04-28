@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,28 +123,18 @@ public class MIProcessAdapter implements MIProcess {
 		if (fGDBProcess instanceof Spawner) {
 			if (inferior.isRunning()) {
 				Spawner gdbSpawner = (Spawner) fGDBProcess;
-				
-				// Cygwin gdb 6.8 is capricious when it comes to interrupting the
-				// target. The same logic here will work with MinGW, though. And on
-				// linux it's irrelevant since interruptCTRLC()==interrupt(). So,
-				// one odd size fits all.
-				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c54
-				if (inferior.getIsRemoteInferior()) {
-					gdbSpawner.interrupt();
+				if (inferior.isAttachedLocalInferior()) {
+					// not all gdb versions forward the interrupt to an attached
+					// inferior, so interrupt the inferior directly
+					interruptInferior(inferior);
 				}
 				else {
-					gdbSpawner.interruptCTRLC();
+					// standard case (gdb launches process) and remote case (gdbserver)
+					gdbSpawner.interrupt();
 				}
-				
 				waitForInterrupt(inferior);
 			}
-			// If we are still running try to drop the sig to the PID
-			if (inferior.isRunning() && inferior.getInferiorPID() > 0) {
-				// lets try something else.
-				interruptInferior(inferior);
-			}
 		}
-
 	}
 
 	protected boolean waitForInterrupt(MIInferior inferior) {
@@ -170,7 +160,6 @@ public class MIProcessAdapter implements MIProcess {
 		if (fGDBProcess instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner) fGDBProcess;
 			gdbSpawner.raise(inferior.getInferiorPID(), gdbSpawner.INT);
-			waitForInterrupt(inferior);
 		}
 	}
 	

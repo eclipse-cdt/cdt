@@ -27,14 +27,34 @@ public class Spawner extends Process {
 
 	public int NOOP = 0;
 	public int HUP = 1;
-	public int INT = 2;
 	public int KILL = 9;
 	public int TERM = 15;
 
 	/**
-	 * A fabricated signal number for use on Windows only. Tells the starter program to send a CTRL-C to the
-	 * inferior regardless of whether the inferior is a Cygiwn process or not. With {@link #INT}, the starter
-	 * does a 'kill -SIGINT' if the inferior is a Cygwin process.
+	 * On Windows, what this does is far from easy to explain. 
+	 * Some of the logic is in the JNI code, some in the spawner.exe code.
+	 * 
+	 * <ul>
+	 * <li>If the process this is being raised against was launched by us (the Spawner)
+	 *    <ul>
+	 *    <li>If the process is a cygwin program (has the cygwin1.dll loaded), then issue a 'kill -SIGINT'. If
+	 *    the 'kill' utility isn't available, send the process a CTRL-C
+	 *    <li>If the process is <i>not</i> a cygwin program, send the process a CTRL-C
+	 *    </ul>
+	 * <li>If the process this is being raised against was <i>not</i> launched by us, search for a console
+	 * window whose PID matches the one we're trying to raise a signal on. If we find one, then send keyboard
+	 * events to simulate the user hitting CTRL-C at that console. We do all this because we can't programatically
+	 * send a CTRL-C to a process that doesn't share our console.
+	 * </ul>
+	 * 
+	 * On non-Windows, raising this just raises a POSIX SIGINT  
+	 * 
+	 */
+	public int INT = 2;
+
+	/**
+	 * A fabricated signal number for use on Windows only. Tells the starter program to send a CTRL-C
+	 * regardless of whether the process is a Cygwin one or not.
 	 * 
 	 * @since 5.2
 	 */
@@ -212,20 +232,17 @@ public class Spawner extends Process {
 	}
 
 	/**
-	 * Our extensions.
-	 **/
+	 * On Windows, interrupt the spawned program by using Cygwin's utility 'kill -SIGINT' if it's a Cgywin
+	 * program, otherwise send it a CTRL-C. If Cygwin's 'kill' command is not available, send a CTRL-C. On
+	 * linux, interrupt it by raising a SIGINT.
+	 */
 	public int interrupt() {
 		return raise(pid, INT);
 	}
 
 	/**
-	 * On Windows, this differs from interrupt() in that it will always send a CTRL-C event to the inferior,
-	 * whereas {@link #interrupt()} will do a Cygwin 'kill -SIGINT' if the inferior is a Cygwin process
-	 * (otherwise it sends a CTRL-C). In some cases, CDT needs to send CTRL-C regardless of whether the
-	 * inferior is a cygwin process or not, e.g., when interrupting gdb on Windows (see bug 304096).
-	 * 
-	 * <p>
-	 * On non-Windows hosts, this simply calls {@link #interrupt()}
+	 * On Windows, interrupt the spawned program by send it a CTRL-C (even if it's a Cygwin program). On
+	 * linux, interrupt it by raising a SIGINT. 
 	 * 
 	 * @since 5.2
 	 */

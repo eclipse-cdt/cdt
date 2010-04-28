@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -881,7 +881,7 @@ public class ScannerConfigInfoFactory2 {
 				ScannerConfigProfile configuredProfile = ScannerConfigProfileManager.getInstance().
 						getSCProfileConfiguration(selectedProfile);
 				// get the one and only provider id
-				String providerId = (String) configuredProfile.getSIProviderIds().get(0);
+				String providerId = configuredProfile.getSIProviderIds().get(0);
                 po.providerOptionsMap = new LinkedHashMap<String, ProfileOptions.ProviderOptions>(1);
 				po.providerOptionsMap.put(providerId, ppo);
                 

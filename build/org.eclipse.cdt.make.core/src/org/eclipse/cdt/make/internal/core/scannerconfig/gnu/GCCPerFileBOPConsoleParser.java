@@ -94,7 +94,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             return false;
         }
         // sanity check
-        if (filePath.indexOf(FILE_EXTENSIONS[extensionsIndex]) == -1) {
+        if (filePath==null || filePath.indexOf(FILE_EXTENSIONS[extensionsIndex]) == -1) {
             TraceUtil.outputTrace("Error identifying file name :2", tokens, TraceUtil.EOL); //$NON-NLS-1$
             return false;
         }

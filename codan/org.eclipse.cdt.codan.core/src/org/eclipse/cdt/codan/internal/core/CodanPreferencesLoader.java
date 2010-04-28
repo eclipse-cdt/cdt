@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core;
 
+import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * @author Alena
@@ -54,7 +58,8 @@ public class CodanPreferencesLoader {
 	 */
 	public void setProperty(String id, String s) {
 		IProblem prob = baseModel.findProblem(id);
-		if (!(prob instanceof CodanProblem)) return;
+		if (!(prob instanceof CodanProblem))
+			return;
 		String sevs = s;
 		boolean enabled = true;
 		if (sevs.startsWith("-")) { //$NON-NLS-1$
@@ -94,7 +99,8 @@ public class CodanPreferencesLoader {
 	 */
 	public String getProperty(String id) {
 		IProblem prob = baseModel.findProblem(id);
-		if (!(prob instanceof CodanProblem)) return null;
+		if (!(prob instanceof CodanProblem))
+			return null;
 		String enabled = prob.isEnabled() ? "" : "-"; //$NON-NLS-1$ //$NON-NLS-2$
 		String severity = prob.getSeverity().toString();
 		String res = enabled + severity;
@@ -104,7 +110,7 @@ public class CodanPreferencesLoader {
 	/**
 	 * @param storePreferences
 	 */
-	public void load(IEclipsePreferences storePreferences) {
+	public void load(Preferences storePreferences) {
 		IProblem[] probs = getProblems();
 		for (int i = 0; i < probs.length; i++) {
 			String id = probs[i].getId();
@@ -113,5 +119,23 @@ public class CodanPreferencesLoader {
 				setProperty(id, s);
 			}
 		}
+	}
+
+	public static Preferences getProjectNode(IProject project) {
+		if (!project.exists())
+			return null;
+		Preferences prefNode = new ProjectScope(project)
+				.getNode(CodanCorePlugin.PLUGIN_ID);
+		if (prefNode == null)
+			return null;
+		return prefNode;
+	}
+
+	public static Preferences getWorkspaceNode() {
+		Preferences prefNode = new InstanceScope()
+				.getNode(CodanCorePlugin.PLUGIN_ID);
+		if (prefNode == null)
+			return null;
+		return prefNode;
 	}
 }

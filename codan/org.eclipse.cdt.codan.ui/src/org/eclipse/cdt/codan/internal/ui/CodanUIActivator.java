@@ -1,9 +1,16 @@
 package org.eclipse.cdt.codan.internal.ui;
 
+import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -14,6 +21,7 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui";
 	// The shared instance
 	private static CodanUIActivator plugin;
+	private IPreferenceStore preferenceCoreStore;
 
 	/**
 	 * The constructor
@@ -94,5 +102,23 @@ public class CodanUIActivator extends AbstractUIPlugin {
 	 */
 	public static void log(String message) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, 1, message, null));
+	}
+
+	/**
+	 * @return
+	 */
+	public IPreferenceStore getCorePreferenceStore() {
+		if (preferenceCoreStore == null) {
+			preferenceCoreStore = new ScopedPreferenceStore(
+					new InstanceScope(), CodanCorePlugin.PLUGIN_ID);
+		}
+		return preferenceCoreStore;
+	}
+
+	public IPreferenceStore getPreferenceStore(IProject project) {
+		ProjectScope ps = new ProjectScope(project);
+		ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps, PLUGIN_ID);
+		scoped.setSearchContexts(new IScopeContext[] { ps, new InstanceScope() });
+		return scoped;
 	}
 }

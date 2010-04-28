@@ -16,7 +16,7 @@
    </extension>
    <extension
          id="codanNature"
-         name="CDT Code Analysis Nature"
+         name="Code Analysis Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run

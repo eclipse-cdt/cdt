@@ -1,17 +1,14 @@
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
-import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.actions.ToggleNatureAction;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class BuildPropertyPage extends FieldEditorPreferencePage implements
 		IWorkbenchPropertyPage {
@@ -21,8 +18,7 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 * 
 	 */
 	public BuildPropertyPage() {
-		setPreferenceStore(org.eclipse.cdt.codan.internal.ui.CodanUIActivator.getDefault()
-				.getPreferenceStore());
+		setPreferenceStore(CodanUIActivator.getDefault().getPreferenceStore());
 	}
 
 	/*
@@ -35,7 +31,9 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD,
-				"&Run with Build", getFieldEditorParent()));
+				"&Run with build", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR,
+				"Run as you &type (selected checkers)", getFieldEditorParent()));
 	}
 
 	@Override
@@ -70,7 +68,9 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	public IAdaptable getElement() {
-		return element;
+		if (element.getAdapter(IProject.class) != null)
+			return (IProject) element.getAdapter(IProject.class);
+		return null;
 	}
 
 	/*
@@ -82,13 +82,11 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	 */
 	public void setElement(IAdaptable element) {
 		this.element = element;
-		ProjectScope ps = new ProjectScope((IProject) getElement());
-		ScopedPreferenceStore scoped = new ScopedPreferenceStore(ps,
-				CodanCorePlugin.PLUGIN_ID);
-		scoped
-				.setSearchContexts(new IScopeContext[] { ps,
-						new InstanceScope() });
-		setPreferenceStore(scoped);
+		if (getElement() != null) {
+			IPreferenceStore scoped = CodanUIActivator.getDefault()
+					.getPreferenceStore(((IProject) getElement()));
+			setPreferenceStore(scoped);
+		}
 	}
 
 	protected String getPageId() {

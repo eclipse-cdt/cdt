@@ -30,13 +30,12 @@ import org.eclipse.cdt.codan.internal.core.model.CodanProblemCategory;
 import org.eclipse.cdt.codan.internal.core.model.ProblemProfile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.service.prefs.Preferences;
 
 public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String NAME_ATTR = "name"; //$NON-NLS-1$
@@ -324,7 +323,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 				wp = (IProblemProfile) getDefaultProfile().clone();
 				// load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
-				loader.load(CodanCorePlugin.getDefault().getStorePreferences());
+				loader.load(loader.getWorkspaceNode());
 			} catch (CloneNotSupportedException e) {
 				wp = getDefaultProfile();
 			}
@@ -358,13 +357,12 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 					// load default values
 					CodanPreferencesLoader loader = new CodanPreferencesLoader(
 							prof);
-					IEclipsePreferences node = new ProjectScope(
-							(IProject) element)
-							.getNode(CodanCorePlugin.PLUGIN_ID);
-					boolean useWorkspace = node.getBoolean(
+					Preferences projectNode = loader
+							.getProjectNode((IProject) element);
+					boolean useWorkspace = projectNode.getBoolean(
 							PreferenceConstants.P_USE_PARENT, false);
 					if (!useWorkspace) {
-						loader.load(node);
+						loader.load(projectNode);
 					}
 					profiles.put(element, prof);
 				} catch (CloneNotSupportedException e) {

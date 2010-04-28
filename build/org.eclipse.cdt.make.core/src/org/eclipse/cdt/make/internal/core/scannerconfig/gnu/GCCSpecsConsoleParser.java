@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +125,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 			}
 		}
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
-				"Include paths", includes, Collections.emptyList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
+				"Include paths", includes, new ArrayList<String>(0), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
 	}
 
 }

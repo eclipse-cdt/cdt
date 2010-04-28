@@ -10,9 +10,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text;bundle-version="3.5.0",
  org.eclipse.ui.editors;bundle-version="3.5.0",
  org.eclipse.core.resources;bundle-version="3.5.0",
- org.eclipse.cdt.codan.checkers;bundle-version="1.0.0",
+ org.eclipse.cdt.codan.checkers,
  org.eclipse.cdt.ui,
- org.eclipse.cdt.core
+ org.eclipse.cdt.core,
+ org.eclipse.cdt.codan.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: Eclipse CDT

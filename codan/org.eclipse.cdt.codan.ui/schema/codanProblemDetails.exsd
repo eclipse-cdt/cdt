@@ -3,11 +3,12 @@
 <schema targetNamespace="org.eclipse.cdt.codan.checkers.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.cdt.codan.checkers.ui" id="codanMarkerResolution" name="Codan Marker Resolution"/>
+         <meta.schema plugin="org.eclipse.cdt.codan.checkers.ui" id="codanProblemDetails" name="Codan Problem Details"/>
       </appinfo>
       <documentation>
-         Extension point to plugin quick fix for codan markers
-
+         This extension point provides a mechanism to add extra details for a problem, which would
+be displayed in Problem Details view. It can include extra locations, associated problems,
+help link or extenal link.
       </documentation>
    </annotation>
 
@@ -18,8 +19,8 @@
          </appinfo>
       </annotation>
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="resolution"/>
+         <sequence>
+            <element ref="problemDetails" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -48,38 +49,32 @@
       </complexType>
    </element>
 
-   <element name="resolution">
+   <element name="problemDetails">
       <annotation>
          <documentation>
-            Contribute codan marker resolution
+            root element for extension.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="class" type="string" use="required">
+         <attribute name="problemId" type="string">
             <annotation>
                <documentation>
-                  Class that implement IMarkerResolution that provides a fix for the given problem
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.IMarkerResolution"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="problemId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Problem id of the problem for which quick fix is defined
+                  Problem id for which extra details available.
+If ommitted provider would be called for all problem kinds.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/checker/problem/@id"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="messagePattern" type="string">
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  If problem id is not enought to identity the fix messagePattern can be used to apply fix for given message
+                  
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider:"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -90,7 +85,7 @@
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         since 1.0
+         1.0
       </documentation>
    </annotation>
 
@@ -99,13 +94,7 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         &lt;extension
-          point=&quot;org.eclipse.cdt.codan.checkers.ui.codanMarkerResolution&quot;&gt;
-       &lt;resolution
-             class=&quot;org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFix&quot;
-             problemId=&quot;org.eclipse.cdt.codan.internal.checkers.CatchByReference&quot;&gt;
-       &lt;/resolution&gt;
-    &lt;/extension&gt;
+         [Enter extension point usage example here.]
       </documentation>
    </annotation>
 
@@ -114,8 +103,7 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         Programmatically resolution can be added using CatchByReferenceQuickFix.addResolution method.
-It is not API yet.
+         [Enter API information here.]
       </documentation>
    </annotation>
 
@@ -124,7 +112,7 @@ It is not API yet.
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         see CatchByReferenceQuickFix
+         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 

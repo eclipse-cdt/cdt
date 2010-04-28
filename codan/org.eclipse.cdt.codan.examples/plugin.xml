@@ -19,4 +19,11 @@
       </problem>
       </checker>
    </extension>
+       <extension
+          point="org.eclipse.cdt.codan.ui.codanProblemDetails">
+       <problemDetails
+             class="org.eclipse.cdt.codan.examples.uicontrib.FlexlintHelpLink"
+             >
+       </problemDetails>
+    </extension>
 </plugin>

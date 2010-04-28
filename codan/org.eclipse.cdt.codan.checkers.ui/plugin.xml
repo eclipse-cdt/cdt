@@ -2,6 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="codanMarkerResolution" name="Codan Marker Resolution" schema="schema/codanMarkerResolution.exsd"/>
+
    <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
@@ -20,4 +21,5 @@
              problemId="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem">
        </resolution>
     </extension>
+
 </plugin>

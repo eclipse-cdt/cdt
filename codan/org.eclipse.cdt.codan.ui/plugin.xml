@@ -73,13 +73,13 @@
          point="org.eclipse.ui.views">
       <view
          category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.codan.ui.views.ProblemDetails"
-            icon="icons/sample.gif"
-            id="org.eclipse.cdt.codan.ui.views.ProblemDetails"
+            class="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"
+            icon="icons/problemDetails.gif"
+            id="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"
             name="Problem Details">
       </view>
    </extension>
-
+   <extension-point id="codanProblemDetails" name="Codan Problem Details" schema="schema/codanProblemDetails.exsd"/>
    <!--
    <extension
          point="org.eclipse.ui.bindings">

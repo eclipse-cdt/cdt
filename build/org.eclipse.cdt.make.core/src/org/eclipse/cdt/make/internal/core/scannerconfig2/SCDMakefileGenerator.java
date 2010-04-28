@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -41,7 +40,8 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider#initialize()
      */
-    protected boolean initialize() {
+    @Override
+	protected boolean initialize() {
     	String args = buildInfo.getProviderRunArguments(providerId);
     	if (null == args)
     		args = " -E -P -v -dD "; //$NON-NLS-1$
@@ -69,7 +69,7 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
         boolean rc = false;
         if (collector instanceof IScannerInfoCollector2) {
             IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
-            List commands = collector2.getCollectedScannerInfo(
+            List<CCommandDSC> commands = collector2.getCollectedScannerInfo(
                     resource.getProject(), ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND);
             if (commands != null && commands.size() > 0) {
         
@@ -79,16 +79,14 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                 buffer.append(".PHONY: all"); //$NON-NLS-1$
                 buffer.append(DENDL);
                 buffer.append("COMMANDS := "); //$NON-NLS-1$
-                for (Iterator i = commands.iterator(); i.hasNext(); ) {
-                    CCommandDSC cmd = (CCommandDSC) i.next();
+                for (CCommandDSC cmd : commands) {
                     buffer.append("\t\\"+ENDL+"\t    scd_cmd_"); //$NON-NLS-1$ //$NON-NLS-2$
                     buffer.append(cmd.getCommandId());
                 }
                 buffer.append(DENDL);
                 buffer.append("all: $(COMMANDS)"); //$NON-NLS-1$
                 buffer.append(DENDL);
-                for (Iterator i = commands.iterator(); i.hasNext(); ) {
-                    CCommandDSC cmd = (CCommandDSC) i.next();
+                for (CCommandDSC cmd : commands) {
                     buffer.append("scd_cmd_"); //$NON-NLS-1$
                     buffer.append(cmd.getCommandId());
                     buffer.append(':');

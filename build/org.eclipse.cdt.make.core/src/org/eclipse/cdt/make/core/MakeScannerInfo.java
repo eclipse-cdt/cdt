@@ -27,11 +27,12 @@ import org.eclipse.core.runtime.CoreException;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class MakeScannerInfo implements IScannerInfo {
 
 	private IProject project;
-	private ArrayList symbolList;
-	private ArrayList pathList;
+	private ArrayList<String> symbolList;
+	private ArrayList<String> pathList;
 	boolean hasChanged = false;
 
 	public MakeScannerInfo(IProject project) {
@@ -72,7 +73,7 @@ public class MakeScannerInfo implements IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public synchronized String[] getIncludePaths() {
-		return (String[]) getPathList().toArray(new String[getPathList().size()]);
+		return getPathList().toArray(new String[getPathList().size()]);
 	}
 
 	/*
@@ -80,9 +81,9 @@ public class MakeScannerInfo implements IScannerInfo {
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
-	public synchronized Map getDefinedSymbols() {
+	public synchronized Map<String, String> getDefinedSymbols() {
 		// Return the defined symbols for the default configuration
-		HashMap symbols = new HashMap();
+		HashMap<String, String> symbols = new HashMap<String, String>();
 		String[] symbolList = getPreprocessorSymbols();
 		for (int i = 0; i < symbolList.length; ++i) {
 			String symbol = symbolList[i];
@@ -103,20 +104,20 @@ public class MakeScannerInfo implements IScannerInfo {
 		return symbols;
 	}
 
-	protected List getPathList() {
+	protected List<String> getPathList() {
 		if (pathList == null) {
-			pathList = new ArrayList();
+			pathList = new ArrayList<String>();
 		}
 		return pathList;
 	}
 
 	public synchronized String[] getPreprocessorSymbols() {
-		return (String[]) getSymbolList().toArray(new String[getSymbolList().size()]);
+		return getSymbolList().toArray(new String[getSymbolList().size()]);
 	}
 
-	protected List getSymbolList() {
+	protected List<String> getSymbolList() {
 		if (symbolList == null) {
-			symbolList = new ArrayList();
+			symbolList = new ArrayList<String>();
 		}
 		return symbolList;
 	}

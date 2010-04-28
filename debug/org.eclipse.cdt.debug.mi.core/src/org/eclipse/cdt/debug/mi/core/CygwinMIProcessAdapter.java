@@ -57,7 +57,7 @@ public class CygwinMIProcessAdapter extends MIProcessAdapter {
 						// simulated Cygwin/POSIX SIGINT; a CTRL-C won't do.
 						gdbSpawner.interrupt();		
 					}
-					else if (inferior.isAttachedLocalInferior()) {
+					else if (inferior.isAttachedInferior()) {
 						// Cygwin gdb 6.8 has no support for forwarding an
 						// interrupt request to the local process it has
 						// attached to. That support has since been added and

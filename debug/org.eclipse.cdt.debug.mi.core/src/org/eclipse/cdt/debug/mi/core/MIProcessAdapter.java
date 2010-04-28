@@ -123,9 +123,9 @@ public class MIProcessAdapter implements MIProcess {
 		if (fGDBProcess instanceof Spawner) {
 			if (inferior.isRunning()) {
 				Spawner gdbSpawner = (Spawner) fGDBProcess;
-				if (inferior.isAttachedLocalInferior()) {
+				if (inferior.isAttachedInferior() && !inferior.isRemoteInferior()) {
 					// not all gdb versions forward the interrupt to an attached
-					// inferior, so interrupt the inferior directly
+					// local inferior, so interrupt the inferior directly
 					interruptInferior(inferior);
 				}
 				else {

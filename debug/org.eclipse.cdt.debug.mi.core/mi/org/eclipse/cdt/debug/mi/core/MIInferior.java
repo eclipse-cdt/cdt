@@ -385,7 +385,7 @@ public class MIInferior extends Process {
 
 	/**
 	 * Called early on in the debug session to mark the inferior process as being
-	 * under the control of a gdbserver.
+	 * under the control of a gdbserver. 
 	 * 
 	 * @since 7.0
 	 */
@@ -394,8 +394,7 @@ public class MIInferior extends Process {
 	}
 
 	/**
-	 * Is the inferior process being debugged remotely through gdbserver? This
-	 * is mutually exclusive with {@link #isAttachedLocalInferior()}.
+	 * Is the inferior process being debugged remotely through gdbserver?
 	 * 
 	 * @since 7.0
 	 */
@@ -404,14 +403,12 @@ public class MIInferior extends Process {
 	}
 
 	/**
-	 * Is this inferior process being debugged through a local attach session?
-	 * I.e., is it a process running on "this" machine that was not launched by
-	 * gdb but which gdb attached to? This is mutually exclusive with
-	 * {@link #isRemoteInferior()
-	 *
-	 * @since 7.0	 
+	 * Was the inferior process attached to by gdb (as opposed to launched by
+	 * gdb).
+	 * 
+	 * @since 7.0
 	 */
-	public boolean isAttachedLocalInferior() {
+	public boolean isAttachedInferior() {
 		return session.isAttachSession();
 	}
 }

@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.debug.internal.ui.CDebugUIMessages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -499,6 +501,15 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 						}
 						else if (srcElement instanceof IFile) {
 							compilationPath = ((IFile)srcElement).getLocation().toString();
+						}
+                        else if (srcElement instanceof java.io.File) {
+                            compilationPath = ((java.io.File)srcElement).getAbsolutePath();
+                        }
+						else if (srcElement instanceof ITranslationUnit) {
+						    IPath location = ((ITranslationUnit) srcElement).getLocation();
+						    if (location != null) {
+						    	compilationPath = location.toString();
+						    }
 						}
 						else {
 							assert false : "missing support for source element of type " + srcElement.getClass().toString(); //$NON-NLS-1$

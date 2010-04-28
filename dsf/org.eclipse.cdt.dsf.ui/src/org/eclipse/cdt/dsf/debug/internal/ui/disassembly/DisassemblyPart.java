@@ -24,6 +24,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyPosition;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.ErrorPosition;
@@ -1625,7 +1626,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			return;
 		}
 		if (DEBUG) System.out.println("retrieveDisassembly "+getAddressText(startAddress)+" "+lines+" lines"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		retrieveDisassembly(startAddress, endAddress, lines, fShowSource, false);
+		retrieveDisassembly(startAddress, endAddress, lines, fShowSource, true);
 	}
 
 	/* (non-Javadoc)
@@ -1730,7 +1731,6 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 		AddressRangePosition pos = fDocument.getPositionOfAddress(address);
 		assert !(pos instanceof SourcePosition);
-		assert pos != null || address.compareTo(fStartAddress) < 0|| address.compareTo(fEndAddress) >= 0;
 		return pos;
 	}
 
@@ -2712,6 +2712,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		}
 		if (sourceElement instanceof File) {
 			sourceElement = new LocalFileStorage((File)sourceElement);
+        } else if (sourceElement instanceof ITranslationUnit) {
+            IPath location = ((ITranslationUnit) sourceElement).getLocation();
+            if (location != null) {
+                sourceElement = new LocalFileStorage(location.toFile());
+            }
 		}
 		if (sourceElement instanceof IStorage) {
 			if (!(sourceElement instanceof IFile)) {
@@ -2725,9 +2730,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				}
 			}
 			fFile2Storage.put(file, sourceElement);
-		} else {
-			fFile2Storage.put(file, null);
+		} else if (sourceElement == null) {
 			logWarning(DisassemblyMessages.Disassembly_log_error_locateFile+file, null);
+		} else {
+            fFile2Storage.put(file, null);
+            assert false : "missing support for source element of type " + sourceElement.getClass().toString(); //$NON-NLS-1$
 		}
 		
 		if (sourceElement instanceof IStorage) {

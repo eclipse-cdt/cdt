@@ -14,10 +14,7 @@ package org.eclipse.cdt.dsf.debug.internal.ui;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputRequestor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
@@ -130,23 +127,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 		private ViewerInputService fInputService;
 
-        /**
-		 * Creates the content for the root element of the tree viewer in the hover
-		 */
-		private class TreeRoot extends ElementContentProvider {
-			@Override
-			protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-				return 1;
-			}
-			@Override
-			protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-				return new Object[] { fVariable };
-			}
-			@Override
-			protected boolean supportsContextId(String id) {
-				return true;
-			}
-		}
+        private IInformationControlCreator fInformationControlCreator;
 
 		/**
 		 * Inner class implementing IDetailPaneContainer methods.  Handles changes to detail
@@ -463,20 +444,20 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			if (input instanceof IExpressionDMContext) {
 				fVariable = input;
 				fInputService.resolveViewerInput(input);
-			} else if (input instanceof IVariable) {
-				fVariable = input;
-				fViewer.setInput(new TreeRoot());
 			}
 		}
 
 		@Override
 		public IInformationControlCreator getInformationPresenterControlCreator() {
-			return new ExpressionInformationControlCreator(fShowDetailPane, fExpansionLevel) {
-				@Override
-				public IInformationControl createInformationControl(Shell shell) {
-					return new ExpressionInformationControl(shell, true);
-				}
-			};
+		    if (fInformationControlCreator == null) {
+    		    fInformationControlCreator = new ExpressionInformationControlCreator(fShowDetailPane, fExpansionLevel) {
+    				@Override
+    				public IInformationControl createInformationControl(Shell shell) {
+    					return new ExpressionInformationControl(shell, true);
+    				}
+    			};
+		    }
+			return fInformationControlCreator;
 		}
 
 		public void viewerInputComplete(IViewerInputUpdate update) {
@@ -491,7 +472,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
     /**
      * Create default expression information control creator.
      * <p>
-     * Same as {@link ExpressionInformationControlCreator(true, 1)}.
+     * Same as {@code ExpressionInformationControlCreator(true, 1)}.
      * </p>
      */
     public ExpressionInformationControlCreator() {

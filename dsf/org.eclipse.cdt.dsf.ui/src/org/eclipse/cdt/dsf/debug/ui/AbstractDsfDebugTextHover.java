@@ -157,9 +157,10 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
     
     /**
      * Create an information control creator for the "advanced" hover.
-     * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()} 
-     * returns <code>true</code>.
-     * 
+     * <p>
+     * Clients can call this method to create an information control creator
+     * with custom options.
+     * </p>
      * @param showDetailPane  whether the detail pane should be visible
      * @param defaultExpansionLevel  automatically expand the expression to this level
      * @return the information control creator
@@ -167,11 +168,27 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
     protected final IInformationControlCreator createExpressionInformationControlCreator(boolean showDetailPane, int defaultExpansionLevel) {
         return new ExpressionInformationControlCreator(showDetailPane, defaultExpansionLevel);
     }
+
+    /**
+     * Create an information control creator for the "advanced" hover.
+     * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()} 
+     * returns <code>true</code>.
+     * <p>
+     * The default implementation returns an information control creator with
+     * details pane enabled and default expansion level = 1.
+     * Clients may override this method to return an instance with different options.
+     * </p>
+     * @return the information control creator
+     * @see {@link #createExpressionInformationControlCreator(boolean, int)}
+     */
+    protected IInformationControlCreator createExpressionInformationControlCreator() {
+        return createExpressionInformationControlCreator(true, 1);
+    }
     
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (useExpressionExplorer()) {
-			return createExpressionInformationControlCreator(true, 1);
+			return createExpressionInformationControlCreator();
 		} else {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {

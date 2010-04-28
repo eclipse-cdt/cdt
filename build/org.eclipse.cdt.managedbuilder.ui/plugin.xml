@@ -252,6 +252,14 @@
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
            tooltip="%Includes.tooltip"/>
      <tab
+           class="org.eclipse.cdt.ui.newui.IncludeFileTab"
+           icon="icons/obj16/h_file_obj.gif"
+           name="%IncludeFiles"
+           weight="015"
+           helpId="cdt_u_prop_pns_inc"
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_PathAndSymb"
+           tooltip="%IncludeFiles.tooltip"/>
+     <tab
            class="org.eclipse.cdt.ui.newui.SymbolTab"
            icon="icons/obj16/define_obj.gif"
            name="%Symbols"
@@ -333,6 +341,14 @@
            helpId="cdt_u_prop_exp"
            parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
            tooltip="%Includes.tooltip"/>
+     <tab
+           class="org.eclipse.cdt.ui.newui.ExpIncludeFileTab"
+           icon="icons/obj16/h_file_obj.gif"
+           name="%IncludeFiles"
+           weight="015"
+           helpId="cdt_u_prop_exp"
+           parent="org.eclipse.cdt.managedbuilder.ui.properties.Page_ExpPathAndSymb"
+           tooltip="%IncludeFiles.tooltip"/>
      <tab
            class="org.eclipse.cdt.ui.newui.ExpSymbolTab"
            icon="icons/obj16/define_obj.gif"

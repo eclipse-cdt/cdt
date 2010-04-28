@@ -34,6 +34,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 	private static final int SPACING = 5; // for radio buttons layout
 	
     private Button show_tree;
+    private Button show_inc_files;
     private Button show_mng;
     private Button show_tool;
     private Button show_exp;
@@ -56,6 +57,10 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_mng = new Button(usercomp, SWT.CHECK);
         show_mng.setText(UIMessages.getString("PropertyPageDefsTab.0")); //$NON-NLS-1$
         show_mng.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        show_inc_files = new Button(usercomp, SWT.CHECK);
+        show_inc_files.setText(UIMessages.getString("PropertyPageDefsTab.showIncludeFileTab")); //$NON-NLS-1$
+        show_inc_files.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_tree = new Button(usercomp, SWT.CHECK);
         show_tree.setText(UIMessages.getString("PropertyPageDefsTab.1")); //$NON-NLS-1$
@@ -107,6 +112,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         b_3 = new Button(discGrp, SWT.RADIO);
         b_3.setText(UIMessages.getString("PropertyPageDefsTab.9")); //$NON-NLS-1$
         
+        show_inc_files.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_SHOW_INC_FILES));
         show_tree.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE));
 		show_mng.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG));
 		show_tool.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM));
@@ -129,6 +135,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void performOK() {
+		CDTPrefUtil.setBool(CDTPrefUtil.KEY_SHOW_INC_FILES, show_inc_files.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_DTREE, show_tree.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, !show_mng.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOTOOLM, !show_tool.getSelection());
@@ -149,6 +156,7 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 	@Override
 	protected void performDefaults() {
 		show_tree.setSelection(false);
+		show_inc_files.setSelection(false);
 		show_mng.setSelection(true);
 		show_tool.setSelection(true);
 		show_exp.setSelection(false);

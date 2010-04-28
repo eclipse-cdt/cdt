@@ -37,6 +37,8 @@ public class CDTPrefUtil {
 	public static final String KEY_DTREE   = "properties.data.hierarchy.enable"; //$NON-NLS-1$
 	public static final String KEY_NOTOOLM   = "properties.toolchain.modification.disable"; //$NON-NLS-1$
 	public static final String KEY_EXPORT   = "properties.export.page.enable"; //$NON-NLS-1$
+	/** @since 5.2 Show the "Include Files" settings entry tab */
+	public static final String KEY_SHOW_INC_FILES = "properties.includefiles.page.enable"; //$NON-NLS-1$
 	/** @since 5.2 */
 	public static final String KEY_TIPBOX   = "properties.option.tipbox.enable"; //$NON-NLS-1$
 	// string keys

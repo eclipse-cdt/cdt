@@ -1011,6 +1011,14 @@
 			  valueType="includePath"
 			  browseType="directory">
 		  </option>
+	      <option
+	          browseType="file"
+	          category="gnu.c.compiler.category.dirs"
+	          command="-include"
+	          id="gnu.c.compiler.option.include.files"
+	          name="%Option.Posix.InclFiles"
+	          valueType="includeFiles">
+		  </option>
 		  <optionCategory
 			  owner="cdt.managedbuild.tool.gnu.c.compiler"
 			  name="%OptionCategory.Optimize"

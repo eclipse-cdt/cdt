@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IProcessInfo;
+import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -26,8 +29,8 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
-import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
@@ -38,8 +41,8 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
-import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -54,6 +57,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadGroupExitedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MINotifyAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
@@ -61,7 +65,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -141,9 +144,11 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			return 0;
 		}
 
+		/* Unused; reintroduce if needed
 		public String getId(){
 			return fThreadId;
 		}
+		*/
 
 		@Override
 		public String toString() { return baseToString() + ".thread[" + fThreadId + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$
@@ -397,6 +402,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// This is important because we cannot always ask GDB for the list, since it may
 	// be running at the time.  Bug 303503
     private Map<String, String> fDebuggedProcessesAndNames = new HashMap<String, String>();
+    
+	// Much like fDebuggedProcessesAndNames, but this list contains all
+	// processes running as reported by CCorePlugin#getProcessList(). We resort
+	// to using that cdt-core call when '-list-thread-groups --available' is
+	// not truly supported by gdb. Currently, e.g., MinGw 7.0 doesn't.
+    private Map<String, String> fRunningProcessesAndNames = new HashMap<String, String>();
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
@@ -568,14 +579,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			} else {
 				name = fDebuggedProcessesAndNames.get(id);
 				if (name == null) {
+					name = fRunningProcessesAndNames.get(id);
+				}
+				if (name == null) {
 					// We don't have the name in our map.  Should not happen.
 					name = "Unknown name"; //$NON-NLS-1$
 					assert false : "Don't have entry for process ID: " + id; //$NON-NLS-1$
 				} else if (name.length() == 0) {
-					// We end up here when the '-list-thread-groups --available'
-					// cmd failed after we first found out about the new process.
-					// (This seems to happen every time with MinGW 7.0)
-					// Return the default name of our program.
+					// Probably will not happen, but just in case...use the
+					// binary file name (absolute path)
 					IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
 					name = backend.getProgramPath().toOSString();
 					fDebuggedProcessesAndNames.put(id, name);
@@ -803,9 +815,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		return containerDmcs;
 	}
 
-    public void getRunningProcesses(IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
+	public void getRunningProcesses(final IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {
 		final ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-
 		if (controlDmc != null) {
 			fListThreadGroupsAvailableCache.execute(
 				fCommandFactory.createMIListThreadGroups(controlDmc, true),
@@ -820,7 +831,26 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 						if (isSuccess()) {
 							rm.setData(makeProcessDMCAndData(controlDmc, getData().getGroupList()));
 						} else {
-							rm.setData(new IProcessDMContext[0]);
+							// Looks like this gdb doesn't truly support
+							// "-list-thread-groups --available". Resort to
+							// how we do things with gdb 6.8
+							IProcessList list = null;
+							try {
+								list = CCorePlugin.getDefault().getProcessList();
+							} catch (CoreException e) {
+							}
+
+							if (list == null) {
+								rm.setData(new IProcessDMContext[0]);
+							} else {
+								fRunningProcessesAndNames.clear();
+								IProcessInfo[] procInfos = list.getProcessList();
+								for (IProcessInfo procInfo : procInfos) {
+									fRunningProcessesAndNames.put(Integer.toString(procInfo.getPid()), procInfo.getName());
+								}
+								
+								rm.setData(makeProcessDMCs(controlDmc, procInfos));
+							}
 						}
 						rm.done();
 					}
@@ -830,6 +860,15 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			rm.done();
 		}
 
+	}
+	
+	/** Stole this from GDBProcesses. Used when we resort to getting the process list natively */
+	private IProcessDMContext[] makeProcessDMCs(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
+		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
+		for (int i=0; i<procDmcs.length; i++) {
+			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid())); 
+		}
+		return procDmcs;
 	}
 
 	private MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IThreadGroupInfo[] processes) {
@@ -1006,6 +1045,22 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     												if (groupInfo.getPid().equals(finalGroupId)) {
     													fDebuggedProcessesAndNames.put(finalGroupId, groupInfo.getName());
     												}
+    											}
+    										}
+    										else {
+    											// Looks like this gdb doesn't truly support
+    											// "-list-thread-groups --available". Get the
+    											// process list natively
+    											IProcessList list = null;
+    											try {
+    												list = CCorePlugin.getDefault().getProcessList();
+        											int groupId_int = Integer.parseInt(finalGroupId);
+        											for (IProcessInfo procInfo : list.getProcessList()) {
+        												if (procInfo.getPid() == groupId_int) {
+        													fDebuggedProcessesAndNames.put(finalGroupId, procInfo.getName());
+        												}
+        											}
+    											} catch (CoreException e) {
     											}
     										}
     									}

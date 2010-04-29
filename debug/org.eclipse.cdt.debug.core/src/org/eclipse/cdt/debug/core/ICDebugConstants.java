@@ -90,8 +90,12 @@ public interface ICDebugConstants {
      */
     public static final String PREF_FILTERED_DEBUGGERS = PLUGIN_ID + ".cDebug.filteredDebuggers"; //$NON-NLS-1$
 
-    /**
-	 * Boolean preference controlling whether the instruction stepping mode should be activated.
+	/**
+	 * Boolean preference used to persist the instruction-stepping mode. The
+	 * persistence is global but the mode is per debug target. We update the
+	 * persisted global value when a debug session ends, using the mode that
+	 * session is in at that time. In other words, the most recently terminated
+	 * debug session dictates the initial mode of the next new debug session.
 	 * 
 	 * Temporary. See bugs 79872 and 80323.
 	 */

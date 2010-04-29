@@ -74,9 +74,6 @@ public class TraceUtil {
 	 *             item2[0]
 	 *             item2[1]
 	 *             ...
-	 * @param title
-	 * @param col1
-	 * @param col2
 	 */
 	public static void outputTrace(String title, String subtitle1, List<String> item1, List<String> item1new, String subtitle2, List<String> item2) {
 		if (isTracing()) {
@@ -97,10 +94,6 @@ public class TraceUtil {
 		}
 	}
 
-	/**
-	 * @param string
-	 * @param line
-	 */
 	public static void outputError(String string, String line) {
 		if (isTracing()) {
 			System.out.println();
@@ -119,12 +112,6 @@ public class TraceUtil {
 		}
 	}
 
-	/**
-	 * @param title
-	 * @param subtitlePrefix
-	 * @param subtitlePostfix
-	 * @param map - el grande map
-	 */
 	public static void metricsTrace(String title, String subtitlePrefix, String subtitlePostfix,
 			Map<String, List<Map<String, List<String>>>> directoryCommandListMap) {
 		try {
@@ -153,12 +140,6 @@ public class TraceUtil {
 		catch (IOException e) {}
 	}
 
-	/**
-	 * @param title
-	 * @param workingDirsN
-	 * @param commandsN
-	 * @param filesN
-	 */
 	public static void summaryTrace(String title, int workingDirsN, int commandsN, int filesN) {
 		try {
 			logger.writeln();

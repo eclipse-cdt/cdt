@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
+import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -32,7 +33,6 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	 * Do not use this method to change target name, rather use {@link MakeTargetManager#renameTarget(IMakeTarget, String)}.
 	 * This method is for internal use only.
 	 * 
-	 * @param name
 	 * @since 7.0
 	 */
 	public void setName(String name);
@@ -42,17 +42,16 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	public IProject getProject();
 	
 	/**
-	 * @deprecated
+	 * Set build target
 	 * 
-	 * @param target
-	 * @throws CoreException
+	 * @deprecated as of CDT 3.0
 	 */
 	@Deprecated
 	public void setBuildTarget(String target) throws CoreException;
 
 	
 	/**
-	 * @deprecated
+	 * @deprecated as of CDT 3.0
 	 * 
 	 * @return build target
 	 */
@@ -73,7 +72,6 @@ public interface IMakeTarget extends IAdaptable, IMakeCommonBuildInfo {
 	/**
 	 * Make this target temporary on the container, this target will not be persisted, 
 	 * and may not be added to the IMakeTargetManager. 
-	 * @param container
 	 */
 	public void setContainer(IContainer container);
 	

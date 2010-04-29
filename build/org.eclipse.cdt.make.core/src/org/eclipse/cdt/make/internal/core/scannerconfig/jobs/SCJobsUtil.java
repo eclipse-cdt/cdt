@@ -63,10 +63,6 @@ public class SCJobsUtil {
     }
     /**
      * Call ESI providers to get scanner info
-     * 
-     * @param collector 
-     * @param buildInfo
-     * @param monitor
      */
     public static boolean getProviderScannerInfo(final IProject project,
                                                  final IScannerConfigBuilderInfo2 buildInfo,
@@ -124,10 +120,6 @@ public class SCJobsUtil {
 
     /**
      * Update and persist scanner configuration
-     * 
-     * @param project
-     * @param buildInfo
-     * @param monitor
      */
     public static boolean updateScannerConfiguration(IProject project,
                                                      IScannerConfigBuilderInfo2 buildInfo,
@@ -137,10 +129,6 @@ public class SCJobsUtil {
 
     /**
      * Update and persist scanner configuration
-     * 
-     * @param project
-     * @param buildInfo
-     * @param monitor
      */
     public static boolean updateScannerConfiguration(IProject project,
     												 InfoContext context,
@@ -172,24 +160,12 @@ public class SCJobsUtil {
         return rc.get();
     }
 
-    /**
-     * @param project
-     * @param buildInfo
-     * @param monitor
-     * @return
-     */
     public static boolean readBuildOutputFile(final IProject project,
                                               final IScannerConfigBuilderInfo2 buildInfo,
                                               final IProgressMonitor monitor) {
     	return readBuildOutputFile(project, buildInfo.getContext(), buildInfo, monitor);
     }
 
-    /**
-     * @param project
-     * @param buildInfo
-     * @param monitor
-     * @return
-     */
     public static boolean readBuildOutputFile(final IProject project,
     										  final InfoContext context,
                                               final IScannerConfigBuilderInfo2 buildInfo,

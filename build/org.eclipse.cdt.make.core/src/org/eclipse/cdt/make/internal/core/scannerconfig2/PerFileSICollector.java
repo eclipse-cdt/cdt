@@ -276,10 +276,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
 
-    /**
-     * @param commandId
-     * @param scannerInfo
-     */
     private void addScannerInfo(Integer commandId, Map scannerInfo) {
 		assert Thread.holdsLock(fLock);
         CCommandDSC cmd = sid.commandIdCommandMap.get(commandId);
@@ -845,10 +841,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         return new PathInfo(includes, quotedIncludes, definedSymbols, incFiles, macroFiles);
     }
 
-    /**
-     * @param path
-     * @return
-     */
     private CCommandDSC getCommand(IPath path) {
         try {
         	IFile file = project.getWorkspace().getRoot().getFile(path);
@@ -916,11 +908,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         return stringListToPathArray(allIncludes);
     }
 
-	/**
-	 * @param discovered
-	 * @param allIncludes
-	 * @return
-	 */
 	private static IPath[] stringListToPathArray(List<String> discovered) {
 		List<Path> allIncludes = new ArrayList<Path>(discovered.size());
 		for (Iterator<String> j = discovered.iterator(); j.hasNext(); ) {
@@ -932,9 +919,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		return allIncludes.toArray(new IPath[allIncludes.size()]);
 	}
 
-    /**
-     * @return
-     */
     private Map<String, String> getAllSymbols() {
 		assert Thread.holdsLock(fLock);
         Map<String, String> symbols = new HashMap<String, String>();

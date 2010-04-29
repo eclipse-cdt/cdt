@@ -127,11 +127,7 @@ public class ScannerConfigNature implements IProjectNature {
 	}
 
 	/**
-	 * Returns build command as stored in .project file
-	 * 
-	 * @param description
-	 * @param builderID
-	 * @return ICommand
+	 * @return build command as stored in .project file
 	 */
 	public static ICommand getBuildSpec(IProjectDescription description, String builderID) {
 		ICommand[] commands = description.getBuildSpec();
@@ -145,10 +141,6 @@ public class ScannerConfigNature implements IProjectNature {
 
 	/**
 	 * Stores a build command in .project file
-	 * 
-	 * @param description
-	 * @param newCommand
-	 * @return IProjecDescription
 	 */
 	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand) {
 		ICommand[] oldCommands = description.getBuildSpec();
@@ -176,9 +168,6 @@ public class ScannerConfigNature implements IProjectNature {
 		return description;
 	}
 
-	/**
-	 * @param project
-	 */
 	public static void initializeDiscoveryOptions(IProject project) {
 		try {
 			IScannerConfigBuilderInfo2 scPrefInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(

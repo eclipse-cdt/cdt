@@ -31,8 +31,6 @@ public final class ScannerConfigUtil {
 	 * Adds all new discovered symbols/values to the existing ones.
 	 *  
 	 * @param sumSymbols - a map of [String, Map] where Map is a SymbolEntry
-	 * @param symbols
-	 * @return boolean
 	 */
 	public static boolean scAddSymbolsList2SymbolEntryMap(Map<String, SymbolEntry> sumSymbols, List<String> symbols, boolean active) {
 		boolean rc = false;
@@ -62,9 +60,6 @@ public final class ScannerConfigUtil {
 
 	/**
 	 * Gets all discovered symbols with either active or removed values
-	 * @param sumSymbols
-	 * @param active - false = removed
-	 * @return
 	 */
 	public static List<String> scSymbolsSymbolEntryMap2List(Map<String, SymbolEntry> sumSymbols, boolean active) {
 		Set<Entry<String, SymbolEntry>> symbols = sumSymbols.entrySet();
@@ -102,10 +97,6 @@ public final class ScannerConfigUtil {
 
 	/**
 	 * Adds a single symbol definition string ("DEBUG_LEVEL=4") to the SymbolEntryMap
-	 * 
-	 * @param symbols
-	 * @param symbol
-	 * @param active
 	 */
 	public static boolean scAddSymbolString2SymbolEntryMap(Map<String, SymbolEntry> symbols, String symbol, boolean active) {
 		boolean rc = false;
@@ -134,7 +125,6 @@ public final class ScannerConfigUtil {
 	/**
 	 * @param result (out)
 	 * @param addend (in)
-	 * @return
 	 */
 	public static boolean scAddSymbolEntryMap2SymbolEntryMap(Map<String, SymbolEntry> result, Map<String, SymbolEntry> addend) {
 		boolean rc = false;
@@ -173,9 +163,6 @@ public final class ScannerConfigUtil {
 
 	/**
 	 * Returns a symbol key (i.e. for DEF=1 returns DEF)
-	 * 
-	 * @param symbol - in
-	 * @param key - out
 	 */
 	public static String getSymbolKey(String symbol) {
 		int index = symbol.indexOf('=');
@@ -186,10 +173,7 @@ public final class ScannerConfigUtil {
 	}
 	
 	/**
-	 * Returns a symbol value (i.e. for DEF=1 returns 1)
-	 * 
-	 * @param symbol - in
-	 * @param key - out (may be null)
+	 * Returns a symbol value (i.e. for DEF=1 returns 1),  may be null
 	 */
 	public static String getSymbolValue(String symbol) {
 		int index = symbol.indexOf('=');
@@ -203,7 +187,6 @@ public final class ScannerConfigUtil {
 	 * Removes a symbol value from the symbol entry. If it was an only value than
 	 * it symbol entry will be removed alltogether.
 	 * 
-	 * @param symbol
 	 * @param symbolEntryMap map of [symbol's key, symbolEntry]
 	 */
 	public static void removeSymbolEntryValue(String symbol, Map<String, SymbolEntry> symbolEntryMap) {
@@ -223,9 +206,6 @@ public final class ScannerConfigUtil {
 	 * Swaps two include paths in the include paths Map.
 	 * Used by Up/Down discovered paths
 	 *  
-	 * @param sumPaths
-	 * @param index1
-	 * @param index2
 	 * @return new map of include paths
 	 */
 	public static LinkedHashMap<String, SymbolEntry> swapIncludePaths(LinkedHashMap<String, SymbolEntry> sumPaths, int index1, int index2) {
@@ -249,10 +229,7 @@ public final class ScannerConfigUtil {
 	}
 	
 	/**
-	 * Tokenizes string with quuotes
-	 * 
-	 * @param String
-	 * @return String[] 
+	 * Tokenizes string with quotes
 	 */
 	public static String[] tokenizeStringWithQuotes(String line, String quoteStyle) {
 		ArrayList<String> allTokens = new ArrayList<String>();
@@ -271,9 +248,6 @@ public final class ScannerConfigUtil {
 
 	/**
 	 * Converts array of IPath-s to array of String-s
-	 * 
-	 * @param paths
-	 * @return
 	 */
 	public static String[] iPathArray2StringArray(IPath[] paths) {
 		String[] rv = new String[paths.length];

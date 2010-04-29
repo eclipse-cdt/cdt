@@ -67,7 +67,6 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	
 	/**
 	 * Called by the console line parsers to find a file with a given name.
-	 * @param fileName
 	 * @return IFile or null
 	 */
 	public IFile findFile(String fileName) {
@@ -99,7 +98,6 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	}
 	
 	/**
-	 * @param filePath
 	 * @return file in workspace as {@link IFile} or {@code null} if not found
 	 */
 	protected IFile findFilePath(String filePath) {
@@ -139,7 +137,6 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 	}
 
 	/**
-	 * @param fileName
 	 * @return file in workspace as {@link IFile} or {@code null}
 	 */
 	protected IFile findFileName(String fileName) {

@@ -817,7 +817,6 @@ public class ScannerConfigInfoFactory2 {
 
 		/**
          * Load profile defaults
-         * @param profileId
          */
         private void loadDefaults(String profileId) {
             ProfileOptions po = new ProfileOptions();
@@ -854,9 +853,6 @@ public class ScannerConfigInfoFactory2 {
             profileOptionsMap.put(profileId, po);
         }
 
-        /**
-		 * @param profileId
-		 */
 		private boolean migrateScannerConfigBuildInfo(String profileId) {
 			boolean rc = true;
 			try {
@@ -899,9 +895,6 @@ public class ScannerConfigInfoFactory2 {
 			return rc;
 		}
 
-		/**
-		 * @param profile
-		 */
 		private void loadProfile(ICStorageElement profile) {
             if (profileOptionsMap == null) {
                 profileOptionsMap = new LinkedHashMap<String, ProfileOptions>(1);
@@ -1078,11 +1071,6 @@ public class ScannerConfigInfoFactory2 {
 		private PreferenceSet prefsContainer;
 		private InfoContext context;
 
-		/**
-		 * @param prefs
-		 * @param profileId
-		 * @param useDefaults
-		 */
 		public Preference(PreferenceSet container, Preferences prefs, InfoContext context, String profileId, boolean useDefaults) {
 			super();
 			this.prefs = prefs;

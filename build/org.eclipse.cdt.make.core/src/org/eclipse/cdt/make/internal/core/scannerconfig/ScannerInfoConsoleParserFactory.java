@@ -39,14 +39,6 @@ public class ScannerInfoConsoleParserFactory {
     /**
      * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
      * and a utility.
-     * 
-     * @param outputStream
-     * @param errorStream
-     * @param currentProject
-     * @param providerId 
-     * @param scBuildInfo
-     * @param markerGenerator
-     * @return ConsoleOutputSniffer
      */
     public static ConsoleOutputSniffer getESIProviderOutputSniffer(
                                             OutputStream outputStream,
@@ -61,14 +53,6 @@ public class ScannerInfoConsoleParserFactory {
     /**
      * Creates a ConsoleOutputStreamSniffer, make builder scanner info console parser
      * and a utility.
-     * 
-     * @param outputStream
-     * @param errorStream
-     * @param currentProject
-     * @param providerId 
-     * @param scBuildInfo
-     * @param markerGenerator
-     * @return ConsoleOutputSniffer
      */
     public static ConsoleOutputSniffer getESIProviderOutputSniffer(
                                             OutputStream outputStream,
@@ -96,15 +80,6 @@ public class ScannerInfoConsoleParserFactory {
 	/**
 	 * Creates a ConsoleOutputStreamSniffer, ESI provider scanner info console parser
 	 * and a utility.
-	 * 
-	 * @param outputStream
-     * @param errorStream
-	 * @param currentProject
-	 * @param workingDirectory
-     * @param buildInfo
-	 * @param markerGenerator
-     * @param IScannerInfoCollector2
-	 * @return ConsoleOutputSniffer
 	 */
 	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
 											OutputStream outputStream,
@@ -120,15 +95,6 @@ public class ScannerInfoConsoleParserFactory {
 	/**
 	 * Creates a ConsoleOutputStreamSniffer, ESI provider scanner info console parser
 	 * and a utility.
-	 * 
-	 * @param outputStream
-     * @param errorStream
-	 * @param currentProject
-	 * @param workingDirectory
-     * @param buildInfo
-	 * @param markerGenerator
-     * @param IScannerInfoCollector2
-	 * @return ConsoleOutputSniffer
 	 */
 	public static ConsoleOutputSniffer getMakeBuilderOutputSniffer(
 											OutputStream outputStream,

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
+import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -25,17 +26,12 @@ public interface IMakeTargetManager {
 	IMakeTarget createTarget(IProject project, String targetName, String targetBuilderID) throws CoreException;
 	/**
 	 * Adds target to manager.
-	 * @param target
-	 * @throws CoreException
 	 */
 	void addTarget(IMakeTarget target) throws CoreException;
 	
 	/**
 	 * Adds target to manager on a specific projects folder. It is assumed
 	 * that the target and container belong to the same project.
-	 * @param container
-	 * @param target
-	 * @throws CoreException
 	 */
 	void addTarget(IContainer container, IMakeTarget target) throws CoreException;
 	void removeTarget(IMakeTarget target) throws CoreException;
@@ -52,7 +48,6 @@ public interface IMakeTargetManager {
 	 * 
 	 * @param container to set targets for or null if project should be used
 	 * @param targets array
-	 * @throws CoreException
 	 * 
 	 * @since 7.0
 	 */

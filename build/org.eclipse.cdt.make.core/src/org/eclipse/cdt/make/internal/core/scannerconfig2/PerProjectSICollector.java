@@ -233,9 +233,6 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
 	/**
 	 * Compare discovered include paths and symbol definitions with the ones from scanInfo.
-	 * 
-	 * @param scanInfo
-	 * @return
 	 */
 	private boolean scannerConfigNeedsUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedIncludes = includePathsNeedUpdate(discPathInfo);
@@ -246,10 +243,6 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
 	/**
 	 * Compare include paths with already discovered.
-	 * 
-	 * @param discPathInfo
-	 * @param includes
-	 * @return
 	 */
 	private boolean includePathsNeedUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedIncludes = false;
@@ -303,10 +296,6 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	
 	/**
 	 * Compare symbol definitions with already discovered.
-	 * 
-	 * @param discPathInfo
-	 * @param symbols
-	 * @return
 	 */
 	private boolean definedSymbolsNeedUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedSymbols = false;
@@ -457,9 +446,6 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	 * Static method to return compiler built-in scanner info.
 	 * Preconditions: resource has to be contained by a project that has following natures:
 	 *     C nature, CC nature (for C++ projects), Make nature and ScannerConfig nature  
-	 * 
-	 * @param project
-	 * @throws CModelException 
 	 */
 	public static void calculateCompilerBuiltins(final IProject project) throws CModelException {
 		createDiscoveredPathContainer(project, new NullProgressMonitor());

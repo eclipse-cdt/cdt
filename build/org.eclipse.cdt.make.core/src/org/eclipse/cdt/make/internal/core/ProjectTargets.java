@@ -171,9 +171,8 @@ public class ProjectTargets {
 
 	/**
 	 * Persist the MakeTarget as a child of parent
-	 * @param parent
-	 * @param target
-	 * @return create ICStorageElement
+	 * 
+	 * @return created ICStorageElement
 	 */
 	private ICStorageElement createTargetElement(ICStorageElement parent, IMakeTarget target) {
 		ICStorageElement targetElem = parent.createChild(TARGET_ELEMENT);
@@ -209,7 +208,6 @@ public class ProjectTargets {
 
 	/**
 	 * Saves the targets to the project description
-	 * @throws CoreException
 	 */
 	public void saveTargets() throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(getProject(), true);
@@ -231,7 +229,7 @@ public class ProjectTargets {
 	/**
 	 * This method loads an old style XML document provided in the input stream
 	 * and returns an ICStorageElemnt wrapping it.
-	 * @param input
+	 * 
 	 * @return ICStorageElement or null
 	 */
 	protected ICStorageElement translateInputStreamToDocument(InputStream input) {

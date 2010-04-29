@@ -38,7 +38,7 @@ public interface IDiscoveredPathManager {
         /**
          * Get defined symbols for the whole project 
          */
-		Map 	getSymbols();
+        Map<String, String> getSymbols();
 		
         IDiscoveredScannerInfoSerializable getSerializable();
 	}
@@ -63,7 +63,7 @@ public interface IDiscoveredPathManager {
         /**
          * Get defined symbols for the specific path (file) 
          */
-        Map     getSymbols(IPath path);
+        Map<String, String> getSymbols(IPath path);
         
         /**
          * Get include files (gcc option -include) for the specific path (file)
@@ -86,7 +86,7 @@ public interface IDiscoveredPathManager {
     	 * 
     	 * @return Map
     	 */
-    	Map getPathInfoMap();
+    	Map<IResource, PathInfo> getPathInfoMap();
     }
 
     

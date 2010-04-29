@@ -1,19 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
   <head>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+	<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>
-      Type Hierarchy View
-    </title>
+    <title>Type Hierarchy View</title>
     <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">
+    <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>   
   </head>
+  
   <body>
     <h1>
-      Type Hierarchy View
+      Type Hierarchy view
     </h1>
     <p>
-      This view shows the hierarchy of a type. The Type Hierarchy view consists of two panes:
+      The <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.ui.typeHierarchy)")'>Type Hierarchy</a> view shows a tree display of the selected type or method. The <strong>Type Hierarchy</strong> view consists of two panes:
     </p>
     <ul>
       <li>
@@ -24,33 +24,31 @@
       </li>
     </ul>
     <h2 class="Head">
-      Type Hierarchy tree pane toolbar buttons
+      Type Hierarchy view toolbar
     </h2>
     <p>
-    The type hierarchy tree shows supertypes, suptypes or both of a given type depending on the selection made in the
+    The type hierarchy tree shows supertypes, subtypes or both of a given type depending on the selection made in the
     toolbar.
     </p>
-    <table border="1" cellspacing="0" cellpadding="5" width="100%" summary="Hierarchy viewer">
-      <thead>
-        <tr>
-          <th>
-            <p>
-              Command
-            </p>
-          </th>
-          <th>
-            <p>
-              Description
-            </p>
-          </th>
-        </tr>
-      </thead>
+    <table border="1" cellspacing="0" cellpadding="4" width="600px" bordercolor="#DDDDDD" >
+    <caption><strong>Type Hierarchy Toolbar Options</strong></caption>
+	<colgroup>
+		<col width="5%" valign="top" >
+		<col width="20%" valign="top" >
+		<col width="75%" valign="top" >
+	</colgroup>
+ 	<tr>
+		<th>Icon</th>
+		<th>Command</th>
+		<th>Description</th>
+	 </tr>
       <tbody>
         <tr>
+          <td align="center"><img src="../images/hierarchy_co.gif" border="0" alt="Show Hierarchy icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show the Type Hierarchy
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -59,10 +57,11 @@
           </td>
         </tr>
         <tr>
+          <td align="center"><img src="../images/super_co.gif" border="0" alt="Show Supertype Hierarchy icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show the Supertype Hierarchy
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -73,10 +72,11 @@
           </td>
         </tr>
         <tr>
+          <td align="center"><img src="../images/sub_co.gif" border="0" alt="Show Subtype Hierarchy icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show the Subtype Hierarchy
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -87,10 +87,11 @@
           </td>
         </tr>
         <tr>
+          <td align="center"><img src="../images/history_list.gif" border="0" alt="History List icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show History List
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -99,10 +100,11 @@
           </td>
         </tr>
         <tr>
+          <td align="center"><img src="../images/refresh_nav.gif" border="0" alt="Refresh icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Refresh
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -111,10 +113,11 @@
           </td>
         </tr>
         <tr>
+          <td align="center"><img src="../images/progress_stop.gif" border="0" alt="Cancel icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Cancel
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -123,14 +126,25 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/icon_menu.png" border="0" alt="Menu icon" /></td>
           <td valign="top">
-            <p>
-              Layout &gt; Hierarchy View Only
-            </p>
+            <p><strong>
+              View Menu
+            </p></strong>
           </td>
           <td valign="top">
             <p>
-              Hides the member list pane.
+              Shows additional options to manage the Type Hierarchy view including: <br />
+              <ul>
+              	<li>Select Working Set...</li>
+              	<li>Deselect Working Set</li>
+              	<li>Edit Active Working Set...</li>
+              	<li>Type Hierarchy</li>
+              	<li>Supertype Hierarchy</li>
+              	<li>Subtype Hierarchy</li>
+              	<li>Layout</li>
+              	<li>Show File Names</li>
+              </ul>
             </p>
           </td>
         </tr>
@@ -142,27 +156,22 @@
     <p>
       The member list pane displays the members of the currently selected type in the type hierarchy tree pane.
     </p>
-    <table border="1" cellspacing="0" cellpadding="5" width="100%" summary="Member viewer">
-      <thead>
-        <tr>
-          <th>
-            <p>
-              Command
-            </p>
-          </th>
-          <th>
-            <p>
-              Description
-            </p>
-          </th>
-        </tr>
-      </thead>
+    <table border="1" cellspacing="0" cellpadding="4" width="600px" bordercolor="#DDDDDD" >
+    <caption><strong>Type Hierarchy Member Options</strong></caption>
+	<colgroup>
+		<col width="20%" valign="top" >
+		<col width="75%" valign="top" >
+	</colgroup>
+ 	<tr>
+		<th>Command</th>
+		<th>Description</th>
+	 </tr>
       <tbody>
         <tr>
           <td valign="top">
-            <p>
+            <p><strong>
               Show All Inherited Members
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -173,9 +182,9 @@
         </tr>
         <tr>
           <td valign="top">
-            <p>
+            <p><strong>
               Hide Fields
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -185,9 +194,9 @@
         </tr>
         <tr>
           <td valign="top">
-            <p>
+            <p><strong>
               Hide Static Fields and Methods
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -197,9 +206,9 @@
         </tr>
         <tr>
           <td valign="top">
-            <p>
+            <p><strong>
               Hide Non-Public Members
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -213,5 +222,7 @@
       <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
       <a href="cdt_o_views.htm">Views</a>
     </p>
+  <hr />
+<img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement" > 
   </body>
 </html>

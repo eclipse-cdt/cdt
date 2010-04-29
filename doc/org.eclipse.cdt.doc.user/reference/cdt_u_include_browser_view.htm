@@ -1,20 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
   <head>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+	<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2008. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>
-      Include Browser View
-    </title>
+    <title>Include Browser View</title>
     <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">
+    <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
   </head>
   <body>
     <h1>
-      Include Browser View
+      Include Browser view
     </h1>
     <p>
-      This view shows the include relationships between source and header files.
+      The <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.ui.includeBrowser)")'>Include Browser</a> view shows the <tt>&lt;include&gt;</tt> and <tt>#include</tt> relationships between source and header files.
     </p>
+    <p><img src="../images/view_include_browser.png" border="0" alt="Include Browser view" /></p>
     <h2 class="Head">
       Include Browser toolbar buttons
     </h2>
@@ -22,27 +22,25 @@
     The Include Browser tree shows files included by the focused file or files including the focused file depending on the selection made in the
     toolbar.
     </p>
-    <table border="1" cellspacing="0" cellpadding="5" width="100%" summary="Includes viewer">
-      <thead>
-        <tr>
-          <th>
-            <p>
-              Command
-            </p>
-          </th>
-          <th>
-            <p>
-              Description
-            </p>
-          </th>
-        </tr>
-      </thead>
+    <table border="1" cellspacing="0" cellpadding="4" width="600px" bordercolor="#DDDDDD" >
+    	<caption><strong>Include Browser Toolbar Options</strong></caption>
+	<colgroup>
+		<col width="5%" valign="top" >
+		<col width="30%" valign="top" >
+		<col width="65%" valign="top" >
+	</colgroup>
+ 	<tr>
+		<th>Icon</th>
+		<th>Name</th>	
+		<th>Description</th>
+	 </tr>
       <tbody>
         <tr>
+          <td valign="top" align="center"><img src="../images/icon_next.png" border="0" alt="Show Next Include icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show Next Include
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -51,10 +49,11 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/icon_previous.png" border="0" alt="Show Previous Include icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show Previous Include
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -63,10 +62,11 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/icon_hide_sys_includes.png" border="0" alt="Hide System Includes icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Hide System Includes
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -75,10 +75,11 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/icon_hide_inactive_includes.png" border="0" alt="Hide Inactive Code Includes icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Hide Includes from Inactive Code
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -87,10 +88,11 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center" ><img src="../images/icon_show_callers.png" border="0" alt="Show Includes icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show Includers
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -99,10 +101,11 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/icon_show_callees.png" border="0" alt="Show Included Files icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show Included Files
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -111,10 +114,11 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/history_list.gif" border="0" alt="Show History List icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Show History List
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
@@ -123,14 +127,37 @@
           </td>
         </tr>
         <tr>
+          <td valign="top" align="center"><img src="../images/refresh_nav.gif" border="0" alt="Refresh icon" /></td>
           <td valign="top">
-            <p>
+            <p><strong>
               Refresh View Content
-            </p>
+            </p></strong>
           </td>
           <td valign="top">
             <p>
               This command updates the view content by running a new query on the index database.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" align="center"><img src="../images/icon_menu.png" border="0" alt="Menu icon" /></td>
+          <td valign="top">
+            <p><strong>
+              View Menu
+            </p></strong>
+          </td>
+          <td valign="top">
+            <p>
+              Shows additional options to manage the Include Browser view including: <br />
+              <ul>
+              	<li>Select Working Set...</li>
+              	<li>Deselect Working Set</li>
+              	<li>Edit Active Working Set...</li>
+              	<li>Show Includers</li>
+              	<li>Show Files Included</li>
+              	<li>Hide System Includes</li>
+              	<li>Hide Inactive Includes</li>
+              </ul>
             </p>
           </td>
         </tr>
@@ -140,5 +167,7 @@
       <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
       <a href="cdt_o_views.htm">Views</a>
     </p>
+  <hr />
+<img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement" > 
   </body>
 </html>

@@ -33,9 +33,6 @@ public interface IMakeCommonBuildInfo {
 	IPath getBuildLocation();
 
 	/**
-	 * @param location 
-	 * @throws CoreException 
-	 * 
 	 * @deprecated - use setBuildString(BUILD_LOCATION...)
 	 */
 	@Deprecated
@@ -50,9 +47,6 @@ public interface IMakeCommonBuildInfo {
 	IPath getBuildCommand();
 
 	/**
-	 * @param command 
-	 * @throws CoreException 
-	 * 
 	 * @deprecated - use setBuildString(BUILD_COMMAND...)
 	 */
 	@Deprecated
@@ -61,9 +55,6 @@ public interface IMakeCommonBuildInfo {
 	String getBuildArguments();
 
 	/**
-	 * @param args 
-	 * @throws CoreException 
-	 * 
 	 * @deprecated - use setBuildString(BUILD_ARGUMENTS...)
 	 */
 	@Deprecated

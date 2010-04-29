@@ -279,7 +279,7 @@ public class MakeBuilder extends ACBuilder {
 	/**
 	 * Refresh project. Can be overridden to not call actual refresh or to do something else.
 	 * Method is called after build is complete.
-	 * @param project
+	 * 
 	 * @since 6.0
 	 */
 	protected void refreshProject(IProject project) {
@@ -296,7 +296,6 @@ public class MakeBuilder extends ACBuilder {
 
 	/**
 	 * Check whether the build has been canceled.
-	 * @param monitor
 	 */
 	public void checkCancel(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled())

@@ -157,11 +157,7 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @deprecated
-	 * @param file
-	 * @param isGnuStyle
-	 * @param makefileDirs
-	 * @return
+	 * @deprecated as of CDT 5.0
 	 */
 	@Deprecated
 	static public IMakefile createMakefile(File file, boolean isGnuStyle, String[] makefileDirs) {
@@ -197,12 +193,9 @@ public class MakeCorePlugin extends Plugin {
 	/**
 	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
 	 * contents by name. 
-	 * @param name URI of main file
-	 * @param isGnuStyle
-	 * @param makefileDirs
+	 * 
+	 * @param fileURI URI of main file
 	 * @param makefileReaderProvider may be <code>null</code> for EFS IFileStore reading
-	 * @return IMakefile
-	 * @throws CoreException
 	 */
 	public static IMakefile createMakefile(URI fileURI,
 			boolean isGnuStyle, String[] makefileDirs, IMakefileReaderProvider makefileReaderProvider) {
@@ -233,11 +226,8 @@ public class MakeCorePlugin extends Plugin {
 
 	/**
 	 * Create an IMakefile using EFS to fetch contents.
-	 * @param name URI of main file
-	 * @param isGnuStyle
-	 * @param makefileDirs
-	 * @return IMakefile
-	 * @throws CoreException
+	 * 
+	 * @param fileURI URI of main file
 	 */
 	public static IMakefile createMakefile(URI fileURI,
 			boolean isGnuStyle, String[] makefileDirs) {
@@ -327,7 +317,6 @@ public class MakeCorePlugin extends Plugin {
 	}
 
 	/**
-	 * @param commandId
 	 * @return String[] - array of parserIds associated with the commandId or 'all'
 	 */
 	public String[] getScannerInfoConsoleParserIds(String commandId) {
@@ -355,7 +344,6 @@ public class MakeCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * @param parserId
 	 * @return parser - parser object identified by the parserId
 	 */
 	public IScannerInfoConsoleParser getScannerInfoConsoleParser(String parserId) {

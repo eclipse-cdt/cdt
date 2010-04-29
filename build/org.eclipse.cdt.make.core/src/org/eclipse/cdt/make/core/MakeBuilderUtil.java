@@ -54,9 +54,6 @@ public class MakeBuilderUtil {
 	}
 
 	/**
-	 * Return the URI of the build directory for a prject and IMakeBuilderInfo
-	 * @param project
-	 * @param info
 	 * @return URI of the build directory, or the Project's URI if one couldn't be found
 	 * @since 6.0
 	 */

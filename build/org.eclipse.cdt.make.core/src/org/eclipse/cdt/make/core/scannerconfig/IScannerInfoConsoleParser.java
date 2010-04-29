@@ -24,10 +24,7 @@ public interface IScannerInfoConsoleParser extends IConsoleParser {
 	/**
 	 * One time initialization of a console parser.
 	 * 
-	 * @param project
-     * @param workingDirectory
 	 * @param collector - scanner info collector
-     * @param markerGenerator
 	 */
 	public void startup(IProject project, IPath workingDirectory,
             			IScannerInfoCollector collector, IMarkerGenerator markerGenerator);

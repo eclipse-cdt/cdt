@@ -141,7 +141,7 @@ public class MakeRecon extends OutputStream {
 	}
 
 	/**
-	 * @see java.io.OutputStream#write(...)
+	 * @see java.io.OutputStream#write(byte[], int, int)
 	 */
 	@Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {

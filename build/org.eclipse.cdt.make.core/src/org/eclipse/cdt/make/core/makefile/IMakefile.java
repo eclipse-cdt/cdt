@@ -40,114 +40,85 @@ public interface IMakefile extends IParent {
 
 	/**
 	 * ITargetRule | IInferenceRule | ISpecialRule
-	 * @return
 	 */
 	IRule[] getRules();
 
 	/**
-	 * Returns the IRule for target.
-	 * 
-	 * @param target
-	 * @return
+	 * @return the IRule for target.
 	 */
 	IRule[] getRules(String target);
 
 	/**
-	 * Returns IInferenceRule
-	 * @return
+	 * @return IInferenceRule
+	 * 
 	 */
 	IInferenceRule[] getInferenceRules();
 
 	/**
-	 * Returns the IInferenceRules for target.
-	 * @param target
-	 * @return
+	 * @return the IInferenceRules for target.
 	 */
 	IInferenceRule[] getInferenceRules(String target);
 
 	/**
-	 * Returns ITargetRule
-	 * @return
+	 * @return ITargetRule
 	 */
 	ITargetRule[] getTargetRules();
 
 	/**
-	 * Returns the ITargetRules for name.
-	 * 
-	 * @param target
-	 * @return
+	 * @return the ITargetRules for name.
 	 */
 	ITargetRule[] getTargetRules(String target);
 
 	/**
-	 * Return IMacroDefinition
-	 * @return
+	 * @return the IMacroDefinitions.
 	 */
 	IMacroDefinition[] getMacroDefinitions();
 
 	/**
-	 * Returns the IMacroDefinitions for name.
-	 * 
-	 * @param name
-	 * @return
+	 * @return the IMacroDefinitions for name.
 	 */
 	IMacroDefinition[] getMacroDefinitions(String name);
 
 	/**
-	 * Return all the builtin directives.
-	 * @return
+	 * @return all the built-in directives.
 	 */
 	IDirective[] getBuiltins();
 
 	/**
-	 * Return all the buil-in MacroDefintions
-	 * @return
+	 * @return all the built-in MacroDefintions
 	 */
 	IMacroDefinition[] getBuiltinMacroDefinitions();
 
 	/**
-	 * Returns the Builtin macro definition for name.
-	 *  
-	 * @param name
-	 * @return
+	 * @return the built-in macro definition for name.
 	 */
 	IMacroDefinition[] getBuiltinMacroDefinitions(String name);
 
 	/**
-	 * Returning after expanding any macros.
-	 * @return String - expanded line
+	 * @return line after expanding any macros.
 	 */
 	String expandString(String line);
 
 	/**
-	 * Returning after expanding any macros.
-	 * @param String - line to expand
-	 * @param boolean -  if true recursively expand.
-	 * @return String - expanded line
+	 * @return line after expanding any macros.
+	 * 
+	 * @param line - line to expand
+	 * @param recursive -  if true recursively expand.
 	 */
 	String expandString(String line, boolean recursive);
 
 	/**
-	 * Get the makefile Reader provider used to create this makefile.
-	 * @return IMakefileReaderProvider or <code>null</code>
+	 * @return  the makefile Reader provider used to create this makefile or <code>null</code>
 	 */
 	IMakefileReaderProvider getMakefileReaderProvider();
 	
 	/**
 	 * Clear all statements and (re)parse the Makefile
-	 * 
-	 * @param filePath
-	 * @param makefile
-	 * @throws IOException
 	 */
 	void parse(String filePath, Reader makefile) throws IOException;
 	
 	/**
 	 * Clear all statements and (re)parse the Makefile
-	 * 
-	 * @param fileURI
-	 * @param makefile
-	 * @throws IOException
 	 */
 	void parse(URI fileURI, Reader makefile) throws IOException;
 	
@@ -155,9 +126,7 @@ public interface IMakefile extends IParent {
 	 * Clear the all statements and (re)parse the Makefile
 	 * using the given makefile Reader provider
 	 * 
-	 * @param fileURI
 	 * @param makefileReaderProvider provider, or <code>null</code> to use a FileReader
-	 * @throws IOException
 	 */
 	void parse(URI fileURI, IMakefileReaderProvider makefileReaderProvider) throws IOException;
 	

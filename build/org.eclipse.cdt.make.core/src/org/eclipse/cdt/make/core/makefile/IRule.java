@@ -20,14 +20,13 @@ package org.eclipse.cdt.make.core.makefile;
  */
 public interface IRule extends IParent {
 	/**
-	 *  Array of command for the rule.
-	 * @return
+	 * @return Array of command for the rule.
 	 */
 	ICommand[] getCommands();
 
 	/**
-	 * The rule target name.
-	 * @return
+	 * @return The rule target name.
+	 * 
 	 */
 	ITarget getTarget();
 

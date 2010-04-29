@@ -823,19 +823,28 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 							rm.setData(makeProcessDMCAndData(controlDmc, getData().getGroupList()));
 						} else {
 							// Looks like this gdb doesn't truly support
-							// "-list-thread-groups --available". Resort to
-							// how we do things with gdb 6.8
-							IProcessList list = null;
-							try {
-								list = CCorePlugin.getDefault().getProcessList();
-							} catch (CoreException e) {
+							// "-list-thread-groups --available". If we're
+							// debugging locally, resort to getting the
+							// list natively (as we do with gdb 6.8). If
+							// we're debugging remotely, the user is out
+							// of luck
+							IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+							if (backend.getSessionType() == SessionType.LOCAL) {
+								IProcessList list = null;
+								try {
+									list = CCorePlugin.getDefault().getProcessList();
+								} catch (CoreException e) {
+								}
+	
+								if (list == null) {
+									rm.setData(new IProcessDMContext[0]);
+								} else {
+									IProcessInfo[] procInfos = list.getProcessList();
+									rm.setData(makeProcessDMCAndData(controlDmc, procInfos));
+								}
 							}
-
-							if (list == null) {
+							else {
 								rm.setData(new IProcessDMContext[0]);
-							} else {
-								IProcessInfo[] procInfos = list.getProcessList();
-								rm.setData(makeProcessDMCAndData(controlDmc, procInfos));
 							}
 						}
 						rm.done();
@@ -1038,17 +1047,20 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     										else {
     											// Looks like this gdb doesn't truly support
     											// "-list-thread-groups --available". Get the
-    											// process list natively
-    											IProcessList list = null;
-    											try {
-    												list = CCorePlugin.getDefault().getProcessList();
-        											int groupId_int = Integer.parseInt(finalGroupId);
-        											for (IProcessInfo procInfo : list.getProcessList()) {
-        												if (procInfo.getPid() == groupId_int) {
-        													fDebuggedProcessesAndNames.put(finalGroupId, procInfo.getName());
-        												}
-        											}
-    											} catch (CoreException e) {
+    											// process list natively if we're debugging locally
+    											IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+    											if (backend.getSessionType() == SessionType.LOCAL) {
+	    											IProcessList list = null;
+	    											try {
+	    												list = CCorePlugin.getDefault().getProcessList();
+	        											int groupId_int = Integer.parseInt(finalGroupId);
+	        											for (IProcessInfo procInfo : list.getProcessList()) {
+	        												if (procInfo.getPid() == groupId_int) {
+	        													fDebuggedProcessesAndNames.put(finalGroupId, procInfo.getName());
+	        												}
+	        											}
+	    											} catch (CoreException e) {
+	    											}
     											}
     										}
     									}

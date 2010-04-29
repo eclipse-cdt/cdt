@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class GNUMakefileChecker extends ACBuilder {
 		}
 	}
 
-	protected Map validatorMap = new HashMap();
+	protected Map<IProject, IMakefileValidator> validatorMap = new HashMap<IProject, IMakefileValidator>();
 
 	public GNUMakefileChecker() {
 	}
@@ -63,9 +63,13 @@ public class GNUMakefileChecker extends ACBuilder {
 	/**
 	 * @see IncrementalProjectBuilder#build
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		if (DEBUG_EVENTS)
-			printEvent(kind, args);
+	@Override
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> pargs = args;
+			printEvent(kind, pargs);
+		}
 
 		IResourceDelta delta = null;
 
@@ -73,7 +77,7 @@ public class GNUMakefileChecker extends ACBuilder {
 		if (kind != FULL_BUILD) {
 			delta = getDelta(getProject());
 		}
-                                                                                                                             
+
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build
 			checkProject(getProject(), monitor);
@@ -131,7 +135,7 @@ public class GNUMakefileChecker extends ACBuilder {
 	}
 
 	protected IMakefileValidator getMakefileValidator(IFile file) {
-		IMakefileValidator validator = (IMakefileValidator) validatorMap.get(file.getProject());
+		IMakefileValidator validator = validatorMap.get(file.getProject());
 		if (validator == null) {
 			// FIXME: look int the preference store for a value.
 			validator = new GNUMakefileValidator();

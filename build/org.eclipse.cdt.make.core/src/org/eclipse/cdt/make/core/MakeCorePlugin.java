@@ -370,6 +370,7 @@ public class MakeCorePlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		

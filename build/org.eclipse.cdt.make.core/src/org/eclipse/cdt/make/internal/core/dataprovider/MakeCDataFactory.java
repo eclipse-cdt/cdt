@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class MakeCDataFactory extends CDataFactory {
 		return fInstance;
 	}
 
+	@Override
 	public CLanguageData createLanguageData(CConfigurationData cfg,
 			CResourceData rcBase, CLanguageData base, String id, boolean clone) {
 		if(id == null)
@@ -33,6 +34,7 @@ public class MakeCDataFactory extends CDataFactory {
 		return new MakeLanguageData(id, base);
 	}
 
+	@Override
 	public CLanguageData createLanguageData(CConfigurationData cfg,
 			CResourceData rcBase, String id, String name, String languageId,
 			int supportedKinds, String[] rcTypes, boolean isContentTypes) {

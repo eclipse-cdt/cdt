@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.core.runtime.IPath;
 
 public class PathInfoToLangSettingsConverter {
@@ -73,13 +74,13 @@ public class PathInfoToLangSettingsConverter {
 		return entries;
 	}
 	
-	private static ICMacroEntry[] calculateEntries(int flags, Map map){
+	private static ICMacroEntry[] calculateEntries(int flags, Map<String, String> map){
 		ICMacroEntry entries[] = new ICMacroEntry[map.size()];
 		int num = 0;
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String name = (String)entry.getKey();
-			String value = (String)entry.getValue();
+		Set<Entry<String, String>> entrySet = map.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String name = entry.getKey();
+			String value = entry.getValue();
 			entries[num++] = new CMacroEntry(name, value, flags);
 		}
 		return entries;

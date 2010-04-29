@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -37,7 +37,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
      * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#getPathEntries(org.eclipse.core.runtime.IPath, int)
      */
     public IPathEntry[] getPathEntries(IPath path, int mask) {
-		ArrayList entries = new ArrayList();
+		ArrayList<IPathEntry> entries = new ArrayList<IPathEntry>();
         try {
             IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
             if (info instanceof IPerFileDiscoveredPathInfo) {
@@ -56,10 +56,10 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
                     }
         		}
         		if ((mask & IPathEntry.CDT_MACRO) != 0) {
-    				Map syms = filePathInfo.getSymbols(path);
-    				for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
-    					Entry entry = (Entry)iter.next();
-    					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue()));
+    				Map<String, String> syms = filePathInfo.getSymbols(path);
+    				Set<Entry<String, String>> entrySet = syms.entrySet();
+    				for (Entry<String, String> entry : entrySet) {
+    					entries.add(CoreModel.newMacroEntry(path, entry.getKey(), entry.getValue()));
     				}
         		}
         		// compare the resource with include and macros files
@@ -88,7 +88,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
         catch (CoreException e) {
             // 
         }
-		return (IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]);
+		return entries.toArray(new IPathEntry[entries.size()]);
     }
 
 	/* (non-Javadoc)

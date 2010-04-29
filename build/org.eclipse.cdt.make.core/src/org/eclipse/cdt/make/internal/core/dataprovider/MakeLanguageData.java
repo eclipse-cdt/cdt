@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class MakeLanguageData extends UserAndDiscoveredEntryLanguageData {
 		fSupportedKinds = kinds;
 	}
 
+	@Override
 	protected void copySettingsFrom(CLanguageData data) {
 		super.copySettingsFrom(data);
 		if(data instanceof MakeLanguageData){
@@ -41,6 +42,7 @@ public class MakeLanguageData extends UserAndDiscoveredEntryLanguageData {
 		}
 	}
 
+	@Override
 	protected ICLanguageSettingEntry[] getAllDiscoveredEntries(int kind) {
 		if(fDiscoveredCache != null){
 			int roFlag = canDisableDiscoveredEntries(kind) ? 0 : ICLanguageSettingEntry.READONLY;

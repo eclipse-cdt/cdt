@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
             target.enableInstructionStepping( enabled );
             if ( enabled && target instanceof ICDebugTarget ) {
                 try {
-                    getView().getSite().getPage().showView( ICDebugUIConstants.ID_DISASSEMBLY_VIEW );
+                    getView().getSite().getPage().showView( ICDebugUIConstants.ID_DSF_DISASSEMBLY_VIEW );
                 }
                 catch( PartInitException e ) {
                     CDebugUIPlugin.log( e.getStatus() );

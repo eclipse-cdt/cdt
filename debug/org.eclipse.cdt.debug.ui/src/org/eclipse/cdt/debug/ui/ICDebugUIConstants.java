@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,16 @@ public interface ICDebugUIConstants {
 
     /**
      * Disassembly view identifier (value <code>"org.eclipse.cdt.debug.ui.DisassemblyView"</code>).
+     * @deprecated As of CDT 7.0 replaced by the DSF Disassembly view ("org.eclipse.cdt.dsf.debug.ui.disassembly.view")
      */
+    @Deprecated
     public static final String ID_DISASSEMBLY_VIEW = PREFIX + "DisassemblyView"; //$NON-NLS-1$
+
+    /**
+     * Disassembly view identifier (value <code>"org.eclipse.cdt.dsf.debug.ui.disassembly.view"</code>).
+     * @since 7.0
+     */
+    public static final String ID_DSF_DISASSEMBLY_VIEW = "org.eclipse.cdt.dsf.debug.ui.disassembly.view"; //$NON-NLS-1$
 
     /**
      * Signals view identifier (value <code>"org.eclipse.cdt.debug.ui.SignalsView"</code>).

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	private ArrayList fThreads;
 
 	/**
-	 * Associated inferrior process, or <code>null</code> if not available.
+	 * Associated inferior process, or <code>null</code> if not available.
 	 */
 	private IProcess fDebuggeeProcess = null;
 
@@ -793,7 +793,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
-	public ILaunch getLaunch() {
+	@Override
+    public ILaunch getLaunch() {
 		return fLaunch;
 	}
 
@@ -832,7 +833,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	public Object getAdapter( Class adapter ) {
+	@Override
+    public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( ICDebugElement.class ) )
 			return this;
 		if ( adapter.equals( CDebugElement.class ) )
@@ -1622,7 +1624,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString() {
+	@Override
+    public String toString() {
 		String result = ""; //$NON-NLS-1$
 		try {
 			result = getName();
@@ -1697,8 +1700,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#isInstructionSteppingEnabled()
 	 */
 	public boolean isInstructionSteppingEnabled() {
-		return fPreferences.getBoolean( PREF_INSTRUCTION_STEPPING_MODE ) ||
-			   CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON );
+		return fPreferences.getBoolean( PREF_INSTRUCTION_STEPPING_MODE );
 	}
 
 	/* (non-Javadoc)
@@ -1710,10 +1712,15 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void initializePreferences() {
 		fPreferences = new Preferences();
-		fPreferences.setDefault( PREF_INSTRUCTION_STEPPING_MODE, false );
+		fPreferences.setDefault( PREF_INSTRUCTION_STEPPING_MODE, CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON ));
 	}
 
 	private void disposePreferences() {
+	    if (fPreferences != null) {
+	        // persist current instruction stepping mode
+	        CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, fPreferences.getBoolean( PREF_INSTRUCTION_STEPPING_MODE ) );
+            CDebugCorePlugin.getDefault().savePluginPreferences();
+	    }
 		fPreferences = null;
 	}
 

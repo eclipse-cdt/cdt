@@ -152,7 +152,13 @@ public class GDBProcesses extends MIProcesses {
 			if (name == null) {
 				// Should not happen.
 				name = "Unknown name"; //$NON-NLS-1$
-				assert false : "Don't have entry for process ID: " + pid; //$NON-NLS-1$
+
+				// Until bug 305385 is fixed, the above code will not work, so we assume we
+				// are looking for our own process
+//				assert false : "Don't have entry for process ID: " + pid; //$NON-NLS-1$
+				IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+				name = backend.getProgramPath().lastSegment();
+
 			}
 		
 			rm.setData(new MIThreadDMData(name, pidStr));

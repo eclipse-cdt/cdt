@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenHelper;
 
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
@@ -231,7 +232,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return new String[] {fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory};
+			return new String[] {fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory, fDoxygenCategory};
 		}
 	
 		/*
@@ -250,13 +251,15 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (parentElement instanceof String) {
 				String entry= (String) parentElement;
 				if (fCodeCategory.equals(entry))
-					return fListModel.subList(8, fListModel.size()).toArray();
+					return fListModel.subList(11, fListModel.size()).toArray();
 				if (fAssemblyCategory.equals(entry))
 					return fListModel.subList(6, 8).toArray();
 				if (fCommentsCategory.equals(entry))
 					return fListModel.subList(0, 3).toArray();
 				if (fPreprocessorCategory.equals(entry))
 					return fListModel.subList(3, 6).toArray();
+				if (fDoxygenCategory.equals(entry))
+					return fListModel.subList(8, 11).toArray();
 			}
 			return new Object[0];
 		}
@@ -265,8 +268,10 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (element instanceof String)
 				return null;
 			int index= fListModel.indexOf(element);
-			if (index >= 8)
+			if (index >= 11)
 				return fCodeCategory;
+			if (index >= 8)
+				return fDoxygenCategory;
 			if (index >= 6)
 				return fAssemblyCategory;
 			if (index >= 3)
@@ -308,6 +313,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels, PreferenceConstants.EDITOR_ASM_LABEL_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR },
+         	{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenTagRecognized, DoxygenHelper.DOXYGEN_TAG_RECOGNIZED },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenSingleLineComment, DoxygenHelper.DOXYGEN_SINGLE_TOKEN },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenMultiLineComment, DoxygenHelper.DOXYGEN_MULTI_TOKEN },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR },
 //			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR },
@@ -317,11 +325,12 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_numbers, PreferenceConstants.EDITOR_C_NUMBER_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_others, PreferenceConstants.EDITOR_C_DEFAULT_COLOR },
 	};
-	
+		
 	private final String fCodeCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code;
 	private final String fCommentsCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments;
 	private final String fPreprocessorCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor;
 	private final String fAssemblyCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_assembly;
+	private final String fDoxygenCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_doxygen;
 	
 	private ColorSelector fSyntaxForegroundColorEditor;
 	private Label fColorEditorLabel;
@@ -606,6 +615,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 					return 2;
 				if (fPreprocessorCategory.equals(element))
 					return 3;
+				if (fDoxygenCategory.equals(element))
+					return 4;
 				return 0;
 			}
 		});

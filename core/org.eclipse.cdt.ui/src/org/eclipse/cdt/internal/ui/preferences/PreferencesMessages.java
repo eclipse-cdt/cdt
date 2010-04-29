@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,10 +75,14 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorColoringConfigurationBlock_ppOthers;
 	public static String CEditorColoringConfigurationBlock_ppHeaders;
 	public static String CEditorColoringConfigurationBlock_cCommentTaskTags;
+	public static String CEditorColoringConfigurationBlock_DoxygenTagRecognized;
+	public static String CEditorColoringConfigurationBlock_DoxygenSingleLineComment;
+	public static String CEditorColoringConfigurationBlock_DoxygenMultiLineComment;
 	public static String CEditorColoringConfigurationBlock_coloring_category_code;
 	public static String CEditorColoringConfigurationBlock_coloring_category_comments;
 	public static String CEditorColoringConfigurationBlock_coloring_category_preprocessor;
 	public static String CEditorColoringConfigurationBlock_coloring_category_assembly;
+	public static String CEditorColoringConfigurationBlock_coloring_category_doxygen;
 	public static String CEditorColoringConfigurationBlock_coloring_element;
 	public static String CEditorColoringConfigurationBlock_link;
 	public static String CEditorColoringConfigurationBlock_enable_semantic_highlighting;

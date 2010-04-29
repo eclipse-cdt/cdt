@@ -514,6 +514,16 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		// The brace was closed automatically.
 		assertEquals("}", tester.getLine(1)); //$NON-NLS-1$
 	}
+	
+	public void testSkipToStatementStartWhitesmiths_Bug311018() throws Exception {
+		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
+		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
+		AutoEditTester tester = createAutoEditTester();
+		tester.type("if (i > 0)\n"); //$NON-NLS-1$
+		tester.type("{\n"); //$NON-NLS-1$
+		// start is indented to the brace
+		assertEquals("if (i > 0)\n    {\n    \n    }", tester.fDoc.get());
+	}
 
 	private void assertNoError() {
 		if (!fStatusLog.isEmpty()) {

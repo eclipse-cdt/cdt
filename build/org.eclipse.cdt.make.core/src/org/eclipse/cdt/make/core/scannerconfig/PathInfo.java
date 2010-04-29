@@ -28,19 +28,19 @@ public final class PathInfo {
 	
 	private IPath[] fIncludePaths;
 	private IPath[] fQuoteIncludePaths;
-	private HashMap fSymbols;
+	private HashMap<String, String> fSymbols;
 	private IPath[] fIncludeFiles;
 	private IPath[] fMacroFiles;
 	private int fHash;
 	
 	public PathInfo(IPath[] includePaths,
 			IPath[] quoteIncludePaths,
-			Map symbols,
+			Map<String, String> symbols,
 			IPath[] includeFiles,
 			IPath[] macroFiles){
 		fIncludePaths = includePaths != null && includePaths.length != 0 ? (IPath[])includePaths.clone() : EMPTY_PATH_ARRAY;
 		fQuoteIncludePaths = quoteIncludePaths != null && quoteIncludePaths.length != 0 ? (IPath[])quoteIncludePaths.clone() : EMPTY_PATH_ARRAY;
-		fSymbols = symbols != null && symbols.size() != 0 ? new HashMap(symbols) : new HashMap(0);
+		fSymbols = symbols != null && symbols.size() != 0 ? new HashMap<String, String>(symbols) : new HashMap<String, String>(0);
 		fIncludeFiles = includeFiles != null && includeFiles.length != 0 ? (IPath[])includeFiles.clone() : EMPTY_PATH_ARRAY;
 		fMacroFiles = macroFiles != null && macroFiles.length != 0 ? (IPath[])macroFiles.clone() : EMPTY_PATH_ARRAY;
 	}
@@ -60,8 +60,9 @@ public final class PathInfo {
     /**
      * Get defined symbols  
      */
-    public Map getSymbols(){
-    	return (Map)fSymbols.clone();
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getSymbols(){
+        return (Map<String, String>)fSymbols.clone();
     }
     
     /**
@@ -87,6 +88,7 @@ public final class PathInfo {
 			&& fMacroFiles.length == 0;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if(this == obj)
 			return true;
@@ -110,6 +112,7 @@ public final class PathInfo {
 		return true;
 	}
 
+	@Override
 	public int hashCode() {
 		int hash = fHash;
 		if(hash == 0){

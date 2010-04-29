@@ -219,13 +219,13 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 
 		Iterator<String> iter = tokens.iterator();
 		while(iter.hasNext()){
-			String token = (String)iter.next();
+			String token = iter.next();
 			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
 			int lastIndex = token.lastIndexOf("\"");	//$NON-NLS-1$
 			if (firstIndex != -1 && firstIndex == lastIndex) {
 				// Keep looking
 				while (iter.hasNext()) {
-					String nextToken = (String) iter.next();
+					String nextToken = iter.next();
 					token += WHITESPACE + nextToken;
 					if (nextToken.indexOf("\"") != -1) break;	//$NON-NLS-1$
 				}
@@ -244,11 +244,11 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	//}
 
 	/**
-	 * Answers <code>true</code> if the receiver manages settings for the
+	 * @return <code>true</code> if the receiver manages settings for the
 	 * argument
 	 * 
 	 * @param tool
-	 * @return
+	 * 
 	 */
 	@Override
 	public boolean isFor(Object tool, Object unused) {
@@ -363,7 +363,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 			Iterator<String> iterator = set.iterator();
 			while (iterator.hasNext()) {
 				Object key = iterator.next();
-				String val = (String) stringOptionsMap.get(key);
+				String val = stringOptionsMap.get(key);
 				if (alloptions.indexOf(val) == -1) {
 					StringBuffer buf = new StringBuffer();
 					String[] vals = val.split(WHITESPACE);
@@ -380,7 +380,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		Set<IOption> objSet = userObjsMap.keySet();
 		for (int s = 0; s < objSet.size(); s++) {
 			for (IOption op : objSet) {
-				String val = (String) userObjsMap.get(op);
+				String val = userObjsMap.get(op);
 				ArrayList<String> list = new ArrayList<String>();
 				for (String v : parseString(val)) {
 					if (alloptions.indexOf(v) != -1)

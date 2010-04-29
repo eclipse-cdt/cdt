@@ -283,9 +283,8 @@ public class BreakpointVMProvider extends AbstractVMProvider
             getBreakpointOrganizerVMCs(
                 (BreakpointOrganizerVMNode)_nestingOrganizerVmc.getVMNode(), path.getParentPath(),
                 new DataRequestMonitor<List<BreakpointOrganizerVMContext>>(getExecutor(), rm) {
-                @Override
-                protected void handleCompleted() {
-                    if (isSuccess()) {
+                    @Override
+                    protected void handleSuccess() {
                         int newVmcIdx = getData().indexOf(_nestingOrganizerVmc);
                         
                         if (newVmcIdx >= 0) {
@@ -293,10 +292,9 @@ public class BreakpointVMProvider extends AbstractVMProvider
                         } else {
                             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE, "Breakpoint category not found", null)); //$NON-NLS-1$
                         }
+                        rm.done();
                     }
-                    rm.done();
-                }
-            });
+                });
         }
     }
     

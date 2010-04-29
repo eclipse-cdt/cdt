@@ -372,12 +372,14 @@
       </propertyTester>
       </extension>
       
-     
-   <extension
+    <!-- Bug 289526 [debug view] Migrate the Restart feature to the new one, as supported by the platform 
+    Don't contribute this action to context menu if selection isn't an IRestart.  Debug platform
+    already contributes it. -->
+    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
             targetID="org.eclipse.debug.ui.DebugView"
-            id="org.eclipse.cdt.debug.ui.debugview.popupMenu">
+            id="org.eclipse.cdt.debug.ui.debugview.popupMenu2">
          <action
                label="%RestartAction.label"
                icon="icons/elcl16/restart.gif"
@@ -387,7 +389,20 @@
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
             <selection class="org.eclipse.cdt.debug.core.model.IRestart"/>
+            
          </action>
+         <visibility>
+         	<objectClass name="org.eclipse.cdt.debug.core.model.IRestart"/>
+         </visibility>
+      </viewerContribution>
+   </extension>
+      
+     
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.cdt.debug.ui.debugview.popupMenu">
          <action
                state="false"
                style="toggle"
@@ -877,18 +892,6 @@
       <viewContribution
             targetID="org.eclipse.debug.ui.DebugView"
             id="org.eclipse.cdt.debug.ui.debugview.toolbar">
-         <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               toolbarPath="threadGroup"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               disabledIcon="icons/dlcl16/restart.gif"
-               enablesFor="1"
-               icon="icons/elcl16/restart.gif"
-               helpContextId="restart_action_context"
-               label="%RestartAction.label"
-               tooltip="%RestartAction.tooltip">
-            <selection class="org.eclipse.cdt.debug.core.model.IRestart"/>
-         </action>
          <action
                state="false"
                style="toggle"

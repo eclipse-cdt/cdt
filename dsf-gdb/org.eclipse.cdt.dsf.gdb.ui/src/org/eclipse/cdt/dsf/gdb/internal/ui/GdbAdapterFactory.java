@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Navid Mehregani (TI) - Bug 289526 - Migrate the Restart feature to the new one, as supported by the platform
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui;
 
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignalHandler;
 import org.eclipse.cdt.debug.core.model.IReverseResumeHandler;
 import org.eclipse.cdt.debug.core.model.IReverseStepIntoHandler;
@@ -68,6 +68,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.commands.IDisconnectHandler;
+import org.eclipse.debug.core.commands.IRestartHandler;
 import org.eclipse.debug.core.commands.IResumeHandler;
 import org.eclipse.debug.core.commands.IStepIntoHandler;
 import org.eclipse.debug.core.commands.IStepOverHandler;
@@ -181,7 +182,7 @@ public class GdbAdapterFactory
             session.registerModelAdapter(IResumeHandler.class, fResumeCommand);
             session.registerModelAdapter(IReverseResumeHandler.class, fReverseResumeCommand);
             session.registerModelAdapter(IResumeWithoutSignalHandler.class, fResumeWithoutSignalCommand);
-            session.registerModelAdapter(IRestart.class, fRestartCommand);
+            session.registerModelAdapter(IRestartHandler.class, fRestartCommand);
             session.registerModelAdapter(ITerminateHandler.class, fTerminateCommand);
             session.registerModelAdapter(IConnect.class, fConnectCommand);
             session.registerModelAdapter(IDisconnectHandler.class, fDisconnectCommand);
@@ -238,7 +239,7 @@ public class GdbAdapterFactory
             session.unregisterModelAdapter(IResumeHandler.class);
             session.unregisterModelAdapter(IReverseResumeHandler.class);
             session.unregisterModelAdapter(IResumeWithoutSignalHandler.class);
-            session.unregisterModelAdapter(IRestart.class);
+            session.unregisterModelAdapter(IRestartHandler.class);
             session.unregisterModelAdapter(ITerminateHandler.class);
             session.unregisterModelAdapter(IConnect.class);
             session.unregisterModelAdapter(IDisconnectHandler.class);

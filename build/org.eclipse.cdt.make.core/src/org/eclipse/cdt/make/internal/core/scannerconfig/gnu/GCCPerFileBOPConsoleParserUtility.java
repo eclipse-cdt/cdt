@@ -44,20 +44,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	private String fDefaultMacroDefinitionValue= "1"; //$NON-NLS-1$
 
 
-    /**
-     * @param markerGenerator 
-     * @param workingDirectory 
-     * @param project 
-     */
     public GCCPerFileBOPConsoleParserUtility(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator) {
         super(project, workingDirectory, markerGenerator);
     }
 
-    /**
-     * Adds a mapping filename, generic_command
-     * @param longFileName
-     * @param genericLine
-     */
     void addGenericCommandForFile(String longFileName, String genericCommand) {
         // if a file name has already been added once, return
         if (compiledFileList.contains(longFileName))
@@ -104,8 +94,6 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 
     /**
      * Adds a mapping command line -> file, this time without a dir
-     * @param longFileName
-     * @param genericLine
      */
     void addGenericCommandForFile2(String longFileName, String genericLine) {
         // if a file name has already been added once, return
@@ -129,8 +117,6 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
     }
 
     /**
-     * @param genericLine
-     * @param cppFileType
      * @return CCommandDSC compile command description 
      */
     public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {

@@ -93,15 +93,11 @@ public interface IDiscoveredPathManager {
     interface IDiscoveredScannerInfoSerializable {
         /**
          * Serialize discovered scanner info to an XML element
-         * 
-         * @param root
          */
         public void serialize(Element root);
         
         /**
          * Deserialize discovered scanner info from an XML element
-         * 
-         * @param root
          */
         public void deserialize(Element root);
         

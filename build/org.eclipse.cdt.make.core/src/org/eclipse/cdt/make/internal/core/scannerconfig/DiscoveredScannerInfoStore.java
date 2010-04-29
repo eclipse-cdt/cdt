@@ -196,10 +196,6 @@ public final class DiscoveredScannerInfoStore {
 		return document;
 	}
 
-	/**
-	* @param document
-	* @param project 
-	*/
 	private void upgradeDocument(Document document, IProject project) {
 		Element rootElem = (Element) document.getElementsByTagName(SI_ELEM).item(0);
 		ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2.0\""); //$NON-NLS-1$
@@ -231,11 +227,6 @@ public final class DiscoveredScannerInfoStore {
         return cfgElem;
 	}
 	
-	/**
-	* @param scannerInfo
-	* @param rootElement
-	* @param doc
-	*/
 	private void saveDiscoveredScannerInfo(InfoContext context, IDiscoveredScannerInfoSerializable serializable, Document doc) {
 		NodeList rootList = doc.getElementsByTagName(SI_ELEM);
 		if (rootList.getLength() > 0) {
@@ -350,9 +341,6 @@ public final class DiscoveredScannerInfoStore {
         return MakeCorePlugin.getWorkingDirectory().append(fileName);
     }
 
-    /**
-     * @param delta
-     */
     public void updateScannerConfigStore(IResourceDelta delta) {
         try {
             delta.accept(new IResourceDeltaVisitor() {
@@ -395,9 +383,6 @@ public final class DiscoveredScannerInfoStore {
         deletePluginStateFile(scFileName);
     }
 
-    /**
-     * @param scFileName
-     */
     private void deletePluginStateFile(String scFileName) {
         IPath path = MakeCorePlugin.getWorkingDirectory().append(scFileName);
         File file = path.toFile();
@@ -418,10 +403,6 @@ public final class DiscoveredScannerInfoStore {
         }
     }
 
-    /**
-     * @param oldFileName
-     * @param newFileName
-     */
     private void movePluginStateFile(String oldFileName, String newFileName) {
         IPath oldPath = MakeCorePlugin.getWorkingDirectory().append(oldFileName);
         IPath newPath = MakeCorePlugin.getWorkingDirectory().append(newFileName);

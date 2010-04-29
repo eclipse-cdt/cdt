@@ -33,10 +33,6 @@ public class BuildOutputReaderJob extends Job {
     private InfoContext context;
     private IScannerConfigBuilderInfo2 buildInfo;
 
-	/**
-     * @param project
-     * @param buildInfo
-     */
     public BuildOutputReaderJob(IProject project, IScannerConfigBuilderInfo2 buildInfo) {
     	this(project, buildInfo.getContext(), buildInfo);
     }

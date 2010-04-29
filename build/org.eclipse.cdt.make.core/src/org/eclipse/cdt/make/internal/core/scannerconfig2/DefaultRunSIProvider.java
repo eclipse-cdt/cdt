@@ -170,9 +170,6 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     /**
      * Initialization of protected fields. 
      * Subclasses are most likely to override default implementation.
-     * 
-     * @param currentProject
-     * @return boolean
      */
     protected boolean initialize() {
     	
@@ -188,19 +185,11 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
      * Add additional arguments. For example: tso - target specific options
      * Base class implementation returns compileArguments.
      * Subclasses are most likely to override default implementation.
-     * 
-     * @param isDefaultCommand
-     * @param collector 
-     * @return
      */
     protected String[] prepareArguments(boolean isDefaultCommand) {
         return fCompileArguments;
     }
 
-    /**
-     * @param array
-     * @return
-     */
     private String coligate(String[] array) {
         StringBuffer sb = new StringBuffer(128);
         for (int i = 0; i < array.length; ++i) {
@@ -211,10 +200,6 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
         return ca;
     }
 
-    /**
-     * @param launcher
-     * @return
-     */
     protected String[] setEnvironment(ICommandLauncher launcher, Properties initialEnv) {
         // Set the environmennt, some scripts may need the CWD var to be set.
         Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();

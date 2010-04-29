@@ -104,10 +104,6 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
         return rc;
 	}
 
-    /**
-     * @param inputFileName
-     * @return
-     */
     private BufferedReader getStreamReader(String inputFileName) {
         BufferedReader reader = null;
         try {
@@ -121,8 +117,6 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
 
     /**
      * Precondition: Neither input nor output are null
-     * @param monitor
-     * @return
      */
     private boolean readFileToOutputStream(IProgressMonitor monitor, BufferedReader reader, OutputStream ostream) {
         final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$

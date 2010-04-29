@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Discovered portion of scanner configuration
- * @deprecated
+ * @deprecated as of CDT 4.0.
  * @author vhirsl
  * 
  * @noextend This class is not intended to be subclassed by clients.
@@ -44,9 +44,6 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 
 	private  org.eclipse.cdt.make.core.MakeScannerInfo userInfo;
 	
-	/**
-	 * @param project
-	 */
 	public DiscoveredScannerInfo(IProject project) {
 		this.project = project;
 	}
@@ -204,16 +201,10 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		DiscoveredScannerInfoProvider.updateScannerInfo(this);
 	}
 
-	/**
-	 * @param userPaths
-	 */
 	public void setUserIncludePaths(List<String> userPaths) {
 		userInfo.setIncludePaths(userPaths.toArray(new String[userPaths.size()]));
 	}
 
-	/**
-	 * @param userSymbols
-	 */
 	public void setUserDefinedSymbols(List<String> userSymbols) {
 		userInfo.setPreprocessorSymbols(userSymbols.toArray(new String[userSymbols.size()]));
 	}

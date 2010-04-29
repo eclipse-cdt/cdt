@@ -119,10 +119,6 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 			|| isMacroDefinition(line);
 	}
 
-	/**
-	 * @param line
-	 * @return
-	 */
 	public static boolean isStaticTargetRule(String line) {
 		line = line.trim();
 		int colon1 = Util.indexOf(line, ':');
@@ -136,10 +132,6 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 		return false;
 	}
 
-	/**
-	 * @param line
-	 * @return
-	 */
 	public static boolean isGNUTargetRule(String line) {
 		line = line.trim();
 		int colon = Util.indexOf(line, ':');

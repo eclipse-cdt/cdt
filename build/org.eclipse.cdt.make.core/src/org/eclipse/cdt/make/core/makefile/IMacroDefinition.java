@@ -20,44 +20,38 @@ package org.eclipse.cdt.make.core.makefile;
 public interface IMacroDefinition  extends IDirective {
 
 	/**
-	 * Returns the name of the macro
-	 * @return
+	 * @return the name of the macro
 	 */
 	String getName();
 
 	/**
-	 * Returns the value of the macro
-	 * @return
+	 * @return the value of the macro
 	 */
 	StringBuffer getValue();
 
 	/**
-	 * The macro is a built-in
-	 * @return
+	 * @return the macro is a built-in
 	 */
 	boolean isFromDefault();
 
 	/**
-	 * The macro was found in a Makefile.
-	 * @return
+	 * @return the macro was found in a Makefile.
+	 * 
 	 */
 	boolean isFromMakefile();
 
 	/**
-	 * The macro came from the environment.
-	 * @return
+	 * @return the macro came from the environment.
 	 */
 	boolean isFromEnviroment();
 
 	/**
 	 * The macro came from the make command option -e
-	 * @return
 	 */
 	boolean isFromEnvironmentOverride();
 
 	/**
-	 * The macro was pass from an option to make.
-	 * @return
+	 * @return the macro was pass from an option to make.
 	 */
 	boolean isFromCommand();
 }

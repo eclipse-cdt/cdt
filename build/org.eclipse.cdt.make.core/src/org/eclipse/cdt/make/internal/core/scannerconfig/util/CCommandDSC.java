@@ -53,10 +53,7 @@ public class CCommandDSC {
     private List<String> symbols;
     private List<String> includes;
     private List<String> quoteIncludes;
-    
-    /**
-	 * @param cppFileType2 
-	 */
+
 	public CCommandDSC(boolean cppFileType) {
 		this(cppFileType, null);
 	}
@@ -92,9 +89,6 @@ public class CCommandDSC {
 		compilerCommand.add(option);
 	}
 	
-    /**
-     * @return
-     */
     public Integer getCommandIdAsInteger() {
         return new Integer(getCommandId());
     }
@@ -169,8 +163,7 @@ public class CCommandDSC {
 	}
 	
 	/**
-	 * Returns the compiler command
-	 * @return
+	 * @return the compiler command
 	 */
 	public String getCompilerName() {
 		String compiler = new String();
@@ -255,7 +248,7 @@ public class CCommandDSC {
         return makeAbsolute(project, quoteIncludes);
     }
     /**
-     * @param includes. Quote include paths (for #include "...")
+     * @param includes - quote include paths (for #include "...")
      */
     public void setQuoteIncludes(List<String> includes) {
         quoteIncludes = includes;
@@ -285,9 +278,6 @@ public class CCommandDSC {
         this.discovered = discovered;
     }
 
-    /**
-     * @param cmdElem
-     */
     public void serialize(Element cmdElem) {
         Document doc = cmdElem.getOwnerDocument();
         // serialize the command
@@ -324,9 +314,6 @@ public class CCommandDSC {
         cmdElem.appendChild(siElem);
     }
 
-    /**
-     * @param cmdElem
-     */
     public void deserialize(Element cmdElem) {
         // read command options
         NodeList descList = cmdElem.getElementsByTagName(CMD_DESCRIPTION_ELEM);

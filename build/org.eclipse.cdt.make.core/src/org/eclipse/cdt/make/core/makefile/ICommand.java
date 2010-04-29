@@ -39,7 +39,7 @@ public interface ICommand extends IDirective {
 	final public static char TAB = '\t';
 
 	/**
-	 *   -    If the command prefix contains a hyphen, or the -i option is
+	 * -    If the command prefix contains a hyphen, or the -i option is
 	 * present, or the special target .IGNORE has either the current
 	 * target as a prerequisite or has no prerequisites, any error
 	 * found while executing the command will be ignored.

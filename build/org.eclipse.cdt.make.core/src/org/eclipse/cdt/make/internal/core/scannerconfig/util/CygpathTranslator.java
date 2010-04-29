@@ -81,10 +81,6 @@ public class CygpathTranslator {
         }
     }
     
-    /**
-     * @param sumIncludes
-     * @return
-     */
     public static List<String> translateIncludePaths(IProject project, List<String> sumIncludes) {
     	// first check if cygpath translation is needed at all
     	boolean translationNeeded = false;

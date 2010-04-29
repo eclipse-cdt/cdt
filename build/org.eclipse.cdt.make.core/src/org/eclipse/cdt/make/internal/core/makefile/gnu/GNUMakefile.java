@@ -412,10 +412,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		return stmt;
 	}
 
-	/**
-	 * @param line
-	 * @return
-	 */
 	protected SpecialRule parseSpecialRule(String line) {
 		line = line.trim();
 		String keyword =  null;
@@ -469,8 +465,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	 * ifneq CONDITIONAL
 	 * else
 	 *
-	 * @param line
-	 * @return
 	 */
 	protected Conditional parseConditional(String line) {
 		Conditional condition = null;
@@ -568,10 +562,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		return new VPath(this, pattern, directories);
 	}
 
-	/**
-	 * @param line
-	 * @return
-	 */
 	protected UnExport parseUnExport(String line) {
 		// Pass over "unexport"
 		for (int i = 0; i < line.length(); i++) {
@@ -780,10 +770,6 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		return staticRules;
 	}
 
-	/**
-	 * @param line
-	 * @return
-	 */
 	protected InferenceRule parseInferenceRule(String line) {
 		String tgt;
 		int index = Util.indexOf(line, ':');

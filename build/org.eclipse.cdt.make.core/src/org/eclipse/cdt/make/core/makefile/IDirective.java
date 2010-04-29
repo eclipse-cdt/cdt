@@ -20,22 +20,19 @@ package org.eclipse.cdt.make.core.makefile;
 public interface IDirective {
 
 	/**
-	 * Returns the parent of this directive, null if none.
-	 * @return
+	 * @return the parent of this directive, null if none.
 	 */
 	IDirective getParent();
 
 	/**
-	 * The starting line number of this directive.
+	 * @return the starting line number of this directive.
 	 * The numbering starts at 1 .i.e the first line is not 0
-	 * @return
 	 */
 	int getStartLine();
 
 	/**
-	 * The ending line number of this directive.
+	 * @return the ending line number of this directive.
 	 * The numbering starts at 1 .i.e the first line is not 0
-	 * @return
 	 */
 	int getEndLine();
 

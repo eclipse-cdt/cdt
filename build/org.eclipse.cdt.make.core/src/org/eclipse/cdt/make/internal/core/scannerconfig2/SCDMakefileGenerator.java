@@ -61,10 +61,6 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
         return generateMakefile(resource.getProject().getName());
     }
 
-    /**
-     * @param name
-     * @return
-     */
     private boolean generateMakefile(String projectName) {
         boolean rc = false;
         if (collector instanceof IScannerInfoCollector2) {

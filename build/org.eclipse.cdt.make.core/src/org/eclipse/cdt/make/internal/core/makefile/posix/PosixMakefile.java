@@ -232,10 +232,6 @@ public class PosixMakefile extends AbstractMakefile {
 		return builtins;
 	}
 
-	/**
-	 * @param line
-	 * @return
-	 */
 	protected SpecialRule processSpecialRule(String line) {
 		line = line.trim();
 		String keyword =  null;

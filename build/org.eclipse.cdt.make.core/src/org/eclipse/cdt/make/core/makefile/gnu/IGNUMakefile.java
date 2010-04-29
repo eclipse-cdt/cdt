@@ -21,13 +21,11 @@ public interface IGNUMakefile extends IMakefile {
 	/**
 	 * Set the search include directories for the
 	 * "include" directive
-	 * @param paths
 	 */
 	void setIncludeDirectories(String[] paths);
 
 	/**
-	 * Get the include directories search paths.
-	 * @return
+	 * @return the include directories search paths.
 	 */
 	String[] getIncludeDirectories();
 }

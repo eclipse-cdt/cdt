@@ -62,9 +62,6 @@ public class ScannerConfigProfile {
 	public final class ScannerInfoConsoleParser {
 		private IConfigurationElement configElem;
 		
-		/**
-		 * @param scannerInfoConsoleParser
-		 */
 		public ScannerInfoConsoleParser(IConfigurationElement configElem) {
 			this.configElem = configElem;
 		}
@@ -113,9 +110,6 @@ public class ScannerConfigProfile {
 	 * @author vhirsl
 	 */
 	public final class Run extends Action {
-		/**
-		 * @param run
-		 */
 		public Run(IConfigurationElement run) {
 			super(run);
 		}
@@ -138,9 +132,6 @@ public class ScannerConfigProfile {
 	 * @author vhirsl
 	 */
 	public final class Open extends Action {
-		/**
-		 * @param open
-		 */
 		public Open(IConfigurationElement open) {
 			super(open);
 		}
@@ -239,9 +230,6 @@ public class ScannerConfigProfile {
 	
 	private Boolean supportsContext;
 
-	/**
-	 * @param profileId
-	 */
 	public ScannerConfigProfile(String profileId) {
 		id = profileId;
 		load();

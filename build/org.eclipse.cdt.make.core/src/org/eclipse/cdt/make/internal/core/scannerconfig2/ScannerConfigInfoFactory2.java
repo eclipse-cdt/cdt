@@ -988,7 +988,7 @@ public class ScannerConfigInfoFactory2 {
 
 		/**
 		 * @param profile element
-		 * @param profile options 
+		 * @param po options 
 		 */
 		private void store(ICStorageElement profile, ProfileOptions po) {
 			ICStorageElement child, grandchild;

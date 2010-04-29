@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -295,10 +295,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
 
-    /**
-     * @param file 
-     * @param object
-     */
     private void addCompilerCommand(IFile file, CCommandDSC cmd) {
 		assert Thread.holdsLock(fLock);
         List<CCommandDSC> existingCommands = new ArrayList<CCommandDSC>(sid.commandIdCommandMap.values());
@@ -323,10 +319,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		generateFileDelta(file, cmd);
     }
 
-    /**
-	 * @param file
-	 * @param cmd
-	 */
 	private void generateFileDelta(IFile file, CCommandDSC cmd) {
 		assert Thread.holdsLock(fLock);
         Integer commandId = cmd.getCommandIdAsInteger();
@@ -342,10 +334,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		}
 	}
 
-	/**
-	 * @param file
-	 * @param cmd
-	 */
 	private void applyFileDeltas() {
 		assert Thread.holdsLock(fLock);
 		for (Iterator<IResource> i = siChangedForFileMap.keySet().iterator(); i.hasNext(); ) {
@@ -429,10 +417,6 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
     
-    /**
-     * @param type
-     * @param object
-     */
     private void addScannerInfo(ScannerInfoTypes type, List delta) {
         // TODO Auto-generated method stub
         

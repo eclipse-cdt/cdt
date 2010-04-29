@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -242,14 +241,10 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					filesToCheck.add(new FileAndChecksum(tu, ifile, checksum));
 					filesToDelete[i]= null;
 				}
-			}			
-			try {
-				removeOutdatedFiles(checksums, filesToCheck, monitor);
-			}
-			catch (NoSuchAlgorithmException e) {
-				CCorePlugin.log(e);
-			}
-			deleteFiles(pdom, 1, filesToDelete, filesToCheck, monitor);
+			}		
+			
+			List<FileAndChecksum> updateTimestamps= getUnchangedWithDifferentTimestamp(checksums, filesToCheck, monitor);
+			updateIndex(pdom, 1, filesToDelete, updateTimestamps, monitor);
 		}
 		finally {
 			pdom.releaseReadLock();
@@ -262,21 +257,19 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void deleteFiles(WritablePDOM pdom, final int giveupReadlocks, IIndexFragmentFile[] filesToDelete,
+	private void updateIndex(WritablePDOM pdom, final int giveupReadlocks, IIndexFragmentFile[] filesToDelete,
 			List<FileAndChecksum> updateTimestamps, IProgressMonitor monitor) throws InterruptedException, CoreException {
 		pdom.acquireWriteLock(giveupReadlocks);
 		try {
-			for (int i = 0; i < filesToDelete.length; i++) {
-				IIndexFragmentFile ifile = filesToDelete[i];
+			for (IIndexFragmentFile ifile : filesToDelete) {
 				if (ifile != null) {
 					checkMonitor(monitor);
 					pdom.clearFile(ifile, null);
 				}
 			}
-			for (Iterator<FileAndChecksum> i = updateTimestamps.iterator(); i.hasNext();) {
+			for (FileAndChecksum fc : updateTimestamps) {
 				checkMonitor(monitor);
 				
-				FileAndChecksum fc = i.next();
 				IIndexFragmentFile file= fc.fIFile;
 				if (file != null) {
 					IResource r= fc.fFile.getResource();
@@ -292,32 +285,44 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		}
 	}
 	
-	private void removeOutdatedFiles(Map<?, ?> checksums, List<FileAndChecksum> filesToCheck, IProgressMonitor monitor) throws NoSuchAlgorithmException {
-        MessageDigest md= Checksums.getAlgorithm(checksums); 
-		for (Iterator<FileAndChecksum> i = filesToCheck.iterator(); i.hasNext();) {
+	private List<FileAndChecksum> getUnchangedWithDifferentTimestamp(Map<?, ?> checksums, List<FileAndChecksum> filesToCheck, IProgressMonitor monitor) {
+        MessageDigest md;
+		try {
+			md = Checksums.getAlgorithm(checksums);
+		} catch (NoSuchAlgorithmException e) {
+			CCorePlugin.log(e);
+			return Collections.emptyList();
+		} 
+
+		List<FileAndChecksum> result= new ArrayList<TeamPDOMImportOperation.FileAndChecksum>();
+		for (FileAndChecksum cs : filesToCheck) {
 			checkMonitor(monitor);
 			
-			FileAndChecksum cs= i.next();
 			ITranslationUnit tu= cs.fFile;
 			if (tu != null) {
 				IPath location= tu.getLocation();
 				if (location != null) {
 					try {
 						final File file = location.toFile();
-						if (!file.isFile()) {
-							i.remove();
-						} else {
-							byte[] checksum= Checksums.computeChecksum(md, file);
-							if (!Arrays.equals(checksum, cs.fChecksum)) {
-								i.remove();
+						if (file.isFile()) {
+							IResource res= cs.fFile.getResource();
+							if (res == null || res.getLocalTimeStamp() != cs.fIFile.getTimestamp()) {
+								byte[] checksum= Checksums.computeChecksum(md, file);
+								if (Arrays.equals(checksum, cs.fChecksum)) {
+									result.add(cs);
+								}
 							}
 						}
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						CCorePlugin.log(e);
+						result.add(cs);
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+						result.add(cs);
 					}
 				}
 			}
 		}
+		return result;
 	}
 }

@@ -44,15 +44,17 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	public IMarker getMarker() {
 		return marker;
 	}
-	
-	protected String getProblemMessage(){
+
+	protected String getProblemMessage() {
 		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 		return message;
 	}
-	protected String getProblemId(){
-		String id = marker.getAttribute(IMarker.PROBLEM, (String)null); //$NON-NLS-1$
+
+	protected String getProblemId() {
+		String id = marker.getAttribute(IMarker.PROBLEM, (String) null); //$NON-NLS-1$
 		return id;
 	}
+
 	/**
 	 * return true if provider can provide details for given marker (previously set by setMarker)
 	 * @param id - id of the problem
@@ -65,22 +67,30 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * visible as hyperlinks and newline characters (\n). Default message if
 	 * marker message plus location.
 	 */
-	public String getStyledProblemMessage(){
-		String message = getProblemMessage();
-		String loc = marker.getResource().getFullPath().toOSString(); 
+	public String getStyledProblemMessage() {
+		String message = escapeForLink(getProblemMessage());
+		String loc = marker.getResource().getFullPath().toOSString();
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
-		return message + "\n"+loc+":"+line;  //$NON-NLS-1$//$NON-NLS-2$
+		return message + "\n" + loc + ":" + line; //$NON-NLS-1$//$NON-NLS-2$
 	}
-	
+
 	/**
 	 * Return styled problem description. String can include <a> tags to which would be
 	 * visible as hyperlinks and newline characters (\n)
 	 */
-	public String getStyledProblemDescription(){
+	public String getStyledProblemDescription() {
 		String id = getProblemId();
-		if (id==null) return ""; //$NON-NLS-1$
+		if (id == null)
+			return ""; //$NON-NLS-1$
 		IProblem problem = CodanRuntime.getInstance().getChechersRegistry().getDefaultProfile().findProblem(id);
-		return problem.getDescription();
+		return escapeForLink(problem.getDescription());
 	}
 
+	/**
+	 * Method to escape characters which are interpreted by Link swt control,
+	 * such as & (mnemonic)
+	 */
+	protected String escapeForLink(String text) {
+		return text.replaceAll("&", "&&"); //$NON-NLS-2$
+	}
 }

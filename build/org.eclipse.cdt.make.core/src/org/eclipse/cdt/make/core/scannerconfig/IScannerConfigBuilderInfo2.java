@@ -70,7 +70,6 @@ public interface IScannerConfigBuilderInfo2 {
 	
     /**
      * Persist the buildInfo.
-     * @throws CoreException
      */
     void save() throws CoreException;
 }

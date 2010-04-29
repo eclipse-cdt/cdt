@@ -402,12 +402,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	// This is important because we cannot always ask GDB for the list, since it may
 	// be running at the time.  Bug 303503
     private Map<String, String> fDebuggedProcessesAndNames = new HashMap<String, String>();
-    
-	// Much like fDebuggedProcessesAndNames, but this list contains all
-	// processes running as reported by CCorePlugin#getProcessList(). We resort
-	// to using that cdt-core call when '-list-thread-groups --available' is
-	// not truly supported by gdb. Currently, e.g., MinGw 7.0 doesn't.
-    private Map<String, String> fRunningProcessesAndNames = new HashMap<String, String>();
 	
     private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
@@ -578,9 +572,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				id = null;
 			} else {
 				name = fDebuggedProcessesAndNames.get(id);
-				if (name == null) {
-					name = fRunningProcessesAndNames.get(id);
-				}
 				if (name == null) {
 					// We don't have the name in our map.  Should not happen.
 					name = "Unknown name"; //$NON-NLS-1$
@@ -843,13 +834,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 							if (list == null) {
 								rm.setData(new IProcessDMContext[0]);
 							} else {
-								fRunningProcessesAndNames.clear();
 								IProcessInfo[] procInfos = list.getProcessList();
-								for (IProcessInfo procInfo : procInfos) {
-									fRunningProcessesAndNames.put(Integer.toString(procInfo.getPid()), procInfo.getName());
-								}
-								
-								rm.setData(makeProcessDMCs(controlDmc, procInfos));
+								rm.setData(makeProcessDMCAndData(controlDmc, procInfos));
 							}
 						}
 						rm.done();
@@ -862,11 +848,13 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	}
 	
-	/** Stole this from GDBProcesses. Used when we resort to getting the process list natively */
-	private IProcessDMContext[] makeProcessDMCs(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
-		IProcessDMContext[] procDmcs = new IMIProcessDMContext[processes.length];
+	private MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
+		MIProcessDMCAndData[] procDmcs = new MIProcessDMCAndData[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
-			procDmcs[i] = createProcessContext(controlDmc, Integer.toString(processes[i].getPid())); 
+			procDmcs[i] = new MIProcessDMCAndData(controlDmc.getSessionId(),
+					                              controlDmc, 
+					                              Integer.toString(processes[i].getPid()),
+					                              processes[i].getName());
 		}
 		return procDmcs;
 	}

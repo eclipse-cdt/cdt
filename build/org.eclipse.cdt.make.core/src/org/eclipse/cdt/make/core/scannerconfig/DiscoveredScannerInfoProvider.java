@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class DiscoveredScannerInfoProvider extends ScannerProvider {
 
 	// This is the id of the IScannerInfoProvider extension point entry
@@ -61,6 +62,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 	 * 
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		try {
 			getDiscoveredScannerInfo(resource.getProject(), true);
@@ -75,6 +77,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
+	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		super.subscribe(resource, listener);
 	}
@@ -85,6 +88,7 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
+	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		super.unsubscribe(resource, listener);
 	}
@@ -107,10 +111,10 @@ public class DiscoveredScannerInfoProvider extends ScannerProvider {
 			ICProject cProject = CoreModel.getDefault().create(project);
 			if (cProject != null) {
 				IPathEntry[] entries = cProject.getRawPathEntries();
-				List newEntries = new ArrayList(Arrays.asList(entries));
+				List<IPathEntry> newEntries = new ArrayList<IPathEntry>(Arrays.asList(entries));
 				if (!newEntries.contains(container)) {
 					newEntries.add(container);
-					cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), null);
+					cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), null);
 				}
 			}
 			ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);

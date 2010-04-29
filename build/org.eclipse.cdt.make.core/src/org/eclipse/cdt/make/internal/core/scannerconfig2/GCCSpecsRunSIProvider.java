@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,8 @@ public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider#initialize()
      */
-    protected boolean initialize() {
+    @Override
+	protected boolean initialize() {
         boolean rc = super.initialize();
         
         if (rc) {
@@ -62,11 +63,12 @@ public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider#prepareArguments(boolean)
      */
-    protected String[] prepareArguments(boolean isDefaultCommand) {
+    @Override
+	protected String[] prepareArguments(boolean isDefaultCommand) {
     	if (collector == null)
             return fCompileArguments;
     	
-        List tso = collector.getCollectedScannerInfo(resource.getProject(), ScannerInfoTypes.TARGET_SPECIFIC_OPTION);
+        List<String> tso = collector.getCollectedScannerInfo(resource.getProject(), ScannerInfoTypes.TARGET_SPECIFIC_OPTION);
         if (tso == null || tso.size() == 0) {
             return fCompileArguments;
         }
@@ -83,7 +85,7 @@ public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
             rv = new String[tso.size()];
         }
         for (int i = 0; i < tso.size(); ++i) {
-            rv[nTokens + i] = (String) tso.get(i);
+            rv[nTokens + i] = tso.get(i);
         }
         return rv;
     }

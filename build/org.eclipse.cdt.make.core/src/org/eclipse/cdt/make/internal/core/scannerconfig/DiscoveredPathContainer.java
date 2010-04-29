@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -73,17 +73,16 @@ public class DiscoveredPathContainer implements IPathEntryContainer {
     private IPathEntry[] computeNewPathEntries() throws CoreException {
         IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
         IPath[] includes = info.getIncludePaths();
-        Map syms = info.getSymbols();
-        List entries = new ArrayList(includes.length + syms.size());
-        for (int i = 0; i < includes.length; i++) {
-            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, includes[i], true));
+        Map<String, String> syms = info.getSymbols();
+        List<IPathEntry> entries = new ArrayList<IPathEntry>(includes.length + syms.size());
+        for (IPath inc : includes) {
+            entries.add(CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, inc, true));
         }
-        Iterator iter = syms.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry entry = (Entry)iter.next();
-            entries.add(CoreModel.newMacroEntry(Path.EMPTY, (String)entry.getKey(), (String)entry.getValue()));
+        Set<Entry<String, String>> entrySet = syms.entrySet();
+        for (Entry<String, String> entry : entrySet) {
+            entries.add(CoreModel.newMacroEntry(Path.EMPTY, entry.getKey(), entry.getValue()));
         }
-        return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+        return entries.toArray(new IPathEntry[entries.size()]);
     }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,18 +26,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProvider {
 	private static final String STORAGE_ID = "makeConfigDataProvider"; //$NON-NLS-1$
 
+	@Override
 	protected CDataFactory getDataFactory() {
 		return MakeCDataFactory.getDefault();
 	}
 
+	@Override
 	protected CDataSerializer getDataSerializer() {
 		return UserAndDiscoveredEntryDataSerializer.getDefault();
 	}
 
+	@Override
 	protected String getStorageId() {
 		return STORAGE_ID;
 	}
 	
+	@Override
 	public CConfigurationData applyConfiguration(
 			ICConfigurationDescription des,
 			ICConfigurationDescription baseDescription,
@@ -49,6 +53,7 @@ public class MakeConfigurationDataProvider extends CDefaultConfigurationDataProv
 		return result;
 	}
 
+	@Override
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
 			IProgressMonitor monitor) throws CoreException {
 		CConfigurationData result = super.loadConfiguration(des, monitor);

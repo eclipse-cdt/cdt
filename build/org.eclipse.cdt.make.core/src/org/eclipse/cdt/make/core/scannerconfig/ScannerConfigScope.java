@@ -22,7 +22,8 @@ public class ScannerConfigScope {
     public static final ScannerConfigScope PROJECT_SCOPE = new ScannerConfigScope("project"); //$NON-NLS-1$
     public static final ScannerConfigScope FILE_SCOPE = new ScannerConfigScope("file"); //$NON-NLS-1$
     
-    public String toString() {
+    @Override
+	public String toString() {
         return scope;
     }
     
@@ -33,7 +34,8 @@ public class ScannerConfigScope {
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object arg0) {
+    @Override
+	public boolean equals(Object arg0) {
         if (arg0 == null) return false;
         if (arg0 == this) return true;
         if (arg0 instanceof ScannerConfigScope) return scope.equals(((ScannerConfigScope)arg0).scope);
@@ -42,7 +44,8 @@ public class ScannerConfigScope {
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return scope.hashCode();
     }
 }

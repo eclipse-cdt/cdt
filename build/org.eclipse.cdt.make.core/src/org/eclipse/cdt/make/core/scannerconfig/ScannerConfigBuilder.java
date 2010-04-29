@@ -22,7 +22,6 @@ import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.jobs.SCJobsUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;

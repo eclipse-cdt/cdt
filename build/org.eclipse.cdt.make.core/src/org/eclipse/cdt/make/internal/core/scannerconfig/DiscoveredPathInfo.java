@@ -145,7 +145,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		}
 		// Now do the same for the symbols
 		Map<String, SymbolEntry> symbols = getSymbolMap();
-		Set<String> symbolsSet = includes.keySet();
+		Set<String> symbolsSet = symbols.keySet();
 		for (String symbol : symbolsSet) {
 			SymbolEntry se = symbols.get(symbol);
 			List<String> activeValues = se.getActiveRaw();

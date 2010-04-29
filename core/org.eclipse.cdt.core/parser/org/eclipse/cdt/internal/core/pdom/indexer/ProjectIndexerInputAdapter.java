@@ -42,15 +42,13 @@ import org.eclipse.core.runtime.content.IContentType;
  * @since 5.0
  */
 public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
-	/**
-	 * mstodo
-	 */
 	private static final AbstractLanguage[] NO_LANGUAGE = new AbstractLanguage[0];
 	private final ICProject fCProject;
 	private final HashMap<String, IIndexFileLocation> fIflCache;
 	private final FileExistsCache fExistsCache;
 	private AbstractLanguage fLangC;
 	private AbstractLanguage fLangCpp;
+	private String fProjectPrefix;
 
 	public ProjectIndexerInputAdapter(ICProject cproject) {
 		this(cproject, true);
@@ -58,6 +56,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 
 	public ProjectIndexerInputAdapter(ICProject cproject, boolean useCache) {
 		fCProject= cproject;
+		fProjectPrefix= cproject.getProject().getFullPath().toString() + IPath.SEPARATOR;
 		if (useCache) {
 			fIflCache= new HashMap<String, IIndexFileLocation>();
 			fExistsCache= new FileExistsCache();
@@ -226,7 +225,8 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	
 	@Override
 	public boolean canBePartOfSDK(IIndexFileLocation ifl) {
-		return ifl.getFullPath() == null;
+		final String fullPath = ifl.getFullPath();
+		return fullPath == null || !fullPath.startsWith(fProjectPrefix);
 	}
 
 	@Override

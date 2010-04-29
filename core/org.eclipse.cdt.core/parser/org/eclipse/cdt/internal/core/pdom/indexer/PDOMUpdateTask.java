@@ -27,7 +27,11 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -98,23 +102,32 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 			}
 		}
 		if (haveProject && (fUpdateOptions & IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT) != 0) {
+			final String projectPrefix= project.getProject().getFullPath().toString() + IPath.SEPARATOR;
 			IIndex index= CCorePlugin.getIndexManager().getIndex(project);
 			index.acquireReadLock();
 			try {
 				IIndexFile[] files= index.getAllFiles();
 				for (IIndexFile indexFile : files) {
 					IIndexFileLocation floc= indexFile.getLocation();
-					if (floc.getFullPath() == null) {
-						IPath path= IndexLocationFactory.getPath(floc);
+					final String fullPath = floc.getFullPath();
+					if (fullPath == null || !fullPath.startsWith(projectPrefix)) {
+						IPath path= IndexLocationFactory.getAbsolutePath(floc);
 						if (path != null) {
 							ITranslationUnit tu= CoreModel.getDefault().createTranslationUnitFrom(project, path);
 							if (tu != null) {
+								if (fullPath != null) {
+									if (tu instanceof ExternalTranslationUnit) {
+										IResource file= ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+										if (file instanceof IFile) {
+											((ExternalTranslationUnit) tu).setResource((IFile) file);
+										}
+									}
+								}
 								set.add(tu);
 							}
 						}
 					}
 				}
-				
 			} finally {
 				index.releaseReadLock();
 			}

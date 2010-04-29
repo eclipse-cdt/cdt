@@ -17,6 +17,7 @@ import java.net.URI;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -36,4 +37,10 @@ public class ExternalTranslationUnit extends TranslationUnit {
 		super(parent, uri, contentTypeID);
 	}
 
+	/**
+	 * A file included from a different project can still belong to a (non-CDT) project
+	 */
+	public void setResource(IFile file) {
+		resource= file;
+	}
 }

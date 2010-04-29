@@ -18,8 +18,8 @@
  * David McKnight   (IBM)        - [224377] "open with" menu does not have "other" option
  * David McKnight   (IBM)        - [277141] System Editor Passed Incorrect Cache Information in Presence of Case-Differentiated-Only filenames
  * David McKnight   (IBM)        - [284596] [regression] Open with-> problem when descriptor doesn't match previous
+ * David McKnight   (IBM)        - [309755] SystemRemoteFileOpenWithMenu.getPreferredEditor(), the listed default editor is not always correct
  *******************************************************************************/
-
 package org.eclipse.rse.internal.files.ui.actions;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -319,7 +319,7 @@ private void hackOpenEditor(SystemEditableRemoteFile editable, IEditorDescriptor
 	editable.setEditor(editor);
 	
 	SystemIFileProperties properties = new SystemIFileProperties(file);
-	properties.setRemoteFileObject(this);
+	properties.setRemoteFileObject(editable);
 }
 
 private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
@@ -395,7 +395,7 @@ protected IEditorDescriptor getPreferredEditor(IRemoteFile remoteFile) {
 
 	IFile localFile = getLocalResource(remoteFile);
 	
-	if (localFile == null) {
+	if (localFile == null || !localFile.exists()){
 		return registry.getDefaultEditor(remoteFile.getName());
 	}
 	else {

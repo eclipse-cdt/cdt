@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public final class InfoContext {
 		return fInstanceId;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if(obj == this)
 			return true;
@@ -49,6 +50,7 @@ public final class InfoContext {
 		return true;
 	}
 
+	@Override
 	public int hashCode() {
 		int code = fProject != null ? fProject.hashCode() : 0;
 		
@@ -57,6 +59,7 @@ public final class InfoContext {
 		return code;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		

@@ -882,9 +882,11 @@ public class CommandMinerThread extends MinerThread
 									nextIndex++;
 									c = theValue.charAt(nextIndex);					
 									
-									if (nextIndex + 1 == theValue.length()){
-										nextIndex++;
-									}
+									if (nextIndex + 1 == theValue.length()){ // last character?
+										if (Character.isJavaIdentifierPart(c)){
+											nextIndex++;
+										}
+									}	
 								}
 												
 								String v = theValue.substring(index + 1, nextIndex);

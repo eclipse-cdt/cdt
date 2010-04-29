@@ -148,18 +148,21 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		Set<String> symbolsSet = symbols.keySet();
 		for (String symbol : symbolsSet) {
 			SymbolEntry se = symbols.get(symbol);
-			List<String> activeValues = se.getActiveRaw();
-			for (String value : activeValues) {
-				Element symbolElement = doc.createElement(DEFINED_SYMBOL);
-				symbolElement.setAttribute(SYMBOL, value);
-				collectorElem.appendChild(symbolElement);
-			}
-			List<String> removedValues = se.getRemovedRaw();
-			for (String value : removedValues) {
-				Element symbolElement = doc.createElement(DEFINED_SYMBOL);
-				symbolElement.setAttribute(SYMBOL, value);
-				symbolElement.setAttribute(REMOVED, "true"); //$NON-NLS-1$
-				collectorElem.appendChild(symbolElement);
+			if (se != null)
+			{
+				List<String> activeValues = se.getActiveRaw();
+				for (String value : activeValues) {
+					Element symbolElement = doc.createElement(DEFINED_SYMBOL);
+					symbolElement.setAttribute(SYMBOL, value);
+					collectorElem.appendChild(symbolElement);
+				}
+				List<String> removedValues = se.getRemovedRaw();
+				for (String value : removedValues) {
+					Element symbolElement = doc.createElement(DEFINED_SYMBOL);
+					symbolElement.setAttribute(SYMBOL, value);
+					symbolElement.setAttribute(REMOVED, "true"); //$NON-NLS-1$
+					collectorElem.appendChild(symbolElement);
+				}
 			}
 		}
 	}

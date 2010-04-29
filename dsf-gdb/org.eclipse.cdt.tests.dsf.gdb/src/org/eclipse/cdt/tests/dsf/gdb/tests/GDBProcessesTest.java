@@ -125,7 +125,8 @@ public class GDBProcessesTest extends BaseTestCase {
          */
         IThreadDMData processData = (IThreadDMData)fWait.getReturnInfo();
         Assert.assertNotNull("No process data is returned for Process DMC", processData);
-        Assert.assertTrue("Process data should be executable name " + EXEC_NAME, processData.getName().contains(EXEC_NAME));
+        Assert.assertTrue("Process data should be executable name " + EXEC_NAME + "but we got" + processData.getName(),
+        		 processData.getName().contains(EXEC_NAME));
 	}
 	
 	/* 

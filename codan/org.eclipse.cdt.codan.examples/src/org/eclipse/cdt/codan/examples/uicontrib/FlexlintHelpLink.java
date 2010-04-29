@@ -1,7 +1,5 @@
 package org.eclipse.cdt.codan.examples.uicontrib;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +26,11 @@ public class FlexlintHelpLink extends AbstractCodanProblemDetailsProvider {
 	}
 
 	@Override
-	public URL getHelpURL() {
+	public String getStyledProblemDescription() {
 		String helpId = parseHelpId(getProblemMessage());
-		try {
-			return new URL("http://www.gimpel-online.com/MsgRef.html#" + helpId); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			return null;
-		}
+		String url = "http://www.gimpel-online.com/MsgRef.html#" + helpId;
+		return "<a href=\"" + url + "\">" + url + "</a>";
 	}
+
+
 }

@@ -94,7 +94,13 @@ If ommitted provider would be called for all problem kinds.
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+                &lt;extension
+          point=&quot;org.eclipse.cdt.codan.ui.codanProblemDetails&quot;&gt;
+       &lt;problemDetails
+             class=&quot;org.eclipse.cdt.codan.examples.uicontrib.FlexlintHelpLink&quot;
+             &gt;
+       &lt;/problemDetails&gt;
+    &lt;/extension&gt;
       </documentation>
    </annotation>
 
@@ -112,7 +118,8 @@ If ommitted provider would be called for all problem kinds.
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         See
+org.eclipse.cdt.codan.examples.uicontrib.FlexlintHelpLink
       </documentation>
    </annotation>
 

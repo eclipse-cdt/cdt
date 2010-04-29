@@ -17,12 +17,12 @@
 /*
  * Created by: Elena Laskavaia
  * Created on: 2010-04-28
- * Last modified by: $Author$
+ * Last modified by: $Author: elaskavaia $
  */
 package org.eclipse.cdt.codan.ui;
 
-import java.net.URL;
-
+import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.core.resources.IMarker;
 
 /**
@@ -49,7 +49,10 @@ public abstract class AbstractCodanProblemDetailsProvider {
 		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 		return message;
 	}
-
+	protected String getProblemId(){
+		String id = marker.getAttribute(IMarker.PROBLEM, (String)null); //$NON-NLS-1$
+		return id;
+	}
 	/**
 	 * return true if provider can provide details for given marker (previously set by setMarker)
 	 * @param id - id of the problem
@@ -58,26 +61,26 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	public abstract boolean isApplicable(String id);
 
 	/**
-	 * URL to external help for the problem, would be displayed as label, and as action
-	 * will go to given URL is not null. If label is null (getHelpLabel) URL would be used as label.
+	 * Return styled problem message. String can include <a> tags to which would be
+	 * visible as hyperlinks and newline characters (\n). Default message if
+	 * marker message plus location.
 	 */
-	public URL getHelpURL() {
-		return null;
+	public String getStyledProblemMessage(){
+		String message = getProblemMessage();
+		String loc = marker.getResource().getFullPath().toOSString(); 
+		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
+		return message + "\n"+loc+":"+line;  //$NON-NLS-1$//$NON-NLS-2$
+	}
+	
+	/**
+	 * Return styled problem description. String can include <a> tags to which would be
+	 * visible as hyperlinks and newline characters (\n)
+	 */
+	public String getStyledProblemDescription(){
+		String id = getProblemId();
+		if (id==null) return ""; //$NON-NLS-1$
+		IProblem problem = CodanRuntime.getInstance().getChechersRegistry().getDefaultProfile().findProblem(id);
+		return problem.getDescription();
 	}
 
-	/**
-	 * Label text to use to navigate to a help. Would be shown as hyperlink. If helpURL is not
-	 * null would open a browser with given URL.
-	 */
-	public String getHelpLabel() {
-		return null;
-	}
-
-	/**
-	 * Return help context id. Only one getHelpURL or getHelpContextId can be used.
-	 * In case if help context id is not null hyperlink would open context help page.
-	 */
-	public String getHelpContextId() {
-		return null;
-	}
 }

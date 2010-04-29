@@ -91,4 +91,14 @@
       </key>
    </extension>
    -->
+      <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+
+         <showInPart id="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"/>
+
+         <viewShortcut id="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"/>
+      </perspectiveExtension>
+   </extension>
 </plugin>

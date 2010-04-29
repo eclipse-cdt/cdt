@@ -21,12 +21,11 @@ import junit.framework.Assert;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
-import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
@@ -36,7 +35,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -73,7 +71,6 @@ public class SyncUtil {
     private static IContainerDMContext fGdbContainerDmc;
     private static IBreakpointsTargetDMContext fBreakpointsDmc;
 	private static IProcesses fProcessesService;
-	private static IGDBControl fGDBCtrl;
     
     public static final int WAIT_FOREVER = ServiceEventWaitor.WAIT_FOREVER;
     
@@ -96,7 +93,6 @@ public class SyncUtil {
 		fStack = tracker.getService(MIStack.class);
 		fExpressions = tracker.getService(IExpressions.class);
 		fProcessesService = tracker.getService(IProcesses.class);
-		fGDBCtrl = tracker.getService(IGDBControl.class);
 		
 		fCommandFactory = tracker.getService(IMICommandControl.class).getCommandFactory();
 
@@ -529,7 +525,7 @@ public class SyncUtil {
     }
 
 	/**
-	 * Utility method to return the process DM context. This can be used only by
+	 * Utility method to return the container DM context. This can be used only by
 	 * tests that deal with a single heavyweight process. If more than one
 	 * process is available, this method will fail. 
 	 * 
@@ -540,14 +536,16 @@ public class SyncUtil {
 	 * @throws InterruptedException
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
-	public static IProcessDMContext getProcessContext() throws InterruptedException {
+	public static IContainerDMContext getContainerContext() throws InterruptedException {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
 		final AsyncCompletionWaitor waitor = new AsyncCompletionWaitor();
 		
 		fProcessesService.getExecutor().submit(new Runnable() {
             public void run() {
-            	fProcessesService.getProcessesBeingDebugged(fGDBCtrl.getContext(), new DataRequestMonitor<IDMContext[]>(fProcessesService.getExecutor(), null) {
+            	fProcessesService.getProcessesBeingDebugged(
+            			fCommandControl.getContext(), 
+            			new DataRequestMonitor<IDMContext[]>(fProcessesService.getExecutor(), null) {
                     @Override
                     protected void handleCompleted() {
                        if (isSuccess()) {
@@ -555,9 +553,11 @@ public class SyncUtil {
                     	   Assert.assertNotNull("invalid return value from service", contexts);
                     	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
                     	   IDMContext context = contexts[0];    
-                    	   IProcessDMContext processContext = DMContexts.getAncestorOfType(context, IProcessDMContext.class);
-                           Assert.assertNotNull("unexpected process context type ", processContext);
-                    	   waitor.setReturnInfo(processContext);
+                           Assert.assertNotNull("unexpected process context type ", context);
+                    	   waitor.setReturnInfo(context);
+                    	   waitor.waitFinished();
+                        } else {
+                           waitor.waitFinished(getStatus());
                         }
                     }
             		
@@ -565,11 +565,9 @@ public class SyncUtil {
             }
         });
 		
-
-    	
     	waitor.waitUntilDone(TestsPlugin.massageTimeout(2000));
     	Assert.assertTrue(waitor.getMessage(), waitor.isOK());
-    	return (IProcessDMContext) waitor.getReturnInfo();
+    	return (IContainerDMContext)waitor.getReturnInfo();
 	}
     
 }

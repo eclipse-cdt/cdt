@@ -36,7 +36,6 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -80,7 +79,6 @@ public class MIRunControlTest extends BaseTestCase {
 
     private IGDBControl fGDBCtrl;
 	private IMIRunControl fRunCtrl;
-	private IMIProcesses fProcService;
 
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
@@ -109,7 +107,6 @@ public class MIRunControlTest extends BaseTestCase {
    		fThreadExecDmc = procService.createExecutionContext(fContainerDmc, threadDmc, "1");
 
 		fRunCtrl = fServicesTracker.getService(IMIRunControl.class);
-		fProcService = fServicesTracker.getService(IMIProcesses.class);
 	}
 
 
@@ -190,14 +187,13 @@ public class MIRunControlTest extends BaseTestCase {
             }
         };
 
-        final IProcessDMContext processContext = SyncUtil.getProcessContext();
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
         /*
          * Test getExecutionContexts() when only one thread exist. 
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());
             	fRunCtrl.getExecutionContexts(containerDmc, rm);
             }
         });
@@ -278,14 +274,13 @@ public class MIRunControlTest extends BaseTestCase {
 
         Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
         
-        final IProcessDMContext processContext = SyncUtil.getProcessContext();
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
         /*
          * Test getExecutionContexts for a valid container DMC
          */
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());
             	fRunCtrl.getExecutionContexts(containerDmc, rmExecutionCtxts);
             }
         });
@@ -336,14 +331,13 @@ public class MIRunControlTest extends BaseTestCase {
             }
         };
         
-        final IProcessDMContext processContext = SyncUtil.getProcessContext();
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
         /*
          * Call getModelData for Execution DMC
          */
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	fRunCtrl.getExecutionData(((MIRunControl)fRunCtrl).createMIExecutionContext(containerDmc, 1), rm);
             }
         });
@@ -570,11 +564,10 @@ public class MIRunControlTest extends BaseTestCase {
                     getGDBLaunch().getSession(),
                     IResumedDMEvent.class);
         
-        final IProcessDMContext processContext = SyncUtil.getProcessContext();
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	fRunCtrl.resume(containerDmc, rm);
             }
         });
@@ -593,7 +586,6 @@ public class MIRunControlTest extends BaseTestCase {
 		
 		fRunCtrl.getExecutor().submit(new Runnable() {
 			public void run() {
-				IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());				
 				wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
 				wait.waitFinished();
 			}
@@ -641,11 +633,10 @@ public class MIRunControlTest extends BaseTestCase {
 		
 		wait.waitReset();
 		
-		final IProcessDMContext processContext = SyncUtil.getProcessContext();
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
 		
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
             	wait.waitFinished();
             }
@@ -687,11 +678,10 @@ public class MIRunControlTest extends BaseTestCase {
 			return;
 		}
 		
-        final IProcessDMContext processContext = SyncUtil.getProcessContext();
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
         fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-            	IContainerDMContext containerDmc = fProcService.createContainerContext(processContext, ((IMIProcessDMContext)processContext).getProcId());            	
             	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
             	wait.waitFinished();
             }

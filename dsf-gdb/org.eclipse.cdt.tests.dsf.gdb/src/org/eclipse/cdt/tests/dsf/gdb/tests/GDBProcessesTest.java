@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
@@ -107,7 +108,7 @@ public class GDBProcessesTest extends BaseTestCase {
          * Ask the service to get model data for the process. 
          * There is only one process in case of GDB back end. 
          */
-		final IProcessDMContext processContext = SyncUtil.getProcessContext();
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(), IProcessDMContext.class);
         fSession.getExecutor().submit(new Runnable() {
             public void run() {
 				fProcService.getExecutionData(processContext, rm);
@@ -146,7 +147,7 @@ public class GDBProcessesTest extends BaseTestCase {
         };
 
 
-		final IProcessDMContext processContext = SyncUtil.getProcessContext();
+		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(), IProcessDMContext.class);
         fProcService.getExecutor().submit(new Runnable() {
             public void run() {
             	IThreadDMContext threadDmc = fProcService.createThreadContext(processContext, THREAD_ID);

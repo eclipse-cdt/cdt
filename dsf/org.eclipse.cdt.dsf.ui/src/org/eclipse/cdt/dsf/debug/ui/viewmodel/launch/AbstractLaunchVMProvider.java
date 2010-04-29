@@ -145,12 +145,12 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 						    }
 						});
                     }
+                    if (rm != null) {
+                    	rm.done();
+                    }
+                    return;
                 }
             }
-            if (rm != null) {
-            	rm.done();
-            }
-            return;
         } else if (event instanceof IRunControl.ISuspendedDMEvent) {
     		final IExecutionDMContext exeContext= ((IRunControl.ISuspendedDMEvent) event).getDMContext();
     		ScheduledFuture<?> refreshStackFramesFuture = getRefreshFuture(exeContext);

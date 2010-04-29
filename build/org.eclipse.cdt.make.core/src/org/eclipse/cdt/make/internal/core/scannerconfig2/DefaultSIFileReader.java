@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
 			ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.
 	                getMakeBuilderOutputSniffer(ostream, null, project, context, buildDirectory, buildInfo, markerGenerator, collector);
 			if (sniffer != null) {
-				ostream = (sniffer == null ? null : sniffer.getOutputStream());
+				ostream = sniffer.getOutputStream();
 			}
 	        
 			if (ostream != null) {

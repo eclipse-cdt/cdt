@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,9 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.Path;
 public abstract class CDataDiscoveredInfoProcessor {
 
 	public void applyDiscoveredInfo(CConfigurationData cfgData, DiscoveredSettingInfo dsIinfo){
-		Map map = CDataUtil.createPathRcDataMap(cfgData);
+		Map<IPath, CResourceData> map = CDataUtil.createPathRcDataMap(cfgData);
 		IRcSettingInfo info;
 
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
@@ -46,7 +47,7 @@ public abstract class CDataDiscoveredInfoProcessor {
 		}
 		
 		if(map.size() != 0){
-			CResourceData rcData = (CResourceData)map.get(Path.EMPTY);
+			CResourceData rcData = map.get(Path.EMPTY);
 			if(rcData != null){
 				info = CDataDiscoveredInfoCalculator.createEmptyRcSettingInfo((CFolderData)rcData);
 				applyInfo(cfgData, info, cr);
@@ -54,11 +55,11 @@ public abstract class CDataDiscoveredInfoProcessor {
 			}
 			
 			if(map.size() != 0){
-				for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-					Map.Entry entry = (Map.Entry)iter.next();
-					IPath path = (IPath)entry.getKey();
+				Set<Entry<IPath, CResourceData>> entries = map.entrySet();
+				for (Entry<IPath, CResourceData> entry : entries) {
+					IPath path = entry.getKey();
 					PathSettingsContainer curCr = cr.getChildContainer(path, false, false);
-					rcData = (CResourceData)entry.getValue();
+					rcData = entry.getValue();
 					info = (IRcSettingInfo)curCr.getValue();
 					applyInfo(cfgData, rcData, info);
 				}

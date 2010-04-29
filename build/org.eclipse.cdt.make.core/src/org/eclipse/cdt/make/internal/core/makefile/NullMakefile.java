@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,10 +41,12 @@ public class NullMakefile extends AbstractMakefile {
 		super(null);
 	}
 
+	@Override
 	public IDirective[] getDirectives() {
 		return EMPTY_DIRECTIVES;
 	}
 
+	@Override
 	public IDirective[] getBuiltins() {
 		return EMPTY_DIRECTIVES;
 	}
@@ -52,6 +54,7 @@ public class NullMakefile extends AbstractMakefile {
 	public void addDirective(IDirective directive) {
 	}
 
+	@Override
 	public String toString() {
 		return new String();
 	}

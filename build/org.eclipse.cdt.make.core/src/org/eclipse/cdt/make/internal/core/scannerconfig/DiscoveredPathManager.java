@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 //		PathSettingsContainer fContainer = PathSettingsContainer.createRootContainer();
 
 		public IDiscoveredPathInfo getInfo(InfoContext context){
-			return (IDiscoveredPathInfo)fInfoMap.get(context);
+			return fInfoMap.get(context);
 		}
 		
 //		private Map getMap(IPath path, boolean create, boolean exactPath){
@@ -90,8 +90,8 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 
 		public IDiscoveredPathInfo setInfo(InfoContext context, IDiscoveredPathInfo info){
 			if(info != null)
-				return (IDiscoveredPathInfo)fInfoMap.put(context, info);
-			return (IDiscoveredPathInfo)fInfoMap.remove(context);
+				return fInfoMap.put(context, info);
+			return fInfoMap.remove(context);
 		}
 
 	}
@@ -154,7 +154,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 	}
 	
 	private DiscoveredInfoHolder getHolder(IProject project, boolean create){
-		DiscoveredInfoHolder holder = (DiscoveredInfoHolder)fDiscoveredInfoHolderMap.get(project);
+		DiscoveredInfoHolder holder = fDiscoveredInfoHolderMap.get(project);
 		if(holder == null && create){
 			holder = new DiscoveredInfoHolder();
 			fDiscoveredInfoHolderMap.put(project, holder);
@@ -274,7 +274,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
         // 1. clear DiscoveredPathManager's path info cache
     	DiscoveredInfoHolder holder = getHolder(project, false);
     	InfoContext context = new InfoContext(project);
-        IDiscoveredPathInfo oldInfo = (IDiscoveredPathInfo) holder.getInfo(context);
+        IDiscoveredPathInfo oldInfo = holder.getInfo(context);
         
         // 2. switch the containers
         try {

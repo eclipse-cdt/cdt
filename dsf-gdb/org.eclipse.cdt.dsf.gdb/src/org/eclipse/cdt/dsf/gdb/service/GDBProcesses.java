@@ -138,11 +138,23 @@ public class GDBProcesses extends MIProcesses {
 			}
 			
 			String name = fProcessNames.get(pid);
-			// If we still don't find the name in our list, return the default name of our program
 			if (name == null) {
-				IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
-				name = backend.getProgramPath().lastSegment();
+				// Hm. Strange. But if the pid is our inferior's, we can just use the binary name
+				MIInferiorProcess inferior = fGdb.getInferiorProcess();
+				if (inferior != null) {
+					String inferiorPidStr = inferior.getPid();
+					if (inferiorPidStr != null && Integer.parseInt(inferiorPidStr) == pid) {
+						IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+						name = backend.getProgramPath().lastSegment();
+					}
+				}
 			}
+			if (name == null) {
+				// Should not happen.
+				name = "Unknown name"; //$NON-NLS-1$
+				assert false : "Don't have entry for process ID: " + pid; //$NON-NLS-1$
+			}
+		
 			rm.setData(new MIThreadDMData(name, pidStr));
 			rm.done();
 		} else {
@@ -240,10 +252,11 @@ public class GDBProcesses extends MIProcesses {
 				rm.setData(null);
 			} else {
 				fProcessNames.clear();
-				for (IProcessInfo procInfo : list.getProcessList()) {
+				IProcessInfo[] procInfos = list.getProcessList();
+				for (IProcessInfo procInfo : procInfos) {
 					fProcessNames.put(procInfo.getPid(), procInfo.getName());
 				}
-				rm.setData(makeProcessDMCs(controlDmc, list.getProcessList()));
+				rm.setData(makeProcessDMCs(controlDmc, procInfos));
 			}
 			rm.done();
 		} else {

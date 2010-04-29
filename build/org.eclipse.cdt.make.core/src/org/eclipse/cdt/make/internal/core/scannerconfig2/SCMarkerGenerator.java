@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.make.internal.core.scannerconfig2;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICModelMarker;
@@ -108,7 +107,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
             
         }
         catch (CoreException e) {
-            CCorePlugin.log(e.getStatus());
+            MakeCorePlugin.log(e.getStatus());
         }
  		
 	}
@@ -137,7 +136,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
             }
         }
         catch (CoreException e) {
-            CCorePlugin.log(e.getStatus());
+        	MakeCorePlugin.log(e.getStatus());
         }
     }
     

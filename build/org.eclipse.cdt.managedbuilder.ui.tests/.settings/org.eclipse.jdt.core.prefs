@@ -1,4 +1,4 @@
-#Thu Oct 08 20:38:59 EDT 2009
+#Thu Apr 29 13:28:18 EDT 2010
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
@@ -33,7 +33,7 @@ org.eclipse.jdt.core.compiler.problem.invalidJavadoc=warning
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTags=enabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsDeprecatedRef=disabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsNotVisibleRef=enabled
-org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=protected
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=private
 org.eclipse.jdt.core.compiler.problem.localVariableHiding=ignore
 org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=error
 org.eclipse.jdt.core.compiler.problem.missingDeprecatedAnnotation=warning

@@ -1,4 +1,4 @@
-#Wed Sep 16 12:29:14 EDT 2009
+#Thu Apr 29 13:15:20 EDT 2010
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
@@ -31,15 +31,15 @@ org.eclipse.jdt.core.compiler.problem.invalidJavadoc=warning
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTags=enabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsDeprecatedRef=disabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsNotVisibleRef=enabled
-org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=protected
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=private
 org.eclipse.jdt.core.compiler.problem.localVariableHiding=ignore
 org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=error
 org.eclipse.jdt.core.compiler.problem.missingDeprecatedAnnotation=warning
 org.eclipse.jdt.core.compiler.problem.missingJavadocComments=ignore
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsOverriding=disabled
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsVisibility=public
-org.eclipse.jdt.core.compiler.problem.missingJavadocTagDescription=return_tag
-org.eclipse.jdt.core.compiler.problem.missingJavadocTags=warning
+org.eclipse.jdt.core.compiler.problem.missingJavadocTagDescription=all_standard_tags
+org.eclipse.jdt.core.compiler.problem.missingJavadocTags=ignore
 org.eclipse.jdt.core.compiler.problem.missingJavadocTagsOverriding=disabled
 org.eclipse.jdt.core.compiler.problem.missingJavadocTagsVisibility=protected
 org.eclipse.jdt.core.compiler.problem.missingOverrideAnnotation=warning

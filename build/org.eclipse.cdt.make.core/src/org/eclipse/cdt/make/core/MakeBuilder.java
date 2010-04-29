@@ -72,7 +72,9 @@ public class MakeBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map args0, IProgressMonitor monitor) throws CoreException {
+		@SuppressWarnings("unchecked")
+		Map<String, String> args = args0;
 		if (DEBUG_EVENTS)
 			printEvent(kind, args);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -418,13 +418,17 @@ public class CommandCache implements ICommandListener
                      *  Match this up with a command set we know about.
                      */
                     if ( ! fPendingQCommandsSent.remove(finalCachedCmd) ) {
-                        /* 
-                         *  It should not be the case that this is possible. It would mean we
-                         *  have mismanaged  the queues or completions  are lost at the lower
-                         *  levels.  When the removal and cancellation is completed this code
-                         *  will probably not be here. But for now just return.
-                         */
-                        return ;
+                    	/*
+                    	 * This can happen if the call to queueCommand() completes without
+                    	 * actually having to send the command.  In that case, we should find
+                    	 * our command in the fPendingQCommandsNotYetSent queue.
+                    	 * For example, upon termination some queueCommand() implementation
+                    	 * may complete immediately with an error status. Bug 309309
+                    	 */
+                        if ( ! fPendingQCommandsNotYetSent.remove(finalCachedCmd) ) {
+                        	assert false : "Missing command"; //$NON-NLS-1$
+                        	return;
+                        }
                     }
 
                     ICommandResult result = getData();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,14 +51,14 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	}
 	
 	/**
-	 * @see IReconcilingStrategy#reconcile(document)
+	 * @see IReconcilingStrategy#setDocument(IDocument)
 	 */
 	public void setDocument(IDocument document) {
 	}	
 
 
 	/**
-	 * @see IReconcilingStrategy#reconcile(region)
+	 * @see IReconcilingStrategy#reconcile(IRegion)
 	 */
 	public void reconcile(IRegion region) {
 		// We use a trick to avoid running the reconciler multiple times
@@ -72,7 +72,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy {
 	}
 
 	/**
-	 * @see IReconcilingStrategy#reconcile(dirtyRegion, region)
+	 * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
 		// FIXME: This seems to generate to much flashing in

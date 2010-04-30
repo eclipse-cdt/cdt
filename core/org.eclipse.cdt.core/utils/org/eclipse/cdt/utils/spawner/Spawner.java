@@ -41,10 +41,9 @@ public class Spawner extends Process {
 	 *    the 'kill' utility isn't available, send the process a CTRL-C
 	 *    <li>If the process is <i>not</i> a cygwin program, send the process a CTRL-C
 	 *    </ul>
-	 * <li>If the process this is being raised against was <i>not</i> launched by us, search for a console
-	 * window whose PID matches the one we're trying to raise a signal on. If we find one, then send keyboard
-	 * events to simulate the user hitting CTRL-C at that console. We do all this because we can't programatically
-	 * send a CTRL-C to a process that doesn't share our console.
+	 * <li>If the process this is being raised against was <i>not</i> launched by us, use 
+	 * DebugBreakProcess to interrupt it (sending a CTRL-C is easy only if we share a console 
+	 * with the target process) 
 	 * </ul>
 	 * 
 	 * On non-Windows, raising this just raises a POSIX SIGINT  

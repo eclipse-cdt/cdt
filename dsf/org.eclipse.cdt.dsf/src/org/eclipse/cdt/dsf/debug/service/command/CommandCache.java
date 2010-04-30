@@ -607,6 +607,10 @@ public class CommandCache implements ICommandListener
         
         CommandInfo cachedCmd = new CommandInfo( CommandStyle.NONCOALESCED, genericCommand, null) ;
         
+        // It is important to actually fetch the content of the fPendingQCommandsNotYetSent map
+        // instead of only using 'cachedCmd'.  This is because although cachedCmd can be considered
+        // equal to unqueuedCommand, it is not identical and we need the full content of unqueuedCommand.
+        // For instance, cachedCmd does not have the list of requestMonitors that unqueuedCommand has.
         for ( CommandInfo unqueuedCommand : new ArrayList<CommandInfo>(fPendingQCommandsNotYetSent) ) {
             if ( unqueuedCommand.equals( cachedCmd )) {
                 fPendingQCommandsNotYetSent.remove(unqueuedCommand);

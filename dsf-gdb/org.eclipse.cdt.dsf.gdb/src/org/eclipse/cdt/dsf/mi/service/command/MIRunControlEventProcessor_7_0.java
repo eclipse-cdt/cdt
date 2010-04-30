@@ -294,10 +294,15 @@ public class MIRunControlEventProcessor_7_0
     		IContainerDMContext containerDmc = null;
     		if (groupId == null) {
     			// MI does not currently provide the group-id in these events
-    			if (threadId != null) {
-    				containerDmc = procService.createContainerContextFromThreadId(fControlDmc, threadId);
-    				procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
+    			
+    			// In some cases, gdb sends a bare stopped event. Likely a bug, but 
+    			// we need to react to it all the same. See bug 311118.
+    			if (threadId == null) {
+    				threadId = "all"; //$NON-NLS-1$
     			}
+    			
+   				containerDmc = procService.createContainerContextFromThreadId(fControlDmc, threadId);
+   				procDmc = DMContexts.getAncestorOfType(containerDmc, IProcessDMContext.class);
     		} else {
     			// This code would only trigger if the groupId was provided by MI
     			procDmc = procService.createProcessContext(fControlDmc, groupId);

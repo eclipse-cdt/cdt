@@ -68,18 +68,23 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType#getMemberOfClass()
 	 */
 	public IType getMemberOfClass() {
-		if (classType == null) { 
+		if (classType == null) {
+			IASTName name;
+			IBinding binding= null;
 			ICPPASTPointerToMember pm = operator;
-			IASTName name = pm.getName();
-			if (name instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
-				if (ns.length > 1)
-					name = ns[ns.length - 2];
-				else 
-					name = ns[ns.length - 1]; 
+			if (pm == null) {
+				name= new CPPASTName();
+			} else {
+				name = pm.getName();
+				if (name instanceof ICPPASTQualifiedName) {
+					IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+					if (ns.length > 1)
+						name = ns[ns.length - 2];
+					else 
+						name = ns[ns.length - 1]; 
+				}
+				binding = name.resolvePreBinding();
 			}
-			
-			IBinding binding = name.resolvePreBinding();
 			if (binding instanceof IType) {
 				classType = (IType) binding;
 			} else {

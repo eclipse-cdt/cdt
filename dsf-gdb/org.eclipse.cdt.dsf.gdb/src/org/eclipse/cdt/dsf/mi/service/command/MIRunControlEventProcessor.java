@@ -170,6 +170,44 @@ public class MIRunControlEventProcessor
     			}
     		}
     	}
+    	
+    	// Now check for a oob command result.  This happens on Windows when interrupting GDB.
+    	// In this case, GDB before 7.0 does not always send a *stopped event, so we must do it ourselves
+    	// Bug 304096 (if you have the patience to go through it :-))
+    	MIResultRecord rr = ((MIOutput)output).getMIResultRecord();
+    	if (rr != null) {
+    		int id = rr.getToken();
+    		String state = rr.getResultClass();
+    		if ("error".equals(state)) { //$NON-NLS-1$
+
+    			MIResult[] results = rr.getMIResults();
+    			for (int i = 0; i < results.length; i++) {
+    				String var = results[i].getVariable();
+    				MIValue val = results[i].getMIValue();
+    				if (var.equals("msg")) { //$NON-NLS-1$
+    					if (val instanceof MIConst) {
+    						String message = ((MIConst) val).getString();
+    						if (message.toLowerCase().startsWith("quit")) { //$NON-NLS-1$
+    							IRunControl runControl = fServicesTracker.getService(IRunControl.class);
+    							IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
+    							if (runControl != null && procService != null) {
+    								// We don't know which thread stopped so we simply create a container event.
+    								String groupId = MIProcesses.UNIQUE_GROUP_ID;
+    								IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
+    								IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
+
+    								if (runControl.isSuspended(processContainerDmc) == false) {
+    									// Create an MISignalEvent because that is what the *stopped event should have been
+    									MIEvent<?> event = MISignalEvent.parse(processContainerDmc, id, rr.getMIResults());
+    									fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
+    								}
+    							}
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
     }
 
 	/**

@@ -108,7 +108,7 @@ public abstract class AbstractTargetAction
 	}
 
 	/**
-	 * @return {@code} if the action is enabled or {@code false} otherwise.
+	 * @return {@code true} if the action is enabled or {@code false} otherwise.
 	 * 
 	 * @since 7.0
 	 */

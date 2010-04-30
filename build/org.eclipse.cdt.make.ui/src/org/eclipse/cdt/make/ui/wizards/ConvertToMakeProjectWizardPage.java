@@ -47,6 +47,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
     
     private static final String WZ_TITLE = "WizardMakeProjectConversion.title"; //$NON-NLS-1$
@@ -54,7 +55,6 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
     
 	/**
 	 * Constructor for ConvertToStdMakeProjectWizardPage.
-	 * @param pageName
 	 */
 	public ConvertToMakeProjectWizardPage(String pageName) {
 		super(pageName);
@@ -80,9 +80,6 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
        
     /**
      * Method isCandidate returns true for all projects.
-     * 
-     * @param project
-     * @return boolean
      */
     @Override
 	public boolean isCandidate(IProject project) { 

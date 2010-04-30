@@ -107,16 +107,10 @@ public class DeleteTargetAction extends SelectionListenerAction {
 		return super.updateSelection(selection) && canDelete();
 	}
 
-	/**
-	 * @return
-	 */
 	private List<?> getSelectedElements() {
 		return getStructuredSelection().toList();
 	}
 
-	/**
-		 * @return
-		 */
 	private boolean canDelete() {
 		List<?> elements = getSelectedElements();
 		for (Object element : elements) {

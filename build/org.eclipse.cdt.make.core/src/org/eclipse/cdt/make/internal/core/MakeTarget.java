@@ -333,7 +333,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(op, monitor);
+			ResourcesPlugin.getWorkspace().run(op, null, IResource.NONE, monitor);
 		} finally {
 			monitor.done();
 		}

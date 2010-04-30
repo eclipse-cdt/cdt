@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
@@ -2078,4 +2078,30 @@ public class CommonBuilder extends ACBuilder {
 		if (markers != null) {
 			workspace.deleteMarkers(markers);
 		}
-	}}
+	}
+
+	/**
+	 * Only lock the workspace is this is a ManagedBuild, or this project references others.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public ISchedulingRule getRule(int trigger, Map args) {
+		IResource WR_rule = ResourcesPlugin.getWorkspace().getRoot();
+		if (needAllConfigBuild() || !isCdtProjectCreated(getProject()))
+			return WR_rule;
+
+		// Get the builders to run
+		IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(getProject(), args);
+		// Be pessimistic if we referenced other configs
+		if (getReferencedConfigs(builders).length > 0)
+			return WR_rule;
+		// If any builder isManaged => pessimistic
+		for (IBuilder builder : builders) {
+			if (builder.isManagedBuildOn())
+				return WR_rule;
+		}
+
+		// Success!
+		return null;
+	}
+}

@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
@@ -220,6 +221,18 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 		super.clean(monitor);
 		if (DEBUG_EVENTS)
 			printEvent(IncrementalProjectBuilder.CLEAN_BUILD, null);
+	}
+
+   /**
+	* Default ACBuilder shouldn't require locking the workspace during a CDT Project build.
+	*
+	* Note this may have a detrimental effect on #getDelta().  Derived builders which rely
+	* on #getDelta(...) being accurate should return a WorkspaceRoot scheduling rule.
+	* @since 5.2
+	*/
+	@SuppressWarnings("rawtypes")
+	public ISchedulingRule getRule(int trigger, Map args) {
+		return null;
 	}
 
 }

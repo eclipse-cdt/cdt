@@ -18,6 +18,7 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -100,7 +101,7 @@ public class TargetBuild {
 								target.build(new SubProgressMonitor(monitor, 1));
 							}
 						};
-						MakeUIPlugin.getWorkspace().run(runnable, monitor);
+						MakeUIPlugin.getWorkspace().run(runnable, null, IResource.NONE, monitor);
 					}
 				} catch (CoreException e) {
 					return e.getStatus();

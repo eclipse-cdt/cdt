@@ -34,7 +34,7 @@ import org.eclipse.swt.graphics.RGB;
  */
 public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 
-	private Map fTokenMap= new HashMap();
+	private Map<String, Token> fTokenMap= new HashMap<String, Token>();
 	private String[] fPropertyNamesColor;
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>,
@@ -57,7 +57,7 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	/**
 	 * Creates the list of rules controlling this scanner.
 	 */
-	abstract protected List createRules();
+	abstract protected List<IRule> createRules();
 		
 	/**
 	 * Must be called after the constructor has been called.
@@ -79,7 +79,7 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	}
 
 	private void initializeRules() {
-		List rules= createRules();
+		List<IRule> rules= createRules();
 		if (rules != null) {
 			IRule[] result= new IRule[rules.size()];
 			rules.toArray(result);
@@ -88,7 +88,7 @@ public abstract class AbstractMakefileCodeScanner extends RuleBasedScanner {
 	}
 
 	protected Token getToken(String key) {
-		return (Token) fTokenMap.get(key);
+		return fTokenMap.get(key);
 	}
 
 	private void addToken(String colorKey, String boldKey, String italicKey) {

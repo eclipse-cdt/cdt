@@ -47,22 +47,22 @@ public class ColorManager implements ISharedTextColors {
 		return fgColorManager;
 	}
 
-	protected Map fColorTable = new HashMap(10);
+	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
 
-	/**
-	 * @see IMakefileColorManager#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.ISharedTextColors#dispose()
 	 */
 	public void dispose() {
-		Iterator e = fColorTable.values().iterator();
+		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
-			 ((Color) e.next()).dispose();
+			 (e.next()).dispose();
 	}
 
-	/**
-	 * @see IMakefileColorManager#getColor(RGB)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.ISharedTextColors#getColor(org.eclipse.swt.graphics.RGB)
 	 */
 	public Color getColor(RGB rgb) {
-		Color color = (Color) fColorTable.get(rgb);
+		Color color = fColorTable.get(rgb);
 		if (color == null) {
 			color = new Color(Display.getCurrent(), rgb);
 			fColorTable.put(rgb, color);

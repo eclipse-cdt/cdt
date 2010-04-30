@@ -48,9 +48,6 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	}
 	/**
 	 * ConvertToStdMakeConversionWizard Wizard constructor
-	 * 
-	 * @param title
-	 * @param desc
 	 */
 	public ConvertToMakeProjectWizard(String title, String desc) {
 		super(title, desc);

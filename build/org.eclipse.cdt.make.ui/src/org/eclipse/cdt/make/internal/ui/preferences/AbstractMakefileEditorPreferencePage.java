@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,25 +46,25 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public abstract class AbstractMakefileEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	OverlayPreferenceStore fOverlayStore;
 	
-	Map fCheckBoxes= new HashMap();
+	Map<Control, String> fCheckBoxes= new HashMap<Control, String>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
+			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
 	
-	Map fTextFields= new HashMap();
+	Map<Control, String> fTextFields= new HashMap<Control, String>();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
-			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
+			fOverlayStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 
-	private Map fNumberFields= new HashMap();
+	private Map<Text, String[]> fNumberFields= new HashMap<Text, String[]>();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
@@ -86,19 +86,19 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 	}
 	
 	protected void initializeFields() {
-		Map checkBoxes= getCheckBoxes();
-		Map textFields= getTextFields();
-		Iterator e= checkBoxes.keySet().iterator();
+		Map<Control, String> checkBoxes= getCheckBoxes();
+		Map<Control, String> textFields= getTextFields();
+		Iterator<Control> e= checkBoxes.keySet().iterator();
 		while (e.hasNext()) {
 			Button b= (Button) e.next();
-			String key= (String) checkBoxes.get(b);
+			String key= checkBoxes.get(b);
 			b.setSelection(getOverlayStore().getBoolean(key));
 		}
 		
 		e= textFields.keySet().iterator();
 		while (e.hasNext()) {
 			Text t= (Text) e.next();
-			String key= (String) textFields.get(t);
+			String key= textFields.get(t);
 			t.setText(getOverlayStore().getString(key));
 		}		
 	}
@@ -106,6 +106,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		getOverlayStore().propagate();
 		MakeUIPlugin.getDefault().savePluginPreferences();
@@ -120,21 +121,22 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		return fOverlayStore;
 	}
 	
-	protected Map getCheckBoxes() {
+	protected Map<Control, String> getCheckBoxes() {
 		return fCheckBoxes;
 	}
 	
-	protected Map getTextFields() {
+	protected Map<Control, String> getTextFields() {
 		return fTextFields;
 	}
 	
-	protected Map getNumberFields() {
+	protected Map<Text, String[]> getNumberFields() {
 		return fNumberFields;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		getOverlayStore().loadDefaults();
 		initializeFields();
@@ -147,6 +149,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (getOverlayStore() != null) {
 			getOverlayStore().stop();
@@ -200,9 +203,9 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 	
 	void numberFieldChanged(Text textControl) {
 		String number= textControl.getText();
-		IStatus status= validatePositiveNumber(number, (String[])getNumberFields().get(textControl));
+		IStatus status= validatePositiveNumber(number, getNumberFields().get(textControl));
 		if (!status.matches(IStatus.ERROR)) {
-			getOverlayStore().setValue((String) getTextFields().get(textControl), number);
+			getOverlayStore().setValue(getTextFields().get(textControl), number);
 		}
 		updateStatus(status);
 	}
@@ -225,10 +228,10 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 	
 	private void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
-			Set keys= getNumberFields().keySet();
-			for (Iterator iter = keys.iterator(); iter.hasNext();) {
-				Text text = (Text) iter.next();
-				IStatus s= validatePositiveNumber(text.getText(), (String[])getNumberFields().get(text));
+			Set<Text> keys= getNumberFields().keySet();
+			for (Iterator<Text> iter = keys.iterator(); iter.hasNext();) {
+				Text text = iter.next();
+				IStatus s= validatePositiveNumber(text.getText(), getNumberFields().get(text));
 				status= s.getSeverity() > status.getSeverity() ? s : status;
 			}
 		}	

@@ -13,9 +13,9 @@ package org.eclipse.cdt.make.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -63,7 +63,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     private boolean fInitialized = false;
     private String fPersistedProfileId = null;
     
-    private Map fProfilePageMap = null;
+    private Map<String, DiscoveryProfilePageConfiguration> fProfilePageMap = null;
 
     // Composite parent provided by the block.
     private Composite fCompositeParent;
@@ -159,18 +159,11 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         }
     }
 
-    /**
-     * @param title
-     */
     public AbstractDiscoveryOptionsBlock(String title) {
         super(title);
         initializeProfilePageMap();
     }
 
-    /**
-     * @param title
-     * @param image
-     */
     public AbstractDiscoveryOptionsBlock(String title, ImageDescriptor image) {
         super(title, image);
         initializeProfilePageMap();
@@ -180,7 +173,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
      * 
      */
     private void initializeProfilePageMap() {
-        fProfilePageMap = new HashMap(5);
+        fProfilePageMap = new HashMap<String, DiscoveryProfilePageConfiguration>(5);
         
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(MakeUIPlugin.getPluginId(), "DiscoveryProfilePage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
@@ -195,7 +188,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#setContainer(org.eclipse.cdt.ui.dialogs.ICOptionContainer)
      */
-    public void setContainer(ICOptionContainer container) {
+    @Override
+	public void setContainer(ICOptionContainer container) {
         super.setContainer(container);
         
         fPrefs = getContainer().getPreferences();
@@ -222,9 +216,6 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         getContainer().updateContainer();
     }
 
-    /**
-     * @param project
-     */
     protected void createBuildInfo() {
         if (getProject() != null) {
             try {
@@ -267,7 +258,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */
-    public void setVisible(boolean visible) {
+    @Override
+	public void setVisible(boolean visible) {
         super.setVisible(visible);
         if (visible) {
             handleDiscoveryProfileChanged();
@@ -309,20 +301,22 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.AbstractDiscoveryPage#isValid()
      */
-    public boolean isValid() {
+    @Override
+	public boolean isValid() {
         return (getCurrentPage() == null) ? true : getCurrentPage().isValid();
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
      */
-    public String getErrorMessage() {
+    @Override
+	public String getErrorMessage() {
         return getCurrentPage().getErrorMessage();
     }
     
     protected AbstractDiscoveryPage getDiscoveryProfilePage(String profileId) {
         DiscoveryProfilePageConfiguration configElement = 
-                (DiscoveryProfilePageConfiguration) fProfilePageMap.get(profileId);
+                fProfilePageMap.get(profileId);
         if (configElement != null) {
             try {
                 return configElement.getPage();
@@ -334,7 +328,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
 
     protected String getDiscoveryProfileName(String profileId) {
         DiscoveryProfilePageConfiguration configElement = 
-                (DiscoveryProfilePageConfiguration) fProfilePageMap.get(profileId);
+                fProfilePageMap.get(profileId);
         if (configElement != null) {
             return configElement.getName();
         }
@@ -342,8 +336,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     }
     
     protected String getDiscoveryProfileId(String profileName) {
-        for (Iterator I = fProfilePageMap.keySet().iterator(); I.hasNext();) {
-            String profileId = (String) I.next();
+        Set<String> profileIds = fProfilePageMap.keySet();
+        for (String profileId : profileIds) {
             String confProfileName = getDiscoveryProfileName(profileId);
             if (profileName.equals(confProfileName)) {
                 return profileId;
@@ -352,8 +346,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         return null;
     }
     
-    protected List getDiscoveryProfileIdList() {
-        return new ArrayList(fProfilePageMap.keySet());
+    protected List<String> getDiscoveryProfileIdList() {
+        return new ArrayList<String>(fProfilePageMap.keySet());
     }
     
     protected abstract String getCurrentProfileId();

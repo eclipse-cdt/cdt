@@ -32,6 +32,7 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -62,7 +63,7 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		 * @see org.eclipse.cdt.make.internal.ui.text.makefile.AbstractMakefileCodeScanner#createRules()
 		 */
 		@Override
-		protected List createRules() {
+		protected List<IRule> createRules() {
 			setDefaultReturnToken(getToken(fProperties[0]));
 			return null;
 		}
@@ -198,7 +199,6 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	}
 
 	/**
-	 * @param event
 	 * @return <code>true</code> if the given property change event affects the code coloring
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event) {
@@ -211,9 +211,6 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 		return false;
 	}
 
-	/**
-	 * @param event
-	 */
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (fCodeScanner != null) {
 			fCodeScanner.adaptToPreferenceChange(event);

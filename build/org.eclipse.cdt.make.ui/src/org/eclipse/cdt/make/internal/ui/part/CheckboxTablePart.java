@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * @version 	1.0
- * @author
  */
 public class CheckboxTablePart extends StructuredViewerPart {
 	public CheckboxTablePart(String[] buttonLabels) {
@@ -33,6 +32,7 @@ public class CheckboxTablePart extends StructuredViewerPart {
 	/*
 	 * @see StructuredViewerPart#createStructuredViewer(Composite, FormWidgetFactory)
 	 */
+	@Override
 	protected StructuredViewer createStructuredViewer(Composite parent, int style) {
 		style |= SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		CheckboxTableViewer tableViewer = CheckboxTableViewer.newCheckList(parent, style);
@@ -56,6 +56,7 @@ public class CheckboxTablePart extends StructuredViewerPart {
 	/*
 	 * @see SharedPartWithButtons#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(Button button, int index) {
 	}
 

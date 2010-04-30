@@ -325,11 +325,6 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         }
     }
 
-    /**
-     * @param project
-     * @param monitor
-     * @throws CModelException
-     */
     private void createDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {
         IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
         ICProject cProject = CoreModel.getDefault().create(project);
@@ -345,9 +340,6 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
    }
 
-    /**
-     * @param project
-     */
     private void changeDiscoveryContainer(IProject project) {
         String profileId = getBuildInfo().getSelectedProfileId();
         ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().

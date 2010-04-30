@@ -11,19 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.debug.ui.actions.DsfCommandRunnable;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GDBProcess;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
-import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -55,8 +52,8 @@ public class GdbRestartCommand implements IRestartHandler {
             return;
         }
     	
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
-            @Override public void doExecute() {
+        fExecutor.submit(new DsfRunnable() {
+            public void run() {
     			IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
 				if (gdbControl != null) {
 					request.setEnabled(gdbControl.canRestart());
@@ -69,37 +66,62 @@ public class GdbRestartCommand implements IRestartHandler {
     }
     
     private class UpdateLaunchJob extends Job {
-    	private final AtomicReference<IPath> fExecPathRef;
+    	IDebugCommandRequest fRequest;
     	
-    	UpdateLaunchJob(IPath path) {
+    	UpdateLaunchJob(IDebugCommandRequest request) {
 			super(""); //$NON-NLS-1$
 			setSystem(true);
-			fExecPathRef = new AtomicReference<IPath>(path);
+			fRequest = request;
     	}
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-	        // Now that we restarted the inferior, we must add it to our launch
+	        // Before restarting the inferior, we must add it to our launch
 	        // we must do this here because we cannot do it in the executor, or else
 	        // it deadlocks
-	        // We must first remove the old inferior from our launch (since it uses
-	        // the same name and we use that name to find the old one)
-	        //
+	        // We must first remove the old inferior from our launch so that we
+			// can re-use its name
+			
 	        // Remove
-	        String inferiorLabel = fExecPathRef.get().lastSegment();
+	        String inferiorLabel = null;
 
 	        IProcess[] launchProcesses = fLaunch.getProcesses();
 	        for (IProcess p : launchProcesses) {
-	        	if (p.getLabel().equals(inferiorLabel)) {
+	        	if ((p instanceof GDBProcess) == false) {
+	        		// We have to processes in our launches, GDB and the inferior
+	        		// We can tell this is the inferior because it is not GDB.
+	        		// If we don't have an inferior at all, we just won't find it.
+	        		inferiorLabel = p.getLabel();
 	            	fLaunch.removeProcess(p);
 	            	break;
 	        	}
 	        }
 	        // Add
-	        try {
-	            fLaunch.addInferiorProcess(inferiorLabel);
-	        } catch (CoreException e) {
+	        if (inferiorLabel != null) {
+	        	try {
+	        		fLaunch.addInferiorProcess(inferiorLabel);
+	        	} catch (CoreException e) {
+	        	}
 	        }
+	        
+	        // Now that we have added the new inferior to the launch,
+	        // which creates its console, we can perform the restart safely.
+	        fExecutor.submit(new DsfRunnable() {
+	        	public void run() {
+	        		final IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
+	        		if (gdbControl != null) {
+	        			gdbControl.restart(fLaunch, new RequestMonitor(fExecutor, null) {
+	        				@Override
+	        				protected void handleCompleted() {
+	        					fRequest.done();
+	        				};
+	        			});
+	        		} else {
+    					fRequest.done();
+	        		}
+	        	}
+	        });
+	        
 	        return Status.OK_STATUS;
 		}
     }
@@ -110,23 +132,30 @@ public class GdbRestartCommand implements IRestartHandler {
             return false;
         }
 
-        fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) {
-            @Override public void doExecute() {
+        fExecutor.submit(new DsfRunnable() {
+        	public void run() {
     			final IGDBControl gdbControl = fTracker.getService(IGDBControl.class);
-    			final IGDBBackend backend = fTracker.getService(IGDBBackend.class);
-				if (gdbControl != null && backend != null) {
+				if (gdbControl != null) {
                     gdbControl.initInferiorInputOutput(new RequestMonitor(fExecutor, null) {
                     	@Override
                     	protected void handleCompleted() {
-                    		if (isSuccess()) {
+                    		if (isSuccess()) {                    			
                         		gdbControl.createInferiorProcess();
-                        		gdbControl.restart(fLaunch, new RequestMonitor(fExecutor, null));
                         		
-                        		// Update the launch outside the executor
-            					new UpdateLaunchJob(backend.getProgramPath()).schedule();
+                        		// Update the launch outside the executor.
+                        		// Also, we must have created the new inferior first to create
+                        		// the new streams.
+                        		// Finally, we should only do the actual restart after
+                        		// we have updated the launch, to make sure our consoles
+                        		// are ready to process any output from the new inferior (bug 223154)
+                        		new UpdateLaunchJob(request).schedule();
+                    		} else {
+                    			request.done();
                     		}
                     	}
                     });
+				} else {
+					request.done();
 				}
 			}
         });

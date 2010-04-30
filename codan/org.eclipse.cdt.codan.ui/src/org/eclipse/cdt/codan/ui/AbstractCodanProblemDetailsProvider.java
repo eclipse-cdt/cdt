@@ -70,6 +70,9 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	public String getStyledProblemMessage() {
 		String message = escapeForLink(getProblemMessage());
 		String loc = marker.getResource().getFullPath().toOSString();
+		String loc2 = marker.getAttribute(IMarker.LOCATION, ""); //$NON-NLS-1$
+		if (loc2.length()>0)
+			loc=loc2;
 		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
 		return message + "\n" + loc + ":" + line; //$NON-NLS-1$//$NON-NLS-2$
 	}

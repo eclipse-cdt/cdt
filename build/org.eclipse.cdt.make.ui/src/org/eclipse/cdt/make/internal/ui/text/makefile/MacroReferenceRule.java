@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,11 +32,13 @@ public class MacroReferenceRule extends PatternRule {
 		}
 	}
 	
+	@Override
 	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		nOfBrackets = 1;
 		return super.doEvaluate(scanner, resume);
 	}
 
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters = scanner.getLegalLineDelimiters();

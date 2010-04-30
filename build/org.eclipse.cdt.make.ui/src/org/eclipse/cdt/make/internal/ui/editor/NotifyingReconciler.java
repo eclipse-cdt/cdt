@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.make.internal.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -23,12 +22,10 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
  */
 public class NotifyingReconciler extends MonoReconciler {
 
-	private ArrayList fReconcilingParticipants= new ArrayList();
+	private ArrayList<IReconcilingParticipant> fReconcilingParticipants= new ArrayList<IReconcilingParticipant>();
 	
 	/**
 	 * Constructor for NotifyingReconciler.
-	 * @param strategy
-	 * @param isIncremental
 	 */
 	public NotifyingReconciler(IReconcilingStrategy strategy, boolean isIncremental) {
 		super(strategy, isIncremental);
@@ -37,6 +34,7 @@ public class NotifyingReconciler extends MonoReconciler {
 	/*
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#process(org.eclipse.jface.text.reconciler.DirtyRegion)
 	 */
+	@Override
 	protected void process(DirtyRegion dirtyRegion) {
 		super.process(dirtyRegion);
 		notifyReconcilingParticipants();
@@ -51,14 +49,14 @@ public class NotifyingReconciler extends MonoReconciler {
 	}
 
 	protected void notifyReconcilingParticipants() {
-		Iterator i= new ArrayList(fReconcilingParticipants).iterator();
-		while (i.hasNext()) {
-			((IReconcilingParticipant) i.next()).reconciled();
+		for (IReconcilingParticipant participant : fReconcilingParticipants) {
+			participant.reconciled();
 		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#initialProcess()
 	 */
+	@Override
 	protected void initialProcess() {
 		super.initialProcess();
 		notifyReconcilingParticipants();

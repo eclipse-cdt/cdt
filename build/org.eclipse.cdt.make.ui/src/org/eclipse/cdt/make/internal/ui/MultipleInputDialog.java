@@ -13,7 +13,6 @@ package org.eclipse.cdt.make.internal.ui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +48,10 @@ public class MultipleInputDialog extends Dialog {
 	
 	protected Composite panel;
 	
-	protected List fieldList = new ArrayList();
-	protected List controlList = new ArrayList();
-	protected List validators = new ArrayList();
-	protected Map valueMap = new HashMap();
+	protected List<FieldSummary> fieldList = new ArrayList<FieldSummary>();
+	protected List<Text> controlList = new ArrayList<Text>();
+	protected List<Validator> validators = new ArrayList<Validator>();
+	protected Map<Object, String> valueMap = new HashMap<Object, String>();
 
 	private String title;
 	
@@ -67,6 +66,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null) {
@@ -78,6 +78,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		Control bar = super.createButtonBar(parent);
 		validateFields();
@@ -87,6 +88,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite)super.createDialogArea(parent);
 		container.setLayout(new GridLayout(2, false));
@@ -97,8 +99,7 @@ public class MultipleInputDialog extends Dialog {
 		panel.setLayout(layout);
 		panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		for (Iterator i = fieldList.iterator(); i.hasNext();) {
-			FieldSummary field = (FieldSummary)i.next();
+		for (FieldSummary field : fieldList) {
 			switch(field.type) {
 				case TEXT:
 					createTextField(field.name, field.initialValue, field.allowsEmpty);
@@ -145,6 +146,7 @@ public class MultipleInputDialog extends Dialog {
 		
 		if (!allowEmpty) {
 			validators.add(new Validator() {
+				@Override
 				public boolean validate() {
 					return !text.getText().equals(""); //$NON-NLS-1$
 				}
@@ -186,6 +188,7 @@ public class MultipleInputDialog extends Dialog {
 
 		if (!allowEmpty) {
 			validators.add(new Validator() {
+				@Override
 				public boolean validate() {
 					return !text.getText().equals(""); //$NON-NLS-1$
 				}
@@ -200,6 +203,7 @@ public class MultipleInputDialog extends Dialog {
 		
 		Button button = createButton(comp, IDialogConstants.IGNORE_ID, MakeUIPlugin.getResourceString("MultipleInputDialog.0"), false); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setMessage(MakeUIPlugin.getResourceString("MultipleInputDialog.1")); //$NON-NLS-1$
@@ -250,6 +254,7 @@ public class MultipleInputDialog extends Dialog {
 
 		if (!allowEmpty) {
 			validators.add(new Validator() {
+				@Override
 				public boolean validate() {
 					return !text.getText().equals(""); //$NON-NLS-1$
 				}
@@ -264,6 +269,7 @@ public class MultipleInputDialog extends Dialog {
 		
 		Button button = createButton(comp, IDialogConstants.IGNORE_ID, MakeUIPlugin.getResourceString("MultipleInputDialog.2"), false); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				int code = dialog.open();
@@ -283,12 +289,10 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
-		for (Iterator i = controlList.iterator(); i.hasNext(); ) {
-			Control control = (Control)i.next();
-			if (control instanceof Text) {
-				valueMap.put(control.getData(FIELD_NAME), ((Text)control).getText());
-			}
+		for (Text control : controlList) {
+			valueMap.put(control.getData(FIELD_NAME), control.getText());
 		}
 		controlList = null;
 		super.okPressed();
@@ -298,6 +302,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
+	@Override
 	public int open() {
 		applyDialogFont(panel);
 		return super.open();
@@ -312,8 +317,7 @@ public class MultipleInputDialog extends Dialog {
 	}
 	
 	public void validateFields() {
-		for(Iterator i = validators.iterator(); i.hasNext(); ) {
-			Validator validator = (Validator) i.next();
+		for (Validator validator : validators) {
 			if (!validator.validate()) {
 				getButton(IDialogConstants.OK_ID).setEnabled(false);
 				return;
@@ -325,6 +329,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
+	@Override
 	protected Point getInitialLocation(Point initialSize) {
 		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
 		if (initialLocation != null) {
@@ -341,6 +346,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
+	@Override
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
 		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
@@ -349,6 +355,7 @@ public class MultipleInputDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 		return super.close();

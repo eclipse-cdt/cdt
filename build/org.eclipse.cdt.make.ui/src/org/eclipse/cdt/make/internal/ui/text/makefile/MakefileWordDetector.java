@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ public class MakefileWordDetector implements IWordDetector {
 	private static final String correctSpecChars = "@$/\\_"; //$NON-NLS-1$
 
 	/**
-	 * @see IWordDetector#isWordPart(character)
+	 * @see IWordDetector#isWordPart(char)
 	 */
 	public boolean isWordPart(char character) {
 		return Character.isLetterOrDigit(character) || (correctSpecChars.indexOf(character) >= 0);

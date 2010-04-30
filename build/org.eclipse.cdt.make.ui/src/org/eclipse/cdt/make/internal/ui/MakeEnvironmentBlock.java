@@ -131,8 +131,6 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/**
 		 * Sets this variable's value
-		 * 
-		 * @param value
 		 */
 		public void setValue(String value) {
 			this.value = value;
@@ -317,8 +315,6 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 	/**
 	 * Updates the environment table for the given launch configuration
-	 * 
-	 * @param info 
 	 */
 	protected void updateEnvironment(IMakeCommonBuildInfo info) {
 		environmentTable.setInput(info);
@@ -453,8 +449,6 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 	/**
 	 * Create some empty space.
-	 * @param comp 
-	 * @param colSpan 
 	 */
 	protected void createVerticalSpacer(Composite comp, int colSpan) {
 		Label label = new Label(comp, SWT.NONE);

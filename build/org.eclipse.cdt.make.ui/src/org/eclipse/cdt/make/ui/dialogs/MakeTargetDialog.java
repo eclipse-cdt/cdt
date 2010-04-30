@@ -134,7 +134,6 @@ public class MakeTargetDialog extends Dialog {
 	 *
 	 * @param parentShell - shell to display the dialog.
 	 * @param target - make target to edit.
-	 * @throws CoreException
 	 */
 	public MakeTargetDialog(Shell parentShell, IMakeTarget target) throws CoreException {
 		this(parentShell, target.getContainer());
@@ -157,7 +156,6 @@ public class MakeTargetDialog extends Dialog {
 	 *
 	 * @param parentShell - shell to display the dialog.
 	 * @param container - container where to create the target.
-	 * @throws CoreException
 	 */
 	public MakeTargetDialog(Shell parentShell, IContainer container) throws CoreException {
 		super(parentShell);

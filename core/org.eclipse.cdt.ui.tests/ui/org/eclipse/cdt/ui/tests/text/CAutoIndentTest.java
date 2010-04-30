@@ -438,6 +438,16 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 			store.setToDefault(PreferenceConstants.EDITOR_AUTO_INDENT);
 		}
 	}
+	
+	public void testSkipToStatementStartWhitesmiths_Bug311018() throws Exception {
+		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
+		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
+		AutoEditTester tester = createAutoEditTester();
+		tester.type("if (i > 0)\n"); //$NON-NLS-1$
+		tester.type("{\n"); //$NON-NLS-1$
+		// start is indented to the brace
+		assertEquals("if (i > 0)\n    {\n    \n    }", tester.fDoc.get());
+	}
 
 	public void testTabsAsSpaces_SmartIndentDisabled_Bug242707() throws Exception  {
 		HashMap<String, String> options = new HashMap<String, String>();

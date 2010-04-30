@@ -1277,8 +1277,8 @@ public final class CIndenter {
 				case Symbols.TokenWHILE:
 				case Symbols.TokenFOR:
 				case Symbols.TokenTRY:
+					fIndent += fPrefs.prefIndentBracesForBlocks ? 1 : 0;
 					return fPosition;
-
 				case Symbols.TokenCLASS:
 				case Symbols.TokenENUM:
 				case Symbols.TokenSTRUCT:

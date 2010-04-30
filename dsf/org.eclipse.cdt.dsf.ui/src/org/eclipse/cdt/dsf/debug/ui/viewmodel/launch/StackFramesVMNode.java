@@ -55,7 +55,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
@@ -435,11 +434,12 @@ public class StackFramesVMNode extends AbstractDMVMNode
             update.setProperty(ILaunchVMConstants.PROP_FRAME_ADDRESS, "0x" + address.toString(16)); //$NON-NLS-1$
         }
 
-        IPath filePath = new Path(data.getFile());
-        String fileName = filePath.toOSString();
-        Object showFullPathPreference = getVMProvider().getPresentationContext().getProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY);
-        if (showFullPathPreference instanceof Boolean && (Boolean)showFullPathPreference == false) {
-        	fileName = filePath.lastSegment();
+        String fileName = data.getFile();
+        if (fileName != null) {
+	        Object showFullPathPreference = getVMProvider().getPresentationContext().getProperty(IDsfDebugUIConstants.DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY);
+	        if (showFullPathPreference instanceof Boolean && (Boolean)showFullPathPreference == false) {
+	        	fileName = new Path(fileName).lastSegment();
+	        }
         }
         update.setProperty(ILaunchVMConstants.PROP_FRAME_FILE, fileName);
         

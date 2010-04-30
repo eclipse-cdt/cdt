@@ -215,7 +215,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 
 	/**
 	 * This method provides caching of potentially long running and called on each
-	 * mouse move {@link dragOverOperation}.
+	 * mouse move {@link #dragOverOperation}.
 	 *
 	 * @param operation - incoming operation.
 	 * @param dropContainer - container where drop is going to be.

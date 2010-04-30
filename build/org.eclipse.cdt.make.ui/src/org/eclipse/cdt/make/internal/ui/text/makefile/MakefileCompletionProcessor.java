@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 
-	public class DirectiveComparator implements Comparator {
+	public class DirectiveComparator implements Comparator<Object> {
 
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
@@ -131,7 +131,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			statements = makefile.getTargetRules();
 		}
 
-		ArrayList proposalList = new ArrayList(statements.length);
+		ArrayList<ICompletionProposal> proposalList = new ArrayList<ICompletionProposal>(statements.length);
 
 		// iterate over all the different categories
 		for (int i = 0; i < statements.length; i++) {
@@ -163,7 +163,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 				proposalList.add(result);
 			}
 		}
-		ICompletionProposal[] proposals = (ICompletionProposal[]) proposalList.toArray(new ICompletionProposal[0]);
+		ICompletionProposal[] proposals = proposalList.toArray(new ICompletionProposal[0]);
 		Arrays.sort(proposals, comparator);
 		return proposals;
 	}
@@ -175,7 +175,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
 		boolean macro = WordPartDetector.inMacro(viewer, documentOffset);
 		IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
-		ArrayList contextList = new ArrayList();
+		ArrayList<String> contextList = new ArrayList<String>();
 		if (macro) {
 			IDirective[] statements = makefile.getMacroDefinitions();
 			for (int i = 0; i < statements.length; i++) {
@@ -205,7 +205,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 
 		IContextInformation[] result = new IContextInformation[contextList.size()];
 		for (int i = 0; i < result.length; i++) {
-			String context = (String)contextList.get(i);
+			String context = contextList.get(i);
 			result[i] = new ContextInformation(imageMacro, wordPart.toString(), context);
 		}
 		return result;

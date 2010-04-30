@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import java.util.Comparator;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class CompletionProposalComparator implements Comparator {
+public class CompletionProposalComparator implements Comparator<ICompletionProposal> {
 
 	/**
 	 * Constructor for CompletionProposalComparator.
@@ -26,9 +26,7 @@ public class CompletionProposalComparator implements Comparator {
 	/* (non-Javadoc)
 	 * @see Comparator#compare(Object, Object)
 	 */
-	public int compare(Object o1, Object o2) {
-		ICompletionProposal c1= (ICompletionProposal) o1;
-		ICompletionProposal c2= (ICompletionProposal) o2;
+	public int compare(ICompletionProposal c1, ICompletionProposal c2) {
 		return c1.getDisplayString().compareToIgnoreCase(c2.getDisplayString());
 	}	
 	

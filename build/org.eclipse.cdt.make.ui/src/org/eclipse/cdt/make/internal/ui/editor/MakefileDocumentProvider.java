@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,16 +31,10 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	IMakefile fMakefile;
 
 	protected class MakefileAnnotationModel extends ResourceMarkerAnnotationModel /*implements IProblemRequestor */{
-		/**
-		 * @param resource
-		 */
 		public MakefileAnnotationModel(IResource resource) {
 			super(resource);
 		}
 
-		/**
-		 * @param makefile
-		 */
 		public void setMakefile(IMakefile makefile) {
 			fMakefile = makefile;
 		}
@@ -71,13 +65,15 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
     /* (non-Javadoc)
      * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
      */
-    protected IAnnotationModel createAnnotationModel(IFile file) {
+    @Override
+	protected IAnnotationModel createAnnotationModel(IFile file) {
     	return new MakefileAnnotationModel(file);
     }
 
     /*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
 	 */
+	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		if (!(element instanceof IFileEditorInput))
 			return null;
@@ -107,7 +103,8 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
     /* (non-Javadoc)
      * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object, org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
      */
-    protected void disposeFileInfo(Object element, FileInfo info) {
+    @Override
+	protected void disposeFileInfo(Object element, FileInfo info) {
 	    if (info instanceof MakefileFileInfo) {
 		    MakefileFileInfo makefileInfo= (MakefileFileInfo) info;
 		    if (makefileInfo.fCopy != null) {
@@ -120,6 +117,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
     /*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
 	 */
+	@Override
 	protected FileInfo createEmptyFileInfo() {
 		return new MakefileFileInfo();
 	}
@@ -140,7 +138,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	 * @see org.eclipse.cdt.make.internal.ui.IMakefileDocumentProvider#shutdown()
 	 */
 	public void shutdown() {
-		Iterator e= getConnectedElementsIterator();
+		Iterator<?> e= getConnectedElementsIterator();
 		while (e.hasNext())
 			disconnect(e.next());
 	}
@@ -148,6 +146,7 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 	/*
 	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createSaveOperation(java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
 	 */
+	@Override
 	protected DocumentProviderOperation createSaveOperation(Object element, IDocument document, boolean overwrite)
 			throws CoreException {
 		if (!(element instanceof IFileEditorInput)) {

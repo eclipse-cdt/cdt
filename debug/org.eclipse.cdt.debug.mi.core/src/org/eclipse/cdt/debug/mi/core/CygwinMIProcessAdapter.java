@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author Doug Schaefer
@@ -45,66 +44,61 @@ public class CygwinMIProcessAdapter extends MIProcessAdapter {
 				// Once we drop support for gdb 6.8, we should be able to ditch
 				// this method and rely on the base implementation
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c56
-				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					if (inferior.isRemoteInferior()) {
-						// Interrupt gdb with a 'kill -SIGINT'. The reason we
-						// need to send a simulated Cygwin/POSIX SIGINT to
-						// Cygwin gdb is that it has special handling in the case
-						// of remote debugging, as explained in the bugzilla 
-						// comment above. That special handling will forward the
-						// interrupt request through gdbserver to the remote
-						// inferior, but the interrupt to gdb *must* be a
-						// simulated Cygwin/POSIX SIGINT; a CTRL-C won't do.
-						gdbSpawner.interrupt();		
-					}
-					else if (inferior.isAttachedInferior()) {
-						// Cygwin gdb 6.8 has no support for forwarding an
-						// interrupt request to the local process it has
-						// attached to. That support has since been added and
-						// will be available in 7.x. So, the only way to suspend the
-						// attached-to inferior is to interrupt it directly.
-						// The following call will take a special path in the
-						// JNI code. See Java_org_eclipse_cdt_utils_spawner_Spawner_raise()
-						// We don't use the Cygwin 'kill' command since we don't
-						// know if the process associated with PID (the
-						// inferior) is a cygwin
-						// process (kill only works on cygwin programs). We also
-						// can't use GenerateConsoleCtrlEvent() to send a CTRL-C
-						// since that can only be used if the recipient shares a
-						// console with the caller. So, we end up looking for a
-						// console window associated with PID, and then we
-						// fabricate keyboard events to simulate the user doing
-						// a CTRL-C in that console! Crazy stuff, but it works.
-						// Thing is, the PID associated with the console window
-						// has to be that of the process we're trying to
-						// interrupt. What that means is that in order for CDT's
-						// 'suspend' button to work in an attach debug session,
-						// the inferior must have been launched with its own
-						// console. If you open a Windows console and type
-						// 'myprogram.exe', CDT can attach to it but not suspend
-						// it once it resumes it. Instead, you have to launch
-						// the program by using 'start myprogram.exe'.
-						interruptInferior(inferior);
-						interruptedInferior = true;
-					}
-					else {
-						// The typical case--gdb launches the inferior.
-						// Interrupt gdb but with a CTRL-C. gdb (6.8) itself
-						// doesn't have a handler for CTRL-C, but all processes
-						// in the console
-						// process group will receive the CTRL-C, and gdb
-						// registers itself to catch any such events that
-						// happen in the inferior. Thus it is able to determine
-						// and report that the inferior has been interrupted.
-						// But it's important we don't interrupt Cygwin gdb with
-						// a 'kill' since that will only reach gdb, and gdb
-						// won't forward the request on to the inferior. See
-						// bugzilla comment referenced above for details.
-						gdbSpawner.interruptCTRLC(); 
-					}
+				if (inferior.isRemoteInferior()) {
+					// Interrupt gdb with a 'kill -SIGINT'. The reason we
+					// need to send a simulated Cygwin/POSIX SIGINT to
+					// Cygwin gdb is that it has special handling in the case
+					// of remote debugging, as explained in the bugzilla 
+					// comment above. That special handling will forward the
+					// interrupt request through gdbserver to the remote
+					// inferior, but the interrupt to gdb *must* be a
+					// simulated Cygwin/POSIX SIGINT; a CTRL-C won't do.
+					gdbSpawner.interrupt();		
+				}
+				else if (inferior.isAttachedInferior()) {
+					// Cygwin gdb 6.8 has no support for forwarding an
+					// interrupt request to the local process it has
+					// attached to. That support has since been added and
+					// will be available in 7.x. So, the only way to suspend the
+					// attached-to inferior is to interrupt it directly.
+					// The following call will take a special path in the
+					// JNI code. See Java_org_eclipse_cdt_utils_spawner_Spawner_raise()
+					// We don't use the Cygwin 'kill' command since we don't
+					// know if the process associated with PID (the
+					// inferior) is a cygwin
+					// process (kill only works on cygwin programs). We also
+					// can't use GenerateConsoleCtrlEvent() to send a CTRL-C
+					// since that can only be used if the recipient shares a
+					// console with the caller. So, we end up looking for a
+					// console window associated with PID, and then we
+					// fabricate keyboard events to simulate the user doing
+					// a CTRL-C in that console! Crazy stuff, but it works.
+					// Thing is, the PID associated with the console window
+					// has to be that of the process we're trying to
+					// interrupt. What that means is that in order for CDT's
+					// 'suspend' button to work in an attach debug session,
+					// the inferior must have been launched with its own
+					// console. If you open a Windows console and type
+					// 'myprogram.exe', CDT can attach to it but not suspend
+					// it once it resumes it. Instead, you have to launch
+					// the program by using 'start myprogram.exe'.
+					interruptInferior(inferior);
+					interruptedInferior = true;
 				}
 				else {
-					gdbSpawner.interrupt();
+					// The typical case--gdb launches the inferior.
+					// Interrupt gdb but with a CTRL-C. gdb (6.8) itself
+					// doesn't have a handler for CTRL-C, but all processes
+					// in the console
+					// process group will receive the CTRL-C, and gdb
+					// registers itself to catch any such events that
+					// happen in the inferior. Thus it is able to determine
+					// and report that the inferior has been interrupted.
+					// But it's important we don't interrupt Cygwin gdb with
+					// a 'kill' since that will only reach gdb, and gdb
+					// won't forward the request on to the inferior. See
+					// bugzilla comment referenced above for details.
+					gdbSpawner.interruptCTRLC(); 
 				}
 				
 				waitForInterrupt(inferior);

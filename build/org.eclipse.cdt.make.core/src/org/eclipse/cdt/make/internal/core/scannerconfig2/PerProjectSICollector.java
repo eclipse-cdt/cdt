@@ -95,7 +95,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		this.context = new InfoContext(project);
 	}
 
-	public synchronized void contributeToScannerConfig(Object resource, Map scannerInfo, boolean isBuiltinConfig) {
+	public synchronized void contributeToScannerConfig(Object resource, @SuppressWarnings("rawtypes") Map scannerInfo, boolean isBuiltinConfig) {
 		this.isBuiltinConfig= isBuiltinConfig;
 		try {
 			contributeToScannerConfig(resource, scannerInfo);
@@ -108,7 +108,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
 	 */
-	public synchronized void contributeToScannerConfig(Object resource, Map scannerInfo) {
+	public synchronized void contributeToScannerConfig(Object resource, @SuppressWarnings("rawtypes") Map scannerInfo) {
 		// check the resource
 		String errorMessage = null;
 		if (resource == null) {
@@ -141,6 +141,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
 			    for (Object name : scannerInfo.keySet()) {
 			        ScannerInfoTypes siType = (ScannerInfoTypes) name;
+			        @SuppressWarnings("unchecked")
                     List<String> delta = (List<String>) scannerInfo.get(siType);
                     
                     List<String> discovered = discoveredSI.get(siType);
@@ -344,7 +345,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
         if (errorMessage != null) {
             TraceUtil.outputError("PerProjectSICollector.getCollectedScannerInfo : ", errorMessage); //$NON-NLS-1$
         }
-        else if (project.equals(((IResource)resource).getProject())) {
+        else if (resource!=null && project.equals(((IResource)resource).getProject())) {
             rv = discoveredSI.get(type);
         }
         return rv;

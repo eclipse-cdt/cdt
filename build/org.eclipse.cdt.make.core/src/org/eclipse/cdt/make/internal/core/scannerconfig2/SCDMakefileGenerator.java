@@ -61,10 +61,11 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
         return generateMakefile(resource.getProject().getName());
     }
 
-    private boolean generateMakefile(String projectName) {
+	private boolean generateMakefile(String projectName) {
         boolean rc = false;
         if (collector instanceof IScannerInfoCollector2) {
             IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
+            @SuppressWarnings("unchecked")
             List<CCommandDSC> commands = collector2.getCollectedScannerInfo(
                     resource.getProject(), ScannerInfoTypes.UNDISCOVERED_COMPILER_COMMAND);
             if (commands != null && commands.size() > 0) {

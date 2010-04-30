@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,8 +69,9 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		fOutputParser.processLine("-Imultiline3\\"); //$NON-NLS-1$
 		fOutputParser.processLine(" -DAA=\"BB\" test.c"); //$NON-NLS-1$
 		
-		List sumIncludes = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.INCLUDE_PATHS);
-        assertTrue(sumIncludes.contains("/dir/include")); //$NON-NLS-1$
+		@SuppressWarnings("unchecked")
+		List<String> sumIncludes = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.INCLUDE_PATHS);
+		assertTrue(sumIncludes.contains("/dir/include")); //$NON-NLS-1$
 		assertTrue(sumIncludes.contains("c:\\dir\\include")); //$NON-NLS-1$
 		assertTrue(sumIncludes.contains("D:/dir/include")); //$NON-NLS-1$
 		assertTrue(sumIncludes.contains("/dir2/include")); //$NON-NLS-1$

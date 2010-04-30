@@ -63,11 +63,12 @@ public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider#prepareArguments(boolean)
      */
-    @Override
+	@Override
 	protected String[] prepareArguments(boolean isDefaultCommand) {
     	if (collector == null)
             return fCompileArguments;
     	
+    	@SuppressWarnings("unchecked")
         List<String> tso = collector.getCollectedScannerInfo(resource.getProject(), ScannerInfoTypes.TARGET_SPECIFIC_OPTION);
         if (tso == null || tso.size() == 0) {
             return fCompileArguments;

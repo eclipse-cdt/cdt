@@ -63,8 +63,9 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		fOutputParser.processLine("-c test.c"); // multiline //$NON-NLS-1$
 		fOutputParser.processLine("gcc -D 'SUM(x, y) = (x) + (y)' -c test.c"); // more complex macro definition //$NON-NLS-1$
 		
+		@SuppressWarnings("unchecked")
 		List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
-        assertTrue(sumSymbols.contains("MACRO1=1")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("MACRO1=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("MACRO2=value2")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("MACRO3=")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("MACRO4=value4")); //$NON-NLS-1$
@@ -85,7 +86,8 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 	public void testParsingSymbolDefinitions_bug80271() {
 		fOutputParser.processLine("gcc -DMACRO1 -I ..\\inc -c ..\\perfilescdtest\\source.c");	// PR 80271 //$NON-NLS-1$
 
-        List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		@SuppressWarnings("unchecked")
+		List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("MACRO1=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.size() == 1);
 	}
@@ -94,7 +96,8 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		fOutputParser.processLine("../src/bug186065.cc:8: error: missing terminating \" character");	// PR 80271 //$NON-NLS-1$
 		fOutputParser.processLine("gcc -DBUG186065_IS_FIXED test.c"); //$NON-NLS-1$
 
-        List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		@SuppressWarnings("unchecked")
+		List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("BUG186065_IS_FIXED=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.size() == 1);
 	}
@@ -107,7 +110,8 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		fOutputParser.processLine("/usr/gcc-tool-x -DE test5.c"); //$NON-NLS-1$
 		fOutputParser.processLine("/usr/gcc/something_else -DF test6.c"); //$NON-NLS-1$
 
-        List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		@SuppressWarnings("unchecked")
+		List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("A=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("B=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("C=1")); //$NON-NLS-1$
@@ -121,7 +125,8 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		fOutputParser.processLine("gcc -DA test1.c; gcc -DB test2.c"); //$NON-NLS-1$
 		fOutputParser.processLine("nix -DC; gcc -DD test2.c"); //$NON-NLS-1$
 
-        List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		@SuppressWarnings("unchecked")
+		List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("A=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("B=1")); //$NON-NLS-1$
 		assertFalse(sumSymbols.contains("C=1")); //$NON-NLS-1$
@@ -141,7 +146,8 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		fOutputParser.processLine("sh -c 'gcc -DAA test1.c; gcc -DBB test2.c'"); //$NON-NLS-1$
 		fOutputParser.processLine("sh -c 'nix -DCC; gcc -DDD test2.c'"); //$NON-NLS-1$
 
-        List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		@SuppressWarnings("unchecked")
+		List<String> sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("A=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("B=1")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("C=1")); //$NON-NLS-1$

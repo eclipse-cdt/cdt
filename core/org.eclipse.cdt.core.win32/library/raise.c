@@ -54,21 +54,55 @@ find_child_console (HWND hwnd, LPARAM arg)
   return TRUE;
 }
 
+// Need to declare this Win32 prototype ourselves. _WIN32_WINNT is getting
+// defined to a Windows NT value, thus we don't get this. Can't assume 
+// we're running on XP, anyway (or can we by now?)
+#if (_WIN32_WINNT < 0x0501)
+typedef BOOL (WINAPI *DebugBreakProcessFunc)(HANDLE);
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////
-// Function implements interrupt process (Ctrl-C emulation)
+// Called to interrupt a process that we didn't launch (and thus does not share our 
+// console). Windows XP introduced the function 'DebugBreakProcess', which allows
+// a process to interrupt another process even if if the two do not share a console.
+// If we're running on 2000 or earlier, we have to resort to simulating a CTRL-C
+// in the console by firing keyboard events. This will work only if the process
+// has its own console. That means, e.g., the process should have been started at
+// the cmdline with 'start myprogram.exe' instead of 'myprogram.exe'.
+//
 // Arguments:  
 //			pid - process' pid
 // Return : 0 if OK or error code
 /////////////////////////////////////////////////////////////////////////////////////
 int interruptProcess(int pid) 
 {
+	// See if DebugBreakProcess is available (XP and beyond)
+	HMODULE hmod = LoadLibrary(L"Kernel32.dll");
+	if (hmod != NULL) 
+	{
+		BOOL success = FALSE;
+		FARPROC procaddr = GetProcAddress(hmod, "DebugBreakProcess");
+		if (procaddr != NULL)
+		{
+			HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
+			if (proc != NULL) 
+			{
+				DebugBreakProcessFunc pDebugBreakProcess = (DebugBreakProcessFunc)procaddr;
+				success = (*pDebugBreakProcess)(proc); 
+				CloseHandle(proc);
+			}
+		}
+		FreeLibrary(hmod);
+		hmod = NULL;
+		
+		if (success == TRUE)
+			return 0;	// 0 == OK; if not, try old-school way
+	}
+
 #ifdef DEBUG_MONITOR
     _TCHAR buffer[1000];
 #endif
-	int rc;
-	// Try another method
-	rc = 0;
+	int rc = 0;
 	consoleHWND = NULL;
 
 #ifdef DEBUG_MONITOR

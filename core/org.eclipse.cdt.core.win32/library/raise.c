@@ -95,7 +95,7 @@ int interruptProcess(int pid)
 		FreeLibrary(hmod);
 		hmod = NULL;
 		
-		if (success == TRUE)
+		if (success)
 			return 0;	// 0 == OK; if not, try old-school way
 	}
 

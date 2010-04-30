@@ -62,26 +62,13 @@ public class CygwinMIProcessAdapter extends MIProcessAdapter {
 					// will be available in 7.x. So, the only way to suspend the
 					// attached-to inferior is to interrupt it directly.
 					// The following call will take a special path in the
-					// JNI code. See Java_org_eclipse_cdt_utils_spawner_Spawner_raise()
-					// We don't use the Cygwin 'kill' command since we don't
-					// know if the process associated with PID (the
-					// inferior) is a cygwin
-					// process (kill only works on cygwin programs). We also
-					// can't use GenerateConsoleCtrlEvent() to send a CTRL-C
-					// since that can only be used if the recipient shares a
-					// console with the caller. So, we end up looking for a
-					// console window associated with PID, and then we
-					// fabricate keyboard events to simulate the user doing
-					// a CTRL-C in that console! Crazy stuff, but it works.
-					// Thing is, the PID associated with the console window
-					// has to be that of the process we're trying to
-					// interrupt. What that means is that in order for CDT's
-					// 'suspend' button to work in an attach debug session,
-					// the inferior must have been launched with its own
-					// console. If you open a Windows console and type
-					// 'myprogram.exe', CDT can attach to it but not suspend
-					// it once it resumes it. Instead, you have to launch
-					// the program by using 'start myprogram.exe'.
+					// JNI code. See
+					// Java_org_eclipse_cdt_utils_spawner_Spawner_raise()
+					// We don't use the Cygwin 'kill' command since (a) we don't
+					// know if the process associated with PID (the inferior) is
+					// a cygwin one (kill only works on cygwin programs), and
+					// (b) a CTRL-C will work just fine whether it's a cygwin
+					// program or not
 					interruptInferior(inferior);
 					interruptedInferior = true;
 				}

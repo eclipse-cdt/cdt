@@ -162,15 +162,15 @@ public class DiscoveredElement {
 	/**
 	 * @return children of the discovered element 
 	 */
-	public Object[] getChildren() {
+	public DiscoveredElement[] getChildren() {
 		switch(fEntryKind) {
 			case INCLUDE_PATH:
 			case SYMBOL_DEFINITION:
 			case INCLUDE_FILE:
 			case MACROS_FILE:
-				return new Object[0];
+				return new DiscoveredElement[0];
 		}
-		return fChildren.toArray();
+		return fChildren.toArray(new DiscoveredElement[fChildren.size()]);
 	}
 
 	public boolean hasChildren() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
@@ -68,10 +69,6 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		}
 		return super.getImage(element);
 	}
-	/**
-	 * @param elem
-	 * @return
-	 */
 	private Image composeImage(DiscoveredElement elem) {
 		Image image = null;
 		switch (elem.getEntryKind()) {
@@ -106,6 +103,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
@@ -129,10 +127,6 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		return super.getText(element);
 	}
 
-	/**
-	 * @param annotation
-	 * @return
-	 */
 	private String addAnnotation(String annotation) {
 		return " (" + annotation + ")";	//$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -181,6 +175,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int, int)
 		 */
+		@Override
 		protected void drawCompositeImage(int width, int height) {
 			ImageData bg = fBaseImage.getImageData();
 			if (bg == null) {
@@ -204,6 +199,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
 		 */
+		@Override
 		protected Point getSize() {
 			if (fSize == null) {
 				ImageData data = fBaseImage.getImageData();

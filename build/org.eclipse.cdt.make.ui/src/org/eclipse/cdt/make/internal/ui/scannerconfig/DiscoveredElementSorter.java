@@ -29,6 +29,7 @@ public class DiscoveredElementSorter extends ViewerSorter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 	 */
+	@Override
 	public int category(Object element) {
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
@@ -50,6 +51,7 @@ public class DiscoveredElementSorter extends ViewerSorter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#sort(org.eclipse.jface.viewers.Viewer, java.lang.Object[])
 	 */
+	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		if (elements.length > 0 && elements[0] instanceof DiscoveredElement) {
 			DiscoveredElement firstElem = (DiscoveredElement) elements[0];

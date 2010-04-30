@@ -42,6 +42,7 @@ public class LexicalSortingAction extends Action {
 		valueChanged(checked, false);
 	}
 
+	@Override
 	public void run() {
 		valueChanged(isChecked(), true);
 	}
@@ -59,10 +60,7 @@ public class LexicalSortingAction extends Action {
 
 	private class LexicalMakefileSorter extends ViewerSorter {
 
-		public boolean isSorterProperty(Object element, Object property) {
-			return true;
-		}
-
+		@Override
 		public int category(Object obj) {
 			if (obj instanceof IDirective) {
 				IDirective directive = (IDirective) obj;

@@ -571,7 +571,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		for (Iterator i = selElements.iterator(); i.hasNext(); ) {
 			DiscoveredElement elem = (DiscoveredElement) i.next();
 			DiscoveredElement parent = elem.getParent();
-			Object[] children = parent.getChildren();
+			DiscoveredElement[] children = parent.getChildren();
 			for (int j = 0; j < children.length; ++j) {
 				DiscoveredElement child = (DiscoveredElement) children[j];
 				if (elem.equals(child)) {
@@ -599,7 +599,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		for (Iterator i = revSelElements.iterator(); i.hasNext(); ) {
 			DiscoveredElement elem = (DiscoveredElement) i.next();
 			DiscoveredElement parent = elem.getParent();
-			Object[] children = parent.getChildren();
+			DiscoveredElement[] children = parent.getChildren();
 			for (int j = children.length - 1; j >= 0; --j) {
 				DiscoveredElement child = (DiscoveredElement) children[j];
 				if (elem.equals(child)) {

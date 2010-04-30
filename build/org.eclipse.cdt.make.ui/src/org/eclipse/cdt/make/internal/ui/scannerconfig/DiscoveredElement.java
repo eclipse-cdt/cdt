@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.cdt.make.internal.ui.scannerconfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 
@@ -37,7 +36,7 @@ public class DiscoveredElement {
 	private String fEntry;
 	private int fEntryKind; 
 	private boolean fRemoved;
-	private ArrayList fChildren = new ArrayList();
+	private ArrayList<DiscoveredElement> fChildren = new ArrayList<DiscoveredElement>();
 	private DiscoveredElement fParent;
 	
 	public DiscoveredElement(IProject project, String entry, int kind, boolean removed, boolean system) {
@@ -92,8 +91,7 @@ public class DiscoveredElement {
 					group = parent;
 				}
 				else if (parent.getEntryKind() == CONTAINER) {
-					for (Iterator i = parent.fChildren.iterator(); i.hasNext(); ) {
-						DiscoveredElement child = (DiscoveredElement) i.next();
+					for (DiscoveredElement child : parent.fChildren) {
 						if (child.getEntryKind() == parentKind) {
 							group = child;
 							break;
@@ -116,14 +114,11 @@ public class DiscoveredElement {
 		return fProject;
 	}
 	/**
-	 * @return Returns the fEntry.
+	 * @return the fEntry.
 	 */
 	public String getEntry() {
 		return fEntry;
 	}
-	/**
-	 * @param string
-	 */
 	public void setEntry(String entry) {
 		fEntry = entry;
 	}
@@ -165,8 +160,7 @@ public class DiscoveredElement {
 	}
 
 	/**
-	 * Returns children of the discovered element 
-	 * @return
+	 * @return children of the discovered element 
 	 */
 	public Object[] getChildren() {
 		switch(fEntryKind) {
@@ -190,20 +184,16 @@ public class DiscoveredElement {
 		return (fChildren.size() > 0);
 	}
 
-	public void setChildren(Object[] children) {
-		fChildren = new ArrayList(Arrays.asList(children));
+	public void setChildren(DiscoveredElement[] children) {
+		fChildren = new ArrayList<DiscoveredElement>(Arrays.asList(children));
 	}
 
-	/**
-	 * 
-	 */
 	public boolean delete() {
 		boolean rc = false;
 		DiscoveredElement parent = getParent();
 		if (parent != null) {
 			rc = parent.fChildren.remove(this);
-			for (Iterator i = fChildren.iterator(); i.hasNext(); ) {
-				DiscoveredElement child = (DiscoveredElement) i.next();
+			for (DiscoveredElement child : fChildren) {
 				child.setParent(null);
 				rc |= true;
 			}

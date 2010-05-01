@@ -24,7 +24,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements
 		IConnectorNode {
 	protected ArrayList<IBasicBlock> incoming = new ArrayList<IBasicBlock>(2);
 
-	public ConnectorNode() {
+	protected ConnectorNode() {
 		super();
 	}
 
@@ -46,9 +46,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getIncomingSize
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getIncomingSize ()
 	 */
 	public int getIncomingSize() {
 		return incoming.size();

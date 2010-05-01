@@ -15,7 +15,7 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	private IConnectorNode jump;
 	private boolean backward;
 
-	public JumpNode() {
+	protected JumpNode() {
 		super();
 	}
 
@@ -30,8 +30,7 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.IJumpNode#getJumpNode()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.IJumpNode#getJumpNode()
 	 */
 	public IConnectorNode getJumpNode() {
 		return jump;

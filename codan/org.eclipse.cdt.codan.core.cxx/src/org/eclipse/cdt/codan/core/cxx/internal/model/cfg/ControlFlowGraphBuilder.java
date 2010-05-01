@@ -22,7 +22,6 @@ import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
-import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
 import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
@@ -45,10 +44,9 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
- * TODO: add description
+ * This class creates C control flow graph
  */
 public class ControlFlowGraphBuilder {
 	CxxStartNode start;
@@ -152,15 +150,12 @@ public class ControlFlowGraphBuilder {
 			addOutgoing(prev, gotoNode);
 			return gotoNode;
 		} else if (body instanceof IASTProblemStatement) {
-			System.err.println("problem");
+			// System.err.println("problem");
 			CxxPlainNode node = factory.createPlainNode(body);
 			addOutgoing(prev, node);
 			return node;
-			
-		} else if (body instanceof IASTAmbiguousStatement) {
-			System.err.println("amb");
 		} else {
-			System.err.println("unknown statement for cfg: "+body);
+			System.err.println("unknown statement for cfg: " + body); //$NON-NLS-1$
 		}
 		return prev;
 	}
@@ -211,7 +206,7 @@ public class ControlFlowGraphBuilder {
 		DecisionNode node = factory.createDecisionNode(body
 				.getControllerExpression());
 		addOutgoing(prev, node);
-		ConnectorNode conn = new ConnectorNode();
+		IConnectorNode conn = factory.createConnectorNode();
 		node.setMergeNode(conn);
 		createSwitchBody(node, conn, body.getBody());
 		return conn;
@@ -224,7 +219,7 @@ public class ControlFlowGraphBuilder {
 	 * @param body
 	 */
 	private void createSwitchBody(DecisionNode switchNode,
-			ConnectorNode mergeNode, IASTStatement body) {
+			IConnectorNode mergeNode, IASTStatement body) {
 		if (!(body instanceof IASTCompoundStatement))
 			return; // bad
 		IASTCompoundStatement comp = (IASTCompoundStatement) body;
@@ -232,17 +227,6 @@ public class ControlFlowGraphBuilder {
 		IBasicBlock prev = switchNode;
 		for (int i = 0; i < children.length; i++) {
 			IASTNode elem = children[i];
-			if (elem instanceof IASTCaseStatement) {
-				IASTCaseStatement caseSt = (IASTCaseStatement) elem;
-			}
-			if (elem instanceof IASTDefaultStatement) {
-				IBranchNode lbl = factory.createBranchNode(IBranchNode.DEFAULT);
-				if (!(prev instanceof IExitNode) && prev != switchNode)
-					addOutgoing(prev, lbl);
-				addOutgoing(switchNode, lbl);
-				prev = lbl;
-				continue;
-			}
 			if (elem instanceof IASTCaseStatement
 					|| elem instanceof IASTDefaultStatement) {
 				IBranchNode lbl = null;

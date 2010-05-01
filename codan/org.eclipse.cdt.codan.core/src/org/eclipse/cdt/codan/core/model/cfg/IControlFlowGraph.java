@@ -14,15 +14,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * TODO: add description
+ * Represents control flow graph object
  */
 public interface IControlFlowGraph {
 	IStartNode getStartNode();
 
-	/**
-	 * 
-	 * @return
-	 */
 	Iterator<IExitNode> getExitNodeIterator();
 
 	int getExitNodeSize();

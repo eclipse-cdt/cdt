@@ -30,7 +30,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	/**
 	 * @param prev
 	 */
-	public DecisionNode() {
+	protected DecisionNode() {
 		super();
 	}
 
@@ -53,9 +53,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getOutgoingSize
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getOutgoingSize ()
 	 */
 	public int getOutgoingSize() {
 		return next.size();

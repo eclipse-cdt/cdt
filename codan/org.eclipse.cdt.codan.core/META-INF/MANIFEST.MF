@@ -11,7 +11,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.cdt.codan.core,
  org.eclipse.cdt.codan.core.model,
- org.eclipse.cdt.codan.core.model.cfg,
+ org.eclipse.cdt.codan.core.model.cfg;x-friends:="org.eclipse.cdt.codan.core.cxx",
  org.eclipse.cdt.codan.internal.core;
   x-friends:="org.eclipse.cdt.codan.core,
    org.eclipse.cdt.codan.core.cxx,

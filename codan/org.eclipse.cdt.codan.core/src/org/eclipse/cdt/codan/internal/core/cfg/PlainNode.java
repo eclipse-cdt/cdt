@@ -12,7 +12,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode {
 	protected IBasicBlock next;
 
-	public PlainNode() {
+	protected PlainNode() {
 		super();
 	}
 

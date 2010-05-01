@@ -11,7 +11,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
  * 
  */
 public class StartNode extends AbstractSingleOutgoingNode implements IStartNode {
-	public StartNode() {
+	protected StartNode() {
 		super();
 	}
 

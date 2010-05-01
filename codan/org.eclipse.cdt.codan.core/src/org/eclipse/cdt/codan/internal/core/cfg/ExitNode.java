@@ -14,7 +14,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 public class ExitNode extends AbstractSingleIncomingNode implements IExitNode {
 	private IStartNode start;
 
-	public ExitNode() {
+	protected ExitNode() {
 		super();
 	}
 

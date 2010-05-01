@@ -18,7 +18,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 public class BranchNode extends PlainNode implements IBranchNode {
 	protected String label;
 
-	public BranchNode(String label) {
+	protected BranchNode(String label) {
 		super();
 		this.label = label;
 	}
@@ -26,8 +26,7 @@ public class BranchNode extends PlainNode implements IBranchNode {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.IBranchNode#getLabel()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.IBranchNode#getLabel()
 	 */
 	public String getLabel() {
 		return label;

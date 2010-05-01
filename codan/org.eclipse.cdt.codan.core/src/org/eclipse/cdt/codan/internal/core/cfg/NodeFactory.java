@@ -8,18 +8,20 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model.cfg;
+package org.eclipse.cdt.codan.internal.core.cfg;
 
-import org.eclipse.cdt.codan.internal.core.cfg.ConnectorNode;
-import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
-import org.eclipse.cdt.codan.internal.core.cfg.ExitNode;
-import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
-import org.eclipse.cdt.codan.internal.core.cfg.BranchNode;
-import org.eclipse.cdt.codan.internal.core.cfg.PlainNode;
-import org.eclipse.cdt.codan.internal.core.cfg.StartNode;
+import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
+import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
+import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
+import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
+import org.eclipse.cdt.codan.core.model.cfg.INodeFactory;
+import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
+import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
 /**
- * TODO: add description
+ * Factory that creates cfg nodes
  */
 public class NodeFactory implements INodeFactory {
 	IControlFlowGraph graph;
@@ -40,9 +42,7 @@ public class NodeFactory implements INodeFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createPlainNode
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createPlainNode ()
 	 */
 	public IPlainNode createPlainNode() {
 		return new PlainNode();
@@ -51,9 +51,7 @@ public class NodeFactory implements INodeFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createJumpNode
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createJumpNode ()
 	 */
 	public IJumpNode createJumpNode() {
 		return new JumpNode();
@@ -82,9 +80,7 @@ public class NodeFactory implements INodeFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createStartNode
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createStartNode ()
 	 */
 	public IStartNode createStartNode() {
 		return new StartNode();
@@ -93,9 +89,7 @@ public class NodeFactory implements INodeFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createExitNode
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.INodeFactory#createExitNode ()
 	 */
 	public IExitNode createExitNode() {
 		return new ExitNode();

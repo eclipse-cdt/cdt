@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.internal.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.internal.ui.CodnaUIMessages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,7 +34,7 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
-		Job job = new Job("Running Code Analysis") {
+		Job job = new Job(CodnaUIMessages.Job_TitleRunningAnalysis) {
 			@SuppressWarnings("unchecked")
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {

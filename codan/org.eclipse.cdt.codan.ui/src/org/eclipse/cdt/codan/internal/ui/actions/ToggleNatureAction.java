@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.internal.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -82,17 +83,16 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 				}
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			CodanUIActivator.log(e);
 		}
 		return false;
 	}
 
 	/**
-	 * Toggles sample nature on a project
+	 * Toggles codan nature on a project
 	 * 
 	 * @param project
-	 *            to have sample nature added or removed
+	 *            to have codan nature added or removed
 	 */
 	public void toggleNature(IProject project, boolean add) {
 		try {
@@ -109,11 +109,10 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 						description.setNatureIds(newNatures);
 						project.setDescription(description, null);
 						return;
-					} else {
-						// already there no need to add
-						add = false;
-						break;
 					}
+					// already there no need to add
+					add = false;
+					break;
 				}
 			}
 			if (add) {
@@ -125,6 +124,7 @@ public class ToggleNatureAction implements IObjectActionDelegate {
 				project.setDescription(description, null);
 			}
 		} catch (CoreException e) {
+			CodanUIActivator.log(e);
 		}
 	}
 }

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Alena Laskavaia 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Alena Laskavaia  - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.views;
 
 import java.util.Collection;
@@ -21,13 +31,14 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * Problems Details view show details for selected problem marker.
- * Other plugins can contribute to override default behavior using codanProblemDetails extension point.
+ * Other plugins can contribute to override default behaviour using 
+ * codanProblemDetails extension point.
  */
 public class ProblemDetails extends ViewPart {
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "org.eclipse.cdt.codan.internal.ui.views.ProblemDetails";
+	public static final String ID = "org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"; //$NON-NLS-1$
 	private Composite area;
 	/**
 	 * Control for problem message, which can include location
@@ -50,7 +61,7 @@ public class ProblemDetails extends ViewPart {
 	 * to create the area and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		final String problemsViewId = "org.eclipse.ui.views.ProblemView";
+		final String problemsViewId = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
 		area = new Composite(parent, SWT.NONE);
 		area.setLayout(new GridLayout());
 		SelectionAdapter linkSelAdapter = new SelectionAdapter() {
@@ -58,15 +69,15 @@ public class ProblemDetails extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				String link = e.text;
 				if (link==null) return;
-				if (link.startsWith("http")) {
+				if (link.startsWith("http")) { //$NON-NLS-1$
 					org.eclipse.swt.program.Program.launch(e.text);
 					return;
 				}
-				if (link.startsWith("file:")) {
+				if (link.startsWith("source:")) { //$NON-NLS-1$
 					// open in eclipse editor TODO
 					return;
 				}
-				if (link.startsWith("help:")) {
+				if (link.startsWith("help:")) { //$NON-NLS-1$
 					// open in eclipse help TODO
 					return;
 				}
@@ -133,7 +144,7 @@ public class ProblemDetails extends ViewPart {
 		try {
 			control.setText(text);
 		} catch (Exception e) {
-			// this is more debug message
+			// this is debug message
 			control.setText("failed to set text: " + provider.getClass() + " " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -142,6 +153,6 @@ public class ProblemDetails extends ViewPart {
 	 * Passing the focus request to the area's control.
 	 */
 	public void setFocus() {
-		area.setFocus();
+		message.setFocus();
 	}
 }

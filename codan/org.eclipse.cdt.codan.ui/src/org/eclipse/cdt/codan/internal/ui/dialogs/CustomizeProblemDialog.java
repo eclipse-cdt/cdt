@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.internal.ui.dialogs;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.internal.ui.CodnaUIMessages;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -50,9 +51,9 @@ public class CustomizeProblemDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		getShell().setText("Customize Problem...");
+		getShell().setText(CodnaUIMessages.CustomizeProblemDialog_Title);
 		setTitle(problem.getName());
-		setMessage("Edit problem parameters, scope and launch options");
+		setMessage(CodnaUIMessages.CustomizeProblemDialog_Message);
 		Composite area = (Composite) super.createDialogArea(parent);
 		comp = new CustomizeProblemComposite(area, problem);
 		GridData ld = new GridData(GridData.FILL_BOTH);

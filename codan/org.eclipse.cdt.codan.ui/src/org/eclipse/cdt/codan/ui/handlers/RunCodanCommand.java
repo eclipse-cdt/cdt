@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Command to run code analysis AbstractHandler, an IHandler base class.
+ * Command to run code analysis on selected resources
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
@@ -17,10 +17,6 @@ public class RunCodanCommand extends AbstractHandler {
 	public RunCodanCommand() {
 	}
 
-	/**
-	 * the command has been executed, so extract extract the needed information
-	 * from the application context.
-	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection currentSelection = HandlerUtil.getCurrentSelection(event);
 		RunCodeAnalysis action = new RunCodeAnalysis();

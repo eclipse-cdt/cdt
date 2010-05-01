@@ -1,24 +1,13 @@
 /*******************************************************************************
- * $QNXLicenseC:
- * Copyright 2008, QNX Software Systems. All Rights Reserved.
- * 
- * You must obtain a written license from and pay applicable license fees to QNX 
- * Software Systems before you may reproduce, modify or distribute this software, 
- * or any work that includes all or part of this software.   Free development 
- * licenses are available for evaluation and non-commercial purposes.  For more 
- * information visit http://licensing.qnx.com or email licensing@qnx.com.
- *  
- * This file may contain contributions from others.  Please review this entire 
- * file for other proprietary rights or license notices, as well as the QNX 
- * Development Suite License Guide at http://licensing.qnx.com/license-guide/ 
- * for other information.
- * $
+ * Copyright (c) 2010 Alena Laskavaia 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-/*
- * Created by: Elena Laskavaia
- * Created on: 2010-04-28
- * Last modified by: $Author$
- */
 package org.eclipse.cdt.codan.internal.ui.views;
 
 import java.util.ArrayList;
@@ -37,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
  * Class that can load extension for problemDetails
  */
 public class ProblemDetailsExtensions {
-	private static final String ALL = "*";//$NON-NLS-1$
+	public static final String ALL = "*";//$NON-NLS-1$
 	private static final String EXTENSION_POINT_NAME = "codanProblemDetails"; //$NON-NLS-1$
 	private static boolean extensionsLoaded;
 	private static HashMap<String, Collection<?>> map = new HashMap<String, Collection<?>>();
@@ -89,6 +78,11 @@ public class ProblemDetailsExtensions {
 		collection.add(configurationElement);
 	}
 
+	/**
+	 * Remove provider from the list
+	 * @param id - codan problem id or ALL
+	 * @param el - details provider (class extending AbstractCodanProblemDetailsProvider) or ElementConfiguration (user internally) 
+	 */
 	@SuppressWarnings("rawtypes")
 	public static void removeExtension(String id, Object el) {
 		Collection collection = getCollection(id);
@@ -131,6 +125,11 @@ public class ProblemDetailsExtensions {
 		return collection;
 	}
 
+	/**
+	 * Add extension (details provider) using API
+	 * @param id - codan problem id or ALL
+	 * @param provider - class extending AbstractCodanProblemDetailsProvider
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void addExtension(String id, AbstractCodanProblemDetailsProvider provider) {
 		Collection collection = getCollection(id);

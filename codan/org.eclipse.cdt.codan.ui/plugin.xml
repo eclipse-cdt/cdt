@@ -76,10 +76,10 @@
             class="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"
             icon="icons/problemDetails.gif"
             id="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"
-            name="Problem Details">
+            name="%view.name">
       </view>
    </extension>
-   <extension-point id="codanProblemDetails" name="Codan Problem Details" schema="schema/codanProblemDetails.exsd"/>
+   <extension-point id="codanProblemDetails" name="%extension-point.name" schema="schema/codanProblemDetails.exsd"/>
    <!--
    <extension
          point="org.eclipse.ui.bindings">

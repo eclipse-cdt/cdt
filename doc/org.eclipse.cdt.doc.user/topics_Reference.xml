@@ -27,7 +27,7 @@
 	<topic label="Debug views" href="reference/cdt_o_dbg_view.htm">
 		<topic label="Registers view" href="reference/cdt_u_registersview.htm"/>
 		<topic label="Memory view" href="reference/cdt_u_memoryview.htm"/>
-		<topic label="Memory view preferences" href="reference/cdt_u_mem_view_pref.htm"/>
+		<topic label="Traditional Memory Rendering preferences" href="reference/cdt_u_mem_view_pref.htm"/>
 		<topic label="Disassembly view" href="reference/cdt_u_dissassembly_view.htm"/>
 		<topic label="Modules view" href="reference/cdt_u_modules_view.htm"/>
 		<topic label="Signals view" href="reference/cdt_u_signals_view.htm"/>

@@ -30,7 +30,7 @@
 <context id ="problems_view">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_problems_view.htm"
-   	label="Problems view"/>
+   	label="Problems view (C/C++)"/>
 </context>
 <context id ="properties_view">
    <description>Click below to see help.</description>

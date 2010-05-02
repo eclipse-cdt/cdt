@@ -50,7 +50,7 @@ public class CHeuristicScannerTest extends TestCase {
 	 */
 	protected void setUp() {
 		if (CCorePlugin.getDefault() != null) {
-			HashMap options= CCorePlugin.getDefaultOptions();
+			HashMap<String, String> options= CCorePlugin.getDefaultOptions();
 			options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.TAB);
 			options.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "4");
 
@@ -839,6 +839,5 @@ public class CHeuristicScannerTest extends TestCase {
     	
     	String indent= fScanner.computeIndentation(fDocument.getLength() - 8).toString();
     	Assert.assertEquals("					", indent);
-    	
     }
 }

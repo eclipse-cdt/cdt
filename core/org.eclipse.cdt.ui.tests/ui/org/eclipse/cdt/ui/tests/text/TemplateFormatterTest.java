@@ -55,7 +55,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 
 	private TemplateContextType fTemplateContextType;
 	private String fSelection;
-	private HashMap fDefaultOptions;
+	private HashMap<String, String> fDefaultOptions;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -72,7 +72,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	}
 	
 	private void setOption(String key, String value) {
-		HashMap options= new HashMap(1);
+		HashMap<String, String> options= new HashMap<String, String>(1);
 		options.put(key, value);
 		CCorePlugin.setOptions(options);
 	}

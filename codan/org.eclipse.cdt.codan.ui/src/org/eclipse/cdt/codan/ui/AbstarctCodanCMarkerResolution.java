@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.checkers.ui;
+package org.eclipse.cdt.codan.ui;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;

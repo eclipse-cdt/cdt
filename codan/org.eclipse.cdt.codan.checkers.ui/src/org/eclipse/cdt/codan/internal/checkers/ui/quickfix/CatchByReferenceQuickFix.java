@@ -10,16 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
-import org.eclipse.cdt.codan.checkers.ui.AbstarctCodanCMarkerResolution;
 import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
+import org.eclipse.cdt.codan.internal.checkers.ui.Messages;
+import org.eclipse.cdt.codan.ui.AbstarctCodanCMarkerResolution;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 
+/**
+ * quick fix for catch by value
+ */
 public class CatchByReferenceQuickFix extends AbstarctCodanCMarkerResolution {
 	public String getLabel() {
-		return "Change to use reference";
+		return Messages.CatchByReferenceQuickFix_Message;
 	}
 
 	public void apply(IMarker marker, IDocument document) {

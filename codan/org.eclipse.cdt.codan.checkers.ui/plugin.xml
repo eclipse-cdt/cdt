@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="codanMarkerResolution" name="Codan Marker Resolution" schema="schema/codanMarkerResolution.exsd"/>
+
 
    <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
-            class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CodanProblemMarkerResolutionGenerator"
+            class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
             markerType="org.eclipse.cdt.codan.core.codanProblem">
       </markerResolutionGenerator>
    </extension>
     <extension
-          point="org.eclipse.cdt.codan.checkers.ui.codanMarkerResolution">
+          point="org.eclipse.cdt.codan.ui.codanMarkerResolution">
        <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFix"
              problemId="org.eclipse.cdt.codan.internal.checkers.CatchByReference">

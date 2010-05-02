@@ -80,6 +80,7 @@
       </view>
    </extension>
    <extension-point id="codanProblemDetails" name="%extension-point.name" schema="schema/codanProblemDetails.exsd"/>
+    <extension-point id="codanMarkerResolution" name="Codan Marker Resolution" schema="schema/codanMarkerResolution.exsd"/>
    <!--
    <extension
          point="org.eclipse.ui.bindings">

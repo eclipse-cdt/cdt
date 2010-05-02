@@ -8,7 +8,7 @@
  * Contributors:
  *    Andrew Gvozdev  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
+package org.eclipse.cdt.codan.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -72,7 +71,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 
 	private static synchronized void readExtensions() {
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
-				CheckersUiActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
+				CodanUIActivator.PLUGIN_ID, EXTENSION_POINT_NAME);
 		if (ep == null)
 			return;
 		try {
@@ -95,8 +94,8 @@ public class CodanProblemMarkerResolutionGenerator implements
 		if (configurationElement.getName().equals("resolution")) { //$NON-NLS-1$
 			String id = configurationElement.getAttribute("problemId"); //$NON-NLS-1$
 			if (id == null) {
-				CheckersUiActivator.log("Extension for " + EXTENSION_POINT_NAME
-						+ " problemId is not defined");
+				CodanUIActivator.log("Extension for " + EXTENSION_POINT_NAME //$NON-NLS-1$
+						+ " problemId is not defined"); //$NON-NLS-1$
 				return;
 			}
 			IMarkerResolution res;
@@ -104,7 +103,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 				res = (IMarkerResolution) configurationElement
 						.createExecutableExtension("class");//$NON-NLS-1$
 			} catch (CoreException e) {
-				CheckersUiActivator.log(e);
+				CodanUIActivator.log(e);
 				return;
 			}
 			String messagePattern = configurationElement
@@ -114,9 +113,9 @@ public class CodanProblemMarkerResolutionGenerator implements
 					Pattern.compile(messagePattern);
 				} catch (Exception e) {
 					// bad pattern log and ignore
-					CheckersUiActivator.log("Extension for "
+					CodanUIActivator.log("Extension for " //$NON-NLS-1$
 							+ EXTENSION_POINT_NAME
-							+ " messagePattern is invalid: " + e.getMessage());
+							+ " messagePattern is invalid: " + e.getMessage()); //$NON-NLS-1$
 					return;
 				}
 			}

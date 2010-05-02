@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
  * Derived from JDT.
  */
 public class CHeuristicScannerTest extends TestCase {
-
+	private static boolean BUG_65463_IS_FIXED = false;
 	private FastPartitioner fPartitioner;
 	private Document fDocument;
 	private CIndenter fScanner;
@@ -815,7 +815,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testConditional1() throws Exception {
-		if (true) // XXX enable when https://bugs.eclipse.org/bugs/show_bug.cgi?id=65463 is fixed
+		if (!BUG_65463_IS_FIXED) // Enable when http://bugs.eclipse.org/bugs/show_bug.cgi?id=65463 is fixed
 			return;
     	fDocument.set(
     			"		boolean isPrime() {\n" +
@@ -828,7 +828,7 @@ public class CHeuristicScannerTest extends TestCase {
     }
 
 	public void testConditional2() throws Exception {
-		if (true) // XXX enable when https://bugs.eclipse.org/bugs/show_bug.cgi?id=65463 is fixed
+		if (!BUG_65463_IS_FIXED) // Enable when http://bugs.eclipse.org/bugs/show_bug.cgi?id=65463 is fixed
 			return;
     	fDocument.set(
     			"		boolean isPrime() {\n" +

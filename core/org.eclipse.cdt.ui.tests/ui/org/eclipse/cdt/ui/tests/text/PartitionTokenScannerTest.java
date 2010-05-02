@@ -32,7 +32,7 @@ import org.eclipse.jface.text.rules.IToken;
  * Compares two <code>IParitionTokenScanner</code>s for conformance and performance.
  */
 public class PartitionTokenScannerTest extends TestCase {
-
+	static boolean PRINT_TIMING = false;
 	private IPartitionTokenScanner fReference;
 	private IPartitionTokenScanner fTestee;
 
@@ -58,9 +58,7 @@ public class PartitionTokenScannerTest extends TestCase {
 				buffer.append(lineDelimiter);
 				line= reader.readLine();
 			}
-
 			return new Document(buffer.toString());
-
 		} catch (IOException e) {			
 		}
 		
@@ -122,7 +120,7 @@ public class PartitionTokenScannerTest extends TestCase {
 		final long referenceTime= getTime(fReference, document, COUNT);
 		final long testeeTime= getTime(fTestee, document, COUNT);
 
-		if (false) {
+		if (PRINT_TIMING) {
 			System.out.println("reference time = " + referenceTime / 1000.0f);
 			System.out.println("testee time = " + testeeTime / 1000.0f);
 			System.out.println("factor = " + (float) referenceTime / testeeTime);
@@ -144,7 +142,6 @@ public class PartitionTokenScannerTest extends TestCase {
 	}
 	
 	private void testConformance(final IDocument document) {
-		
 		final StringBuffer message= new StringBuffer();
 		
 		fReference.setRange(document, 0, document.getLength());
@@ -185,7 +182,6 @@ public class PartitionTokenScannerTest extends TestCase {
 	}
 
 	private static void testPerformance(final IPartitionTokenScanner scanner, final IDocument document) {
-		
 		scanner.setRange(document, 0, document.getLength());
 
 		IToken token;
@@ -259,5 +255,4 @@ public class PartitionTokenScannerTest extends TestCase {
 		
 		return buffer.toString();	
 	}
-	
 }

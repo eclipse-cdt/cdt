@@ -32,7 +32,7 @@ import org.eclipse.jface.text.rules.IToken;
  * Compares two <code>IParitionTokenScanner</code>s for conformance and performance.
  */
 public class PartitionTokenScannerTest extends TestCase {
-	static boolean PRINT_TIMING = false;
+	private static boolean PRINT_TIMING = false;
 	private IPartitionTokenScanner fReference;
 	private IPartitionTokenScanner fTestee;
 

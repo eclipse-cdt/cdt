@@ -105,7 +105,7 @@ public class AddBlockCommentTest extends BaseUITestCase {
 		
 		fDocument.set(before);
 
-		SourceRange range = new SourceRange( startLinePosition.getOffset(),
+		SourceRange range = new SourceRange(startLinePosition.getOffset(),
 				endLinePosition.getOffset() - startLinePosition.getOffset());
 		fEditor.setSelection(range, true);
 		
@@ -133,7 +133,7 @@ public class AddBlockCommentTest extends BaseUITestCase {
 			String before, String after) throws Exception {
 		fDocument.set(before);
 		
-		SourceRange range = new SourceRange( startLinePosition.getOffset(),
+		SourceRange range = new SourceRange(startLinePosition.getOffset(),
 				endLinePosition.getOffset() - startLinePosition.getOffset());
 		fEditor.setSelection(range, true);
 		

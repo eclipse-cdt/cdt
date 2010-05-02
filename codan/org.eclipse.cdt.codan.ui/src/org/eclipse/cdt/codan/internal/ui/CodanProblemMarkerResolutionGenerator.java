@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.codan.ui.AbstarctCodanCMarkerResolution;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -57,11 +58,14 @@ public class CodanProblemMarkerResolutionGenerator implements
 					.iterator(); iterator.hasNext();) {
 				ConditionalResolution res = iterator.next();
 				if (res.messagePattern != null) {
-					if (message.matches(res.messagePattern))
-						list.add(res.res);
-				} else {
-					list.add(res.res);
+					if (!message.matches(res.messagePattern))
+						continue;
 				}
+				if (res.res instanceof AbstarctCodanCMarkerResolution) {
+					if (!((AbstarctCodanCMarkerResolution)res.res).isApplicable(marker))
+						continue;
+				}
+				list.add(res.res);
 			}
 			if (list.size() > 0)
 				return list.toArray(new IMarkerResolution[list.size()]);

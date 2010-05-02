@@ -27,16 +27,17 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Generic class for codan  marker resolution (for quick fix). 
- * Use as a base class for codanMarkerResolution extension.
- * To add specific icon and description client class should additionally 
- * implement {@link IMarkerResolution2}
+ * Generic class for codan marker resolution (for quick fix). Use as a base
+ * class for codanMarkerResolution extension. To add specific icon and
+ * description client class should additionally implement
+ * {@link IMarkerResolution2}
  */
 public abstract class AbstarctCodanCMarkerResolution implements
 		IMarkerResolution {
 	/**
-	 * Get position offset from marker. If CHAR_START attribute is not set
-	 * for marker, line and document would be used.
+	 * Get position offset from marker. If CHAR_START attribute is not set for
+	 * marker, line and document would be used.
+	 * 
 	 * @param marker
 	 * @param doc
 	 * @return
@@ -56,11 +57,13 @@ public abstract class AbstarctCodanCMarkerResolution implements
 		}
 		return position;
 	}
-    /**
-     * Runs this resolution.
-     * 
-     * @param marker the marker to resolve
-     */
+
+	/**
+	 * Runs this resolution.
+	 * 
+	 * @param marker
+	 *            the marker to resolve
+	 */
 	public void run(IMarker marker) {
 		// See if there is an open editor on the file containing the marker
 		IWorkbenchWindow w = PlatformUI.getWorkbench()
@@ -97,10 +100,18 @@ public abstract class AbstarctCodanCMarkerResolution implements
 
 	/**
 	 * Apply marker resolution for given marker in given open document.
+	 * 
 	 * @param marker
 	 * @param document
 	 */
 	public abstract void apply(IMarker marker, IDocument document);
 
-
+	/**
+	 * Override is extra checks is required to determine appicablity of marker resolution
+	 * @param marker
+	 * @return
+	 */
+	public boolean isApplicable(IMarker marker) {
+		return true;
+	}
 }

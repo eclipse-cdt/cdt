@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.codan.internal.checkers.ui.messages"; //$NON-NLS-1$
 	public static String CatchByReferenceQuickFix_Message;
 	public static String QuickFixAssignmentInCondition_Message;
+	public static String SuggestedParenthesisQuickFix_Message;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

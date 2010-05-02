@@ -13,6 +13,10 @@
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixAssignmentInCondition"
              problemId="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem">
        </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFix"
+             problemId="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem">
+       </resolution>
     </extension>
 
 </plugin>

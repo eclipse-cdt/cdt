@@ -94,5 +94,4 @@ public class AutomatedSuite extends TestSuite {
 		// tests from package org.eclipse.cdt.ui.tests.wizards.settingswizards
 		addTest(SettingsWizardTestSuite.suite());
 	}
-	
 }

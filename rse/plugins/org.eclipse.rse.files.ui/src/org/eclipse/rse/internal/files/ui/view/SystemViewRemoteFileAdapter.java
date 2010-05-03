@@ -65,6 +65,7 @@
  * David McKnight     (IBM)      - [276534] Cache Conflict After Synchronization when Browsing Remote System with Case-Differentiated-Only Filenames
  * David McKnight   (IBM)        - [280466] File download keeps running in case sensitive case
  * David McKnight   (IBM)        - [309813] RSE permits opening of file after access removed
+ * David McKnight   (IBM)        - [308221] Bidi3.6: Improper display of date in Properties and Table Views
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;

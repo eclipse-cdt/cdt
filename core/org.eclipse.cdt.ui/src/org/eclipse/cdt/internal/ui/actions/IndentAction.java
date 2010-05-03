@@ -40,7 +40,6 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
@@ -50,6 +49,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.IndentUtil;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CIndenter;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 
 /**
@@ -451,10 +451,7 @@ public class IndentAction extends TextEditorAction {
 		if (editor == null)
 			return null;
 		
-		ITranslationUnit cu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-		if (cu == null)
-			return null;
-		return cu.getCProject();
+		return EditorUtility.getCProject(editor.getEditorInput());
 	}
 
 	/**

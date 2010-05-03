@@ -733,14 +733,14 @@ public class EditorUtility {
 	public static ICProject getCProject(IEditorInput input) {
 		ICProject cProject= null;
 		if (input instanceof IFileEditorInput) {
-			IProject project= ((IFileEditorInput)input).getFile().getProject();
+			IProject project= ((IFileEditorInput) input).getFile().getProject();
 			if (project != null) {
 				cProject= CoreModel.getDefault().create(project);
 				if (!cProject.exists())
 					cProject= null;
 			}
 		} else if (input instanceof ITranslationUnitEditorInput) {
-			final ITranslationUnit tu= ((ITranslationUnitEditorInput)input).getTranslationUnit();
+			final ITranslationUnit tu= ((ITranslationUnitEditorInput) input).getTranslationUnit();
 			if (tu != null) {
 				cProject= tu.getCProject();
 			} else if (input instanceof ExternalEditorInput) {

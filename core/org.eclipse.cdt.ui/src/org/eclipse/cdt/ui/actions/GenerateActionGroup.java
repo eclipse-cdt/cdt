@@ -52,6 +52,7 @@ import org.eclipse.cdt.internal.ui.actions.CDTQuickMenuCreator;
 import org.eclipse.cdt.internal.ui.editor.AddIncludeOnSelectionAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.editor.SortLinesAction;
 
 /**
  * Action group that adds the source and generate actions to a part's context
@@ -129,6 +130,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //	
 //	private OrganizeIncludesAction fOrganizeIncludes;
 //	private SortMembersAction fSortMembers;
+	private SortLinesAction fSortLines;
 //	private FormatAllAction fFormatAll;
 //	private CopyQualifiedNameAction fCopyQualifiedNameAction;
 //	
@@ -161,7 +163,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fSortMembers= new SortMembersAction(editor);
 //		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
 //		editor.setAction("SortMembers", fSortMembers); //$NON-NLS-1$
-//		
+
+		fSortLines= new SortLinesAction(editor);
+		fSortLines.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_LINES);
+		editor.setAction("SortLines", fSortLines); //$NON-NLS-1$
+		
 //		IAction pastAction= editor.getAction(ITextEditorActionConstants.PASTE);//IWorkbenchActionDefinitionIds.PASTE);
 //		fCopyQualifiedNameAction= new CopyQualifiedNameAction(editor, null, pastAction);
 //		fCopyQualifiedNameAction.setActionDefinitionId(CopyQualifiedNameAction.JAVA_EDITOR_ACTION_DEFINITIONS_ID);
@@ -412,6 +418,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		added+= addAction(source, fAddInclude);
 //		added+= addAction(source, fOrganizeIncludes);
 //		added+= addAction(source, fSortMembers);
+		added+= addAction(source, fSortLines);
 //		added+= addAction(source, fCleanUp);
 		source.add(new Separator(GROUP_GENERATE));
 //		added+= addAction(source, fOverrideMethods);

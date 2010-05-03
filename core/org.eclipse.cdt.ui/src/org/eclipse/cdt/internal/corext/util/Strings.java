@@ -378,7 +378,6 @@ public class Strings {
 		}
 	}
 		
-	
 	/**
 	 * Concatenate the given strings into one strings using the passed line delimiter as a
 	 * delimiter. No delimiter is added to the last line.
@@ -397,9 +396,10 @@ public class Strings {
 		if (s.length() != c.length)
 			return false;
 
-		for (int i = c.length; --i >= 0;)
+		for (int i = c.length; --i >= 0;) {
 			if (s.charAt(i) != c[i])
 				return false;
+		}
 		return true;
 	}
 		
@@ -421,7 +421,32 @@ public class Strings {
 		else
 			return text.substring(0, end);
 	}
-	
+
+	/**
+	 * Converts tabs to spaces in a line of text.
+	 * @param line The line of text.
+	 * @param tabWidth Tabulation size.
+	 * @return The line with tab characters replaced by spaces.
+	 */
+	public static String convertTabsToSpaces(String line, int tabWidth) {
+		StringBuilder buf = null;
+		for (int i = 0; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if (c == '\t') {
+				if (buf == null) {
+					buf = new StringBuilder(line.length() * tabWidth);
+					buf.append(line.subSequence(0, i));
+				}
+				for (int k = tabWidth - i % tabWidth; --k >= 0;) {
+					buf.append(' ');
+				}
+			} else if (buf != null) {
+				buf.append(c);
+			}
+		}
+		return buf != null ? buf.toString() : line;
+	}
+
 	public static String removeMnemonicIndicator(String string) {
 		return LegacyActionTools.removeMnemonics(string);
 	}

@@ -2191,6 +2191,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		setAction("Format", action); //$NON-NLS-1$
 		markAsStateDependentAction("Format", true); //$NON-NLS-1$
 
+		action = new SortLinesAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_LINES);
+		setAction("SortLines", action); //$NON-NLS-1$
+		markAsStateDependentAction("SortLines", true); //$NON-NLS-1$
+		markAsSelectionDependentAction("SortLines", true); //$NON-NLS-1$
+
 		action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", action); //$NON-NLS-1$
@@ -2225,7 +2231,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_MACRO_EXPLORER);
         setAction("OpenMacroExplorer", action); //$NON-NLS-1$*/
 
-        //Assorted action groupings
+        // Assorted action groupings
 		fSelectionSearchGroup = createSelectionSearchGroup();
 		fTextSearchGroup= new TextSearchGroup(this);
 		fRefactoringActionGroup= new CRefactoringActionGroup(this, ITextEditorActionConstants.GROUP_EDIT);

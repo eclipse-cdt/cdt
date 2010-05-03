@@ -1335,6 +1335,13 @@
          </action>
 <!-- Import Group -->
          <action
+               definitionId="org.eclipse.cdt.ui.edit.text.c.sort.lines"
+               label="%SortLinesAction.label"
+               retarget="true"
+               menubarPath="org.eclipse.jdt.ui.source.menu/importGroup"
+               id="org.eclipse.cdt.ui.actions.SortLines">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.edit.text.c.add.include"
                label="%AddIncludeAction.label"
                retarget="true"
@@ -1806,6 +1813,11 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.add.include"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            sequence="M1+M2+S"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.sort.lines"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="M1+O"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.open.outline"
@@ -2252,6 +2264,12 @@
             description="%ActionDefinition.addInclude.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.add.include">
+      </command>
+      <command
+            name="%ActionDefinition.sortLines.name"
+            description="%ActionDefinition.sortLines.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.sort.lines">
       </command>
       <command
             name="%ActionDefinition.showOutline.name"

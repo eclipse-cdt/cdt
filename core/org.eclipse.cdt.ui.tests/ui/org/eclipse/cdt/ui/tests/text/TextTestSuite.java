@@ -72,10 +72,11 @@ public class TextTestSuite extends TestSuite {
 		// compare tests
 		addTest(CStructureCreatorTest.suite());
 		
-		// block comment tests
+		// source manipulation tests
 		addTest(AddBlockCommentTest.suite());
 		addTest(RemoveBlockCommentTest.suite());
-	
+		addTest(SortLinesTest.suite());
+
 		// add include
 		addTest(AddIncludeTest.suite());
     }

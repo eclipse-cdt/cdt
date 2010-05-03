@@ -196,6 +196,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		bars.setGlobalActionHandler(CdtActionConstants.REMOVE_BLOCK_COMMENT, getAction(textEditor, "RemoveBlockComment")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.INDENT, getAction(textEditor, "Indent")); //$NON-NLS-1$
 		bars.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
+		bars.setGlobalActionHandler(CdtActionConstants.SORT_LINES, getAction(textEditor, "SortLines")); //$NON-NLS-1$
 
 		IAction action= getAction(textEditor, ITextEditorActionConstants.REFRESH);
 		bars.setGlobalActionHandler(ITextEditorActionConstants.REFRESH, action);

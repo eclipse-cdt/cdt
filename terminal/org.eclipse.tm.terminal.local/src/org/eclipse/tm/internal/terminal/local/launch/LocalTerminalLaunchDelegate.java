@@ -43,7 +43,7 @@ import org.eclipse.ui.PlatformUI;
  * {@link ProcessFactory}, which allows the process to run with a pseudo-terminal ({@link PTY}).
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -144,7 +144,7 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 			ProcessFactory factory = ProcessFactory.getFactory();
 			if (PTY.isSupported()) {
 
-				spawner = factory.exec(commandLine, environment, workingDirectoryAsFile, new PTY());
+				spawner = factory.exec(commandLine, environment, workingDirectoryAsFile, new PTY(false));
 			}
 			else {
 

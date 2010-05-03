@@ -153,6 +153,7 @@ public class ConnectionEstablisher
 	 * @param bindAddr the local IP address to bind to
 	 * @param timeout the idle duration to wait before shutting down
 	 * @param ticket validation id required by the client to access the DataStore
+	 * @since 3.2
 	 */
 	public ConnectionEstablisher(String port, int backlog, InetAddress bindAddr, String timeout, String ticket)
 	{

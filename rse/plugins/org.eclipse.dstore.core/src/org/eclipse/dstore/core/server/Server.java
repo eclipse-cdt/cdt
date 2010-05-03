@@ -170,6 +170,7 @@ public class Server implements Runnable
 	 * @param bindAddr the local IP address to bind to
 	 * @param timeout the idle time to wait before shutting down
 	 * @param ticket the ticket that the client needs to interact with the DataStore
+	 * @since 3.2
 	 */
 	public Server(String port, int backlog, InetAddress bindAddr, String timeout, String ticket)
 	{

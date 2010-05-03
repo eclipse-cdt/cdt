@@ -28,7 +28,7 @@
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
-<li>Highlights of Bugs fixed since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1.1-200909160905/index.php">TM 3.1.1</a>:
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M6-201003160452/index.php">TM 3.2M6</a>:
 <ul>
   <li>Releng: TM now embeds repository information in released bundles. This allows PDE versions
       newer than Eclipse 3.6M7 to import source from the Eclipse CVS Repository directly from

@@ -3,18 +3,17 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Debug view</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
 
 <body>
 
 <h1>Debug view</h1>
 
-<p>The <strong>Debug</strong> view shows the target debugging information in a tree hierarchy.</p>
+<p>The <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.debug.ui.DebugView)")'>Debug</a> view shows the target debugging information in a tree hierarchy.</p>
 <p><img src="../images/view_debug.png" width="529" height="252" alt="Debug view" ></p>
 <p>The number beside the thread label is a reference counter, not a 
 thread identification number (TID).</p>
@@ -23,7 +22,7 @@ thread identification number (TID).</p>
   hit, and signal received). When a program exits, the  exit 
   code is displayed.</p>
 <p>The  icons that appear in the Debug view include:</p>
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#DDDDDD" width="600">
   <tr>
     <th width="76" valign="top"><center>
       Icons
@@ -48,7 +47,7 @@ thread identification number (TID).</p>
   </tr>
   <tr>
     <td width="76" valign="top"><center>
-      <img alt="Icon: Thread; suspended" src="../images/icon_thread1.gif" width="16" height="16">      &nbsp;<img alt="Icon: Thread; running" src="../images/icon_thread2.gif" width="16" height="16"> &nbsp;<img alt="Icon: Thread; stopped" src="../images/icon_thread3.gif" width="16" height="16"> 
+      <img alt="Icon: Thread; suspended" src="../images/icon_thread1.gif" width="16" height="16">&nbsp;<img alt="Icon: Thread; running" src="../images/icon_thread2.gif" width="16" height="16"> &nbsp;<img alt="Icon: Thread; stopped" src="../images/icon_thread3.gif" width="16" height="16"> 
     </center>    </td>
     <td width="169" valign="top">Thread instance </td>
     <td width="317" valign="top">Thread number and state</td>
@@ -66,7 +65,10 @@ also control the debug session. You can perform actions such as terminating the
 session and stopping the program by using the debug launch controls available 
 from Debug view.</p>
 
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+<h3>Debug view toolbar options</h3>
+<p>The table below lists the toolbar options displayed in the Debug view.</p>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#DDDDDD" width="600">
   <tr>
     <th width="45" align="left"><center>
       Icons
@@ -75,14 +77,19 @@ from Debug view.</p>
     <th align="left" width="638">Description</th>
   </tr>
   <tr>
-    <td align="left" valign="top">      <center>
+    <td align="left" valign="top">  <center>
         <img src="../images/icon_db_terminate_all.png" width="21" height="20" alt="Remove all Terminated launches icon">
         </center>    </td>
     <td align="left" valign="top"><strong>Remove All Terminated Launches </strong></td>
     <td align="left" valign="top">Clears all terminated processes in Debug view</td>
   </tr>
   <tr>
-    <td align="left" valign="top">      <center>
+    <td align="left" valign="top"> <center>&nbsp; </center> </td>
+    <td align="left" valign="top"><strong>Connect to a Process</strong></td>
+    <td align="left" valign="top">Enables the selection of a running process to debug.</td>
+  </tr>
+  <tr>
+    <td align="left" valign="top"> <center>
         <img src="../images/icon_db_restart.png" width="20" height="18" alt="Restart icon">
         </center>    </td>
     <td align="left" valign="top"><strong>Restart</strong></td>
@@ -174,9 +181,9 @@ debugging attached processes).</td>
 </table>
 
 <h3>Debug view context menu commands </h3>
+<p>The Debug view context menu commands include:</p>
 
-  <p>The Debug view context menu commands   include:</p>
-  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#999999" width="600">
+  <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#DDDDDD" width="600">
     <tr>
       <td align="center"><strong>Icons</strong></td>
       <td align="center"><strong>Name</strong></td>
@@ -202,14 +209,7 @@ debugging attached processes).</td>
       <td><strong>Drop To Frame </strong></td>
       <td>Select the Drop to Frame command to re-enter the selected stack frame in the Debug view.</td>
     </tr>
-    <tr>
-      <td align="left" valign="top">          <center>
-          <img src="../images/icon_db_restart.png" width="20" height="18" alt="Restart icon">
-              </center>      </td>
-      <td align="left" valign="top"><strong>Restart</strong></td>
-      <td align="left" valign="top">Starts a new debug session for the selected process</td>
-    </tr>
-    <tr>
+   <tr>
       <td align="left" valign="top">          <center>
           <img src="../images/icon_db_stepinto.png" width="18" height="14" alt="Step Into icon">
               </center>      </td>
@@ -294,33 +294,7 @@ debugging attached processes).</td>
       <td align="left" valign="top"><strong>Remove All Terminated </strong></td>
       <td align="left" valign="top">Clears all terminated processes in Debug view</td>
     </tr>
-    <tr>
-      <td align="left"><center>
-        <img src="../images/icon_db_relaunch.png" width="21" height="19" alt="Relaunch icon">
-      </center>      </td>
-      <td><strong>Relaunch</strong></td>
-      <td>This command relaunches the selected debug target. </td>
-    </tr>
-    <tr>
-      <td align="left"><center>
-      </center>      </td>
-      <td><strong>Edit...</strong></td>
-      <td>Opens the launch configuration dialog, allowing you to make changes. </td>
-    </tr>
-    <tr>
-      <td align="left"><center>
-        <img src="../images/icon_db_edit_src_lookup.png" width="20" height="18" alt="Edit Source Lookup icon">
-      </center>      </td>
-      <td><strong>Edit Source Lookup... </strong></td>
-      <td valign="top">Opens the source lookup dialog, allowing you to make changes. </td>
-    </tr>
-    <tr>
-      <td align="left"><center>
-      </center>      </td>
-      <td><strong>Lookup Source </strong></td>
-      <td>Select  to force a source lookup to take place. </td>
-    </tr>
-    <tr>
+   <tr>
       <td align="left"><center>
         <img src="../images/icon_db_terminate_remove.png" width="19" height="17" alt="Terminate and Remove icon">
       </center>      </td>
@@ -331,12 +305,12 @@ debugging attached processes).</td>
       <td align="left"><center>
         <img src="../images/icon_db_terminate_all2.png" width="19" height="18" alt="Terminate all icon">
       </center>      </td>
-      <td><strong>Terminate All </strong></td>
-      <td>Terminates all active launches in the view. </td>
+      <td><strong>Terminate/Disconnect All </strong></td>
+      <td>Terminates or disconnects all active launches in the view. </td>
     </tr>
     <tr>
       <td align="left"><center>
-      </center>      </td>
+      </center> </td>
       <td><strong>Properties</strong></td>
       <td>Opens the <strong>Properties for</strong> window showing the process properties. </td>
     </tr>
@@ -351,9 +325,11 @@ debugging attached processes).</td>
 <a href="../tasks/cdt_o_debug.htm">Debugging</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
-<a href="cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
-<a href="cdt_u_dbg_breadcrumb.htm">Debug Breadcrumb</a></p>
+<a href="cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a><br />
+<a href="cdt_u_dbg_breadcrumb.htm">Debug Breadcrumb</a><br />
+<a href="../reference/cdt_o_views.htm">C/C++ Views</a></p>
 
+<hr />
 <img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement"><br>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
 

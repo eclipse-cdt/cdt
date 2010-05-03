@@ -78,8 +78,6 @@ public final class SortLinesAction extends TextEditorAction {
 					CodeFormatterUtil.getTabWidth(cProject));
 			if (elements.length <= 1)
 				return;
-			if (!validateEditorInputState())
-				return;
 
 			Arrays.sort(elements);
 			StringBuilder buf = new StringBuilder();
@@ -89,7 +87,13 @@ public final class SortLinesAction extends TextEditorAction {
 					buf.append(TextUtilities.getDefaultLineDelimiter(document));
 				}
 			}
-			ReplaceEdit edit = new ReplaceEdit(block.getOffset(), block.getLength(), buf.toString());
+			String replacement = buf.toString();
+			if (replacement.equals(document.get(block.getOffset(), block.getLength())))
+				return;
+			if (!validateEditorInputState())
+				return;
+
+			ReplaceEdit edit = new ReplaceEdit(block.getOffset(), block.getLength(), replacement);
 			IDocumentUndoManager manager= DocumentUndoManagerRegistry.getDocumentUndoManager(document);
 			manager.beginCompoundChange();
 			edit.apply(document);

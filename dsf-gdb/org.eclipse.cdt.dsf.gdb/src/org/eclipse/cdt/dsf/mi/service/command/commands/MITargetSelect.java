@@ -19,9 +19,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 public class MITargetSelect extends MICommand<MIInfo> {
 
     /**
-	 * @since 2.0
+	 * @since 3.0
 	 */
-    protected MITargetSelect(IDMContext ctx, String[] params) {
+    public MITargetSelect(IDMContext ctx, String[] params) {
         super(ctx, "-target-select", null, params); //$NON-NLS-1$
     }
     

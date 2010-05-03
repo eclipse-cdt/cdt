@@ -619,9 +619,13 @@ public class CommandFactory {
 		return new MITargetDetach(ctx, groupId);
 	}
 
-	public ICommand<MIInfo> createMITargetSelect(IDMContext ctx, String host, String port, boolean extended) {
-		return new MITargetSelect(ctx, host, port, extended);
-	}
+    public ICommand<MIInfo> createMITargetSelect(IDMContext ctx, String[] params) {
+        return new MITargetSelect(ctx, params);
+    }
+
+    public ICommand<MIInfo> createMITargetSelect(IDMContext ctx, String host, String port, boolean extended) {
+        return new MITargetSelect(ctx, host, port, extended);
+    }
 
 	public ICommand<MIInfo> createMITargetSelect(IDMContext ctx, String serialDevice, boolean extended) {
 		return new MITargetSelect(ctx, serialDevice, extended);

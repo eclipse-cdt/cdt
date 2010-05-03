@@ -463,7 +463,14 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			lsEntries.add(add);
 		setSettingEntries(getKind(), lsEntries, toAllLang);
 	}
-	
+
+	/**
+	 * Add and/or delete entries in the case of multi-configuration selection in the drop-down box.<br/>
+	 * Hint: {@code lang} keeps the selected language for each one of the selected configurations.
+	 * 
+	 * @param ent - entry to add
+	 * @param del - entry to delete
+	 */
 	private void performMulti(ICLanguageSettingEntry ent, ICLanguageSettingEntry del) {
 		MultiLanguageSetting ms = (MultiLanguageSetting)lang;
 		ICLanguageSetting[] langSettings = (ICLanguageSetting[])ms.getItems();

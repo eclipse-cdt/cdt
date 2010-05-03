@@ -98,6 +98,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListLocals;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackSelectFrame;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetDetach;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetDownload;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelect;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectCore;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITargetSelectTFile;
@@ -144,6 +145,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListLocalsInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MITargetDownloadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITraceFindInfo;
@@ -638,6 +640,14 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMITargetSelectTFile(IDMContext ctx, String traceFilePath) {
 		return new MITargetSelectTFile(ctx, traceFilePath);
 	}
+
+    public ICommand<MITargetDownloadInfo> createMITargetDownload(ICommandControlDMContext ctx) {
+        return new MITargetDownload(ctx);
+    }
+
+    public ICommand<MITargetDownloadInfo> createMITargetDownload(ICommandControlDMContext ctx, String file) {
+        return new MITargetDownload(ctx, file);
+    }
 
 	public ICommand<MIThreadInfoInfo> createMIThreadInfo(ICommandControlDMContext dmc) {
 		return new MIThreadInfo(dmc);

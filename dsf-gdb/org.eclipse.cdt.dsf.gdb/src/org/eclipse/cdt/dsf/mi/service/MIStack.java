@@ -363,7 +363,7 @@ public class MIStack extends AbstractDsfService
 
         final MIFrameDMC miFrameDmc = (MIFrameDMC)frameDmc;
         
-        IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
+        final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
         if (execDmc == null) { 
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "No execution context found in " + frameDmc, null)); //$NON-NLS-1$
             rm.done();
@@ -452,6 +452,36 @@ public class MIStack extends AbstractDsfService
                     // Create the data object.
                     rm.setData(new FrameDataFromMIStackFrameListInfo(getData(), idx));
                     rm.done();
+                }
+                
+                @Override
+				protected void handleError() {                
+					// We're seeing gdb in some cases fail when it's
+					// being asked for the stack depth or stack
+					// frames, but the same command succeeds if
+					// the request is limited to one frame. So try
+					// again with a limit of 1. It's better to show
+					// just one frame than none at all
+                	if (miFrameDmc.fLevel == 0) {
+	                    fMICommandCache.execute(
+	                    	fCommandFactory.createMIStackListFrames(execDmc, 0, 0),
+	                            new DataRequestMonitor<MIStackListFramesInfo>(getExecutor(), rm) { 
+	                                @Override
+	                                protected void handleSuccess() {
+	                                    // Find the index to the correct MI frame object.
+	                                    int idx = findFrameIndex(getData().getMIFrames(), miFrameDmc.fLevel);
+	                                    if (idx == -1) {
+	                                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid frame " + frameDmc, null));  //$NON-NLS-1$
+	                                        rm.done();
+	                                        return;
+	                                    }
+	                                    
+	                                    // Create the data object.
+	                                    rm.setData(new FrameDataFromMIStackFrameListInfo(getData(), idx));
+	                                    rm.done();
+	                                }
+	                            });
+                	}
                 }
             }); 
     }
@@ -857,7 +887,7 @@ public class MIStack extends AbstractDsfService
                 }); 
     }
 
-    public void getStackDepth(IDMContext dmc, final int maxDepth, final DataRequestMonitor<Integer> rm) {
+    public void getStackDepth(final IDMContext dmc, final int maxDepth, final DataRequestMonitor<Integer> rm) {
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
 	    if (execDmc != null) {
 	    	// Make sure the thread is stopped
@@ -909,7 +939,18 @@ public class MIStack extends AbstractDsfService
 	    						rm.setData(1);
 	    						rm.done();	    				    	
 	    					} else {
-	    						super.handleError();
+								// We're seeing gdb in some cases fail when it's
+								// being asked for the stack depth or stack
+								// frames, but the same command succeeds if
+								// the request is limited to one frame. So try
+								// again with a limit of 1. It's better to show
+								// just one frame than none at all
+	    						if (maxDepth != 1) {
+	    							getStackDepth(dmc, 1, rm);
+	    						}
+	    						else {
+		    						super.handleError();
+	    						}
 	    					}
 	    				}
 	    			});

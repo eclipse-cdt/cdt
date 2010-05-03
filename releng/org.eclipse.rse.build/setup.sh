@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="S-"
-ep_ver=3.6M6
-ep_date="-201003121448"
+ep_ver=3.6M7
+ep_date="-201004291549"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3637e.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3644b.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -139,7 +139,7 @@ fi
 #CDTLOC=releases/ganymede/dist/${CDTNAME}
 CDTREL=7.0.0
 CDTFEAT=7.0.0
-CDTVER=201003151310
+CDTVER=201005031211
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
@@ -169,10 +169,10 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=R36_M4
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.5.100.v20091210.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.6.0.v20091204/pdebuild.jar \
-  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.200.v20091019.jar ]; then
+baseBuilderTag=v20100423
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.6.0.v20100412.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build_3.6.0.v20100412/pdebuild.jar \
+  -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.p2.metadata.generator_1.0.200.v20100413.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."
     rm -rf org.eclipse.releng.basebuilder

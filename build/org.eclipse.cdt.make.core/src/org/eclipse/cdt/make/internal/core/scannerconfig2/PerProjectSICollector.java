@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -296,8 +296,12 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 						Boolean includePathExists = true;
 						URI projectLocationURI = discPathInfo.getProject().getLocationURI();
 						
+						// make relative path absolute (e.g. MinGW paths)
+						Path path = new Path(include);
+						String absoluteInclude = path.makeAbsolute().toOSString();
+												
 						// use the project's location... create a URI that uses the same provider but that points to the include path
-						URI includeURI = FileSystemUtilityManager.getDefault().replacePath(projectLocationURI, include);
+						URI includeURI = FileSystemUtilityManager.getDefault().replacePath(projectLocationURI, absoluteInclude);
 						
 						// ask EFS if the path exists
 						try {

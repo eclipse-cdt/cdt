@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,12 @@ public class FileSystemUtilityManager {
 		IFilesystemUtility utility = fSchemeToUtilityImplementerMap.get(uri.getScheme());
 		
 		if(utility == null) {
+			
+			//path needs to be prefixed with "/" otherwise it will throw URISyntaxException
+			if (!path.startsWith("/")) { //$NON-NLS-1$
+				path = "/" + path; //$NON-NLS-1$
+			}
+			
 			// if there is no corresponding utility, then assume we can just replace the path field
 			try {
 				return  new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(),

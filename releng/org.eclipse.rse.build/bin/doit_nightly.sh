@@ -81,5 +81,5 @@ fi
 
 #Cleanup old nightly builds (leave only last 5 in place)
 cd $HOME/ws2/publish
-ls -d N200* | sort | head -n-5 | xargs rm -rf
+ls -d N201* | sort | head -n-5 | xargs rm -rf
 

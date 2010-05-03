@@ -3,25 +3,25 @@
 	<category-def name="CDT Main Features" label="CDT Main Features"/>
 	<category-def name="CDT Optional Features" label="CDT Optional Features"/>
 	
-	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
+	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_5.0.4.@timeStamp@.jar" version="5.0.4.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
+	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_5.0.4.@timeStamp@.jar" version="5.0.4.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_5.0.2.@timeStamp@.jar" version="5.0.2.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.core.lrparser.feature" url="features/org.eclipse.cdt.core.lrparser.feature_5.0.2.@timeStamp@.jar" version="5.0.2.@timeStamp@">
+	<feature id="org.eclipse.cdt.core.lrparser.feature" url="features/org.eclipse.cdt.core.lrparser.feature_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.core.parser.upc.feature" url="features/org.eclipse.cdt.core.parser.upc.feature_5.0.2.@timeStamp@.jar" version="5.0.2.@timeStamp@">
+	<feature id="org.eclipse.cdt.core.parser.upc.feature" url="features/org.eclipse.cdt.core.parser.upc.feature_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.xlc.feature" url="features/org.eclipse.cdt.xlc.feature_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
+	<feature id="org.eclipse.cdt.xlc.feature" url="features/org.eclipse.cdt.xlc.feature_5.0.4.@timeStamp@.jar" version="5.0.4.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.xlc.sdk" url="features/org.eclipse.cdt.xlc.sdk_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
+	<feature id="org.eclipse.cdt.xlc.sdk" url="features/org.eclipse.cdt.xlc.sdk_5.0.4.@timeStamp@.jar" version="5.0.4.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.util" url="features/org.eclipse.cdt.util_5.0.2.@timeStamp@.jar" version="5.0.2.@timeStamp@">
@@ -39,7 +39,7 @@
 	<feature id="org.eclipse.cdt.gnu.debug" url="features/org.eclipse.cdt.gnu.debug_5.0.2.@timeStamp@.jar" version="5.0.2.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_5.0.3.@timeStamp@.jar" version="5.0.3.@timeStamp@">
+	<feature id="org.eclipse.cdt.platform" url="features/org.eclipse.cdt.platform_5.0.4.@timeStamp@.jar" version="5.0.4.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 </site>

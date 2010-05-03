@@ -851,7 +851,7 @@ public class ASTSignatureUtil {
 		StringBuffer result = new StringBuffer();
 		result.append(getExpressionString(expression.getArrayExpression()));
 		result.append(Keywords.cpLBRACKET);
-		result.append(getExpressionString(expression.getSubscriptExpression()));
+		result.append(getInitializerClauseString(expression.getArgument()));
 		result.append(Keywords.cpRBRACKET);
 		return result.toString();
 	}

@@ -408,7 +408,7 @@ public class ExpressionWriter extends NodeWriter{
 	private void writeArraySubscriptExpression(IASTArraySubscriptExpression arrSubExp) {
 		arrSubExp.getArrayExpression().accept(visitor);
 		scribe.print('[');
-		arrSubExp.getSubscriptExpression().accept(visitor);
+		arrSubExp.getArgument().accept(visitor);
 		scribe.print(']');
 		
 	}

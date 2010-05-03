@@ -58,11 +58,15 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 
 	/**
 	 * Returns the subscript expression, or <code>null</code>. Consider using {@link #getArgument()}.
+	 * @deprecated Replaced by {@link #getArgument()}
 	 */
+	@Deprecated
 	public IASTExpression getSubscriptExpression();
 
 	/**
 	 * Not allowed on frozen ast.
+	 * @deprecated Replaced by {@link #setArgument(IASTInitializerClause)}
 	 */
+	@Deprecated
 	public void setSubscriptExpression(IASTExpression expression);
 }

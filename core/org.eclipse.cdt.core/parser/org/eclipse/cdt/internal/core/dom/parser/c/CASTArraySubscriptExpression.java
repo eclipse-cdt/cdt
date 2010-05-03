@@ -74,7 +74,6 @@ public class CASTArraySubscriptExpression extends ASTNode implements
         }
     }
 
-    
     public IASTInitializerClause getArgument() {
 		return getSubscriptExpression();
 	}

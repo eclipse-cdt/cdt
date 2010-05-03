@@ -2702,7 +2702,7 @@ public class CPPSemantics {
 
     public static ICPPFunction findOverloadedOperator(IASTArraySubscriptExpression exp) {
     	char[] name = OverloadableOperator.BRACKET.toCharArray();
-    	IASTExpression[] args = {exp.getArrayExpression(), exp.getSubscriptExpression()};
+    	IASTInitializerClause[] args = {exp.getArrayExpression(), exp.getArgument()};
     	IType type = exp.getArrayExpression().getExpressionType();
     	type = SemanticUtil.getUltimateTypeUptoPointers(type);
     	return findOverloadedOperator(exp, args, type, name, NonMemberMode.none);

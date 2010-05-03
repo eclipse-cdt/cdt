@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -601,9 +601,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	/**
 	 * iteration_statement_matched
 	 *     ::= 'do' statement 'while' '(' expression ')' ';'
+	 *        | 'do' statement
 	 */
-	public void consumeStatementDoLoop() {
-		IASTExpression condition = (IASTExpression) astStack.pop();
+	public void consumeStatementDoLoop(boolean hasWhileBlock) {
+		IASTExpression condition = hasWhileBlock? (IASTExpression) astStack.pop() : null;
 		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTDoStatement stat = nodeFactory.newDoStatement(body, condition);
 		setOffsetAndLength(stat);

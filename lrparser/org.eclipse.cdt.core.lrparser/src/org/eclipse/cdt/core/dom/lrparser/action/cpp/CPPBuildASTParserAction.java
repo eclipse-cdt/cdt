@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -688,8 +688,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * try_block
      *     ::= 'try' compound_statement <openscope-ast> handler_seq
      */
-	public void consumeStatementTryBlock() {
-		List<Object> handlerSeq = astStack.closeScope();
+	public void consumeStatementTryBlock(boolean hasCatchBlock) {
+		List<Object> handlerSeq = hasCatchBlock ? astStack.closeScope() : Collections.emptyList();
 		IASTStatement body = (IASTStatement) astStack.pop();
 		
 		ICPPASTTryBlockStatement tryStatement = nodeFactory.newTryBlockStatement(body);

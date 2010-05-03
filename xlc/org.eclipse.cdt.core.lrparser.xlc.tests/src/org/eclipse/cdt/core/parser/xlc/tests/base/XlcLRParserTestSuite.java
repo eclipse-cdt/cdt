@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests.base;
+
+
 
 
 
@@ -54,6 +56,7 @@ public class XlcLRParserTestSuite extends TestSuite {
 			addTest(XlcLRTests.suite()); // has some tests that do fail
 			addTest(XlcLRUtilOldTests.suite());
 			addTest(XlcLRUtilTests.suite());
+			addTest(XlcCompletionHangingTest.suite());
 			//addTest(XlcLRCPPImplicitNameTests.suite());
 			//addTest(LRInactiveCodeTests.suite());
 

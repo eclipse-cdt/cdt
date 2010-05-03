@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2009 IBM Corporation and others.
+ Copyright (c) 2009, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -10,40 +10,51 @@
 -->
 
 <project name="XLC Parsers" default="c" basedir=".">
-	
-	<import file="../../org.eclipse.cdt.core.lrparser/grammar/generate.xml"/>
-	
-	<property name="c_location" value="../parser/org/eclipse/cdt/internal/core/lrparser/xlc/c"/>
-	<property name="cpp_location" value="../parser/org/eclipse/cdt/internal/core/lrparser/xlc/cpp"/>
 
-	
+	<import file="../../org.eclipse.cdt.core.lrparser/grammar/generate.xml" />
+
+	<property name="c_location" value="../parser/org/eclipse/cdt/internal/core/lrparser/xlc/c" />
+	<property name="cpp_location" value="../parser/org/eclipse/cdt/internal/core/lrparser/xlc/cpp" />
+
+
 	<target name="c">
 		<antcall target="generate_c">
-            <param name="grammar_name" value="XlcCParser"/>
-		</antcall>
-    </target>
-	
-    <target name="cpp">
-		<antcall target="generate_cpp">
-            <param name="grammar_name" value="XlcCPPParser"/>
-		</antcall>
-	</target>
-	
-	
-	<target name="generate_c">
-		<antcall target="generate">
-			<param name="grammar_dir" value="xlc"/>
-			<param name="output_dir" value="${c_location}"/>
-			<param name="grammar_name" value="${grammar_name}"/>
-		</antcall>
-	</target>
-	
-	<target name="generate_cpp">
-		<antcall target="generate">
-			<param name="grammar_dir" value="xlc"/>
-			<param name="output_dir" value="${cpp_location}"/>
-			<param name="grammar_name" value="${grammar_name}"/>
+			<param name="grammar_name" value="XlcCParser" />
 		</antcall>
 	</target>
 
-</project>  
+	<target name="cpp">
+		<antcall target="generate_cpp">
+			<param name="grammar_name" value="XlcCPPParser" />
+		</antcall>
+	</target>
+
+
+	<target name="generate_c">
+		<property name="lpg_include" value="${lpg_include_loc}/gcc" />
+		<antcall target="generate">
+			<param name="grammar_dir" value="xlc" />
+			<param name="output_dir" value="${c_location}" />
+			<param name="grammar_name" value="${grammar_name}" />
+		</antcall>
+	</target>
+
+	<target name="generate_cpp">
+		<property name="lpg_include" value="${lpg_include_loc}/gpp" />
+		<antcall target="generate">
+			<param name="grammar_dir" value="xlc" />
+			<param name="output_dir" value="${cpp_location}" />
+			<param name="grammar_name" value="${grammar_name}" />
+		</antcall>
+	</target>
+
+	<target name="clean_l_files">
+		<delete>
+
+			<fileset dir="${c_location}" includes="**/*.l" />
+			<fileset dir="${cpp_location}" includes="**/*.l" />
+
+		</delete>
+	</target>
+
+</project>

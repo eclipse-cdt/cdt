@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2006, 2009 IBM Corporation and others.
+ Copyright (c) 2006, 2010 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -10,39 +10,49 @@
 -->
 
 <project name="UPC Parser" default="upc" basedir=".">
-    <description>Generates the UPC parser from LPG grammar files</description>
-	
-	<import file="../../org.eclipse.cdt.core.lrparser/grammar/generate.xml"/>
-	
-	<property name="upc_location" value="../src/org/eclipse/cdt/internal/core/dom/parser/upc"/>
+	<description>Generates the UPC parser from LPG grammar files</description>
+
+	<import file="../../org.eclipse.cdt.core.lrparser/grammar/generate.xml" />
+
+	<property name="upc_location" value="../src/org/eclipse/cdt/internal/core/dom/parser/upc" />
 
 	<target name="upc">
 		<description>Generate the UPC parser</description>
 		<!-- Generate main parser -->
 		<antcall target="generate_upc">
-            <param name="grammar_name" value="UPCParser"/>
+			<param name="grammar_name" value="UPCParser" />
 		</antcall>
 		<!-- Generate parser for disambiguating declarations vs expression statements -->
 		<antcall target="generate_upc">
-            <param name="grammar_name" value="UPCExpressionParser"/>
+			<param name="grammar_name" value="UPCExpressionParser" />
 		</antcall>
 		<!-- Generate parser for disambiguating cast expressions vs binary expressions-->
 		<antcall target="generate_upc">
-            <param name="grammar_name" value="UPCNoCastExpressionParser"/>
+			<param name="grammar_name" value="UPCNoCastExpressionParser" />
 		</antcall>
 		<!-- Generate parser for disambiguating sizeof expressions -->
 		<antcall target="generate_upc">
-            <param name="grammar_name" value="UPCSizeofExpressionParser"/>
+			<param name="grammar_name" value="UPCSizeofExpressionParser" />
 		</antcall>
 	</target>
-	
-	
+
+
 	<target name="generate_upc">
+		<property name="lpg_include" value="${lpg_include_loc}/c99" />
 		<antcall target="generate">
-			<param name="grammar_dir" value="upc"/>
-			<param name="output_dir" value="${upc_location}"/>
-			<param name="grammar_name" value="${grammar_name}"/>
+			<param name="grammar_dir" value="upc" />
+			<param name="output_dir" value="${upc_location}" />
+			<param name="grammar_name" value="${grammar_name}" />
 		</antcall>
 	</target>
-	
-</project>  
+
+	<target name="clean_l_files">
+		<delete>
+
+			<fileset dir="${upc_location}" includes="**/*.l" />
+
+
+		</delete>
+	</target>
+
+</project>

@@ -99,5 +99,10 @@ type_qualifier_list
 
 member_declaration
     ::= static_assert_declaration
+    
+static_assert_declaration 
+    ::= '__static_assert'  '(' expression ',' literal ')' ';'
+        /. $Build  consumeCPPASTStaticAssertDeclaration();  $EndBuild ./
+
           
 $End

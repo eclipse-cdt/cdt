@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: org.eclipse.cdt.core.lrparser.tests
-Bundle-Version: 5.0.2.qualifier
+Bundle-Version: 5.0.3.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.cdt.core.tests,

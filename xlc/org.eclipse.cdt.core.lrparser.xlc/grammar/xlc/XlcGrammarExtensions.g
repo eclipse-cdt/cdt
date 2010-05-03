@@ -90,9 +90,6 @@ no_type_declaration_specifiers_opt
     ::= no_type_declaration_specifiers
       | $empty
 
-static_assert_declaration 
-    ::= '__static_assert'  '(' expression ',' literal ')' ';'
-        /. $Build  consumeCPPASTStaticAssertDeclaration();  $EndBuild ./
 
 $End
 

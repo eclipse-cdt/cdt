@@ -30,7 +30,10 @@
   Discovery needs EMF.</li>
 <li>Highlights of Bugs fixed since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.1.1-200909160905/index.php">TM 3.1.1</a>:
 <ul>
-  <li>TBD</li>
+  <li>Releng: TM now embeds repository information in released bundles. This allows PDE versions
+      newer than Eclipse 3.6M7 to import source from the Eclipse CVS Repository directly from
+      an installed binary TM bundle, and thus makes it much easier to contribute patches
+      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=311447">311447</a>].</li>
 <!--
   <li>API: The IServerLogger interface File types can now be specified as "XML", in addition to the existing "binary"
       and "text" file types. The special property of XML files is that they are transferred
@@ -42,8 +45,8 @@
 -->
 </ul>
 </li>
-<li>At least 2 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-03-20;chfield=resolution;query_format=advanced;chfieldfrom=2010-03-16;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[6];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
+<li>At least 17 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-05-05;chfield=resolution;query_format=advanced;chfieldfrom=2010-03-16;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[6];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20M7;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M6-201003160452/">

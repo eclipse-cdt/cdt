@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Ericsson and others.
+ * Copyright (c) 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,14 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-
-/**	
- *   -file-exec-and-symbols [FILE]
- *   
- *   Specify the executable file to be debugged. Unlike `-file-exec-and-symbols', 
- *   the symbol table is not read from this file. If used without argument, GDB 
- *   clears the information about the executable file. No output is produced, 
- *   except a completion notification.
+/**
+ * -file-exec-and-symbols [FILE]
+ * 
+ * Specify the executable file to be debugged. This file is the one from which
+ * the symbol table is also read. If no file is specified, the command clears
+ * the executable and symbol information. If breakpoints are set when using this
+ * command with no arguments, gdb will produce error messages. Otherwise, no
+ * output is produced, except a completion notification.
  */
 public class MIFileExecAndSymbols extends MICommand<MIInfo>
 {

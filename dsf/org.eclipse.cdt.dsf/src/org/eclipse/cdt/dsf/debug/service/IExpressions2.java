@@ -165,7 +165,7 @@ public interface IExpressions2 extends IExpressions {
 	 * <p>An implementation may provide its own semantics for viewing other data as arrays, if so desired.
 	 * @param context an existing expression
 	 * @param castInfo the casting information
-	 * @param rm request monitor returning a casted expression data model context object that must be passed to the appropriate
+	 * @return a casted expression data model context object that must be passed to the appropriate
      *          data retrieval routine to obtain the value of the expression.  The object must
      *          report the casted type (if any) via {@link #getExpressionData(IExpressionDMContext, DataRequestMonitor)}
      *          and report alternate children according to the array casting context via 

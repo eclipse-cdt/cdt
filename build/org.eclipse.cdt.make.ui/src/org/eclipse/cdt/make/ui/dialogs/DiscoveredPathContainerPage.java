@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementLabelProv
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementSorter;
 import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
@@ -113,10 +115,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	private ICProject fCProject;
 	private IContainerEntry fPathEntry;
 
-	private TreeListDialogField fDiscoveredContainerList;
+	private TreeListDialogField<DiscoveredElement> fDiscoveredContainerList;
 	private IDiscoveredPathInfo info = null;
 	private boolean dirty;
-	private List deletedEntries;
+	private List<DiscoveredElement> deletedEntries;
 
 	private CopyTextAction copyTextAction;
 	private HandlerSubmission submission;
@@ -139,14 +141,14 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 		DiscoveredContainerAdapter adapter = new DiscoveredContainerAdapter();
 
-		fDiscoveredContainerList = new TreeListDialogField(adapter, buttonLabels, new DiscoveredElementLabelProvider());
+		fDiscoveredContainerList = new TreeListDialogField<DiscoveredElement>(adapter, buttonLabels, new DiscoveredElementLabelProvider());
 		fDiscoveredContainerList.setDialogFieldListener(adapter);
-		fDiscoveredContainerList.setLabelText(MakeUIPlugin.getResourceString(CONTAINER_LIST_LABEL)); //$NON-NLS-1$
+		fDiscoveredContainerList.setLabelText(MakeUIPlugin.getResourceString(CONTAINER_LIST_LABEL));
 
         fDiscoveredContainerList.setTreeExpansionLevel(2);
         fDiscoveredContainerList.setViewerSorter(new DiscoveredElementSorter());
 		dirty = false;
-		deletedEntries = new ArrayList();
+		deletedEntries = new ArrayList<DiscoveredElement>();
 	}
 	
 	/* (non-Javadoc)
@@ -185,13 +187,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	        IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
 	        if (collector instanceof IScannerInfoCollectorCleaner) {
 	            IScannerInfoCollectorCleaner collectorUtil = (IScannerInfoCollectorCleaner) collector;
-	            boolean exitLoop = false;
-	            for (Iterator i = deletedEntries.iterator(); i.hasNext() && !exitLoop; ) {
-	            	DiscoveredElement elem = (DiscoveredElement) i.next();
+	            for (DiscoveredElement elem : deletedEntries) {
 	            	switch (elem.getEntryKind()) {
 	            		case DiscoveredElement.CONTAINER:
 	            			collectorUtil.deleteAll(project);
-	            			exitLoop = true;
 	            			break;
 						case DiscoveredElement.PATHS_GROUP:
 			                collectorUtil.deleteAllPaths(project);
@@ -213,8 +212,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
         if (info instanceof IPerProjectDiscoveredPathInfo) {
             IPerProjectDiscoveredPathInfo projectPathInfo = (IPerProjectDiscoveredPathInfo) info;
 		
-			LinkedHashMap includes = new LinkedHashMap();
-			LinkedHashMap symbols = new LinkedHashMap();
+			LinkedHashMap<String, Boolean> includes = new LinkedHashMap<String, Boolean>();
+			LinkedHashMap<String, SymbolEntry> symbols = new LinkedHashMap<String, SymbolEntry>();
 			
 			DiscoveredElement container = (DiscoveredElement) fDiscoveredContainerList.getElement(0);
 			if (container != null && container.getEntryKind() == DiscoveredElement.CONTAINER) {
@@ -255,7 +254,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
         
 		try {
 			// update scanner configuration
-			List resourceDelta = new ArrayList(1);
+			List<IResource> resourceDelta = new ArrayList<IResource>(1);
 			resourceDelta.add(fCProject.getProject());
 			MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(info, resourceDelta);
 			return true;
@@ -280,20 +279,16 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 			fPathEntry = containerEntry;
 		}
 		else {
-			fPathEntry = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);		
+			fPathEntry = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
 		}
 		if (fPathEntry != null) {
 			DiscoveredElement element = populateDiscoveredElements(fPathEntry);
-			ArrayList elements = new ArrayList();
+			ArrayList<DiscoveredElement> elements = new ArrayList<DiscoveredElement>();
 			elements.add(element);
 			fDiscoveredContainerList.addElements(elements);
 		}
 	}
 
-	/**
-	 * @param pathEntry
-	 * @return
-	 */
 	private DiscoveredElement populateDiscoveredElements(IContainerEntry pathEntry) {
 		DiscoveredElement container = null;
 		try {
@@ -307,26 +302,26 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
             	if (info instanceof IPerProjectDiscoveredPathInfo) {
 	                IPerProjectDiscoveredPathInfo projectPathInfo = (IPerProjectDiscoveredPathInfo) info;
 					// get include paths
-					LinkedHashMap paths = projectPathInfo.getIncludeMap();
-					for (Iterator i = paths.keySet().iterator(); i.hasNext(); ) {
-						String include = (String) i.next();
-						Boolean removed = (Boolean) paths.get(include);
+					LinkedHashMap<String, Boolean> paths = projectPathInfo.getIncludeMap();
+					Set<String> includesKeySet = paths.keySet();
+					for (String include : includesKeySet) {
+						Boolean removed = paths.get(include);
 						removed = (removed == null) ? Boolean.FALSE : removed;
 						DiscoveredElement.createNew(container, fCProject.getProject(), include, 
 								DiscoveredElement.INCLUDE_PATH, removed.booleanValue(), false);
 					}
 					// get defined symbols 
-					LinkedHashMap symbols = projectPathInfo.getSymbolMap();
-					for (Iterator i = symbols.keySet().iterator(); i.hasNext(); ) {
-						String symbol = (String) i.next();
-						SymbolEntry se = (SymbolEntry) symbols.get(symbol);
-						for (Iterator j = se.getActiveRaw().iterator(); j.hasNext();) {
-							String value = (String) j.next();
+					LinkedHashMap<String, SymbolEntry> symbols = projectPathInfo.getSymbolMap();
+					Set<String> symbolsKeySet = symbols.keySet();
+					for (String symbol : symbolsKeySet) {
+						SymbolEntry se = symbols.get(symbol);
+						List<String> activeValues = se.getActiveRaw();
+						for (String value : activeValues) {
 							DiscoveredElement.createNew(container, fCProject.getProject(), value, 
 									DiscoveredElement.SYMBOL_DEFINITION, false, false);
 						}
-						for (Iterator j = se.getRemovedRaw().iterator(); j.hasNext();) {
-							String value = (String) j.next();
+						List<String> removedValues = se.getRemovedRaw();
+						for (String value : removedValues) {
 							DiscoveredElement.createNew(container, fCProject.getProject(), value, 
 									DiscoveredElement.SYMBOL_DEFINITION, true, false);
 						}
@@ -342,25 +337,25 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 								DiscoveredElement.INCLUDE_PATH, false, false);
 					}
 					// get defined symbols
-            		Map symbols = filePathInfo.getSymbols();
-            		for (Iterator iter = symbols.keySet().iterator(); iter.hasNext();) {
-						String key = (String) iter.next();
-						String value = (String) symbols.get(key);
+            		Map<String, String> symbols = filePathInfo.getSymbols();
+            		Set<String> symbolsKeySet = symbols.keySet();
+            		for (String key : symbolsKeySet) {
+						String value = symbols.get(key);
 						String symbol = (value != null && value.length() > 0) ? key + "=" + value : key; //$NON-NLS-1$
 						DiscoveredElement.createNew(container, fCProject.getProject(), symbol, 
 								DiscoveredElement.SYMBOL_DEFINITION, false, false);
 					}
             		// get include files
             		IPath[] includeFiles = filePathInfo.getIncludeFiles(fCProject.getPath());
-            		for (int i = 0; i < includeFiles.length; i++) {
-						String includeFile = includeFiles[i].toPortableString();
+            		for (IPath incFile : includeFiles) {
+            			String includeFile = incFile.toPortableString();
 						DiscoveredElement.createNew(container, fCProject.getProject(), includeFile, 
 								DiscoveredElement.INCLUDE_FILE, false, false);
 					}
             		// get macros files
             		IPath[] macrosFiles = filePathInfo.getMacroFiles(fCProject.getPath());
-            		for (int i = 0; i < macrosFiles.length; i++) {
-						String macrosFile = macrosFiles[i].toPortableString();
+            		for (IPath macrosFilePath : macrosFiles) {
+            			String macrosFile = macrosFilePath.toPortableString();
 						DiscoveredElement.createNew(container, fCProject.getProject(), macrosFile, 
 								DiscoveredElement.MACROS_FILE, false, false);
 					}
@@ -452,7 +447,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	/**
 	 * @author vhirsl
 	 */
-	private class DiscoveredContainerAdapter implements IDialogFieldListener, ITreeListAdapter {
+	private class DiscoveredContainerAdapter implements IDialogFieldListener, ITreeListAdapter<DiscoveredElement> {
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// ---------- IDialogFieldListener --------
@@ -468,14 +463,14 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#customButtonPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, int)
 		 */
-		public void customButtonPressed(TreeListDialogField field, int index) {
+		public void customButtonPressed(TreeListDialogField<DiscoveredElement> field, int index) {
 			containerPageCustomButtonPressed(field, index);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#selectionChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
 		 */
-		public void selectionChanged(TreeListDialogField field) {
+		public void selectionChanged(TreeListDialogField<DiscoveredElement> field) {
 			if (copyTextAction != null) {
 				copyTextAction.canBeApplied(field.getSelectedElements());
 			}
@@ -485,7 +480,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#doubleClicked(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
 		 */
-		public void doubleClicked(TreeListDialogField field) {
+		public void doubleClicked(TreeListDialogField<DiscoveredElement> field) {
 			// TODO Auto-generated method stub
 
 		}
@@ -493,7 +488,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#keyPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, org.eclipse.swt.events.KeyEvent)
 		 */
-		public void keyPressed(TreeListDialogField field, KeyEvent event) {
+		public void keyPressed(TreeListDialogField<DiscoveredElement> field, KeyEvent event) {
 			// TODO Auto-generated method stub
 
 		}
@@ -501,7 +496,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#getChildren(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
 		 */
-		public Object[] getChildren(TreeListDialogField field, Object element) {
+		public Object[] getChildren(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
 				DiscoveredElement elem = (DiscoveredElement) element;
 				return elem.getChildren();
@@ -512,7 +507,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#getParent(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
 		 */
-		public Object getParent(TreeListDialogField field, Object element) {
+		public Object getParent(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
 				DiscoveredElement elem = (DiscoveredElement) element;
 				return elem.getParent();
@@ -523,7 +518,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#hasChildren(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
 		 */
-		public boolean hasChildren(TreeListDialogField field, Object element) {
+		public boolean hasChildren(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
 				DiscoveredElement elem = (DiscoveredElement) element;
 				return elem.hasChildren();
@@ -532,11 +527,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		}
 	}
 
-	/**
-	 * @param field
-	 * @param index
-	 */
-	private void containerPageCustomButtonPressed(TreeListDialogField field, int index) {
+	private void containerPageCustomButtonPressed(TreeListDialogField<DiscoveredElement> field, int index) {
 		switch (index) {
 			case IDX_UP:
 				/* move entry up */
@@ -567,13 +558,13 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private boolean moveUp() {
 		boolean rc = false;
-		List selElements = fDiscoveredContainerList.getSelectedElements();
-		for (Iterator i = selElements.iterator(); i.hasNext(); ) {
+		List<Object> selElements = fDiscoveredContainerList.getSelectedElements();
+		for (Iterator<Object> i = selElements.iterator(); i.hasNext(); ) {
 			DiscoveredElement elem = (DiscoveredElement) i.next();
 			DiscoveredElement parent = elem.getParent();
 			DiscoveredElement[] children = parent.getChildren();
 			for (int j = 0; j < children.length; ++j) {
-				DiscoveredElement child = (DiscoveredElement) children[j];
+				DiscoveredElement child = children[j];
 				if (elem.equals(child)) {
 					int prevIndex = j - 1;
 					if (prevIndex >= 0) {
@@ -593,15 +584,15 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private boolean moveDown() {
 		boolean rc = false;
-		List selElements = fDiscoveredContainerList.getSelectedElements();
-		List revSelElements = new ArrayList(selElements);
+		List<Object> selElements = fDiscoveredContainerList.getSelectedElements();
+		List<Object> revSelElements = new ArrayList<Object>(selElements);
 		Collections.reverse(revSelElements);
-		for (Iterator i = revSelElements.iterator(); i.hasNext(); ) {
+		for (Iterator<Object> i = revSelElements.iterator(); i.hasNext(); ) {
 			DiscoveredElement elem = (DiscoveredElement) i.next();
 			DiscoveredElement parent = elem.getParent();
 			DiscoveredElement[] children = parent.getChildren();
 			for (int j = children.length - 1; j >= 0; --j) {
-				DiscoveredElement child = (DiscoveredElement) children[j];
+				DiscoveredElement child = children[j];
 				if (elem.equals(child)) {
 					int prevIndex = j + 1;
 					if (prevIndex < children.length) {
@@ -619,14 +610,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		return rc;
 	}
 	
-	/**
-	 * @param action
-	 * @return
-	 */
 	private boolean enableDisableEntry(int action) {
 		boolean rc = false;
 		boolean remove = (action == DO_DISABLE);
-		List selElements = fDiscoveredContainerList.getSelectedElements();
+		List<Object> selElements = fDiscoveredContainerList.getSelectedElements();
 		for (int i = selElements.size() - 1; i >= 0; --i) {
 			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
 			switch (elem.getEntryKind()) {
@@ -641,8 +628,8 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private boolean deleteEntry() {
 		boolean rc = false;
-		List newSelection = new ArrayList();
-		List selElements = fDiscoveredContainerList.getSelectedElements();
+		List<DiscoveredElement> newSelection = new ArrayList<DiscoveredElement>();
+		List<Object> selElements = fDiscoveredContainerList.getSelectedElements();
 		boolean skipIncludes = false, skipSymbols = false;
 		for (int i = 0; i < selElements.size(); ++i) {
 			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
@@ -692,10 +679,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 						if (elem.equals(child)) {
 							newSelection.clear();
 							if (j + 1 < children.length) {
-								newSelection.add(children[j + 1]);
+								newSelection.add((DiscoveredElement)children[j + 1]);
 							}
 							else if (j - 1 >= 0) {
-								newSelection.add(children[j - 1]);
+								newSelection.add((DiscoveredElement)children[j - 1]);
 							}
 							else {
 								newSelection.add(parent);
@@ -705,7 +692,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 					}
 				}
 			}
-        }
+		}
 		fDiscoveredContainerList.postSetSelection(new StructuredSelection(newSelection));
 		return rc;
 	}

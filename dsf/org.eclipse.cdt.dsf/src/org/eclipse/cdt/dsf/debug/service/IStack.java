@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006,, 2008 Wind River Systems and others.
+ * Copyright (c) 2006,, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,11 +129,14 @@ public interface IStack extends IDsfService {
     void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
-     * Retrieves the number of stack frames available for the given context..
+     * Retrieves the number of stack frames available for the given context.  The depth
+     * returned could, but is not required to, be limited to the maxDepth parameter.
+     * 
      * @param dmc Context to retrieve data for.
-     * @param The maximum depth of stack to calculate.  Should be 0 to calculate 
-     * depth with no limit.
-     * @param rm Callback 
+     * @param maxDepth The maximum depth of stack that is requested.  If 0, not limit should
+     * be used to calculate the stack depth, and the actual stack depth should be returned.
+     * @param rm Request monitor indicating the current stack depth, potentially limited
+     * to maxDepth.
      */
     void getStackDepth(IDMContext dmc, int maxDepth, DataRequestMonitor<Integer> rm);
 }

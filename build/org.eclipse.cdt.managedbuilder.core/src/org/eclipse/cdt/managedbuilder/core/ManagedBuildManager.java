@@ -4099,7 +4099,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	private static IPath getPathForResource(IResource resource) {
-		return new Path(resource.getLocationURI().getPath());
+		URI uri = resource.getLocationURI();
+		return new Path(uri.getPath());
 	}
 
 	public static IBuilder[] createBuilders(IProject project, Map args){

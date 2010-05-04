@@ -88,8 +88,8 @@
          point="org.eclipse.ui.activities">
  
       <category
-            name="CDT CDI-GDB - GDB Debugging (Legacy)"
-            description="C/C++ debugging with the CDI (legacy) GDB debugger"
+            name="%category.name"
+            description="%category.description"
             id="org.eclipse.cdt.debug.cdigdbCategory">
       </category>
   
@@ -99,8 +99,8 @@
       </categoryActivityBinding>
   
       <activity
-            name="CDT CDI-GDB - GDB Debugging (Legacy)"
-            description="C/C++ debugging with the CDI (legacy) GDB debugger"
+            name="%activity.name"
+            description="%activity.description"
             id="org.eclipse.cdt.debug.cdigdbActivity">
        </activity>
 

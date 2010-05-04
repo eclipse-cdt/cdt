@@ -542,8 +542,8 @@
          point="org.eclipse.ui.activities">
  
       <category
-            name="CDT DSF-GDB - GDB Debugging"
-            description="C/C++ debugging with the DSF GDB debugger"
+            name="%category.name"
+            description="%category.description"
             id="org.eclipse.cdt.debug.dsfgdbCategory">
       </category>
   
@@ -553,8 +553,8 @@
       </categoryActivityBinding>
   
       <activity
-            name="CDT DSF-GDB - GDB Debugging)"
-            description="C/C++ debugging with the DSF GDB debugger"
+            name="%activity.name"
+            description="%activity.description"
             id="org.eclipse.cdt.debug.dsfgdbActivity">
        </activity>
 

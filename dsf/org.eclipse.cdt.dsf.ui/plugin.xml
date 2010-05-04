@@ -675,7 +675,7 @@
          point="org.eclipse.ui.activities">
       <activity
             id="org.eclipse.cdt.dsf.ui.activity.updateModes"
-            name="Debug Update Modes">
+            name="%activity.name">
          <enabledWhen>
 	        <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
          </enabledWhen>
@@ -690,8 +690,8 @@
          point="org.eclipse.ui.activities">
  
       <category
-            name="CDT-DSF Debug Services Framework"
-            description="Debug Services Framework"
+            name="%category.name"
+            description="%category.description"
             id="org.eclipse.cdt.dsf.ui.dsfCategory">
       </category>
   
@@ -701,8 +701,8 @@
       </categoryActivityBinding>
   
       <activity
-            name="CDT-DSF Debug Services Framework"
-            description="Debug Services Framework"
+            name="%activity.name.0"
+            description="%activity.description"
             id="org.eclipse.cdt.dsf.ui.dsfActivity">
        </activity>
 

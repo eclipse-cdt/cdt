@@ -2388,8 +2388,8 @@
          point="org.eclipse.ui.activities">
  
       <category
-            name="CDT Debug - C/C++ Development Tools"
-            description="Commands for C/C++ debugging"
+            name="%category.name"
+            description="%category.description"
             id="org.eclipse.cdt.debug.ui.cdtCategory">
       </category>
   
@@ -2399,8 +2399,8 @@
       </categoryActivityBinding>
   
       <activity
-            name="CDT Debug - C/C++ Development Tools"
-            description="Commands for C/C++ debugging"
+            name="%activity.name"
+            description="%activity.description"
             id="org.eclipse.cdt.debug.ui.cdtActivity">
        </activity>
 

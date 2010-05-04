@@ -11,9 +11,10 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import java.util.HashMap;
+
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
-import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 
 public class CodanProblem implements IProblemWorkingCopy {
@@ -26,6 +27,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 	private IProblemParameterInfo parameterInfo;
 	private boolean frozen;
 	private String description;
+	private String markerType = IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE;
 
 	public CodanSeverity getSeverity() {
 		return severity;
@@ -43,11 +45,6 @@ public class CodanProblem implements IProblemWorkingCopy {
 
 	public String getId() {
 		return id;
-	}
-
-	public IProblemCategory getCategory() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -89,7 +86,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 
 	public Object getParameter(Object key) {
 		return parameters.get(key);
-	};
+	}
 
 	public IProblemParameterInfo getParameterInfo() {
 		return parameterInfo;
@@ -140,5 +137,18 @@ public class CodanProblem implements IProblemWorkingCopy {
 	 */
 	public void setDescription(String desc) {
 		this.description = desc;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
+	 */
+	public String getMarkerType() {
+		return markerType;
+	}
+
+	public void setMarkerType(String type) {
+		markerType = type;
 	}
 }

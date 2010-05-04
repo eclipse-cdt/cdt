@@ -187,6 +187,8 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 			String sev = getAtt(configurationElement, "defaultSeverity", false); //$NON-NLS-1$
 			String patt = getAtt(configurationElement, "messagePattern", false); //$NON-NLS-1$
 			String desc = getAtt(configurationElement, "description", false); //$NON-NLS-1$
+			String markerType = getAtt(configurationElement,
+					"markerType", false); //$NON-NLS-1$
 			if (enab != null) {
 				p.setEnabled(Boolean.valueOf(enab));
 			}
@@ -197,6 +199,9 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 			}
 			if (patt != null) {
 				p.setMessagePattern(patt);
+			}
+			if (markerType != null) {
+				p.setMarkerType(markerType);
 			}
 			p.setDescription(desc);
 			addProblem(p, category);
@@ -323,7 +328,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 				wp = (IProblemProfile) getDefaultProfile().clone();
 				// load default values
 				CodanPreferencesLoader loader = new CodanPreferencesLoader(wp);
-				loader.load(loader.getWorkspaceNode());
+				loader.load(CodanPreferencesLoader.getWorkspaceNode());
 			} catch (CloneNotSupportedException e) {
 				wp = getDefaultProfile();
 			}
@@ -357,7 +362,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 					// load default values
 					CodanPreferencesLoader loader = new CodanPreferencesLoader(
 							prof);
-					Preferences projectNode = loader
+					Preferences projectNode = CodanPreferencesLoader
 							.getProjectNode((IProject) element);
 					boolean useWorkspace = projectNode.getBoolean(
 							PreferenceConstants.P_USE_PARENT, false);

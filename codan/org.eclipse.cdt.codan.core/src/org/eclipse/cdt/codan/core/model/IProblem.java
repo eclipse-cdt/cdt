@@ -25,6 +25,8 @@ package org.eclipse.cdt.codan.core.model;
  * it will remain the same.
  * </p>
  * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblem extends IProblemElement {
 	/**
@@ -78,4 +80,11 @@ public interface IProblem extends IProblemElement {
 	 * @return
 	 */
 	public String getDescription();
+
+	/**
+	 * Return marker id for the problem
+	 * 
+	 * @return
+	 */
+	public String getMarkerType();
 }

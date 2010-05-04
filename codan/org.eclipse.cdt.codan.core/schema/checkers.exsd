@@ -171,6 +171,16 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  Marker type to use to generate problem, default is the generic codan marker
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

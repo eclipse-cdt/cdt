@@ -37,8 +37,9 @@ public class CodanApplication implements IApplication {
 		CodanRuntime runtime = CodanRuntime.getInstance();
 		runtime.setProblemReporter(new CodanMarkerProblemReporter() {
 			@Override
-			public void reportProblem(String id, int severity, IFile file,
-					int lineNumber, int startChar, int endChar, String message) {
+			public void reportProblem(String id, String markerType,
+					int severity, IFile file, int lineNumber, int startChar,
+					int endChar, String message) {
 				System.out.println(file.getLocation() + ":" + lineNumber + ": "
 						+ message);
 			}

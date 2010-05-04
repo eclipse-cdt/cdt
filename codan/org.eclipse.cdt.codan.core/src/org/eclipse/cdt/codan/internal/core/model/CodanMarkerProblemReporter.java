@@ -59,8 +59,8 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 		} else {
 			message = MessageFormat.format(messagePattern, args);
 		}
-		reportProblem(id, severity, file, lineNumber, loc.getStartingChar(),
-				loc.getEndingChar(), message);
+		reportProblem(id, problem.getMarkerType(), severity, file, lineNumber,
+				loc.getStartingChar(), loc.getEndingChar(), message);
 	}
 
 	/*
@@ -70,12 +70,13 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 	 * org.eclipse.cdt.codan.core.model.IProblemReporter#reportProblem(java.
 	 * lang.String, org.eclipse.core.resources.IFile, int, java.lang.String)
 	 */
-	public void reportProblem(String id, int severity, IFile file,
-			int lineNumber, int startChar, int endChar, String message) {
+	public void reportProblem(String id, String markerType, int severity,
+			IFile file, int lineNumber, int startChar, int endChar,
+			String message) {
 		try {
 			// Do not put in duplicates
-			IMarker[] cur = file.findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
-					false, IResource.DEPTH_ZERO);
+			IMarker[] cur = file.findMarkers(markerType, false,
+					IResource.DEPTH_ZERO);
 			if (cur != null) {
 				for (IMarker element : cur) {
 					int line = ((Integer) element
@@ -90,8 +91,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 					}
 				}
 			}
-			IMarker marker = file
-					.createMarker(GENERIC_CODE_ANALYSIS_MARKER_TYPE);
+			IMarker marker = file.createMarker(markerType);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);

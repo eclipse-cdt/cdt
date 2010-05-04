@@ -289,9 +289,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				});
 	}
 	/**
-	 * Returns the next random number.
-	 *
-	 * @return int A positive integer
+	 * @return the next random number as a positive integer.
 	 */
 	public static int getRandomNumber() {
 		if (randomNumber == null) {
@@ -307,10 +305,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the list of project types that are defined by this project,
+	 * @return the list of project types that are defined by this project,
 	 * projects referenced by this project, and by the extensions.
-	 *
-	 * @return IProjectType[]
 	 */
 	public static IProjectType[] getDefinedProjectTypes() {
 		try {
@@ -375,10 +371,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return depCalculatorsMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to ProjectTypes
-	 *
-	 * @return Map
 	 */
 	public static SortedMap<String, IProjectType> getExtensionProjectTypeMap() {
 		try {
@@ -391,10 +385,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return projectTypeMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Configurations
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, IConfiguration> getExtensionConfigurationMap() {
 		if (extensionConfigurationMap == null) {
@@ -403,10 +395,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionConfigurationMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Resource Configurations
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, IResourceConfiguration> getExtensionResourceConfigurationMap() {
 		if (extensionResourceConfigurationMap == null) {
@@ -415,10 +405,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionResourceConfigurationMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to ToolChains
-	 *
-	 * @return Map
 	 */
 	public static SortedMap<String, IToolChain> getExtensionToolChainMap() {
 		try {
@@ -444,10 +432,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionToolChainMap.values().toArray(new ToolChain[extensionToolChainMap.size()]);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Tools
-	 *
-	 * @return Map
 	 */
 	public static SortedMap<String, ITool> getExtensionToolMap() {
 		try {
@@ -471,10 +457,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionToolMap.values().toArray(new Tool[extensionToolMap.size()]);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to TargetPlatforms
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, ITargetPlatform> getExtensionTargetPlatformMap() {
 		if (extensionTargetPlatformMap == null) {
@@ -483,10 +467,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionTargetPlatformMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Builders
-	 *
-	 * @return Map
 	 */
 	public static SortedMap<String, IBuilder> getExtensionBuilderMap() {
 		try {
@@ -510,10 +492,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionBuilderMap.values().toArray(new Builder[extensionBuilderMap.size()]);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Options
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, IOption> getExtensionOptionMap() {
 		if (extensionOptionMap == null) {
@@ -522,10 +502,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionOptionMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Option Categories
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, IOptionCategory> getExtensionOptionCategoryMap() {
 		if (extensionOptionCategoryMap == null) {
@@ -534,10 +512,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionOptionCategoryMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to InputTypes
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, IInputType> getExtensionInputTypeMap() {
 		if (extensionInputTypeMap == null) {
@@ -546,10 +522,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionInputTypeMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to OutputTypes
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, IOutputType> getExtensionOutputTypeMap() {
 		if (extensionOutputTypeMap == null) {
@@ -558,10 +532,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return extensionOutputTypeMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of IDs to Targets (CDT V2.0 object model)
-	 *
-	 * @return Map
 	 */
 	protected static Map<String, ITarget> getExtensionTargetMap() {
 		if (extensionTargetMap == null) {
@@ -571,7 +543,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @param resource
 	 * @return the targets owned by this resource.  If none are owned,
 	 * an empty array is returned.
 	 */
@@ -586,11 +557,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the project type from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IProjectType
+	 * @return the project type from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IProjectType getExtensionProjectType(String id) {
 		try {
@@ -605,11 +573,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the configuration from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IConfiguration
+	 * @return the configuration from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IConfiguration getExtensionConfiguration(String id) {
 		try {
@@ -636,11 +601,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the resource configuration from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IResourceConfiguration
+	 * @return the resource configuration from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IResourceConfiguration getExtensionResourceConfiguration(String id) {
 		try {
@@ -655,11 +617,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the tool-chain from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IToolChain
+	 * @return the tool-chain from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IToolChain getExtensionToolChain(String id) {
 		try {
@@ -674,11 +633,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the tool from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return ITool
+	 * @return the tool from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static ITool getExtensionTool(String id) {
 		try {
@@ -693,11 +649,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the target platform from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return ITargetPlatform
+	 * @return the target platform from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static ITargetPlatform getExtensionTargetPlatform(String id) {
 		try {
@@ -712,11 +665,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the builder from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IBuilder
+	 * @return the builder from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IBuilder getExtensionBuilder(String id) {
 		try {
@@ -739,11 +689,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 
 	/**
-	 * Returns the option from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IOption
+	 * @return the option from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IOption getExtensionOption(String id) {
 		try {
@@ -758,11 +705,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the InputType from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IInputType
+	 * @return the InputType from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IInputType getExtensionInputType(String id) {
 		try {
@@ -777,11 +721,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the OutputType from the manifest with the ID specified in the argument
-	 *  or <code>null</code>.
-	 *
-	 * @param id
-	 * @return IOutputType
+	 * @return the OutputType from the manifest with the ID specified in the argument
+	 *  or {@code null}.
 	 */
 	public static IOutputType getExtensionOutputType(String id) {
 		try {
@@ -796,11 +737,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the target from the manifest with the ID specified in the argument
-	 *  or <code>null</code> - CDT V2.0 object model.
-	 *
-	 * @param id
-	 * @return ITarget
+	 * @return the target from the manifest with the ID specified in the argument
+	 *  or {@code null} - CDT V2.0 object model.
 	 */
 	public static ITarget getExtensionTarget(String id) {
 		try {
@@ -839,9 +777,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Sets the default configuration for the project. Note that this will also
 	 * update the default target if needed.
-	 *
-	 * @param project
-	 * @param newDefault
 	 */
 	public static void setDefaultConfiguration(IProject project, IConfiguration newDefault) {
 		if (project == null || newDefault == null) {
@@ -857,9 +792,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Sets the currently selected configuration.  This is used while the project
 	 * property pages are displayed
-	 *
-	 * @param project
-	 * @param config
 	 */
 	public static void setSelectedConfiguration(IProject project, IConfiguration config) {
 		if (project == null) {
@@ -886,7 +818,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * load tool provider defined or default (if not found) command line generator special for selected tool
 	 * @param toolId - id selected tool ID
-	 * @return IManagedCommandLineGenerator
 	 */
 	public static IManagedCommandLineGenerator getCommandLineGenerator(IConfiguration config, String toolId) {
 		ITool tool = config.getTool(toolId);
@@ -910,10 +841,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * Gets the currently selected target.  This is used while the project
-	 * property pages are displayed
-	 *
-	 * @param project
-	 * @return target
+	 * property pages are displayed.
+	 * 
+	 * @return target configuration.
 	 */
 	public static IConfiguration getSelectedConfiguration(IProject project) {
 		if (project == null) {
@@ -1057,7 +987,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param option The option to set the value for.
 	 * @param value The boolean that the option should contain after the change.
 	 *
-	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option.  This can be the same option or a newly created option.
 	 *
 	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
@@ -1095,7 +1025,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param option The option to set the value for.
 	 * @param value The boolean that the option should contain after the change.
 	 *
-	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option.  This can be the same option or a newly created option.
 	 *
 	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
@@ -1132,7 +1062,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param option The option to set the value for.
 	 * @param value The value that the option should contain after the change.
 	 *
-	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option.  This can be the same option or a newly created option.
 	 *
 	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
@@ -1169,7 +1099,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param option The option to set the value for.
 	 * @param value The value that the option should contain after the change.
 	 *
-	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option.  This can be the same option or a newly created option.
 	 *
 	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
@@ -1205,7 +1135,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param option The option to set the value for.
 	 * @param value The values the option should contain after the change.
 	 *
-	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option.  This can be the same option or a newly created option.
 	 *
 	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
@@ -1242,7 +1172,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param option The option to set the value for.
 	 * @param value The values the option should contain after the change.
 	 *
-	 * @return IOption The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option.  This can be the same option or a newly created option.
 	 *
 	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
 	 *        has changed to <code>IHoldsOptions holder</code>. Client code
@@ -1294,11 +1224,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return retOpt;
 	}
 
-	/**
-	 * @param config
-	 * @param tool
-	 * @param command
-	 */
 	public static void setToolCommand(IConfiguration config, ITool tool, String command) {
 		// The tool may be a reference.
 		if (tool instanceof IToolReference) {
@@ -1478,9 +1403,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Saves the build information associated with a project and all resources
 	 * in the project to the build info file.
-	 *
-	 * @param project
-	 * @param force
 	 */
 	private static boolean updateBuildInfo(IProject project, boolean force) throws CoreException {
 		IManagedBuildInfo info = getBuildInfo(project, false);
@@ -1664,9 +1586,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 	}
 
-	/**
-	 * @param resource
-	 */
 	public static void removeBuildInfo(IResource resource) {
 		/*
 		IManagedBuildInfo info = findBuildInfo(resource, false);
@@ -1690,9 +1609,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Resets the build information for the project and configuration specified in the arguments.
 	 * The build information will contain the settings defined in the plugin manifest.
-	 *
-	 * @param project
-	 * @param configuration
 	 */
 	public static void resetConfiguration(IProject project, IConfiguration configuration) {
 		// reset the configuration
@@ -1753,8 +1669,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a ProjectType that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param projectType
 	 */
 	public static void addExtensionProjectType(ProjectType projectType) {
 		if (projectTypes == null) {
@@ -1775,8 +1689,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a Configuration that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param configuration
 	 */
 	public static void addExtensionConfiguration(Configuration configuration) {
 		IConfiguration previous = getExtensionConfigurationMap().put(configuration.getId(), configuration);
@@ -1792,8 +1704,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a Resource Configuration that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param resourceConfiguration
 	 */
 	public static void addExtensionResourceConfiguration(ResourceConfiguration resourceConfiguration) {
 		IResourceConfiguration previous = getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(), resourceConfiguration);
@@ -1809,8 +1719,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a ToolChain that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param toolChain
 	 */
 	public static void addExtensionToolChain(ToolChain toolChain) {
 		IToolChain previous = getExtensionToolChainMap().put(toolChain.getId(), toolChain);
@@ -1828,8 +1736,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * has a reference to it as part of its description. This
 	 * permits a tool that is common to many targets to be defined
 	 * only once.
-	 *
-	 * @param tool
 	 */
 	public static void addExtensionTool(Tool tool) {
 		ITool previous = getExtensionToolMap().put(tool.getId(), tool);
@@ -1845,8 +1751,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a TargetPlatform that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param targetPlatform
 	 */
 	public static void addExtensionTargetPlatform(TargetPlatform targetPlatform) {
 		ITargetPlatform previous = getExtensionTargetPlatformMap().put(targetPlatform.getId(), targetPlatform);
@@ -1862,8 +1766,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a Builder that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param Builder
 	 */
 	public static void addExtensionBuilder(Builder builder) {
 		IBuilder previous = getExtensionBuilderMap().put(builder.getId(), builder);
@@ -1879,8 +1781,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a Option that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param option
 	 */
 	public static void addExtensionOption(Option option) {
 		IOption previous = getExtensionOptionMap().put(option.getId(), option);
@@ -1896,8 +1796,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a OptionCategory that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param optionCategory
 	 */
 	public static void addExtensionOptionCategory(OptionCategory optionCategory) {
 		IOptionCategory previous = getExtensionOptionCategoryMap().put(optionCategory.getId(), optionCategory);
@@ -1913,8 +1811,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds an InputType that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param inputType
 	 */
 	public static void addExtensionInputType(InputType inputType) {
 		IInputType previous = getExtensionInputTypeMap().put(inputType.getId(), inputType);
@@ -1930,8 +1826,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds an OutputType that is is specified in the manifest to the
 	 * build system. It is available to any element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param outputType
 	 */
 	public static void addExtensionOutputType(OutputType outputType) {
 		IOutputType previous = getExtensionOutputTypeMap().put(outputType.getId(), outputType);
@@ -1947,8 +1841,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Adds a Target that is is specified in the manifest to the
 	 * build system. It is available to any CDT 2.0 object model element that
 	 * has a reference to it as part of its description.
-	 *
-	 * @param target
 	 */
 	public static void addExtensionTarget(Target target) {
 		getExtensionTargetMap().put(target.getId(), target);
@@ -1957,10 +1849,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Creates a new project instance for the resource based on the parent project type.
 	 *
-	 * @param resource
 	 * @param parent - parent project type
 	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
-	 * @throws BuildException
 	 */
 	public static IManagedProject createManagedProject(IResource resource, IProjectType parent)
 		throws BuildException
@@ -1971,10 +1861,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Creates a new target for the resource based on the parentTarget.
 	 *
-	 * @param resource
-	 * @param parentTarget
 	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
-	 * @throws BuildException
 	 */
 	public static ITarget createTarget(IResource resource, ITarget parentTarget)
 		throws BuildException
@@ -2083,7 +1970,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return(buildInfoVersion.isGreaterOrEqualTo(version));
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Determine if the .cdtbuild file is present, which will determine if build information
 	 * can be loaded externally or not. Return true if present, false otherwise.
 	 */
@@ -2095,7 +1982,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return cdtbuild.exists();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Load the build information for the specified resource from its project
 	 * file. Pay attention to the version number too.
 	 */
@@ -2802,15 +2689,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 //		return false;
 	}
 
-	/* (non-Javadoc)
-	 * Provate helper method that first checks to see if a build information
+	/**
+	 * Private helper method that first checks to see if a build information
 	 * object has been associated with the project for the current workspace
 	 * session. If one cannot be found, one is created from the project file
 	 * associated with the argument. If there is no prject file or the load
-	 * fails for some reason, the method will return <code>null</code>
-	 *
-	 * @param resource
-	 * @return
+	 * fails for some reason, the method will re{@code null}code>
 	 */
 	private static ManagedBuildInfo findBuildInfo(IResource rc, boolean forceLoad) {
 
@@ -2843,7 +2727,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			int flags = forceLoad ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
 
 			if(BuildDbgUtil.DEBUG)
-				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loadded" + (forceLoad ? " forceload" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is NOT loaded" + (forceLoad ? " forceload" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			ICProjectDescription projDes = CoreModel.getDefault().getProjectDescriptionManager().getProjectDescription(proj, flags);
 			if(projDes != null){
 				if(BuildDbgUtil.DEBUG)
@@ -2863,7 +2747,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 					buildInfo = ConfigurationDataProvider.getLoaddedBuildInfo(projDes);
 					if(buildInfo != null){
 						if(BuildDbgUtil.DEBUG)
-							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info found, setting as loadded"); //$NON-NLS-1$
+							BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info found, setting as loaded"); //$NON-NLS-1$
 
 						try {
 							setLoaddedBuildInfo(proj, buildInfo);
@@ -2928,14 +2812,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return buildInfo;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Determine if build information can be found. Various attempts are made
 	 * to find the information, and if successful, true is returned; false otherwise.
 	 * Typically, this routine would be called prior to findBuildInfo, to deterimine
 	 * if findBuildInfo should be called to actually do the loading of build
 	 * information, if possible
-	 * @param resource
-	 * @return
 	 */
 	private static boolean canFindBuildInfo(IResource resource) {
 
@@ -2969,15 +2851,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return (buildInfo != null);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * this method is called if managed build info session property
 	 * was not set. The caller will use the project rule
 	 * to synchronize with other callers
 	 * findBuildInfoSynchronized could also be called from project converter
 	 * in this case the ManagedBuildInfo saved in the converter would be returned
-	 *
-	 * @param resource
-	 * @return
 	 */
 /*	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
 		ManagedBuildInfo buildInfo = null;
@@ -3057,7 +2936,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Finds, but does not create, the managed build information for the
 	 * argument.
-	 * Loads the build info in case it is not currently loadded
+	 * Loads the build info in case it is not currently loaded
 	 * Calling this method is the same as calling getBuildInfo(IResource resource, boolean forceLoad)
 	 * with the "forceLoad" argument set to true
 	 *
@@ -3101,12 +2980,12 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Finds, but does not create, the managed build information for the
 	 * argument.
-	 * If the build info is not currently loadded and "forceLoad" argument is set to true,
+	 * If the build info is not currently loaded and "forceLoad" argument is set to true,
 	 * loads the build info from the .cdtbuild file
-	 * In case "forceLoad" is false, does not load the build info and returns null in case it is not loadded
+	 * In case "forceLoad" is false, does not load the build info and returns null in case it is not loaded
 	 *
 	 * @param resource The resource to search for managed build information on.
-	 * @param forceLoad specifies whether the build info should be loadded in case it is not loadded currently.
+	 * @param forceLoad specifies whether the build info should be loaded in case it is not loaded currently.
 	 * @return IManagedBuildInfo The build information object for the resource.
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource, boolean forceLoad) {
@@ -3279,21 +3158,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the instance of the Environment Variable Provider
-	 *
-	 * @return IEnvironmentVariableProvider
+	 * @return the instance of the Environment Variable Provider
 	 */
 	public static IEnvironmentVariableProvider getEnvironmentVariableProvider(){
 		return EnvironmentVariableProvider.getDefault();
 	}
 
 	/**
-	 * Returns the version, if 'id' contains a valid version
+	 * @return the version, if 'id' contains a valid version
 	 * Returns null if 'id' does not contain a valid version
 	 * Returns null if 'id' does not contain a version
-	 *
-	 * @param idAndVersion
-	 * @return String
 	 */
 
 	public static String getVersionFromIdAndVersion(String idAndVersion) {
@@ -3316,11 +3190,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * If the input to this function contains 'id & a valid version', it returns only the 'id' part
+	 * @return If the input to this function contains 'id & a valid version', it returns only the 'id' part
 	 * Otherwise it returns the received input back.
-	 *
-	 * @param idAndVersion
-	 * @return String
 	 */
 	public static String getIdFromIdAndVersion(String idAndVersion) {
 		// If there is a valid version return only 'id' part
@@ -3336,9 +3207,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the instance of the Build Macro Provider
-	 *
-	 * @return IBuildMacroProvider
+	 * @return the instance of the Build Macro Provider
 	 */
 	public static IBuildMacroProvider getBuildMacroProvider(){
 		return BuildMacroProvider.getDefault();
@@ -3659,14 +3528,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 
-	/*
+	/**
 	 * Generic routine for checking the availability of converters for the given
 	 * Build Object.
-	 * @param IBuildObject, This function takes a 'IBuildObject' as an argument
-	 * @return true if there are converters for the given Build Object
-	 * @return false if there are no converters
+	 * 
+	 * @return true if there are converters for the given Build Object.
+	 * Returns false if there are no converters.
 	 */
-
 	public static boolean hasTargetConversionElements(IBuildObject buildObj) {
 
 		// Get the Converter Extension Point
@@ -4072,9 +3940,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Return the Build Location URI or null if one couldn't be found
-	 * @param cfg
-	 * @param builder
 	 * @return build location URI or null if one couldn't be found
 	 * @since 6.0
 	 */
@@ -4815,8 +4680,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * entry-point for the tool-chain modification validation functionality
-	 *
-	 * @return {@link IToolChainModificationManager}
 	 */
 	public static IToolChainModificationManager getToolChainModificationManager(){
 		return ToolChainModificationManager.getInstance();

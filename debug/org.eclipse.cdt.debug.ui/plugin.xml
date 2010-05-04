@@ -247,15 +247,6 @@
                helpContextId="move_to_line_action_context"
                label="%GlobalMoveToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"/>
-         <action
-               id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               disabledIcon="icons/dlcl16/restart.gif"
-               icon="icons/elcl16/restart.gif"
-               helpContextId="restart_action_context"
-               label="%RestartAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup">
-         </action>
       </actionSet>
    </extension>
    <extension
@@ -372,32 +363,6 @@
       </propertyTester>
       </extension>
       
-    <!-- Bug 289526 [debug view] Migrate the Restart feature to the new one, as supported by the platform 
-    Don't contribute this action to context menu if selection isn't an IRestart.  Debug platform
-    already contributes it. -->
-    <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.DebugView"
-            id="org.eclipse.cdt.debug.ui.debugview.popupMenu2">
-         <action
-               label="%RestartAction.label"
-               icon="icons/elcl16/restart.gif"
-               helpContextId="restart_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               menubarPath="stepGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate">
-            <selection class="org.eclipse.cdt.debug.core.model.IRestart"/>
-            
-         </action>
-         <visibility>
-         	<objectClass name="org.eclipse.cdt.debug.core.model.IRestart"/>
-         </visibility>
-      </viewerContribution>
-   </extension>
-      
-     
    <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution

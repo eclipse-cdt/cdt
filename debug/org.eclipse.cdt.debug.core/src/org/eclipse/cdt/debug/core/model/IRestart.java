@@ -14,10 +14,17 @@ package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.DebugException;
 /**
- * Provides the ability to restart a debug target.
+ * Provides the ability to restart a debug target.  
+ * <p>
+ * Note: Debug elements which support restart should implement this interface.
+ * Adopting to this interface is not enough.   
+ * </p>
+ * <p>
+ * Note 2: Debugger can also implement the asynchronous  
+ * {@link org.eclipse.debug.core.commands.IRestartHandler}.
+ * </p>
  * 
- * @deprecated Use org.eclipse.debug.core.commands.IRestartHandler instead.  IRestartHandler
- * handles the call in an asynchronous fashion.
+ * @see org.eclipse.debug.core.commands.IRestartHandler
  */
 public interface IRestart 
 {

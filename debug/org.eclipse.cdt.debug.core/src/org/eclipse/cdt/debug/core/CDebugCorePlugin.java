@@ -18,7 +18,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.breakpointactions.BreakpointActionManager;
+import org.eclipse.cdt.debug.core.command.CCommandAdapterFactory;
 import org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService;
+import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -31,6 +33,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceUtils;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
@@ -331,6 +334,7 @@ public class CDebugCorePlugin extends Plugin {
     public void start( BundleContext context ) throws Exception {
 		super.start( context );
 		initializeCommonSourceLookupDirector();
+		createCommandAdapterFactory();
 		createBreakpointListenersList();
 		createDisassemblyContextService();
 		setSessionManager( new SessionManager() );
@@ -349,6 +353,12 @@ public class CDebugCorePlugin extends Plugin {
 		super.stop( context );
 	}
 
+	private void createCommandAdapterFactory() {
+        IAdapterManager manager= Platform.getAdapterManager();
+        CCommandAdapterFactory actionFactory = new CCommandAdapterFactory();
+        manager.registerAdapters(actionFactory, IRestart.class);
+	}
+	
 	private void initializeCommonSourceLookupDirector() {
 		if ( fCommonSourceLookupDirector == null ) {
 			fCommonSourceLookupDirector = new CommonSourceLookupDirector();

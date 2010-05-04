@@ -901,8 +901,8 @@ public class MIStack extends AbstractDsfService
 	    	// still be re-used.
 	    	StackDepthInfo cachedDepth = fStackDepthCache.get(execDmc.getThreadId());
 	    	if (cachedDepth != null) {
-	    	    if ((maxDepth == 0 && cachedDepth.maxDepthRequested == 0) || 
-	    		    (maxDepth != 0 && (cachedDepth.maxDepthRequested == 0 || cachedDepth.maxDepthRequested >= maxDepth)) ) 
+	    	    if (cachedDepth.maxDepthRequested == 0 || 
+	    		    (maxDepth != 0 && cachedDepth.maxDepthRequested >= maxDepth))
 	    	    {
 	    	        rm.setData(cachedDepth.returnedDepth);
 	    	        rm.done();

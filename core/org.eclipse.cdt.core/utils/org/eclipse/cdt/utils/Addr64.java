@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.internal.core.Messages;
 
-public class Addr64 implements IAddress {
+public class Addr64 implements IAddress, Serializable {
 
 	public static final Addr64 ZERO = new Addr64("0"); //$NON-NLS-1$
 	public static final Addr64 MAX = new Addr64("ffffffffffffffff", 16); //$NON-NLS-1$

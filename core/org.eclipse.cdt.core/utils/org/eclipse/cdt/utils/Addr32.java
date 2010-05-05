@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.internal.core.Messages;
 
-public class Addr32 implements IAddress {
+public class Addr32 implements IAddress, Serializable {
 
 	private static final long MAX_ADDR = 0xffffffffL;
 	

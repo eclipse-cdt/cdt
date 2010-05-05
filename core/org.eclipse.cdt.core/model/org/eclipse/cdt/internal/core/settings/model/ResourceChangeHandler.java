@@ -7,22 +7,22 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Broadcom Corporation - Bug 311189 and clean-up
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.ResourceChangeHandlerBase;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -45,35 +46,78 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 /**
  * This resource change handler notices external changes to the cdt projects
  * and associated project storage metadata files, as well as changes to
- * source folders 
- * 
- * 
- * delegates parts of it's functionality to CProjectDescriptio 
+ * source folders
+ *
+ * Notifies CProjectDescriptionManager on some events, in particular project close and remove
  */
 public class ResourceChangeHandler extends ResourceChangeHandlerBase implements  ISaveParticipant {
-	CProjectDescriptionManager fMngr = CProjectDescriptionManager.getInstance();
-	
-	class RcMoveHandler implements IResourceMoveHandler {
+
+	/**
+	 * A resource move handler which updates the model when C model resources are moved / removed.
+	 * It's responsible for:
+	 *   - Handling project description update after a project move
+	 *   - Noticing the removal of directories that correspond to SourceEntrys
+	 *   - Removing resource specific configuration from removed removed files and folders
+	 *
+	 * It records changes made during an IResourceChangeEvent for subsequent update to the model. This
+	 * is performed in a WorkspaceJob to ensure we don't remove model entries while many changes are in
+	 * progress as part of a team operation. See also Bug 311189
+	 */
+	private static class RcMoveHandler implements IResourceMoveHandler {
+		CProjectDescriptionManager fMngr = CProjectDescriptionManager.getInstance();
+
+		/** Map of modified project descriptions to update */
 		Map<IProject, ICProjectDescription> fProjDesMap = new HashMap<IProject, ICProjectDescription>();
-		Set<IProject> fRemovedProjSet = new HashSet<IProject>();
+		/** Set of removed resources */
+		Collection<IProject> fRemovedProjects = new HashSet<IProject>();
+		/** Map of moved & removed resources: 'from' -> 'to'; 'to' may be null for removed resources */
+		Map<IResource, IResource> fMovedResources = new HashMap<IResource, IResource>();
 
 		public void handleProjectClose(IProject project) {
 			fMngr.projectClosedRemove(project);
 		}
-		
-		private ICExclusionPatternPathEntry[] checkMove(IPath fromFullPath, IPath toFullPath, ICExclusionPatternPathEntry[] entries){
+
+		/**
+		 * Check and return a new ICSourceEntry[] when a path has been changed in a project
+		 * @param fromFullPath
+		 * @param toFullPath
+		 * @param entries - source entries to check
+		 * @return ICSourceEntry[] or null if no change to the source entries
+		 */
+		private ICSourceEntry[] checkMove(IPath fromFullPath, IPath toFullPath, ICSourceEntry[] entries){
 			boolean modified = false;
 			for(int k = 0; k < entries.length; k++){
 				if(entries[k].getFullPath().equals(fromFullPath)){
-					ICExclusionPatternPathEntry entry = entries[k];
-					entries[k] = (ICExclusionPatternPathEntry)CDataUtil.createEntry(entry.getKind(), toFullPath.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
+					ICSourceEntry entry = entries[k];
+					entries[k] = (ICSourceEntry)CDataUtil.createEntry(entry.getKind(), toFullPath.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
 					modified = true;
 				}
 			}
 			return modified ? entries : null;
 		}
-	
-		@SuppressWarnings("fallthrough")
+
+		/**
+		 * Check and return a new ICSourceEntry[] which doesn't contain rcFullPath as a source path
+		 * @param rcFullPath - that path being removed
+		 * @param entries - source entries to check
+		 * @return ICSourceEntry[] or null if no change
+		 */
+		private ICSourceEntry[] checkRemove(IPath rcFullPath, ICSourceEntry[] entries) {
+			List<ICSourceEntry> updatedList = null;
+			int num = 0;
+			for (ICSourceEntry entrie : entries) {
+				if(entrie.getFullPath().equals(rcFullPath)){
+					if(updatedList == null){
+						updatedList = new ArrayList<ICSourceEntry>(Arrays.asList(entries));
+					}
+					updatedList.remove(num);
+				} else {
+					num++;
+				}
+			}
+			return updatedList != null ? updatedList.toArray(new ICSourceEntry[updatedList.size()]) : null;
+		}
+
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
 			boolean proceed = true;
 			IProject fromProject = fromRc.getProject();
@@ -81,83 +125,32 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			switch(toRc.getType()){
 			case IResource.PROJECT:{
 				ICProjectDescription des = fMngr.projectMove(fromProject, toProject);
-				fRemovedProjSet.add(fromProject);
+				fRemovedProjects.add(fromProject);
 				if(des != null)
 					fProjDesMap.put(toProject, des);
 			}
 			break;
-			case IResource.FOLDER:{
-				IPath fromFullPath = fromRc.getFullPath();
-				IPath toFullPath = toRc.getFullPath();
-				if(toFullPath.equals(fromFullPath))
+			case IResource.FOLDER:
+			case IResource.FILE:
+				// Only handle move in the same project 
+				// TODO: should we treat this as a remove?
+				if (!toProject.equals(fromProject))
 					break;
-
-				if(!toProject.equals(fromProject))
+				// If path hasn't changed, nothing to do
+				if (fromRc.getFullPath().equals(toRc.getFullPath()))
 					break;
-				
-				ICProjectDescription des = getProjectDescription(toProject, true);
-				if(des != null){
-					ICConfigurationDescription cfgDess[] = des.getConfigurations();
-					for (ICConfigurationDescription cfg : cfgDess) {
-						ICExclusionPatternPathEntry entries[] = cfg.getSourceEntries();
-						entries = checkMove(fromFullPath, toFullPath, entries);
-						if(entries != null){
-							try {
-								cfg.setSourceEntries((ICSourceEntry[])entries);
-							} catch (WriteAccessException e) {
-								CCorePlugin.log(e);
-							} catch (CoreException e) {
-								CCorePlugin.log(e);
-							}
-						}
-						
-//don't do anything about output entries						ICBuildSetting bs = cfg.getBuildSetting();
-//						if(bs != null){
-//							entries = bs.getOutputDirectories();
-//							entries = checkMove(fromFullPath, toFullPath, entries);
-//							if(entries != null){
-//								bs.setOutputDirectories((ICOutputEntry[])entries);
-//							}
-//						}
-					}
-				}
-				//do not break.. proceed with rc description move
-			}
-			case IResource.FILE:{
-				IPath fromRcProjPath = fromRc.getProjectRelativePath();
-				IPath toRcProjPath = toRc.getProjectRelativePath();
-				if(toRcProjPath.equals(fromRcProjPath))
-					break;
-
-				if(!toProject.equals(fromProject))
-					break;
-				
-				ICProjectDescription des = getProjectDescription(toProject, true);
-				if(des != null){
-					ICConfigurationDescription cfgDess[] = des.getConfigurations();
-					for (ICConfigurationDescription cfgDes : cfgDess) {
-						ICResourceDescription rcDescription = cfgDes.getResourceDescription(fromRcProjPath, true);
-						if(rcDescription != null){
-							try {
-								rcDescription.setPath(toRcProjPath);
-							} catch (WriteAccessException e) {
-//							} catch (CoreException e) {
-							}
-						}
-					}
-				}
+				fMovedResources.put(fromRc, toRc);
 				break;
 			}
-			}
-			
+
 			return proceed;
 		}
-		
-		private ICProjectDescription getProjectDescription(IResource rc, boolean load){
-			IProject project = rc.getProject(); 
+
+		private ICProjectDescription getProjectDescription(IResource rc) {
+			IProject project = rc.getProject();
 			ICProjectDescription des = fProjDesMap.get(project);
 			if(des == null && !fProjDesMap.containsKey(project)){
-				int flags = load ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
+				int flags = 0;
 				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
 				flags |= ICProjectDescriptionManager.GET_WRITABLE;
 				des = fMngr.getProjectDescription(project, flags);
@@ -166,131 +159,105 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			}
 			return des;
 		}
-		
-//		private void setProjectDescription(IProject project, ICProjectDescription des){
-//			fProjDesMap.put(project, des);
-//		}
-		
-		private List<ICExclusionPatternPathEntry> checkRemove(IPath rcFullPath, ICExclusionPatternPathEntry[] entries){
-			List<ICExclusionPatternPathEntry> updatedList = null;
-			int num = 0;
-			for (ICExclusionPatternPathEntry entrie : entries) {
-				if(entrie.getFullPath().equals(rcFullPath)){
-					if(updatedList == null){
-						updatedList = new ArrayList<ICExclusionPatternPathEntry>(Arrays.asList(entries));
-					}
-					updatedList.remove(num);
-				} else {
-					num++;
-				}
-			}
-			return updatedList;
-		}
-	
-		@SuppressWarnings("fallthrough")
+
 		public boolean handleResourceRemove(IResource rc) {
 			boolean proceed = true;
 			IProject project = rc.getProject();
 			switch(rc.getType()){
 			case IResource.PROJECT:
 				fMngr.projectClosedRemove(project);
-				fRemovedProjSet.add(project);
+				fRemovedProjects.add(project);
 				proceed = false;
 				break;
 			case IResource.FOLDER:
-				if(project.exists()){
-					ICProjectDescription des = getProjectDescription(project, true);
-					if(des != null){
-						IPath rcFullPath = rc.getFullPath();
-						ICConfigurationDescription cfgDess[] = des.getConfigurations();
-						for (ICConfigurationDescription cfg : cfgDess) {
-							ICExclusionPatternPathEntry[] entries = cfg.getSourceEntries();
-							List<ICExclusionPatternPathEntry> updatedList = checkRemove(rcFullPath, entries);
-							
-							if(updatedList != null){
-								try {
-									cfg.setSourceEntries(updatedList.toArray(new ICSourceEntry[updatedList.size()]));
-								} catch (WriteAccessException e) {
-									CCorePlugin.log(e);
-								} catch (CoreException e) {
-									CCorePlugin.log(e);
-								}
-							}
-							
-//don't do anything about output entries							ICBuildSetting bs = cfg.getBuildSetting();
-//							if(bs != null){
-//								entries = bs.getOutputDirectories();
-//								updatedList = checkRemove(rcFullPath, entries);
-//								if(updatedList != null){
-//									bs.setOutputDirectories((ICOutputEntry[])updatedList.toArray(new ICOutputEntry[updatedList.size()]));
-//								}
-//							}
-						}
-					}
-				}
-				//do not break.. proceed with rc description remove
 			case IResource.FILE:
-				if(project.exists()){
-					ICProjectDescription des = getProjectDescription(project, true);
-					if(des != null){
-						IPath rcProjPath = rc.getProjectRelativePath();
-						ICConfigurationDescription cfgDess[] = des.getConfigurations();
-						for (ICConfigurationDescription cfgDes : cfgDess) {
-							ICResourceDescription rcDescription = cfgDes.getResourceDescription(rcProjPath, true);
-							if(rcDescription != null){
-								try {
-									cfgDes.removeResourceDescription(rcDescription);
-								} catch (WriteAccessException e) {
-									CCorePlugin.log(e);
-								} catch (CoreException e) {
-									CCorePlugin.log(e);
-								}
-							}
-						}
-					}
-				}
+				if (project.isAccessible())
+					fMovedResources.put(rc, null);
 				break;
 			}
-			
+
 			return proceed;
 		}
 
 		public void done() {
-			for(Iterator<Map.Entry<IProject, ICProjectDescription>> iter = fProjDesMap.entrySet().iterator(); iter.hasNext();){
-				Map.Entry<IProject, ICProjectDescription> entry = iter.next();
-				if(fRemovedProjSet.contains(entry.getKey())){
-					iter.remove();
-				} else {
-					ICProjectDescription des = entry.getValue();
-					if(des != null && !des.isModified())
-						iter.remove();
-				}
+			// If the resource's project was moved / removed, don't consider the path for source entry removal
+			for (Iterator<IResource> it = fMovedResources.keySet().iterator(); it.hasNext() ; ) {
+				if (fRemovedProjects.contains(it.next().getProject()))
+					it.remove();
 			}
-			
-			if(!fProjDesMap.isEmpty()){
-				CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable(){
 
-					public void run(IProgressMonitor monitor) throws CoreException {
-						for (Entry<IProject, ICProjectDescription> entry : fProjDesMap.entrySet()) {
-							IProject project = entry.getKey();
-							if(!project.isOpen())
-								continue;
-							
-							ICProjectDescription des = entry.getValue();
-							
+			if (fMovedResources.isEmpty() && fProjDesMap.isEmpty())
+				return;
+
+			// Handle moved and removed resources
+			//   - reconciles  both source-entry move & remove
+			//   - resource configuration move & remove
+			// Run it in the Workspace, so we don't trip Bug 311189
+			CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable(){
+
+				public void run(IProgressMonitor monitor) throws CoreException {
+					for (Map.Entry<IResource, IResource> entry : fMovedResources.entrySet()) {
+						IResource from = entry.getKey();
+						IResource to = entry.getValue();
+						// TODO: don't handle moves to a different project
+						assert(to == null || to.getProject().equals(from.getProject()));
+
+						// Bug 311189 -- if the resource still exists now, don't treat as a remove!
+						if (to == null && from.exists())
+							continue;
+
+						ICProjectDescription prjDesc = getProjectDescription(from);
+						if (prjDesc == null)
+							continue;
+
+						for (ICConfigurationDescription cfg : prjDesc.getConfigurations()) {
 							try {
-								fMngr.setProjectDescription(project, des);
+								// Handle source entry change
+								if (from instanceof IFolder) {
+									ICSourceEntry[] entries = cfg.getSourceEntries();
+									if (to != null)
+										entries = checkMove(from.getFullPath(), to.getFullPath(), entries);
+									else
+										entries = checkRemove(from.getFullPath(), entries);
+									// Update if there have been any changes
+									if(entries != null)
+										cfg.setSourceEntries(entries);
+								}
+
+								// We deliberately don't remove output entries. These directories may not exist when
+								// the project is created and may be deleted at during a normal project lifecycle
+
+								// Handle resource description change
+								ICResourceDescription rcDescription = cfg.getResourceDescription(from.getProjectRelativePath(), true);
+								if(rcDescription != null)
+									if (to != null)
+										rcDescription.setPath(to.getProjectRelativePath());
+									else
+										cfg.removeResourceDescription(rcDescription);
+							} catch (WriteAccessException e) {
+								CCorePlugin.log(e);
 							} catch (CoreException e) {
 								CCorePlugin.log(e);
 							}
 						}
 					}
-					
-				}, new NullProgressMonitor());
-			}
+					fMovedResources.clear();
+
+					// Save all the changed project descriptions
+					for (Entry<IProject, ICProjectDescription> entry : fProjDesMap.entrySet()) {
+						if(!entry.getKey().isAccessible())
+							continue;
+						try {
+							fMngr.setProjectDescription(entry.getKey(), entry.getValue());
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+						}
+					}
+				}
+			}, new NullProgressMonitor());
 		}
 	}
-	
+
 
 	@Override
 	protected IResourceMoveHandler createResourceMoveHandler(
@@ -299,7 +266,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	}
 
 	/*
-	 *  I S a v e P a r t i c i p a n t 
+	 *  I S a v e P a r t i c i p a n t
 	 */
 
 	/* (non-Javadoc)
@@ -340,15 +307,15 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 					IResourceDelta projDelta = proj;
 					if(!shouldVisit((IProject)projDelta.getResource()))
 						continue;
-					
+
 					if((projDelta.getKind() & IResourceDelta.REMOVED) == IResourceDelta.REMOVED)
 						continue;
-					
+
 					IResourceDelta children[] = projDelta.getAffectedChildren();
 					for (IResourceDelta child : children) {
 						IResource rc = child.getResource();
 						if(rc.getType() != IResource.FILE)
-							continue;					
+							continue;
 					}
 				}
 			}
@@ -356,7 +323,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		}
 		super.doHandleResourceMove(event, handler);
 	}
-	
-	
+
+
 
 }

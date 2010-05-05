@@ -10,6 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     IBM Corporation
+ *     James Blackburn (Broadcom Corporation)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -61,7 +62,6 @@ import org.eclipse.cdt.internal.core.settings.model.ConfigBasedPathEntryStore;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -1430,7 +1430,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 * @param sourceRoot
 	 * @throws CModelException
 	 */
-	void updatePathEntryFromDeleteSource(ISourceRoot sourceRoot) throws CModelException {
+	void updatePathEntryFromDeleteSource(final ISourceRoot sourceRoot) throws CModelException {
 		final ICProject cproject = sourceRoot.getCProject();
 		IPathEntry[] rawEntries = getRawPathEntries(cproject);
 		boolean change = false;
@@ -1450,29 +1450,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			IPathEntry[] newEntries = new IPathEntry[list.size()];
 			list.toArray(newEntries);
 			final IPathEntry[] finalEntries = newEntries;
-			Job updatePathEntry = new Job("PathEntry Update source roots") { //$NON-NLS-1$
-				
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-				 */
+			Job updatePathEntry = new WorkspaceJob("PathEntry Update source roots") { //$NON-NLS-1$
 				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						CCorePlugin.getWorkspace().run(new IWorkspaceRunnable() {
-							
-							/* (non-Javadoc)
-							 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-							 */
-							public void run(IProgressMonitor mon) throws CoreException {
-								setRawPathEntries(cproject, finalEntries, mon);
-							}
-						}, null);
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
-					
+				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+					// If the path which triggered this change exists when we run this job then nothing to do
+					if (sourceRoot.getResource() == null || !sourceRoot.getResource().exists())
+						setRawPathEntries(cproject, finalEntries, monitor);
 					return Status.OK_STATUS;
 				}
 			};

@@ -29,12 +29,29 @@ import org.eclipse.core.runtime.IPath;
 
 public abstract class ResourceChangeHandlerBase implements IResourceChangeListener {
 	public interface IResourceMoveHandler {
+		/**
+		 * Resource moved fromRc to toRc
+		 * @param fromRc
+		 * @param toRc
+		 * @return boolean indicating if children should be visited
+		 */
 		boolean handleResourceMove(IResource fromRc, IResource toRc);
-		
+
+		/**
+		 * Handle a resource remove
+		 * @param rc Removed IResource
+		 * @return boolean indicating if children should be visited
+		 */
 		boolean handleResourceRemove(IResource rc);
 
+		/**
+		 * Handle a project close
+		 */
 		void handleProjectClose(IProject project);
-		
+
+		/**
+		 * Call-back ticked at end of a resource change event 
+		 */
 		void done();
 	}
 

@@ -40,7 +40,10 @@ public class URIRelativeLocationConverter implements IIndexLocationConverter {
 	}
 	
 	public IIndexFileLocation fromInternalFormat(String raw) {
-		URI uri= baseURI.resolve(URIUtil.toURI(raw).getRawPath().substring(1));
+		String rawPath = URIUtil.toURI(raw).getRawPath();
+		if (rawPath.length() > 0 && rawPath.charAt(0) == '/')
+			rawPath= rawPath.substring(1);
+		URI uri= baseURI.resolve(rawPath);
 		return new IndexFileLocation(uri, null);
 	}
 	

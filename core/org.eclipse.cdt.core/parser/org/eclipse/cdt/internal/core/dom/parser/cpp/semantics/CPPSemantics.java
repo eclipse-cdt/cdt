@@ -2984,6 +2984,25 @@ public class CPPSemantics {
 						doKoenigLookup(funcData);
 					} catch (DOMException e) {
 					}
+					// Filter with file-set
+					IASTTranslationUnit tu= parent.getTranslationUnit();
+					if (tu != null && funcData.foundItems instanceof Object[]) {
+						final IIndexFileSet fileSet = tu.getIndexFileSet();
+						if (fileSet != null) {
+							int j=0;
+							final Object[] items= (Object[]) funcData.foundItems;
+							for (int i = 0; i < items.length; i++) {
+								Object item = items[i];
+								items[i]= null;
+								if (item instanceof IIndexBinding) {
+									if (!fileSet.containsDeclaration((IIndexBinding) item)) {
+										continue;
+									}
+								}
+								items[j++]= item;
+							}
+						}
+					}
 				}
 			} catch (DOMException e) {
 				return null;

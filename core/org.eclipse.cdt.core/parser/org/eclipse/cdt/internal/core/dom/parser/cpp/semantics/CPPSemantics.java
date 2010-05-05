@@ -2801,7 +2801,7 @@ public class CPPSemantics {
     		return null;
     	IType type;
 		try {
-			type = SemanticUtil.getSimplifiedType(((ICPPVariable) binding).getType());
+			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
 	    	ICPPClassType classType = (ICPPClassType) type;

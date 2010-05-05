@@ -1813,7 +1813,7 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.add.include"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
-            sequence="M1+M2+S"
+            sequence="M1+M3+S"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.sort.lines"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>

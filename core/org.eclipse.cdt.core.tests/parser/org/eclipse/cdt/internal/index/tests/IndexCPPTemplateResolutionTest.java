@@ -21,13 +21,13 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -76,6 +76,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public static class ProjectWithDepProj extends IndexCPPTemplateResolutionTest {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
+		
+		// template <typename T= int> class XT;
+		
+	    // #include "header.h"
+		// template <typename T> class XT {};
+		// void test() {
+		//    XT<> x;
+		// };		
+		@Override
+		public void testDefaultTemplateArgInHeader_264988() throws Exception {
+			// Not supported across projects (the composite index does not merge
+			// default values of template parameters).
+		}
 	}
 	
 	public static void addTests(TestSuite suite) {		

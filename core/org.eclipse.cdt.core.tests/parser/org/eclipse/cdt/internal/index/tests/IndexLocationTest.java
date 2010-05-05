@@ -186,17 +186,20 @@ public class IndexLocationTest extends BaseTestCase {
 		
 		IFolder content= cproject.getProject().getFolder("content");
 		content.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, null);
+		final IFile file = content.getFile("external2.h");
+		assertTrue(file.exists());
 		
 		ICProject cproject2= CProjectHelper.createCProject("LocationTests2"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		deleteOnTearDown(cproject2);
 		
 		IFolder content2= cproject2.getProject().getFolder("content");
 		content2.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, null);
+		assertTrue(content2.getFile("external2.h").exists());
 
-		waitForIndexer(cproject2);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, 10000);
 		CCorePlugin.getIndexManager().reindex(cproject);
 		waitForIndexer(cproject);
-		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 		index.acquireReadLock();
 		try {
 			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, NPM);

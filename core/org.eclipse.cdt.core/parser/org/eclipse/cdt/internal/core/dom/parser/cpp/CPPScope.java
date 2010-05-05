@@ -81,7 +81,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return physicalNode;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public void addName(IASTName name) throws DOMException {
 		// don't add inactive names to the scope
 		if (!name.isActive())
@@ -328,7 +328,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	    return CPPSemantics.findBindings(this, name, false);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
     public void addBinding(IBinding binding) {
         if (bindings == null)
             bindings = new CharArrayObjectMap(1);

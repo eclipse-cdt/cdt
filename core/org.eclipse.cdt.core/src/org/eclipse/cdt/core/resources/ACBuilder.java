@@ -230,6 +230,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	* on #getDelta(...) being accurate should return a WorkspaceRoot scheduling rule.
 	* @since 5.2
 	*/
+	@Override
 	@SuppressWarnings("rawtypes")
 	public ISchedulingRule getRule(int trigger, Map args) {
 		return null;

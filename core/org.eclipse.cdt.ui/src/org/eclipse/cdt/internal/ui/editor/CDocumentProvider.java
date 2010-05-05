@@ -651,7 +651,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see AnnotationModel#addAnnotation(Annotation, Position, boolean)
 		 */
 		@Override
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({ "unchecked" })
 		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 			super.addAnnotation(annotation, position, fireModelChanged);
 			

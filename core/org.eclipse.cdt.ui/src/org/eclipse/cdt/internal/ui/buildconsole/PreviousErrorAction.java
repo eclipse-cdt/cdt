@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Dmitry Kozlov (CodeSourcery) - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.buildconsole;
@@ -23,7 +24,7 @@ public class PreviousErrorAction extends Action {
 	private BuildConsolePage fConsolePage;
 
 	public PreviousErrorAction(BuildConsolePage page) {
-		super(ConsoleMessages.NextErrorAction_Tooltip); 
+		super(ConsoleMessages.PreviousErrorAction_Tooltip); 
 		fConsolePage = page;
 		setEnabled(true);
 		setToolTipText(ConsoleMessages.PreviousErrorAction_Tooltip); 

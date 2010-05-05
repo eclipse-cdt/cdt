@@ -203,8 +203,11 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						assert(to == null || to.getProject().equals(from.getProject()));
 
 						// Bug 311189 -- if the resource still exists now, don't treat as a remove!
-						if (to == null && from.exists())
-							continue;
+						if (to == null) {
+							from.refreshLocal(IResource.DEPTH_ZERO, null);
+							if (from.exists())
+								continue;
+						}
 
 						ICProjectDescription prjDesc = getProjectDescription(from);
 						if (prjDesc == null)

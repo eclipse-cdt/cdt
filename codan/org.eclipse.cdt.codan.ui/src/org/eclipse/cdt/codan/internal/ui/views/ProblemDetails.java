@@ -12,9 +12,18 @@ package org.eclipse.cdt.codan.internal.ui.views;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -24,10 +33,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Problems Details view show details for selected problem marker.
@@ -49,6 +61,7 @@ public class ProblemDetails extends ViewPart {
 	 */
 	private Link description;
 	private GenericCodanProblemDetailsProvider genProvider = new GenericCodanProblemDetailsProvider();
+	private AbstractCodanProblemDetailsProvider curProvider = genProvider;
 
 	/**
 	 * The constructor.
@@ -68,13 +81,15 @@ public class ProblemDetails extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String link = e.text;
-				if (link==null) return;
+				if (link == null)
+					return;
 				if (link.startsWith("http")) { //$NON-NLS-1$
 					org.eclipse.swt.program.Program.launch(e.text);
 					return;
 				}
-				if (link.startsWith("source:")) { //$NON-NLS-1$
-					// open in eclipse editor TODO
+				// link file format example "file:/tmp/file.c#42", 42 is the line number
+				if (link.startsWith("file:")) { //$NON-NLS-1$
+					openFile(link);
 					return;
 				}
 				if (link.startsWith("help:")) { //$NON-NLS-1$
@@ -136,6 +151,7 @@ public class ProblemDetails extends ViewPart {
 	}
 
 	private void applyProvider(AbstractCodanProblemDetailsProvider provider) {
+		curProvider = provider;
 		setTextSafe(message, provider, provider.getStyledProblemMessage());
 		setTextSafe(description, provider, provider.getStyledProblemDescription());
 	}
@@ -155,4 +171,37 @@ public class ProblemDetails extends ViewPart {
 	public void setFocus() {
 		message.setFocus();
 	}
+
+    @SuppressWarnings("restriction")
+    public void openFile(String link) {
+	    String file = link.replaceFirst("^file:", ""); //$NON-NLS-1$ //$NON-NLS-2$
+	    file = file.replaceAll("#\\d+$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+	    String sline = link.replaceAll(".*#(\\d+)$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
+	    try {
+	    	IPath pfile = new Path(file);
+	    	IResource markerResource = curProvider.getMarker().getResource();
+			ICElement element = CoreModel.getDefault().create(markerResource);
+	    	IEditorPart part = EditorUtility.openInEditor(pfile, element);
+	    	int line = 0;
+	    	try {
+	    		line = Integer.parseInt(sline);
+	    	} catch (NumberFormatException e2) {
+	    		// no line
+	    	}
+	    	if (line > 0) {
+	    		if (part instanceof ITextEditor) {
+	    			ITextEditor textEditor = (ITextEditor) part;
+					IDocument document = textEditor.getDocumentProvider().getDocument(
+	    			        part.getEditorInput());
+	    			try {
+	                    textEditor.selectAndReveal(document.getLineOffset(line-1), 0);
+	                } catch (BadLocationException e1) {
+	                    return;
+	                }
+	    		}
+	    	}
+	    } catch (PartInitException e1) {
+	    	CodanUIActivator.log(e1);
+	    }
+    }
 }

@@ -56,7 +56,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * @return
 	 */
 	protected String getProblemId() {
-		String id = marker.getAttribute(IMarker.PROBLEM, (String) null); 
+		String id = marker.getAttribute(IMarker.PROBLEM, (String) null);
 		return id;
 	}
 
@@ -77,14 +77,14 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 */
 	public String getStyledProblemMessage() {
 		String message = escapeForLink(getProblemMessage());
-		String loc = marker.getResource().getFullPath().toOSString();
-		String loc2 = marker.getAttribute(IMarker.LOCATION, ""); //$NON-NLS-1$
-		if (loc2.length()>0)
-			loc=loc2;
-		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
-		return message + "\n" + loc + ":" + line; //$NON-NLS-1$//$NON-NLS-2$
+		String href = getLocationHRef();
+		String link = href.replaceFirst("^file:", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		link = link.replaceFirst("#(\\d+)$", ":$1");  //$NON-NLS-1$//$NON-NLS-2$
+		return "<a href=\"" + href + "\">" + link + "</a>\n" + message; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
-
+	protected String getLocationHRef() {
+		return CodanEditorUtility.getLocationHRef(marker);
+	}
 	/**
 	 * Return styled problem description. This text would be used in Link widget.
 	 * String can include <a> tags to which would be
@@ -109,6 +109,6 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * such as & (mnemonic)
 	 */
 	protected String escapeForLink(String text) {
-		return text.replaceAll("&", "&&");  //$NON-NLS-1$//$NON-NLS-2$
+		return text.replaceAll("&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 }

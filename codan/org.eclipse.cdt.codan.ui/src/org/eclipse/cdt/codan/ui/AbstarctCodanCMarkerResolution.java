@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -32,8 +26,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * description client class should additionally implement
  * {@link IMarkerResolution2}
  */
-public abstract class AbstarctCodanCMarkerResolution implements
-		IMarkerResolution {
+public abstract class AbstarctCodanCMarkerResolution implements IMarkerResolution {
 	/**
 	 * Get position offset from marker. If CHAR_START attribute is not set for
 	 * marker, line and document would be used.
@@ -65,35 +58,16 @@ public abstract class AbstarctCodanCMarkerResolution implements
 	 *            the marker to resolve
 	 */
 	public void run(IMarker marker) {
-		// See if there is an open editor on the file containing the marker
-		IWorkbenchWindow w = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (w == null) {
-			return;
-		}
-		IWorkbenchPage page = w.getActivePage();
-		if (page == null) {
-			return;
-		}
-		IFileEditorInput input = new FileEditorInput((IFile) marker
-				.getResource());
-		IEditorPart editorPart = page.findEditor(input);
-		if (editorPart == null) {
-			// open an editor
-			try {
-				editorPart = IDE.openEditor(page, (IFile) marker.getResource(),
-						true);
-			} catch (PartInitException e) {
-				e.printStackTrace();
-			}
-		}
-		if (editorPart == null) {
-			return;
-		}
+		IEditorPart editorPart;
+        try {
+	        editorPart = CodanEditorUtility.openInEditor(marker);
+        } catch (PartInitException e) {
+	        CodanUIActivator.log(e);
+	        return;
+        }
 		if (editorPart instanceof ITextEditor) {
 			ITextEditor editor = (ITextEditor) editorPart;
-			IDocument doc = editor.getDocumentProvider().getDocument(
-					editor.getEditorInput());
+			IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 			apply(marker, doc);
 		}
 	}

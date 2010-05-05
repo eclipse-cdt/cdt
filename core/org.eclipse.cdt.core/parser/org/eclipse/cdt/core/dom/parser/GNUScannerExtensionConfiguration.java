@@ -50,7 +50,7 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
     	addPreprocessorKeyword(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
     	addPreprocessorKeyword(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
 
-		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		addKeyword(GCCKeywords.cp__ALIGNOF, IGCCToken.t___alignof__ );
 		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
 		addKeyword(GCCKeywords.cp__ASM, IToken.t_asm); 
 		addKeyword(GCCKeywords.cp__ASM__, IToken.t_asm); 

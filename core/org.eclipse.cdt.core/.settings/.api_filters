@@ -23,5 +23,11 @@
                 <message_argument value="5.0.0.200806171202"/>
             </message_arguments>
         </filter>
+        <filter id="924844039">
+            <message_arguments>
+                <message_argument value="5.0.4.qualifier"/>
+                <message_argument value="5.0.0.200806171202"/>
+            </message_arguments>
+        </filter>
     </resource>
 </component>

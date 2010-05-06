@@ -24,9 +24,9 @@ public interface IGDBJtagDevice {
 
 	/**
 	 * Device reset command
-	 * @param commands ommands collection
+	 * @param commands collection
 	 */
-	public void doReset(Collection commands);
+	public void doReset(Collection<String> commands);
 	
 	/**
 	 * Default device delay in millisecond
@@ -39,7 +39,7 @@ public interface IGDBJtagDevice {
 	 * @param delay delay in second
 	 * @param commands device specific delay commands
 	 */
-	public void doDelay(int delay, Collection commands);
+	public void doDelay(int delay, Collection<String> commands);
 	
 	/**
 	 * Target needs to be in pause mode in order to do
@@ -47,15 +47,16 @@ public interface IGDBJtagDevice {
 	 * MMU takes control
 	 * @param commands device specific pause commands
 	 */
-	public void doHalt(Collection commands);
+	public void doHalt(Collection<String> commands);
 	
 	/**
 	 * Commands to connect to remote JTAG device
 	 * @param ip host name of IP address of JTAG device
 	 * @param port TCP socket port number of JTAG device
 	 * @param commands remote connection commands
+
 	 */
-	public void doRemote(String ip, int port, Collection commands);
+	public void doRemote(String ip, int port, Collection<String> commands);
 	
 	/**
 	 * Commands to download the executable binary to target
@@ -63,7 +64,7 @@ public interface IGDBJtagDevice {
 	 * @param imageOffset executable binary memory offset
 	 * @param commands executable binary download commands
 	 */
-	public void doLoadImage(String imageFileName, String imageOffset, Collection commands);
+	public void doLoadImage(String imageFileName, String imageOffset, Collection<String> commands);
 	
 	/**
 	 * Commands to download the symbols file to target
@@ -71,37 +72,39 @@ public interface IGDBJtagDevice {
 	 * @param symbolOffset symbols file memory offset
 	 * @param commands symbols file download command
 	 */
-	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection commands);
+	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection<String> commands);
 	
 	/**
 	 * Commands to set initial program counter
 	 * @param pc program counter
 	 * @param commands set program counter commands
 	 */
-	public void doSetPC(String pc, Collection commands);
+	public void doSetPC(String pc, Collection<String> commands);
 	
 	/**
 	 * Commands to set initial breakpoint
 	 * @param stopAt initial breakpoint location
 	 * @param commands set breakpoint commands
 	 */
-	public void doStopAt(String stopAt, Collection commands);
+	public void doStopAt(String stopAt, Collection<String> commands);
 	
 	/**
 	 * De-freeze the target in order to start debugging
 	 * @param commands commands to continue the target
 	 */
-	public void doContinue(Collection commands);
+	public void doContinue(Collection<String> commands);
 	
 	/**
 	 * Device specific default hostname of IP address
 	 * @return default hostname of IP address
+
 	 */
 	public String getDefaultIpAddress();
 	
 	/**
 	 * Device specific default port number
 	 * @return default port number
+
 	 */
 	public String getDefaultPortNumber();
 

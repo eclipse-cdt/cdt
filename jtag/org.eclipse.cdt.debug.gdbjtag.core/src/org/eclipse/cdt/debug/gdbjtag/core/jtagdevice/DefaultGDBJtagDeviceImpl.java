@@ -15,24 +15,29 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 import java.util.Collection;
 
 /**
- * @author ajin
+ * Default implementation of the "jtag device"
  *
  */
 public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 
+	/**
+	 * @since 7.0
+	 */
+	protected static final String LINESEP = System.getProperty("line.separator"); //$NON-NLS-1$
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doDelay(int, java.util.Collection)
 	 */
-	public void doDelay(int delay, Collection commands) {
-		String cmd = "monitor delay " + String.valueOf(delay * 1000);
+	public void doDelay(int delay, Collection<String> commands) {
+		String cmd = "monitor delay " + String.valueOf(delay * 1000); //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doReset(java.util.Collection)
 	 */
-	public void doReset(Collection commands) {
-		String cmd = "monitor reset run";
+	public void doReset(Collection<String> commands) {
+		String cmd = "monitor reset run"; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 
@@ -46,42 +51,42 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doRemote(java.lang.String, int, java.util.Collection)
 	 */
-	public void doRemote(String ip, int port, Collection commands) {
-		String cmd = "target remote " + ip + ":" + String.valueOf(port);
+	public void doRemote(String ip, int port, Collection<String> commands) {
+		String cmd = "target remote " + ip + ":" + String.valueOf(port); //$NON-NLS-1$ //$NON-NLS-2$
 		addCmd(commands, cmd);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doHalt(java.util.Collection)
 	 */
-	public void doHalt(Collection commands) {
-		String cmd = "monitor halt";
+	public void doHalt(Collection<String> commands) {
+		String cmd = "monitor halt"; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doContinue(java.util.Collection)
 	 */
-	public void doContinue(Collection commands) {
-		String cmd = "continue";
+	public void doContinue(Collection<String> commands) {
+		String cmd = "continue"; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doLoadImage(java.lang.String, java.lang.String, java.util.Collection)
 	 */
-	public void doLoadImage(String imageFileName, String imageOffset, Collection commands) {
+	public void doLoadImage(String imageFileName, String imageOffset, Collection<String> commands) {
 		String file = escapeScpaces(imageFileName);
-		String cmd = "restore " + file + " " + imageOffset;
+		String cmd = "restore " + file + " " + imageOffset; //$NON-NLS-1$ //$NON-NLS-2$
 		addCmd(commands, cmd);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doLoadSymbol(java.lang.String, java.lang.String, java.util.Collection)
 	 */
-	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection commands) {
+	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection<String> commands) {
 		String file = escapeScpaces(symbolFileName);
-		String cmd = "add-sym " + file + " " + symbolOffset;
+		String cmd = "add-sym " + file + " " + symbolOffset; //$NON-NLS-1$ //$NON-NLS-2$
 		addCmd(commands, cmd);
 	}
 	
@@ -93,38 +98,38 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doSetPC(java.lang.String, java.util.Collection)
 	 */
-	public void doSetPC(String pc, Collection commands) {
-		String cmd = "set $pc=0x" + pc;
+	public void doSetPC(String pc, Collection<String> commands) {
+		String cmd = "set $pc=0x" + pc; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doStopAt(java.lang.String, java.util.Collection)
 	 */
-	public void doStopAt(String stopAt, Collection commands) {
-		String cmd = "tbreak " + stopAt;
+	public void doStopAt(String stopAt, Collection<String> commands) {
+		String cmd = "tbreak " + stopAt; //$NON-NLS-1$
 		addCmd(commands, cmd);
 	}
 
 	/*
 	 * addCmd Utility method to format commands
 	 */
-	protected void addCmd(Collection commands, String cmd) {
-		commands.add(cmd + System.getProperty("line.separator"));
+	protected void addCmd(Collection<String> commands, String cmd) {
+		commands.add(cmd + LINESEP);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#getDefaultIpAddress()
 	 */
 	public String getDefaultIpAddress() {
-		return "localhost";
+		return "localhost"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#getDefaultPortNumber()
 	 */
 	public String getDefaultPortNumber() {
-		return "10000";
+		return "10000"; //$NON-NLS-1$
 	}
 
 }

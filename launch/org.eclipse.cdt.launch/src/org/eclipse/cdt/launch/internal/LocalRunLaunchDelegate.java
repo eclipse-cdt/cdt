@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Arrays;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -57,8 +58,8 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 		}
 		try {
 			monitor.worked(1);
-			IPath exePath = verifyProgramPath(config);
-			ICProject project = verifyCProject(config);
+			IPath exePath = CDebugUtils.verifyProgramPath(config);
+			ICProject project = CDebugUtils.verifyCProject(config);
 			if (exePath != null) {
 				exeFile = verifyBinary(project, exePath);
 			}

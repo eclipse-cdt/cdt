@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2008 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,15 +52,33 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_STOP_AT = Activator.PLUGIN_ID + ".stopAt"; //$NON-NLS-1$
 	public static final String ATTR_SET_RESUME = Activator.PLUGIN_ID + ".setResume"; //$NON-NLS-1$
 	public static final String ATTR_RUN_COMMANDS = Activator.PLUGIN_ID + ".runCommands"; //$NON-NLS-1$
-	
+	/** @since 7.0 */ public static final String ATTR_USE_PROJ_BINARY_FOR_IMAGE = Activator.PLUGIN_ID + ".useProjBinaryForImage"; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String ATTR_USE_FILE_FOR_IMAGE = Activator.PLUGIN_ID + ".useFileForImage"; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String ATTR_USE_PROJ_BINARY_FOR_SYMBOLS = Activator.PLUGIN_ID + ".useProjBinaryForSymbols"; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String ATTR_USE_FILE_FOR_SYMBOLS = Activator.PLUGIN_ID + ".useFileForSymbols"; //$NON-NLS-1$
+
 	public static final boolean DEFAULT_DO_RESET = true;
 	public static final boolean DEFAULT_DO_HALT = true;
 	public static final int DEFAULT_DELAY = 3;
-	public static final boolean DEFAULT_LOAD_IMAGE = false;
-	public static final boolean DEFAULT_LOAD_SYMBOLS = false;
+	public static final boolean DEFAULT_LOAD_IMAGE = true;
+	public static final boolean DEFAULT_LOAD_SYMBOLS = true;
 	public static final boolean DEFAULT_SET_PC_REGISTER = false;
 	public static final boolean DEFAULT_SET_STOP_AT = false;
 	public static final boolean DEFAULT_SET_RESUME = false;
 	public static final boolean DEFAULT_USE_DEFAULT_RUN = true;
-		
+
+	/** @since 7.0 */ public static final String DEFAULT_INIT_COMMANDS = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_IMAGE_FILE_NAME = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_SYMBOLS_FILE_NAME = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_RUN_COMMANDS = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final boolean DEFAULT_USE_PROJ_BINARY_FOR_IMAGE = true;
+	/** @since 7.0 */ public static final boolean DEFAULT_USE_FILE_FOR_IMAGE = false;
+	/** @since 7.0 */ public static final boolean DEFAULT_USE_PROJ_BINARY_FOR_SYMBOLS = true;
+	/** @since 7.0 */ public static final boolean DEFAULT_USE_FILE_FOR_SYMBOLS = false;
+	/** @since 7.0 */ public static final String DEFAULT_IMAGE_OFFSET = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_SYMBOLS_OFFSET = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_PC_REGISTER = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_STOP_AT = ""; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String DEFAULT_JTAG_DEVICE = ""; //$NON-NLS-1$
+	
 }

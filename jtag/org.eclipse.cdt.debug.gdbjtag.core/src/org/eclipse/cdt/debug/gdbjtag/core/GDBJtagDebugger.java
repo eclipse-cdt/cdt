@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetNewConsole;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -117,14 +119,58 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
 			List<String> commands = new ArrayList<String>();
 
-			// hook up to remote target
 			if (submonitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
+			// execute symbol load
+			boolean doLoadSymbols = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS);
+			if (doLoadSymbols) {
+				String symbolsFileName = null;
+				// New setting in Helios. Default is true. Check for existence
+				// in order to support older launch configs
+				if (config.hasAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS) &&
+						config.getAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_SYMBOLS)) {
+					IPath programFile = CDebugUtils.verifyProgramPath(config);
+					if (programFile != null) {
+						symbolsFileName = programFile.toOSString();
+					}
+				}
+				else {
+					symbolsFileName = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, IGDBJtagConstants.DEFAULT_SYMBOLS_FILE_NAME);
+					if (symbolsFileName.length() > 0) {
+						symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName);
+					}
+				}
+				if (symbolsFileName == null) {
+					// The launch config GUI should prevent this from happening, but just in case					
+					throw new CoreException(new Status( IStatus.ERROR,
+							Activator.getUniqueIdentifier(),
+							-1, Messages.getString("GDBJtagDebugger.err_no_sym_file"), null));
+				}
+
+					// Escape windows path separator characters TWICE, once for Java and once for GDB.
+				symbolsFileName = symbolsFileName.replace("\\", "\\\\");
+
+					String symbolsOffset = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, IGDBJtagConstants.DEFAULT_SYMBOLS_OFFSET);
+				if (symbolsOffset.length() > 0) {
+					symbolsOffset = "0x" + symbolsOffset;					
+				}
+				commands.clear();
+				gdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
+				monitor.beginTask(Messages.getString("GDBJtagDebugger.loading_symbols"), 1); //$NON-NLS-1$				
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
+			}
+
+			if (submonitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+			
+			// hook up to remote target
 			boolean useRemote = config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 			if (useRemote) {
 				submonitor.subTask(Messages.getString("GDBJtagDebugger.2")); //$NON-NLS-1$
 				try {
+					commands.clear();				
 					if (gdbJtagDevice instanceof IGDBJtagConnection) { 
 						URI	connection = new URI(config.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION));
 						IGDBJtagConnection device = (IGDBJtagConnection)gdbJtagDevice;
@@ -149,7 +195,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			submonitor.setWorkRemaining(80); // compensate for optional work above
 
 			// Run device-specific code to reset the board
-			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, true)) {
+			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
 				commands.clear();
 				gdbJtagDevice.doReset(commands);
 				int defaultDelay = gdbJtagDevice.getDefaultDelay();
@@ -159,7 +205,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			submonitor.setWorkRemaining(65); // compensate for optional work above
 
 			// Run device-specific code to halt the board
-			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
+			if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT)) {
 				commands.clear();
 				gdbJtagDevice.doHalt(commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
@@ -172,31 +218,44 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			// execute load
 			boolean doLoad = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE);
 			if (doLoad) {
-				// Escape windows path separator characters TWICE, once for Java and once for GDB.
-				String imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
-				if (imageFileName.length() > 0) {
-					monitor.beginTask(Messages.getString("GDBJtagDebugger.5"), 1); //$NON-NLS-1$
-					imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName).replace("\\", "\\\\");
-					String imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""); //$NON-NLS-2$ //$NON-NLS-4$
-					commands.clear();
-					gdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
-					executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
+				String imageFileName = null;
+
+				// New setting in Helios. Default is true. Check for existence
+				// in order to support older launch configs
+				if (config.hasAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE) &&
+						config.getAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_IMAGE)) {
+					IPath programFile = CDebugUtils.verifyProgramPath(config);
+					if (programFile != null) {
+						imageFileName = programFile.toOSString();
+					}
 				}
+				else {
+					imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, IGDBJtagConstants.DEFAULT_IMAGE_FILE_NAME);
+					if (imageFileName.length() > 0) {
+						imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName);
+					}
+				}
+				if (imageFileName == null) {
+					// The launch config GUI should prevent this from happening, but just in case
+					throw new CoreException(new Status( IStatus.ERROR,
+							Activator.getUniqueIdentifier(),
+							-1, Messages.getString("GDBJtagDebugger.err_no_img_file"), null));
+				}
+				imageFileName = imageFileName.replace("\\", "\\\\");
+
+				String imageOffset = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
+				if (imageOffset.length() > 0) {
+					imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);					
+				}
+	
+				commands.clear();
+				gdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
+				monitor.beginTask(Messages.getString("GDBJtagDebugger.loading_image"), 1); //$NON-NLS-1$
+				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
+
+
 			}
 			submonitor.setWorkRemaining(15); // compensate for optional work above
-
-			// execute symbol load
-			boolean doLoadSymbols = config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS);
-			if (doLoadSymbols) {
-				String symbolsFileName = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, ""); //$NON-NLS-1$
-				if (symbolsFileName.length() > 0) {
-					symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName).replace("\\", "\\\\");
-					String symbolsOffset = "0x" + config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, ""); //$NON-NLS-2$
-					commands.clear();
-					gdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
-					executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(15));
-				}
-			}
 		} catch (OperationCanceledException e) {
 			if (launch != null && launch.canTerminate()) {
 				launch.terminate();
@@ -229,7 +288,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			// Set program counter
 			boolean setPc = config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER);
 			if (setPc) {
-				String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, "")); //$NON-NLS-1$
+				String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); //$NON-NLS-1$
 				gdbJtagDevice.doSetPC(pcRegister, commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
 			}
@@ -239,7 +298,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			monitor.beginTask(Messages.getString("GDBJtagDebugger.18"), 1); //$NON-NLS-1$
 			boolean setStopAt = config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT);
 			if (setStopAt) {
-				String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, ""); //$NON-NLS-1$
+				String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); //$NON-NLS-1$
 				commands.clear();
 				gdbJtagDevice.doStopAt(stopAt, commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
@@ -266,7 +325,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 	private void executeGDBScript(String script, MISession miSession, 
 			IProgressMonitor monitor) throws CoreException {
 		// Try to execute any extra command
-		if (script == null)
+		if (script == null || script.length() == 0)
 			return;
 		script = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(script);
 		String[] commands = script.split("\\r?\\n");
@@ -309,7 +368,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 	private IGDBJtagDevice getGDBJtagDevice (ILaunchConfiguration config) 
 		throws CoreException, NullPointerException {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
+		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); //$NON-NLS-1$
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
 			getInstance().getGDBJtagDeviceContribution();
 		for (int i = 0; i < availableDevices.length; i++) {

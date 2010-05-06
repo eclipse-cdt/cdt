@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDIDebugger;
 import org.eclipse.cdt.debug.core.ICDIDebugger2;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -80,7 +81,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 		}
 		monitor.worked( 1 );
 		try {
-			IPath exePath = verifyProgramPath( config );
+			IPath exePath = CDebugUtils.verifyProgramPath( config );
 			File wd = getWorkingDirectory( config );
 			if ( wd == null ) {
 				wd = new File( System.getProperty( "user.home", "." ) ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -130,8 +131,8 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 		monitor.subTask( LaunchMessages.getString( "LocalCDILaunchDelegate.2" ) ); //$NON-NLS-1$
 		ICDISession dsession = null;
 		try {
-			IPath exePath = verifyProgramPath( config );
-			ICProject project = verifyCProject( config );
+			IPath exePath = CDebugUtils.verifyProgramPath( config );
+			ICProject project = CDebugUtils.verifyCProject( config );
 			IBinaryObject exeFile = null;
 			if ( exePath != null ) {
 				exeFile = verifyBinary( project, exePath );
@@ -201,11 +202,11 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			}
 			cancel( "", -1 ); //$NON-NLS-1$
 		}
-		IPath exePath = verifyProgramPath( config );
+		IPath exePath = CDebugUtils.verifyProgramPath( config );
 		if (exePath == null) {
 			exePath= getProgramPathForPid(pid);
 		}
-		ICProject project = verifyCProject( config );
+		ICProject project = CDebugUtils.verifyCProject( config );
 		IBinaryObject exeFile = null;
 		if ( exePath != null ) {
 			exeFile = verifyBinary( project, exePath );
@@ -273,7 +274,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 		ICDebugConfiguration debugConfig = getDebugConfig( config );
 		String path = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, (String)null );
 		if ( path == null || path.length() == 0) {
-			ICProject project = verifyCProject( config );
+			ICProject project = CDebugUtils.verifyCProject( config );
 			IPath corefile = promptForCoreFilePath( (IProject)project.getResource(), debugConfig );
 			if ( corefile == null ) {
 				cancel( LaunchMessages.getString( "LocalCDILaunchDelegate.6" ), ICDTLaunchConfigurationConstants.ERR_NO_COREFILE ); //$NON-NLS-1$
@@ -289,8 +290,8 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			cancel( "", -1 ); //$NON-NLS-1$
 		}
 
-		IPath exePath = verifyProgramPath( config );
-		ICProject project = verifyCProject( config );
+		IPath exePath = CDebugUtils.verifyProgramPath( config );
+		ICProject project = CDebugUtils.verifyCProject( config );
 		IBinaryObject exeFile = null;
 		if ( exePath != null ) {
 			exeFile = verifyBinary( project, exePath );
@@ -329,8 +330,8 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 
 	private ICDISession launchOldDebugSession( ILaunchConfiguration config, ILaunch launch, ICDIDebugger debugger, IProgressMonitor monitor ) throws CoreException {
 		IBinaryObject exeFile = null;
-		IPath exePath = verifyProgramPath( config );
-		ICProject project = verifyCProject( config );
+		IPath exePath = CDebugUtils.verifyProgramPath( config );
+		ICProject project = CDebugUtils.verifyCProject( config );
 		if ( exePath != null ) {
 			exeFile = verifyBinary( project, exePath );
 		}
@@ -338,7 +339,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 	}
 
 	private ICDISession launchDebugSession( ILaunchConfiguration config, ILaunch launch, ICDIDebugger2 debugger, IProgressMonitor monitor ) throws CoreException {
-		IPath path = verifyProgramPath( config );
+		IPath path = CDebugUtils.verifyProgramPath( config );
 		File exeFile = path != null ? path.toFile() : null;
 		return debugger.createSession( launch, exeFile, monitor );
 	}

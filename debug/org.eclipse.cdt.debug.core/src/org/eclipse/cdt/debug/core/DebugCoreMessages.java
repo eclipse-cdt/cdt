@@ -13,6 +13,8 @@ package org.eclipse.cdt.debug.core;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.ibm.icu.text.MessageFormat;
+
 public class DebugCoreMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.core.DebugCoreMessages";//$NON-NLS-1$
@@ -20,6 +22,14 @@ public class DebugCoreMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle( BUNDLE_NAME );
 
 	private DebugCoreMessages() {
+	}
+
+	static String getFormattedString(String key, String arg) {
+		return MessageFormat.format(getString(key), new String[]{arg});
+	}
+
+	static String getFormattedString(String key, String[] args) {
+		return MessageFormat.format(getString(key), args);
 	}
 
 	public static String getString( String key ) {

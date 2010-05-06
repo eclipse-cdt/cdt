@@ -159,7 +159,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		gdbCommand.setLayoutData(gd);
 		gdbCommand.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 
@@ -216,7 +216,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		jtagDevice.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateDeviceIpPort(jtagDevice.getText());
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 		
@@ -275,7 +275,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		ipAddress.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 		portNumber.addVerifyListener(new VerifyListener() {
@@ -285,13 +285,13 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 		portNumber.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 
 		connection.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});	
 	}

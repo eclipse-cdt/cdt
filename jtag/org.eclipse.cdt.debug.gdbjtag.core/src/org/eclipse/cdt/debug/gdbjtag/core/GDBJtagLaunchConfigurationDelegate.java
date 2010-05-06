@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
-import java.io.File;
-
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -48,10 +47,9 @@ public class GDBJtagLaunchConfigurationDelegate extends AbstractCLaunchDelegate 
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			GDBJtagDebugger debugger = new GDBJtagDebugger();
-			ICProject project = verifyCProject(configuration);
-			IPath exePath = verifyProgramPath(configuration);
-			File exeFile = exePath != null ? exePath.toFile() : null;
-			ICDISession session = debugger.createSession(launch, exeFile, submonitor.newChild(1));
+			ICProject project = CDebugUtils.verifyCProject(configuration);
+			IPath exePath = CDebugUtils.verifyProgramPath(configuration);
+			ICDISession session = debugger.createSession(launch, null, submonitor.newChild(1));
 			IBinaryObject exeBinary = null;
 			if ( exePath != null ) {
 				exeBinary = verifyBinary(project, exePath);

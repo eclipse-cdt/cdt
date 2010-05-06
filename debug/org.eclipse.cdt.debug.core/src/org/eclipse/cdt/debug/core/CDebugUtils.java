@@ -12,10 +12,10 @@
 package org.eclipse.cdt.debug.core;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -40,6 +40,7 @@ import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -47,11 +48,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.w3c.dom.Document;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utility methods.
@@ -561,4 +565,127 @@ public class CDebugUtils {
         }
         return new Path(path);
     }
+
+	/**
+	 * Returns the ICProject associated with the project setting in the Main tab
+	 * of a CDT launch configuration, or throws a CoreException providing a
+	 * reason (e.g., the setting is empty, the project no longer exists, the
+	 * isn't a CDT one, etc).
+	 * 
+	 * @param config
+	 *            the launch configuration
+	 * @return an ICProject; never null.
+	 * @throws CoreException
+	 * @since 7.0
+	 */
+	public static ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
+		String name = CDebugUtils.getProjectName(config);
+		if (name == null) {
+			throwCoreException(DebugCoreMessages.getString("CDebugUtils.C_Project_not_specified"),  //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+		}
+		ICProject cproject = CDebugUtils.getCProject(config);
+		if (cproject == null) {
+			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (!proj.exists()) {
+				throwCoreException(DebugCoreMessages.getFormattedString("CDebugUtils.Project_NAME_does_not_exist", name),  //$NON-NLS-1$
+						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			} else if (!proj.isOpen()) {
+				throwCoreException(DebugCoreMessages.getFormattedString("CDebugUtils.Project_NAME_is_closed", name), //$NON-NLS-1$
+						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			}
+			throwCoreException(DebugCoreMessages.getString("CDebugUtils.Not_a_C_CPP_project"),  //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+		}
+		return cproject;
+	}
+
+	/**
+	 * Returns an IPath for the file referenced in the <i>C/C++ Application</i>
+	 * setting of a CDT launch configuration. Typically, the file is obtained by
+	 * combining the <i>C/C++ Application</i> setting with the <i>Project</i>
+	 * setting. If unable to combine and resolve these settings to a valid file,
+	 * a CoreException is thrown that provides the reason why. There are many
+	 * such possible reasons (a problem with the <i>Project</i> setting, an
+	 * empty <i>C/C++ Application</i> setting, the combined settings doesn't
+	 * resolve to an existing file, etc).
+	 * 
+	 * @param config
+	 *            the launch configuration
+	 * @param ignoreProjectSetting
+	 *            if true, resolve the file using only the <i>C/C++
+	 *            Application</i> setting. Do not take the <i>Project</i>
+	 *            setting into account.
+	 * @return an IPath; never null
+	 * @throws CoreException
+	 * @since 7.0
+	 */
+	public static IPath verifyProgramPath(ILaunchConfiguration config, boolean ignoreProjectSetting) throws CoreException {
+		ICProject cproject = null;
+		if (!ignoreProjectSetting) {
+			cproject = verifyCProject(config);	// will throw exception if project setting not valid
+		}
+		IPath programPath = CDebugUtils.getProgramPath(config);
+		if (programPath == null || programPath.isEmpty()) {
+			throwCoreException(DebugCoreMessages.getString("CDebugUtils.Program_file_not_specified"), //$NON-NLS-1$
+					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+		}
+		
+		if (programPath != null) {	// this check is here only to avoid warning; compiler can't tell we'll throw an exception above
+			if (!programPath.isAbsolute() && (cproject != null)) {
+				// See if we can brute-force append the program path to the
+				// project location. This allows us to support the program file
+				// being outside the project, even outside the workspace, without
+				// requiring a linked resource (e.g., the setting could be 
+				// "..\..\some\dir\myprogram.exe")
+				IPath location = cproject.getProject().getLocation();
+				if (location != null) {
+					programPath = location.append(programPath);
+					if (!programPath.toFile().exists()) {
+						// Try looking in the project for the file. This
+						// supports linked resources.
+						IFile projFile = null;
+						try {
+							projFile = cproject.getProject().getFile(CDebugUtils.getProgramPath(config));
+						}
+						catch (IllegalArgumentException exc) {
+							// thrown if relative path that resolves to a root file (e.g., "..\somefile")							
+						}	
+						if (projFile != null && projFile.exists()) {
+							programPath = projFile.getLocation();
+						}
+					}
+				}
+			}
+			if (!programPath.toFile().exists()) {
+				throwCoreException(
+						DebugCoreMessages.getString("CDebugUtils.Program_file_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException(
+								DebugCoreMessages.getFormattedString("CDebugUtils.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
+						ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+			}
+		}
+		return programPath;
+	}
+
+	/**
+	 * Variant that expects (requires) the launch configuration to have a valid
+	 * <i>Project</i> setting. See
+	 * {@link #verifyProgramPath(ILaunchConfiguration, boolean)}
+	 * 
+	 * @since 7.0
+	 */
+	public static IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
+		return verifyProgramPath(config, false); 
+	}
+	
+	/** Throws a CoreException. Clutter-reducing utility method. */
+	private static void throwCoreException(String msg, int code) throws CoreException {
+		throwCoreException(msg, null, code);
+	}
+
+	/** Throws a CoreException. Clutter-reducing utility method. */
+	private static void throwCoreException(String msg, Exception innerException, int code) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), code, msg, innerException));
+	}
 }

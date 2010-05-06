@@ -77,8 +77,19 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	public void doLoadImage(String imageFileName, String imageOffset, Collection<String> commands) {
 		String file = escapeScpaces(imageFileName);
-		String cmd = "restore " + file + " " + imageOffset; //$NON-NLS-1$ //$NON-NLS-2$
-		addCmd(commands, cmd);
+		if (imageOffset.length() > 0) {
+			// 'restore' simply puts the program into memory. 
+			addCmd(commands, "restore " + file + " " + imageOffset);
+		}
+		else {
+			// 'load' puts the program into memory and sets the PC. To see why
+			// we do this when no offset is specified, see
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=310304#c20
+			addCmd(commands, "load " + file);			
+		}
+		// 'exec-file' specifies the program as the context for getting memory.
+		// Basically, it tells gdb "this is the program we'll be debugging"
+		addCmd(commands, "exec-file " + file);
 	}
 
 	/* (non-Javadoc)
@@ -86,8 +97,12 @@ public class DefaultGDBJtagDeviceImpl implements IGDBJtagDevice {
 	 */
 	public void doLoadSymbol(String symbolFileName, String symbolOffset, Collection<String> commands) {
 		String file = escapeScpaces(symbolFileName);
-		String cmd = "add-sym " + file + " " + symbolOffset; //$NON-NLS-1$ //$NON-NLS-2$
-		addCmd(commands, cmd);
+		if (symbolOffset == null || (symbolOffset.length() == 0)) {
+			addCmd(commands, "symbol-file " + file);
+		}
+		else {
+			addCmd(commands, "add-sym " + file + " " + symbolOffset);			
+		}
 	}
 	
 	protected String escapeScpaces(String file) {

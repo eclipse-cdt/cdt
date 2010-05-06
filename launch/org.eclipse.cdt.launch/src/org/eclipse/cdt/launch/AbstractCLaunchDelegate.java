@@ -398,7 +398,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 */
 	@Deprecated
 	protected IFile getProgramFile(ILaunchConfiguration config) throws CoreException {
-		ICProject cproject = verifyCProject(config);
+		ICProject cproject = CDebugUtils.verifyCProject(config);
 		String fileName = CDebugUtils.getProgramName(config);
 		if (fileName == null) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
@@ -417,62 +417,18 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		return programPath;
 	}
 
+	/**
+	 * @deprecated use {@link CDebugUtils#verifyCProject(ILaunchConfiguration)}
+	 */
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
-		String name = CDebugUtils.getProjectName(config);
-		if (name == null) {
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.C_Project_not_specified"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
-		}
-		ICProject cproject = CDebugUtils.getCProject(config);
-		if (cproject == null) {
-			IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (!proj.exists()) {
-				abort(
-						LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, //$NON-NLS-1$
-						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
-			} else if (!proj.isOpen()) {
-				abort(LaunchMessages.getFormattedString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, //$NON-NLS-1$
-						ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
-			}
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Not_a_C_CPP_project"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
-		}
-		return cproject;
+		return CDebugUtils.verifyCProject(config);
 	}
 
+	/**
+	 * @deprecated use {@link CDebugUtils#verifyProgramPath(ILaunchConfiguration)
+	 */
 	protected IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
-		ICProject cproject = verifyCProject(config);
-		IPath programPath = CDebugUtils.getProgramPath(config);
-		if (programPath == null || programPath.isEmpty()) {
-			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_not_specified"), null, //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
-		}
-		if (!programPath.isAbsolute()) {
-			IPath location = cproject.getProject().getLocation();
-			if (location != null) {
-				programPath = location.append(programPath);
-				if (!programPath.toFile().exists()) {
-					// Try the old way, which is required to support linked resources.
-					IFile projFile = null;
-					try {
-						projFile = project.getFile(CDebugUtils.getProgramPath(config));
-					}
-					catch (IllegalArgumentException exc) {}	// thrown if relative path that resolves to a root file (e.g., "..\somefile")
-					if (projFile != null && projFile.exists()) {
-						programPath = projFile.getLocation();
-					}
-				}
-			}
-		}
-		if (!programPath.toFile().exists()) {
-			abort(
-					LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
-					new FileNotFoundException(
-							LaunchMessages.getFormattedString(
-																"AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.toOSString())), //$NON-NLS-1$
-					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
-		}
-		return programPath;
+		return CDebugUtils.verifyProgramPath(config);
 	}
 
 	protected IPath verifyProgramFile(ILaunchConfiguration config) throws CoreException {

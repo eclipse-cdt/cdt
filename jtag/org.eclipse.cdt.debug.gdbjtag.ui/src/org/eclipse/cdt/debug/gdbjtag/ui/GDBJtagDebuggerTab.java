@@ -160,7 +160,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		gdbCommand.setLayoutData(gd);
 		gdbCommand.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob();	// provides much better performance for Text listeners 
 			}
 		});
 
@@ -200,7 +200,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		commandFactory.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				commandFactoryChanged();
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 	}
@@ -215,7 +215,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		miProtocol = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		miProtocol.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 	}
@@ -285,7 +285,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		jtagDevice.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateDeviceIpPort(jtagDevice.getText());
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 		
@@ -344,7 +344,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		ipAddress.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 		portNumber.addVerifyListener(new VerifyListener() {
@@ -354,13 +354,13 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		});
 		portNumber.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 
 		connection.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
+				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});		
 	}

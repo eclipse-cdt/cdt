@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContribution;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContributionFactory;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice;
@@ -350,7 +351,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
             // Below steps are specific to JTag hardware debugging
             
         /*
-         * Retrieve the JTag device
+         * Retrieve the IGDBJtagDevice instance
          */
         new Step() {
 			@Override
@@ -369,6 +370,61 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				}
 				rm.done();
             }},
+        /*
+         * Execute symbol loading
+         */
+        new Step() {
+			@Override
+			public void execute(RequestMonitor rm) {
+				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
+				try {
+					if (config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS)) {
+						String symbolsFileName = null;
+
+						// New setting in Helios. Default is true. Check for existence
+						// in order to support older launch configs
+						if (config.hasAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS) &&
+								config.getAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_SYMBOLS, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_SYMBOLS)) {
+							IPath programFile = CDebugUtils.verifyProgramPath(config);
+							if (programFile != null) {
+								symbolsFileName = programFile.toOSString();
+							}
+						}
+						else {
+							symbolsFileName = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, IGDBJtagConstants.DEFAULT_SYMBOLS_FILE_NAME);
+							if (symbolsFileName.length() > 0) {
+								symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName);
+							} else {
+								symbolsFileName = null;
+							}
+						}
+						
+						if (symbolsFileName == null) {
+		        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, Messages.getString("GDBJtagDebugger.err_no_img_file"), null)); //$NON-NLS-1$
+		        			rm.done();
+		        			return;
+						}
+
+						// Escape windows path separator characters TWICE, once for Java and once for GDB.						
+						symbolsFileName = symbolsFileName.replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+
+						String symbolsOffset = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, IGDBJtagConstants.DEFAULT_SYMBOLS_OFFSET);
+						if (symbolsOffset.length() > 0) {
+							symbolsOffset = "0x" + symbolsOffset;					
+						}
+						List<String> commands = new ArrayList<String>();
+						fGdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
+						queueCommands(commands, rm);									
+						
+					} else {
+						rm.done();
+					}
+				} catch (CoreException e) {
+        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot load symbol", e)); //$NON-NLS-1$
+        			rm.done();
+				}
+			}},
+
         /*
          * Hook up to remote target
          */
@@ -410,7 +466,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
-					if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, true)) {
+					if (config.getAttribute(IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET)) {
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doReset(commands);
 						queueCommands(commands, rm);
@@ -447,7 +503,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
-					if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, true)) {
+					if (config.getAttribute(IGDBJtagConstants.ATTR_DO_HALT, IGDBJtagConstants.DEFAULT_DO_HALT)) {
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doHalt(commands);
 						queueCommands(commands, rm);								
@@ -467,16 +523,21 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
-					String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, ""); //$NON-NLS-1$
+					String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_INIT_COMMANDS, IGDBJtagConstants.DEFAULT_INIT_COMMANDS);
 					userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
-					String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
-					
-					CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
-					crm.setDoneCount(commands.length);
-					for (int i = 0; i < commands.length; ++i) {
-						fCommandControl.queueCommand(
-						    new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
-						    new DataRequestMonitor<MIInfo>(getExecutor(), crm));
+					if (userCmd.length() > 0) {
+						String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
+						
+						CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+						crm.setDoneCount(commands.length);
+						for (int i = 0; i < commands.length; ++i) {
+							fCommandControl.queueCommand(
+							    new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
+							    new DataRequestMonitor<MIInfo>(getExecutor(), crm));
+						}
+					}
+					else {
+						rm.done();
 					}
 				} catch (CoreException e) {
         			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot run user defined init commands", e)); //$NON-NLS-1$
@@ -491,20 +552,44 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
+					String imageFileName = null;
 					if (config.getAttribute(IGDBJtagConstants.ATTR_LOAD_IMAGE, IGDBJtagConstants.DEFAULT_LOAD_IMAGE)) {
-						// Escape windows path separator characters TWICE, once for Java and once for GDB.
-						String imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, ""); //$NON-NLS-1$
-						if (imageFileName.length() > 0) {
-							imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName).replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
-							String imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-							List<String> commands = new ArrayList<String>();
-							fGdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
-							queueCommands(commands, rm);									
-						} else {
-							rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Image name cannot be empty", null)); //$NON-NLS-1$
-							rm.done();
+						// New setting in Helios. Default is true. Check for existence
+						// in order to support older launch configs
+						if (config.hasAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE) &&
+								config.getAttribute(IGDBJtagConstants.ATTR_USE_PROJ_BINARY_FOR_IMAGE, IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_IMAGE)) {
+							IPath programFile = CDebugUtils.verifyProgramPath(config);
+							if (programFile != null) {
+								imageFileName = programFile.toOSString();
+							}
 						}
-					} else {
+						else {
+							imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, IGDBJtagConstants.DEFAULT_IMAGE_FILE_NAME); //$NON-NLS-1$
+							if (imageFileName.length() > 0) {
+								imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName);
+							} else {
+								imageFileName = null;
+							}
+						}
+						
+						if (imageFileName == null) {
+		        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, Messages.getString("GDBJtagDebugger.err_no_img_file"), null)); //$NON-NLS-1$
+		        			rm.done();
+		        			return;
+						}
+
+						// Escape windows path separator characters TWICE, once for Java and once for GDB.						
+						imageFileName = imageFileName.replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+
+						String imageOffset = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
+						if (imageOffset.length() > 0) {
+							imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET); //$NON-NLS-2$ //$NON-NLS-4$					
+						}
+						List<String> commands = new ArrayList<String>();
+						fGdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
+						queueCommands(commands, rm);									
+					} 
+					else {
 						rm.done();
 					}
 				} catch (CoreException e) {
@@ -512,36 +597,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
         			rm.done();
 				}
 			}},
-        /*
-         * Execute symbol loading
-         */
-        new Step() {
-			@Override
-			public void execute(RequestMonitor rm) {
-				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
-				try {
-					if (config.getAttribute(IGDBJtagConstants.ATTR_LOAD_SYMBOLS, IGDBJtagConstants.DEFAULT_LOAD_SYMBOLS)) {
-						// Escape windows path separator characters TWICE, once for Java and once for GDB.
-						String symbolsFileName = config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_FILE_NAME, ""); //$NON-NLS-1$
-						if (symbolsFileName.length() > 0) {
-							symbolsFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(symbolsFileName).replace("\\", "\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
-							String symbolsOffset = "0x" + config.getAttribute(IGDBJtagConstants.ATTR_SYMBOLS_OFFSET, ""); //$NON-NLS-1$ //$NON-NLS-2$
-							List<String> commands = new ArrayList<String>();
-							fGdbJtagDevice.doLoadSymbol(symbolsFileName, symbolsOffset, commands);
-							queueCommands(commands, rm);									
-						} else {
-							rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Symbol name cannot be empty", null)); //$NON-NLS-1$
-							rm.done();
-						}
-					} else {
-						rm.done();
-					}
-				} catch (CoreException e) {
-        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot load symbol", e)); //$NON-NLS-1$
-        			rm.done();
-				}
-			}
-        },
         /* 
          * Start tracking the breakpoints once we know we are connected to the target (necessary for remote debugging) 
          */
@@ -566,7 +621,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
 					if (config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER)) {
-						String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, "")); //$NON-NLS-1$
+						String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); //$NON-NLS-1$
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doSetPC(pcRegister, commands);
 						queueCommands(commands, rm);								
@@ -587,7 +642,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
 					if (config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT)) {
-						String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, ""); //$NON-NLS-1$
+						String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); //$NON-NLS-1$
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doStopAt(stopAt, commands);
 						queueCommands(commands, rm);								
@@ -628,16 +683,21 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
-					String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, ""); //$NON-NLS-1$
-					userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
-					String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
-					
-					CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
-					crm.setDoneCount(commands.length);
-					for (int i = 0; i < commands.length; ++i) {
-						fCommandControl.queueCommand(
-						    new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
-						    new DataRequestMonitor<MIInfo>(getExecutor(), crm));
+					String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, IGDBJtagConstants.DEFAULT_RUN_COMMANDS); //$NON-NLS-1$
+					if (userCmd.length() > 0) {
+						userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
+						String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
+						
+						CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+						crm.setDoneCount(commands.length);
+						for (int i = 0; i < commands.length; ++i) {
+							fCommandControl.queueCommand(
+							    new CLICommand<MIInfo>(fCommandControl.getContext(), commands[i]),
+							    new DataRequestMonitor<MIInfo>(getExecutor(), crm));
+						}
+					}
+					else {
+						rm.done();
 					}
 				} catch (CoreException e) {
         			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot run user defined run commands", e)); //$NON-NLS-1$
@@ -703,12 +763,11 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 	private IGDBJtagDevice getGDBJtagDevice (ILaunchConfiguration config) 
 	throws CoreException, NullPointerException {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
-		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
-			getInstance().getGDBJtagDeviceContribution();
-		for (int i = 0; i < availableDevices.length; i++) {
-			if (jtagDeviceName.equals(availableDevices[i].getDeviceName())) {
-				gdbJtagDevice = availableDevices[i].getDevice();
+		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); //$NON-NLS-1$
+		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance().getGDBJtagDeviceContribution();
+		for (GDBJtagDeviceContribution availableDevice : availableDevices) {
+			if (jtagDeviceName.equals(availableDevice.getDeviceName())) {
+				gdbJtagDevice = availableDevice.getDevice();
 				break;
 			}
 		}

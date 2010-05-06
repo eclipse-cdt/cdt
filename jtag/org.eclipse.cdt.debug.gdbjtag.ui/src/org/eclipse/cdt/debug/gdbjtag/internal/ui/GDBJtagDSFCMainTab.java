@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial implementation
  *******************************************************************************/
-package org.eclipse.cdt.debug.gdbjtag.ui;
+package org.eclipse.cdt.debug.gdbjtag.internal.ui;
 
 import java.util.HashSet;
 

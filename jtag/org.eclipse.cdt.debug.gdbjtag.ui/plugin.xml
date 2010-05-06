@@ -117,7 +117,7 @@
                </placement>
             </tab>
      <tab
-            class="org.eclipse.cdt.debug.gdbjtag.ui.GDBJtagDSFCMainTab"
+            class="org.eclipse.cdt.debug.gdbjtag.internal.ui.GDBJtagDSFCMainTab"
             group="org.eclipse.cdt.debug.gdbjtag.launchConfigurationTabGroup"
             id="org.eclipse.cdt.debug.gdbjtag.ui.cmaintab.dsf"
             name="%launchtab.cmaintab.name">

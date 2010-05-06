@@ -22,7 +22,6 @@
          category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
          class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
          id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
-         helpContextId="TraditionalRenderingPreferencePage_context"
          name="%page.name"/>
 </extension>
 <extension

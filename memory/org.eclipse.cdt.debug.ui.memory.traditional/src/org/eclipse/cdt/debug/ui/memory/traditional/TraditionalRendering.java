@@ -1192,7 +1192,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
      */
-    @SuppressWarnings({ "unchecked" })
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter)
     {
         if(adapter == IWorkbenchAdapter.class)

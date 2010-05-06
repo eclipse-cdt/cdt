@@ -14,8 +14,6 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection;
-
 /**
  * Provides device specific debug commands for different hardware
  * JTAG devices. See <code>DefaultGDBJtagDeviceImpl</code> for

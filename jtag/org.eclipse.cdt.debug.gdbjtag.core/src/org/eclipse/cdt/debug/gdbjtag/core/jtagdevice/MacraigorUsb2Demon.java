@@ -30,17 +30,15 @@ public class MacraigorUsb2Demon extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
 	 */
-	public void doDelay(int delay, Collection commands) {
-		String cmd = "monitor sleep " + String.valueOf(delay);
-		super.addCmd(commands, cmd);
+	public void doDelay(int delay, Collection<String> commands) {
+		super.addCmd(commands, "monitor sleep " + String.valueOf(delay));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doReset(java.util.Collection)
 	 */
-	public void doReset(Collection commands) {
-		String cmd = "monitor resetrun";
-		super.addCmd(commands, cmd);
+	public void doReset(Collection<String> commands) {
+		super.addCmd(commands, "monitor resetrun");
 	}
 
 }

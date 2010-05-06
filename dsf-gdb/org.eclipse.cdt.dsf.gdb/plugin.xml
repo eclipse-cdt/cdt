@@ -61,24 +61,5 @@
          contextId="org.eclipse.cdt.debug.ui.debugging"
          debugModelId="org.eclipse.cdt.dsf.gdb"/>
    </extension>
-   <extension
-         point="org.eclipse.cdt.debug.core.CDebugger">
-      <debugger
-            class="org.eclipse.cdt.dsf.gdb.launching.GDBDebugger"
-            cpu="native"
-            id="org.eclipse.cdt.dsf.gdb.GdbDebugger"
-            modes="dsf"
-            name="gdb/mi"
-            platform="*">
-      </debugger>
-      <debugger
-            class="org.eclipse.cdt.dsf.gdb.launching.GDBServerDebugger"
-            cpu="*"
-            id="org.eclipse.cdt.dsf.gdb.GdbServerDebugger"
-            modes="dsf"
-            name="gdbserver Debugger"
-            platform="*">
-      </debugger>
-   </extension>
    
 </plugin>

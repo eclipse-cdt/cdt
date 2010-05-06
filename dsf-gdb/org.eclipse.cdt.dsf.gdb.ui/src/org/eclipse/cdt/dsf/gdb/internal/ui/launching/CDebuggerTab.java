@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 QNX Software Systems and others.
+ * Copyright (c) 2008, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,28 +13,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
+import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension;
+import org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -43,17 +40,21 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.ibm.icu.text.Collator;
-
-public class CDebuggerTab extends AbstractCDebuggerTab {
+public class CDebuggerTab extends CLaunchConfigurationTab {
 	
     /**
      * Tab identifier used for ordering of tabs added using the 
@@ -64,20 +65,37 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
      */
     public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.debuggerTab"; //$NON-NLS-1$
 
-	private final static String LOCAL_DEBUGGER_ID = "org.eclipse.cdt.dsf.gdb.GdbDebugger";//$NON-NLS-1$
-	private final static String REMOTE_DEBUGGER_ID = "org.eclipse.cdt.dsf.gdb.GdbServerDebugger";//$NON-NLS-1$
+	private final static String LOCAL_DEBUGGER_ID = "gdb";//$NON-NLS-1$
+	private final static String REMOTE_DEBUGGER_ID = "gdbserver";//$NON-NLS-1$
 	
-	protected boolean fAttachMode = false;
-	protected boolean fRemoteMode = false;
-	protected boolean fCoreMode = false;
+	protected ILaunchConfiguration fLaunchConfiguration;
+	protected ILaunchConfigurationWorkingCopy fWorkingCopy;
+	protected String fDebuggerId;
+
+	// Dynamic Debugger UI widgets
+	protected ICDebuggerPage fDynamicTab;
+	protected Composite fDynamicTabHolder;
+	private boolean fInitDefaults;
+	private Combo fDCombo;
+	private boolean fIsInitializing;
+	
+	protected boolean fAttachMode;
+	protected boolean fRemoteMode;
+	protected boolean fCoreMode;
 	
 	protected Button fStopInMain;
 	protected Text fStopInMainSymbol;
-
+	
 	private ScrolledComposite fContainer;
 
 	private Composite fContents;
 
+    private IContentChangeListener fContentListener = new IContentChangeListener() {
+        public void contentChanged() {
+            contentsChanged();
+        }
+    };
+    
 	public CDebuggerTab(SessionType sessionType, boolean attach) {
 		if (sessionType == SessionType.REMOTE) {
 			fRemoteMode = true;
@@ -98,7 +116,6 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	    return TAB_ID;
 	}
 
-	@Override
 	public void createControl(Composite parent) {
 		fContainer = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -116,69 +133,66 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
 		fContents.setLayoutData(gd);
 
-		createDebuggerCombo(fContents, (fAttachMode) ? 1 : 2);
+		if (fAttachMode) {
+			createDebuggerCombo(fContents);
+		}
+		
 		createOptionsComposite(fContents);
 		createDebuggerGroup(fContents, 2);
 		
 		fContainer.setContent(fContents);
 	}
 
-	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
-    	ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-		Arrays.sort(debugConfigs, new Comparator<ICDebugConfiguration>() {
-			public int compare(ICDebugConfiguration c1, ICDebugConfiguration c2) {
-				return Collator.getInstance().compare(c1.getName(), c2.getName());
+	protected void initDebuggerTypes(String selection) {
+		if (fAttachMode) {
+			// Use a LinkedHashSet to keep ordering
+			Set<String> set = new LinkedHashSet<String>();
+			set.add(LOCAL_DEBUGGER_ID);
+			set.add(REMOTE_DEBUGGER_ID);
+			if (selection.equals("")) { //$NON-NLS-1$
+				selection = LOCAL_DEBUGGER_ID;
 			}
-		});
-		List<ICDebugConfiguration> list = new ArrayList<ICDebugConfiguration>();
-		if (selection.equals("")) { //$NON-NLS-1$
-			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
-			if (dc == null) {
-				CDebugCorePlugin.getDefault().saveDefaultDebugConfiguration(LOCAL_DEBUGGER_ID);
-				dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
+
+			setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
+			loadDebuggerCombo(set.toArray(new String[set.size()]), selection);
+		} else {
+			if (fRemoteMode) {
+				setDebuggerId(REMOTE_DEBUGGER_ID);
+			} else {
+				setDebuggerId(LOCAL_DEBUGGER_ID);
 			}
-			if (dc != null)
-				selection = dc.getID();
+			updateComboFromSelection();
 		}
-		String defaultSelection = selection;
-		for (ICDebugConfiguration debugConfig: debugConfigs) {
-			// Note that for an attach session, we don't know yet if the user will want to do a
-			// remote session.  So, we must allow for the remote debugger even if fRemote is false,
-			// in the case of attach
-			if (((fRemoteMode || fAttachMode) && debugConfig.getID().equals(REMOTE_DEBUGGER_ID)) ||
-                (!fRemoteMode && debugConfig.getID().equals(LOCAL_DEBUGGER_ID))) {
-					list.add(debugConfig);
-			}
-		}
-		// if no selection meaning nothing in config the force initdefault on tab
-		setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
-		loadDebuggerCombo(list.toArray(new ICDebugConfiguration[list.size()]), defaultSelection);
 	}
 
-	@Override
-	protected void updateComboFromSelection() {
-		super.updateComboFromSelection();
-		initializeCommonControls(getLaunchConfiguration());
-	}
-
-	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		super.setDefaults(config);
+		setLaunchConfigurationWorkingCopy(config);
+		ICDebuggerPage dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.setDefaults(config);
+			setInitializeDefault(false);
+		}
+		
 		if (fAttachMode && fRemoteMode) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, REMOTE_DEBUGGER_ID);
 		} else if (fAttachMode) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, LOCAL_DEBUGGER_ID);
 		} else if (fRemoteMode) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				    IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, REMOTE_DEBUGGER_ID);
 		} else if (fCoreMode){
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, LOCAL_DEBUGGER_ID);
 		} else {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, LOCAL_DEBUGGER_ID);
 		}
 		
 		if (!fAttachMode && !fCoreMode) {
@@ -186,58 +200,36 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 					ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_DEFAULT);
 		}
 		
-		// Set the default debugger based on the active toolchain on the project (if possible)
-		String defaultDebugger = null;
-		try {
-			String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");//$NON-NLS-1$
-			if (projectName.length() > 0) {
-				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-            	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
-            	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
-            	String configId = configDesc.getId();
-        		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-        		outer: for (int i = 0; i < debugConfigs.length; ++i) {
-        			ICDebugConfiguration debugConfig = debugConfigs[i];
-        			String[] patterns = debugConfig.getSupportedBuildConfigPatterns();
-        			if (patterns != null) {
-        				for (int j = 0; j < patterns.length; ++j) {
-        					if (configId.matches(patterns[j])) {
-        						defaultDebugger = debugConfig.getID();
-        						break outer;
-        					}
-        				}
-        			}
-        		}
-			}
-		} catch (CoreException e) {
-		}
-		
-		if (defaultDebugger == null) {
-			ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDebugConfiguration();
-			if (dc != null) {
-				defaultDebugger = dc.getID();
-			}
-		}
-		
-		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, defaultDebugger);
 	}
 
-	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
-		super.initializeFrom(config);
+
+		setLaunchConfiguration(config);
+		ICDebuggerPage dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.initializeFrom(config);
+		}
+
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
-			loadDebuggerComboBox(config, id);
+			initDebuggerTypes(id);
 			initializeCommonControls(config);
 		} catch (CoreException e) {
 		}
 		setInitializing(false);
 	}
 
-	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		super.performApply(config);
+		if (getDebuggerId() != null) {
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebuggerId());
+			ICDebuggerPage dynamicTab = getDynamicTab();
+			if (dynamicTab == null) {
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map<?,?>)null);
+			} else {
+				dynamicTab.performApply(config);
+			}
+		}
 		
 		if (fAttachMode && fRemoteMode) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
@@ -276,15 +268,24 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				return false;
 			}
 		}
-		if (super.isValid(config) == false) {
+		
+		setErrorMessage(null);
+		setMessage(null);
+		if (getDebuggerId() == null) {
+			setErrorMessage(LaunchMessages.getString("AbstractCDebuggerTab.No_debugger_available")); //$NON-NLS-1$
 			return false;
+		}
+
+		ICDebuggerPage dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			return dynamicTab.isValid(config);
 		}
 		return true;
 	}
 
 	protected boolean validateDebuggerConfig(ILaunchConfiguration config) {
-		ICDebugConfiguration debugConfig = getDebugConfig();
-		if (debugConfig == null) {
+		String debuggerType = getDebuggerId();
+		if (debuggerType == null) {
 			setErrorMessage(LaunchMessages.getString("CDebuggerTab.No_debugger_available")); //$NON-NLS-1$
 			return false;
 		}
@@ -368,20 +369,257 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			} else if (fAttachMode) {
 				// In attach mode, figure out if we are doing a remote connect based on the currently
 				// chosen debugger
-				if (getDebugConfig().getID().equals(REMOTE_DEBUGGER_ID)) fRemoteMode = true;
+				if (getDebuggerId().equals(REMOTE_DEBUGGER_ID)) fRemoteMode = true;
 				else fRemoteMode = false;
 			}
 		} catch (CoreException e) {
 		}
 	}
 
-	@Override
 	protected void setInitializeDefault(boolean init) {
-		super.setInitializeDefault(init);
+		fInitDefaults = init;
 	}
 	
-	@Override
 	protected void contentsChanged() {
 		fContainer.setMinSize(fContents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+	
+	protected void loadDynamicDebugArea() {
+		// Dispose of any current child widgets in the tab holder area
+		Control[] children = getDynamicTabHolder().getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].dispose();
+		}
+
+		String debuggerId = getIdForCurrentDebugger();
+		if (debuggerId == null) {
+			setDynamicTab(null);
+		} else {
+			if (debuggerId.equals(LOCAL_DEBUGGER_ID)) {
+				if (fCoreMode) {
+					setDynamicTab(new GdbCoreDebuggerPage());
+				} else {
+					setDynamicTab(new GdbDebuggerPage());
+				}
+			} else if (debuggerId.equals(REMOTE_DEBUGGER_ID)) {
+				setDynamicTab(new GdbServerDebuggerPage());
+			}
+		}
+		setDebuggerId(debuggerId);
+
+		if (getDynamicTab() == null) {
+			return;
+		}
+		// Ask the dynamic UI to create its Control
+		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+		getDynamicTab().createControl(getDynamicTabHolder());
+		getDynamicTab().getControl().setVisible(true);
+		getDynamicTabHolder().layout(true);
+		contentsChanged();
+	}
+	
+	protected void setDebuggerId(String id) {
+		fDebuggerId = id;
+	}
+
+	protected String getDebuggerId() {
+		return fDebuggerId;
+	}
+
+	protected ICDebuggerPage getDynamicTab() {
+		return fDynamicTab;
+	}
+
+	protected void setDynamicTab(ICDebuggerPage tab) {
+        if ( fDynamicTab instanceof ICDebuggerPageExtension )
+            ((ICDebuggerPageExtension)fDynamicTab).removeContentChangeListener( fContentListener );
+        fDynamicTab = tab;
+        if ( fDynamicTab instanceof ICDebuggerPageExtension )
+            ((ICDebuggerPageExtension)fDynamicTab).addContentChangeListener( fContentListener );
+	}
+
+	protected Composite getDynamicTabHolder() {
+		return fDynamicTabHolder;
+	}
+
+	protected void setDynamicTabHolder(Composite tabHolder) {
+		fDynamicTabHolder = tabHolder;
+	}
+
+	protected ILaunchConfigurationWorkingCopy getLaunchConfigurationWorkingCopy() {
+		return fWorkingCopy;
+	}
+
+	protected void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
+		fLaunchConfiguration = launchConfiguration;
+		setLaunchConfigurationWorkingCopy(null);
+	}
+
+	protected ILaunchConfiguration getLaunchConfiguration() {
+		return fLaunchConfiguration;
+	}
+
+	protected void setLaunchConfigurationWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
+		fWorkingCopy = workingCopy;
+	}
+
+	/**
+	 * Overridden here so that any error message in the dynamic UI gets
+	 * returned.
+	 * 
+	 * @see ILaunchConfigurationTab#getErrorMessage()
+	 */
+	@Override
+	public String getErrorMessage() {
+		ICDebuggerPage tab = getDynamicTab();
+		if ( (super.getErrorMessage() != null) || (tab == null)) {
+			return super.getErrorMessage();
+		}
+		return tab.getErrorMessage();
+	}
+
+	/**
+	 * Notification that the user changed the selection of the Debugger.
+	 */
+	protected void handleDebuggerChanged() {
+		loadDynamicDebugArea();
+
+		// always set the newly created area with defaults
+		ILaunchConfigurationWorkingCopy wc = getLaunchConfigurationWorkingCopy();
+		if (getDynamicTab() == null) {
+			// remove any debug specfic args from the config
+			if (wc == null) {
+				if (getLaunchConfiguration().isWorkingCopy()) {
+					wc = (ILaunchConfigurationWorkingCopy)getLaunchConfiguration();
+				}
+			}
+			if (wc != null) {
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SPECIFIC_ATTRS_MAP, (Map<?,?>)null);
+			}
+		} else {
+			if (wc == null) {
+				try {
+					if (getLaunchConfiguration().isWorkingCopy()) {
+						setLaunchConfigurationWorkingCopy((ILaunchConfigurationWorkingCopy)getLaunchConfiguration());
+					} else {
+						setLaunchConfigurationWorkingCopy(getLaunchConfiguration().getWorkingCopy());
+					}
+					wc = getLaunchConfigurationWorkingCopy();
+
+				} catch (CoreException e) {
+					return;
+				}
+			}
+			if (initDefaults()) {
+				getDynamicTab().setDefaults(wc);
+			}
+			setInitializeDefault(false);
+			getDynamicTab().initializeFrom(wc);
+		}
+	}
+
+	@Override
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		ICDebuggerPage dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.activated(workingCopy);
+		}
+	}
+
+	protected boolean initDefaults() {
+		return fInitDefaults;
+	}
+
+	@Override
+	public Image getImage() {
+		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
+	}
+
+	public String getName() {
+		return LaunchMessages.getString("AbstractCDebuggerTab.Debugger"); //$NON-NLS-1$
+	}
+
+	protected void createDebuggerCombo(Composite parent) {
+		Composite comboComp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		comboComp.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		comboComp.setLayoutData(gd);
+		Label dlabel = new Label(comboComp, SWT.NONE);
+		dlabel.setText(LaunchMessages.getString("Launch.common.DebuggerColon")); //$NON-NLS-1$
+		fDCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
+		fDCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fDCombo.addSelectionListener(new SelectionListener() {
+		    public void widgetSelected(SelectionEvent e) {
+		        if (!isInitializing()) {
+		            setInitializeDefault(true);
+		            updateComboFromSelection();
+		        }
+		    }
+
+		    public void widgetDefaultSelected(SelectionEvent e) {
+		    }
+		});
+	}
+
+	protected void loadDebuggerCombo(String[] names, String current) {
+		if (fDCombo == null) {
+			return;
+		}
+		
+		fDCombo.removeAll();
+		int select = -1;
+		for (int i = 0; i < names.length; i++) {
+			fDCombo.add(names[i]);
+			if (names[i].equalsIgnoreCase(current)) {
+				select = i;
+			}
+		}
+
+		if (select != -1) {
+			fDCombo.select(select);
+		} else {
+			fDCombo.select(0);
+		}
+
+		updateComboFromSelection();
+		getControl().getParent().layout(true);
+	}
+
+	protected void createDebuggerGroup(Composite parent, int colspan) {
+		Group debuggerGroup = new Group(parent, SWT.SHADOW_ETCHED_IN);
+		debuggerGroup.setText(LaunchMessages.getString("CDebuggerTab.Debugger_Options")); //$NON-NLS-1$
+		setDynamicTabHolder(debuggerGroup);
+		GridLayout tabHolderLayout = new GridLayout();
+		tabHolderLayout.marginHeight = 0;
+		tabHolderLayout.marginWidth = 0;
+		tabHolderLayout.numColumns = 1;
+		getDynamicTabHolder().setLayout(tabHolderLayout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = colspan;
+		getDynamicTabHolder().setLayoutData(gd);
+	}
+
+	protected void updateComboFromSelection() {
+		handleDebuggerChanged();
+		updateLaunchConfigurationDialog();
+		initializeCommonControls(getLaunchConfiguration());
+	}
+
+	protected boolean isInitializing() {
+		return fIsInitializing;
+	}
+
+	protected void setInitializing(boolean isInitializing) {
+		fIsInitializing = isInitializing;
+	}
+
+	protected String getIdForCurrentDebugger() {
+		if (fDCombo == null) {
+			return getDebuggerId();
+		} else {
+			int selectedIndex = fDCombo.getSelectionIndex();
+			return fDCombo.getItem(selectedIndex);
+		}
 	}
 }

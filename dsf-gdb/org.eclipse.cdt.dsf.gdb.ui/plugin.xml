@@ -211,19 +211,6 @@
       </statusHandler>
    </extension>
    <extension
-         point="org.eclipse.cdt.debug.ui.CDebuggerPage">
-      <debuggerPage
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbDebuggerPage"
-            debuggerID="org.eclipse.cdt.dsf.gdb.GdbDebugger"
-            id="org.eclipse.cdt.dsf.gdb.ui.GdbDebuggerPage">
-      </debuggerPage>
-      <debuggerPage
-            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbServerDebuggerPage"
-            debuggerID="org.eclipse.cdt.dsf.gdb.GdbServerDebugger"
-            id="org.eclipse.cdt.dsf.gdb.ui.GdbServerDebuggerPage">
-      </debuggerPage>
-   </extension>
-   <extension
          point="org.eclipse.ui.popupMenus">
       <viewerContribution
             id="org.eclipse.cdt.dsf.gdb.ui.debugview.context"

@@ -367,7 +367,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 			useRemote.setSelection(useRemoteAttr);
 
 			savedJtagDevice = configuration.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, "");
-			if (savedJtagDevice.isEmpty()) {
+			if (savedJtagDevice.length() == 0) {
 				jtagDevice.select(0);
 			} else {
 				String storedAddress = ""; //$NON-NLS-1$
@@ -424,7 +424,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		savedJtagDevice = jtagDevice.getText();
 		configuration.setAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, savedJtagDevice);
 		configuration.setAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, useRemote.getSelection());
-		if (!savedJtagDevice.isEmpty()) {
+		if (savedJtagDevice.length() > 0) {
 			try {
 				IGDBJtagDevice device = findJtagDeviceByName(jtagDevice.getText()).getDevice();
 				if (device instanceof IGDBJtagConnection) {

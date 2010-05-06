@@ -127,10 +127,12 @@ public class CElementImageProvider {
 		ImageDescriptor descriptor= null;
 		if (element instanceof ICElement) {
 			if (!CCorePlugin.showSourceRootsAtTopOfProject() &&
-				element instanceof ICContainer && isParentOfSourceRoot(element))
+				element instanceof ICContainer && isParentOfSourceRoot(element)) {
+				
 				descriptor = CPluginImages.DESC_OBJS_SOURCE2_ROOT;
-			else
-			descriptor= getCImageDescriptor((ICElement) element, flags);
+			} else {
+				descriptor= getCImageDescriptor((ICElement) element, flags);
+			}
 		} else if (element instanceof IFile) {
 			// Check for Non Translation Unit.
 			IFile file = (IFile)element;
@@ -146,7 +148,7 @@ public class CElementImageProvider {
 					descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
 				
 				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
-				descriptor = new CElementImageDescriptor(descriptor, 0, size);
+				descriptor = new CElementImageDescriptor(descriptor, CElementImageDescriptor.INACTIVE, size);
 			}
 		} else if (!CCorePlugin.showSourceRootsAtTopOfProject() &&
 				element instanceof IFolder && isParentOfSourceRoot(element)) {

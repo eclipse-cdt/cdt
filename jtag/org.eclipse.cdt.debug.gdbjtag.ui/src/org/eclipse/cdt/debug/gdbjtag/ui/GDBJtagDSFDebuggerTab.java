@@ -299,6 +299,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @param text
 	 */
+	@SuppressWarnings("deprecation")
 	protected void updateDeviceIpPort(String selectedDeviceName) {
 		if (selectedDeviceName.equals(savedJtagDevice)) { return; }
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance()
@@ -313,6 +314,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 						IGDBJtagConnection connectionDevice = (IGDBJtagConnection)selectedDevice;
 						connection.setText(connectionDevice.getDefaultDeviceConnection());
 					} else {
+						// support for deprecated TCP/IP based methods
 						ipAddress.setText(selectedDevice.getDefaultIpAddress());
 						portNumber.setText(selectedDevice.getDefaultPortNumber());
 					}

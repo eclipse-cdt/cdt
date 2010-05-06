@@ -14,7 +14,6 @@ package org.eclipse.cdt.debug.gdbjtag.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -59,7 +58,7 @@ public class GDBJtagImages {
 		try {
 			return new URL(iconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			LaunchUIPlugin.log(e);
+			Activator.log(e);
 			return null;
 		}
 	}

@@ -9,7 +9,7 @@
 	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_7.0.0.@timeStamp@.jar" version="7.0.0.@timeStamp@">
 		<category name="CDT Main Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">
+	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_7.0.0.@timeStamp@.jar" version="7.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.core.lrparser.feature" url="features/org.eclipse.cdt.core.lrparser.feature_5.1.0.@timeStamp@.jar" version="5.1.0.@timeStamp@">

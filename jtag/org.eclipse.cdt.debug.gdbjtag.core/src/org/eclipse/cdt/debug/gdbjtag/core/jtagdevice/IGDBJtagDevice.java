@@ -14,6 +14,8 @@ package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection;
+
 /**
  * Provides device specific debug commands for different hardware
  * JTAG devices. See <code>DefaultGDBJtagDeviceImpl</code> for
@@ -77,7 +79,9 @@ public interface IGDBJtagDevice {
 	 *            commands that will connect to the device, or leave the
 	 *            collection as-is if that operation is either unsupported or
 	 *            not applicable
-	 * @deprecated use @see IGDBJtagConnection#doRemote
+	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
+	 *             implementing this method (implementation should throw
+	 *             UnsupportedOperationException)
 	 */
 	public void doRemote(String ip, int port, Collection<String> commands);
 
@@ -152,7 +156,9 @@ public interface IGDBJtagDevice {
 	 * Device specific default hostname of IP address
 	 * 
 	 * @return default hostname of IP address
-	 * @deprecated use @see IGDBJtagConnection#getDetaultDeviceConnection
+	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
+	 *             implementing this method (implementation should throw
+	 *             UnsupportedOperationException)
 	 */
 	public String getDefaultIpAddress();
 
@@ -160,7 +166,9 @@ public interface IGDBJtagDevice {
 	 * Device specific default port number
 	 * 
 	 * @return default port number
-	 * @deprecated use @see IGDBJtagConnection#getDetaultDeviceConnection
+	 * @deprecated an implementor should adapt to IGDBJtagConnection instead of
+	 *             implementing this method (implementation should throw
+	 *             UnsupportedOperationException)
 	 */
 	public String getDefaultPortNumber();
 }

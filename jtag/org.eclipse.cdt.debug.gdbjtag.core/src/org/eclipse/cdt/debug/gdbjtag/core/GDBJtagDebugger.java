@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2008 QNX Software Systems and others.
+ * Copyright (c) 2007 - 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,16 @@
  *     Doug Schaefer, Adrian Petrescu - QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
  *     Peter Vidler  - Monitor support (progress and cancellation) bug 242699
+ *     Bruce Griffith, Sage Electronic Engineering, LLC - bug 305943
+ *              - API generalization to become transport-independent (allow
+ *                connections via serial ports and pipes).
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,9 +123,19 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			boolean useRemote = config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET);
 			if (useRemote) {
 				submonitor.subTask(Messages.getString("GDBJtagDebugger.2")); //$NON-NLS-1$
-				String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-				int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-				gdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+				try {
+					if (gdbJtagDevice instanceof IGDBJtagConnection) { 
+						URI	connection = new URI(config.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, "")); //$NON-NLS-1$
+						IGDBJtagConnection device = (IGDBJtagConnection)gdbJtagDevice;
+						device.doRemote(connection.getSchemeSpecificPart(), commands);
+					} else {
+						String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, "");  //$NON-NLS-1$
+						int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
+						gdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+					}
+				} catch (URISyntaxException e) {
+					throw new OperationCanceledException();
+				}
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(10));
 				if (submonitor.isCanceled()) {
 					throw new OperationCanceledException();

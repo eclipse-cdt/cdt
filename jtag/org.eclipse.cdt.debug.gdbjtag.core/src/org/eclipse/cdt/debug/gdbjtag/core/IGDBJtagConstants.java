@@ -23,13 +23,18 @@ public interface IGDBJtagConstants {
 	// Debugger
 	public static final String ATTR_USE_REMOTE_TARGET = Activator.PLUGIN_ID + ".useRemoteTarget"; //$NON-NLS-1$
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$
+	/** @since 7.0 */
+	public static final String ATTR_CONNECTION = Activator.PLUGIN_ID + ".connection"; //$NON-NLS-1$
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
 	public static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
 	
 	public static final boolean DEFAULT_USE_REMOTE_TARGET = true;
 	public static final String DEFAULT_IP_ADDRESS = "localhost"; //$NON-NLS-1$
 	public static final int DEFAULT_PORT_NUMBER = 10000;
-	
+	/**
+	 * @since 7.0
+	 */
+	public static final String DEFAULT_CONNECTION = "localhost:10000"; //$NON-NLS-1$
 	// Startup
 	public static final String ATTR_INIT_COMMANDS = Activator.PLUGIN_ID + ".initCommands"; //$NON-NLS-1$
 	public static final String ATTR_DELAY = Activator.PLUGIN_ID + ".delay"; //$NON-NLS-1$

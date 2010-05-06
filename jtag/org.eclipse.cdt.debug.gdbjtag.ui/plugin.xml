@@ -40,6 +40,24 @@
       </device>
    </extension>
    <extension
+         point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagConnectionImpl"
+            default_connection="/dev/com1"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GenericSerial"
+            name="%GenericSerial.name">
+      </device>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagConnectionImpl"
+            default_connection="| openocd --pipe"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCD"
+            name="%OpenOCDPipe.name">
+      </device>
+   </extension>
+   <extension
          point="org.eclipse.debug.ui.launchConfigurationTabs">
       <tab
             class="org.eclipse.cdt.debug.gdbjtag.ui.GDBJtagCDICMainTab"

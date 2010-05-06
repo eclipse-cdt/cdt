@@ -54,7 +54,7 @@ public interface IGDBJtagDevice {
 	 * @param ip host name of IP address of JTAG device
 	 * @param port TCP socket port number of JTAG device
 	 * @param commands remote connection commands
-
+	 * @deprecated use @see IGDBJtagConnection#doRemote
 	 */
 	public void doRemote(String ip, int port, Collection<String> commands);
 	
@@ -97,14 +97,14 @@ public interface IGDBJtagDevice {
 	/**
 	 * Device specific default hostname of IP address
 	 * @return default hostname of IP address
-
+	 * @deprecated use @see IGDBJtagConnection#getDetaultDeviceConnection
 	 */
 	public String getDefaultIpAddress();
 	
 	/**
 	 * Device specific default port number
 	 * @return default port number
-
+	 * @deprecated use @see IGDBJtagConnection#getDetaultDeviceConnection
 	 */
 	public String getDefaultPortNumber();
 

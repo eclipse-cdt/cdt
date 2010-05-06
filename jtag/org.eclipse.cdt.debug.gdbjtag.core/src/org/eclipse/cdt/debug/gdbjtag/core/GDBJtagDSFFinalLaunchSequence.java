@@ -8,6 +8,9 @@
  * Contributors:
  *     Ericsson - initial API and implementation this class is based on
  *     QNX Software Systems - Initial implementation for Jtag debugging
+ *     Sage Electronic Engineering, LLC - bug 305943
+ *              - API generalization to become transport-independent (allow
+ *                connections via serial ports and pipes).
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -16,6 +19,8 @@ package org.eclipse.cdt.debug.gdbjtag.core;
  *
  */
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -373,16 +378,26 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
 					if (config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
-						String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
-						int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 						List<String> commands = new ArrayList<String>();
-						fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+						if (fGdbJtagDevice instanceof IGDBJtagConnection) {
+							URI	uri = new URI(config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ""));
+							IGDBJtagConnection device = (IGDBJtagConnection)fGdbJtagDevice;
+							device.doRemote(uri.getSchemeSpecificPart(), commands);
+						} else {
+							// Handle legacy network device contributions that don't understand URIs
+							String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, "");
+							int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
+							fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
+						}
 						queueCommands(commands, rm);
 					} else {
 						rm.done();
 					}
 				} catch (CoreException e) {
         			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot connect to remote target", e)); //$NON-NLS-1$
+        			rm.done();
+				} catch (URISyntaxException e) {
+        			rm.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Invalid remote target connection syntax", e)); //$NON-NLS-1$
         			rm.done();
 				}
 			}},

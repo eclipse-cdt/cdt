@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.gdbjtag.core;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -73,6 +74,12 @@ public class Activator extends Plugin {
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+	/**
+	 * @since 7.0
+	 */
+	public static void log(Throwable t) {
+		getDefault().getLog().log(new Status(Status.ERROR, PLUGIN_ID, t.getMessage(), t));
 	}
 
 }

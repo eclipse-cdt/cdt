@@ -368,6 +368,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @param text
 	 */
+	@SuppressWarnings("deprecation")
 	protected void updateDeviceIpPort(String selectedDeviceName) {
 		if (selectedDeviceName.equals(savedJtagDevice)) {
 			return;
@@ -384,6 +385,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 						IGDBJtagConnection connectionDevice = (IGDBJtagConnection)selectedDevice;
 						connection.setText(connectionDevice.getDefaultDeviceConnection());
 					} else {
+						// legacy way 
 						ipAddress.setText(selectedDevice.getDefaultIpAddress());
 						portNumber.setText(selectedDevice.getDefaultPortNumber());
 					}
@@ -468,28 +470,25 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 				
 				for (int i = 0; i < jtagDevice.getItemCount(); i++) {
 					if (jtagDevice.getItem(i).equals(savedJtagDevice)) {
-						storedAddress = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ""); //$NON-NLS-1$
-						storedPort = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
-						storedConnection = configuration.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, ""); //$NON-NLS-1$
+						storedAddress = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS); //$NON-NLS-1$
+						storedPort = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
+						storedConnection = configuration.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION); //$NON-NLS-1$
 						jtagDevice.select(i);
 						break;
 					}
 				}
 
-				if (storedConnection!=null) {
-					try {
-						connection.setText(new URI(storedConnection).getSchemeSpecificPart());
-					} catch (URISyntaxException e) {
-						Activator.log(e);
-					}
-				} 
-				if (storedAddress!=null)
-				{
-					// Treat as legacy network probe
-					ipAddress.setText(storedAddress);
-					String portString = (0<storedPort)&&(storedPort<=65535) ? Integer.valueOf(storedPort).toString() : "";  //$NON-NLS-1$
-					portNumber.setText(portString);
+				// New generic connection settings				
+				try {
+					connection.setText(new URI(storedConnection).getSchemeSpecificPart());
+				} catch (URISyntaxException e) {
+					Activator.log(e);
 				}
+
+				// Legacy TCP/IP based settings
+				ipAddress.setText(storedAddress);
+				String portString = (0<storedPort)&&(storedPort<=65535) ? Integer.valueOf(storedPort).toString() : "";  //$NON-NLS-1$
+				portNumber.setText(portString);
 			}
 		} catch (CoreException e) {
 			Activator.getDefault().getLog().log(e.getStatus());

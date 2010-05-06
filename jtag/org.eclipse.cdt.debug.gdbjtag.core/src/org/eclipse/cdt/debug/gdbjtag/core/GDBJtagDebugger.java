@@ -73,6 +73,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 		return new GDBJtagCommandFactory(miVersion);
 	}
 	
+	@SuppressWarnings("deprecation")
 	protected void doStartSession(ILaunch launch, Session session, IProgressMonitor monitor) throws CoreException {
 		SubMonitor submonitor = SubMonitor.convert(monitor, 100);
 		
@@ -125,10 +126,11 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 				submonitor.subTask(Messages.getString("GDBJtagDebugger.2")); //$NON-NLS-1$
 				try {
 					if (gdbJtagDevice instanceof IGDBJtagConnection) { 
-						URI	connection = new URI(config.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, "")); //$NON-NLS-1$
+						URI	connection = new URI(config.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION));
 						IGDBJtagConnection device = (IGDBJtagConnection)gdbJtagDevice;
 						device.doRemote(connection.getSchemeSpecificPart(), commands);
 					} else {
+						// use deprecated methods tied to TCP/IP
 						String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, "");  //$NON-NLS-1$
 						int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
 						gdbJtagDevice.doRemote(ipAddress, portNumber, commands);

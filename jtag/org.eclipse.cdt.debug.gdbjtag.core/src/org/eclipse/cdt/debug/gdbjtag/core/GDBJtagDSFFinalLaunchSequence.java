@@ -373,6 +373,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
          * Hook up to remote target
          */
         new Step() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();

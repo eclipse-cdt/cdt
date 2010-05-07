@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -145,16 +143,13 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 
 	protected void initDebuggerTypes(String selection) {
 		if (fAttachMode) {
-			// Use a LinkedHashSet to keep ordering
-			Set<String> set = new LinkedHashSet<String>();
-			set.add(LOCAL_DEBUGGER_ID);
-			set.add(REMOTE_DEBUGGER_ID);
+			setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
+
 			if (selection.equals("")) { //$NON-NLS-1$
 				selection = LOCAL_DEBUGGER_ID;
 			}
 
-			setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
-			loadDebuggerCombo(set.toArray(new String[set.size()]), selection);
+			loadDebuggerCombo(new String[] { LOCAL_DEBUGGER_ID, REMOTE_DEBUGGER_ID }, selection);
 		} else {
 			if (fRemoteMode) {
 				setDebuggerId(REMOTE_DEBUGGER_ID);
@@ -385,8 +380,9 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	}
 	
 	protected void loadDynamicDebugArea() {
+		Composite dynamicTabHolder = getDynamicTabHolder();
 		// Dispose of any current child widgets in the tab holder area
-		Control[] children = getDynamicTabHolder().getChildren();
+		Control[] children = dynamicTabHolder.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			children[i].dispose();
 		}
@@ -403,18 +399,21 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 				}
 			} else if (debuggerId.equals(REMOTE_DEBUGGER_ID)) {
 				setDynamicTab(new GdbServerDebuggerPage());
+			} else {
+				assert false : "Unknown debugger id"; //$NON-NLS-1$
 			}
 		}
 		setDebuggerId(debuggerId);
 
-		if (getDynamicTab() == null) {
+		ICDebuggerPage debuggerPage = getDynamicTab();
+		if (debuggerPage == null) {
 			return;
 		}
 		// Ask the dynamic UI to create its Control
-		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
-		getDynamicTab().createControl(getDynamicTabHolder());
-		getDynamicTab().getControl().setVisible(true);
-		getDynamicTabHolder().layout(true);
+		debuggerPage.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+		debuggerPage.createControl(dynamicTabHolder);
+		debuggerPage.getControl().setVisible(true);
+		dynamicTabHolder.layout(true);
 		contentsChanged();
 	}
 	
@@ -594,10 +593,10 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		tabHolderLayout.marginHeight = 0;
 		tabHolderLayout.marginWidth = 0;
 		tabHolderLayout.numColumns = 1;
-		getDynamicTabHolder().setLayout(tabHolderLayout);
+		debuggerGroup.setLayout(tabHolderLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = colspan;
-		getDynamicTabHolder().setLayoutData(gd);
+		debuggerGroup.setLayoutData(gd);
 	}
 
 	protected void updateComboFromSelection() {

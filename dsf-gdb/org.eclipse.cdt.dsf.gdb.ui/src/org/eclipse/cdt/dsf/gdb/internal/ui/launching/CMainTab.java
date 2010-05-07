@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Ken Ryall (Nokia) - bug 178731
  *     Ericsson - Support for tracepoint post-mortem debugging
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
@@ -213,7 +214,7 @@ public class CMainTab extends CAbstractMainTab {
 		});
 
 		Button browseForCoreButton;
-		browseForCoreButton = createPushButton(coreComp, LaunchMessages.getString("Launch.common.Browse_2"), null); //$NON-NLS-1$
+		browseForCoreButton = createPushButton(coreComp, LaunchMessages.getString("Launch.common.Browse_3"), null); //$NON-NLS-1$
 		browseForCoreButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent evt) {

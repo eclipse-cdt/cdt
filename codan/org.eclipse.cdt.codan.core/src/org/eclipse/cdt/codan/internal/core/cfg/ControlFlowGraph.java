@@ -75,7 +75,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	}
 
 	public void print(IBasicBlock node) {
-		System.out.println(node.getClass().getSimpleName() + ": "
+		System.out.println(node.getClass().getSimpleName() + ": " //$NON-NLS-1$
 				+ ((AbstractBasicBlock) node).toStringData());
 		if (node instanceof IDecisionNode) {
 			// todo
@@ -83,9 +83,9 @@ public class ControlFlowGraph implements IControlFlowGraph {
 					.getOutgoingIterator();
 			for (; branches.hasNext();) {
 				IBasicBlock brNode = branches.next();
-				System.out.println("{");
+				System.out.println("{"); //$NON-NLS-1$
 				print(brNode);
-				System.out.println("}");
+				System.out.println("}"); //$NON-NLS-1$
 			}
 			print(((IDecisionNode) node).getMergeNode());
 		} else if (node instanceof ISingleOutgoing) {
@@ -118,15 +118,14 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph#getNodes
-	 * ()
+	 * @see org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph#getNodes ()
 	 */
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
 		getNodes(getStartNode(), result);
-		for (Iterator iterator = deadNodes.iterator(); iterator.hasNext();) {
-			IBasicBlock d = (IBasicBlock) iterator.next();
+		for (Iterator<IBasicBlock> iterator = deadNodes.iterator(); iterator
+				.hasNext();) {
+			IBasicBlock d = iterator.next();
 			getNodes(d, result);
 		}
 		return result;

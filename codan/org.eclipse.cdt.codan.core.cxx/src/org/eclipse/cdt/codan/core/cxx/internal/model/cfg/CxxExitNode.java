@@ -38,7 +38,7 @@ public class CxxExitNode extends ExitNode implements IExitNode {
 	 */
 	public String toStringData() {
 		if (getNode() == null)
-			return "return; // fake";
+			return "return; // fake"; //$NON-NLS-1$
 		return getNode().getRawSignature();
 	}
 }

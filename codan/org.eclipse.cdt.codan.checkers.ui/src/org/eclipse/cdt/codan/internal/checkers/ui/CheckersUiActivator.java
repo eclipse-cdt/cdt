@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 public class CheckersUiActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.checkers.ui";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.checkers.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static CheckersUiActivator plugin;

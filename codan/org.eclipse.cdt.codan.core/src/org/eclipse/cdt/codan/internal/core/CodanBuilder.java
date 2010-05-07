@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
@@ -105,7 +106,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		}
 		int tick = 1000;
 		// System.err.println("processing " + resource);
-		monitor.beginTask("Code analysis on " + resource, checkers + memsize
+		monitor.beginTask(Messages.CodanBuilder_Code_Analysis_On + resource, checkers + memsize
 				* tick);
 		try {
 			IProblemReporter problemReporter = CodanRuntime.getInstance()

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -12,6 +13,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * 
@@ -40,21 +42,23 @@ public class CodanApplication implements IApplication {
 			public void reportProblem(String id, String markerType,
 					int severity, IFile file, int lineNumber, int startChar,
 					int endChar, String message) {
-				System.out.println(file.getLocation() + ":" + lineNumber + ": "
+				System.out.println(file.getLocation() + ":" + lineNumber + ": " //$NON-NLS-1$ //$NON-NLS-2$
 						+ message);
 			}
 		});
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		if (all) {
-			log("Launching analysis on workspace");
+			log(Messages.CodanApplication_LogRunWorkspace);
 			codanBuilder.processResource(root, new NullProgressMonitor());
 		} else {
 			for (String project : projects) {
-				log("Launching analysis on project " + project);
+				log(Messages.CodanApplication_LogRunProject + project);
 				IProject wProject = root.getProject(project);
 				if (!wProject.exists()) {
-					System.err.println("Error: project " + project
-							+ " does not exist");
+					System.err.println( //
+							NLS.bind(
+									Messages.CodanApplication_Error_ProjectDoesNotExists,
+									project));
 					continue;
 				}
 				codanBuilder.processResource(wProject,
@@ -78,9 +82,9 @@ public class CodanApplication implements IApplication {
 	private void extractArguments(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			String string = args[i];
-			if (string.equals("-verbose")) {
+			if (string.equals("-verbose")) { //$NON-NLS-1$
 				verbose = true;
-			} else if (string.equals("-all")) {
+			} else if (string.equals("-all")) { //$NON-NLS-1$
 				all = true;
 			} else {
 				projects.add(string);
@@ -92,10 +96,10 @@ public class CodanApplication implements IApplication {
 	 * 
 	 */
 	private void help() {
-		System.out.println("Usage: [options] <project1> <project2> ...");
-		System.out.println("Options:");
-		System.out.println("  -all - run on all projects in workspace");
-		System.out.println("  -verbose - print extra build information");
+		System.out.println(Messages.CodanApplication_Usage);
+		System.out.println(Messages.CodanApplication_Options);
+		System.out.println(Messages.CodanApplication_all_option);
+		System.out.println(Messages.CodanApplication_verbose_option);
 	}
 
 	public void stop() {

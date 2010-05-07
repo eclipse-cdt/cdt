@@ -18,6 +18,7 @@ import org.eclipse.cdt.codan.core.model.IProblemElement;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.core.CodanPreferencesLoader;
+import org.eclipse.cdt.codan.internal.ui.Messages;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -145,7 +146,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 
 
 	public ProblemsTreeEditor(Composite parent, IProblemProfile profile) {
-		super(PreferenceConstants.P_PROBLEMS, "Problems", parent);
+		super(PreferenceConstants.P_PROBLEMS, Messages.ProblemsTreeEditor_Problems, parent);
 		setEmptySelectionAllowed(true);
 		getTreeViewer().getTree().setHeaderVisible(true);
 		// getTreeViewer().getTree().
@@ -154,7 +155,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		// column Name
 		TreeViewerColumn column1 = new TreeViewerColumn(getTreeViewer(), SWT.NONE);
 		column1.getColumn().setWidth(300);
-		column1.getColumn().setText("Name");
+		column1.getColumn().setText(Messages.ProblemsTreeEditor_NameColumn);
 		column1.setLabelProvider(new ColumnLabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof IProblem) {
@@ -171,7 +172,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		// column Severity
 		TreeViewerColumn column2 = new TreeViewerColumn(getTreeViewer(), SWT.NONE);
 		column2.getColumn().setWidth(100);
-		column2.getColumn().setText("Severity");
+		column2.getColumn().setText(Messages.ProblemsTreeEditor_SeverityColumn);
 		column2.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(Object element) {
@@ -298,6 +299,6 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	 */
 	@Override
 	protected String modelToString(Object model) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

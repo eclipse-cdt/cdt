@@ -44,13 +44,13 @@ public abstract class AbstractBasicBlock implements IBasicBlock {
 	 */
 	public String toStringData() {
 		if (getData() == null)
-			return "0x" + Integer.toHexString(System.identityHashCode(this));
+			return "0x" + Integer.toHexString(System.identityHashCode(this)); //$NON-NLS-1$
 		return getData().toString();
 	}
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + ": " + toStringData();
+		return getClass().getSimpleName() + ": " + toStringData(); //$NON-NLS-1$
 	}
 
 	/**

@@ -28,7 +28,7 @@ import org.osgi.framework.BundleContext;
  */
 public class CodanUIActivator extends AbstractUIPlugin {
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui"; //$NON-NLS-1$
 	// The shared instance
 	private static CodanUIActivator plugin;
 	private IPreferenceStore preferenceCoreStore;

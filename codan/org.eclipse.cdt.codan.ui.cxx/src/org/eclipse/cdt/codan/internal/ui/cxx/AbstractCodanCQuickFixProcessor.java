@@ -63,7 +63,7 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 			IMarker m = markers[i];
 			int start = m.getAttribute(IMarker.CHAR_START, -1);
 			if (start==loc.getOffset()) {
-				String id = m.getAttribute(IMarker.PROBLEM,"");
+				String id = m.getAttribute(IMarker.PROBLEM,""); //$NON-NLS-1$
 				return getCorrections(context, id, m);
 			}
 		}

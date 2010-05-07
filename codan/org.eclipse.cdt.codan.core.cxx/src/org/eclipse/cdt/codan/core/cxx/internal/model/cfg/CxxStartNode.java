@@ -30,6 +30,6 @@ public class CxxStartNode extends StartNode {
 	 */
 	@Override
 	public String toString() {
-		return "start";
+		return "start"; //$NON-NLS-1$
 	}
 }

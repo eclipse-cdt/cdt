@@ -98,7 +98,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 			marker.setAttribute(IMarker.PROBLEM, id);
 			marker.setAttribute(IMarker.CHAR_END, endChar);
 			marker.setAttribute(IMarker.CHAR_START, startChar);
-			marker.setAttribute("org.eclipse.cdt.core.problem", 42);
+			marker.setAttribute("org.eclipse.cdt.core.problem", 42); //$NON-NLS-1$
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

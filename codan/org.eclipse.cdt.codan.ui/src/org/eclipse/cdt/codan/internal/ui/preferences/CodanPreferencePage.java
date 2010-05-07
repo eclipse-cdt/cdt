@@ -16,6 +16,7 @@ import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.internal.ui.Messages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -126,14 +127,14 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		info = new Group(comp, SWT.NONE);
 		info.setLayoutData(new GridData(GridData.FILL_BOTH));
 		info.setLayout(new GridLayout(2, false));
-		info.setText("Info");
+		info.setText(Messages.CodanPreferencePage_Info);
 		infoParams = new Label(info, SWT.NONE);
 		infoParams.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
 				false));
 		infoButton = new Button(info, SWT.PUSH);
 		infoButton
 				.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
-		infoButton.setText("Customize...");
+		infoButton.setText(Messages.CodanPreferencePage_Customize);
 		infoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -180,17 +181,17 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	private void updateProblemInfo() {
 		if (selectedProblem == null) {
-			infoMessage.setText("");
-			infoParams.setText("");
+			infoMessage.setText(""); //$NON-NLS-1$
+			infoParams.setText(""); //$NON-NLS-1$
 			infoButton.setEnabled(false);
 		} else {
 			IProblemParameterInfo parameterInfo = selectedProblem
 					.getParameterInfo();
 			String desc = selectedProblem.getDescription();
-			infoMessage.setText(desc == null ? "No additional information"
+			infoMessage.setText(desc == null ? Messages.CodanPreferencePage_NoInfo
 					: desc);
-			infoParams.setText(parameterInfo == null ? "No parameters"
-					: "This problem has parameters");
+			infoParams.setText(parameterInfo == null ? Messages.CodanPreferencePage_NoParameters
+					: Messages.CodanPreferencePage_HasParameters);
 			infoButton.setEnabled(true);
 		}
 		info.layout(true);

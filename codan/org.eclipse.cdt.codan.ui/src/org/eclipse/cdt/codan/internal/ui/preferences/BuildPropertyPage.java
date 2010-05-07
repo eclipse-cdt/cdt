@@ -2,6 +2,7 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
+import org.eclipse.cdt.codan.internal.ui.Messages;
 import org.eclipse.cdt.codan.internal.ui.actions.ToggleNatureAction;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,9 +32,9 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD,
-				"&Run with build", getFieldEditorParent()));
+				Messages.BuildPropertyPage_RunWithBuild, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR,
-				"Run as you &type (selected checkers)", getFieldEditorParent()));
+				Messages.BuildPropertyPage_RunAsYouType, getFieldEditorParent()));
 	}
 
 	@Override
@@ -90,6 +91,6 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	}
 
 	protected String getPageId() {
-		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage";
+		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"; //$NON-NLS-1$
 	}
 }

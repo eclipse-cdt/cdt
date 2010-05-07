@@ -32,6 +32,6 @@ public class CxxBranchNode extends BranchNode {
 	 */
 	@Override
 	public String toString() {
-		return labelData.getRawSignature()+":";
+		return labelData.getRawSignature()+":"; //$NON-NLS-1$
 	}
 }

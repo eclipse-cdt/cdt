@@ -37,7 +37,7 @@ public class CxxDecisionNode extends DecisionNode {
 	 */
 	public String toStringData() {
 		if (getNode() == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return getNode().getRawSignature();
 	}
 }

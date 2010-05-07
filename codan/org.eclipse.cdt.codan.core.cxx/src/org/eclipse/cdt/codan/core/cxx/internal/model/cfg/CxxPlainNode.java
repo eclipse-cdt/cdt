@@ -39,7 +39,7 @@ public class CxxPlainNode extends PlainNode {
 	 */
 	public String toStringData() {
 		if (getNode() == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return getNode().getRawSignature();
 	}
 }

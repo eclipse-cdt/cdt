@@ -47,7 +47,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(
 				file).findProblem(id);
 		if (problem == null)
-			throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
+			throw new IllegalArgumentException("Id is not registered:" + id); //$NON-NLS-1$
 		if (problem.isEnabled() == false)
 			return; // skip
 		int severity = problem.getSeverity().intValue();

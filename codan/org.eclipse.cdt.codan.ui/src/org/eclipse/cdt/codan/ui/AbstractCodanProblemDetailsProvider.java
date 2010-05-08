@@ -80,7 +80,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 		String href = getLocationHRef();
 		String link = href.replaceFirst("^file:", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		link = link.replaceFirst("#(\\d+)$", ":$1");  //$NON-NLS-1$//$NON-NLS-2$
-		return "<a href=\"" + href + "\">" + link + "</a>\n" + message; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return "<a href=\"" + href + "\">" + link + "</a> \n" + message; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	protected String getLocationHRef() {
 		return CodanEditorUtility.getLocationHRef(marker);

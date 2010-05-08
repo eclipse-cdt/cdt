@@ -83,5 +83,40 @@
             name="Name convention for function">
       </problem>
       </checker>
+             <checker
+                   class="org.eclipse.cdt.codan.internal.checkers.ReturnChecker"
+                   id="org.eclipse.cdt.codan.internal.checkers.ReturnChecker"
+                   name="Return inconsistencies">
+                <problem
+                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      defaultEnabled="true"
+                      defaultSeverity="Error"
+                      description="Return statment has no return value, if somebody would use return value from this function it would be random"
+                      id="org.eclipse.cdt.codan.checkers.noreturn"
+                      messagePattern="Return without value, in function returning non-void"
+                      name="No return value">
+                </problem>
+                <problem
+                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      defaultEnabled="true"
+                      defaultSeverity="Error"
+                      description="Return statement has a value, but function is declared to return void. Did you mean to declare function with return value?"
+                      id="org.eclipse.cdt.codan.checkers.errreturnvalue"
+                      messagePattern="Return has value, in function returning void"
+                      name="Unused return value">
+                </problem>
+                     <problem
+                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      defaultEnabled="true"
+                      defaultSeverity="Warning"
+                      description="No return statement in a function which is declared to return value"
+                      id="org.eclipse.cdt.codan.checkers.errnoreturn"
+                      messagePattern="No return, in function returning non-void"
+                      name="No return">
+                </problem>
+             </checker>
+       
+
+             
    </extension>
 </plugin>

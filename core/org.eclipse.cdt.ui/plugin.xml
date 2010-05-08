@@ -3520,4 +3520,14 @@
          </complexArray>
       </processType>
    </extension>
+	<extension point="org.eclipse.ui.decorators">
+		<decorator adaptable="true"
+			class="org.eclipse.cdt.internal.ui.viewsupport.ExcludedFileDecorator"
+			id="org.eclipse.cdt.managedbuilder.ui.excludedFile" label="%excluded-file.name"
+			lightweight="true" state="true">
+			<enablement>
+				<objectClass name="org.eclipse.core.resources.IFile" />
+			</enablement>
+		</decorator>
+	</extension>
 </plugin>

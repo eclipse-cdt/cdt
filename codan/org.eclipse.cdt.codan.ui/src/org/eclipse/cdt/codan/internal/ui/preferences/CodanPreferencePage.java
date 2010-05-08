@@ -16,7 +16,7 @@ import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
-import org.eclipse.cdt.codan.internal.ui.Messages;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -63,7 +63,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		super(GRID);
 		setPreferenceStore(new ScopedPreferenceStore(new InstanceScope(),
 				CodanCorePlugin.PLUGIN_ID));
-		//setDescription("Code Analysis Preference Page");
+		// setDescription("Code Analysis Preference Page");
 		problemSelectionListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (info != null) {
@@ -127,14 +127,14 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		info = new Group(comp, SWT.NONE);
 		info.setLayoutData(new GridData(GridData.FILL_BOTH));
 		info.setLayout(new GridLayout(2, false));
-		info.setText(Messages.CodanPreferencePage_Info);
+		info.setText(CodanUIMessages.CodanPreferencePage_Info);
 		infoParams = new Label(info, SWT.NONE);
 		infoParams.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
 				false));
 		infoButton = new Button(info, SWT.PUSH);
 		infoButton
 				.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
-		infoButton.setText(Messages.CodanPreferencePage_Customize);
+		infoButton.setText(CodanUIMessages.CodanPreferencePage_Customize);
 		infoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -144,7 +144,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		infoMessage = new Label(info, SWT.WRAP);
 		GridData ld = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
 		ld.horizontalSpan = 2;
-		ld.widthHint=400;
+		ld.widthHint = 400;
 		infoMessage.setLayoutData(ld);
 		setSelectedProblem(null);
 	}
@@ -188,10 +188,12 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 			IProblemParameterInfo parameterInfo = selectedProblem
 					.getParameterInfo();
 			String desc = selectedProblem.getDescription();
-			infoMessage.setText(desc == null ? Messages.CodanPreferencePage_NoInfo
-					: desc);
-			infoParams.setText(parameterInfo == null ? Messages.CodanPreferencePage_NoParameters
-					: Messages.CodanPreferencePage_HasParameters);
+			if (desc == null)
+				desc = CodanUIMessages.CodanPreferencePage_NoInfo;
+			infoMessage.setText(desc);
+			infoParams
+					.setText(parameterInfo == null ? CodanUIMessages.CodanPreferencePage_NoParameters
+							: CodanUIMessages.CodanPreferencePage_HasParameters);
 			infoButton.setEnabled(true);
 		}
 		info.layout(true);

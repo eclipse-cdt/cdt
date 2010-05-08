@@ -13,7 +13,7 @@ package org.eclipse.cdt.codan.internal.ui.dialogs;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.internal.ui.CodnaUIMessages;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -75,7 +75,7 @@ public class ParametersComposite extends Composite {
 		IProblemParameterInfo info = problem.getParameterInfo();
 		if (info == null) {
 			Label label = new Label(this, 0);
-			label.setText(CodnaUIMessages.ParametersComposite_None);
+			label.setText(CodanUIMessages.ParametersComposite_None);
 		}
 		initPrefStore(info);
 		page.setPreferenceStore(pref);

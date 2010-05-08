@@ -13,8 +13,10 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
@@ -120,7 +122,8 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	public IAdaptable getElement() {
-		if (element==null) return element;
+		if (element == null)
+			return element;
 		if (!(element instanceof IProject))
 			return (IAdaptable) element.getAdapter(IProject.class);
 		return element;
@@ -205,13 +208,12 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 		Composite radioGroup = new Composite(comp, SWT.NONE);
 		radioGroup.setLayout(new GridLayout());
 		radioGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		useWorkspaceSettingsButton = createRadioButton(radioGroup, Messages
-				.getString("OverlayPage.Use_Workspace_Settings")); //$NON-NLS-1$
-		useProjectSettingsButton = createRadioButton(radioGroup, Messages
-				.getString("OverlayPage.Use_Project_Settings")); //$NON-NLS-1$
+		useWorkspaceSettingsButton = createRadioButton(radioGroup,
+				CodanUIMessages.OverlayPage_Use_Workspace_Settings);
+		useProjectSettingsButton = createRadioButton(radioGroup,
+				CodanUIMessages.OverlayPage_Use_Project_Settings);
 		configureButton = new Button(comp, SWT.PUSH);
-		configureButton.setText(Messages
-				.getString("OverlayPage.Configure_Workspace_Settings")); //$NON-NLS-1$
+		configureButton.setText(CodanUIMessages.OverlayPage_Use_Workspace_Settings);
 		configureButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				configureWorkspaceSettings();
@@ -327,6 +329,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage
 	/**
 	 * Creates a new preferences page and opens it
 	 */
+	@SuppressWarnings("cast")
 	protected void configureWorkspaceSettings() {
 		try {
 			// create a new instance of the current class

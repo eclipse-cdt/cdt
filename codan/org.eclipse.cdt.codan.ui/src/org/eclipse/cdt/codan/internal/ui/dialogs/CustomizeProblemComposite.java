@@ -12,7 +12,7 @@ package org.eclipse.cdt.codan.internal.ui.dialogs;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.internal.ui.CodnaUIMessages;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -56,7 +56,7 @@ public class CustomizeProblemComposite extends Composite {
 	 */
 	private void createParamtersTab(TabFolder tabFolder) {
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
-		tabItem1.setText(CodnaUIMessages.CustomizeProblemComposite_TabParameters);
+		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_TabParameters);
 		parametersTab = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(parametersTab);
 		parametersTab.setLayout(new GridLayout());
@@ -69,7 +69,7 @@ public class CustomizeProblemComposite extends Composite {
 	 */
 	private void createScopeTab(TabFolder tabFolder) {
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
-		tabItem1.setText(CodnaUIMessages.CustomizeProblemComposite_TabScope);
+		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_TabScope);
 		Composite comp = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(comp);
 		comp.setLayout(new GridLayout());

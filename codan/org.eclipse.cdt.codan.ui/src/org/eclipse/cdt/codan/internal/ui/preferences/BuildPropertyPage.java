@@ -2,7 +2,7 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
-import org.eclipse.cdt.codan.internal.ui.Messages;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.actions.ToggleNatureAction;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,9 +32,9 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_ON_BUILD,
-				Messages.BuildPropertyPage_RunWithBuild, getFieldEditorParent()));
+				CodanUIMessages.BuildPropertyPage_RunWithBuild, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_RUN_IN_EDITOR,
-				Messages.BuildPropertyPage_RunAsYouType, getFieldEditorParent()));
+				CodanUIMessages.BuildPropertyPage_RunAsYouType, getFieldEditorParent()));
 	}
 
 	@Override

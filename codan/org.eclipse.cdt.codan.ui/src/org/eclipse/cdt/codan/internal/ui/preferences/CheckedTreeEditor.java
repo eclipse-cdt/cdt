@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
-import org.eclipse.cdt.codan.internal.ui.Messages;
+import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -313,7 +313,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements
 		if (!emptySelectionAllowed) {
 			Object[] checkedElements = getTreeViewer().getCheckedElements();
 			if (checkedElements.length == 0) {
-				showErrorMessage(Messages.CheckedTreeEditor_SelectionCannotBeEmpty);
+				showErrorMessage(CodanUIMessages.CheckedTreeEditor_SelectionCannotBeEmpty);
 				return false;
 			}
 		}

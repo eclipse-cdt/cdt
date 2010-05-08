@@ -8,30 +8,31 @@
 </head>
 <body>
 
-<h1>Discovery options preferences </h1>
-<br>
-<p style="margin-top: 0">Controls how to discover information required to build your project, enhance search and Content Assist functionality, and automatically enhance your makefile, such as include paths and symbol definitions.</p>
-<p style="margin-top: 0"><img src="../images/mpref_discovopts.png" width="801" height="676" alt="Discovery options preference page"></p>
+<h1>Discovery Options properties </h1>
+<p>Use the <strong>Discovery Options</strong> properties panel to control how information required to build your project is discovered, enhance search and Content Assist functionality, and automatically enhance your makefile, such as include paths and symbol definitions.</p>
+<p><img src="../images/mpref_discovopts.png" alt="Discovery options preference page"></p>
 
-<table cellpadding="5" cellspacing="0" border="1" >
-	<br>
-		<caption><strong>Discovery options preferences</strong></caption>
-	<br>	
+<table cellpadding="5" cellspacing="0" border="1" width="700px" bordercolor="#DDDDDD" >
+	<caption><strong>Discovery Options preferences</strong></caption>	
 	<colgroup>
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
 	</colgroup>
 	<tbody> 
-		<tr>
-			<td><strong>Configuration</strong></td>
+		<tr align="center">
+			<td><strong>Group</strong></td>
+			<td><strong>Description</strong></td>
+		</tr>
+		<tr valign="top" >
+			<td valign="top" ><strong>Configuration</strong></td>
 			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
-		<tr>
-			<td><strong>Manage configurations</strong></td>
+		<tr valign="top" >
+			<td valign="top" ><strong>Manage Configurations...</strong></td>
 			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
 		</tr>
-		<tr>
-			<td><strong>Discovery Profiles Scope</strong></td>
+		<tr valign="top" >
+			<td valign="top" ><strong>Discovery Profiles Scope</strong></td>
 			<td>Specifies the type of profile to set for discovery:
 			  <ul>
 			    <li><strong>Per Language</strong> - Enables the association of different profiles with different resource types (different tools and input types), to have different settings discovered, e.g. for C and C++ source files and for different tools used by the project.
@@ -44,51 +45,57 @@ the entire project (configuration). This means that both the project and per-fil
 			
 			</td>
 		</tr>
-		<tr>
-			<td>Left pane list (language specific)</td>
+		<tr valign="top" >
+			<td valign="top" ><strong>Tools</strong> (language specific list)</td>
 			<td>Shows a list of language specific compilers. Select a language from the list.</td>
 		</tr>
-		<tr>
+		<tr valign="top" >
+			<td colspan="2" ><strong>Automated discovery of paths and symbols</strong></td>
+		</tr>
+		<tr valign="top" >
 			<td><strong>Automate discovery of paths and symbols</strong></td>
 			<td>Scans the build output to populate the path and symbol tables, such as symbol definitions, system include directories, local include directories, macros, and include files.</td>
 		</tr>
-				<tr>
+		<tr valign="top" >
 			<td><strong>Report path detection problems</strong></td>
 			<td>Sets the notification of diagnostic errors for include paths that the Eclipse CDT is unable to resolve as it parses the build output.</td>
 		</tr>
-		<tr>
+		<tr valign="top" >
 			<td><strong>Discovery profile</strong></td>
 			<td>Indicates the discovery profile to use for paths and symbol detection. The type of <strong>Configuration</strong> and <strong>Discovery Profile Scope</strong> you specify determine what which <strong>Discovery Profile</strong> options display on this tab.</td>
 		</tr>		
-		<tr>
+		<tr valign="top" >
+			<td colspan="2" ><strong>Discovery profile options</strong></td>
+		</tr>
+		<tr valign="top" >
 			<td><strong>Enable build output scanner info discovery</strong></td>
 			<td>Configures the scanner to parse the output from a build for compiler commands with options that specify the definition of preprocessor symbols, and include search paths (for GCC compiler, -D and -I respectively). This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
 		</tr>
-		<tr>
+		<tr valign="top" >
+			<td><strong>Load build output from file</strong></td>
+			<td>Specifies the name of the file you selected to load the build output from. </td>
+		</tr>
+		<tr valign="top" >
 			<td><strong>Load</strong></td>
 			<td>Lets you load a file to discover paths and symbols based on a previous builds' output. To activate the discovery select a build log file and then the <strong>Load</strong> button. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.
 			<p><strong>Note:</strong> Click <strong>Variables</strong> to open the Select Variables window to define a build output file.</p>
 			</td>
 		</tr>
-		<tr>
-			<td><strong>Load build output from file</strong></td>
-			<td>Specifies the name of the file you selected to load the build output from. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
-		</tr>
-		<tr>
-			<td><strong>Browse</strong></td>
+		<tr valign="top" >
+			<td><strong>Browse...</strong></td>
 			<td>Click to locate a previously built output file to load the build output from. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
 		</tr>
-		<tr>
-			<td><strong>Variables</strong></td>
+		<tr valign="top" >
+			<td><strong>Variables...</strong></td>
 			<td>Click to specify an argument for, or create and configure simple launch variables which you can reference in launch configurations that support variables. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
 		</tr>
-		<tr>
+		<tr valign="top" >
 			<td><strong>Enable generate scanner info command</strong></td>
 			<td>Enables the retrieval of information from the scanner. If it is not selected, the includes will be populated with default gcc system includes; Eclipse gathers the compiler settings based on the specified toolchain. This means that the Eclipse CDT can obtain the default gcc system includes to associate with the project. 
 				<p>When selected, you can specify any required compiler specific commands in the <strong>Compiler invocation command</strong> field.</p>
 			</td>
 		</tr>
-		<tr>
+		<tr valign="top" >
 			<td><strong>Compiler invocation command</strong></td>
 			<td>Indicates the compiler specific command used to invoke the compiler (such as <span class="typewriter">gcc</span>, or more complicated commands used to perform all necessary steps for compiling C/C++ source files into .o files, and linking the object files and libraries into an executable program. For example, the command <strong>gcc -E -P -v hello.c | hello.cpp</strong> reads a compiler's configuration file and prints out information that includes the compiler's internally defined preprocessor symbols and include search paths. The information is complementary to the scanner configuration discovered when the output is parsed (if you've enabled the <strong>Enable build output scanner info discovery</strong> option), and is added to the project's scanner configuration. You can click <strong>Browse</strong> to locate this command, if required.
 			
@@ -108,11 +115,15 @@ the entire project (configuration). This means that both the project and per-fil
         <li><samp>-iwithprefix <span style="font-style: italic;">dir</span></samp></li>
         <li><samp>-iwithprefixbefore <span style="font-style: italic;">dir</span></samp></li>
       </ul>
-			</td>
+	    </td>
 		</tr>
-			<tr>
-			<td><strong>Browse</strong></td>
+		<tr valign="top" >
+			<td><strong>Browse...</strong></td>
 			<td>Click to browse for a file to include in the compiler invocation command. This button is only visible when <strong>Configuration</strong> is set to Release and the <strong>Discovery Profiles Scope</strong> is set to <strong>Configuration-wide</strong>.</td>
+		</tr>
+		<tr valign="top" >
+			<td><strong>Compiler invocation arguments</strong></td>
+			<td>Enter additional arguments to send to the chosen compiler.</td>
 		</tr>
   </tbody>
 </table>
@@ -159,7 +170,7 @@ the entire project (configuration). This means that both the project and per-fil
 <li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
 </ul>
 </p>
-
+<hr />
 <p><img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" ></p>
 </body>
 </html>

@@ -10,21 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.preferences;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -55,9 +61,11 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	private ISelectionChangedListener problemSelectionListener;
 	private IProblem selectedProblem;
 	private Group info;
+	private Label infoDesc;
 	private Label infoMessage;
 	private Label infoParams;
 	private Button infoButton;
+	private ProblemsTreeEditor checkedTreeEditor;
 
 	public CodanPreferencePage() {
 		super(GRID);
@@ -93,7 +101,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		profile = isPropertyPage() ? getRegistry()
 				.getResourceProfileWorkingCopy((IResource) getElement())
 				: getRegistry().getWorkspaceProfile();
-		CheckedTreeEditor checkedTreeEditor = new ProblemsTreeEditor(
+		checkedTreeEditor = new ProblemsTreeEditor(
 				getFieldEditorParent(), profile);
 		addField(checkedTreeEditor);
 		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(
@@ -126,14 +134,35 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	private void createInfoControl(Composite comp) {
 		info = new Group(comp, SWT.NONE);
 		info.setLayoutData(new GridData(GridData.FILL_BOTH));
-		info.setLayout(new GridLayout(2, false));
+		info.setLayout(new GridLayout(3, false));
 		info.setText(CodanUIMessages.CodanPreferencePage_Info);
+		GridDataFactory gdLab = GridDataFactory.swtDefaults().align(
+				SWT.BEGINNING, SWT.BEGINNING).grab(false, false);
+		GridDataFactory gdFact = GridDataFactory.swtDefaults().align(
+				SWT.BEGINNING, SWT.BEGINNING).grab(true, true);
+		// message
+		Label labelMessage = new Label(info, SWT.NONE);
+		labelMessage.setText(CodanUIMessages.CodanPreferencePage_MessageLabel);
+		labelMessage.setLayoutData(gdLab.create());
+		infoMessage = new Label(info, SWT.WRAP);
+		infoMessage.setLayoutData(gdFact.copy().span(2, 1).create());
+		// description
+		Label labelDesc = new Label(info, SWT.NONE);
+		labelDesc.setText(CodanUIMessages.CodanPreferencePage_Description);
+		labelDesc.setLayoutData(gdLab.create());
+		infoDesc = new Label(info, SWT.WRAP);
+		PixelConverter pixelConverter = new PixelConverter(comp);
+		infoDesc.setLayoutData(gdFact.copy().span(2, 1).hint(pixelConverter.convertWidthInCharsToPixels(60),
+				pixelConverter.convertHeightInCharsToPixels(3)).create());
+		// params
+		Label labelParams = new Label(info, SWT.NONE);
+		labelParams.setText(CodanUIMessages.CodanPreferencePage_Parameters);
+		labelParams.setLayoutData(gdLab.create());
 		infoParams = new Label(info, SWT.NONE);
-		infoParams.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
-				false));
+		infoParams.setLayoutData(gdFact.create());
 		infoButton = new Button(info, SWT.PUSH);
-		infoButton
-				.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+		infoButton.setLayoutData(GridDataFactory.swtDefaults().align(SWT.END,
+				SWT.BEGINNING).create());
 		infoButton.setText(CodanUIMessages.CodanPreferencePage_Customize);
 		infoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -141,12 +170,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 				openCustomizeDialog();
 			}
 		});
-		infoMessage = new Label(info, SWT.WRAP);
-		GridData ld = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-		ld.horizontalSpan = 2;
-		ld.widthHint = 400;
-		infoMessage.setLayoutData(ld);
-		setSelectedProblem(null);
+	    restoreWidgetValues();
 	}
 
 	/**
@@ -171,6 +195,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	@Override
 	public boolean performOk() {
+		saveWidgetValues();
 		// if (isPropertyPage())
 		getRegistry().updateProfile((IResource) getElement(), null);
 		return super.performOk();
@@ -179,9 +204,35 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	/**
 	 * 
 	 */
+	private void saveWidgetValues() {
+		CodanUIActivator.getDefault().getDialogSettings().put(getWidgetId(),
+				selectedProblem == null ? "" : selectedProblem.getId()); //$NON-NLS-1$
+	}
+
+	private void restoreWidgetValues() {
+		String id = CodanUIActivator.getDefault().getDialogSettings().get(
+				getWidgetId());
+		if (id != null && id.length() > 0) {
+			checkedTreeEditor.getTreeViewer().setSelection(new StructuredSelection(profile.findProblem(id)), true);
+		} else {
+			setSelectedProblem(null);
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	protected String getWidgetId() {
+		return getPageId() + ".selection"; //$NON-NLS-1$
+	}
+
+	/**
+	 * 
+	 */
 	private void updateProblemInfo() {
 		if (selectedProblem == null) {
 			infoMessage.setText(""); //$NON-NLS-1$
+			infoDesc.setText(""); //$NON-NLS-1$
 			infoParams.setText(""); //$NON-NLS-1$
 			infoButton.setEnabled(false);
 		} else {
@@ -190,9 +241,15 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 			String desc = selectedProblem.getDescription();
 			if (desc == null)
 				desc = CodanUIMessages.CodanPreferencePage_NoInfo;
-			infoMessage.setText(desc);
+			String messagePattern = selectedProblem.getMessagePattern();
+			String message = CodanUIMessages.CodanPreferencePage_NoInfo;
+			if (messagePattern != null) {
+				message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+			}
+			infoMessage.setText(message);
+			infoDesc.setText(desc);
 			infoParams
-					.setText(parameterInfo == null ? CodanUIMessages.CodanPreferencePage_NoParameters
+					.setText(parameterInfo == null ? CodanUIMessages.CodanPreferencePage_NoInfo
 							: CodanUIMessages.CodanPreferencePage_HasParameters);
 			infoButton.setEnabled(true);
 		}

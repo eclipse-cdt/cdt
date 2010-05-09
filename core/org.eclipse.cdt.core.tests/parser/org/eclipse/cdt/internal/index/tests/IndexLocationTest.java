@@ -65,7 +65,7 @@ public class IndexLocationTest extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		for(Iterator i= projects.iterator(); i.hasNext(); ) {
+		for (Iterator i= projects.iterator(); i.hasNext(); ) {
 			ICProject ptd= (ICProject) i.next();
 			if (ptd != null) {
 				ptd.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -257,7 +257,7 @@ public class IndexLocationTest extends BaseTestCase {
 		};
 		IContainer root= ResourcesPlugin.getWorkspace().getRoot();
 		// loc -uri-> raw -project-> loc
-		for(int i=0; i<paths.length; i++) {
+		for (int i= 0; i < paths.length; i++) {
 			IIndexFileLocation ifl1 = IndexLocationFactory.getExternalIFL(paths[i]);
 			URIRelativeLocationConverter urlc = new URIRelativeLocationConverter(base);
 			String r1 = urlc.toInternalFormat(ifl1);
@@ -291,10 +291,10 @@ public class IndexLocationTest extends BaseTestCase {
 				"/"+cproject.getProject().getName()+"/a /b /c.d",
 				"/"+cproject.getProject().getName()+"/a b c/d-e/f.g"
 		};
-		URI base = URI.create("file:/" + basePath);
+		URI base = URI.create("file://" + basePath);
 		URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
 		// loc -project-> raw -uri-> loc
-		for(int i=0; i<paths.length; i++) {
+		for (int i= 0; i < paths.length; i++) {
 			IFile file= cproject.getProject().getFile(paths[i]);
 			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
 			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(cproject.getProject());
@@ -329,9 +329,9 @@ public class IndexLocationTest extends BaseTestCase {
 				linkedFolder.getFullPath()+"/a b c/d-e/f.g"
 		};
 		// loc -project-> raw -uri-> loc
-		URI base = URI.create("file:/" + basePath);
+		URI base = URI.create("file://" + basePath);
 		URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
-		for(int i=0; i<paths.length; i++) {
+		for (int i= 0; i < paths.length; i++) {
 			IFile file= linkedFolder.getFile(paths[i]);
 			IIndexFileLocation ifl1= IndexLocationFactory.getWorkspaceIFL(file);
 			ResourceContainerRelativeLocationConverter prlc= new ResourceContainerRelativeLocationConverter(linkedFolder);
@@ -347,7 +347,7 @@ public class IndexLocationTest extends BaseTestCase {
 	}
 	
 	private void deleteOnTearDown(ICProject cproject) {
-		if(cproject!=null) {
+		if (cproject!=null) {
 			projects.add(cproject);
 		}
 	}

@@ -151,13 +151,13 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	private IStatusLineManager fLineManager;
 
 	private static ICProject getProject(Object object) {
-		if (object instanceof ICElement)
-			return ((ICElement)object).getCProject();
-		else if (object instanceof IResource) {
-			return CoreModel.getDefault().create(((IResource)object).getProject());
-		}
-		else
+		if (object instanceof ICElement) {
+			return ((ICElement) object).getCProject();
+		} else if (object instanceof IResource) {
+			return CoreModel.getDefault().create(((IResource) object).getProject());
+		} else {
 			return null;
+		}
 	}
 	
 	public boolean performAction() {
@@ -170,9 +170,9 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 	    // Get search flags
 	    int searchFlags = 0;
-	    if (searchForButtons[searchAllButtonIndex].getSelection())
+	    if (searchForButtons[searchAllButtonIndex].getSelection()) {
 	    	searchFlags |= PDOMSearchPatternQuery.FIND_ALL_TYPES;
-	    else {
+	    } else {
 	    	for (int i = 0; i < searchForButtons.length; ++i) {
 	    		if (searchForButtons[i].getSelection())
 	    			searchFlags |= ((Integer)searchForButtons[i].getData()).intValue();
@@ -180,7 +180,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	    }
 	    for (int i = 0; i < limitToButtons.length; ++i) {
 	    	if (limitToButtons[i].getSelection())
-    			searchFlags |= ((Integer)limitToButtons[i].getData()).intValue();
+    			searchFlags |= ((Integer) limitToButtons[i].getData()).intValue();
 	    }
 	    
 		// get the list of elements for the scope
@@ -198,14 +198,15 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			}
 			break;
 		case ISearchPageContainer.SELECTION_SCOPE:
-			if( structuredSelection != null) {
+			if (structuredSelection != null) {
 				scopeDescription = CSearchMessages.SelectionScope; 
 				for (Iterator<?> i = structuredSelection.iterator(); i.hasNext();) {
 					Object obj = i.next();
-					if (obj instanceof IResource)
+					if (obj instanceof IResource) {
 						elements.add(CoreModel.getDefault().create((IResource)obj));
-					else if (obj instanceof ICElement)
+					} else if (obj instanceof ICElement) {
 						elements.add(obj);
+					}
 				}
 				break;
 			}
@@ -228,10 +229,8 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			break;
 		}
 		
-		ICElement[] scope
-			= elements.isEmpty()
-			? null
-			: elements.toArray(new ICElement[elements.size()]);
+		ICElement[] scope = elements.isEmpty() ?
+				null : elements.toArray(new ICElement[elements.size()]);
 		
 		try {
 			PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, patternStr, 
@@ -249,9 +248,9 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(STORE_CASE_SENSITIVE, isCaseSensitive);
 		
-		if (previousPatterns == null)
+		if (previousPatterns == null) {
 			previousPatterns = new String[] { patternStr };
-		else {
+		} else {
 			// Add only if we don't have it already
 			boolean addit = true;
 			for (int i = 0; i < previousPatterns.length; ++i) {
@@ -277,32 +276,32 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	public void createControl(Composite parent) {
-		initializeDialogUnits( parent );
+		initializeDialogUnits(parent);
 		
 		GridData gd;
-		Composite  result = new Composite( parent, SWT.NONE );
-		GridLayout layout = new GridLayout( 2, false );
+		Composite  result = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 10;
-		result.setLayout( layout );
-		result.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
+		result.setLayout(layout);
+		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		RowLayouter layouter = new RowLayouter( layout.numColumns );
+		RowLayouter layouter = new RowLayouter(layout.numColumns);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.verticalAlignment   = GridData.VERTICAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_FILL;
 	
-		layouter.setDefaultGridData( gd, 0 );
-		layouter.setDefaultGridData( gd, 1 );
+		layouter.setDefaultGridData(gd, 0);
+		layouter.setDefaultGridData(gd, 1);
 		layouter.setDefaultSpan();
 
-		layouter.perform( createExpression(result) );
-		layouter.perform( createSearchFor(result), createLimitTo(result), -1 );
+		layouter.perform(createExpression(result));
+		layouter.perform(createSearchFor(result), createLimitTo(result), -1);
 		
-		setControl( result );
+		setControl(result);
 		
 		fLineManager = getStatusLineManager();
 		
-		Dialog.applyDialogFont( result );
+		Dialog.applyDialogFont(result);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(result, ICHelpContextIds.C_SEARCH_PAGE);	
 	}
 
@@ -315,8 +314,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				 IWorkbenchPartSite workbenchSite = page.getActivePart().getSite();
 				 if (workbenchSite instanceof IViewSite){
 				 	return ((IViewSite) workbenchSite).getActionBars().getStatusLineManager();
-				 }
-				 else if (workbenchSite instanceof IEditorSite){
+				 } else if (workbenchSite instanceof IEditorSite){
 				 	return ((IEditorSite) workbenchSite).getActionBars().getStatusLineManager();
 				 }
 			}
@@ -325,24 +323,24 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		return null;
 	}
 
-	private Control createExpression( Composite parent ) {
+	private Control createExpression(Composite parent) {
 		Composite  result = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		result.setLayout(layout);
-		GridData gd = new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL );
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 0;
-		result.setLayoutData( gd );
+		result.setLayoutData(gd);
 
 		// Pattern text + info
-		Label label = new Label( result, SWT.LEFT );
-		label.setText( CSearchMessages.CSearchPage_expression_label ); 
-		gd = new GridData( GridData.BEGINNING );
+		Label label = new Label(result, SWT.LEFT);
+		label.setText(CSearchMessages.CSearchPage_expression_label); 
+		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
-		label.setLayoutData( gd );
+		label.setLayoutData(gd);
 
 		// Pattern combo
-		patternCombo = new Combo( result, SWT.SINGLE | SWT.BORDER );
+		patternCombo = new Combo(result, SWT.SINGLE | SWT.BORDER);
 		patternCombo.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
 				final String text = patternCombo.getText();
@@ -394,15 +392,15 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 			}
 		});
 		
-		patternCombo.addModifyListener( new ModifyListener() {
-			public void modifyText( ModifyEvent e ) {
+		patternCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
 				setPerformActionEnabled();
 			}
 		});
 		
-		gd = new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL );
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalIndent = -gd.horizontalIndent;
-		patternCombo.setLayoutData( gd );
+		patternCombo.setLayoutData(gd);
 
 
 		// Ignore case checkbox		
@@ -410,9 +408,9 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		caseSensitiveButton.setText(CSearchMessages.CSearchPage_expression_caseSensitive); 
 		gd= new GridData();
 		caseSensitiveButton.setLayoutData(gd);
-		caseSensitiveButton.addSelectionListener( new SelectionAdapter() {
+		caseSensitiveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected( SelectionEvent e ) {
+			public void widgetSelected(SelectionEvent e) {
 //				isCaseSensitive = caseSensitiveButton.getSelection();
 				setPerformActionEnabled();
 			}
@@ -421,12 +419,12 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		return result;
 	}
 
-	private Control createLimitTo( Composite parent ) {
+	private Control createLimitTo(Composite parent) {
 		Group result = new Group(parent, SWT.NONE);
-		result.setText( CSearchMessages.CSearchPage_limitTo_label ); 
+		result.setText(CSearchMessages.CSearchPage_limitTo_label); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		result.setLayout( layout );
+		result.setLayout(layout);
 
 		Listener limitToListener = new Listener() {
 			public void handleEvent(Event event) {
@@ -453,10 +451,10 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		};
 		
 		limitToButtons = new Button[limitToText.length];
-		for( int i = 0; i < limitToText.length; i++ ){
+		for(int i = 0; i < limitToText.length; i++){
 			Button button = new Button(result, SWT.CHECK);
-			button.setText( limitToText[i] );
-			button.setData( limitToData[i] );
+			button.setText(limitToText[i]);
+			button.setData(limitToData[i]);
 			button.addListener(SWT.Selection, limitToListener);
 			limitToButtons[i] = button;
 		}
@@ -525,11 +523,12 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		
 		// Need a type
 		boolean any = false;
-		for (int i = 0; i < searchForButtons.length; ++i)
+		for (int i = 0; i < searchForButtons.length; ++i) {
 			if (searchForButtons[i].getSelection()) {
 				any = true;
 				break;
 			}
+		}
 		if (!any)
 			enable = false;
 		
@@ -538,9 +537,9 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	
 	private IDialogSettings getDialogSettings() {
 		IDialogSettings settings = CUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings searchSettings = settings.getSection( PAGE_NAME );
-		if( searchSettings == null )
-			searchSettings = settings.addNewSection( PAGE_NAME );
+		IDialogSettings searchSettings = settings.getSection(PAGE_NAME);
+		if (searchSettings == null)
+			searchSettings = settings.addNewSection(PAGE_NAME);
 		return searchSettings;
 	}
 
@@ -668,5 +667,4 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		}
 		super.setVisible(visible);
 	}
-	
 }

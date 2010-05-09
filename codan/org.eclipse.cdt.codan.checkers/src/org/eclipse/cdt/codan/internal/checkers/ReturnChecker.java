@@ -16,7 +16,7 @@ import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
 import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
+import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -100,7 +100,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		boolean noexitop = false;
 		for (; exitNodeIterator.hasNext();) {
 			IExitNode node = exitNodeIterator.next();
-			if (((AbstractBasicBlock) node).getData() == null) {
+			if (((ICfgData) node).getData() == null) {
 				// if it real exit node such as return, exit or throw data
 				// will be an ast node, it is null it is fake node added by the
 				// graph builder

@@ -4,13 +4,19 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 
-public abstract class AbstractBasicBlock implements IBasicBlock {
+public abstract class AbstractBasicBlock implements IBasicBlock, ICfgData {
 	private Object data;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.codan.internal.core.cfg.ICfgData#getData()
+	 */
 	public Object getData() {
 		return data;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.codan.internal.core.cfg.ICfgData#setData(java.lang.Object)
+	 */
 	public void setData(Object data) {
 		this.data = data;
 	}

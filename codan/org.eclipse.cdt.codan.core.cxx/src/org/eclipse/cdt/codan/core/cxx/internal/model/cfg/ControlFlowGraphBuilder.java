@@ -23,6 +23,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
+import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -440,7 +441,7 @@ public class ControlFlowGraphBuilder {
 		if (prev instanceof IExitNode || prev == null) {
 			dead.add(node);
 			return;
-		} else if (prev instanceof AbstractBasicBlock) {
+		} else if (prev instanceof ICfgData) {
 			((AbstractBasicBlock) prev).addOutgoing(node);
 		}
 		if (!(node instanceof IStartNode))

@@ -15,7 +15,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.INodeFactory;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
-import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
+import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.codan.internal.core.cfg.NodeFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
@@ -41,19 +41,19 @@ public class CxxNodeFactory extends NodeFactory implements INodeFactory {
 
 	public CxxPlainNode createPlainNode(IASTNode ast) {
 		IPlainNode node = createPlainNode();
-		((AbstractBasicBlock) node).setData(ast);
+		((ICfgData) node).setData(ast);
 		return (CxxPlainNode) node;
 	}
 
 	public CxxDecisionNode createDecisionNode(IASTNode ast) {
 		IDecisionNode node = createDecisionNode();
-		((AbstractBasicBlock) node).setData(ast);
+		((ICfgData) node).setData(ast);
 		return (CxxDecisionNode) node;
 	}
 
 	public CxxExitNode createExitNode(IASTNode ast) {
 		IExitNode node = createExitNode();
-		((AbstractBasicBlock) node).setData(ast);
+		((ICfgData) node).setData(ast);
 		return (CxxExitNode) node;
 	}
 
@@ -63,7 +63,7 @@ public class CxxNodeFactory extends NodeFactory implements INodeFactory {
 	 */
 	public IBranchNode createBranchNode(IASTNode caseSt) {
 		IBranchNode node = createBranchNode(caseSt.getRawSignature());
-		((AbstractBasicBlock) node).setData(caseSt);
+		((ICfgData) node).setData(caseSt);
 		return node;
 	}
 }

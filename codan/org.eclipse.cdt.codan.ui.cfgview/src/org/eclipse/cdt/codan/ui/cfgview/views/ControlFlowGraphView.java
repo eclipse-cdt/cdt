@@ -16,6 +16,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
+import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.codan.ui.cfgview.ControlFlowGraphPlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -168,7 +169,7 @@ public class ControlFlowGraphView extends ViewPart {
 			if (obj == null)
 				return null;
 			String strdata = "";
-			if (obj instanceof AbstractBasicBlock) {
+			if (obj instanceof ICfgData) {
 				strdata = ((AbstractBasicBlock) obj).toStringData();
 			}
 			if (obj instanceof IConnectorNode) {
@@ -376,8 +377,8 @@ public class ControlFlowGraphView extends ViewPart {
 		public void run() {
 			ISelection selection = viewer.getSelection();
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj instanceof AbstractBasicBlock) {
-				Object data = ((AbstractBasicBlock) obj).getData();
+			if (obj instanceof ICfgData) {
+				Object data = ((ICfgData) obj).getData();
 				if (data instanceof IASTNode) {
 					IASTNode node = (IASTNode) data;
 					if (node instanceof IASTTranslationUnit) // don't

@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import junit.framework.Test;
@@ -29,7 +31,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Doug Schaefer
- *
  */
 public class EnumerationTests extends PDOMTestBase {
 
@@ -60,6 +61,12 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("TestCEnum", enumeration.getName());
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(3, enumerators.length);
+		// Enumerators are returned in arbitrary order. Sort them to make checking easier.
+		Arrays.sort(enumerators, new Comparator<IEnumerator>() {
+			public int compare(IEnumerator o1, IEnumerator o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 		assertEquals("ca", enumerators[0].getName());
 		assertEquals("cb", enumerators[1].getName());
 		assertEquals("cc", enumerators[2].getName());
@@ -92,6 +99,12 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals("TestCPPEnum", enumeration.getName());
 		IEnumerator[] enumerators = enumeration.getEnumerators();
 		assertEquals(3, enumerators.length);
+		// Enumerators are returned in arbitrary order. Sort them to make checking easier.
+		Arrays.sort(enumerators, new Comparator<IEnumerator>() {
+			public int compare(IEnumerator o1, IEnumerator o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 		assertEquals("cppa", enumerators[0].getName());
 		assertEquals("cppb", enumerators[1].getName());
 		assertEquals("cppc", enumerators[2].getName());
@@ -114,5 +127,4 @@ public class EnumerationTests extends PDOMTestBase {
 		loc = aRefs[0].getFileLocation();
 		assertEquals(offset("enumTest.cpp", "cppa;"), loc.getNodeOffset());
 	}
-	
 }

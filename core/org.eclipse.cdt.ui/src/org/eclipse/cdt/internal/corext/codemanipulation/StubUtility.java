@@ -309,7 +309,7 @@ public class StubUtility {
 			if (position.getLength() > 0) {
 				int[] offsets= position.getOffsets();
 				for (int j= 0; j < offsets.length; j++) {
-					final int offset = offsets[j] ;
+					final int offset = offsets[j];
 					try {
 						int startLine= doc.getLineOfOffset(offset);
 						int startOffset= doc.getLineOffset(startLine);

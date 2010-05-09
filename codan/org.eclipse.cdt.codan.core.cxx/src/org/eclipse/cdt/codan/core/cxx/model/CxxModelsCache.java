@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.model;
 
+import java.util.WeakHashMap;
+
+import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
+import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -27,6 +32,7 @@ public class CxxModelsCache {
 	private IASTTranslationUnit ast;
 	private ITranslationUnit tu;
 	private IIndex index;
+	private WeakHashMap<IASTFunctionDefinition, IControlFlowGraph> cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
 
 	private static CxxModelsCache instance = new CxxModelsCache();
 
@@ -34,12 +40,20 @@ public class CxxModelsCache {
 		return instance;
 	}
 
+	public synchronized IControlFlowGraph getControlFlowGraph(IASTFunctionDefinition func) {
+		IControlFlowGraph cfg = cfgmap.get(func);
+		if (cfg!=null) return cfg;
+		cfg = CxxControlFlowGraph.build(func);
+		cfgmap.put(func, cfg);
+		return cfg;
+	}
 	public synchronized IASTTranslationUnit getAst(IFile file)
 			throws CoreException, InterruptedException {
 		if (file.equals(this.file)) {
 			return ast;
 		}
 
+		cfgmap.clear();
 		// create translation unit and access index
 		ICElement celement = CoreModel.getDefault().create(file);
 		if (!(celement instanceof ITranslationUnit))

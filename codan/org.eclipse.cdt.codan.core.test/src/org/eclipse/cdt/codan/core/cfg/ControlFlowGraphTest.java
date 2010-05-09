@@ -324,4 +324,36 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		IBasicBlock m3 = jumpEnd(m2);
 		assertSame(m1, m3);
 	}
+	/*-
+	 <code file="test_throw.cc">
+	 int foo() {
+	 	throw 5;
+	 }
+	 </code>
+	 */
+	public void test_throw() {
+		buildAndCheck("test_throw.cc");
+		IStartNode startNode = graph.getStartNode();
+		assertEquals(1, graph.getExitNodeSize());
+		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
+		IExitNode exit = exitNodeIterator.next();
+
+		assertEquals("throw 5;", data(exit));
+	}
+	/*-
+	 <code file="test_exit.c">
+	 int foo() {
+	 	exit(0);
+	 }
+	 </code>
+	 */
+	public void test_exit() {
+		buildAndCheck("test_exit.c");
+		IStartNode startNode = graph.getStartNode();
+		assertEquals(1, graph.getExitNodeSize());
+		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
+		IExitNode exit = exitNodeIterator.next();
+
+		assertEquals("exit(0);", data(exit));
+	}
 }

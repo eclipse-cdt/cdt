@@ -31,8 +31,10 @@ import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
@@ -43,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 
 /**
@@ -72,6 +75,7 @@ public class ControlFlowGraphBuilder {
 			returnExit = (CxxExitNode) factory.createExitNode(null);
 			returnExit.setStartNode(start);
 			addOutgoing(last, returnExit);
+			exits.add(returnExit);
 		}
 		CxxControlFlowGraph graph = new CxxControlFlowGraph(start, exits);
 		graph.setUnconnectedNodes(dead);
@@ -94,6 +98,10 @@ public class ControlFlowGraphBuilder {
 		} else if (body instanceof IASTExpressionStatement
 				|| body instanceof IASTDeclarationStatement
 				|| body instanceof IASTNullStatement) {
+			if (isThrowStatement(body) || isExitStatement(body)) {
+				CxxExitNode node = createExitNode(prev, body);
+				return node;
+			}
 			CxxPlainNode node = factory.createPlainNode(body);
 			addOutgoing(prev, node);
 			return node;
@@ -106,9 +114,7 @@ public class ControlFlowGraphBuilder {
 		} else if (body instanceof IASTDoStatement) {
 			return createDoWhile(prev, (IASTDoStatement) body);
 		} else if (body instanceof IASTReturnStatement) {
-			CxxExitNode node = factory.createExitNode(body);
-			node.setStartNode(start);
-			addOutgoing(prev, node);
+			CxxExitNode node = createExitNode(prev, body);
 			return node;
 		} else if (body instanceof IASTBreakStatement) {
 			if (outerBreak != null)
@@ -158,6 +164,37 @@ public class ControlFlowGraphBuilder {
 			System.err.println("unknown statement for cfg: " + body); //$NON-NLS-1$
 		}
 		return prev;
+	}
+
+	/**
+	 * @param body
+	 * @return
+	 */
+	private boolean isThrowStatement(IASTNode body) {
+		if (!(body instanceof IASTExpressionStatement)) return false;
+		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
+		if (!(expression instanceof IASTUnaryExpression)) return false;
+		return ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_throw;
+	}
+	private boolean isExitStatement(IASTNode body) {
+		if (!(body instanceof IASTExpressionStatement)) return false;
+		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
+		if (!(expression instanceof IASTFunctionCallExpression)) return false;
+		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
+		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param prev
+	 * @param body
+	 * @return
+	 */
+	protected CxxExitNode createExitNode(IBasicBlock prev, IASTNode body) {
+		CxxExitNode node = factory.createExitNode(body);
+		node.setStartNode(start);
+		addOutgoing(prev, node);
+		exits.add(node);
+		return node;
 	}
 
 	/**

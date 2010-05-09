@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
+import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
+import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
+import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -47,7 +53,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
 				if (!isVoid(func)) {
-					if (getDeclSpecType(func) != ICASTSimpleDeclSpecifier.t_unspecified) {
+					if (isExplicitReturn(func)) {
 						if (ret.getReturnValue() == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
@@ -74,11 +80,43 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		func.accept(visitor);
 		if (!visitor.hasret) {
 			// no return at all
-			if (!isVoid(func)
-					&& getDeclSpecType(func) != ICASTSimpleDeclSpecifier.t_unspecified) {
-				reportProblem(RET_NORET_ID, func.getDeclSpecifier());
+			if (!isVoid(func) && isExplicitReturn(func)) {
+				if (endsWithNoExitNode(func))
+					reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 			}
 		}
+	}
+
+	/**
+	 * @param func
+	 * @return
+	 */
+	@SuppressWarnings("restriction")
+	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
+		IControlFlowGraph graph = CxxModelsCache.getInstance()
+				.getControlFlowGraph(func);
+		Iterator<IExitNode> exitNodeIterator = graph
+				.getExitNodeIterator();
+		boolean noexitop = false;
+		for (; exitNodeIterator.hasNext();) {
+			IExitNode node = exitNodeIterator.next();
+			if (((AbstractBasicBlock) node).getData() == null) {
+				// if it real exit node such as return, exit or throw data
+				// will be an ast node, it is null it is fake node added by the
+				// graph builder
+				noexitop = true;
+				break;
+			}
+		}
+		return noexitop;
+	}
+
+	/**
+	 * @param func
+	 * @return
+	 */
+	protected boolean isExplicitReturn(IASTFunctionDefinition func) {
+		return getDeclSpecType(func) != ICASTSimpleDeclSpecifier.t_unspecified;
 	}
 
 	/**

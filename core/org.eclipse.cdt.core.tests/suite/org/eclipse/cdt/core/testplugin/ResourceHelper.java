@@ -540,9 +540,9 @@ public class ResourceHelper {
 		} catch (InterruptedException e) {
 		}
 
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
-
 		IResource resource = project.getFile(linkName);
+		resource.refreshLocal(IResource.DEPTH_ZERO, null);
+
 		if (!resource.exists()) {
 			resource = project.getFolder(linkName);
 		}

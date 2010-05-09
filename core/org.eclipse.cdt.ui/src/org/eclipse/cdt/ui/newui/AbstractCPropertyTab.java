@@ -684,6 +684,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		}
 	}
 
+	/**
+	 * The writing mode for multiple configurations edits (configuration drop-down list
+	 * in project properties). This mode applies to lists of entries.
+	 * See preference Multiple Configurations Edit, String List Write Mode.
+	 * 
+	 * @return
+	 *    {@code true} if each list should be replaced as a whole with the
+	 *       list user is currently working with in UI<br/>
+	 *    {@code false} if changes apply only to individual entries and unaffected
+	 *       entries are preserved.
+	 */
 	protected boolean isWModifyMode() {
 		int wmode = CDTPrefUtil.getInt(CDTPrefUtil.KEY_WMODE);
 		return (wmode == CDTPrefUtil.WMODE_MODIFY);

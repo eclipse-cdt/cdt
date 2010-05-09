@@ -20,8 +20,10 @@ import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -50,9 +52,11 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContext;
 import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
@@ -63,7 +67,6 @@ import org.eclipse.cdt.internal.corext.util.Strings;
 import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 
 public class StubUtility {
-
 	private static final String[] EMPTY= new String[0];
 	
 	private StubUtility() {
@@ -92,7 +95,7 @@ public class StubUtility {
 		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
 		context.setVariable(CodeTemplateContextType.DECLARATIONS, declarations != null ? declarations : ""); //$NON-NLS-1$
 		context.setVariable(CodeTemplateContextType.TYPENAME, new Path(tu.getElementName()).removeFileExtension().toString());
-		String includeGuardSymbol= generateIncludeGuardSymbol(tu.getElementName(), project);
+		String includeGuardSymbol= generateIncludeGuardSymbol(tu.getResource(), project);
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
 		
 		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT, CodeTemplateContextType.TYPE_COMMENT, CodeTemplateContextType.DECLARATIONS };
@@ -131,7 +134,7 @@ public class StubUtility {
 		String fileComment= getFileComment(file, lineDelimiter);
 		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
 		ICProject cproject = CoreModel.getDefault().create(file.getProject());
-		String includeGuardSymbol= generateIncludeGuardSymbol(file.getName(), cproject);
+		String includeGuardSymbol= generateIncludeGuardSymbol(file, cproject);
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
 		context.setResourceVariables(file);
 		String[] fullLine= { CodeTemplateContextType.FILE_COMMENT };
@@ -249,7 +252,7 @@ public class StubUtility {
 	 */
 	public static String getDestructorComment(ITranslationUnit tu, String typeName, String[] excTypeSig, String lineDelimiter) throws CoreException {
 		String templateId= CodeTemplateContextType.DESTRUCTORCOMMENT_ID;
-		return getMethodComment(templateId, tu, typeName, "~"+typeName, EMPTY, excTypeSig, null, lineDelimiter); //$NON-NLS-1$
+		return getMethodComment(templateId, tu, typeName, "~" + typeName, EMPTY, excTypeSig, null, lineDelimiter); //$NON-NLS-1$
 	}
 
 	/*
@@ -318,7 +321,7 @@ public class StubUtility {
 								edit.addChild(new InsertEdit(lineOffset, prefix));
 							}
 						}
-					} catch (BadLocationException exc) {
+					} catch (BadLocationException e) {
 						break;
 					}
 				}
@@ -340,7 +343,6 @@ public class StubUtility {
 		edit.apply(doc, 0);
 		return doc.get();
 	}
-
 
 	private static TemplateVariable findVariable(TemplateBuffer buffer, String variable) {
 		TemplateVariable[] positions= buffer.getVariables();
@@ -453,7 +455,6 @@ public class StubUtility {
 		return getProjectLineDelimiter(elem.getCProject());
 	}
 
-
 	/**
 	 * Get the default task tag for the given project.
 	 * 
@@ -505,6 +506,7 @@ public class StubUtility {
 	private static Template getCodeTemplate(String id, ICProject cProject) {
 		return getCodeTemplate(id, cProject != null ? cProject.getProject() : null);
 	}
+
 	private static Template getCodeTemplate(String id, IProject project) {
 		if (project == null)
 			return CUIPlugin.getDefault().getCodeTemplateStore().findTemplateById(id);
@@ -517,46 +519,44 @@ public class StubUtility {
 		return projectStore.findTemplateById(id);
 	}
 
-	private static int getIncludeGuardScheme(ICProject cproject) {
-		return PreferenceConstants.getPreference(
-				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
-				cproject,
+	private static String generateIncludeGuardSymbol(IResource file, ICProject cproject) {
+		int scheme = PreferenceConstants.getPreference(
+				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME, cproject,
 				PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
-	}
-
-	private static String generateIncludeGuardSymbol(String fileName, ICProject cproject) {
-
-		int preferenceValue = getIncludeGuardScheme(cproject);
 		
-		switch (preferenceValue) {
-		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME:
-			if (fileName != null) {
-				return generateIncludeGuardSymbolFromFileName(fileName);
-			} else {
+		switch (scheme) {
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH:
+			if (file == null)
 				return null;
+			IPath path = file.getFullPath();
+			ISourceRoot root = cproject.findSourceRoot(file);
+			if (root != null) {
+				path = PathUtil.makeRelativePath(path, root.getPath());
 			}
-			
-		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID:
-    		return generateIncludeGuardSymbolFromUUID();
+			return generateIncludeGuardSymbolFromFilePath(path.toString());
 			
 		default:
-			CUIPlugin.log("Unknown preference value " + preferenceValue + "for include guard scheme", null); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+			CUIPlugin.log("Unknown preference value " + scheme + " for include guard scheme.", null); //$NON-NLS-1$ //$NON-NLS-2$
+			//$FALL-THROUGH$
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME:
+			if (file == null)
+				return null;
+			return generateIncludeGuardSymbolFromFilePath(file.getName());
+
+		case PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID:
+    		return generateIncludeGuardSymbolFromUUID();
 		}
     }
 
-	private static String generateIncludeGuardSymbolFromFileName(String fileName) {
-		String name = fileName;
-		//convert to upper case and remove invalid characters
-		//eg convert foo.h --> FOO_H_
-		StringBuffer buf = new StringBuffer();
-		// Do not do this, leading underscores are discouraged by the std.
-		//buf.append('_');
-		for (int i = 0; i < name.length(); ++i) {
-			char ch = name.charAt(i);
+	private static String generateIncludeGuardSymbolFromFilePath(String filename) {
+		// Convert to upper case and replace invalid characters with underscores,
+		// e.g. convert some/directory/foo-bar.h to SOME_DIRECTORY_FOO_BAR_H_
+		StringBuilder buf = new StringBuilder(filename.length() + 1);
+		for (int i = 0; i < filename.length(); ++i) {
+			char ch = filename.charAt(i);
 			if (Character.isLetterOrDigit(ch)) {
 				buf.append(Character.toUpperCase(ch));
-			} else if (ch == '.' || ch == '_') {
+			} else if (buf.length() > 0){
 				buf.append('_');
 			}
 		}
@@ -573,7 +573,7 @@ public class StubUtility {
 		// e.g. convert
 		//         067e6162-3b6f-4ae2-a171-2470b63dff00 to
 		//        H067E6162-3b6F-4AE2-A171-2470B63DFF00
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		buf.append('H');
 		
@@ -624,5 +624,4 @@ public class StubUtility {
 		}
 		return result.toArray(new Template[result.size()]);
 	}
-	
 }

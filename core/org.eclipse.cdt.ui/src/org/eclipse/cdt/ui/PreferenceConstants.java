@@ -1433,8 +1433,8 @@ public class PreferenceConstants {
 
 	/**
 	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
-	 * specifying that the include guard symbol is to be derived from the
-	 * include file's name.
+	 * specifying that the include guard symbol is to be derived from
+	 * the include file's name.
 	 * 
 	 * @since 5.1
 	 */
@@ -1447,6 +1447,15 @@ public class PreferenceConstants {
 	 * @since 5.1
 	 */
 	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_UUID = 1;
+	
+	/**
+	 * The value of <code>CODE_TEMPLATES_INCLUDE_GUARD_GENERATION_SCHEME</code>
+	 * specifying that the include guard symbol is to be derived from
+	 * the include file's path relative to the source folder.
+	 * 
+	 * @since 5.2
+	 */
+	public static final int CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_PATH = 2;
 	
 	/**
 	 * Returns the CDT-UI preference store.
@@ -1631,7 +1640,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
 		store.setDefault(PreferenceConstants.EDITOR_STICKY_OCCURRENCES, true);
 		
-		//Scalability
+		// Scalability
 		store.setDefault(PreferenceConstants.SCALABILITY_ALERT, true);
 		store.setDefault(PreferenceConstants.SCALABILITY_NUMBER_OF_LINES, 5000);
 		store.setDefault(PreferenceConstants.SCALABILITY_ENABLE_ALL, false);
@@ -1641,7 +1650,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SCALABILITY_PARSER_BASED_CONTENT_ASSIST, false);
 		store.setDefault(PreferenceConstants.SCALABILITY_CONTENT_ASSIST_AUTO_ACTIVATION, false);
 		
-		//Code Templates
+		// Code Templates
 		store.setDefault(PreferenceConstants.CODE_TEMPLATES_INCLUDE_GUARD_SCHEME,
 				CODE_TEMPLATES_INCLUDE_GUARD_SCHEME_FILE_NAME);
     }

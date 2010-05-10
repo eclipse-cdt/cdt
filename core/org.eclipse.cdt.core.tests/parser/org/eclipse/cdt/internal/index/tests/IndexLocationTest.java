@@ -347,7 +347,7 @@ public class IndexLocationTest extends BaseTestCase {
 	}
 	
 	private void deleteOnTearDown(ICProject cproject) {
-		if (cproject!=null) {
+		if (cproject != null) {
 			projects.add(cproject);
 		}
 	}

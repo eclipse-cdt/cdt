@@ -437,13 +437,13 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 					if (config.getAttribute(IGDBJtagConstants.ATTR_USE_REMOTE_TARGET, IGDBJtagConstants.DEFAULT_USE_REMOTE_TARGET)) {
 						List<String> commands = new ArrayList<String>();
 						if (fGdbJtagDevice instanceof IGDBJtagConnection) {
-							URI	uri = new URI(config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, ""));
+							URI	uri = new URI(config.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION));
 							IGDBJtagConnection device = (IGDBJtagConnection)fGdbJtagDevice;
 							device.doRemote(uri.getSchemeSpecificPart(), commands);
 						} else {
 							// Handle legacy network device contributions that don't understand URIs
-							String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, "");
-							int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, 0);
+							String ipAddress = config.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS);
+							int portNumber = config.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
 							fGdbJtagDevice.doRemote(ipAddress, portNumber, commands);
 						}
 						queueCommands(commands, rm);

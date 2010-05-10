@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -146,8 +147,7 @@ public class IndexLocationTest extends BaseTestCase {
 						ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(cproject.getProject().getName()+"/source.cpp")).getFullPath(),
 						new Path(nms3[0].getFile().getLocation().getFullPath())
 				);
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 		} finally {
@@ -291,7 +291,7 @@ public class IndexLocationTest extends BaseTestCase {
 				"/"+cproject.getProject().getName()+"/a /b /c.d",
 				"/"+cproject.getProject().getName()+"/a b c/d-e/f.g"
 		};
-		URI base = URI.create("file://" + basePath);
+		URI base = makeDirectoryURI(basePath);
 		URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
 		// loc -project-> raw -uri-> loc
 		for (int i= 0; i < paths.length; i++) {
@@ -329,7 +329,7 @@ public class IndexLocationTest extends BaseTestCase {
 				linkedFolder.getFullPath()+"/a b c/d-e/f.g"
 		};
 		// loc -project-> raw -uri-> loc
-		URI base = URI.create("file://" + basePath);
+		URI base = makeDirectoryURI(basePath);
 		URIRelativeLocationConverter c1 = new URIRelativeLocationConverter(base);
 		for (int i= 0; i < paths.length; i++) {
 			IFile file= linkedFolder.getFile(paths[i]);
@@ -356,5 +356,10 @@ public class IndexLocationTest extends BaseTestCase {
 		FileOutputStream fos = new FileOutputStream(dest);
 		fos.write(content.getBytes());
 		fos.close();
+	}
+
+	private URI makeDirectoryURI(String dir) throws URISyntaxException {
+		URI uri = new File(dir).toURI();
+		return new URI(uri.toString() + "/");
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ package org.eclipse.rse.internal.subsystems.shells.dstore;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostOutput;
@@ -169,8 +170,17 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 				{
 					output = new RemoteOutput(this, type);
 				}
+
+				DataStore dataStore = line.getDataStore();
+				DataElement fsD= dataStore.findObjectDescriptor(DataStoreResources.model_directory);
+				DataElement convDes = dataStore.localDescriptorQuery(fsD, "C_CHAR_CONVERSION", 1); //$NON-NLS-1$
+				
+				String text = line.getName();
+				if (convDes != null){
+					text = convertSpecialCharacters(text);
+				}
 								
-				output.setText(convertSpecialCharacters(line.getName()));
+				output.setText(convertSpecialCharacters(text));
 
 				int colonSep = src.indexOf(':');
 				// line numbers

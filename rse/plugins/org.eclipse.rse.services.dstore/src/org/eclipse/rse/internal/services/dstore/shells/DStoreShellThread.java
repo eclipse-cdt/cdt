@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import java.io.File;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.DataStoreSchema;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 
@@ -263,7 +264,13 @@ public class DStoreShellThread
 
 				if (cmd != null)
 				{	
-					cmd = convertSpecialCharacters(cmd);
+					// first, find out if the server support conversion
+					DataElement fsD= dataStore.findObjectDescriptor(DataStoreResources.model_directory);
+					DataElement convDes = dataStore.localDescriptorQuery(fsD, "C_CHAR_CONVERSION", 1); //$NON-NLS-1$
+					if (convDes != null){
+						cmd = convertSpecialCharacters(cmd);
+					}
+					
 				    DataElement commandDescriptor = getSendInputDescriptor(commandElement);
 					if (commandDescriptor != null)
 					{

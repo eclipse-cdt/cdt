@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html lang="en">
 
 <head>
@@ -11,7 +11,7 @@
 <body>
 <h1>Console view</h1>
 
-<p>The <img src="../images/command_link.png" border="0" alt="" /> <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.console.ConsoleView)")'>Console</a> view displays the output of a process and allows you to provide keyboard input to a process. There are numerous consoles available, see the Open Console dropdown list for those available to you. </p>
+<p>The <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.console.ConsoleView)")'>Console</a> view displays the output of a process and allows you to provide keyboard input to a process. There are numerous consoles available, see the Open Console dropdown list for those available to you. </p>
 <p><img border="0" src="../images/view_console.png" alt="Console View"></p>
 
 The output console shows several different kinds of text, each in a different color:
@@ -33,11 +33,13 @@ The output console shows several different kinds of text, each in a different co
 		<col width="20%" valign="top" >
 		<col width="75%" valign="top" >
 	</colgroup>
- 	<colhead>
-		<th>Icon</th>
-		<th>Name</th>	
-		<th>Description</th>
-	 </colhead>
+ 	<thead>
+ 		<tr>
+			<th>Icon</th>
+			<th>Name</th>	
+			<th>Description</th>
+		</tr>
+	 </thead>
 	<tr>
 		<td align="center" valign="top"><img src="../images/icon_next_error.png" alt="next error icon"></td>
 		<td valign="top">Next Error</td>
@@ -56,7 +58,7 @@ The output console shows several different kinds of text, each in a different co
 	<tr>
 		<td align="center" valign="top"><img src="../images/icon_save_output_file.png" alt="save output file icon"></td>
 		<td valign="top">Save Console Output to File</td>
-		<td valign="top">Opens the <strong>Properties for Project &gt C/C++ Build </strong> dialog box where you can specify the Build output file location.</td>
+		<td valign="top">Opens the <strong>Properties for Project &gt; C/C++ Build </strong> dialog box where you can specify the Build output file location.</td>
 	</tr>
 	<tr>
 		<td align="center" valign="top"><img src="../images/icon_con_scroll_lock.png" alt="Scroll Lock icon"></td>
@@ -81,7 +83,7 @@ The output console shows several different kinds of text, each in a different co
 	<tr>
 		<td align="center" valign="top"><img src="../images/icon_open_console.png" alt="open Console icon"></td>
 		<td valign="top">Open Console</td>
-		<td valign="top">Opens a new console to display the log for: <br />
+		<td valign="top">Opens a new console to display the log for: <br>
 		<ul>
 			<li>New Console View</li>
 			<li>Program Output Console</li>
@@ -103,16 +105,18 @@ you see one or more of the following options in a context menu depending on the 
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
 	</colgroup>
- 	<colhead>
-		<th>Name</th>
-		<th>Description</th>
-	 </colhead>
+ 	<thead>
+ 		<tr>
+			<th>Name</th>
+			<th>Description</th>
+		</tr>
+	 </thead>
  	<tr>
 		<td><strong>Clear</strong></td>
 		<td>Clears the current console.</td>
 	 </tr>
 	<tr valign="top" >
-		<td><strong>Editor options: Cut, Copy, Paste, Select All</td>
+		<td><strong>Editor options: Cut, Copy, Paste, Select All</strong></td>
 		<td>These options perform the standard edit operations. Which options are available depends on where the focus is in the <strong>Console</strong> view. For example, you cannot paste text into the program output, but you can paste text to the bottom of the file.</td>
 	</tr>
  	<tr>
@@ -135,7 +139,7 @@ you see one or more of the following options in a context menu depending on the 
 
 <p><img src="../images/ngref.gif" ALT="Related references" width="143" height="21">
 <br><a href="../reference/cdt_o_views.htm">C/C++ Views and Editors</a></p>
-<hr />
+<hr >
 <p>
 <img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement">  <br>
 <img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >  

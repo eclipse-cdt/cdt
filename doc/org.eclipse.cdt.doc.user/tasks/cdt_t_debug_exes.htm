@@ -1,11 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<meta name="LASTUPDATED" content="06/17/05 11:09:43" />
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" >
+<meta http-equiv="Content-Style-Type" content="text/css" >
+<meta name="LASTUPDATED" content="06/17/05 11:09:43" >
 <title>Debugging Existing Executables</title>
-<link rel="stylesheet" type="text/css" href="../help.css"/>
+<link rel="stylesheet" type="text/css" href="../help.css">
 <style>
 ul, li	{ padding: 3px 0px}
 </style>
@@ -19,48 +19,48 @@ ul, li	{ padding: 3px 0px}
   <h4>Importing Executables for Debugging </h4>
   <ol>
     <li>Select the <strong>File &gt; Import...</strong> menu item.</li>
-    <li>In the <strong>Import</strong> wizard dialog, click <strong>C/C++</strong> and select <strong>C/C++ Executable</strong>.<br />
-      <p><img src="../images/cdt_debug_exes01.png" vspace="12"  alt="Import dialog"/></p></li>
+    <li>In the <strong>Import</strong> wizard dialog, click <strong>C/C++</strong> and select <strong>C/C++ Executable</strong>.<br>
+      <p><img src="../images/cdt_debug_exes01.png" vspace="12"  alt="Import dialog"></p></li>
     <li>Click <strong>Next</strong>.</li>
-   <li>In the <strong>Import C/C++ Executable Files</strong> page of the <strong>Import Executable</strong> dialog:<br />
+   <li>In the <strong>Import C/C++ Executable Files</strong> page of the <strong>Import Executable</strong> dialog:<br>
    <ul>
    	<li>Choose a parser from the <strong>Select binary parser</strong> list.</li>
    	<li>Type the executable path in the <strong>Select executable</strong> box or click <strong>Browse</strong> to locate the executable.</li>
     <li>Type or click <strong>Browse</strong> to enter a directory path in the <strong>Search directory</strong> box, then select one or more executables from the <strong>C/C++ Executable Files</strong> list.</li>
    </ul>
-   <p><img src="../images/cdt_debug_exes02.png" vspace="12"   alt="Import Executable dialog"/></p>
+   <p><img src="../images/cdt_debug_exes02.png" vspace="12"   alt="Import Executable dialog"></p>
    <p><strong>NOTE</strong> You can import any executable, but only those built with debug symbols will be let you step through source code and see variable values. </p>
    </li>
    <li>Click <strong>Next</strong>.</li>
-   <li>In the <strong>Choose Project</strong> page of the <strong>Import Executable</strong> dialog:<br />
+   <li>In the <strong>Choose Project</strong> page of the <strong>Import Executable</strong> dialog:<br>
    <ul>
    	<li>To import as a new project, activate <strong>New project name</strong> and type the project name.</li>
    	<li>To import into an existing project, activate <strong>Existing project</strong> and click <strong>Search</strong>.</li>
    	<li>To add a launch configuration, activate <strong>Create a Launch Configuration</strong> and select the configuration from the list, then type a name into the <strong>Name</strong> box.</li>
    </ul>
-   <p><img src="../images/cdt_debug_exes03.png" vspace="12"   alt="Import Executable dialog"/></p>
+   <p><img src="../images/cdt_debug_exes03.png" vspace="12"   alt="Import Executable dialog"></p>
    </li>
-  <li>Click <strong>Finish</strong>.<br />
+  <li>Click <strong>Finish</strong>.<br>
     <p>The executable is added to the <strong>C/C++ Projects</strong> view.</p></li>
-  <li>If <strong>Create a Launch Configuration</strong> was activated, the <strong>Debug</strong> dialog appears.<br />
-      <p><img src="../images/cdt_debug_exes04.png" vspace="12"  alt="Debug launch configuration dialog"/></p>
+  <li>If <strong>Create a Launch Configuration</strong> was activated, the <strong>Debug</strong> dialog appears.<br>
+      <p><img src="../images/cdt_debug_exes04.png" vspace="12"  alt="Debug launch configuration dialog"></p>
   </li>
-  <li>Click <strong>Debug</strong>.<br />
+  <li>Click <strong>Debug</strong>.<br>
   <p>The debugger launches and you can begin debugging the executable.</p></li>
   </ol>
   
   <h3>Setting breakpoints </h3>
   <p>Expand the executable in the <strong>C++ Projects</strong> view to see the list of source files. Only executables built with debug symbols will show a list of source files. The source files can be opened in the editor so you can set breakpoints. Use these files only for debugging, you can not change them and rebuild the executable with this project. </p>
-     <p><img src="../images/cdt_debug_exes05.png" alt="C++ Projects View" vspace="12" /></p>
+     <p><img src="../images/cdt_debug_exes05.png" alt="C++ Projects View" vspace="12" ></p>
  
-<p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21" /> <br />
-    <a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br />
+<p><img border="0" src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21" > <br>
+    <a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br>
   <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
-<p><img border="0" src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21" /> <br />
+<p><img border="0" src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21" > <br>
   <a href="cdt_o_debug.htm">Debugging</a></p>
-<p><img border="0" src="../images/ngref.gif" alt="Related reference" width="143" height="21" /> <br />
+<p><img border="0" src="../images/ngref.gif" alt="Related reference" width="143" height="21" > <br>
   <a href="../reference/cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
-<hr />
-<img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement" />
+<hr >
+<img src="../images/nokiaCopyright.png" alt="Nokia Copyright Statement" >
 </body>
 </html>

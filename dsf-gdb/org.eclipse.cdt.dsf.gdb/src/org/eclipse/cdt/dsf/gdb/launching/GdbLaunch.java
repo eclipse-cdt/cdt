@@ -51,6 +51,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ITerminate;
 
@@ -153,7 +154,10 @@ public class GdbLaunch extends DsfLaunch
     				}
     			}).get();
 
-            DebugPlugin.newProcess(this, inferiorProc, label);
+            IProcess inferior = DebugPlugin.newProcess(this, inferiorProc, label);
+            // Register the model adapter so that the inferior console becomes visible
+            // when we select a debug context for this debug session.
+            getSession().registerModelAdapter(IProcess.class, inferior);
         } catch (InterruptedException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
@@ -180,6 +184,18 @@ public class GdbLaunch extends DsfLaunch
 
             GDBProcess gdbProcess = new GDBProcess(this, cliProc, label, null);
             addProcess(gdbProcess);
+            
+            Object existingAdapter = getSession().getModelAdapter(IProcess.class);
+            if (existingAdapter == null) {
+            	// Register the model adapter to the gdbProcess only if there is no other one
+            	// registered already; if there is already one, it is from our inferior process
+            	// and it takes precedence because we want the inferior console to show
+            	// when we select a debug context of this debug session.
+            	// If the inferior process is added later, it will properly overwrite this model adapter.
+            	// Note that we don't always have an inferior console, so it is important to register
+            	// this adapter for those cases.
+                getSession().registerModelAdapter(IProcess.class, gdbProcess);
+            }
         } catch (InterruptedException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
@@ -283,7 +299,7 @@ public class GdbLaunch extends DsfLaunch
         fExecutor.execute(shutdownSeq);
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Override
     public Object getAdapter(Class adapter) {
         // Must force adapters to be loaded.

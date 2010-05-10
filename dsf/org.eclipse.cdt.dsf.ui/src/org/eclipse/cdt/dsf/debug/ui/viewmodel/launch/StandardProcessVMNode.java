@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,13 @@
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
-import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
-import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -39,52 +35,6 @@ import org.eclipse.jface.viewers.TreePath;
 @SuppressWarnings("restriction")
 public class StandardProcessVMNode extends AbstractVMNode {
     
-    /**
-     * VMC element implementation, it is a proxy for the IProcess class, to 
-     * allow the standard label adapter to be used with this object. 
-     */
-    private class VMC extends AbstractVMContext
-        implements IProcess 
-    {
-        private final IProcess fProcess;
-        
-        VMC(IProcess process) {
-            super(StandardProcessVMNode.this);
-            fProcess = process;
-        }
-        
-        @Override
-        public IVMNode getVMNode() { return StandardProcessVMNode.this; }        
-        @Override
-        @SuppressWarnings("rawtypes")
-        public Object getAdapter(Class adapter) { 
-            Object vmcAdapter = super.getAdapter(adapter);
-            if (vmcAdapter != null) {
-                return vmcAdapter;
-            }
-            return fProcess.getAdapter(adapter); 
-        }
-        @Override
-        public String toString() { return "IProcess " + fProcess.toString(); } //$NON-NLS-1$
-
-        public String getAttribute(String key) { return fProcess.getAttribute(key); }
-        public int getExitValue() throws DebugException { return fProcess.getExitValue(); }
-        public String getLabel() { return fProcess.getLabel(); }
-        public ILaunch getLaunch() { return fProcess.getLaunch(); }
-        public IStreamsProxy getStreamsProxy() { return fProcess.getStreamsProxy(); }
-        public void setAttribute(String key, String value) { fProcess.setAttribute(key, value); }
-        public boolean canTerminate() { return fProcess.canTerminate(); }
-        public boolean isTerminated() { return fProcess.isTerminated(); }
-        public void terminate() throws DebugException { fProcess.terminate(); }
-        
-        @Override
-        public boolean equals(Object other) { 
-            return other instanceof VMC && fProcess.equals(((VMC)other).fProcess);
-        }
-        @Override
-        public int hashCode() { return fProcess.hashCode(); }
-    }
-
     public StandardProcessVMNode(AbstractVMProvider provider) {
         super(provider);
     }
@@ -111,7 +61,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
              */
             IProcess[] processes = launch.getProcesses();
             for (int i = 0; i < processes.length; i++) {
-                update.setChild(new VMC(processes[i]), i);
+                update.setChild(processes[i], i);
             }
             update.done();
         }
@@ -209,7 +159,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
     }
     
     protected void handleChange(DebugEvent event, ModelDelta parent) {
-        parent.addNode(new VMC((IProcess)event.getSource()), IModelDelta.STATE);
+        parent.addNode(event.getSource(), IModelDelta.STATE);
     }
 
     protected void handleCreate(DebugEvent event, ModelDelta parent) {

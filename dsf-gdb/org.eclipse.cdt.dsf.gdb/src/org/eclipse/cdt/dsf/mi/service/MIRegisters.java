@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -378,17 +380,18 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     
     // Wraps a list of registers in DMContexts.
     private MIRegisterDMC[] makeRegisterDMCs(MIRegisterGroupDMC groupDmc, IMIExecutionDMContext execDmc, String[] regNames) {
-        MIRegisterDMC[] regDmcList = new MIRegisterDMC[regNames.length];
-        int regNo = 0 ;
+        List<MIRegisterDMC> regDmcList = new ArrayList<MIRegisters.MIRegisterDMC>( regNames.length );
+        int regNo = 0;
         for (String regName : regNames) {
-        	if(execDmc != null)
-        		regDmcList[regNo] = new MIRegisterDMC(this, groupDmc, execDmc, regNo, regName);
-        	else
-        		regDmcList[regNo] = new MIRegisterDMC(this, groupDmc, regNo, regName);
+            if(regName != null && regName.length() > 0) {
+            	if(execDmc != null)
+            		regDmcList.add(new MIRegisterDMC(this, groupDmc, execDmc, regNo, regName));
+            	else
+            		regDmcList.add(new MIRegisterDMC(this, groupDmc, regNo, regName));
+            }
             regNo++;
         }
-        
-        return regDmcList;
+        return regDmcList.toArray(new MIRegisterDMC[regDmcList.size()]);
     }
 
     /*

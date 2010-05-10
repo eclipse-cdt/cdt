@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -253,10 +254,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private void updateData() {
 		int selScope = 0;
-		String lblText = "Tools:";
+		String lblText = Messages.getString("DiscoveryTab.5"); //$NON-NLS-1$
 		if (!cbi.isPerRcTypeDiscovery()) {
 			selScope = 1;
-			lblText = "Configuration:";
+			lblText = Messages.getString("DiscoveryTab.8"); //$NON-NLS-1$
 		}
 		if (scopeComboBox != null)
 			scopeComboBox.select(selScope);

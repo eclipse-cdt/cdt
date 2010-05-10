@@ -167,6 +167,7 @@ public class GDBTypeParser {
 			type = t;
 		}
 
+		@Override
 		public String toString() {
 			return unParse(this);
 		}
@@ -214,6 +215,7 @@ public class GDBTypeParser {
 			return child != null;
 		}
 
+		@Override
 		public String verbose() {
 			StringBuffer sb = new StringBuffer();
 			switch (getType()) {

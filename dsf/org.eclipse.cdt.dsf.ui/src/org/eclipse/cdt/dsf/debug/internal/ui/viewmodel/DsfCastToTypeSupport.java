@@ -216,7 +216,6 @@ public class DsfCastToTypeSupport  {
 		private void fireExpressionChangedEvent(IExpressionDMContext exprDMC) {
 			ExpressionChangedEvent event = new ExpressionChangedEvent(exprDMC);
 			dmvmProvider.handleEvent(event);
-			dmvmProvider.refresh();	// this seems to be required, esp. for Expressions View
 		}
     }
     

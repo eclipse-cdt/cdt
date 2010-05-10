@@ -1201,8 +1201,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
-        // Always refresh the contents of the view upon suspended event.
-        if (event instanceof ISuspendedDMEvent) {
+        // The following events can affect any expression's values, 
+        // refresh the contents of the parent element (i.e. all the expressions). 
+        if (event instanceof ISuspendedDMEvent ||
+        	event instanceof IMemoryChangedEvent ||
+        	event instanceof IExpressionChangedDMEvent ||
+        	(event instanceof PropertyChangeEvent &&
+        			((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         }         
 

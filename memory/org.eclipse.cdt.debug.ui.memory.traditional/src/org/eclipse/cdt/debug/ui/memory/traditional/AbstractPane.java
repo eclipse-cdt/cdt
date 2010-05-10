@@ -493,6 +493,7 @@ public abstract class AbstractPane extends Canvas
     	return (value / 2) * 2 == value;
     }
     
+    @SuppressWarnings("all")
     protected void updateCaret()
     {
         try

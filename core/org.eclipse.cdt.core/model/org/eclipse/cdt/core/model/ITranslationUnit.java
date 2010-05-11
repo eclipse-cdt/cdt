@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -485,6 +486,16 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 */
 	@Deprecated
 	org.eclipse.cdt.core.parser.CodeReader getCodeReader();
+
+	/**
+	 * Returns the path to the file that should be used by the parser to access the file contents.
+	 * For local translation units, this will return the equivalent to <code>getLocation().toOSString()</code>
+	 * 
+	 * @since 5.2
+	 * @return String representing the path that should be used to obtain the file content.
+	 * @see FileContent
+	 */
+	String getPathForFileContent();
 
 
 }

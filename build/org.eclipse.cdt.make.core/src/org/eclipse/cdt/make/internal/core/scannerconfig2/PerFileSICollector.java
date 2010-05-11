@@ -60,15 +60,15 @@ import org.w3c.dom.NodeList;
  * @author vhirsl
  */
 public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoCollectorCleaner {
-	private static final int INCLUDE_PATH 		= 1;
-	private static final int QUOTE_INCLUDE_PATH = 2;
-	private static final int INCLUDE_FILE		= 3;
-	private static final int MACROS_FILE		= 4;
+	protected static final int INCLUDE_PATH 		= 1;
+	protected static final int QUOTE_INCLUDE_PATH = 2;
+	protected static final int INCLUDE_FILE		= 3;
+	protected static final int MACROS_FILE		= 4;
 	
-    private class ScannerInfoData implements IDiscoveredScannerInfoSerializable {
-        private final Map<Integer, Set<IFile>> commandIdToFilesMap; // command id and set of files it applies to
-        private final Map<IFile, Integer> fileToCommandIdMap;  // maps each file to the corresponding command id
-        private final Map<Integer, CCommandDSC> commandIdCommandMap; // map of all commands
+    protected class ScannerInfoData implements IDiscoveredScannerInfoSerializable {
+        protected final Map<Integer, Set<IFile>> commandIdToFilesMap; // command id and set of files it applies to
+        protected final Map<IFile, Integer> fileToCommandIdMap;  // maps each file to the corresponding command id
+        protected final Map<Integer, CCommandDSC> commandIdCommandMap; // map of all commands
 
         public ScannerInfoData() {
             commandIdCommandMap = new LinkedHashMap<Integer, CCommandDSC>();  // [commandId, command]
@@ -150,7 +150,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 
     }
     
-    private static class ProjectScannerInfo {
+    protected static class ProjectScannerInfo {
     	IPath[] includePaths;
     	IPath[] quoteIncludePaths;
     	IPath[] includeFiles;
@@ -166,28 +166,28 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
     }
     
     public static final String COLLECTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".PerFileSICollector"; //$NON-NLS-1$
-	private static final String CC_ELEM = "compilerCommand"; //$NON-NLS-1$
-	private static final String ID_ATTR = "id"; //$NON-NLS-1$
-	private static final String FILE_TYPE_ATTR = "fileType"; //$NON-NLS-1$
-	private static final String APPLIES_TO_ATTR = "appliesToFiles"; //$NON-NLS-1$
-	private static final String FILE_ELEM = "file"; //$NON-NLS-1$
-	private static final String PATH_ATTR = "path"; //$NON-NLS-1$
+	protected static final String CC_ELEM = "compilerCommand"; //$NON-NLS-1$
+	protected static final String ID_ATTR = "id"; //$NON-NLS-1$
+	protected static final String FILE_TYPE_ATTR = "fileType"; //$NON-NLS-1$
+	protected static final String APPLIES_TO_ATTR = "appliesToFiles"; //$NON-NLS-1$
+	protected static final String FILE_ELEM = "file"; //$NON-NLS-1$
+	protected static final String PATH_ATTR = "path"; //$NON-NLS-1$
 	
-    private IProject project;
-    private InfoContext context;
+    protected IProject project;
+    protected InfoContext context;
     
-    private ScannerInfoData sid; // scanner info data
-    private ProjectScannerInfo psi = null;	// sum of all scanner info
+    protected ScannerInfoData sid; // scanner info data
+    protected ProjectScannerInfo psi = null;	// sum of all scanner info
     
-//    private List siChangedForFileList; 		// list of files for which scanner info has changed
-	private final Map<IFile, Integer> siChangedForFileMap;		// (file, comandId) map for deltas
-	private final List<Integer> siChangedForCommandIdList;	// list of command ids for which scanner info has changed
+//    protected List siChangedForFileList; 		// list of files for which scanner info has changed
+	protected final Map<IFile, Integer> siChangedForFileMap;		// (file, comandId) map for deltas
+	protected final List<Integer> siChangedForCommandIdList;	// list of command ids for which scanner info has changed
     
-    private final SortedSet<Integer> freeCommandIdPool;   // sorted set of free command ids
-    private int commandIdCounter = 0;
+    protected final SortedSet<Integer> freeCommandIdPool;   // sorted set of free command ids
+    protected int commandIdCounter = 0;
     
     /** monitor for data access */
-    private final Object fLock = new Object();
+    protected final Object fLock = new Object();
 
     /**
      * 
@@ -277,7 +277,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
 
-    private void addScannerInfo(Integer commandId, Map<ScannerInfoTypes, List<String>> scannerInfo) {
+    protected void addScannerInfo(Integer commandId, Map<ScannerInfoTypes, List<String>> scannerInfo) {
 		assert Thread.holdsLock(fLock);
         CCommandDSC cmd = sid.commandIdCommandMap.get(commandId);
         if (cmd != null) {
@@ -296,7 +296,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
 
-    private void addCompilerCommand(IFile file, CCommandDSC cmd) {
+    protected void addCompilerCommand(IFile file, CCommandDSC cmd) {
 		assert Thread.holdsLock(fLock);
         List<CCommandDSC> existingCommands = new ArrayList<CCommandDSC>(sid.commandIdCommandMap.values());
         int index = existingCommands.indexOf(cmd);
@@ -320,7 +320,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		generateFileDelta(file, cmd);
     }
 
-	private void generateFileDelta(IFile file, CCommandDSC cmd) {
+	protected void generateFileDelta(IFile file, CCommandDSC cmd) {
 		assert Thread.holdsLock(fLock);
         Integer commandId = cmd.getCommandIdAsInteger();
 		Integer oldCommandId = sid.fileToCommandIdMap.get(file);
@@ -335,7 +335,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		}
 	}
 
-	private void applyFileDeltas() {
+	protected void applyFileDeltas() {
 		assert Thread.holdsLock(fLock);
 		Set<IFile> resources = siChangedForFileMap.keySet();
 		for (IFile file : resources) {
@@ -381,7 +381,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		generateProjectScannerInfo();
 	}
 
-	private void generateProjectScannerInfo() {
+	protected void generateProjectScannerInfo() {
 		assert Thread.holdsLock(fLock);
 		psi = new ProjectScannerInfo();
 		psi.includePaths = getAllIncludePaths(INCLUDE_PATH);
@@ -391,7 +391,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		psi.definedSymbols = getAllSymbols();
 	}
 
-	private void removeUnusedCommands() {
+	protected void removeUnusedCommands() {
 		assert Thread.holdsLock(fLock);
         Set<Entry<Integer, Set<IFile>>> entrySet = sid.commandIdToFilesMap.entrySet();
         for (Entry<Integer, Set<IFile>> entry : entrySet) {
@@ -417,7 +417,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
     
-    private void addScannerInfo(ScannerInfoTypes type, List<CCommandDSC> delta) {
+    protected void addScannerInfo(ScannerInfoTypes type, List<CCommandDSC> delta) {
         // TODO Auto-generated method stub
         
     }
@@ -467,7 +467,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         return new PerFileDiscoveredPathInfo();
     }
 
-	private boolean scannerInfoChanged() {
+	protected boolean scannerInfoChanged() {
 		assert Thread.holdsLock(fLock);
 //		return !siChangedForFileList.isEmpty();
 		return !siChangedForFileMap.isEmpty();
@@ -597,7 +597,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
      * 
      * @author vhirsl
      */
-    private class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo2 {
+    protected class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo2 {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getProject()
          */
@@ -772,7 +772,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 
     }
     
-    private Map<IResource, PathInfo> calculatePathInfoMap(){
+    protected Map<IResource, PathInfo> calculatePathInfoMap(){
 		assert Thread.holdsLock(fLock);
 		
     	Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>(sid.fileToCommandIdMap.size() + 1);
@@ -800,7 +800,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
     	return map;
     }
     
-    private static PathInfo createFilePathInfo(CCommandDSC cmd){
+    protected static PathInfo createFilePathInfo(CCommandDSC cmd){
     	IPath[] includes = stringListToPathArray(cmd.getIncludes());
     	IPath[] quotedIncludes = stringListToPathArray(cmd.getQuoteIncludes());
     	IPath[] incFiles = stringListToPathArray(cmd.getIncludeFile());
@@ -816,7 +816,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         return new PathInfo(includes, quotedIncludes, definedSymbols, incFiles, macroFiles);
     }
 
-    private CCommandDSC getCommand(IPath path) {
+    protected CCommandDSC getCommand(IPath path) {
         try {
         	IFile file = project.getWorkspace().getRoot().getFile(path);
     		return getCommand(file);
@@ -826,7 +826,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         }
     }
 
-    private CCommandDSC getCommand(IFile file) {
+    protected CCommandDSC getCommand(IFile file) {
         CCommandDSC cmd = null;
         if (file != null) {
             Integer cmdId = sid.fileToCommandIdMap.get(file);
@@ -847,7 +847,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
      * 
      * @return list of IPath(s).
      */
-    private IPath[] getAllIncludePaths(int type) {
+    protected IPath[] getAllIncludePaths(int type) {
     	List<String> allIncludes = new ArrayList<String>();
         Set<Integer> cmdIds = sid.commandIdCommandMap.keySet();
         for (Integer cmdId : cmdIds) {
@@ -884,7 +884,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         return stringListToPathArray(allIncludes);
     }
 
-	private static IPath[] stringListToPathArray(List<String> discovered) {
+	protected static IPath[] stringListToPathArray(List<String> discovered) {
 		List<Path> allIncludes = new ArrayList<Path>(discovered.size());
 		for (String include : discovered) {
 		    if (!allIncludes.contains(include)) {
@@ -894,7 +894,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		return allIncludes.toArray(new IPath[allIncludes.size()]);
 	}
 
-    private Map<String, String> getAllSymbols() {
+    protected Map<String, String> getAllSymbols() {
 		assert Thread.holdsLock(fLock);
         Map<String, String> symbols = new HashMap<String, String>();
         Set<Integer> cmdIds = sid.commandIdCommandMap.keySet();

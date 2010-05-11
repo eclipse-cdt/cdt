@@ -199,7 +199,9 @@ public class ScannerConfigBuilder extends ACBuilder {
             // update and persist scanner configuration
             CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2, new SubProgressMonitor(monitor, 30));
             
-            CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, context, false);
+            // this erroneously removes the infor right after it gets created... bad
+            //CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, context, false);
+            
 			if((flags & PERFORM_CORE_UPDATE) != 0)
 				CfgDiscoveredPathManager.getInstance().updateCoreSettings(project, new IConfiguration[]{cfg});
 

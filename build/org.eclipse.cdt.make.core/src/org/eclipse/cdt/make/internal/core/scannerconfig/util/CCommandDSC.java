@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,25 +34,25 @@ import org.w3c.dom.NodeList;
  * @author vhirsl
  */
 public class CCommandDSC {
-    private final static String SINGLE_SPACE = " "; //$NON-NLS-1$
-    private final static String CMD_DESCRIPTION_ELEM = "commandDescription"; //$NON-NLS-1$
-    private final static String CMD_SI_ELEM = "commandScannerInfo"; //$NON-NLS-1$
-    private final static String OPTION_ELEM = "option"; //$NON-NLS-1$
-    private final static String SI_ITEM_ELEM = "siItem"; //$NON-NLS-1$
-    private final static String KEY_ATTR = "key"; //$NON-NLS-1$
-    private final static String VALUE_ATTR = "value"; //$NON-NLS-1$
-    private final static String QUOTE_INCLUDE_ATTR = "quote"; //$NON-NLS-1$
-    private final static String KIND_ATTR = "kind"; //$NON-NLS-1$
+    protected final static String SINGLE_SPACE = " "; //$NON-NLS-1$
+    protected final static String CMD_DESCRIPTION_ELEM = "commandDescription"; //$NON-NLS-1$
+    protected final static String CMD_SI_ELEM = "commandScannerInfo"; //$NON-NLS-1$
+    protected final static String OPTION_ELEM = "option"; //$NON-NLS-1$
+    protected final static String SI_ITEM_ELEM = "siItem"; //$NON-NLS-1$
+    protected final static String KEY_ATTR = "key"; //$NON-NLS-1$
+    protected final static String VALUE_ATTR = "value"; //$NON-NLS-1$
+    protected final static String QUOTE_INCLUDE_ATTR = "quote"; //$NON-NLS-1$
+    protected final static String KIND_ATTR = "kind"; //$NON-NLS-1$
     
-	private int commandId;
-	private List<KVStringPair> compilerCommand;	// members are KVStringPair objects
-	private boolean discovered;
-	private boolean cppFileType;	// C or C++ file type
-	private IProject project;
+	protected int commandId;
+	protected List<KVStringPair> compilerCommand;	// members are KVStringPair objects
+	protected boolean discovered;
+	protected boolean cppFileType;	// C or C++ file type
+	protected IProject project;
 
-    private List<String> symbols;
-    private List<String> includes;
-    private List<String> quoteIncludes;
+    protected List<String> symbols;
+    protected List<String> includes;
+    protected List<String> quoteIncludes;
 
 	public CCommandDSC(boolean cppFileType) {
 		this(cppFileType, null);
@@ -394,7 +394,7 @@ public class CCommandDSC {
 		return path;
 	}
 
-	private static IResource findResource(IProject project, IPath path) {
+	protected static IResource findResource(IProject project, IPath path) {
 		IResource resource = project.findMember(path, false);
 		if (resource == null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

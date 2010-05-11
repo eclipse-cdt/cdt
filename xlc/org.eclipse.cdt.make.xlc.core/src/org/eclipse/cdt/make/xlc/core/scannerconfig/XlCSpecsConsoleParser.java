@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,14 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.make.xlc.core.activator.Activator;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.cdt.core.IMarkerGenerator;
 
@@ -43,14 +46,22 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	// pattern for the includes arguments
 	final Pattern includePattern = Pattern
 			.compile("-(?:qgcc_c_stdinc|qc_stdinc|qgcc_cpp_stdinc|qcpp_stdinc)=(.*)"); //$NON-NLS-1$
-
+	
+	// xlC compiler constants
+	final static String [] compilerConstants = {
+			"__IBMCPP__", //$NON-NLS-1$
+			"__xlC__",    //$NON-NLS-1$
+			"__IBMC__",   //$NON-NLS-1$
+			"__xlc__"     //$NON-NLS-1$
+	};
+	
 	private IProject fProject = null;
 
 	private IScannerInfoCollector fCollector = null;
 
-	private List symbols = new ArrayList();
+	private List<String> symbols = new ArrayList<String>();
 
-	private List includes = new ArrayList();
+	private List<String> includes = new ArrayList<String>();
 
 	/*
 	 * (non-Javadoc)
@@ -126,14 +137,31 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 * @since 1.0
 	 */
 	public void shutdown() {
-		Map scannerInfo = new HashMap();
+		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+		
+		// insert compiler constants, work around buggy xlC option for dumping symbols (it misses a few)
+		for (String constant : compilerConstants) {
+			if (!symbols.contains(constant))
+				symbols.add(constant);
+		}
+
+		// add the scanner info
 		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
+		
 		fCollector.contributeToScannerConfig(fProject, scannerInfo);
-		TraceUtil
-				.outputTrace(
+		if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
+			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
+			try {
+				collector.updateScannerConfiguration(null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				Activator.log(e);
+			}
+		}
+		TraceUtil.outputTrace(
 						"Scanner info from \'specs\' file", //$NON-NLS-1$
-						"Include paths", includes, new ArrayList(), "Defined symbols", symbols); //$NON-NLS-1$ //$NON-NLS-2$
+						"Include paths", includes, new ArrayList<String>(), "Defined symbols", symbols); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

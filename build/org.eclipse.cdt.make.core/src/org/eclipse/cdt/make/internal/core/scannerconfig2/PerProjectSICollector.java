@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,6 +45,10 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
+import org.eclipse.cdt.utils.FileSystemUtilityManager;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -280,8 +285,27 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 						newPersistedIncludes.put(include, persistedIncludes.get(include));
 					}
 					else {
-						newPersistedIncludes.put(include, 
-								((new Path(include)).toFile().exists()) ? Boolean.FALSE : Boolean.TRUE);
+						// the paths may be on EFS resources, not local
+						Boolean includePathExists = true;
+						URI projectLocationURI = discPathInfo.getProject().getLocationURI();
+						
+						// use the project's location... create a URI that uses the same provider but that points to the include path
+						URI includeURI = FileSystemUtilityManager.getDefault().replacePath(projectLocationURI, include);
+						
+						// ask EFS if the path exists
+						try {
+							IFileStore fileStore = EFS.getStore(includeURI);
+							IFileInfo info = fileStore.fetchInfo();
+							if(!info.exists()) {
+								includePathExists = false;
+							}
+						} catch (CoreException e) {
+							MakeCorePlugin.log(e);
+						}
+						
+						// if the include path doesn't exist, then we tell the scanner config system that the folder
+						// has been "removed", and thus it won't show up in the UI
+						newPersistedIncludes.put(include, !includePathExists);
 					}
 				}
 			}

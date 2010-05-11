@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: xlC Error Parser Tests Plug-in
 Bundle-SymbolicName: org.eclipse.cdt.errorparsers.xlc.tests;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 5.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.errorparsers.xlc.tests.TestsPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

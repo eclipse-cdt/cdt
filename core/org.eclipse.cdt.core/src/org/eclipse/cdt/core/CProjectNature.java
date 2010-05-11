@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.core;
@@ -75,9 +76,15 @@ public class CProjectNature implements IProjectNature {
     		newNatures[prevNatures.length] = natureId;
     		description.setNatureIds(newNatures);
     		project.setDescription(description, monitor);
-	    } finally {
-	        monitor.done();
-	    }	    
+		}
+		
+		catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		
+		finally {
+			monitor.done();
+		}
 	}
 
 	/**

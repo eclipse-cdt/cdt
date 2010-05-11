@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
@@ -247,13 +248,47 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 				fireUpdate(INFO_CHANGED, info);
                 
 				if(updateContainer){
-//				ICProject cProject = CoreModel.getDefault().create(info.getProject());
-//				if (cProject != null) {
-//					CoreModel.setPathEntryContainer(new ICProject[]{cProject},
-//							new DiscoveredPathContainer(info.getProject()), null);
-//				}
+
 	                IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
 	                String profileId = buildInfo.getSelectedProfileId();
+	                ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
+	                        getSCProfileConfiguration(profileId).getProfileScope();
+	                changeDiscoveredContainer(project, profileScope, changedResources);
+				}
+			}
+			else {
+		        throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
+		                MakeMessages.getString("DiscoveredPathManager.Info_Not_Serializable"), null)); //$NON-NLS-1$
+			}
+		}
+	}
+    
+    /**
+     * Allows one to update the discovered information for a particular scanner discovery profile ID.
+     * TODO:  This should be made API in IDiscoveredPathManager, or in an interface derived there from.
+     * 
+     * @param context
+     * @param info
+     * @param updateContainer
+     * @param changedResources
+     * @param profileId
+     * @throws CoreException
+     */
+    public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources, String profileId) throws CoreException {
+    	DiscoveredInfoHolder holder = getHolder(info.getProject(), true);
+    	IDiscoveredPathInfo oldInfo = holder.getInfo(context); 
+		if (oldInfo != null) {
+            IDiscoveredScannerInfoSerializable serializable = info.getSerializable();
+			if (serializable != null) {
+				holder.setInfo(context, info);
+                IProject project = info.getProject();
+				DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, context, serializable);
+				fireUpdate(INFO_CHANGED, info);
+                
+				if(updateContainer){
+
+	                IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
+	                
 	                ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
 	                        getSCProfileConfiguration(profileId).getProfileScope();
 	                changeDiscoveredContainer(project, profileScope, changedResources);

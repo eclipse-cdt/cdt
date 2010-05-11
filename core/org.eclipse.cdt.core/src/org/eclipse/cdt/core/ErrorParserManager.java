@@ -17,7 +17,6 @@ package org.eclipse.cdt.core;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.utils.CygPath;
+import org.eclipse.cdt.utils.FileSystemUtilityManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -456,8 +456,13 @@ outer:
 	 */
 	protected IFile findFileInWorkspace(IPath path) {
 		URI uri;
-		if (!path.isAbsolute())
-			uri = URIUtil.append(getWorkingDirectoryURI(), path.toString());
+		if (!path.isAbsolute()) {
+			URI workingDirectoryURI = getWorkingDirectoryURI();
+			String workingDirPath = FileSystemUtilityManager.getDefault().getPathFromURI(workingDirectoryURI);
+			IPath newPath = new Path(workingDirPath).append(path);
+			uri = FileSystemUtilityManager.getDefault().replacePath(workingDirectoryURI, newPath.toString());
+			//uri = URIUtil.append(getWorkingDirectoryURI(), path.toString());
+		}
 		else {
 			uri = toURI(path);
 			if (uri == null) // Shouldn't happen; error logged
@@ -699,22 +704,15 @@ outer:
 	 * @since 5.1
 	 */
 	private URI toURI(IPath path) {
-		try {
+//		try {
 			URI baseURI = getWorkingDirectoryURI();
 			String uriString = path.toString();
 
 			// On Windows "C:/folder/" -> "/C:/folder/"
 			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
 			    uriString = IPath.SEPARATOR + uriString;
-
-			return new URI(baseURI.getScheme(), baseURI.getUserInfo(),
-					       baseURI.getHost(), baseURI.getPort(),
-					       uriString, null, null);
-		} catch (URISyntaxException e) {
-			String message = "Problem converting path to URI [" + path.toString() + "]";  //$NON-NLS-1$//$NON-NLS-2$
-			CCorePlugin.log(message, e);
-		}
-		return null;
+			
+			return FileSystemUtilityManager.getDefault().replacePath(baseURI, uriString);
 	}
 
 	/**

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.cdt.core" version="2">
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.cdt.core" version="2">
     <resource path="parser/org/eclipse/cdt/core/dom/ast/IASTImplicitName.java" type="org.eclipse.cdt.core.dom.ast.IASTImplicitName">
         <filter id="403853384">
             <message_arguments>
@@ -39,6 +38,14 @@
         <filter id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.core.parser.IInactiveCodeToken"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/core/IFilesystemUtility.java" type="org.eclipse.cdt.core.IFilesystemUtility">
+        <filter id="1109393411">
+            <message_arguments>
+                <message_argument value="5.0.3"/>
+                <message_argument value="org.eclipse.cdt.core.IFilesystemUtility"/>
             </message_arguments>
         </filter>
     </resource>

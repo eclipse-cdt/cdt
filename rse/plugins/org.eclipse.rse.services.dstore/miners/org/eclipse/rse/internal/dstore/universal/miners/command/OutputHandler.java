@@ -21,6 +21,7 @@
  * Peter Wang         (IBM)   [299422] [dstore] OutputHandler.readLines() not compatible with servers that return max 1024bytes available to be read
  * David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
  * David McKnight   (IBM)     [309338] [dstore] z/OS USS - invocation of 'env' shell command returns inconsistently organized output
+ * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -129,8 +130,8 @@ public class OutputHandler extends Handler {
 	}
 	
 	private String convertSpecialCharacters(String input){
-		   // needed to ensure xml characters aren't converted in xml layer	
-		
+		if (_commandThread._supportsCharConversion){
+		   // needed to ensure xml characters aren't converted in xml layer			
 			StringBuffer output = new StringBuffer();
 
 			for (int idx = 0; idx < input.length(); idx++)
@@ -151,6 +152,10 @@ public class OutputHandler extends Handler {
 			}
 			return output.toString();
 		}
+		else {
+			return input;
+		}
+	}
 
 	private void doPrompt() {
 		try {

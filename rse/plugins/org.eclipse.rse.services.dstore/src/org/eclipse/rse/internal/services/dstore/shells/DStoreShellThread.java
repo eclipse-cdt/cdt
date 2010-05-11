@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
+ * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -45,6 +46,8 @@ public class DStoreShellThread
 	private DataStore _dataStore;
 	private DataElement _status;
 	private String _invocation;
+	
+	private boolean _sentCharConversionCommand = false;
 	
 	/**
 	 * @param cwd initial working directory
@@ -267,7 +270,12 @@ public class DStoreShellThread
 					// first, find out if the server support conversion
 					DataElement fsD= dataStore.findObjectDescriptor(DataStoreResources.model_directory);
 					DataElement convDes = dataStore.localDescriptorQuery(fsD, "C_CHAR_CONVERSION", 1); //$NON-NLS-1$
-					if (convDes != null){
+					if (convDes != null){						
+						if (!_sentCharConversionCommand){
+							dataStore.command(convDes, _status);
+							_sentCharConversionCommand = true;
+						}
+						
 						cmd = convertSpecialCharacters(cmd);
 					}
 					

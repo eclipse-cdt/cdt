@@ -29,6 +29,7 @@
  *  David McKnight     (IBM)   [302724] problems with environment variable substitution
  *  David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
  *  David McKnight     (IBM)   [308246] [dstore] fix for Bug 287305 breaks on z/OS due to "su" usage
+ *  David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -127,6 +128,8 @@ public class CommandMinerThread extends MinerThread
 	private DataElement _lastPrompt;
 	private InitRunnable _initRunnable;
 	private Thread _cdThread;
+	
+	public boolean _supportsCharConversion = false;
 
 	public CommandMinerThread(DataElement theElement, String invocation, DataElement status, Patterns thePatterns, CommandMiner.CommandMinerDescriptors descriptors)
 	{ 
@@ -653,7 +656,9 @@ public class CommandMinerThread extends MinerThread
 			
 			
 			String origInput = input;
-			input = convertSpecialCharacters(input);
+			if (_supportsCharConversion){
+				input = convertSpecialCharacters(input);
+			}
 			input.getBytes();
 
 			try

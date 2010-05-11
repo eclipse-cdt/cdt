@@ -19,6 +19,7 @@
  * Noriaki Takatsu (IBM)  - [230399] [multithread] changes to stop CommandMiner threads when clients disconnect
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences - cmd descriptor to identify ability
+ * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -146,7 +147,7 @@ public class CommandMiner extends Miner
 		_dataStore.createReference(cancellable, shellD, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// indicates support for char conversion in version 3.2
-		createCommandDescriptor(fsD, "CharConversion", "C_CHAR_CONVERSION", false);
+		createCommandDescriptor(fsD, "CharConversion", "C_CHAR_CONVERSION", false); //$NON-NLS-1$ //$NON-NLS-2$
 		
 
 //		DataElement inputD = _dataStore.createObject(cmdD, "input", "Enter command");
@@ -230,7 +231,16 @@ public class CommandMiner extends Miner
 			getPossibleCommands(status);
 			return status;
 		}
-
+		else if (name.equals("C_CHAR_CONVERSION")) //$NON-NLS-1$
+		{
+			DataElement cmdStatus = getCommandStatus(subject);
+			CommandMinerThread theThread = (CommandMinerThread) _threads.get(cmdStatus.getAttribute(DE.A_ID));
+			if (theThread != null)
+			{	
+				theThread._supportsCharConversion = true;
+			}
+		}
+		
 		return status;
 	}
 	

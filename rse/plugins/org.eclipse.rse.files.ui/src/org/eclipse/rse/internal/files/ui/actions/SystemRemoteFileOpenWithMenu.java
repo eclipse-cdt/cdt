@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [277141] System Editor Passed Incorrect Cache Information in Presence of Case-Differentiated-Only filenames
  * David McKnight   (IBM)        - [284596] [regression] Open with-> problem when descriptor doesn't match previous
  * David McKnight   (IBM)        - [309755] SystemRemoteFileOpenWithMenu.getPreferredEditor(), the listed default editor is not always correct
+ * David McKnight   (IBM)        - [312362] Editing Unix file after it changes on host edits old data
  *******************************************************************************/
 package org.eclipse.rse.internal.files.ui.actions;
 import java.text.Collator;
@@ -231,6 +232,13 @@ private void createOtherMenuItem(final Menu menu, final IRemoteFile remoteFile) 
 
 protected void openEditor(IRemoteFile remoteFile, IEditorDescriptor descriptor) {
 	
+	// make sure we're using the latest version of remoteFile
+	try {
+		remoteFile = remoteFile.getParentRemoteFileSubSystem().getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+	}
+	catch (Exception e){				
+	}
+	
 	SystemEditableRemoteFile editable = SystemRemoteEditManager.getEditableRemoteObject(remoteFile, descriptor);
 	if (editable == null){
 		// case for cancelled operation when user was prompted to save file of different case
@@ -339,7 +347,7 @@ private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile r
 		long storedModifiedStamp = properties.getRemoteFileTimeStamp();
 
 		// get updated remoteFile so we get the current remote timestamp
-		//remoteFile.markStale(true);
+		remoteFile.markStale(true);
 		IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
 		try
 		{

@@ -27,7 +27,7 @@
             defaultSeverity="Warning"
             description="Finds statements like &apos;a;&apos; or &apos;-a;&apos; or &apos;a-b;&apos; which do no seems to have any side effect therefore suspicious"
             id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"
-            messagePattern="Statement has no effect"
+            messagePattern="Statement has no effect ''{0}''"
             name="Statement has no effect"/>
       </checker>
       

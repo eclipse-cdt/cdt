@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
@@ -85,6 +86,10 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				case IASTBinaryExpression.op_shiftLeftAssign:
 				case IASTBinaryExpression.op_shiftRightAssign:
 					return false;
+				case IASTBinaryExpression.op_logicalOr:
+				case IASTBinaryExpression.op_logicalAnd:
+					return hasNoEffect(binExpr.getOperand1())
+							&& hasNoEffect(binExpr.getOperand2());
 				}
 				if (binExpr instanceof CPPASTBinaryExpression) {
 					// unfortunately ICPPASTBinaryExpression does not have
@@ -95,9 +100,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 						return false;
 					IType expressionType = binExpr.getOperand1()
 							.getExpressionType();
-					if (!(expressionType instanceof IBasicType)) {
-						return false; // must be overloaded but parser could not
-						// find it
+					if (!(expressionType instanceof IBasicType || expressionType instanceof ICPPBasicType)) {
+						return false; // must be overloaded but parser could not find it
 					}
 				}
 				return true;

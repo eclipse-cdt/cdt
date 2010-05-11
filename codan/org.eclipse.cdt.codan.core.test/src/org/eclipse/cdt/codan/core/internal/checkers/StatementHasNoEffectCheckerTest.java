@@ -113,11 +113,14 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
-	// main() {
-	// 	 a = foo(1) || a = foo(2);
+	// void main() {
+	// bool a;
+	// class c {};
+	// c z;
+	// 	 (a = z.foo(1)) || (a = z.foo(2));
 	// }
 	public void testLazyEvalHack() {
-		loadCodeAndRun(getAboveComment());
+		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
 }

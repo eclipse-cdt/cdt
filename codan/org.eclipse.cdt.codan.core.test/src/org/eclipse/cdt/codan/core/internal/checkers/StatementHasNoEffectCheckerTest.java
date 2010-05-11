@@ -105,4 +105,19 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkErrorLine(f1, 3);
 		checkErrorLine(f2, 4);
 	}
+	
+	// main() {
+	// 	for (a=b;a;a=a->next);
+	// }
+	public void testForTestExpression() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+	// main() {
+	// 	 a = foo(1) || a = foo(2);
+	// }
+	public void testLazyEvalHack() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

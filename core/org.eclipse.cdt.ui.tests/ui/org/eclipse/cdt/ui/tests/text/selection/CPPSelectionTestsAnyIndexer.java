@@ -1229,4 +1229,22 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 			assertEquals("ambiguous input: 2", e.getMessage());
 		}
 	}
+
+	//	#define MYMACRO
+
+	//	#undef MYMACRO
+	public void testUndef_312399() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testUndef_312399.h", hcode); 
+        IFile file = importFile("testUndef_312399.cpp", scode); 
+        waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        IASTNode target = testF3(file, scode.indexOf("MYMACRO"));
+        assertTrue(target instanceof IASTName);
+        assertEquals("MYMACRO", ((IASTName) target).toString());
+        assertEquals(hcode.indexOf("MYMACRO"), target.getFileLocation().getNodeOffset());
+        assertEquals("MYMACRO".length(), ((ASTNode) target).getLength());
+	}
 }

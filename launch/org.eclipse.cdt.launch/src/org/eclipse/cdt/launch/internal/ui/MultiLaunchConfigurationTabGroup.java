@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -94,7 +95,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				return null;
 			if (columnIndex == 0) {
 				MultiLaunchConfigurationDelegate.LaunchElement el = (MultiLaunchConfigurationDelegate.LaunchElement) element;
-				if (el.data == null) {
+				if (el.data == null || !MultiLaunchConfigurationDelegate.isValidLaunchReference(el.data)) {
 					Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					return errorImage;
 				}
@@ -314,7 +315,9 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					MultiLaunchConfigurationSelectionDialog dialog = 
 						MultiLaunchConfigurationSelectionDialog.createDialog(
 								treeViewer.getControl().getShell(), el.mode, true);
-					dialog.setInitialSelection(el);
+					if (MultiLaunchConfigurationDelegate.isValidLaunchReference(el.data)) {
+						dialog.setInitialSelection(el);
+					}
 					if (dialog.open() == Dialog.OK) {
 						ILaunchConfiguration[] confs = dialog.getSelectedLaunchConfigurations();
 						if (confs.length < 0) 
@@ -456,6 +459,39 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 		public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 			// defaults is empty list
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+		 */
+		@Override
+		public boolean isValid(ILaunchConfiguration launchConfig) {
+			setMessage(null);
+			setErrorMessage(null);
+			int validLaunches = 0;
+			// test if each launch is valid
+			for (LaunchElement element : input) {
+				if (element.enabled) { 
+					if ( element.data == null) {
+						// error referencing invalid launch
+						setErrorMessage(MessageFormat.format(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.14"), //$NON-NLS-1$
+								element.name));
+						return false;
+					} else if (!MultiLaunchConfigurationDelegate.isValidLaunchReference(element.data)) {
+						// error referencing invalid launch
+						setErrorMessage(MessageFormat.format(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.15"), //$NON-NLS-1$
+								element.name));
+						return false;
+					}
+					validLaunches++;
+				} 
+			}
+			if (validLaunches < 1) {
+				// must have at least one valid and enabled launch
+				setErrorMessage(LaunchMessages.getString("MultiLaunchConfigurationTabGroup.16")); //$NON-NLS-1$
+				return false;				
+			}
+			return true;
 		}
 	}
 

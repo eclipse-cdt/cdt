@@ -97,6 +97,8 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 					} catch (CoreException e) {
 						return false;
 					}
+				} else if (element instanceof ILaunchConfiguration) {
+					return MultiLaunchConfigurationDelegate.isValidLaunchReference((ILaunchConfiguration) element);
 				}
 				return true;
 			}

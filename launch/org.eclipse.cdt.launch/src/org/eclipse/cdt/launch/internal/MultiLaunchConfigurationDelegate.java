@@ -44,6 +44,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Group Launch delegate. Launches each configuration in the user selected mode
@@ -570,5 +571,14 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 	public static String getProp(int index, String string) {
 		return MultiLaunchConfigurationDelegate.MULTI_LAUNCH_CONSTANTS_PREFIX + "." + index + "." + string; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Test if a launch configuration is a valid reference. 
+	 * @param config configuration reference
+	 * @return <code>true</code> if it is a valid reference, <code>false</code> if launch configuration should be filtered
+	 */
+	public static boolean isValidLaunchReference(ILaunchConfiguration config) {
+		return DebugUIPlugin.doLaunchConfigurationFiltering( config) && !WorkbenchActivityHelper.filterItem(config);
 	}
 }

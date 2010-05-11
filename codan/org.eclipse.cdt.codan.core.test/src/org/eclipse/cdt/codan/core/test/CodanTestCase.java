@@ -10,17 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+
+import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -54,7 +57,7 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	/**
-	 * Override for c++
+	 * Override for c++ (i.e. at least one c++ test)
 	 * 
 	 * @return is c++ tests
 	 */
@@ -69,32 +72,6 @@ public class CodanTestCase extends BaseTestCase {
 		tmpDir = cproject.getProject().getLocation().makeAbsolute().toFile();
 	}
 
-	public File load(String file) {
-		Class clazz = getClass();
-		InputStream st = null;
-		try {
-			st = TestUtils.getJavaFileText(clazz);
-		} catch (IOException e) {
-			fail("Cannot find java file: " + clazz + ": " + e.getMessage());
-		}
-		try {
-			File testFile = new File(tmpDir, file);
-			tempFiles.add(testFile);
-			TestUtils.saveFile(st, testFile);
-			st.close();
-			currentFile = testFile;
-			try {
-				cproject.getProject().refreshLocal(1, null);
-			} catch (CoreException e) {
-				// hmm
-			}
-			return testFile;
-		} catch (IOException e) {
-			fail("Cannot save test: " + file + ": " + e.getMessage());
-			return null;
-		}
-	}
-
 	public void tearDown() throws CoreException {
 		if (cproject != null) {
 			try {
@@ -102,7 +79,6 @@ public class CodanTestCase extends BaseTestCase {
 						IResource.FORCE
 								| IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 						new NullProgressMonitor());
-			
 			} catch (CoreException e) {
 				throw e;
 			}
@@ -156,7 +132,7 @@ public class CodanTestCase extends BaseTestCase {
 		return cprojects[0];
 	}
 
-	protected void loadFiles() throws CoreException {
+	protected void indexFiles() throws CoreException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -167,7 +143,7 @@ public class CodanTestCase extends BaseTestCase {
 		CCorePlugin.getIndexManager().setIndexerId(cproject,
 				IPDOMManager.ID_FAST_INDEXER);
 		// wait until the indexer is done
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(1000*60, // 1 min
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(1000 * 60, // 1 min
 				new NullProgressMonitor()));
 		return;
 	}
@@ -190,10 +166,75 @@ public class CodanTestCase extends BaseTestCase {
 					return line;
 				cur++;
 			}
-			;
 		} finally {
 			st.close();
 		}
 		return 0;
+	}
+
+	protected String getAboveComment() {
+		return getContents(1)[0].toString();
+	}
+
+	protected StringBuffer[] getContents(int sections) {
+		try {
+			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
+			if (plugin == null)
+				throw new AssertionFailedError(
+						"This test must be run as a JUnit plugin test");
+			return TestSourceReader.getContentsForTest(plugin.getBundle(),
+					"src", getClass(), getName(), sections);
+		} catch (IOException e) {
+			fail(e.getMessage());
+			return null;
+		}
+	}
+
+	public File loadcode(String code, boolean cpp) {
+		String ext = cpp ? ".cc" : ".c"; //$NON-NLS-1$ //$NON-NLS-2$
+		File testFile = null;
+		try {
+			testFile = File.createTempFile("test", ext, tmpDir); //$NON-NLS-1$
+		} catch (IOException e1) {
+			fail(e1.getMessage());
+			return null;
+		}
+		return loadcode(code, testFile);
+	}
+
+	public File loadcode(String code, String filename) {
+		File testFile = new File(tmpDir, filename);
+		return loadcode(code, testFile);
+	}
+
+	private File loadcode(String code, File testFile) {
+		try {
+			tempFiles.add(testFile);
+			TestUtils.saveFile(
+					new ByteArrayInputStream(code.trim().getBytes()), testFile);
+			currentFile = testFile;
+			try {
+				cproject.getProject().refreshLocal(1, null);
+			} catch (CoreException e) {
+				// hmm
+				fail(e.getMessage());
+			}
+			return testFile;
+		} catch (IOException e) {
+			fail("Cannot save test: " + testFile + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+			return null;
+		}
+	}
+
+	public File loadcode_c(String code) {
+		return loadcode(code, true);
+	}
+
+	public File loadcode_cpp(String code) {
+		return loadcode(code, false);
+	}
+
+	public File loadcode(String code) {
+		return loadcode(code, isCpp());
 	}
 }

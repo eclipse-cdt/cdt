@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.test;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
@@ -24,12 +25,14 @@ import org.eclipse.core.runtime.CoreException;
 public class CheckerTestCase extends CodanTestCase {
 	private IMarker[] markers;
 
-
+	public void checkErrorLine(int i) {
+		checkErrorLine(currentFile, i);
+	}
 	/**
 	 * @param i
 	 *            - line
 	 */
-	public void checkErrorLine(int i) {
+	public void checkErrorLine(File file, int i) {
 		assertTrue(markers != null);
 		assertTrue(markers.length > 0);
 		boolean found = false;
@@ -48,8 +51,13 @@ public class CheckerTestCase extends CodanTestCase {
 			} catch (IOException e) {
 				fail(e.getMessage());
 			}
+			String mfile  = m.getResource().getName();
 			if (line.equals(i)) {
 				found = true;
+				if (file!=null && !file.getName().equals(mfile))
+					found = false;
+				else
+					break;
 			}
 		}
 		assertTrue("Error on line " + i + " not found ", found);
@@ -63,12 +71,27 @@ public class CheckerTestCase extends CodanTestCase {
 	/**
 	 * 
 	 */
-	public void runOnFile() {
+	public void runOnProject() {
 		try {
-			loadFiles();
+			indexFiles();
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
+		runCodan();
+	}
+
+	public void loadCodeAndRun(String code) {
+		loadcode(code);
+		 runOnProject();
+	}
+	public void loadCodeAndRunCpp(String code) {
+		loadcode(code, true);
+		 runOnProject();
+	}
+	/**
+	 * 
+	 */
+	protected void runCodan() {
 		CodanRuntime.getInstance().getBuilder().processResource(
 				cproject.getProject(), NPM);
 		try {

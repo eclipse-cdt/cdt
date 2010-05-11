@@ -148,11 +148,17 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		return false;
 	}
 
+	protected void buildAndCheck(String code) {
+		buildAndCheck(code, false);
+	}
+	protected void buildAndCheck_cpp(String code) {
+		buildAndCheck(code, true);
+	}
 	/**
 	 * @param file
 	 */
-	protected void buildAndCheck(String file) {
-		load(file);
+	protected void buildAndCheck(String code, boolean cpp) {
+		loadcode(code, cpp);
 		buildCfg();
 		checkCfg();
 	}
@@ -195,30 +201,27 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		return null;
 	}
 
-	/*-
-	 <code file="test1.c">
-	 main() {
-	   int a;
-	   a=1; 
-	 }
-	 </code>
-	 */
-	public void test_basic() {
-		buildAndCheck("test1.c");
+	@Override
+	public boolean isCpp() {
+		return true;
 	}
 
-	/*-
-	 <code file="test2.c">
-	 main() {
-	   int a=10;
-	   while (a--) {
-	      a=a-2;
-	   }
-	 }
-	 </code>
-	 */
+	//	 main() {
+	//	   int a;
+	//	   a=1; 
+	//	 }
+	public void test_basic() {
+		buildAndCheck(getAboveComment());
+	}
+
+	//	 main() {
+	//	   int a=10;
+	//	   while (a--) {
+	//	      a=a-2;
+	//	   }
+	//	 }
 	public void test_while() {
-		buildAndCheck("test2.c");
+		buildAndCheck(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
 		IConnectorNode conn = (IConnectorNode) decl.getOutgoing();
@@ -233,18 +236,14 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		IExitNode ret = (IExitNode) ((IConnectorNode) m1).getOutgoing();
 	}
 
-	/*-
-	 <code file="test3.c">
-	 main() {
-	   int a=10;
-	   if (a--) {
-	      a=a-2;
-	   }
-	 }
-	 </code>
-	 */
+	//	 main() {
+	//	   int a=10;
+	//	   if (a--) {
+	//	      a=a-2;
+	//	   }
+	//	 }
 	public void test_if() {
-		buildAndCheck("test3.c");
+		buildAndCheck(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
 		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
@@ -257,18 +256,14 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		assertSame(m1, m2);
 	}
 
-	/*-
-	 <code file="test4.c">
-	 main() {
-	   int a=10;
-	   if (a--) {
-	      return;
-	   }
-	 }
-	 </code>
-	 */
+	//	 main() {
+	//	   int a=10;
+	//	   if (a--) {
+	//	      return;
+	//	   }
+	//	 }
 	public void test_if_ret() {
-		buildAndCheck("test4.c");
+		buildAndCheck(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
 		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
@@ -277,19 +272,16 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
 		IBasicBlock m1 = jumpEnd(bElse);
 	}
-	/*-
-	 <code file="test5.c">
-	 main() {
-	   int a=10;
-	   if (a--) {
-	      return;
-	      a++;
-	   }
-	 }
-	 </code>
-	 */
+
+	//	 main() {
+	//	   int a=10;
+	//	   if (a--) {
+	//	      return;
+	//	      a++;
+	//	   }
+	//	 }
 	public void test_if_dead() {
-		buildAndCheck("test5.c");
+		buildAndCheck(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
 		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
@@ -297,21 +289,18 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		IExitNode bThen = (IExitNode) branchEnd(des, IBranchNode.THEN);
 		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
 		IBasicBlock m1 = jumpEnd(bElse);
-		assertEquals(1,graph.getUnconnectedNodeSize());
+		assertEquals(1, graph.getUnconnectedNodeSize());
 	}
-	/*-
-	 <code file="test_ifif.c">
-	 foo() {
-	   int a=10, x=5;
-	   if (a--) {
-	      if (x<0)
-	         a++;
-	   }
-	 }
-	 </code>
-	 */
+
+	//	 foo() {
+	//	   int a=10, x=5;
+	//	   if (a--) {
+	//	      if (x<0)
+	//	         a++;
+	//	   }
+	//	 }
 	public void test_ifif() {
-		buildAndCheck("test_ifif.c");
+		buildAndCheck(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
 		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
@@ -319,41 +308,33 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		IDecisionNode bThen = (IDecisionNode) branchEnd(des, IBranchNode.THEN);
 		assertEquals("x<0", data(bThen));
 		IBasicBlock bElse = branchEnd(des, IBranchNode.ELSE);
-		IBasicBlock m2 = jumpEnd(branchEnd(bThen,IBranchNode.THEN));
+		IBasicBlock m2 = jumpEnd(branchEnd(bThen, IBranchNode.THEN));
 		IBasicBlock m1 = jumpEnd(bElse);
 		IBasicBlock m3 = jumpEnd(m2);
 		assertSame(m1, m3);
 	}
-	/*-
-	 <code file="test_throw.cc">
-	 int foo() {
-	 	throw 5;
-	 }
-	 </code>
-	 */
+
+	//	 int foo() {
+	//	 	throw 5;
+	//	 }
 	public void test_throw() {
-		buildAndCheck("test_throw.cc");
+		buildAndCheck_cpp(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		assertEquals(1, graph.getExitNodeSize());
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
 		IExitNode exit = exitNodeIterator.next();
-
 		assertEquals("throw 5;", data(exit));
 	}
-	/*-
-	 <code file="test_exit.c">
-	 int foo() {
-	 	exit(0);
-	 }
-	 </code>
-	 */
+
+	//	 int foo() {
+	//	 	exit(0);
+	//	 }
 	public void test_exit() {
-		buildAndCheck("test_exit.c");
+		buildAndCheck(getAboveComment());
 		IStartNode startNode = graph.getStartNode();
 		assertEquals(1, graph.getExitNodeSize());
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
 		IExitNode exit = exitNodeIterator.next();
-
 		assertEquals("exit(0);", data(exit));
 	}
 }

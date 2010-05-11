@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 
 /**
@@ -17,84 +20,89 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
  * 
  */
 public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
-	/*-
-	 <code file="test1.c">
-	 main() {
-	   int a;
-	   +a; // error here on line 3
-	 }
-	 </code>
-	 */
-	public void testUnaryExpression() {
-		load("test1.c");
-		runOnFile();
+	// main() {
+	// int a;
+	// +a; // error here on line 3
+	// }
+	public void testUnaryExpression() throws IOException {
+		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
-	
-	/*-
-	 <code file="test2.c">
-	 main() {
-	   int a,b;
-	   
-	   b+a; // error here on line 4
-	 }
-	 </code>
-	 */
+
+	// main() {
+	// int a,b;
+	//
+	// b+a; // error here on line 4
+	// }
 	public void testBinaryExpression() {
-		load("test2.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
-	
-	/*-
-	 <code file="test3.c">
-	 main() {
-	   int a,b;
-	   
-	   a=b+a; // no error here
-	 }
-	 </code>
-	 */
+
+	// main() {
+	// int a,b;
+	//
+	// a=b+a; // no error here
+	// }
 	public void testNormalAssignment() {
-		load("test3.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
-	/*-
-	 <code file="test4.c">
-	 main() {
-	   int a,b;
-	   
-	   (a=b); // no errors here
-	   a+=b;
-	   a<<=b;
-	   a-=b;
-	   a++;
-	   b--;
-	   --a;
-	   ++b;
-	   a%=2;
-	   a>>=2;
-	 }
-	 </code>
-	 */
+
+	// main() {
+	// int a,b;
+	//
+	// (a=b); // no errors here
+	// a+=b;
+	// a<<=b;
+	// a-=b;
+	// a++;
+	// b--;
+	// --a;
+	// ++b;
+	// a%=2;
+	// a>>=2;
+	// }
 	public void testFalsePositives() {
-		load("test4.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
-	
-	/*-
-	 <code file="test5.c">
-	 main() {
-	   int a;
-	   a; // error here on line 3
-	 }
-	 </code>
-	 */
+
+	// main() {
+	// int a;
+	// a; // error here on line 3
+	// }
 	public void testIdExpression() {
-		load("test5.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
+	}
+
+	// main() {
+	// int a=({foo();a;}); // no error here on line 2
+	// }
+	public void testGNUExpressionCompoundStmt() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	/* first file */
+	// main() {
+	// int a;
+	// +a; // error here on line 3
+	// }
+	/* second file */
+	// foo() {
+	// int a;
+	//
+	// +a; // error here on line 4
+	// }
+	/* this test is using two files */
+	public void test2FilesUnaryExpression() throws IOException {
+		StringBuffer[] code = getContents(2);
+		File f1 = loadcode(code[0].toString());
+		File f2 = loadcode(code[1].toString());
+		runOnProject();
+		checkErrorLine(f1, 3);
+		checkErrorLine(f2, 4);
 	}
 }

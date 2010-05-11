@@ -17,87 +17,68 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
  * 
  */
 public class SuggestedParenthesisCheckerTest extends CheckerTestCase {
-	/*-
-	 <code file="test1.c">
-	 main() {
-	   int a=1,b=3;
-	   if (!a<10) b=4; // error here on line 3
-	 }
-	 </code>
-	 */
+	
+//	 main() {
+//	   int a=1,b=3;
+//	   if (!a<10) b=4; // error here on line 3
+//	 }	
 	public void test1() {
-		load("test1.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
 	
-	/*-
-	 <code file="test2.c">
-	 main() {
-	   int a=1,b=3;
-	   
-	   if (b+a && a>b || b-a) b--; // error here on line 4
-	 }
-	 </code>
-	 */
+
+//	 main() {
+//	   int a=1,b=3;
+//	   
+//	   if (b+a && a>b || b-a) b--; // error here on line 4
+//	 }
+
 	public void test2() {
-		load("test2.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
 	
-	/*-
-	 <code file="test3.c">
-	 main() {
-       int a=1,b=3;
-	   if (!(a<10)) b=4; // no error here on line 3
-	 }
-	 </code>
-	 */
+
+//	 main() {
+//     int a=1,b=3;
+//	   if (!(a<10)) b=4; // no error here on line 3
+//	 }
+
 	public void test3() {
-		load("test3.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
-	/*-
-	 <code file="test4.c">
-	 main() {
-      int a=1,b=3;
-	   if (a && !b) b=4; // no error here on line 3
-	 }
-	 </code>
-	 */
+
+	// main() {
+	//   int a=1,b=3;
+	//   if (a && !b) b=4; // no error here on line 3
+	// }
+
 	public void test_lastnot() {
-		load("test4.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 	
-	/*-
-	 <code file="test5.c">
-	 main() {
-       int a=1,b=3;
-	   if ((!a) && 10) b=4; // no error here on line 3
-	 }
-	 </code>
-	 */
+
+//	 main() {
+//      int a=1,b=3;
+//	    if ((!a) && 10) b=4; // no error here on line 3
+//	 }
+
 	public void test_fixed() {
-		load("test5.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
 	
-	/*-
-	 <code file="test6.c">
-	 main() {
-      int a=1,b=3;
-	   if (a && b & a) b=4; //  error here on line 3
-	 }
-	 </code>
-	 */
+
+//	 main() {
+//      int a=1,b=3;
+//	    if (a && b & a) b=4; //  error here on line 3
+//	 }
+
 	public void test_mixedbin() {
-		load("test6.c");
-		runOnFile();
+		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
 	}
 }

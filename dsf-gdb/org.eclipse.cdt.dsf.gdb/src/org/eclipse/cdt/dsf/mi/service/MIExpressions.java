@@ -869,16 +869,20 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
 						protected void handleSuccess() {
 							IExpressionDMContext[] subExpressions = getData();
 
-							if (startIndex >= subExpressions.length || startIndex + length > subExpressions.length) {
+							if (startIndex >= subExpressions.length) {
 								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, "Invalid range for evaluating sub expressions.", null)); //$NON-NLS-1$
 								rm.done();
 								return;
 							}
 							
-							IExpressionDMContext[] subRange = new IExpressionDMContext[length];
-							for (int i=0; i<subRange.length; i++) {
-								subRange[i] = subExpressions[i+startIndex]; 
+							int realLength = length;
+							if (startIndex + length > subExpressions.length) {
+								realLength = subExpressions.length - startIndex;
 							}
+							
+							IExpressionDMContext[] subRange = new IExpressionDMContext[realLength];
+							System.arraycopy(subExpressions, startIndex, subRange, 0, realLength);
+
 							rm.setData(subRange);
 							rm.done();
 						}

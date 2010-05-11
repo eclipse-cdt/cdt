@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,9 +48,9 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionStorageManager;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType;
+import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType.CProjectDescriptionStorageTypeProxy;
 import org.eclipse.cdt.internal.core.settings.model.SettingsContext;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
-import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType.CProjectDescriptionStorageTypeProxy;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -144,7 +144,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			@Override
 			public void aboutToRun(IJobChangeEvent event) {
 				final Job job = event.getJob();
-				if ("org.eclipse.core.internal.events.NotificationManager$NotifyJob".equals(job.getClass().getName())) {
+				if ("org.eclipse.core.internal.events.NotificationManager$NotifyJob".equals(job.getClass().getName())) { //$NON-NLS-1$
 					job.cancel();
 				}
 			}
@@ -289,15 +289,12 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 * @return boolean indicating whether reload is needed
 	 */
 	protected synchronized boolean checkExternalModification() {
-		ICProjectDescription desc = getLoadedDescription();
 		// If loaded, and we have cached the modification stamp, reload
-		if (desc != null && projectModificaitonStamp != IResource.NULL_STAMP) {
-			long currentModificationStamp = project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME).getModificationStamp();
-			if (projectModificaitonStamp < currentModificationStamp) {
-				setCurrentDescription(null, true);
-				projectModificaitonStamp = currentModificationStamp;
-				return true;
-			}
+		long currentModificationStamp = project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME).getModificationStamp();
+		if (projectModificaitonStamp != currentModificationStamp) {
+			setCurrentDescription(null, true);
+			projectModificaitonStamp = currentModificationStamp;
+			return true;
 		}
 		return false;
 	}

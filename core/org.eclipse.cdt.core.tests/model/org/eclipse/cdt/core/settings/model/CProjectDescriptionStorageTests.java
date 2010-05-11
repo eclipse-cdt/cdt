@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2010 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,14 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -167,6 +170,74 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	}
 
 	/**
+	 * Tests that external create and replace of CProjectDescription is picked up
+	 * (Bug 311189)
+	 * @throws Exception
+	 */
+	public void testExternalCProjDescRemoveAndReplace() throws Exception {
+		// Create auto-refresh Thread
+		Job refreshJob = new Job("Auto-Refresh") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				if (monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				try {
+					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					fail("Error during refresh: " + e.getMessage());
+				}
+				schedule(500);
+				return Status.OK_STATUS;
+			}
+		};
+		refreshJob.schedule();
+
+		// Backup the CProjectFile
+		final String initial = "initial";
+		final String testingStorage = "testingStorage";
+		final String testChildInStorage = "testChildInStorage";
+
+		// Backup the original storage file
+		backUpCProjectFile(initial);
+
+		IProject project = cProj.getProject();
+		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, true);
+		projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, true).createChild(testChildInStorage);
+		CoreModel.getDefault().setProjectDescription(project, projDesc);
+		// backup this project_desc
+		backUpCProjectFile(testingStorage);
+
+		// Close and open project
+		project.close(null);
+		project.open(null);
+
+		// verify changes are in read-only description
+		projDesc = CoreModel.getDefault().getProjectDescription(project, false);
+		assertNotNull(projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false));
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+
+		try {
+			// Lock the workspace
+			Job.getJobManager().beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
+
+			// Restore from backup
+			resListener.reset();
+			resListener.addFileToWatch(cProj.getProject().getFile(".cproject").getFullPath());
+			restoreCProjectUsingIResource(initial);
+		} finally {
+			Job.getJobManager().endRule(ResourcesPlugin.getWorkspace().getRoot());
+		}
+
+		resListener.waitForChange();
+		// Fetch what should be the initial project description
+		projDesc = CoreModel.getDefault().getProjectDescription(project, false);
+		assertNull(projDesc.getDefaultSettingConfiguration().getStorage(testingStorage, false));
+
+		refreshJob.cancel();
+	}
+
+
+	/**
 	 * Tests that a read-only project description file is picked up
 	 * @throws Exception
 	 */
@@ -238,6 +309,40 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 			}
 		}
 	}
+
+	/**
+	 * Use IResource API to remove and replace the .cproject file (rather than just modifying
+	 * it atomically exteranlly)
+	 * This tests the team provider remove and replace behaviour when holding a higher-leve resource lock
+	 */
+	private void restoreCProjectUsingIResource(String uniqueKey) throws CoreException {
+		// delete the .cproject
+		IFile cproject = cProj.getProject().getFile(".cproject");
+		IFile cproject_back = cProj.getProject().getFile(".cproject_" + uniqueKey);
+		cproject.delete(true, null);
+		cproject.create(cproject_back.getContents(true), true, null);
+
+		final IFolder csettings = cProj.getProject().getFolder(".csettings");
+		IFolder csettings_back = cProj.getProject().getFolder(".csettings_" + uniqueKey);
+		csettings.refreshLocal(IResource.DEPTH_INFINITE, null);
+		csettings_back.refreshLocal(IResource.DEPTH_INFINITE, null);
+
+		// Nothing to do if these directories don't exist
+		if (!csettings.exists() && !csettings_back.exists())
+			return;
+
+		csettings.delete(false, null);
+		csettings.create(true, false, null);
+
+		csettings_back.accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				assertTrue(resource instanceof IFile);
+				csettings.getFile(resource.getName()).create(((IFile)resource).getContents(), false, null);
+				return false;
+			}
+		});
+	}
+
 
 	private void backUpCProjectFile(String uniqueKey) {
 		File cproj = cProj.getProject().getFile(".cproject").getLocation().toFile();

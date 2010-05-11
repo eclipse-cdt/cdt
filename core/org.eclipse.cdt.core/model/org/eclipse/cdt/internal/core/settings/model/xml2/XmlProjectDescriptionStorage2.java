@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Broadcom Corporation and others.
+ * Copyright (c) 2008, 2010 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,7 +91,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 			project.getFolder(STORAGE_FOLDER_NAME).accept(new IResourceProxyVisitor() {
 				public boolean visit(IResourceProxy proxy) throws CoreException {
 					if (modificationMap.containsKey(proxy.getName()))
-						if (modificationMap.get(proxy.getName()) < proxy.getModificationStamp()) {
+						if (modificationMap.get(proxy.getName()) != proxy.getModificationStamp()) {
 							// There may be old storages in here, ensure we don't infinite reload...
 							modificationMap.put(proxy.getName(), proxy.getModificationStamp());
 							setCurrentDescription(null, true);

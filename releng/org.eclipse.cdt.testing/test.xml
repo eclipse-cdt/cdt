@@ -8,6 +8,8 @@
 	<property name="cdt-lr-parser-loc" value="${eclipse-home}/cdt_lr_parser_folder"/>
 	<property name="cdt-upc-parser-loc" value="${eclipse-home}/cdt_upc_parser_folder"/>
 	
+	<property name="cdt-common-vmargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+	
 	<target name="init">
 		<echo message="library file: ${library-file}"/>
 	</target>
@@ -28,7 +30,7 @@
 			<property name="plugin-name" value="org.eclipse.cdt.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 
@@ -38,7 +40,7 @@
 			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 
@@ -48,7 +50,7 @@
 			<property name="plugin-name" value="org.eclipse.cdt.debug.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.debug.core.tests.AllDebugTests"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 
@@ -58,7 +60,7 @@
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.tests.suite.AllManagedBuildTests"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 
@@ -68,7 +70,7 @@
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.ui.tests.suite.AllManagedBuildUITests"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 	
@@ -78,7 +80,7 @@
 			<property name="plugin-name" value="org.eclipse.cdt.core.lrparser.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.lrparser.tests.LRParserTestSuite"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 	
@@ -88,7 +90,17 @@
 			<property name="plugin-name" value="org.eclipse.cdt.core.parser.upc.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.parser.upc.tests.UPCParserTestSuite"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
-			<property name="extraVMargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
+
+	<target name="cdt-codan" depends="init">
+		<ant target="codan-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${eclipse-home}/cdt_codan_folder"/>
+			<property name="plugin-name" value="org.eclipse.cdt.codan.test"/>
+			<property name="classname" value="org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
 
@@ -98,6 +110,7 @@
 		<antcall target="cdt-debug-ui"/>
 		<antcall target="cdt-mbs-core"/>
 		<antcall target="cdt-mbs-ui"/>
+		<antcall target="cdt-codan"/>
 		<!--
 		<antcall target="cdt-lr-parser"/>
 		<antcall target="cdt-upc-parser"/>

@@ -37,7 +37,9 @@ public class ExcludedFileDecorator implements ILightweightLabelDecorator {
 		if (element instanceof IFile) {
 			IFile resource = (IFile) element;
 			ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-			ICProjectDescription desc = mngr.getProjectDescription(resource.getProject());
+			ICProjectDescription desc = mngr.getProjectDescription(resource.getProject(), false);
+			if (desc == null)
+				return;
 			ICConfigurationDescription conf = desc.getDefaultSettingConfiguration();
 			ICSourceEntry[] entries = conf.getSourceEntries();
 			boolean isSource = false;

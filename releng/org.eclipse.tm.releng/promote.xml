@@ -1,0 +1,28 @@
+<project default="run" name="promote.xml - Promote a build from build server to production server">
+	<target name="run">
+		<!--
+			To use this script, you must have configured a promote.properties file.
+			
+			Then, run commandline:
+			
+			ant -f promote.xml
+			
+			If you need to reuse this script with multiple properties files (eg., from 
+			multiple Hudson builds across multiple branches), use the commandline
+			flag -Dpromote.properties:
+			
+			ant -f promote.xml -Dpromote.properties=promote.properties.R2_0_branch
+		-->
+		<property name="promote.properties" value="promote.properties" />
+		<property file="${promote.properties}"/>
+
+		<!-- load build properties -->
+		<property file="build.properties" />
+
+		<property name="relengBuilderDir" value="${basedir}" />
+
+		<!-- invoke common promotion script -->
+		<property name="relengCommonBuilderDir" value="/opt/public/cbi/build/org.eclipse.dash.common.releng" />
+		<ant antfile="${relengCommonBuilderDir}/promote.xml" dir="${relengCommonBuilderDir}" />
+	</target>
+</project>

@@ -1046,25 +1046,67 @@ public class MIExpressions extends AbstractDsfService implements IExpressions2, 
         varManager.markAllOutOfDate();
     }
 	
-	/** A casted or array-displayed expression. 
-	 * @since 3.0 */
-	public class CastedExpressionDMC extends MIExpressionDMC implements ICastedExpressionDMContext {
+	/** 
+	 * A casted or array-displayed expression. 
+	 * @since 3.0 
+	 */
+	protected class CastedExpressionDMC extends MIExpressionDMC implements ICastedExpressionDMContext {
 
-		private final CastInfo castInfo;
+		private final CastInfo fCastInfo;
 		/** if non-null, interpret result as this type rather than the raw expression's type */
-		private String expression;
+		private String fCastExpression;
 
-		public CastedExpressionDMC(MIExpressionDMC exprDMC, CastInfo castInfo) {
+		public CastedExpressionDMC(MIExpressionDMC exprDMC, String castExpression, CastInfo castInfo) {
 			super(getSession().getId(), exprDMC.getExpression(), exprDMC.getRelativeExpression(), exprDMC);
-			this.castInfo = castInfo;
-			
+			fCastInfo = castInfo;
+			fCastExpression = castExpression;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext#getCastInfo()
+		 */
+		public CastInfo getCastInfo() {
+			return fCastInfo;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.dsf.mi.service.MIExpressions.java#getExpression()
+		 */
+        @Override
+		public String getExpression() {
+            return fCastExpression;
+        }
+        
+        /**
+         * @return True if the two objects are equal, false otherwise.
+         */
+        @Override
+		public boolean equals(Object other) {
+			return super.equals(other)
+					&& fCastInfo.equals(((CastedExpressionDMC) other).fCastInfo);
+        }
+        
+        @Override
+        public String toString() {
+            return baseToString() + ".expr" + "[" + //$NON-NLS-1$ //$NON-NLS-2$
+                    getExpression() +", " + getRelativeExpression() + "]"; //$NON-NLS-1$//$NON-NLS-2$
+        }
+
+	}
+	
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2#createCastedExpression(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext)
+	 */
+	/** @since 3.0 */
+	public ICastedExpressionDMContext createCastedExpression(IExpressionDMContext exprDMC, CastInfo castInfo) {
+		if (exprDMC instanceof MIExpressionDMC && castInfo != null) {
 			String castType = castInfo.getTypeString();
 			String castExpression = exprDMC.getExpression();
 			int castingLength = castInfo.getArrayCount(); 
 			int castingIndex = castInfo.getArrayStartIndex();
 		 
 			// cast to type 
-			if (castType != null) {
+			if (castType != null && castType.length() > 0) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append('(').append(castType).append(')');
 				buffer.append('(').append(castExpression).append(')');
@@ -1080,44 +1122,8 @@ public class MIExpressions extends AbstractDsfService implements IExpressions2, 
 				buffer.append('@').append(castingLength);
 				castExpression = buffer.toString();
 			}
-			this.expression = castExpression;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext#getCastInfo()
-		 */
-		public CastInfo getCastInfo() {
-			return castInfo;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.dsf.mi.service.MIExpressions.java#getExpression()
-		 */
-        @Override
-		public String getExpression() {
-            return expression;
-        }
-        
-        /**
-         * @return True if the two objects are equal, false otherwise.
-         */
-        @Override
-		public boolean equals(Object other) {
-			return super.equals(other)
-					&& castInfo.equals(((CastedExpressionDMC) other).castInfo);
-        }
-	}
-	
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2#createCastedExpression(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext)
-	 */
-	/** @since 3.0 */
-	public ICastedExpressionDMContext createCastedExpression(
-			IExpressionDMContext exprDMC, CastInfo castInfo) {
-		if (exprDMC instanceof MIExpressionDMC) {
-			CastedExpressionDMC castedDMC = new CastedExpressionDMC(
-					(MIExpressionDMC) exprDMC, castInfo);
-			return castedDMC;
+			
+			return new CastedExpressionDMC((MIExpressionDMC) exprDMC, castExpression, castInfo);
 		} else {
 			assert false;
 			return null;

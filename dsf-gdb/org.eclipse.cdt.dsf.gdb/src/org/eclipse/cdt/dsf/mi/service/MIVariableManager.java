@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.CastInfo;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -49,7 +50,6 @@ import org.eclipse.cdt.dsf.gdb.GDBTypeParser;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
-import org.eclipse.cdt.dsf.mi.service.MIExpressions.CastedExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -653,8 +653,8 @@ public class MIVariableManager implements ICommandControl {
 	        	int castingLength = 0; 
         		int castingIndex = 0;
 	        	// in case of casts, need to resolve that before dereferencing, to be safe
-	        	if ( exprDmc instanceof CastedExpressionDMC ) {
-	        		CastInfo castInfo = ((CastedExpressionDMC)exprDmc).getCastInfo();
+	        	if (exprDmc instanceof ICastedExpressionDMContext) {
+	        		CastInfo castInfo = ((ICastedExpressionDMContext)exprDmc).getCastInfo();
 	        		castingLength = castInfo.getArrayCount(); 
 	        		castingIndex = castInfo.getArrayStartIndex();
 	        		if (castingLength > 0) 

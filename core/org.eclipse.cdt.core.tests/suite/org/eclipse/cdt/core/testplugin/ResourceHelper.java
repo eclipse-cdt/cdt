@@ -543,13 +543,17 @@ public class ResourceHelper {
 		} catch (InterruptedException e) {
 		}
 
+		Assert.assertTrue("Symbolic link was not created: [" + command +"]",
+				new File(linkedPath.toOSString()).exists());
+
 		IResource resource = project.getFile(linkName);
 		resource.refreshLocal(IResource.DEPTH_ZERO, null);
 
 		if (!resource.exists()) {
 			resource = project.getFolder(linkName);
+			resource.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
-		Assert.assertTrue(resource.exists());
+		Assert.assertTrue("Failed to create resource form symbolic link", resource.exists());
 
 		externalFilesCreated.add(linkedPath.toOSString());
 		ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, NULL_MONITOR);

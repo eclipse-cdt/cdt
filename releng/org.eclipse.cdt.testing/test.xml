@@ -98,8 +98,10 @@
 		<antcall target="cdt-debug-ui"/>
 		<antcall target="cdt-mbs-core"/>
 		<antcall target="cdt-mbs-ui"/>
+		<!--
 		<antcall target="cdt-lr-parser"/>
 		<antcall target="cdt-upc-parser"/>
+		-->
 	</target>
 
 </project>

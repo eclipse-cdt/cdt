@@ -10,6 +10,7 @@
  *     Ericsson    - Modified for handling of multiple execution contexts
  *     Ericsson    - Major updates for GDB/MI implementation
  *     Ericsson    - Major re-factoring to deal with children
+ *     Axel Mueller - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -28,6 +29,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2.CastInfo;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -47,6 +49,7 @@ import org.eclipse.cdt.dsf.gdb.GDBTypeParser;
 import org.eclipse.cdt.dsf.gdb.GDBTypeParser.GDBType;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions.CastedExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.MIExpressionDMC;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -645,10 +648,21 @@ public class MIVariableManager implements ICommandControl {
 	        if (isArray()) {
 	        	// We can trust the numChildrenHint value for arrays.
 	        	ExpressionInfo[] childrenOfArray = new ExpressionInfo[getNumChildrenHint()];
+	        	String exprName = exprDmc.getExpression();
+	        	
+	        	int castingLength = 0; 
+        		int castingIndex = 0;
+	        	// in case of casts, need to resolve that before dereferencing, to be safe
+	        	if ( exprDmc instanceof CastedExpressionDMC ) {
+	        		CastInfo castInfo = ((CastedExpressionDMC)exprDmc).getCastInfo();
+	        		castingLength = castInfo.getArrayCount(); 
+	        		castingIndex = castInfo.getArrayStartIndex();
+	        		if (castingLength > 0) 
+	        			exprName = '(' + exprName + ')';
+	        	}
 	        	for (int i= 0; i < childrenOfArray.length; i++) {
-	        		String indexStr = "[" + i + "]";//$NON-NLS-1$//$NON-NLS-2$
-	        		String fullExpr = exprDmc.getExpression() + indexStr;
-	        		String relExpr = exprDmc.getRelativeExpression() + indexStr;
+	        		String fullExpr = exprName + "[" + i + "]";//$NON-NLS-1$//$NON-NLS-2$
+	        		String relExpr = exprDmc.getRelativeExpression() + "[" + (castingIndex + i) + "]";//$NON-NLS-1$//$NON-NLS-2$
 
 	        		childrenOfArray[i] = new ExpressionInfo(fullExpr, relExpr);
 	        	}

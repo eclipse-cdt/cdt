@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson 		  - Modified for handling of multiple execution contexts	
+ *     Ericsson 		  - Modified for handling of multiple execution contexts
+ *     Axel Mueller       - Bug 306555 - Add support for cast to type / view as array (IExpressions2)	
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
@@ -65,7 +67,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 2.0
  */
-public class MIExpressions extends AbstractDsfService implements IExpressions, ICachingService {
+public class MIExpressions extends AbstractDsfService implements IExpressions2, ICachingService {
 
     /**
      * A format that gives more details about an expression and supports pretty-printing
@@ -478,6 +480,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
         
 		// Register this service.
 		register(new String[] { IExpressions.class.getName(),
+				IExpressions2.class.getName(),
 				MIExpressions.class.getName() },
 				new Hashtable<String, String>());
 		
@@ -1042,5 +1045,83 @@ public class MIExpressions extends AbstractDsfService implements IExpressions, I
         // to refresh them as well
         varManager.markAllOutOfDate();
     }
+	
+	/** A casted or array-displayed expression. 
+	 * @since 3.0 */
+	public class CastedExpressionDMC extends MIExpressionDMC implements ICastedExpressionDMContext {
+
+		private final CastInfo castInfo;
+		/** if non-null, interpret result as this type rather than the raw expression's type */
+		private String expression;
+
+		public CastedExpressionDMC(MIExpressionDMC exprDMC, CastInfo castInfo) {
+			super(getSession().getId(), exprDMC.getExpression(), exprDMC.getRelativeExpression(), exprDMC);
+			this.castInfo = castInfo;
+			
+			String castType = castInfo.getTypeString();
+			String castExpression = exprDMC.getExpression();
+			int castingLength = castInfo.getArrayCount(); 
+			int castingIndex = castInfo.getArrayStartIndex();
+		 
+			// cast to type 
+			if (castType != null) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append('(').append(castType).append(')');
+				buffer.append('(').append(castExpression).append(')');
+				castExpression = buffer.toString();
+			}	
+			
+			// cast to array (can be in addition to cast to type) 
+			if (castingLength > 0) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("*("); //$NON-NLS-1$
+				buffer.append('(').append(castExpression).append(')');
+				buffer.append('+').append(castingIndex).append(')');
+				buffer.append('@').append(castingLength);
+				castExpression = buffer.toString();
+			}
+			this.expression = castExpression;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext#getCastInfo()
+		 */
+		public CastInfo getCastInfo() {
+			return castInfo;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.dsf.mi.service.MIExpressions.java#getExpression()
+		 */
+        @Override
+		public String getExpression() {
+            return expression;
+        }
+        
+        /**
+         * @return True if the two objects are equal, false otherwise.
+         */
+        @Override
+		public boolean equals(Object other) {
+			return super.equals(other)
+					&& castInfo.equals(((CastedExpressionDMC) other).castInfo);
+        }
+	}
+	
+    /* (non-Javadoc)
+	 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2#createCastedExpression(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext)
+	 */
+	/** @since 3.0 */
+	public ICastedExpressionDMContext createCastedExpression(
+			IExpressionDMContext exprDMC, CastInfo castInfo) {
+		if (exprDMC instanceof MIExpressionDMC) {
+			CastedExpressionDMC castedDMC = new CastedExpressionDMC(
+					(MIExpressionDMC) exprDMC, castInfo);
+			return castedDMC;
+		} else {
+			assert false;
+			return null;
+		}
+	}
 
 }

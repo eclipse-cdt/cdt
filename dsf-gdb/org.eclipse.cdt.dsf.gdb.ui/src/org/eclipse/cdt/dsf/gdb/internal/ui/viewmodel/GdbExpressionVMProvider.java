@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
+ *     Axel Mueller            - Bug 306555 - Add support for cast to type / view as array (IExpressions2)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel;
 
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.DsfCastToTypeSupport;
 import org.eclipse.cdt.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.DisabledExpressionVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionManagerVMNode;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
@@ -32,6 +35,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * A specialization of ExpressionVMProvider that uses a GDB-specific variable VM
  * node. To understand why this is necessary, see GdbVariableVMNode.
  */
+@SuppressWarnings("restriction")
 public class GdbExpressionVMProvider extends ExpressionVMProvider {
 
 	/**
@@ -99,6 +103,11 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
         IExpressionVMNode variableNode =  new GdbVariableVMNode(this, getSession(), syncvarDataAccess);
         addChildNodes(variableNode, new IExpressionVMNode[] {variableNode});
         
+        /* Wire up the casting support. IExpressions2 service is always available
+		 * for gdb. No need to call hookUpCastingSupport */
+		((VariableVMNode) variableNode).setCastToTypeSupport(
+				new DsfCastToTypeSupport(getSession(), GdbExpressionVMProvider.this, syncvarDataAccess));
+		
         /*
          *  Tell the expression node which sub-nodes it will directly support.  It is very important
          *  that the variables node be the last in this chain.  The model assumes that there is some

@@ -13,11 +13,10 @@ package org.eclipse.cdt.codan.core;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * TODO: add description
+ * Core Messages
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.codan.core.messages"; //$NON-NLS-1$
-	public static String CodanApplication_3;
 	public static String CodanApplication_all_option;
 	public static String CodanApplication_Error_ProjectDoesNotExists;
 	public static String CodanApplication_LogRunProject;

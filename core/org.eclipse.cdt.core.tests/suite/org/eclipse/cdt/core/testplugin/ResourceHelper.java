@@ -531,6 +531,9 @@ public class ResourceHelper {
 			throw new UnsupportedOperationException("Windows links .lnk are not supported.");
 		}
 
+		Assert.assertTrue("Path for symbolic link does not exist: [" + realPath.toOSString() +"]",
+				new File(realPath.toOSString()).exists());
+
 		IPath linkedPath = project.getLocation().append(linkName);
 		String command = "ln -s " + realPath.toOSString() + ' ' + linkedPath.toOSString();
 		Process process = Runtime.getRuntime().exec(command);

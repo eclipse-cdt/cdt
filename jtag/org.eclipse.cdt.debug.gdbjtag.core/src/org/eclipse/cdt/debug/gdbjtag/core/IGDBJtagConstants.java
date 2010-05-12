@@ -23,19 +23,12 @@ public interface IGDBJtagConstants {
 	// Debugger
 	public static final String ATTR_USE_REMOTE_TARGET = Activator.PLUGIN_ID + ".useRemoteTarget"; //$NON-NLS-1$
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$
-	/** @since 7.0 */
-	public static final String ATTR_CONNECTION = Activator.PLUGIN_ID + ".connection"; //$NON-NLS-1$
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
 	public static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
 	
 	public static final boolean DEFAULT_USE_REMOTE_TARGET = true;
-	public static final String DEFAULT_IP_ADDRESS = "localhost"; //$NON-NLS-1$
-	public static final int DEFAULT_PORT_NUMBER = 10000;
-	/**
-	 * @since 7.0
-	 */
-	public static final String DEFAULT_CONNECTION = "localhost:10000"; //$NON-NLS-1$
-	// Startup
+	public static final String DEFAULT_IP_ADDRESS = "unspecified-ip-address"; //$NON-NLS-1$
+	public static final int DEFAULT_PORT_NUMBER = 0;
 	public static final String ATTR_INIT_COMMANDS = Activator.PLUGIN_ID + ".initCommands"; //$NON-NLS-1$
 	public static final String ATTR_DELAY = Activator.PLUGIN_ID + ".delay"; //$NON-NLS-1$
 	public static final String ATTR_DO_RESET = Activator.PLUGIN_ID + ".doReset"; //$NON-NLS-1$
@@ -52,6 +45,7 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_STOP_AT = Activator.PLUGIN_ID + ".stopAt"; //$NON-NLS-1$
 	public static final String ATTR_SET_RESUME = Activator.PLUGIN_ID + ".setResume"; //$NON-NLS-1$
 	public static final String ATTR_RUN_COMMANDS = Activator.PLUGIN_ID + ".runCommands"; //$NON-NLS-1$
+	/** @since 7.0 */ public static final String ATTR_CONNECTION = Activator.PLUGIN_ID + ".connection"; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String ATTR_USE_PROJ_BINARY_FOR_IMAGE = Activator.PLUGIN_ID + ".useProjBinaryForImage"; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String ATTR_USE_FILE_FOR_IMAGE = Activator.PLUGIN_ID + ".useFileForImage"; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String ATTR_USE_PROJ_BINARY_FOR_SYMBOLS = Activator.PLUGIN_ID + ".useProjBinaryForSymbols"; //$NON-NLS-1$
@@ -67,6 +61,7 @@ public interface IGDBJtagConstants {
 	public static final boolean DEFAULT_SET_RESUME = false;
 	public static final boolean DEFAULT_USE_DEFAULT_RUN = true;
 
+	/** @since 7.0 */ public static final String DEFAULT_CONNECTION = "unspecified-ip-address:unspecified-port-number"; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String DEFAULT_INIT_COMMANDS = ""; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String DEFAULT_IMAGE_FILE_NAME = ""; //$NON-NLS-1$
 	/** @since 7.0 */ public static final String DEFAULT_SYMBOLS_FILE_NAME = ""; //$NON-NLS-1$

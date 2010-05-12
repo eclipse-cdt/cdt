@@ -128,6 +128,9 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
 			<property name="builder" value="${basedir}/memory"/>
 		</ant>
+		<ant antfile="build.xml" dir="${pde.build.scripts}" target="fetch">
+			<property name="builder" value="${basedir}/codan"/>
+		</ant>
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">

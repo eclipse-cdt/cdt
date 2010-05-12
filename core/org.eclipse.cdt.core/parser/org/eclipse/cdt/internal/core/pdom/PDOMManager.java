@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 QNX Software Systems and others.
+ * Copyright (c) 2005, 2009 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *     Sergey Prigogin (Google)
  *     Tim Kelly (Nokia)
  *     Anna Dushistova (MontaVista)
- *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -753,12 +752,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// in case a team provider does not implement a rule-factory, the
 		// platform makes a pessimistic choice and locks the workspace. We
 		// have to check for that.
-		
-		// Unfortunately, updating the project description, which can be
-		// caused by accessing the scanner info if it's not already created,
-		// requires a project level lock.
-		//ISchedulingRule rule= project.getWorkspace().getRuleFactory().refreshRule(project.getFolder(SETTINGS_FOLDER_NAME));
-		ISchedulingRule rule= project;
+		ISchedulingRule rule= project.getWorkspace().getRuleFactory().refreshRule(project.getFolder(SETTINGS_FOLDER_NAME));
 		if (project.contains(rule)) {
 			rule= MultiRule.combine(project, INIT_INDEXER_SCHEDULING_RULE);
 		}

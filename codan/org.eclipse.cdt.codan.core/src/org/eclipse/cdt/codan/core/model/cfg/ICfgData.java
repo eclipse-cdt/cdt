@@ -8,12 +8,14 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.core.cfg;
+package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
- * Interface to access data object that control flog graph block carries,
- * usually
- * it is an ast node
+ * Interface to access data object that control flow graph block carries,
+ * usually it is an ast node.
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICfgData {
 	public abstract Object getData();

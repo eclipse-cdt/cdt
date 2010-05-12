@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
@@ -23,7 +24,6 @@ import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.internal.core.cfg.DecisionNode;
-import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.codan.internal.core.cfg.JumpNode;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;

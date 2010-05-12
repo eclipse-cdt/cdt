@@ -14,9 +14,9 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
 import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
+import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;

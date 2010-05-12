@@ -11,11 +11,11 @@
 package org.eclipse.cdt.codan.core.cxx.internal.model.cfg;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
+import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.INodeFactory;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
-import org.eclipse.cdt.codan.internal.core.cfg.ICfgData;
 import org.eclipse.cdt.codan.internal.core.cfg.NodeFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 

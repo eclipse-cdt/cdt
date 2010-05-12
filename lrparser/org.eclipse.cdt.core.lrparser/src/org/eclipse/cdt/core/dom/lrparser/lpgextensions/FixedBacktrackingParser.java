@@ -135,7 +135,7 @@ public class FixedBacktrackingParser extends Stacks
     //
     public Object parse(int max_error_count) throws BadParseException
     {
-    	max_error_count = 1000;
+    	//max_error_count = 1000;
         action.reset();
         tokStream.reset(); // Position at first token.
         reallocateStateStack();

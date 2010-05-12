@@ -97,7 +97,7 @@
 	<target name="cdt-codan" depends="init">
 		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${eclipse-home}/cdt_codan_folder"/>
-			<property name="plugin-name" value="org.eclipse.cdt.codan.test"/>
+			<property name="plugin-name" value="org.eclipse.cdt.codan.core.test"/>
 			<property name="classname" value="org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite"/>
 			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>

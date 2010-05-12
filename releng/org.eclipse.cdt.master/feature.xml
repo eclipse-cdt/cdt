@@ -66,10 +66,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.cdt.testing"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.cdt.xlc.feature"
          version="0.0.0"/>
 
@@ -119,6 +115,10 @@
 
    <includes
          id="org.eclipse.cdt.codan.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.cdt.testing"
          version="0.0.0"/>
 
 </feature>

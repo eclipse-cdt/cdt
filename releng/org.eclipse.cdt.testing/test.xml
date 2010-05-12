@@ -95,7 +95,7 @@
 	</target>
 
 	<target name="cdt-codan" depends="init">
-		<ant target="codan-test" antfile="${library-file}" dir="${eclipse-home}">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${eclipse-home}/cdt_codan_folder"/>
 			<property name="plugin-name" value="org.eclipse.cdt.codan.test"/>
 			<property name="classname" value="org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite"/>

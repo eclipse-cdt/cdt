@@ -29,7 +29,6 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
@@ -37,8 +36,6 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
-import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIStack;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -68,7 +65,6 @@ public class SyncUtil {
 	
     private static CommandFactory fCommandFactory;
 
-    private static IContainerDMContext fGdbContainerDmc;
     private static IBreakpointsTargetDMContext fBreakpointsDmc;
 	private static IProcesses fProcessesService;
     
@@ -83,9 +79,6 @@ public class SyncUtil {
     				fSession.getId());
     	
     	fCommandControl = tracker.getService(ICommandControlService.class);
-    	IMIProcesses procService = tracker.getService(IMIProcesses.class);
-   		IProcessDMContext procDmc = procService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNIQUE_GROUP_ID);
-   		fGdbContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 
    		fBreakpointsDmc = (IBreakpointsTargetDMContext)fCommandControl.getContext();
    		
@@ -120,7 +113,8 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent step(final StepType stepType, int timeout) throws Throwable {
-		return step(fGdbContainerDmc, stepType, timeout);
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		return step(containerDmc, stepType, timeout);
 	}
 	
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType) throws Throwable {
@@ -193,7 +187,8 @@ public class SyncUtil {
 
 	public static MIStoppedEvent runToLine(final String fileName, final String lineNo, 
             final boolean skipBreakpoints, int timeout) throws Throwable {
-		return runToLine(fGdbContainerDmc, fileName, lineNo, skipBreakpoints, timeout);
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		return runToLine(containerDmc, fileName, lineNo, skipBreakpoints, timeout);
 	}
 
 	public static MIStoppedEvent runToLine(final String fileName, final String lineNo) throws Throwable {
@@ -201,7 +196,8 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent runToLine(final String fileName, final String lineNo, int timeout) throws Throwable {
-		return runToLine(fGdbContainerDmc, fileName, lineNo, false, timeout);
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		return runToLine(containerDmc, fileName, lineNo, false, timeout);
 	}
 
 	public static int addBreakpoint(final String location) throws Throwable {
@@ -326,7 +322,8 @@ public class SyncUtil {
 	}
 
 	public static MIStoppedEvent resumeUntilStopped(int timeout) throws Throwable {
-		return resumeUntilStopped(fGdbContainerDmc, timeout);
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		return resumeUntilStopped(containerDmc, timeout);
 	}
 
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int timeout) throws Throwable {
@@ -354,7 +351,8 @@ public class SyncUtil {
 	}
 
 	public static MIRunningEvent resume(int timeout) throws Throwable {
-		return resume(fGdbContainerDmc, timeout);
+        IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+		return resume(containerDmc, timeout);
 	}
 
 	public static MIStoppedEvent waitForStop() throws Throwable {

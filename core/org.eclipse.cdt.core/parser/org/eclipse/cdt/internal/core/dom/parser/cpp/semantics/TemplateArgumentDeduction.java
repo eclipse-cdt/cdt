@@ -523,7 +523,9 @@ public class TemplateArgumentDeduction {
 					remaining= cvqA.remove(cvqP);
 				}
 				p = SemanticUtil.getNestedType(p, ALLCVQ); 
-				a = SemanticUtil.getNestedType(a, ALLCVQ); 
+				a = SemanticUtil.getNestedType(a, ALLCVQ);
+				if (p instanceof IQualifierType)
+					return false;
 				if (remaining != CVQualifier._) {
 					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile());
 				}

@@ -70,6 +70,8 @@ public class TracepointActionDialog extends Dialog {
 	private boolean isSubAction;
 
 	private IExtension[] breakpointActionPageExtensions;
+	
+	private static final Point MINIMUM_SIZE = new Point(440, 540);
 
 	/**
 	 * Create the dialog
@@ -111,7 +113,7 @@ public class TracepointActionDialog extends Dialog {
 	 * Create contents of the dialog
 	 */
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(final Composite parent) {
 		dialogArea = (Composite) super.createDialogArea(parent);
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
@@ -132,6 +134,8 @@ public class TracepointActionDialog extends Dialog {
 			public void widgetSelected(final SelectionEvent e) {
 				try {
 					showActionComposite();
+					Point p = parent.computeSize(MINIMUM_SIZE.x, MINIMUM_SIZE.y);
+					getShell().setSize(getShell().computeSize(p.x, p.y));
 				} catch (CoreException e1) {
 				}
 			}
@@ -199,7 +203,7 @@ public class TracepointActionDialog extends Dialog {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(500, 375);
+		return MINIMUM_SIZE;
 	}
 
 	@Override

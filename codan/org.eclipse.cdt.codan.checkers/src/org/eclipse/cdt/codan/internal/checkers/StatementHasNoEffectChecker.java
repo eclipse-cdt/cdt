@@ -21,12 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 
 /**
  * Checker that detects statements without effect such as
@@ -73,36 +68,13 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		private boolean hasNoEffect(IASTExpression e) {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
-				switch (binExpr.getOperator()) {
-				case IASTBinaryExpression.op_assign:
-				case IASTBinaryExpression.op_binaryAndAssign:
-				case IASTBinaryExpression.op_binaryOrAssign:
-				case IASTBinaryExpression.op_binaryXorAssign:
-				case IASTBinaryExpression.op_divideAssign:
-				case IASTBinaryExpression.op_plusAssign:
-				case IASTBinaryExpression.op_minusAssign:
-				case IASTBinaryExpression.op_multiplyAssign:
-				case IASTBinaryExpression.op_moduloAssign:
-				case IASTBinaryExpression.op_shiftLeftAssign:
-				case IASTBinaryExpression.op_shiftRightAssign:
+				if (binExpr.isLValue())
 					return false;
-				case IASTBinaryExpression.op_logicalOr:
-				case IASTBinaryExpression.op_logicalAnd:
-					return hasNoEffect(binExpr.getOperand1())
-							&& hasNoEffect(binExpr.getOperand2());
-				}
-				if (binExpr instanceof CPPASTBinaryExpression) {
-					// unfortunately ICPPASTBinaryExpression does not have
-					// getOverload public method
-					CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) binExpr;
-					ICPPFunction overload = cppBin.getOverload();
-					if (overload != null)
-						return false;
-					IType expressionType = binExpr.getOperand1()
-							.getExpressionType();
-					if (!(expressionType instanceof IBasicType || expressionType instanceof ICPPBasicType)) {
-						return false; // must be overloaded but parser could not find it
-					}
+				switch (binExpr.getOperator()) {
+					case IASTBinaryExpression.op_logicalOr:
+					case IASTBinaryExpression.op_logicalAnd:
+						return hasNoEffect(binExpr.getOperand1())
+								&& hasNoEffect(binExpr.getOperand2());
 				}
 				return true;
 			}
@@ -110,14 +82,14 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				IASTUnaryExpression unaryExpr = (IASTUnaryExpression) e;
 				int operator = unaryExpr.getOperator();
 				switch (operator) {
-				case IASTUnaryExpression.op_postFixDecr:
-				case IASTUnaryExpression.op_prefixDecr:
-				case IASTUnaryExpression.op_postFixIncr:
-				case IASTUnaryExpression.op_prefixIncr:
-				case IASTUnaryExpression.op_throw:
-					return false;
-				case IASTUnaryExpression.op_bracketedPrimary:
-					return hasNoEffect(unaryExpr.getOperand());
+					case IASTUnaryExpression.op_postFixDecr:
+					case IASTUnaryExpression.op_prefixDecr:
+					case IASTUnaryExpression.op_postFixIncr:
+					case IASTUnaryExpression.op_prefixIncr:
+					case IASTUnaryExpression.op_throw:
+						return false;
+					case IASTUnaryExpression.op_bracketedPrimary:
+						return hasNoEffect(unaryExpr.getOperand());
 				}
 				return true;
 			}

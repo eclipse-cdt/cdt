@@ -123,4 +123,14 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
+	
+	// main() {
+	// A a,b;
+	//
+	// b+=a; // error here on line 4
+	// }
+	public void testOverloadedBinaryExpression() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

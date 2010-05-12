@@ -102,9 +102,9 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
 			t = (IType) compTypeSpec.getName().resolveBinding();
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
-			t = new CEnumeration(((IASTEnumerationSpecifier)declSpec).getName());
+			t = new CEnumeration(((IASTEnumerationSpecifier) declSpec).getName());
 		} else {
-		    t = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+		    t = new CBasicType((ICASTSimpleDeclSpecifier) declSpec);
 		}
 		
 		return t;

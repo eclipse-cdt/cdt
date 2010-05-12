@@ -25,44 +25,43 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.core.runtime.CoreException;
 
 public class CQualifierType implements ICQualifierType, ITypeContainer, ISerializableType {
-
 	private boolean isConst;
 	private boolean isVolatile;
 	private boolean isRestrict;
-	private IType type = null;
+	private IType type;
 
 	/**
 	 * CQualifierType has an IBasicType to keep track of the basic type information.
 	 */
 	public CQualifierType(ICASTDeclSpecifier declSpec) {
-		this.type = resolveType( declSpec );
+		this.type = resolveType(declSpec);
 		this.isConst = declSpec.isConst();
 		this.isVolatile = declSpec.isVolatile();
 		this.isRestrict = declSpec.isRestrict();
 	}
 	
-	public CQualifierType( IType type, boolean isConst, boolean isVolatile, boolean isRestrict ){
+	public CQualifierType(IType type, boolean isConst, boolean isVolatile, boolean isRestrict) {
 		this.type = type;
 		this.isConst = isConst;
 		this.isVolatile = isVolatile;
 		this.isRestrict = isRestrict;
 	}
 	
-	public boolean isSameType( IType obj ){
-	    if( obj == this )
+	public boolean isSameType(IType obj) {
+	    if (obj == this)
 	        return true;
-	    if( obj instanceof ITypedef )
-	        return obj.isSameType( this );
+	    if (obj instanceof ITypedef)
+	        return obj.isSameType(this);
 	    
-	    if( obj instanceof ICQualifierType ){
+	    if (obj instanceof ICQualifierType) {
 	        ICQualifierType qt = (ICQualifierType) obj;
-            if( isConst() != qt.isConst() ) return false;
-			if( isRestrict() != qt.isRestrict() ) return false;
-			if( isVolatile() != qt.isVolatile() ) return false;
+            if (isConst() != qt.isConst()) return false;
+			if (isRestrict() != qt.isRestrict()) return false;
+			if (isVolatile() != qt.isVolatile()) return false;
          
-			if( type == null )
+			if (type == null)
 				return false;
-			return type.isSameType( qt.getType() );
+			return type.isSameType(qt.getType());
         }
     	return false;
 	}
@@ -91,15 +90,15 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
 	 */
-	private IType resolveType( ICASTDeclSpecifier declSpec ) {
+	private IType resolveType(ICASTDeclSpecifier declSpec) {
 		IType t = null;
-		if( declSpec instanceof ICASTTypedefNameSpecifier ){
+		if (declSpec instanceof ICASTTypedefNameSpecifier) {
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
 			t = (IType) nameSpec.getName().resolveBinding();			
-		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+		} else if (declSpec instanceof IASTElaboratedTypeSpecifier) {
 			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
 			t = (IType) elabTypeSpec.getName().resolveBinding();
-		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+		} else if (declSpec instanceof IASTCompositeTypeSpecifier) {
 			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
 			t = (IType) compTypeSpec.getName().resolveBinding();
 		} else if (declSpec instanceof IASTEnumerationSpecifier) {
@@ -111,19 +110,20 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 		return t;
 	}
 	
-	public IType getType(){
+	public IType getType() {
 		return type;
 	}
-	public void setType( IType t ){
+
+	public void setType(IType t) {
 	    type = t;
 	}
 	
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;

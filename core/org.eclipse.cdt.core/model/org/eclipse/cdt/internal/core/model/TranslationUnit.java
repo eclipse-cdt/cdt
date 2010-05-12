@@ -1133,11 +1133,4 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IBufferFactory factory) throws CModelException {
 		return CModelManager.getDefault().getSharedWorkingCopy(factory, this, null, monitor);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getPathForFileContent()
-	 */
-	public String getPathForFileContent() {
-		return getLocation().toOSString();
-	}
 }

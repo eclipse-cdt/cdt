@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Sergey Prigogin (Google)
- *    IBM Corporation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser;
 
@@ -57,7 +56,7 @@ public abstract class FileContent {
 	public static FileContent create(ITranslationUnit tu) {
 		IPath location= tu.getLocation();
 		if (location == null)
-			return create(tu.getPathForFileContent(), tu.getContents());
+			return create(tu.getElementName(), tu.getContents());
 		
 		if (tu.isWorkingCopy()) {
 			return create(location.toOSString(), tu.getContents());

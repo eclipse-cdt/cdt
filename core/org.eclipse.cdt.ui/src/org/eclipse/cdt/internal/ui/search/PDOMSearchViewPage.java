@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX - Initial API and implementation
  *     Ed Swartz (Nokia)
  *     Andrey Eremchenko (LEDAS)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -50,7 +52,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
  * Implementation of the search view page for index based searches.
  */
 public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
-
 	public static final int LOCATION_COLUMN_INDEX = 0; 
 	public static final int DEFINITION_COLUMN_INDEX = 1;
 	public static final int MATCH_COLUMN_INDEX = 2;
@@ -69,7 +70,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	private IPDOMSearchContentProvider contentProvider;
 	private boolean fShowEnclosingDefinitions;
 	private ShowEnclosingDefinitionsAction fShowEnclosingDefinitionsAction;
-	private int[] fColumnWidths = { 300, 300, 300 };
+	private int[] fColumnWidths = { 300, 150, 300 };
 	
 	private class ShowEnclosingDefinitionsAction extends Action {
 		public ShowEnclosingDefinitionsAction() {
@@ -100,14 +101,18 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		menuManager.updateAll(true);
 		pageSite.getActionBars().updateActionBars();
 	}
-	
+
 	@Override
 	public void restoreState(IMemento memento) {
 		super.restoreState(memento);
+		IDialogSettings settings = getSettings();
+		boolean showEnclosingDefinitions = true;
+		if (settings.get(KEY_SHOW_ENCLOSING_DEFINITIONS) != null)
+			showEnclosingDefinitions = settings.getBoolean(KEY_SHOW_ENCLOSING_DEFINITIONS);
 		if (memento != null) {
-			Boolean showEnclosingDefinitions = memento.getBoolean(KEY_SHOW_ENCLOSING_DEFINITIONS);
-			if (showEnclosingDefinitions != null)
-				setShowEnclosingDefinitions(showEnclosingDefinitions);
+			Boolean value = memento.getBoolean(KEY_SHOW_ENCLOSING_DEFINITIONS);
+			if (value != null)
+				showEnclosingDefinitions = value.booleanValue();
 			String[] keys = { KEY_LOCATION_COLUMN_WIDTH, KEY_DEFINITION_COLUMN_WIDTH, KEY_MATCH_COLUMN_WIDTH };
 			for (int i = 0; i < keys.length; i++) {
 				Integer width = memento.getInteger(keys[i]);
@@ -117,6 +122,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 					fColumnWidths[i] = width;
 			}
 		}
+		setShowEnclosingDefinitions(showEnclosingDefinitions);
 	}
 	
 	@Override
@@ -130,7 +136,10 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	}
 	
 	public void setShowEnclosingDefinitions(boolean showEnclosingDefinitions) {
+		if (fShowEnclosingDefinitions == showEnclosingDefinitions)
+			return;
 		fShowEnclosingDefinitions = showEnclosingDefinitions;
+		getSettings().put(KEY_SHOW_ENCLOSING_DEFINITIONS, fShowEnclosingDefinitions);
 		if (fShowEnclosingDefinitionsAction.isChecked() != showEnclosingDefinitions)
 			fShowEnclosingDefinitionsAction.setChecked(showEnclosingDefinitions);
 		StructuredViewer viewer = getViewer();
@@ -149,11 +158,11 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		if (viewer != null)
 			viewer.refresh();
 	}
-	
+
 	public boolean isShowEnclosingDefinitions() {
 		return fShowEnclosingDefinitions;
 	}
-	
+
 	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (contentProvider != null)

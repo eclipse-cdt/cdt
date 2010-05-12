@@ -55,7 +55,6 @@
       <import plugin="org.eclipse.cdt.core.parser.upc"/>
       <import plugin="org.eclipse.cdt.core.lrparser.tests" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.junit" version="3.8.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.codan.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.codan.core.cxx" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.codan.checkers" version="1.0.0" match="greaterOrEqual"/>

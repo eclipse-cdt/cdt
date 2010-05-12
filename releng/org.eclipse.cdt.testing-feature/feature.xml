@@ -54,11 +54,14 @@
       <import plugin="org.eclipse.cdt.core.lrparser" version="4.0.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.core.parser.upc"/>
       <import plugin="org.eclipse.cdt.core.lrparser.tests" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.codan.checkers" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.junit" version="3.8.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.codan.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.codan.core.cxx" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.cdt.codan.checkers" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.ant" version="1.6.5" match="compatible"/>
+      <import plugin="org.eclipse.ui.ide.application"/>
+      <import plugin="org.eclipse.equinox.app"/>
    </requires>
 
    <plugin

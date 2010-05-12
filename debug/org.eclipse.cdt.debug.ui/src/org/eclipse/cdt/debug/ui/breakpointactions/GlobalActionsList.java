@@ -73,7 +73,6 @@ public class GlobalActionsList extends Composite {
 		summaryTableColumn.setText(Messages.getString("GlobalActionsList.2")); //$NON-NLS-1$
 
 		ArrayList actions = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActions();
-		boolean hasActions = actions.size() > 0;
 
 		for (Iterator iter = CDebugCorePlugin.getDefault().getBreakpointActionManager().getBreakpointActions().iterator(); iter.hasNext();) {
 			IBreakpointAction element = (IBreakpointAction) iter.next();
@@ -114,13 +113,12 @@ public class GlobalActionsList extends Composite {
 		});
 		if (!useAttachButton)
 			editButton.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL + GridData.HORIZONTAL_ALIGN_END));
-		editButton.setEnabled(hasActions);
 
 		deleteButton = new Button(this, SWT.NONE);
 		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		deleteButton.setText(Messages.getString("GlobalActionsList.6")); //$NON-NLS-1$
-		deleteButton.setEnabled(hasActions);
-		//
+
+		updateButtons();
 	}
 
 	public Button getAttachButton() {

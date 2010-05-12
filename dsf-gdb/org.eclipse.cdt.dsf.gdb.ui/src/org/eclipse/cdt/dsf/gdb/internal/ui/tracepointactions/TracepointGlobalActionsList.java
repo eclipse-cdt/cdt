@@ -79,7 +79,6 @@ public class TracepointGlobalActionsList extends Composite {
 		summaryTableColumn.setText(MessagesForTracepointActions.TracepointActions_Summary);
 
 		ArrayList<ITracepointAction> actions = TracepointActionManager.getInstance().getActions();
-		boolean hasActions = actions.size() > 0;
 
 		for (ITracepointAction element : actions) {
 			if (isSubAction && element instanceof WhileSteppingAction) continue;
@@ -120,12 +119,12 @@ public class TracepointGlobalActionsList extends Composite {
 		});
 		if (!useAttachButton)
 			editButton.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL + GridData.HORIZONTAL_ALIGN_END));
-		editButton.setEnabled(hasActions);
 
 		deleteButton = new Button(this, SWT.NONE);
 		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		deleteButton.setText(MessagesForTracepointActions.TracepointActions_Delete);
-		deleteButton.setEnabled(hasActions);
+		
+		updateButtons();
 	}
 
 	public Button getAttachButton() {

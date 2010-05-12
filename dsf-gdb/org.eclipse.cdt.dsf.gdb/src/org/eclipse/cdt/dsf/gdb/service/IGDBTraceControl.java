@@ -19,11 +19,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
+ * <strong>EXPERIMENTAL</strong>.  This class or interface has been added as part
+ * of a work in progress. There is no guarantee that this API will work or that
+ * it will remain the same.
+ * 
  * The TraceControl service provides access to the debugger Tracing functionality.
  * It is used to do such things as start and stop tracing.
- * 
- * As this functionality is very new to GDB itself, this interface is likely 
- * to change a little in the next release of CDT.
  * 
  * @since 3.0
  */

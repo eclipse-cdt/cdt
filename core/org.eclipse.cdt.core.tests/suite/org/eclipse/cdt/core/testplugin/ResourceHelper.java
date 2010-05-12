@@ -541,10 +541,26 @@ public class ResourceHelper {
 		try {
 			process.waitFor();
 		} catch (InterruptedException e) {
+			Assert.assertTrue("Command to create symbolic link was interrupted: "+e.toString(),
+					new File(linkedPath.toOSString()).exists());
 		}
-
-		Assert.assertTrue("Symbolic link was not created: [" + command +"]",
-				new File(linkedPath.toOSString()).exists());
+		
+		if (!new File(linkedPath.toOSString()).exists()) {
+			// Not supposed to happen, trying to figure out what's going on
+			final int timeCount = 5;
+			for (int i=1;i<=timeCount;i++) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+				if (new File(linkedPath.toOSString()).exists()) {
+					Assert.fail("Symbolic link created only after "+i+" seconds: [" + command +"]");
+					break;
+				}
+			}
+	
+			Assert.fail("Symbolic link NOT created after "+timeCount+" seconds: [" + command +"]");
+		}
 
 		IResource resource = project.getFile(linkName);
 		resource.refreshLocal(IResource.DEPTH_ZERO, null);

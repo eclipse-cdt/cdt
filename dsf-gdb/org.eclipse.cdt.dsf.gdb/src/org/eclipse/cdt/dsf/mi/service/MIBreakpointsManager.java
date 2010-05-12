@@ -87,6 +87,8 @@ import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.framework.BundleContext;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Breakpoint service interface.  The breakpoint service tracks CDT breakpoint
  * objects, and based on those, it manages breakpoints in the debugger back end.
@@ -596,7 +598,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                     @Override
                     protected void handleError() {
-                        addBreakpointProblemMarker(breakpoint, "Breakpoint attribute problem: installation failed", IMarker.SEVERITY_WARNING); //$NON-NLS-1$
+                    	String description = MessageFormat.format(Messages.Breakpoint_attribute_problem, new Object[] { Messages.Breakpoint_installation_failed });
+                        addBreakpointProblemMarker(breakpoint, description, IMarker.SEVERITY_WARNING);
                         installRM.done();
                     }
                 };

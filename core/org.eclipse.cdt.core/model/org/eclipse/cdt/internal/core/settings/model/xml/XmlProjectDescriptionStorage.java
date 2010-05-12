@@ -286,17 +286,34 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	/**
 	 * Method to check whether the description has been modified externally.
 	 * If so the current read-only descriptor is nullified.
+	 * It updates the cached modification stamp
 	 * @return boolean indicating whether reload is needed
 	 */
 	protected synchronized boolean checkExternalModification() {
 		// If loaded, and we have cached the modification stamp, reload
-		long currentModificationStamp = project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME).getModificationStamp();
+		long currentModificationStamp = getModificationStamp(project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
 		if (projectModificaitonStamp != currentModificationStamp) {
 			setCurrentDescription(null, true);
 			projectModificaitonStamp = currentModificationStamp;
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Gets the modification stamp for the resource.
+	 * If the returned value has changed since last call to
+	 * {@link #getModificationStamp(IResource)}, then the resource has changed.
+	 * @param resource IResource to fetch modification stamp for
+	 * @return long modification stamp
+	 */
+	protected long getModificationStamp(IResource resource) {
+		// The modification stamp is based on the ResourceInfo modStamp and file store modification time. Note that
+		// because of bug 160728 subsequent generations of resources may have the same modStamp. Until this is fixed
+		// the suggested solution is to use modStamp + modTime
+		//
+		// Both values are cached in resourceInfo, so this is fast.
+		return resource.getModificationStamp() + resource.getLocalTimeStamp();		
 	}
 
 	/**
@@ -462,7 +479,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			InternalXmlStorageElement storage = createStorage(project, ICProjectDescriptionStorageType.STORAGE_FILE_NAME, true, false, false);
 			try {
 				// Update the modification stamp
-				projectModificaitonStamp = project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME).getModificationStamp();
+				projectModificaitonStamp = getModificationStamp(project.getFile(ICProjectDescriptionStorageType.STORAGE_FILE_NAME));
 				CProjectDescription des = new CProjectDescription(project, new XmlStorage(storage), storage, true, false);
 				try {
 					setThreadLocalProjectDesc(des);
@@ -571,7 +588,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				} else {
 					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor()); //$NON-NLS-1$
 				}
-				return projectFile.getModificationStamp();
+				return getModificationStamp(projectFile);
 			} finally {
 				Job.getJobManager().endRule(rule);
 			}

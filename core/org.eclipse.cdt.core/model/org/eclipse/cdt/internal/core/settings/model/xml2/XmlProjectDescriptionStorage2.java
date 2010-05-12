@@ -90,13 +90,15 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		try {
 			project.getFolder(STORAGE_FOLDER_NAME).accept(new IResourceProxyVisitor() {
 				public boolean visit(IResourceProxy proxy) throws CoreException {
-					if (modificationMap.containsKey(proxy.getName()))
-						if (modificationMap.get(proxy.getName()) != proxy.getModificationStamp()) {
+					if (modificationMap.containsKey(proxy.getName())) {
+						long modStamp = getModificationStamp(proxy.requestResource());
+						if (modificationMap.get(proxy.getName()) != modStamp) {
 							// There may be old storages in here, ensure we don't infinite reload...
-							modificationMap.put(proxy.getName(), proxy.getModificationStamp());
+							modificationMap.put(proxy.getName(), modStamp);
 							setCurrentDescription(null, true);
 							needReload[0] = true;
 						}
+					}
 					return true;
 				}
 			}, IResource.NONE);
@@ -134,7 +136,8 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 																	currEl.getAttribute(EXTERNAL_CELEMENT_KEY),
 																	reCreate, createEmptyIfNotFound, readOnly);
 				// Update the modification stamp
-				modificationMap.put(currEl.getAttribute(EXTERNAL_CELEMENT_KEY), project.getFolder(STORAGE_FOLDER_NAME).getFile(currEl.getAttribute(EXTERNAL_CELEMENT_KEY)).getModificationStamp());
+				modificationMap.put(currEl.getAttribute(EXTERNAL_CELEMENT_KEY), 
+						getModificationStamp(project.getFolder(STORAGE_FOLDER_NAME).getFile(currEl.getAttribute(EXTERNAL_CELEMENT_KEY))));
 
 				ICStorageElement currParent = currEl.getParent();
 				// Get the storageModule element in the new Document

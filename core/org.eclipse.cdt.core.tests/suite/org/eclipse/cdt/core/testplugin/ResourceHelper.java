@@ -541,7 +541,7 @@ public class ResourceHelper {
 		try {
 			process.waitFor();
 		} catch (InterruptedException e) {
-			Assert.assertTrue("Command to create symbolic link was interrupted: "+e.toString(),
+			Assert.assertTrue("Command to create symbolic link was interrupted: "+e.getMessage(),
 					new File(linkedPath.toOSString()).exists());
 		}
 		

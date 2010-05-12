@@ -60,7 +60,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 
 
 public class CfgDiscoveredPathManager implements IResourceChangeListener {
@@ -69,39 +70,9 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
 	private IDiscoveredPathManager fBaseMngr;
 	
+	/** Deadlock-safe mutex lock */
+	private ILock lock = Job.getJobManager().newLock();
 
-	private class GetDiscoveredInfoRunnable implements IWorkspaceRunnable {
-
-		private PathInfo fPathInfo;
-		private ContextInfo fContextInfo;
-		private IProject fProject;
-		private CfgInfoContext fContext;
-		
-		public GetDiscoveredInfoRunnable(ContextInfo cInfo, IProject project, CfgInfoContext context) {
-			fContextInfo = cInfo;
-			fProject = project;
-			fContext = context;
-		}
-
-		public void run(IProgressMonitor monitor) throws CoreException {
-						
-			fPathInfo = getCachedPathInfo(fContextInfo);
-
-			if(fPathInfo == null){
-				IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(fProject, fContext.getConfiguration(), fContextInfo);
-				
-				fPathInfo = resolveCacheBaseDiscoveredInfo(fContextInfo, baseInfo);
-			}
-			
-		}
-		
-		public PathInfo getPathInfo() {
-			return fPathInfo;
-		}
-		
-	};
-
-	
 	private static class ContextInfo {
 		
 		public ContextInfo() {
@@ -196,16 +167,17 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
         PathInfo info = getCachedPathInfo(cInfo);
 		if (info == null) {
-			// Change synchronization to be a lock on the project, otherwise
-			// if the project description is queried from a project change listener, it will deadlock
-		
-			GetDiscoveredInfoRunnable runnable = new GetDiscoveredInfoRunnable(cInfo, project, context); 
-			ISchedulingRule rule = project;
+			try {
+				lock.acquire();
+				info = getCachedPathInfo(cInfo);
 
-			ResourcesPlugin.getWorkspace().run(runnable, rule, IWorkspace.AVOID_UPDATE, null);
-			
-			info = runnable.getPathInfo();
-
+				if(info == null){
+					IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project, context.getConfiguration(), cInfo);
+					info = resolveCacheBaseDiscoveredInfo(cInfo, baseInfo);
+				}
+			} finally {
+				lock.release();
+			}
 		}
 		return info;
 	}

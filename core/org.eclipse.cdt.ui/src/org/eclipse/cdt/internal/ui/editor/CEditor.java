@@ -3444,4 +3444,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		// workaround for http://bugs.eclipse.org/75555
 		return super.isPrefQuickDiffAlwaysOn() && !isEnableScalablilityMode();
 	}
+	public boolean shouldProcessLocalParsingCompletions() {
+		return true;
+	}
 }

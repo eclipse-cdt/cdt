@@ -584,9 +584,10 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	/**
 	 * iteration_statement_matched
 	 *     ::= 'do' statement 'while' '(' expression ')' ';'
+	 *        | 'do' statement
 	 */
-	public void consumeStatementDoLoop() {
-		IASTExpression condition = (IASTExpression) astStack.pop();
+	public void consumeStatementDoLoop(boolean hasWhileBlock) {
+		IASTExpression condition = hasWhileBlock? (IASTExpression) astStack.pop() : null;
 		IASTStatement body = (IASTStatement) astStack.pop();
 		IASTDoStatement stat = nodeFactory.newDoStatement(body, condition);
 		setOffsetAndLength(stat);

@@ -652,8 +652,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	 * try_block
      *     ::= 'try' compound_statement <openscope-ast> handler_seq
      */
-	public void consumeStatementTryBlock() {
-		List<Object> handlerSeq = astStack.closeScope();
+	public void consumeStatementTryBlock(boolean hasCatchBlock) {
+		List<Object> handlerSeq = hasCatchBlock ? astStack.closeScope() : Collections.emptyList();
 		IASTStatement body = (IASTStatement) astStack.pop();
 		
 		ICPPASTTryBlockStatement tryStatement = nodeFactory.newTryBlockStatement(body);

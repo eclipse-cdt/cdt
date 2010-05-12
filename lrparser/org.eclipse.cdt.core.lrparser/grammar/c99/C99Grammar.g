@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2009 IBM Corporation and others.
+-- Copyright (c) 2006, 2010 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -440,7 +440,9 @@ expression_opt
 
 iteration_statement
     ::= 'do' statement 'while' '(' expression ')' ';'
-          /. $Build  consumeStatementDoLoop();  $EndBuild ./
+          /. $Build  consumeStatementDoLoop(true);  $EndBuild ./
+	  | 'do' statement
+          /. $Build  consumeStatementDoLoop(false);  $EndBuild ./
       | 'while' '(' expression ')' statement
           /. $Build  consumeStatementWhileLoop();  $EndBuild ./
       | 'for' '(' expression_opt ';' expression_opt ';' expression_opt ')' statement

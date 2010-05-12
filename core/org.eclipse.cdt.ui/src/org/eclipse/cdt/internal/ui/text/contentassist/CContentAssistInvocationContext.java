@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,6 +116,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		//for scalability
 		if (fEditor != null && fEditor instanceof CEditor) {
 			CEditor editor = (CEditor)fEditor;
+			
+			// check to make sure we should attempt local parsing completions... for remote projects
+			// we should not do this
+			if(!editor.shouldProcessLocalParsingCompletions()) {
+				return null;
+			}
 			if (editor.isEnableScalablilityMode()) {
 				if (editor.isParserBasedContentAssistDisabled()) {
 					return null;

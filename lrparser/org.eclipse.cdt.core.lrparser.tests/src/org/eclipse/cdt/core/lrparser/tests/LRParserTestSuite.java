@@ -54,6 +54,7 @@ public class LRParserTestSuite extends TestSuite {
 			addTest(LRTests.suite()); // has some tests that do fail
 			addTest(LRUtilOldTests.suite());
 			addTest(LRUtilTests.suite());
+			addTest(LRCompletionHangingTest.suite());
 			addTest(LRCPPImplicitNameTests.suite());
 			//addTest(LRInactiveCodeTests.suite());
 

@@ -96,7 +96,13 @@ array_modifier_type_qualifiers
 type_qualifier_list
     ::= cv_qualifier         
       | type_qualifier_list cv_qualifier
+
 member_declaration
     ::= static_assert_declaration
+    
+static_assert_declaration 
+    ::= '__static_assert'  '(' expression ',' literal ')' ';'
+        /. $Build  consumeCPPASTStaticAssertDeclaration();  $EndBuild ./
+
           
 $End

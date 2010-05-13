@@ -14,7 +14,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.6M7-201004291549/eclipse-SDK-3.6M7-linux-gtk.tar.gz"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.6M7-201004291549/eclipse-SDK-3.6M7-linux-gtk-x86_64.tar.gz"/>
 		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"/>
 		<property name="branchVersion" value="7.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />

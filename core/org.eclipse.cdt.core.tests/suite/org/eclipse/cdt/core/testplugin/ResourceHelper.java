@@ -538,16 +538,20 @@ public class ResourceHelper {
 		String command = "ln -s " + realPath.toOSString() + ' ' + linkedPath.toOSString();
 		Process process = Runtime.getRuntime().exec(command);
 
-		// Thread is not supposed to be in interrupted state here and it causes waitFor() to throw immediately
-		Assert.assertFalse("Thread is in interrupted state", Thread.interrupted());
-		try {
-			process.waitFor();
-		} catch (InterruptedException e) {
-		} finally {
-			// Clear interrupted state, see Java bug http://bugs.sun.com/view_bug.do?bug_id=6420270
-			Thread.interrupted();
+		// Wait for up to 5s...
+		for (int i = 0; i < 5; i++) {
+			try {
+				Assert.assertTrue("ln process exited with non-zero status", process.waitFor() == 0);
+				// If exitValue succeeded, then the process has exitted successfully.
+				break;
+			} catch (InterruptedException e) {
+				// Clear interrupted state, see Java bug http://bugs.sun.com/view_bug.do?bug_id=6420270
+				Thread.interrupted();
+			}
+			// wait for a second before checking again
+			try { Thread.sleep(500); } catch (InterruptedException e) {/*don't care*/}
 		}
-		Assert.assertTrue("Symbolic link not created, command=[" + command +"]", new File(linkedPath.toOSString()).exists());
+		Assert.assertTrue("Symbolic link not created, command=[" + command +"]", linkedPath.toFile().exists());
 
 		IResource resource = project.getFile(linkName);
 		resource.refreshLocal(IResource.DEPTH_ZERO, null);

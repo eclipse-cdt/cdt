@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -33,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  * 
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -43,7 +41,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	class OnEachClass extends ASTVisitor {
 		private IASTName className;
 		private IBinding virMethodName;
-		private IBinding destName;
+		private IBinding destructorName;
 
 		OnEachClass() {
 			// shouldVisitDeclarations = true;
@@ -55,22 +53,17 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 				try {
 					boolean err = hasErrorCondition(decl);
 					if (err) {
-						String mess;
 						String clazz = className.toString();
 						String method = virMethodName.getName();
 						IASTNode ast = decl;
-						if (destName != null) {
-							if (destName instanceof ICPPInternalBinding) {
-								ICPPInternalBinding bin = (ICPPInternalBinding) destName;
+						if (destructorName != null) {
+							if (destructorName instanceof ICPPInternalBinding) {
+								ICPPInternalBinding bin = (ICPPInternalBinding) destructorName;
 								IASTNode[] decls = bin.getDeclarations();
 								if (decls!=null && decls.length>0)
 									ast = decls[0];
 							}
-							mess = MessageFormat
-									.format(
-											"Class ''{0}'' has virtual method ''{1}'' but non-virtual destructor ''{2}''",
-											clazz, method, destName.getName());
-							reportProblem(ER_ID, ast, mess);
+							reportProblem(ER_ID, ast, clazz, method, destructorName.getName());
 						}
 					}
 				} catch (DOMException e) {
@@ -98,7 +91,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType type = (ICPPClassType) binding;
 				virMethodName = null;
-				destName = null;
+				destructorName = null;
 				// check for the following conditions:
 				// class has own virtual method and own non-virtual destructor
 				// class has own virtual method and base non-virtual destructor
@@ -118,7 +111,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						hasDestructor = true;
 						if (!icppMethod.isVirtual()) {
 							hasOwnNonVirDestructor = true;
-							destName = icppMethod;
+							destructorName = icppMethod;
 						}
 					}
 				}
@@ -147,8 +140,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 						if (icppMethod.isVirtual()) {
 							hasVirDestructor = true;
 						} else {
-							if (destName == null)
-								destName = icppMethod;
+							if (destructorName == null)
+								destructorName = icppMethod;
 						}
 					}
 				}

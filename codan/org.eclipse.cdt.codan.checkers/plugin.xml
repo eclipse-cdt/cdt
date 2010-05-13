@@ -13,6 +13,7 @@
             defaultSeverity="Warning"
             description="Finds statements like  &apos;if (a=b)&apos;"
             id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"
+            messagePattern="Possible assignment in condition"
             name="Assignment in condition">
       </problem>
       
@@ -39,6 +40,7 @@
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
             id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"
+            messagePattern="Class &apos;&apos;{0}&apos;&apos; has virtual method &apos;&apos;{1}&apos;&apos; but non-virtual destructor &apos;&apos;{2}&apos;&apos;"
             name="Class has a virtual method and non-virtual destructor">
       </problem>
       </checker>
@@ -63,8 +65,8 @@
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            description="This checker finds a problems that caused by lack of understanding operator precedence in C. Example (! x&gt;0 &amp;&amp; x&lt;10). Parenthesis should be used to clarify programmer's intent."
             id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"
+            messagePattern="Suggested parenthesis around expression"
             name="Suggested parenthesis around expression">
       </problem>
       </checker>

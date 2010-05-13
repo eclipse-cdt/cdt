@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * 
  */
 public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -51,16 +51,14 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 					return PROCESS_CONTINUE;
 				if (precedence == 2) { // unary not
 					if (isUsedAsOperand(expression)) {
-						reportProblem(ER_ID, expression,
-								"Suggested parenthesis around expression");
+						reportProblem(ER_ID, expression);
 						return PROCESS_SKIP;
 					}
 				} else if (precedence >= 0) {
 					int pp = getPrecedence(parentExpr);
 					if (pp == -1 || pp == precedence)
 						return PROCESS_CONTINUE;
-					reportProblem(ER_ID, expression,
-							"Suggested parenthesis around expression");
+					reportProblem(ER_ID, expression);
 				}
 			}
 			return PROCESS_CONTINUE;

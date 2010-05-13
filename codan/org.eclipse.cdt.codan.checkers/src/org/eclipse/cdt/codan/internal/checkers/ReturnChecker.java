@@ -91,7 +91,6 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 * @param func
 	 * @return
 	 */
-	@SuppressWarnings("restriction")
 	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
 		IControlFlowGraph graph = CxxModelsCache.getInstance()
 				.getControlFlowGraph(func);

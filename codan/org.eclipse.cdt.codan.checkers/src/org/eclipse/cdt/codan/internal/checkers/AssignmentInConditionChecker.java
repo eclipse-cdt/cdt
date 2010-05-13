@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 
 public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem";
+	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -35,7 +35,7 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 		public int visit(IASTExpression expression) {
 			if (isAssignmentExpression(expression)
 					&& isUsedAsCondition(expression)) {
-				reportProblem(ER_ID, expression, "Possible assignment in condition");
+				reportProblem(ER_ID, expression);
 			}
 			return PROCESS_CONTINUE;
 		}

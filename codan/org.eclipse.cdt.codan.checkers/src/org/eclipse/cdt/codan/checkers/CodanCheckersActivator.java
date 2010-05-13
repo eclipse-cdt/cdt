@@ -10,7 +10,7 @@ import org.osgi.framework.BundleContext;
  */
 public class CodanCheckersActivator extends Plugin {
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.checkers";
+	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.checkers"; //$NON-NLS-1$
 	// The shared instance
 	private static CodanCheckersActivator plugin;
 

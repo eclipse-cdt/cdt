@@ -39,7 +39,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
@@ -54,10 +53,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.mi.core.CoreProcess;
-import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIInferior;
-import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
@@ -102,7 +99,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement3, ICDIAddressToSource, ICDIMemorySpaceManagement, ICDIExecuteMoveInstructionPointer {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement3, ICDIAddressToSource, ICDIExecuteMoveInstructionPointer {
 
 	MISession miSession;
 	ICDITargetConfiguration fConfiguration;
@@ -1320,24 +1317,6 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 			return new MappedSourceLocation(address, info, fileName);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
-		}
-	}
-
-	public String addressToString(BigInteger address, String memorySpaceID) {
-		return null; // use CDT's built-in encoding/decoding <memspace>:<addr-hex>
-	}
-
-	public BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out)
-			throws CDIException {
-		return null; // use CDT's built-in encoding/decoding <memspace>:<addr-hex>
-	}
-
-	public String[] getMemorySpaces() {
-		if (MIPlugin.getDefault().getPluginPreferences().getBoolean(IMIConstants.PREF_ENABLE_MEMORY_SPACES)) {
-			return new String[] { CODE_MEMORY_SPACE, DATA_MEMORY_SPACE };	
-		}
-		else {
-			return new String[0];
 		}
 	}
 

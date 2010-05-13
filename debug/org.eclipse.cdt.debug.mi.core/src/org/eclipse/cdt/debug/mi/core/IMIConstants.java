@@ -63,18 +63,5 @@ public interface IMIConstants
 	 * The default value of the for <code>PREF_SHARED_LIBRARIES_AUTO_REFRESH</code> property
 	 */
 	public static final boolean DEF_PREF_SHARED_LIBRARIES_AUTO_REFRESH = true;
-	
-	/**
-	 * Boolean preference controlling whether memory spaces will be supported.
-	 * gdb has implicit awareness of two memory spaces: "code" and "data". Most
-	 * users don't need that capability, though, and so we expose it in the UI
-	 * only if the user turns it on.
-	 */
-	public static final String PREF_ENABLE_MEMORY_SPACES = PLUGIN_ID + ".PREF_ENABLE_MEMORY_SPACES"; //$NON-NLS-1$
-
-	/**
-	 * The default value of the for <code>PREF_ENABLE_MEMORY_SPACES</code> property
-	 */
-	public static final boolean DEF_PREF_ENABLE_MEMORY_SPACES = false;
 }
 

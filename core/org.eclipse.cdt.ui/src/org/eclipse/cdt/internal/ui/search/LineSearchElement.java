@@ -87,11 +87,12 @@ public class LineSearchElement extends PDOMSearchElement {
 	private final Match[] fMatches;
 	private final static MatchesComparator MATCHES_COMPARATOR = new MatchesComparator();
 
-	private LineSearchElement(IIndexFileLocation file, Match[] matches, int number, String content, int offset) {
+	private LineSearchElement(IIndexFileLocation file, Match[] matches, int number, String content,
+			int offset) {
 		super(file);
 		fMatches = matches;
 		fNumber = number;
-		// skip whitespace at the beginning
+		// Skip whitespace at the beginning.
 		int index = 0;
 		int length = content.length();
 		int firstMatchOffset = matches[0].getOffset();
@@ -103,7 +104,7 @@ public class LineSearchElement extends PDOMSearchElement {
 			length--;
 		}
 		fOffset = offset;
-		fContent = content.substring(index);
+		fContent = content.substring(index).trim();
 	}
 
 	public int getOffset() {

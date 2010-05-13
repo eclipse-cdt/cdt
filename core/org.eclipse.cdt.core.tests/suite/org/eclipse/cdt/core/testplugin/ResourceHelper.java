@@ -538,30 +538,16 @@ public class ResourceHelper {
 		String command = "ln -s " + realPath.toOSString() + ' ' + linkedPath.toOSString();
 		Process process = Runtime.getRuntime().exec(command);
 
+		// Thread is not supposed to be in interrupted state here and it causes waitFor() to throw immediately
 		Assert.assertFalse("Thread is in interrupted state", Thread.interrupted());
 		try {
 			process.waitFor();
 		} catch (InterruptedException e) {
-			Assert.assertTrue("Command to create symbolic link was interrupted: "+e.getMessage(),
-					new File(linkedPath.toOSString()).exists());
+		} finally {
+			// Clear interrupted state, see Java bug http://bugs.sun.com/view_bug.do?bug_id=6420270
+			Thread.interrupted();
 		}
-		
-		if (!new File(linkedPath.toOSString()).exists()) {
-			// Not supposed to happen, trying to figure out what's going on
-			final int timeCount = 5;
-			for (int i=1;i<=timeCount;i++) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-				}
-				if (new File(linkedPath.toOSString()).exists()) {
-					Assert.fail("Symbolic link created only after "+i+" seconds: [" + command +"]");
-					break;
-				}
-			}
-	
-			Assert.fail("Symbolic link NOT created after "+timeCount+" seconds: [" + command +"]");
-		}
+		Assert.assertTrue("Symbolic link not created, command=[" + command +"]", new File(linkedPath.toOSString()).exists());
 
 		IResource resource = project.getFile(linkName);
 		resource.refreshLocal(IResource.DEPTH_ZERO, null);

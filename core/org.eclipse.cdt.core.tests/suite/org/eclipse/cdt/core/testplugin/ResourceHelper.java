@@ -538,6 +538,7 @@ public class ResourceHelper {
 		String command = "ln -s " + realPath.toOSString() + ' ' + linkedPath.toOSString();
 		Process process = Runtime.getRuntime().exec(command);
 
+		Assert.assertFalse("Thread is in interrupted state", Thread.interrupted());
 		try {
 			process.waitFor();
 		} catch (InterruptedException e) {

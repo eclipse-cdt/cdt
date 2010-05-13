@@ -130,14 +130,14 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 		
 		if (element instanceof IIndexFileLocation) {
 			IPath path= IndexLocationFactory.getPath((IIndexFileLocation)element); 
-			if(path!=null) {
+			if (path != null) {
 				// these are categorized into directories already
 				return path.lastSegment();
 			}
 		}
 		
 		if (element instanceof URI) {
-			return ((URI)element).toString();
+			return ((URI) element).toString();
 		}
 		
 		if (element instanceof IStatus) {

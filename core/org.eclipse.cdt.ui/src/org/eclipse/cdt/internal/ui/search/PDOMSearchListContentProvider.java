@@ -133,5 +133,4 @@ public class PDOMSearchListContentProvider implements
 	public void clear() {
 		viewer.refresh();
 	}
-
 }

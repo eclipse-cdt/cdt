@@ -151,9 +151,15 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	 * 
 	 * @param expression
 	 * @return
+	 * @throws DebugException if target not available
 	 */
-	private BigInteger evaluateLiteralAddress(String addr) {
-		IAddressFactory addrFactory = getDebugTarget().getAddressFactory();
+	private BigInteger evaluateLiteralAddress(String addr) throws DebugException {
+		CDebugTarget target = getDebugTarget();
+		if (target == null) {
+			throw new DebugException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, 
+					InternalDebugCoreMessages.getString("CMemoryBlockRetrievalExtension.CDebugTarget_not_available"), null)); //$NON-NLS-1$
+		}
+		IAddressFactory addrFactory = target.getAddressFactory();
 		if (addrFactory instanceof IAddressFactory2) {
 			return ((IAddressFactory2)addrFactory).createAddress(addr, false).getValue();
 		}

@@ -14,6 +14,7 @@ package org.eclipse.cdt.codan.core.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.codan.core.internal.checkers.CatchByReferenceTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ExpressionRequiredInReturnCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
@@ -39,6 +40,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(StatementHasNoEffectCheckerTest.class);
 		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		suite.addTestSuite(ExpressionRequiredInReturnCheckerTest.class);
+		suite.addTestSuite(CatchByReferenceTest.class);
 		return suite;
 	}
 }

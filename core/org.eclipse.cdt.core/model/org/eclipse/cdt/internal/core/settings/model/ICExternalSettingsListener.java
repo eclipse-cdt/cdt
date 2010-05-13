@@ -12,6 +12,9 @@ package org.eclipse.cdt.internal.core.settings.model;
 
 import org.eclipse.core.resources.IProject;
 
+/**
+ * Listener for external settings changes
+ */
 public interface ICExternalSettingsListener {
 	void settingsChanged(IProject project, String cfgId, CExternalSettingChangeEvent event);
 }

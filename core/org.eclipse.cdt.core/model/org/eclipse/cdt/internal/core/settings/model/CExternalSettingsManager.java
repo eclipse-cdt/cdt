@@ -199,31 +199,11 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	
 	private static class NullFactory extends CExternalSettingContainerFactory {
 		static NullFactory INSTANCE = new NullFactory();
-		
-		@Override
-		public void addListener(ICExternalSettingsListener listener) {
-		}
 
 		@Override
 		public CExternalSettingsContainer createContainer(String id,
 				IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException {
 			return NullContainer.INSTANCE;
-		}
-
-//		public String[] getSupplierIds() {
-//			return null;
-//		}
-
-		@Override
-		public void removeListener(ICExternalSettingsListener listener) {
-		}
-
-		@Override
-		public void shutdown() {
-		}
-
-		@Override
-		public void startup() {
 		}
 	}
 	
@@ -760,7 +740,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			CfgListCfgContainer cfgCr = new CfgListCfgContainer(list, i);
 			CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cfgCr);
 			CContainerRef[] refs = ric.getRefInfo(false).getReferences();
-			for(int k = 0; k < refs.length; k++){
+			for(int k = 0; k < refs.length; k++) {
 				if(containerContentsChanged(cfgCr, refs[k], null))
 					changed = true;
 			}

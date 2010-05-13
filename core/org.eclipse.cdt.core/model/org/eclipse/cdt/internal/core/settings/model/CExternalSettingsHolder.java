@@ -25,7 +25,6 @@ import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalcula
 public class CExternalSettingsHolder extends CExternalSettingsContainer {
 	private Map<ExtSettingMapKey, CExternalSetting> fSettingsMap;
 	static final String ELEMENT_EXT_SETTINGS_CONTAINER = "externalSettings"; //$NON-NLS-1$
-	static final CExternalSetting[] EMPTY_EXT_SETTINGS_ARRAY = new CExternalSetting[0];
 	
 	private boolean fIsModified;
 

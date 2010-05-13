@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,26 +195,41 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	void setSourceEntries(ICSourceEntry[] entries) throws CoreException, WriteAccessException;
 
 	/**
-	 * returns the reference information for this configuration, i.e. the information on the projects/configurations
-	 * this configuration references
-	 * the map contains the project_name<->configuration_id associations
-	 * if the current configuration does not reference any other configurations,
-	 * empty map is returned
+	 * Returns a Map of configurations referenced by this configuration. Settings exported
+	 * by a project configuration are automatically picked up by any referencing configurations.
+	 * <p>
+	 * This Map is keyed by project name with value equal to the referenced configuration's ID, or the
+	 * empty string. The empty string is a special configuration value which indicates the reference
+	 * tracks the Active configuration in the referenced Project.
+	 * <p>
+	 * If the current configuration does not reference any other configurations,
+	 * an empty map is returned.
+	 *
+	 * @return Map<String,String> of referenced Project -> Configuration ID
+  	 * @see {@link #setReferenceInfo(Map)} <br/>
+ 	 * {@link #getExternalSettings()}<br/>
+ 	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
 	 */
 	Map<String, String> getReferenceInfo();
 
 	/**
-	 * sets the reference information for this configuration, i.e. the information on the projects/configurations
-	 * this configuration references
-	 * the map should contain the project_name<->configuration_id associations
-	 * 
-	 * @param refs
-	 * 
+	 * Sets the reference information for this configuration.  This configuration
+	 * will pick up settings exported by referenced configurations.
+	 * <p>
+	 * This reference information is a map from project name to configuration ID
+	 * within the referenced project.
+	 * The empty string is a special configuration value which indicates the reference
+	 * tracks the Active configuration in the referenced Project.
+	 *
+	 * @param refs Map of project name -> configuration ID of referenced configurations
 	 * @throws WriteAccessException when the configuration description is read-only
 	 * see {@link CoreModel#getProjectDescription(org.eclipse.core.resources.IProject, boolean)}
+ 	 * @see {@link #getReferenceInfo()} <br/>
+ 	 * {@link #getExternalSettings()}<br/>
+ 	 * {@link #createExternalSetting(String[], String[], String[], ICSettingEntry[])}
 	 */
 	void setReferenceInfo(Map<String, String> refs) throws WriteAccessException;
-	
+
 	/**
 	 * returns an array of settings exported by this configuration
 	 * in case some configurations refer (depend on) this configuration

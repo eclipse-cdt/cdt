@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
@@ -34,12 +34,18 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * A class responsible for persisting CDT Projects and Configuration IDs as referenced
  * by other configurations in other projects. 
- * The user controls this via RefsTab and integrators can use 
+ * The user controls this via RefsTab.  This External settings factory listens
+ * for CProjectDescription model changes and notifies the {@link CExternalSettingsManager},
+ * which is a listener, of changes to the set of external settings. 
  * {@link ICConfigurationDescription#setReferenceInfo(Map)} and {@link ICConfigurationDescription#getReferenceInfo()}
  */
 public class CfgExportSettingContainerFactory extends
 		CExternalSettingContainerFactoryWithListener implements ICProjectDescriptionListener {
+
+	/** ID of this external settings factory */
 	static final String FACTORY_ID = CCorePlugin.PLUGIN_ID + ".cfg.export.settings.sipplier"; //$NON-NLS-1$
+
+	/** Empty String is a the magic configuration ID which maps to the Active configuration */
 	private static final String ACTIVE_CONFIG_ID = ""; //$NON-NLS-1$
 	private static final char DELIMITER = ';';
 
@@ -230,7 +236,7 @@ public class CfgExportSettingContainerFactory extends
 	}
 	
 	/**
-	 * Returns the set of ReferenceIDs (project_name;config_id) for the project descriptions
+	 * Returns the set of containers (Project configurations) (project_name;config_id) for the project descriptions
 	 * reported as changed by the ICDescriptionDelta
 	 * @param delta
 	 * @return String[] of Configuration Reference IDs
@@ -240,7 +246,7 @@ public class CfgExportSettingContainerFactory extends
 			return new String[0];
 		int deltaKind = delta.getDeltaKind();
 		
-		List<String> cfgIds = new ArrayList<String>();
+		Set<String> cfgIds = new HashSet<String>();
 		switch(deltaKind){
 		case ICDescriptionDelta.ADDED:
 		case ICDescriptionDelta.REMOVED:
@@ -264,28 +270,23 @@ public class CfgExportSettingContainerFactory extends
 		String[] ids = new String[cfgIds.size()];
 		if(ids.length != 0){
 			String projName = ((ICProjectDescription)delta.getSetting()).getProject().getName();
-			for(int i = 0; i < ids.length; i++){
-				ids[i] = createId(projName, cfgIds.get(i));
-			}
+			int i = 0;
+			for (String config : cfgIds) 
+				ids[i++] = createId(projName, config);
 		}
 		return ids;
 	}
-	
+
 	/**
-	 * Return the set of changed {Added, Remove & Changed} configuration IDs as discvoered
+	 * Return the set of changed {Added, Remove & Changed} configuration IDs as discovered
 	 * from an ICDescrptionDelta[]
 	 * @param deltas
 	 * @param c
 	 * @return
 	 */
 	private Collection<String> collectCfgIds(ICDescriptionDelta[] deltas, Collection<String> c){
-		if(c == null)
-			c = new ArrayList<String>();
-		for(int i = 0; i < deltas.length; i++){
-			ICDescriptionDelta delta = deltas[i];
-			int deltaKind = delta.getDeltaKind();
-			
-			switch(deltaKind){
+		for (ICDescriptionDelta delta : deltas) {
+			switch (delta.getDeltaKind()) {
 			case ICDescriptionDelta.ADDED:
 			case ICDescriptionDelta.REMOVED:
 				c.add(delta.getSetting().getId());
@@ -296,6 +297,9 @@ public class CfgExportSettingContainerFactory extends
 						(ICDescriptionDelta.EXTERNAL_SETTINGS_ADDED
 								| ICDescriptionDelta.EXTERNAL_SETTINGS_REMOVED)) != 0){
 					c.add(delta.getSetting().getId());
+					// If this is the Active configuration, then record it as changed too (bug 312575)
+					if (delta.getSetting().getConfiguration().isActive())
+						c.add(ACTIVE_CONFIG_ID);
 				}
 				break;
 			}

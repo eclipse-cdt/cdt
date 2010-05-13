@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,21 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Root of the External Settings Provider Factory hierarchy. These
+ * are responsible for creating {@link CExternalSettingsContainer}s
+ * for a given settings provider id.  The container
+ * is a simple container for external settings accessible via: 
+ * {@link CExternalSettingsContainer#getExternalSettings()}
+ *
+ * There are two concrete implementation of this in CDT:
+ * <ul>
+ * <li>{@link CfgExportSettingContainerFactory} responsible for settings propagated
+ * referenced configurations.</li>
+ * <li>{@link ExtensionContainerFactory} responsible for settings contributed
+ * using the external settings extension point.</li>
+ * </ul>  
+ */
 public abstract class CExternalSettingContainerFactory {
 
 	/**

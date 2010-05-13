@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.ui.memory.traditional;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 
+import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -83,7 +84,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 
 @SuppressWarnings("restriction")
-public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering
+public class TraditionalRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering, IResettableMemoryRendering, IMemoryRenderingViewportProvider
 {
 	protected Rendering fRendering;
     protected Action displayEndianBigAction;
@@ -1263,6 +1264,13 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 	public void resetRendering() throws DebugException {
 		fRendering.gotoAddress(fRendering.fBaseAddress);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemoryRenderingViewportProvider#getViewportAddress()
+	 */
+	public BigInteger getViewportAddress() {
+		return fRendering.getViewportStartAddress();
 	}
 }
 

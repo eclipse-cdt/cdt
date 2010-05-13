@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Freescale, Inc.
+ * Copyright (c) 2005, 2010 Freescale Semiconductor, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Freescale, Inc. - initial API and implementation
+ *     Freescale Semiconductor, Inc. - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
@@ -14,8 +14,6 @@ package org.eclipse.cdt.debug.internal.ui.views.memory;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
@@ -55,23 +53,33 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	private Button fExpressionRadio;
 	private String fAddress;
 	private String fMemorySpace;
-	private boolean fEnteredExpression;	// basically, which of the two radio buttons was selected when OK was hit		
-	private CMemoryBlockRetrievalExtension fMemRetrieval;
+	private boolean fEnteredExpression;	// basically, which of the two radio buttons was selected when OK was hit
+	
+	/** The memory spaces to expose. Given to use at instantiation time. */
+	final private String[] fMemorySpaces;
+
+	/**
+	 * For improved usability, we persist the memory space selection from one
+	 * invocation of the dialog to another, but we need not worry about
+	 * persisting it from one instantiation of Eclipse to the next
+	 */
+	private static String fPreviousMemorySpaceSelection;
 
 	private static List<String> sAddressHistory = new ArrayList<String>();
 	private static List<String> sExpressionHistory = new ArrayList<String>();
 	
 	private static boolean sDefaultToExpression = true;
 
-	public AddMemoryBlockDialog(Shell parentShell,
-			IMemoryBlockRetrieval memRetrieval) {
+	public AddMemoryBlockDialog(Shell parentShell, String[] memorySpaces) {
 		super(parentShell);
 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
+		fMemorySpaces = memorySpaces;
 
-		if (memRetrieval instanceof CMemoryBlockRetrievalExtension) {
-			fMemRetrieval = (CMemoryBlockRetrievalExtension)memRetrieval;  
-		}
+		// We shouldn't be using this custom dialog if there are none or only
+		// one memory spaces available.
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
+		assert memorySpaces != null && memorySpaces.length >= 2;
 	}
 
 	/* (non-Javadoc)
@@ -124,7 +132,27 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		gridData = new GridData();
 		gridData.horizontalIndent = radioButtonWidth; 
 		fMemorySpaceInput.setLayoutData(gridData);
-		fMemorySpaceInput.addSelectionListener(this);		
+		fMemorySpaceInput.addSelectionListener(this);
+
+		fMemorySpaceInput.setItems(fMemorySpaces);
+		
+		// Try to persist the mem space selection from one invocation of the
+		// dialog to the next
+		String memSpaceSelection = null; 
+		if (fPreviousMemorySpaceSelection != null) {
+			String[] items = fMemorySpaceInput.getItems();
+			for (String item : items) {
+				if (item.equals(fPreviousMemorySpaceSelection)) {
+					memSpaceSelection = fPreviousMemorySpaceSelection;
+				}
+			}
+		}
+		if (memSpaceSelection != null) {
+			fMemorySpaceInput.setText(memSpaceSelection);
+		}
+		else {
+			fMemorySpaceInput.select(0); // the n/a entry
+		}
 
 		fAddressInput = new Combo(parent, SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -146,16 +174,6 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 				}
 			}
 		});
-
-		// Populate the memory space combobox with the available spaces
-		if (fMemRetrieval != null) {
-			String [] memorySpaces = fMemRetrieval.getMemorySpaces();
-			for (int i = 0; i < memorySpaces.length; i++)
-				fMemorySpaceInput.add(memorySpaces[i]);
-
-			if (memorySpaces.length > 0)
-				fMemorySpaceInput.select(0);
-		}
 
 		// add the history into the combo boxes 
 		String[] history = getHistory(sExpressionHistory);
@@ -201,7 +219,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		fExpression = fExpressionInput.getText();
 		fAddress = fAddressInput.getText();
 		fMemorySpace = fMemorySpaceInput.getText();
-
+		
 		// add to HISTORY list; add to the platform dialog's for the expression
 		if (fExpression.length() > 0)
 			addHistory(sExpressionHistory, fExpression);
@@ -209,6 +227,8 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 			addHistory(sAddressHistory, fAddress);
 
 		fEnteredExpression = fExpressionRadio.getSelection();
+		
+		fPreviousMemorySpaceSelection = fMemorySpace;
 		super.okPressed();
 	}
 

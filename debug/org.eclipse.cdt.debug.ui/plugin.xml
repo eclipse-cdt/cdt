@@ -1388,23 +1388,10 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension"
+            adaptableType="org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval"
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory">
          <adapter
                type="org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget">
-         </adapter>
-         <adapter
-               type="org.eclipse.jface.viewers.ILabelDecorator">
-         </adapter>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.debug.core.model.IMemoryBlockExtension"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory">
-         <adapter
-               type="org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget">
-         </adapter>
-         <adapter
-               type="org.eclipse.jface.viewers.ILabelDecorator">
          </adapter>
       </factory>
       <factory

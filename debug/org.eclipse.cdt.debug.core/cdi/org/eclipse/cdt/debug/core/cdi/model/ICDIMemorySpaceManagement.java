@@ -21,29 +21,38 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * as well if the target supports memory spaces.
  */
 public interface ICDIMemorySpaceManagement extends ICDIObject {
-
 	/**
-	 * Optionally provides the string encoding of a memory space qualified address.
-	 * CDT provides a default encoding of <memory-space-id>:<address(hex)>.
-	 * If this is adequate, the client can return null from this function.
+	 * Optionally provides the string encoding of a memory space qualified
+	 * address. CDT provides a default encoding of
+	 * <memory-space-id>:<address(hex)>. If this is adequate, the client can
+	 * return null from this function.
 	 * 
-	 * @param address - a numeric address
-	 * @param memorySpaceID - a string which represents the memory space
+	 * @param address
+	 *            a numeric address
+	 * @param memorySpaceID
+	 *            a string which represents the memory space
 	 * @return the encoded string representation of the address or null
+	 * @deprecated CDI clients should implement ICDIMemorySpaceEncoder
 	 */
 	String addressToString(BigInteger address, String memorySpaceID);
 
 	/**
 	 * The inverse of addressToString. Optionally decodes a memoryspace/address
-	 * string to its components. Client must provide decoding if it provides 
-	 * encoding in addressToString. Conversely, it should return null if 
+	 * string to its components. Client must provide decoding if it provides
+	 * encoding in addressToString. Conversely, it should return null if
 	 * addressToString returns null.
-	 *
-	 * @param str - the encoded string (contains memory space + hex address value)
-	 * @param memorySpaceID_out the memory space ID
-	 * @return the BigInteger part of str; client should return null if the default decoding provided
-	 * by CDT is sufficient (<memory-space-id>:<address(hex)>)
-	 * @throws CDIException if string is not in the expected format
+	 * 
+	 * @param str
+	 *            the encoded string (contains memory space + hex address
+	 *            value)
+	 * @param memorySpaceID_out
+	 *            the memory space ID
+	 * @return the BigInteger part of str; client should return null if the
+	 *         default decoding provided by CDT is sufficient
+	 *         (<memory-space-id>:<address(hex)>)
+	 * @throws CDIException
+	 *             if string is not in the expected format
+	 * @deprecated CDI clients should implement ICDIMemorySpaceEncoder 
 	 */
 	BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out) throws CDIException;
 	

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Freescale, Inc.
+ * Copyright (c) 2005, 2010 Freescale Semiconductor, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Freescale, Inc. - initial API and implementation
+ *     Freescale Semiconductor, Inc. - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.core.model.ICVariable;
+import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
 import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
+import org.eclipse.cdt.debug.internal.core.CRequest;
 import org.eclipse.cdt.debug.internal.core.model.CRegister;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,17 +33,23 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.ui.views.memory.AddMemoryBlockAction;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.UIJob;
 
@@ -60,33 +68,109 @@ import org.eclipse.ui.progress.UIJob;
  *
  */
 public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
+	
+	/** Request object used to get the memory spaces */
+	private static class GetMemorySpacesRequest extends CRequest implements IMemorySpaceAwareMemoryBlockRetrieval.GetMemorySpacesRequest  {
+		String [] fMemorySpaces = new String[0];
+		public String[] getMemorySpaces() {
+			return fMemorySpaces;
+		}
+		public void setMemorySpaces(String[] memorySpaceIds) {
+			fMemorySpaces = memorySpaceIds;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget#addMemoryBlocks(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void addMemoryBlocks(final IWorkbenchPart part, final ISelection selection) throws CoreException {
 
-	public void addMemoryBlocks(IWorkbenchPart part, ISelection selection) throws CoreException {
-
-		if (!(part instanceof IMemoryRenderingSite))
+		if (!(part instanceof IMemoryRenderingSite)) {
+			assert false : "unexpected kind of view part"; //$NON-NLS-1$
 			return;
+		}
+		final IMemoryRenderingSite renderingSite = (IMemoryRenderingSite)part;
 
-		IAdaptable debugViewElement = DebugUITools.getDebugContext();
+		final IAdaptable debugViewElement = DebugUITools.getDebugContext();
 
 
-		CMemoryBlockRetrievalExtension cdtRetrieval = null;
-
-		{
-			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
-
-			if (retrieval == null && debugViewElement instanceof IDebugElement)
-				retrieval = ((IDebugElement)debugViewElement).getDebugTarget();
-
-			if (retrieval == null || !(retrieval instanceof CMemoryBlockRetrievalExtension))
-				return;
-
-			cdtRetrieval = (CMemoryBlockRetrievalExtension) retrieval;
+		IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)debugViewElement.getAdapter(IMemoryBlockRetrieval.class);
+		if (retrieval == null && debugViewElement instanceof IDebugElement) {
+			// Added logic for CDI (which is based on the standard debug model)
+			retrieval = ((IDebugElement)debugViewElement).getDebugTarget();
 		}
 
+		// If the backend doesn't support memory spaces, use the standard
+		// (platform) dialog for adding a memory block
+		if (!(retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval)) {
+			invokePlatformAction(renderingSite);
+			return;
+		}
+		final IMemorySpaceAwareMemoryBlockRetrieval msRetrieval = (IMemorySpaceAwareMemoryBlockRetrieval)retrieval;
+		
+		// We still don't really know if this session actually involves any
+		// memory spaces. Finding out is not trivial since it requires an
+		// asynchronous call.
+		final Object context = getContextSelectionForPart(part);
+		Job job = new Job("update memory space choices") { //$NON-NLS-1$
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				msRetrieval.getMemorySpaces(context, new GetMemorySpacesRequest(){
+					public void done() {
+						runOnUIThread(new Runnable(){
+							public void run() {
+								if (isSuccess()) {
+									String[] memorySpaces = getMemorySpaces();
+
+									// We shouldn't be using the custom dialog 
+									// if there are none or only one memory 
+									// spaces involved.
+									// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
+									if (memorySpaces.length >= 2) {
+										doAddMemoryBlocks(renderingSite, context, msRetrieval, memorySpaces);
+										return;
+									}
+								}
+
+								// If we get here, then the custom dialog isn't 
+								// necessary. Use the standard (platform) one
+								invokePlatformAction(renderingSite);
+							}});
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+	}
+	
+	/**
+	 * Invoke the platform's Add Memory Block action.
+	 * 
+	 * @param site the rendering site
+	 */
+	void invokePlatformAction(IMemoryRenderingSite site) {
+		// We have to subclass to get access to the protected dispose method
+		class PlatformAction extends AddMemoryBlockAction {
+			PlatformAction(IMemoryRenderingSite site) {
+				super(site);
+			}
+			@Override 
+			protected void dispose() {
+				super.dispose();
+			}
+		};
+		PlatformAction action = new PlatformAction(site);
+		action.run();
+		action.dispose();
+	}
+
+	private void doAddMemoryBlocks(final IMemoryRenderingSite renderingSite, final Object context, final IMemorySpaceAwareMemoryBlockRetrieval retrieval, String[] memorySpaces) {		
 		Shell shell = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 
 		// create dialog to ask for expression/address to block
-		AddMemoryBlockDialog dialog = new AddMemoryBlockDialog(shell, cdtRetrieval);
+		AddMemoryBlockDialog dialog = new AddMemoryBlockDialog(shell, memorySpaces);
 		dialog.open();
 		int returnCode = dialog.getReturnCode();
 		if (returnCode == Window.CANCEL)
@@ -112,20 +196,17 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		else
 			params = new AddressAndSpaceHolder(addrsOrExprs, dialog.getMemorySpace());
 
-		final IAdaptable debugViewElement_f = debugViewElement;
-		final CMemoryBlockRetrievalExtension retrieval_f = cdtRetrieval;
 		final ParamHolder params_f = params;
-		final IMemoryRenderingSite memRendSite = (IMemoryRenderingSite) part;
 		Job job = new Job("Add Memory Block") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				addMemoryBlocks(debugViewElement_f, retrieval_f, params_f,
-						memRendSite);
+				addMemoryBlocks(context, retrieval, params_f, renderingSite);
 				return Status.OK_STATUS;
 			}
 		};
 		job.setSystem(true);
 		job.schedule();
+
 	}
 
 	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection)
@@ -165,8 +246,8 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		public String[] expressions;
 	}
 
-	private void addMemoryBlocks(IAdaptable debugViewElement,
-			CMemoryBlockRetrievalExtension memRetrieval,
+	private void addMemoryBlocks(Object context,
+			IMemorySpaceAwareMemoryBlockRetrieval memRetrieval,
 			final ParamHolder params, IMemoryRenderingSite memRendSite) {
 
 		final String[] addrsOrExprs = (params instanceof AddressAndSpaceHolder) ? ((AddressAndSpaceHolder) params).addresses
@@ -181,13 +262,13 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 				IMemoryBlockExtension memBlock;
 
 				if (params instanceof AddressAndSpaceHolder)
-					memBlock = memRetrieval.getMemoryBlockWithMemorySpaceID(
+					memBlock = memRetrieval.getMemoryBlock(
 							addrOrExpr,
-							((AddressAndSpaceHolder) params).memorySpace,
-							debugViewElement);
+							context,
+							((AddressAndSpaceHolder) params).memorySpace);
 				else
 					memBlock = memRetrieval.getExtendedMemoryBlock(addrOrExpr,
-							debugViewElement);
+							context);
 
 				// add block to memory block manager
 				if (memBlock != null) {
@@ -295,7 +376,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
                     variables[i].getType().isReference() || variables[i] instanceof CRegister)
 				expressions[i] = exp;
 			else
-				expressions[i] = "&" + exp;
+				expressions[i] = "&" + exp; //$NON-NLS-1$
 		}
 
 		ParamHolder params;
@@ -345,5 +426,50 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 			uiJob.schedule();
 	}
 
+	private static Object getContextSelectionForPart(IWorkbenchPart part) {
+		IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(
+				part.getSite().getWorkbenchWindow());
+
+		ISelection debugContext = contextService.getActiveContext(getPartId(part));
+		if (debugContext == null) {
+			debugContext = contextService.getActiveContext();
+		}
+
+		if (debugContext instanceof IStructuredSelection) {
+			return ((IStructuredSelection) debugContext).getFirstElement();
+		}
+
+		return null;
+	}
+	
+	private static String getPartId(IWorkbenchPart part) {
+		if (part instanceof IViewPart) {
+			IViewSite site = (IViewSite) part.getSite();
+			return site.getId() + (site.getSecondaryId() != null ? (":" + site.getSecondaryId()) : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			return part.getSite().getId();
+		}
+	}
+	/**
+	 * Execute runnable on UI thread if the current thread is not an UI thread.
+	 * Otherwise execute it directly.
+	 * 
+	 * @param runnable
+	 *            the runnable to execute
+	 */
+	private void runOnUIThread(final Runnable runnable)	{
+		if (Display.getCurrent() != null) {
+			runnable.run();
+		}
+		else {
+			UIJob job = new UIJob("Memory Browser UI Job"){ //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					runnable.run();
+					return Status.OK_STATUS;
+				}};
+			job.setSystem(true);
+			job.schedule();
+		}
+	}
 }
 

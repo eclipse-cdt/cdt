@@ -82,11 +82,11 @@ public class CheckerTestCase extends CodanTestCase {
 
 	public void loadCodeAndRun(String code) {
 		loadcode(code);
-		 runOnProject();
+		runCodan();
 	}
 	public void loadCodeAndRunCpp(String code) {
 		loadcode(code, true);
-		 runOnProject();
+		runCodan();
 	}
 	/**
 	 * 

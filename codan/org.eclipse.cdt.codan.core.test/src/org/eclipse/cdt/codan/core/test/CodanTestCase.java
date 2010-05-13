@@ -120,12 +120,7 @@ public class CodanTestCase extends BaseTestCase {
 				}
 			}, null);
 			mj.join();
-			// Index the cproject
-			CCorePlugin.getIndexManager().setIndexerId(cprojects[0],
-					IPDOMManager.ID_FAST_INDEXER);
-			// wait until the indexer is done
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000,
-					new NullProgressMonitor()));
+
 		} finally {
 			mj.dispose();
 		}
@@ -142,6 +137,7 @@ public class CodanTestCase extends BaseTestCase {
 		// Index the cproject
 		CCorePlugin.getIndexManager().setIndexerId(cproject,
 				IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().reindex(cproject);
 		// wait until the indexer is done
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(1000 * 60, // 1 min
 				new NullProgressMonitor()));
@@ -191,7 +187,7 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	public File loadcode(String code, boolean cpp) {
-		String ext = cpp ? ".cc" : ".c"; //$NON-NLS-1$ //$NON-NLS-2$
+		String ext = cpp ? ".cpp" : ".c"; //$NON-NLS-1$ //$NON-NLS-2$
 		File testFile = null;
 		try {
 			testFile = File.createTempFile("test", ext, tmpDir); //$NON-NLS-1$

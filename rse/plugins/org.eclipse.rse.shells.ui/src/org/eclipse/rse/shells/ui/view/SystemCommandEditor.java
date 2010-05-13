@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * Radoslav Gerganov (ProSyst) - [221392] [shells] Undo command doesn't work with Eclipse 3.4M5
  * Radoslav Gerganov (ProSyst) - [231835] TVT34:TCT189: "work with compile commands" does not display
+ * Xuan Chen (IBM) - [312265] TVT36:TCT197: "Undo" option missing from context "Edit command" context menu
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -50,6 +51,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
@@ -58,6 +60,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -240,10 +243,22 @@ public class SystemCommandEditor extends SourceViewer
 	private void initializeActions()
 	{
 		IUndoManager undoManager = getUndoManager();
-		if (undoManager instanceof IUndoManagerExtension && _site != null) {
-			IUndoManagerExtension undoManagerExt = (IUndoManagerExtension) undoManager;
-			_undoAction = new UndoActionHandler(_site, undoManagerExt.getUndoContext());
-			fGlobalActions.put(ITextEditorActionConstants.UNDO, _undoAction);
+		if (undoManager instanceof IUndoManagerExtension) {
+			if  (_site == null)
+			{
+				//No _site provided,  try to use the site from active workbench part.
+				IWorkbenchPartSite activeWorkbenchPartSite = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage().getActivePart().getSite();
+				if (activeWorkbenchPartSite instanceof IViewSite)
+				{
+					_site = (IViewSite) activeWorkbenchPartSite;
+				}
+			}
+			if (_site != null)
+			{
+				IUndoManagerExtension undoManagerExt = (IUndoManagerExtension) undoManager;
+				_undoAction = new UndoActionHandler(_site, undoManagerExt.getUndoContext());
+				fGlobalActions.put(ITextEditorActionConstants.UNDO, _undoAction);
+			}
 		}
 
 		_cutAction = new TextViewerAction(this, CUT);

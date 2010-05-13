@@ -14,7 +14,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.6M7-201004291549/eclipse-SDK-3.6M7-linux-gtk-ppc.tar.gz"/>
+		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.6M7-201004291549/eclipse-SDK-3.6M7-linux-gtk-x86.tar.gz"/>
 		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/dsdp/tm/downloads/drops/N.latest/RSE-SDK-latest.zip"/>
 		<property name="branchVersion" value="7.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
@@ -43,7 +43,8 @@
 		<property name="tagname" value="v${timestamp}"/>
 		<property name="testReports" value="${zipsdir}/testReports"/>
 		<property name="junit-report-output" value="${testReports}"/>
-		<property name="jvm1.5" value="/opt/public/common/ibm-java2-ppc-50/bin/java"/>
+		<!--property name="jvm1.5" value="/opt/public/common/ibm-java2-ppc-50/bin/java"/-->
+		<property name="jvm1.5" value="java"/>
 		<condition property="onWindows">
 			<os family="windows"/>
 		</condition>

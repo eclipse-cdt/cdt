@@ -11,12 +11,12 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.regex.Pattern;
+
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
-import org.eclipse.cdt.codan.core.model.AbstractProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.SingleParameterInfo;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -69,16 +69,8 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
 	public void initParameters(IProblemWorkingCopy problem) {
-		IProblemParameterInfo info = new AbstractProblemParameterInfo() {
-			public String getLabel() {
-				return "Name Pattern";
-			}
-
-			public String getKey() {
-				return PARAM_KEY;
-			}
-		};
-		problem.setParameterInfo(info);
+		problem.setParameterInfo(new SingleParameterInfo(PARAM_KEY,
+				CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern));
 		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN);
 	}
 

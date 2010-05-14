@@ -10,38 +10,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.tests;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 
-import junit.extensions.TestSetup;
 import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.eclipse.cdt.core.model.ICProject;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocator;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.testplugin.CDebugHelper;
-import org.eclipse.cdt.debug.testplugin.CProjectHelper;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.deferred.SetModel;
 
 /**
  * @author Peter Graves
@@ -424,7 +409,7 @@ public class BreakpointTests extends AbstractDebugTest {
 		/* Make sure we have the correct 9 breakpoints left */
 		for (int x = 0; x < breakpoints.length; x++) {
 			curbreak = (ICDILocationBreakpoint) breakpoints[x];
-			assertTrue(curbreak.getLocator().getLineNumber() == x + 1);
+			assertEquals(x + 1, curbreak.getLocator().getLineNumber());
 		}
 		cdiTarget.deleteAllBreakpoints();
 		pause();

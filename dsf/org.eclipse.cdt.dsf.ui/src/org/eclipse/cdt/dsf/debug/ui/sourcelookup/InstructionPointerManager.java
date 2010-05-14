@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,7 +229,7 @@ class InstructionPointerManager {
 	        if (frame.getLevel() == 0) {
 	        	id = ID_CURRENT_IP;
 	        	if (text == null) {
-	        		text = "Debug Current Instruction Pointer"; //$NON-NLS-1$
+	        		text = Messages.IPAnnotation_primary;
 	        	}
 	        	if (image == null) {
 	        		image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);
@@ -237,7 +237,7 @@ class InstructionPointerManager {
 	        } else {
 	            id = ID_SECONDARY_IP;
 	            if (text == null) {
-	            	text = "Debug Call Stack"; //$NON-NLS-1$
+	            	text = Messages.IPAnnotation_secondary;
 	            }
 	            if (image == null) {
 	            	image = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,30 @@ public interface ICDTLaunchConfigurationConstants {
      * @since 6.0
      */
     public static final String ID_LAUNCH_C_POST_MORTEM = "org.eclipse.cdt.launch.postmortemLaunchType"; //$NON-NLS-1$
+    
+    /**
+	 * Specifies the default launch delegate for a Local Debug session
+	 * @since 7.0
+	 */
+    public static final String PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
+
+    /**
+	 * Specifies the default launch delegate for an Attach Debug session
+	 * @since 7.0
+	 */
+    public static final String PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"; //$NON-NLS-1$
+
+    /**
+	 * Specifies the default launch delegate for a Post Mortem Debug session
+	 * @since 7.0
+	 */
+    public static final String PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"; //$NON-NLS-1$
+
+    /**
+     * Specifies the default launch delegate for a Run mode session
+	 * @since 7.0
+	 */
+    public static final String PREFERRED_RUN_LAUNCH_DELEGATE = "org.eclipse.cdt.cdi.launch.localCLaunch"; //$NON-NLS-1$
     
 	/**
 	 * Identifier for the C/C++ program process type, which is annotated on processes created

@@ -187,6 +187,39 @@
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.coreFileCLaunch"/>
         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
       </tab>
+      
+      <!-- Run launch tabs-->
+      <tab
+            id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%ArgumentsLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%EnvironmentLaunchTab.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.cdi.launch.runApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">

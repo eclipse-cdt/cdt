@@ -32,6 +32,13 @@
             type="org.eclipse.cdt.launch.applicationLaunchType"
             class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.applicationLaunchTabGroup">
+         <launchMode mode="debug"/>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.applicationRunLaunchTabGroup">
+         <launchMode mode="run"/>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.cdt.launch.attachLaunchType"

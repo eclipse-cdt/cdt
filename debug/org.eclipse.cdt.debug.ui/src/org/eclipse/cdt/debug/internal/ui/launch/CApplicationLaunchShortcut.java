@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,13 +203,24 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
-	        // Workaround for bug 262840: select the standard CDT launcher by default.
-	        HashSet<String> set = new HashSet<String>();
-	        set.add(mode);
+	        // Workaround for bug 262840
+			try {
+				HashSet<String> set = new HashSet<String>();
+				set.add(ILaunchManager.RUN_MODE);
+				ILaunchDelegate preferredDelegate = wc.getPreferredDelegate(set);
+				if (preferredDelegate == null) {
+					wc.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE);
+				}
+			} catch (CoreException e) {}
+			
+			// We must also set the debug mode delegate because this configuration can be re-used
+			// in Debug mode.
 	        try {
+	        	HashSet<String> set = new HashSet<String>();
+	        	set.add(ILaunchManager.DEBUG_MODE);
 	            ILaunchDelegate preferredDelegate = wc.getPreferredDelegate(set);
 	            if (preferredDelegate == null) {
-                    wc.setPreferredLaunchDelegate(set, "org.eclipse.cdt.dsf.gdb.launch.localCLaunch");
+                    wc.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE);
 	            }
 	        } catch (CoreException e) {}
 			// End workaround for bug 262840

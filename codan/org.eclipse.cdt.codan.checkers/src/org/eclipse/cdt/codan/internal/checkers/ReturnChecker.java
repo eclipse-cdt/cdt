@@ -14,9 +14,15 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
 import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
+import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
+import org.eclipse.cdt.codan.core.param.HashParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo.ParameterType;
+import org.eclipse.cdt.codan.core.param.SingleParameterInfo;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -34,7 +40,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
  * <li>Function declared as returning non-void has no return (requires control
  * flow graph)
  */
-public class ReturnChecker extends AbstractAstFunctionChecker {
+public class ReturnChecker extends AbstractAstFunctionChecker implements
+		ICheckerWithParameters {
+	private static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
 	public final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
 	public final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$
 	public final String RET_NORET_ID = "org.eclipse.cdt.codan.checkers.errnoreturn"; //$NON-NLS-1$
@@ -53,7 +61,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
 				if (!isVoid(func)) {
-					if (isExplicitReturn(func)) {
+					if (checkImplicitReturn(RET_NO_VALUE_ID) ||isExplicitReturn(func)) {
 						if (ret.getReturnValue() == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
@@ -80,11 +88,21 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 		func.accept(visitor);
 		if (!visitor.hasret) {
 			// no return at all
-			if (!isVoid(func) && isExplicitReturn(func)) {
+			if (!isVoid(func)
+					&& (checkImplicitReturn(RET_NORET_ID) || isExplicitReturn(func))) {
 				if (endsWithNoExitNode(func))
 					reportProblem(RET_NORET_ID, func.getDeclSpecifier());
 			}
 		}
+	}
+
+	/**
+	 * @param if - problem id 
+	 * @return true if need to check inside functions with implicit return
+	 */
+	protected boolean checkImplicitReturn(String id) {
+		final IProblem pt = getProblemById(id, getFile());
+		return (Boolean) pt.getParameter(PARAM_IMPLICIT);
 	}
 
 	/**
@@ -94,8 +112,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	protected boolean endsWithNoExitNode(IASTFunctionDefinition func) {
 		IControlFlowGraph graph = CxxModelsCache.getInstance()
 				.getControlFlowGraph(func);
-		Iterator<IExitNode> exitNodeIterator = graph
-				.getExitNodeIterator();
+		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
 		boolean noexitop = false;
 		for (; exitNodeIterator.hasNext();) {
 			IExitNode node = exitNodeIterator.next();
@@ -143,5 +160,17 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			type = ((IASTSimpleDeclSpecifier) declSpecifier).getType();
 		}
 		return type;
+	}
+
+	/* checker must implement @link ICheckerWithParameters */
+	public void initParameters(IProblemWorkingCopy problem) {
+		if (problem.getId().equals(RET_NO_VALUE_ID)
+				|| problem.getId().equals(RET_NORET_ID)) {
+			HashParameterInfo info1 = new HashParameterInfo();
+			info1.setElement(new SingleParameterInfo(PARAM_IMPLICIT,
+					CheckersMessages.ReturnChecker_Param0, ParameterType.TYPE_BOOLEAN));
+			problem.setParameterInfo(info1);
+			problem.setParameter(PARAM_IMPLICIT, Boolean.FALSE);
+		}
 	}
 }

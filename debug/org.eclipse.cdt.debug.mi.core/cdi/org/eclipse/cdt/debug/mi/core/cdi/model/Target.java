@@ -111,9 +111,6 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	boolean deferBreakpoints = true;
 	final private Object lock = new Object();
 	
-	final static String CODE_MEMORY_SPACE = "code"; //$NON-NLS-1$
-	final static String DATA_MEMORY_SPACE = "data"; //$NON-NLS-1$
-
 	public Target(Session s, MISession mi) {
 		super(s);
 		miSession = mi;
@@ -270,7 +267,7 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		// Fire CreatedEvent for new threads.
 		// Replace the new threads with the old thread object
 		// User may have old on to the old Thread object.
-		List cList = new ArrayList(currentThreads.length);
+		List<Integer> cList = new ArrayList<Integer>(currentThreads.length);
 		for (int i = 0; i < currentThreads.length; i++) {
 			boolean found = false;
 			for (int j = 0; j < oldThreads.length; j++) {
@@ -288,14 +285,14 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		if (!cList.isEmpty()) {
 			MIThreadCreatedEvent[] events = new MIThreadCreatedEvent[cList.size()];
 			for (int j = 0; j < events.length; j++) {
-				int id = ((Integer)cList.get(j)).intValue();
+				int id = cList.get(j);
 				events[j] = new MIThreadCreatedEvent(miSession, id);
 			}
 			miSession.fireEvents(events);
 		}
 
 		// Fire destroyedEvent for old threads.
-		List dList = new ArrayList(oldThreads.length);
+		List<Integer> dList = new ArrayList<Integer>(oldThreads.length);
 		for (int i = 0; i < oldThreads.length; i++) {
 			boolean found = false;
 			for (int j = 0; j < currentThreads.length; j++) {
@@ -311,7 +308,7 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		if (!dList.isEmpty()) {
 			MIThreadExitEvent[] events = new MIThreadExitEvent[dList.size()];
 			for (int j = 0; j < events.length; j++) {
-				int id = ((Integer)dList.get(j)).intValue();
+				int id = dList.get(j);
 				events[j] = new MIThreadExitEvent(miSession, id);
 			}
 			miSession.fireEvents(events);

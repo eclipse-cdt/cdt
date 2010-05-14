@@ -16,8 +16,8 @@
 export DISPLAY=:1
 
 # set up to use the Java 5 JRE
-#export PATH=/opt/public/common/ibm-java-ppc-605/bin:/usr/local/bin:$PATH
-export PATH=/opt/public/common/ibm-java2-ppc-50/bin/java:/usr/local/bin:$PATH
+export PATH=/opt/public/common/ibm-java-ppc-605/bin:/usr/local/bin:$PATH
+#export PATH=/opt/public/common/ibm-java2-ppc-50/bin/java:/usr/local/bin:$PATH
 
 # make sure we're in the releng project dir 
 cd `dirname $0`
@@ -32,4 +32,5 @@ cd ..
 
 # Let's go!
 java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
-		-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*
+	-Djvm1.5=/opt/public/common/ibm-java2-ppc-50/bin/java \
+	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*

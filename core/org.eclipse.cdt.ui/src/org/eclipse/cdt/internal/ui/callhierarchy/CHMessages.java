@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -54,6 +55,10 @@ public class CHMessages extends NLS {
 	public static String OpenElementInCallHierarchyAction_message;
 	public static String OpenElementInCallHierarchyAction_title;
 	public static String OpenElementInCallHierarchyAction_upperListLabel;
+	public static String CopyCallHierarchyAction_label;
+	public static String CopyCallHierarchyAction_problem;
+	public static String CopyCallHierarchyAction_clipboard_busy;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CHMessages.class);

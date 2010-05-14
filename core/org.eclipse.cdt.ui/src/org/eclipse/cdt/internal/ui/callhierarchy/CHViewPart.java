@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
@@ -33,6 +34,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.Transfer;
@@ -55,6 +57,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 
@@ -101,6 +104,8 @@ public class CHViewPart extends ViewPart {
     
 	private ArrayList<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
 
+	private Clipboard fClipboard;
+
     // widgets
     private PageBook fPagebook;
     private Composite fViewerPage;
@@ -128,13 +133,13 @@ public class CHViewPart extends ViewPart {
 	private Action fHistoryAction;
 	private Action fShowReference;
 	private Action fOpenElement;
+	private CopyCallHierarchyAction fCopyAction;
 	
 	// action groups
 	private OpenViewActionGroup fOpenViewActionGroup;
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
 	private IContextActivation fContextActivation;
-
     
     @Override
 	public void setFocus() {
@@ -201,6 +206,8 @@ public class CHViewPart extends ViewPart {
         createViewerPage();
                 
         getSite().setSelectionProvider(new AdaptingSelectionProvider(ICElement.class, fTreeViewer));
+
+        fClipboard = new Clipboard(parent.getDisplay());
 
         initDragAndDrop();
         createActions();
@@ -444,7 +451,7 @@ public class CHViewPart extends ViewPart {
         };
         fOpenElement.setToolTipText(CHMessages.CHViewPart_Open_tooltip);
         fOpenElement.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
-        
+
         fShowFilesInLabelsAction= new Action(CHMessages.CHViewPart_ShowFiles_label, IAction.AS_CHECK_BOX) {
             @Override
 			public void run() {
@@ -469,6 +476,8 @@ public class CHViewPart extends ViewPart {
         };
         fPreviousAction.setToolTipText(CHMessages.CHViewPart_PreviousReference_tooltip); 
         CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
+
+        fCopyAction= new CopyCallHierarchyAction(this, fClipboard, fTreeViewer);
 
         fRefreshAction = new Action(CHMessages.CHViewPart_Refresh_label) {
             @Override
@@ -709,6 +718,10 @@ public class CHViewPart extends ViewPart {
 		ISelection selection = getSite().getSelectionProvider().getSelection();
 		if (OpenViewActionGroup.canActionBeAdded(selection)){
 			fOpenViewActionGroup.fillContextMenu(menu);
+		}
+
+		if (fCopyAction.canActionBeAdded()) {
+        	menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
 		}
 
 		if (SelectionSearchGroup.canActionBeAdded(selection)){

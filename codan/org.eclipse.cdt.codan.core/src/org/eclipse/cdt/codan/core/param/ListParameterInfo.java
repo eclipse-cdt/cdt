@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core.param;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,20 +17,26 @@ import java.util.Iterator;
  * @author Alena
  * 
  */
-public abstract class AbstractListParameterInfo extends
-		AbstractProblemParameterInfo {
+public class ListParameterInfo extends SingleParameterInfo {
 	protected ArrayList<IProblemParameterInfo> list = new ArrayList<IProblemParameterInfo>(
 			1);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.AbstractProblemParameterInfo#getType()
+	/**
+	 * @param key
+	 * @param label
 	 */
+	public ListParameterInfo(String key, String label) {
+		super(key, label);
+	}
+
 	@Override
-	public ParameterTypes getType() {
-		return ParameterTypes.TYPE_LIST;
+	public ParameterType getType() {
+		return ParameterType.TYPE_LIST;
+	}
+
+	@Override
+	public void setType(ParameterType type) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -63,14 +69,14 @@ public abstract class AbstractListParameterInfo extends
 	 * @param i
 	 * @param info
 	 */
-	protected void setElement(int i, IProblemParameterInfo info) {
+	public void setElement(int i, IProblemParameterInfo info) {
 		while (i >= list.size()) {
 			list.add(null);
 		}
 		list.set(i, info);
 	}
 
-	protected IProblemParameterInfo getElement(int i) {
+	public IProblemParameterInfo getElement(int i) {
 		return list.get(i);
 	}
 

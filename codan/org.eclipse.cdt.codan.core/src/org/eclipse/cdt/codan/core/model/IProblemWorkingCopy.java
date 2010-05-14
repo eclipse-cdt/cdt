@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+
 /**
  * Modifiable problem.
  * 

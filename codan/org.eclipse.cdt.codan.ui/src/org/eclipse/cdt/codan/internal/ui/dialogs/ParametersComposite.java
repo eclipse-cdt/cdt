@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.dialogs;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo.ParameterType;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -61,14 +65,32 @@ public class ParametersComposite extends Composite {
 				if (info == null)
 					return;
 				switch (info.getType()) {
-				case TYPE_STRING:
-					StringFieldEditor fe = new StringFieldEditor(info.getKey(),
-							info.getLabel(), getFieldEditorParent());
-					addField(fe);
-					break;
-				default:
-					throw new UnsupportedOperationException(info.getType()
-							.toString());
+					case TYPE_STRING: {
+						StringFieldEditor fe = new StringFieldEditor(
+								info.getKey(), info.getLabel(),
+								getFieldEditorParent());
+						addField(fe);
+						break;
+					}
+					case TYPE_BOOLEAN: {
+						BooleanFieldEditor fe = new BooleanFieldEditor(
+								info.getKey(), info.getLabel(),
+								getFieldEditorParent());
+						addField(fe);
+						break;
+					}
+					case TYPE_HASH: {
+						Iterator<IProblemParameterInfo> iterator = info
+								.getIterator();
+						while (iterator.hasNext()) {
+							IProblemParameterInfo info1 = iterator.next();
+							createFieldEditorsForParameters(info1);
+						}
+						break;
+					}
+					default:
+						throw new UnsupportedOperationException(info.getType()
+								.toString());
 				}
 			}
 		};
@@ -99,8 +121,17 @@ public class ParametersComposite extends Composite {
 			return;
 		String key = info.getKey();
 		Object parameter = problem.getParameter(key);
-		if (parameter instanceof String) {
+		if (info.getType() == ParameterType.TYPE_HASH && parameter == null) {
+			Iterator<IProblemParameterInfo> iterator = info.getIterator();
+			while (iterator.hasNext()) {
+				IProblemParameterInfo info1 = iterator.next();
+				savePrefStore(info1, problemwc);
+			}
+		} else if (parameter instanceof String) {
 			String newValue = pref.getString(key);
+			problemwc.setParameter(key, newValue);
+		} else if (parameter instanceof Boolean) {
+			boolean newValue = pref.getBoolean(key);
 			problemwc.setParameter(key, newValue);
 		} else
 			throw new UnsupportedOperationException(info.getType().toString());
@@ -114,9 +145,18 @@ public class ParametersComposite extends Composite {
 			return;
 		String key = info.getKey();
 		Object parameter = problem.getParameter(key);
-		if (parameter instanceof String) {
+		if (info.getType() == ParameterType.TYPE_HASH && parameter == null) {
+			Iterator<IProblemParameterInfo> iterator = info.getIterator();
+			while (iterator.hasNext()) {
+				IProblemParameterInfo info1 = iterator.next();
+				initPrefStore(info1);
+			}
+		} else if (parameter instanceof String) {
 			pref.setDefault(key, (String) parameter);
 			pref.setValue(key, (String) parameter);
+		} else if (parameter instanceof Boolean) {
+			pref.setDefault(key, (Boolean) parameter);
+			pref.setValue(key, (Boolean) parameter);
 		} else
 			throw new UnsupportedOperationException(info.getType().toString());
 	}

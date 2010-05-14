@@ -12,11 +12,11 @@ package org.eclipse.cdt.codan.examples.checkers;
 
 import java.util.regex.Pattern;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractCIndexChecker;
-import org.eclipse.cdt.codan.core.model.AbstractProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.AbstractProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;

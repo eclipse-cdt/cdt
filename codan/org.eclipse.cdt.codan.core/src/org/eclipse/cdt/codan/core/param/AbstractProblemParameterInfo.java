@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core.param;
 
 import java.util.Iterator;
 
@@ -34,8 +34,8 @@ public abstract class AbstractProblemParameterInfo implements
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemParameterInfo#getType()
 	 */
-	public ParameterTypes getType() {
-		return ParameterTypes.TYPE_STRING;
+	public ParameterType getType() {
+		return ParameterType.TYPE_STRING;
 	}
 
 	/*

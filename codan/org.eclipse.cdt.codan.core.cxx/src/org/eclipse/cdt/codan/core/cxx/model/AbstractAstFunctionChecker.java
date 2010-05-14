@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.model;
 
+import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -22,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
  * Abstract class for checkers that do all the work on function definition level
  */
 public abstract class AbstractAstFunctionChecker extends
-		AbstractIndexAstChecker {
+		AbstractIndexAstChecker implements ICheckerWithParameters{
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new ASTVisitor() {
@@ -55,4 +57,8 @@ public abstract class AbstractAstFunctionChecker extends
 	 *            - ast node representing function definition
 	 */
 	protected abstract void processFunction(IASTFunctionDefinition func);
+
+	public void initParameters(IProblemWorkingCopy problem) {
+		// do nothing
+	}
 }

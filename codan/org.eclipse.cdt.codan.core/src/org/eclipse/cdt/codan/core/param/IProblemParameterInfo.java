@@ -8,7 +8,7 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.core.model;
+package org.eclipse.cdt.codan.core.param;
 
 import java.util.Iterator;
 
@@ -19,13 +19,15 @@ import java.util.Iterator;
  * ProblemParameterInfo represent parameter meta-info for the ui. If more that
  * one parameter required ParameterInfo should describe hash or array of
  * parameters. This is only needed for auto-generated ui for parameter editing.
- * For complex case custom ui control should be used
+ * For complex case custom ui control should be used. Extend
+ * AbstractProblemParamterInfo class
+ * to implement this interface.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemParameterInfo {
-	enum ParameterTypes {
+	public enum ParameterType {
 		TYPE_STRING("string"), //$NON-NLS-1$
 		TYPE_INTEGER("integer"), //$NON-NLS-1$
 		TYPE_BOOLEAN("boolean"), //$NON-NLS-1$
@@ -34,14 +36,14 @@ public interface IProblemParameterInfo {
 		TYPE_HASH("hash"); //$NON-NLS-1$
 		private String literal;
 
-		private ParameterTypes(String literal) {
+		private ParameterType(String literal) {
 			this.literal = literal;
 		}
 
-		public static ParameterTypes valueOfLiteral(String name) {
-			ParameterTypes[] values = values();
+		public static ParameterType valueOfLiteral(String name) {
+			ParameterType[] values = values();
 			for (int i = 0; i < values.length; i++) {
-				ParameterTypes e = values[i];
+				ParameterType e = values[i];
 				if (e.literal.equals(name))
 					return e;
 			}
@@ -64,7 +66,7 @@ public interface IProblemParameterInfo {
 	 * 
 	 * @return string value of the type
 	 */
-	ParameterTypes getType();
+	ParameterType getType();
 
 	/**
 	 * Additional info on how it is represented in the ui, for example boolean
@@ -84,7 +86,7 @@ public interface IProblemParameterInfo {
 	/**
 	 * Detailed explanation of parameter
 	 * 
-	 * @return the tooltip text
+	 * @return the toolTip text
 	 */
 	String getToolTip();
 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+
 /**
  * Interface representing code analysis problem type. For example
  * "Null Pointer Dereference" is a problem. It has user visible Name and Message

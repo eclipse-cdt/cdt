@@ -13,9 +13,9 @@ package org.eclipse.cdt.codan.internal.core.model;
 import java.util.HashMap;
 
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
-import org.eclipse.cdt.codan.core.model.IProblemParameterInfo;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
 
 public class CodanProblem implements IProblemWorkingCopy {
 	private String id;

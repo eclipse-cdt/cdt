@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
+import java.io.File;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Problem parameter usually key=value settings that allows to alter checker
@@ -33,7 +36,7 @@ public interface IProblemParameterInfo {
 		TYPE_BOOLEAN("boolean"), //$NON-NLS-1$
 		TYPE_FILE("file"), //$NON-NLS-1$
 		TYPE_LIST("list"), //$NON-NLS-1$
-		TYPE_HASH("hash"); //$NON-NLS-1$
+		TYPE_MAP("map"); //$NON-NLS-1$
 		private String literal;
 
 		private ParameterType(String literal) {
@@ -53,6 +56,27 @@ public interface IProblemParameterInfo {
 		@Override
 		public String toString() {
 			return literal;
+		}
+
+		/**
+		 * @param value
+		 * @return parameter type corresponding to the value java type
+		 */
+		public static ParameterType typeOf(Object value) {
+			if (value instanceof Boolean)
+				return TYPE_BOOLEAN;
+			if (value instanceof String)
+				return TYPE_STRING;
+			if (value instanceof Integer)
+				return TYPE_INTEGER;
+			if (value instanceof File)
+				return TYPE_FILE;
+			if (value instanceof List)
+				return TYPE_LIST;
+			if (value instanceof Map)
+				return TYPE_MAP;
+			throw new IllegalArgumentException(
+					"Cannot determine type for " + value.getClass()); //$NON-NLS-1$
 		}
 	}
 

@@ -79,7 +79,7 @@ public class ParametersComposite extends Composite {
 						addField(fe);
 						break;
 					}
-					case TYPE_HASH: {
+					case TYPE_MAP: {
 						Iterator<IProblemParameterInfo> iterator = info
 								.getIterator();
 						while (iterator.hasNext()) {
@@ -121,7 +121,7 @@ public class ParametersComposite extends Composite {
 			return;
 		String key = info.getKey();
 		Object parameter = problem.getParameter(key);
-		if (info.getType() == ParameterType.TYPE_HASH && parameter == null) {
+		if (info.getType() == ParameterType.TYPE_MAP && parameter == null) {
 			Iterator<IProblemParameterInfo> iterator = info.getIterator();
 			while (iterator.hasNext()) {
 				IProblemParameterInfo info1 = iterator.next();
@@ -145,7 +145,7 @@ public class ParametersComposite extends Composite {
 			return;
 		String key = info.getKey();
 		Object parameter = problem.getParameter(key);
-		if (info.getType() == ParameterType.TYPE_HASH && parameter == null) {
+		if (info.getType() == ParameterType.TYPE_MAP && parameter == null) {
 			Iterator<IProblemParameterInfo> iterator = info.getIterator();
 			while (iterator.hasNext()) {
 				IProblemParameterInfo info1 = iterator.next();

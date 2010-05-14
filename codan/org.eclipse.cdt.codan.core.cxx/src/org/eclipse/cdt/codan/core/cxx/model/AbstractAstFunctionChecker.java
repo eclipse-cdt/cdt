@@ -12,6 +12,10 @@ package org.eclipse.cdt.codan.core.cxx.model;
 
 import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.MapParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo.ParameterType;
+import org.eclipse.cdt.codan.core.param.SingleParameterInfo;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -24,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
  * Abstract class for checkers that do all the work on function definition level
  */
 public abstract class AbstractAstFunctionChecker extends
-		AbstractIndexAstChecker implements ICheckerWithParameters{
+		AbstractIndexAstChecker implements ICheckerWithParameters {
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new ASTVisitor() {
@@ -60,5 +64,20 @@ public abstract class AbstractAstFunctionChecker extends
 
 	public void initParameters(IProblemWorkingCopy problem) {
 		// do nothing
+	}
+
+	public IProblemParameterInfo addParam(IProblemWorkingCopy problem,
+			String key, String label, Object defaultValue) {
+		MapParameterInfo map = (MapParameterInfo) problem.getParameterInfo();
+		if (map == null) {
+			map = new MapParameterInfo();
+			problem.setParameterInfo(map);
+		}
+		SingleParameterInfo info = new SingleParameterInfo(key,
+				label,
+				ParameterType.typeOf(defaultValue));
+		map.setElement(info);
+		problem.setParameter(key, defaultValue);
+		return info;
 	}
 }

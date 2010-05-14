@@ -20,9 +20,6 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
-import org.eclipse.cdt.codan.core.param.HashParameterInfo;
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo.ParameterType;
-import org.eclipse.cdt.codan.core.param.SingleParameterInfo;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -61,7 +58,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker implements
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
 				if (!isVoid(func)) {
-					if (checkImplicitReturn(RET_NO_VALUE_ID) ||isExplicitReturn(func)) {
+					if (checkImplicitReturn(RET_NO_VALUE_ID)
+							|| isExplicitReturn(func)) {
 						if (ret.getReturnValue() == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
@@ -97,7 +95,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker implements
 	}
 
 	/**
-	 * @param if - problem id 
+	 * @param if - problem id
 	 * @return true if need to check inside functions with implicit return
 	 */
 	protected boolean checkImplicitReturn(String id) {
@@ -166,11 +164,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker implements
 	public void initParameters(IProblemWorkingCopy problem) {
 		if (problem.getId().equals(RET_NO_VALUE_ID)
 				|| problem.getId().equals(RET_NORET_ID)) {
-			HashParameterInfo info1 = new HashParameterInfo();
-			info1.setElement(new SingleParameterInfo(PARAM_IMPLICIT,
-					CheckersMessages.ReturnChecker_Param0, ParameterType.TYPE_BOOLEAN));
-			problem.setParameterInfo(info1);
-			problem.setParameter(PARAM_IMPLICIT, Boolean.FALSE);
+			addParam(problem, PARAM_IMPLICIT,
+					CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
 		}
 	}
 }

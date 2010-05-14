@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 /**
- * This checker finds a problems that cause by lack of understanding operator
+ * This checker finds a problems which are caused by lack of understanding operator
  * precedence in C. In any case it is better to surround expressions in
  * parenthesis to improve readability. Example: ! x>0 && x<10 (this would be
  * (!x)>0 && x<10 in C) We only look for &&, || and ! operators (and binary | &

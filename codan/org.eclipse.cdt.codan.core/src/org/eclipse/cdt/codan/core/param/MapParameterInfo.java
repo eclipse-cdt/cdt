@@ -22,10 +22,10 @@ import java.util.Iterator;
  * "check setters". In this case you use this type.
  * 
  */
-public class HashParameterInfo extends SingleParameterInfo {
+public class MapParameterInfo extends SingleParameterInfo {
 	protected HashMap<String, IProblemParameterInfo> hash = new HashMap<String, IProblemParameterInfo>();
 
-	public HashParameterInfo() {
+	public MapParameterInfo() {
 		super(""); //$NON-NLS-1$
 	}
 
@@ -33,7 +33,7 @@ public class HashParameterInfo extends SingleParameterInfo {
 	 * @param label
 	 *            - label for this group of parameters
 	 */
-	public HashParameterInfo(String label) {
+	public MapParameterInfo(String label) {
 		super(label);
 	}
 
@@ -43,13 +43,13 @@ public class HashParameterInfo extends SingleParameterInfo {
 	 * @param label
 	 *            - label for this group of parameters
 	 */
-	public HashParameterInfo(String key, String label) {
+	public MapParameterInfo(String key, String label) {
 		super(key, label);
 	}
 
 	@Override
 	public ParameterType getType() {
-		return ParameterType.TYPE_HASH;
+		return ParameterType.TYPE_MAP;
 	}
 
 	@Override

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-import java.util.HashSet;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
@@ -34,8 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchDelegate;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -516,33 +512,6 @@ public class CMainTab extends CAbstractMainTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-	    // Workaround for bug 262840
-	    try {
-	    	HashSet<String> set = new HashSet<String>();
-	    	set.add(ILaunchManager.DEBUG_MODE);
-    	    ILaunchDelegate preferredDelegate = config.getPreferredDelegate(set);
-    	    if (preferredDelegate == null) {
-    	        if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP)) {
-    	            config.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE);
-    	        } else if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH)) {
-                    config.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE);
-    	        } else if (config.getType().getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM)) {
-                    config.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE);
-                }
-    	    }
-	    } catch (CoreException e) {}
-
-	    // We must also set the preferred delegate for Run mode, because this configuration
-	    // can be used in Run mode.
-	    try {
-	    	HashSet<String> set = new HashSet<String>();
-	    	set.add(ILaunchManager.RUN_MODE);
-	    	ILaunchDelegate preferredDelegate = config.getPreferredDelegate(set);
-    	    if (preferredDelegate == null) {
-    	        config.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE);
-    	    }
-	    } catch (CoreException e) {}
-	    
 		// We set empty attributes for project & program so that when one config is
 		// compared to another, the existence of empty attributes doesn't cause and
 		// incorrect result (the performApply() method can result in empty values

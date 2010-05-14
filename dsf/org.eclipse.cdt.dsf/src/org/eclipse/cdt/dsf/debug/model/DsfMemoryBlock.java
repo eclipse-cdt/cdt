@@ -87,8 +87,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      * @param address      - the actual memory block start address
      * @param word_size    - the number of bytes per address
      * @param length       - the requested block length (could be 0)
+     * @since 2.1
      */
-    DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context, String modelId, String expression, BigInteger address, int word_size, long length) {
+    protected DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, IMemoryDMContext context, String modelId, String expression, BigInteger address, int word_size, long length) {
     	fLaunch      = retrieval.getLaunch();
     	fDebugTarget = retrieval.getDebugTarget();
         fRetrieval   = retrieval;
@@ -121,7 +122,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
     public Object getAdapter(Class adapter) {
         if (adapter.isAssignableFrom(DsfMemoryBlockRetrieval.class)) {
@@ -557,7 +558,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     // Helper functions
     ///////////////////////////////////////////////////////////////////////////
 
-    /*
+    /**
 	 * The real thing. Since the original call is synchronous (from a platform
 	 * Job), we use a Query that will patiently wait for the underlying
 	 * asynchronous calls to complete before returning.
@@ -566,8 +567,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @param length 
 	 * @return MemoryByte[] 
 	 * @throws DebugException
+	 * @since 2.1
 	 */
-    private MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long length) throws DebugException {
+    protected MemoryByte[] fetchMemoryBlock(BigInteger bigAddress, final long length) throws DebugException {
 
     	// For the IAddress interface
     	final Addr64 address = new Addr64(bigAddress);
@@ -605,13 +607,15 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         }
     }
 
-	/* Writes an array of bytes to memory.
+	/**
+	 *  Writes an array of bytes to memory.
      * 
      * @param offset
      * @param bytes
      * @throws DebugException
-     */
-    private void writeMemoryBlock(final long offset, final byte[] bytes) throws DebugException {
+	 * @since 2.1
+	 */
+    protected void writeMemoryBlock(final long offset, final byte[] bytes) throws DebugException {
 
     	// For the IAddress interface
     	final Addr64 address = new Addr64(fBaseAddress);
@@ -707,4 +711,13 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     public String getUpdatePolicyDescription(String id) {
 		return id;
 	}
+    
+    /**
+     * Get the context specified at construction.
+     * 
+	 * @since 2.1
+	 */
+    protected IMemoryDMContext getContext() {
+    	return fContext;
+    }
 }

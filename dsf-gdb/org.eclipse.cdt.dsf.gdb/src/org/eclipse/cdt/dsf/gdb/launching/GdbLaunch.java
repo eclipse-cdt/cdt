@@ -32,6 +32,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -117,7 +118,7 @@ public class GdbLaunch extends DsfLaunch
                 	ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
                 	IMIProcesses procService = fTracker.getService(IMIProcesses.class);
                     if (commandControl != null && procService != null) {
-                        fMemRetrieval = new DsfMemoryBlockRetrieval(
+                        fMemRetrieval = new GdbMemoryBlockRetrieval(
                                 GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, getLaunchConfiguration(), fSession);
                         fSession.registerModelAdapter(IMemoryBlockRetrieval.class, fMemRetrieval);
                         

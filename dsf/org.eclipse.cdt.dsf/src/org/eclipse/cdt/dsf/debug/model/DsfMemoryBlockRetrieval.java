@@ -230,7 +230,14 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
         }
 	}
 
-	private void createBlocksFromConfiguration(IMemoryDMContext memoryCtx, String memento) throws CoreException {
+	/**
+	 * Create memory blocks based on the given memento (obtained from the launch
+	 * configuration) and add them to the platform's IMemoryBlockManager. The
+	 * memento was previously created by {@link #getMemento()}
+	 * 
+	 * @since 2.1
+	 */
+	protected void createBlocksFromConfiguration(IMemoryDMContext memoryCtx, String memento) throws CoreException {
 
 	    // Parse the memento and validate its type
         Element root = DebugPlugin.parseDocument(memento);
@@ -280,6 +287,15 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		}
 	}
 
+	/**
+	 * Create a memento to represent all active blocks created by this retrieval
+	 * object (blocks currently registered with the platform's
+	 * IMemoryBlockManager). We will be expected to recreate the blocks in
+	 * {@link #createBlocksFromConfiguration(IMemoryDMContext, String)}.
+	 * 
+	 * @return a string memento
+	 * @throws CoreException
+	 */
 	public String getMemento() throws CoreException {
 		IMemoryBlock[] blocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(this);
 		Document document = DebugPlugin.newDocument();
@@ -355,11 +371,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long,
-	 *      long)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
 	public IMemoryBlock getMemoryBlock(final long startAddress,	final long length) throws DebugException {
 	    throw new DebugException(new Status(
@@ -457,7 +470,10 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	// Helper functions
 	///////////////////////////////////////////////////////////////////////////
 
-	private BigInteger resolveMemoryAddress(final IDMContext dmc, final String expression) throws DebugException {
+	/**
+	 * @since 2.1
+	 */
+	protected BigInteger resolveMemoryAddress(final IDMContext dmc, final String expression) throws DebugException {
 
 		// Use a Query to "synchronize" the downstream calls
 		Query<BigInteger> query = new Query<BigInteger>() {
@@ -501,6 +517,16 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 					DsfPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
 					"Error evaluating memory address (ExecutionException).", e)); //$NON-NLS-1$
 		}
+	}
+	
+	
+	/**
+	 * Return the model ID specified at construction 
+	 * 
+	 * @since 2.1
+	 */
+	protected String getModelId() {
+		return fModelId;
 	}
 
 }

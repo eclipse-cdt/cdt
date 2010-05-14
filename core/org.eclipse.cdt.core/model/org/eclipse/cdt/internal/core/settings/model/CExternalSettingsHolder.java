@@ -71,10 +71,6 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 		return EMPTY_EXT_SETTINGS_ARRAY;
 	}
 
-	void setExternallSettings(CExternalSetting[] settings){
-		setExternalSettings(settings, false);
-	}
-
 	void setExternalSettings(CExternalSetting[] settings, boolean add){
 		if(!add)
 			removeExternalSettings();

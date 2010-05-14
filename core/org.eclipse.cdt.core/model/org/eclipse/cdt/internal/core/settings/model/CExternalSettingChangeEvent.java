@@ -10,23 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+/**
+ * External setting change event
+ */
 class CExternalSettingChangeEvent {
-	private List<CExternalSettingsContainerChangeInfo> fChangeInfoList = new ArrayList<CExternalSettingsContainerChangeInfo>();
+	private final CExternalSettingsContainerChangeInfo[] fChangeInfos;
 
 	CExternalSettingChangeEvent(CExternalSettingsContainerChangeInfo[] infos){
-		fChangeInfoList.addAll(Arrays.asList(infos));
+		fChangeInfos = infos;
 	}
-	
-//	void add(CExternalSettingsContainerChangeInfo info){
-//		fChangeInfoList.add(info);
-//	}
-	
+
 	public CExternalSettingsContainerChangeInfo[] getChangeInfos(){
-		return fChangeInfoList.toArray(
-				new CExternalSettingsContainerChangeInfo[fChangeInfoList.size()]);
+		return fChangeInfos;
 	}
 }

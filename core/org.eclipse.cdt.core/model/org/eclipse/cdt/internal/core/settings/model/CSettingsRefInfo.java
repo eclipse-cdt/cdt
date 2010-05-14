@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Intel Corporation and others.
+ * Copyright (c) 2007, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,21 +53,6 @@ class CSettingsRefInfo {
 			e.setValue(h);
 		}
 	}
-
-//	Map getContainerMapForFactory(String id){
-//		Map map = new HashMap();
-//		for(Iterator iter = fESHolderMap.entrySet().iterator(); iter.hasNext();){
-//			Map.Entry entry = (Map.Entry)iter.next();
-//			CContainerRef r = (CContainerRef)entry.getKey();
-//			if(r.getFactoryId().equals(id))
-//				map.put(r.getContainerId(), r);
-//		}
-//		return map;
-//	}
-	
-//	Map getContainerMapCopy(){
-//		return new HashMap(fESHolderMap);
-//	}
 	
 	CContainerRef[] getReferences(String factoryId){
 		List<CContainerRef> list = new ArrayList<CContainerRef>();

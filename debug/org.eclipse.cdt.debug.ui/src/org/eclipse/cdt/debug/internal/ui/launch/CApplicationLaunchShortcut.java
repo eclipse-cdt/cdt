@@ -48,7 +48,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -207,8 +206,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			try {
 				HashSet<String> set = new HashSet<String>();
 				set.add(ILaunchManager.RUN_MODE);
-				ILaunchDelegate preferredDelegate = wc.getPreferredDelegate(set);
-				if (preferredDelegate == null) {
+	            if (wc.getPreferredDelegate(set) == null && wc.getType().getPreferredDelegate(set) == null) {
 					wc.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE);
 				}
 			} catch (CoreException e) {}
@@ -218,8 +216,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	        try {
 	        	HashSet<String> set = new HashSet<String>();
 	        	set.add(ILaunchManager.DEBUG_MODE);
-	            ILaunchDelegate preferredDelegate = wc.getPreferredDelegate(set);
-	            if (preferredDelegate == null) {
+	            if (wc.getPreferredDelegate(set) == null && wc.getType().getPreferredDelegate(set) == null) {
                     wc.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE);
 	            }
 	        } catch (CoreException e) {}

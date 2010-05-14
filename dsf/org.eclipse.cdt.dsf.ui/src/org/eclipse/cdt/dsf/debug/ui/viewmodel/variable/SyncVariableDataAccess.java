@@ -118,7 +118,7 @@ public class SyncVariableDataAccess {
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -204,7 +204,7 @@ public class SyncVariableDataAccess {
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -302,7 +302,7 @@ public class SyncVariableDataAccess {
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -395,7 +395,7 @@ public class SyncVariableDataAccess {
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }
@@ -488,7 +488,7 @@ public class SyncVariableDataAccess {
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }

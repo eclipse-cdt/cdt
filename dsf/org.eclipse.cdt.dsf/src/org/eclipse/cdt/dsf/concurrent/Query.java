@@ -152,6 +152,7 @@ abstract public class Query<V> extends DsfRunnable
             completed = fRm.isCompleted();
             if (!completed) {
                 fRm.cancel();
+                fRm.notifyAll();
             }
         }
         return !completed; 
@@ -161,7 +162,8 @@ abstract public class Query<V> extends DsfRunnable
 
     public boolean isDone() {
         synchronized (fRm) {
-            return fRm.isCompleted() || (fRm.isCanceled() && !fRm.isExecuted());
+            // If future is canceled, return right away.
+            return fRm.isCompleted() || fRm.isCanceled();
         }
     }
     
@@ -180,6 +182,7 @@ abstract public class Query<V> extends DsfRunnable
      * @deprecated Query implementations should call the request monitor to 
      * set the exception status directly.
      */
+    @Deprecated
     protected void doneException(Throwable t) {
         fRm.setStatus(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, "Exception", t)); //$NON-NLS-1$
         fRm.done();

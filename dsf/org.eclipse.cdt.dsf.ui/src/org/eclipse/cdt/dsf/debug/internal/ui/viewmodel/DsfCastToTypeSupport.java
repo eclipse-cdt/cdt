@@ -75,7 +75,7 @@ public class DsfCastToTypeSupport  {
 	            final DsfSession session = DsfSession.getSession(
 	            		dmvmProvider.getSession().getId());
 	            if (session == null) {
-	                cancel(false);
+	                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
 	                rm.done();
 	                return;
 	            }

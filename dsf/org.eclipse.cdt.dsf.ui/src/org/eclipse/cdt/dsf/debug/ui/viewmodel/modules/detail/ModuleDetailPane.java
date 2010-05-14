@@ -483,7 +483,8 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
+                rm.done();
                 return;
             }
 
@@ -506,7 +507,8 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
                      * We're in another dispatch, so we must guard against executor shutdown again.
                      */
                     if (!DsfSession.isSessionActive(session.getId())) {
-                    	GetModuleDetailsQuery.this.cancel(false);
+                        rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
+                        rm.done();
                         return;
                     }
                     super.handleCompleted();

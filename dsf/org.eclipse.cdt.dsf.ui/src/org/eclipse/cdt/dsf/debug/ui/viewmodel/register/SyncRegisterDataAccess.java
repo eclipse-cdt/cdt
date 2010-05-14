@@ -21,10 +21,10 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IMnemonic;
@@ -60,7 +60,7 @@ public class SyncRegisterDataAccess {
              */
             final DsfSession session = DsfSession.getSession(fDmc.getSessionId());
             if (session == null) {
-                cancel(false);
+                rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
                 rm.done();
                 return;
             }

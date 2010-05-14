@@ -110,6 +110,7 @@ public class DsfQueryTests {
     @Test 
     public void doneExceptionTest() throws InterruptedException, ExecutionException {
         Query<Integer> q = new Query<Integer>() { 
+            @SuppressWarnings("deprecation")
             @Override
             protected void execute(DataRequestMonitor<Integer> rm) {
                 doneException(new Throwable());
@@ -246,10 +247,7 @@ public class DsfQueryTests {
         Assert.assertTrue(cancelCalled[0]);
         Assert.assertTrue(rmHolder[0].isCanceled());
         Assert.assertTrue(q.isCancelled());
-        Assert.assertFalse(q.isDone());
-        
-        // Complete rm and query.
-        rmHolder[0].done();
+        Assert.assertTrue(q.isDone());
         
         // Retrieve data
         try {
@@ -260,6 +258,25 @@ public class DsfQueryTests {
             Assert.assertTrue(q.isDone());
             Assert.assertTrue(q.isCancelled());            
         }            
+        
+        // Complete rm and query.
+        @SuppressWarnings("unchecked")
+        DataRequestMonitor<Integer> drm = (DataRequestMonitor<Integer>)rmHolder[0]; 
+        drm.setData(new Integer(1));
+        rmHolder[0].done();
+        
+        // Try to retrieve data again, it should still result in 
+        // cancellation exception.
+        try {
+            q.get();
+        } catch (CancellationException e) {
+            return; // Success
+        } finally {
+            Assert.assertTrue(q.isDone());
+            Assert.assertTrue(q.isCancelled());            
+        }            
+
+        
         Assert.assertTrue("CancellationException should have been thrown", false); //$NON-NLS-1$
     }
 

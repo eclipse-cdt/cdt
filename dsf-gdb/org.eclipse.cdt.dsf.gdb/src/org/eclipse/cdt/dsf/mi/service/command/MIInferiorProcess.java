@@ -276,7 +276,8 @@ public class MIInferiorProcess extends Process
                 protected void execute(final DataRequestMonitor<Integer> rm) {
                     // Guard against session disposed.
                     if (!DsfSession.isSessionActive(fSession.getId())) {
-                        cancel(false);
+                        rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Debug session already shut down.", null)); //$NON-NLS-1$
+                        rm.done();
                         return;
                     }
 

@@ -13,8 +13,14 @@ package org.eclipse.cdt.codan.core.cxx.model;
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.cxx.Activator;
 import org.eclipse.cdt.codan.core.model.AbstractChecker;
+import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.MapParameterInfo;
+import org.eclipse.cdt.codan.core.param.SingleParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemParameterInfo.ParameterType;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -34,7 +40,7 @@ import org.eclipse.core.runtime.Path;
  * Clients may extend this class.
  */
 public abstract class AbstractIndexAstChecker extends AbstractChecker implements
-		ICAstChecker, IRunnableInEditorChecker {
+		ICAstChecker, IRunnableInEditorChecker,	ICheckerWithParameters {
 	private IFile file;
 
 	protected IFile getFile() {
@@ -127,5 +133,24 @@ public abstract class AbstractIndexAstChecker extends AbstractChecker implements
 			file = astFile;
 			processAst(ast);
 		}
+	}
+	
+	public void initParameters(IProblemWorkingCopy problem) {
+		// do nothing
+	}
+
+	public IProblemParameterInfo addParam(IProblemWorkingCopy problem,
+			String key, String label, Object defaultValue) {
+		MapParameterInfo map = (MapParameterInfo) problem.getParameterInfo();
+		if (map == null) {
+			map = new MapParameterInfo();
+			problem.setParameterInfo(map);
+		}
+		SingleParameterInfo info = new SingleParameterInfo(key,
+				label,
+				ParameterType.typeOf(defaultValue));
+		map.setElement(info);
+		problem.setParameter(key, defaultValue);
+		return info;
 	}
 }

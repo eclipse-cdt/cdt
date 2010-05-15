@@ -14,7 +14,6 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
 import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
-import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
@@ -37,8 +36,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
  * <li>Function declared as returning non-void has no return (requires control
  * flow graph)
  */
-public class ReturnChecker extends AbstractAstFunctionChecker implements
-		ICheckerWithParameters {
+public class ReturnChecker extends AbstractAstFunctionChecker  {
 	private static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
 	public final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
 	public final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$

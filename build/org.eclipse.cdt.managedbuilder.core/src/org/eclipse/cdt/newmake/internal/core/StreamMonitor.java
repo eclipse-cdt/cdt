@@ -53,6 +53,7 @@ public class StreamMonitor extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#close()
 	 */
+	@Override
 	public void close() throws IOException {
 		if (console != null) {
 			console.close();
@@ -63,6 +64,7 @@ public class StreamMonitor extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#flush()
 	 */
+	@Override
 	public void flush() throws IOException {
 		if (console != null) {
 			console.flush();
@@ -72,6 +74,7 @@ public class StreamMonitor extends OutputStream {
 	/**
 	 * @see java.io.OutputStream#write(int)
 	 */
+	@Override
 	public synchronized void write(int b) throws IOException {
 		if (console != null) {
 			console.write(b);
@@ -80,8 +83,9 @@ public class StreamMonitor extends OutputStream {
 	}
 
 	/**
-	 * @see java.io.OutputStream#write(...)
+	 * @see java.io.OutputStream#write(byte[], int, int)
 	 */
+	@Override
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();

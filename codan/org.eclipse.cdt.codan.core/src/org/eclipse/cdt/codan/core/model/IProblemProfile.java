@@ -21,8 +21,8 @@ package org.eclipse.cdt.codan.core.model;
  * with the same id can exist in the same profile (i.e. two category can have same problem listed in both, 
  * but they both should point to the same problem instance). 
  *  
- * To obtain read-only profile use method {@link CheckersRegisry#getResourceProfile,
- * CheckersRegisry#getDefaultProfile() or CheckersRegisry#getWorkspaceProfile()}
+ * To obtain read-only profile use method {@link CheckersRegistry#getResourceProfile,
+ * CheckersRegistry#getDefaultProfile() or CheckersRegistry#getWorkspaceProfile()}
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

@@ -14,7 +14,7 @@ import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
 import org.eclipse.cdt.codan.core.model.IProblemLocationFactory;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
-import org.eclipse.cdt.codan.internal.core.CheckersRegisry;
+import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.cdt.codan.internal.core.CodanBuilder;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
 import org.eclipse.cdt.codan.internal.core.model.ProblemLocationFactory;
@@ -34,7 +34,7 @@ public class CodanRuntime {
 	private static CodanRuntime instance = new CodanRuntime();
 	private IProblemReporter problemReporter = new CodanMarkerProblemReporter();
 	private ICodanBuilder builder = new CodanBuilder();
-	private CheckersRegisry checkers = CheckersRegisry.getInstance();
+	private CheckersRegistry checkers = CheckersRegistry.getInstance();
 	private IProblemLocationFactory locFactory = new ProblemLocationFactory();
 
 	/**

@@ -21,7 +21,7 @@ import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
-import org.eclipse.cdt.codan.internal.core.CheckersRegisry;
+import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -44,7 +44,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 			throw new NullPointerException("file"); //$NON-NLS-1$
 		if (id == null)
 			throw new NullPointerException("id"); //$NON-NLS-1$
-		IProblem problem = CheckersRegisry.getInstance().getResourceProfile(
+		IProblem problem = CheckersRegistry.getInstance().getResourceProfile(
 				file).findProblem(id);
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered:" + id); //$NON-NLS-1$

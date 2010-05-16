@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.service.prefs.Preferences;
 
-public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
+public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String NAME_ATTR = "name"; //$NON-NLS-1$
 	private static final String ID_ATTR = "id"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_NAME = "checkers"; //$NON-NLS-1$
@@ -46,11 +46,11 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String CATEGORY_ELEMENT = "category"; //$NON-NLS-1$
 	private static final Object DEFAULT = "DEFAULT"; //$NON-NLS-1$
 	private Collection<IChecker> checkers = new ArrayList<IChecker>();
-	private static CheckersRegisry instance;
+	private static CheckersRegistry instance;
 	private HashMap<Object, IProblemProfile> profiles = new HashMap<Object, IProblemProfile>();
 	private HashMap<IChecker, Collection<IProblem>> problemList = new HashMap<IChecker, Collection<IProblem>>();
 
-	private CheckersRegisry() {
+	private CheckersRegistry() {
 		instance = this;
 		profiles.put(DEFAULT, new ProblemProfile());
 		readCheckersRegistry();
@@ -239,9 +239,9 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		return checkers.iterator();
 	}
 
-	public static CheckersRegisry getInstance() {
+	public static CheckersRegistry getInstance() {
 		if (instance == null)
-			return new CheckersRegisry();
+			return new CheckersRegistry();
 		return instance;
 	}
 

@@ -93,7 +93,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 
 	protected void processResource(IResource resource,
 			IProgressMonitor monitor, Object model, boolean inEditor) {
-		CheckersRegisry chegistry = CheckersRegisry.getInstance();
+		CheckersRegistry chegistry = CheckersRegistry.getInstance();
 		int checkers = chegistry.getCheckersSize();
 		int memsize = 0;
 		if (resource instanceof IContainer) {

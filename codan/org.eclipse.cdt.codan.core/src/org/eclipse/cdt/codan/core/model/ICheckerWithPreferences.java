@@ -22,7 +22,7 @@ package org.eclipse.cdt.codan.core.model;
  * 
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface ICheckerWithParameters {
+public interface ICheckerWithPreferences {
 	/**
 	 * Implement this method to set default parameters for checkers with
 	 * parameters.
@@ -30,5 +30,5 @@ public interface ICheckerWithParameters {
 	 * @param problem
 	 *            - instance of problem working copy
 	 */
-	void initParameters(IProblemWorkingCopy problem);
+	void initPreferences(IProblemWorkingCopy problem);
 }

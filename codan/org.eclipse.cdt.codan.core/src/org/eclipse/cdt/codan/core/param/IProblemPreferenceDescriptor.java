@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.core.param;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +28,8 @@ import java.util.Map;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IProblemParameterInfo {
-	public enum ParameterType {
+public interface IProblemPreferenceDescriptor extends Cloneable {
+	public enum PreferenceType {
 		TYPE_STRING("string"), //$NON-NLS-1$
 		TYPE_INTEGER("integer"), //$NON-NLS-1$
 		TYPE_BOOLEAN("boolean"), //$NON-NLS-1$
@@ -39,14 +38,14 @@ public interface IProblemParameterInfo {
 		TYPE_MAP("map"); //$NON-NLS-1$
 		private String literal;
 
-		private ParameterType(String literal) {
+		private PreferenceType(String literal) {
 			this.literal = literal;
 		}
 
-		public static ParameterType valueOfLiteral(String name) {
-			ParameterType[] values = values();
+		public static PreferenceType valueOfLiteral(String name) {
+			PreferenceType[] values = values();
 			for (int i = 0; i < values.length; i++) {
-				ParameterType e = values[i];
+				PreferenceType e = values[i];
 				if (e.literal.equals(name))
 					return e;
 			}
@@ -62,7 +61,7 @@ public interface IProblemParameterInfo {
 		 * @param value
 		 * @return parameter type corresponding to the value java type
 		 */
-		public static ParameterType typeOf(Object value) {
+		public static PreferenceType typeOf(Object value) {
 			if (value instanceof Boolean)
 				return TYPE_BOOLEAN;
 			if (value instanceof String)
@@ -90,7 +89,7 @@ public interface IProblemParameterInfo {
 	 * 
 	 * @return string value of the type
 	 */
-	ParameterType getType();
+	PreferenceType getType();
 
 	/**
 	 * Additional info on how it is represented in the ui, for example boolean
@@ -115,20 +114,32 @@ public interface IProblemParameterInfo {
 	String getToolTip();
 
 	/**
-	 * Available if type is list or hash. Returns value of subparamer with the
+	 * Available if type is composite. Returns value of subdescriptor with the
 	 * name of key. For the "list" type key is the number (index).
 	 * 
 	 * @param key
-	 *            - name of the subparameter.
+	 *            - name of the subdescriptor.
 	 * @return
 	 */
-	IProblemParameterInfo getElement(String key);
+	IProblemPreference getChildDescriptor(String key);
 
 	/**
-	 * Available if type is list or hash. Returns iterator over parameter values
-	 * for list and hash.
+	 * Available if type is list or map. Returns array of children.
+	 * Of size 0 for basic types, keys for map, and arrays of 0 element for
+	 * array type
+	 * (since all elements are the same).
 	 * 
 	 * @return
 	 */
-	Iterator<IProblemParameterInfo> getIterator();
+	IProblemPreference[] getChildDescriptors();
+
+	void addChildDescriptor(IProblemPreference info);
+
+	Object clone();
+
+	IProblemPreference getParent();
+
+	public void setParent(IProblemPreference parent);
+
+	String getQualifiedKey();
 }

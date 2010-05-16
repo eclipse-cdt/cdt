@@ -62,7 +62,9 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 				Object[] children = p.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					Object object = children[i];
-					if (isChecked(object)) { return true; }
+					if (isChecked(object)) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -76,7 +78,9 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		 * Object)
 		 */
 		public boolean isGrayed(Object element) {
-			if (element instanceof IProblem) { return false; }
+			if (element instanceof IProblem) {
+				return false;
+			}
 			if (element instanceof IProblemCategory) {
 				// checked if at least one is checked (buy grayed)
 				IProblemCategory p = (IProblemCategory) element;
@@ -91,14 +95,16 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 						all_checked = false;
 					}
 				}
-				if (all_checked || all_unchecked) return false;
+				if (all_checked || all_unchecked)
+					return false;
 				return true;
 			}
 			return false;
 		}
 	}
 
-	class ProblemsContentProvider implements IContentProvider, ITreeContentProvider {
+	class ProblemsContentProvider implements IContentProvider,
+			ITreeContentProvider {
 		public void dispose() {
 			// TODO Auto-generated method stub
 		}
@@ -108,10 +114,15 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof Object[]) return (Object[]) parentElement;
-			if (parentElement instanceof IProblemCategory) { return ((IProblemCategory) parentElement).getChildren(); }
-			if (parentElement instanceof IProblemProfile) { return ((IProblemProfile) parentElement).getRoot()
-					.getChildren(); }
+			if (parentElement instanceof Object[])
+				return (Object[]) parentElement;
+			if (parentElement instanceof IProblemCategory) {
+				return ((IProblemCategory) parentElement).getChildren();
+			}
+			if (parentElement instanceof IProblemProfile) {
+				return ((IProblemProfile) parentElement).getRoot()
+						.getChildren();
+			}
 			return new Object[0];
 		}
 
@@ -128,35 +139,39 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		}
 	}
 
+	@Override
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
 		if (element instanceof IProblemWorkingCopy) {
 			((IProblemWorkingCopy) element).setEnabled(event.getChecked());
 		} else if (element instanceof IProblemCategory) {
-			IProblemCategory cat = (IProblemCategory)element;
+			IProblemCategory cat = (IProblemCategory) element;
 			IProblemElement[] children = cat.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				IProblemElement pe = children[i];
-				checkStateChanged(new CheckStateChangedEvent(getTreeViewer(), pe, event.getChecked()));
+				checkStateChanged(new CheckStateChangedEvent(getTreeViewer(),
+						pe, event.getChecked()));
 			}
 		}
 		getTreeViewer().refresh();
 	}
 
-
-
 	public ProblemsTreeEditor(Composite parent, IProblemProfile profile) {
-		super(PreferenceConstants.P_PROBLEMS, CodanUIMessages.ProblemsTreeEditor_Problems, parent);
+		super(PreferenceConstants.P_PROBLEMS,
+				CodanUIMessages.ProblemsTreeEditor_Problems, parent);
 		setEmptySelectionAllowed(true);
 		getTreeViewer().getTree().setHeaderVisible(true);
 		// getTreeViewer().getTree().
 		getTreeViewer().setContentProvider(new ProblemsContentProvider());
 		getTreeViewer().setCheckStateProvider(new ProblemsCheckStateProvider());
 		// column Name
-		TreeViewerColumn column1 = new TreeViewerColumn(getTreeViewer(), SWT.NONE);
+		TreeViewerColumn column1 = new TreeViewerColumn(getTreeViewer(),
+				SWT.NONE);
 		column1.getColumn().setWidth(300);
-		column1.getColumn().setText(CodanUIMessages.ProblemsTreeEditor_NameColumn);
+		column1.getColumn().setText(
+				CodanUIMessages.ProblemsTreeEditor_NameColumn);
 		column1.setLabelProvider(new ColumnLabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;
@@ -170,27 +185,34 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			}
 		});
 		// column Severity
-		TreeViewerColumn column2 = new TreeViewerColumn(getTreeViewer(), SWT.NONE);
+		TreeViewerColumn column2 = new TreeViewerColumn(getTreeViewer(),
+				SWT.NONE);
 		column2.getColumn().setWidth(100);
-		column2.getColumn().setText(CodanUIMessages.ProblemsTreeEditor_SeverityColumn);
+		column2.getColumn().setText(
+				CodanUIMessages.ProblemsTreeEditor_SeverityColumn);
 		column2.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(Object element) {
-				final ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
+				final ISharedImages images = PlatformUI.getWorkbench()
+						.getSharedImages();
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;
 					switch (p.getSeverity().intValue()) {
-					case IMarker.SEVERITY_INFO:
-						return images.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
-					case IMarker.SEVERITY_WARNING:
-						return images.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
-					case IMarker.SEVERITY_ERROR:
-						return images.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+						case IMarker.SEVERITY_INFO:
+							return images
+									.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+						case IMarker.SEVERITY_WARNING:
+							return images
+									.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+						case IMarker.SEVERITY_ERROR:
+							return images
+									.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
 					}
 				}
 				return null;
 			}
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IProblem) {
 					IProblem p = (IProblem) element;
@@ -200,18 +222,23 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			}
 		});
 		column2.setEditingSupport(new EditingSupport(getTreeViewer()) {
+			@Override
 			protected boolean canEdit(Object element) {
 				return element instanceof IProblem;
 			}
 
+			@Override
 			protected CellEditor getCellEditor(Object element) {
-				return new ComboBoxCellEditor(getTreeViewer().getTree(), CodanSeverity.stringValues());
+				return new ComboBoxCellEditor(getTreeViewer().getTree(),
+						CodanSeverity.stringValues());
 			}
 
+			@Override
 			protected Object getValue(Object element) {
 				return ((IProblem) element).getSeverity().intValue();
 			}
 
+			@Override
 			protected void setValue(Object element, Object value) {
 				int index = ((Integer) value).intValue();
 				CodanSeverity val = CodanSeverity.values()[index];
@@ -276,6 +303,10 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			String id = probs[i].getId();
 			String s = codanPreferencesLoader.getProperty(id);
 			getPreferenceStore().setValue(id, s);
+			String params = codanPreferencesLoader.getPreferencesString(id);
+			if (params != null)
+				getPreferenceStore().setValue(
+						codanPreferencesLoader.getPreferencesKey(id), params);
 		}
 	}
 

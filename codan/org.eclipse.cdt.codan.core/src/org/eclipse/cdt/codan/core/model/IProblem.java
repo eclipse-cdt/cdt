@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 
 /**
  * Interface representing code analysis problem type. For example
@@ -65,16 +65,14 @@ public interface IProblem extends IProblemElement {
 	 */
 	String getMessagePattern();
 
-	public Object getParameter(Object key);
-
 	/**
-	 * Get parameter info root - contains description of types of all the
+	 * Get root preference descriptor - contains description of types of all the
 	 * parameters or null if not defined (used by ui to generate user controls
 	 * for changing parameters)
 	 * 
 	 * @return
 	 */
-	public IProblemParameterInfo getParameterInfo();
+	public IProblemPreference getPreference();
 
 	/**
 	 * Get short description of a problem

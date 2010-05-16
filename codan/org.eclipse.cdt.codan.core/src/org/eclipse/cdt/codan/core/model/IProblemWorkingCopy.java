@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 
 /**
  * Modifiable problem.
@@ -52,22 +52,11 @@ public interface IProblemWorkingCopy extends IProblem {
 
 	/**
 	 * Set value for the checker parameter, checker may set value during
-	 * initialization only
+	 * initialization only, which would the default. User control this values
+	 * through ui later.
 	 * 
-	 * @param key
-	 *            - key of the parameter
-	 * @param value
-	 *            - parameter value
 	 */
-	public void setParameter(Object key, Object value);
-
-	/**
-	 * Set parameter info object for the given problem, see
-	 * {@link IProblemParameterInfo}
-	 * 
-	 * @param info
-	 */
-	public void setParameterInfo(IProblemParameterInfo info);
+	public void setPreference(IProblemPreference pref);
 
 	/**
 	 * Set problem description

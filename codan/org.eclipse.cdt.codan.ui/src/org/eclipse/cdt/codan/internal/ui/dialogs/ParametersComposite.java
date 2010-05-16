@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.dialogs;
 
-import java.util.Iterator;
+import java.io.File;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo.ParameterType;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -28,13 +27,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * @author Alena
+ * Composite to show problem preferences
  * 
  */
 public class ParametersComposite extends Composite {
 	private FieldEditorPreferencePage page;
 	private IProblem problem;
-	private PreferenceStore pref;
+	private PreferenceStore prefStore;
 
 	/**
 	 * @param parent
@@ -47,44 +46,42 @@ public class ParametersComposite extends Composite {
 			throw new NullPointerException();
 		this.setLayout(new GridLayout(2, false));
 		this.problem = problem;
-		this.pref = new PreferenceStore();
+		this.prefStore = new PreferenceStore();
 		page = new FieldEditorPreferencePage() {
 			@Override
 			protected void createFieldEditors() {
 				noDefaultAndApplyButton();
-				IProblemParameterInfo parameterInfo = problem
-						.getParameterInfo();
-				createFieldEditorsForParameters(parameterInfo);
+				IProblemPreference pref = problem.getPreference();
+				createFieldEditorsForParameters(pref);
 			}
 
 			/**
 			 * @param info
 			 */
-			private void createFieldEditorsForParameters(
-					IProblemParameterInfo info) {
+			private void createFieldEditorsForParameters(IProblemPreference info) {
 				if (info == null)
 					return;
 				switch (info.getType()) {
 					case TYPE_STRING: {
 						StringFieldEditor fe = new StringFieldEditor(
-								info.getKey(), info.getLabel(),
+								info.getQualifiedKey(), info.getLabel(),
 								getFieldEditorParent());
 						addField(fe);
 						break;
 					}
 					case TYPE_BOOLEAN: {
 						BooleanFieldEditor fe = new BooleanFieldEditor(
-								info.getKey(), info.getLabel(),
+								info.getQualifiedKey(), info.getLabel(),
 								getFieldEditorParent());
 						addField(fe);
 						break;
 					}
 					case TYPE_MAP: {
-						Iterator<IProblemParameterInfo> iterator = info
-								.getIterator();
-						while (iterator.hasNext()) {
-							IProblemParameterInfo info1 = iterator.next();
-							createFieldEditorsForParameters(info1);
+						IProblemPreference[] childrenDescriptor = info
+								.getChildDescriptors();
+						for (int i = 0; i < childrenDescriptor.length; i++) {
+							IProblemPreference desc = childrenDescriptor[i];
+							createFieldEditorsForParameters(desc);
 						}
 						break;
 					}
@@ -94,70 +91,92 @@ public class ParametersComposite extends Composite {
 				}
 			}
 		};
-		IProblemParameterInfo info = problem.getParameterInfo();
+		IProblemPreference info = problem.getPreference();
 		if (info == null) {
 			Label label = new Label(this, 0);
 			label.setText(CodanUIMessages.ParametersComposite_None);
+		} else {
+			initPrefStore(info);
 		}
-		initPrefStore(info);
-		page.setPreferenceStore(pref);
+		page.setPreferenceStore(prefStore);
 		page.createControl(parent);
 		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
-	public void save(IProblemWorkingCopy problemwc) {
+	public void save(IProblemWorkingCopy problem) {
 		page.performOk();
-		IProblemParameterInfo info = problemwc.getParameterInfo();
-		savePrefStore(info, problemwc);
+		savePrefStore(problem.getPreference());
+	}
+
+	private void savePrefStore(IProblemPreference desc) {
+		if (desc == null)
+			return;
+		String key = desc.getQualifiedKey();
+		switch (desc.getType()) {
+			case TYPE_STRING:
+				desc.setValue(prefStore.getString(key));
+				break;
+			case TYPE_BOOLEAN:
+				desc.setValue(prefStore.getBoolean(key));
+				break;
+			case TYPE_INTEGER:
+				desc.setValue(prefStore.getInt(key));
+				break;
+			case TYPE_FILE:
+				desc.setValue(new File(prefStore.getString(key)));
+				break;
+			case TYPE_MAP:
+			case TYPE_LIST:
+				IProblemPreference[] childrenDescriptor = desc
+						.getChildDescriptors();
+				for (int i = 0; i < childrenDescriptor.length; i++) {
+					IProblemPreference chi = childrenDescriptor[i];
+					savePrefStore(chi);
+				}
+				break;
+			default:
+				throw new UnsupportedOperationException(desc.getType()
+						.toString());
+		}
+	}
+
+	private void initPrefStore(IProblemPreference desc) {
+		if (desc == null)
+			return;
+		String key = desc.getQualifiedKey();
+		switch (desc.getType()) {
+			case TYPE_STRING:
+				prefStore.setValue(key, (String) desc.getValue());
+				break;
+			case TYPE_BOOLEAN:
+				prefStore.setValue(key, (Boolean) desc.getValue());
+				break;
+			case TYPE_INTEGER:
+				prefStore.setValue(key, (Integer) desc.getValue());
+				break;
+			case TYPE_FILE:
+				prefStore.setValue(key, ((File) desc.getValue()).getPath());
+				break;
+			case TYPE_MAP:
+			case TYPE_LIST: {
+				IProblemPreference[] childrenDescriptor = desc
+						.getChildDescriptors();
+				for (int i = 0; i < childrenDescriptor.length; i++) {
+					IProblemPreference chi = childrenDescriptor[i];
+					initPrefStore(chi);
+				}
+				break;
+			}
+			default:
+				throw new UnsupportedOperationException(desc.getType()
+						.toString());
+		}
 	}
 
 	/**
-	 * @param info
-	 * @param problemwc
+	 * @return the problem
 	 */
-	private void savePrefStore(IProblemParameterInfo info,
-			IProblemWorkingCopy problemwc) {
-		if (info == null)
-			return;
-		String key = info.getKey();
-		Object parameter = problem.getParameter(key);
-		if (info.getType() == ParameterType.TYPE_MAP && parameter == null) {
-			Iterator<IProblemParameterInfo> iterator = info.getIterator();
-			while (iterator.hasNext()) {
-				IProblemParameterInfo info1 = iterator.next();
-				savePrefStore(info1, problemwc);
-			}
-		} else if (parameter instanceof String) {
-			String newValue = pref.getString(key);
-			problemwc.setParameter(key, newValue);
-		} else if (parameter instanceof Boolean) {
-			boolean newValue = pref.getBoolean(key);
-			problemwc.setParameter(key, newValue);
-		} else
-			throw new UnsupportedOperationException(info.getType().toString());
-	}
-
-	/**
-	 * @param info
-	 */
-	private void initPrefStore(IProblemParameterInfo info) {
-		if (info == null)
-			return;
-		String key = info.getKey();
-		Object parameter = problem.getParameter(key);
-		if (info.getType() == ParameterType.TYPE_MAP && parameter == null) {
-			Iterator<IProblemParameterInfo> iterator = info.getIterator();
-			while (iterator.hasNext()) {
-				IProblemParameterInfo info1 = iterator.next();
-				initPrefStore(info1);
-			}
-		} else if (parameter instanceof String) {
-			pref.setDefault(key, (String) parameter);
-			pref.setValue(key, (String) parameter);
-		} else if (parameter instanceof Boolean) {
-			pref.setDefault(key, (Boolean) parameter);
-			pref.setValue(key, (Boolean) parameter);
-		} else
-			throw new UnsupportedOperationException(info.getType().toString());
+	public IProblem getProblem() {
+		return problem;
 	}
 }

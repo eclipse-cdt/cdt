@@ -17,7 +17,7 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.cdt.codan.internal.ui.dialogs.CustomizeProblemDialog;
@@ -88,6 +88,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		};
 	}
 
+	@Override
 	protected String getPageId() {
 		return "org.eclipse.cdt.codan.internal.ui.preferences.CodanPreferencePage"; //$NON-NLS-1$
 	}
@@ -97,12 +98,13 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 * GUI blocks needed to manipulate various types of preferences. Each field
 	 * editor knows how to save and restore itself.
 	 */
+	@Override
 	public void createFieldEditors() {
 		profile = isPropertyPage() ? getRegistry()
 				.getResourceProfileWorkingCopy((IResource) getElement())
 				: getRegistry().getWorkspaceProfile();
-		checkedTreeEditor = new ProblemsTreeEditor(
-				getFieldEditorParent(), profile);
+		checkedTreeEditor = new ProblemsTreeEditor(getFieldEditorParent(),
+				profile);
 		addField(checkedTreeEditor);
 		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(
 				problemSelectionListener);
@@ -136,10 +138,10 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		info.setLayoutData(new GridData(GridData.FILL_BOTH));
 		info.setLayout(new GridLayout(3, false));
 		info.setText(CodanUIMessages.CodanPreferencePage_Info);
-		GridDataFactory gdLab = GridDataFactory.swtDefaults().align(
-				SWT.BEGINNING, SWT.BEGINNING).grab(false, false);
-		GridDataFactory gdFact = GridDataFactory.swtDefaults().align(
-				SWT.BEGINNING, SWT.BEGINNING).grab(true, true);
+		GridDataFactory gdLab = GridDataFactory.swtDefaults()
+				.align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false);
+		GridDataFactory gdFact = GridDataFactory.swtDefaults()
+				.align(SWT.BEGINNING, SWT.BEGINNING).grab(true, true);
 		// message
 		Label labelMessage = new Label(info, SWT.NONE);
 		labelMessage.setText(CodanUIMessages.CodanPreferencePage_MessageLabel);
@@ -152,8 +154,12 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		labelDesc.setLayoutData(gdLab.create());
 		infoDesc = new Label(info, SWT.WRAP);
 		PixelConverter pixelConverter = new PixelConverter(comp);
-		infoDesc.setLayoutData(gdFact.copy().span(2, 1).hint(pixelConverter.convertWidthInCharsToPixels(60),
-				pixelConverter.convertHeightInCharsToPixels(3)).create());
+		infoDesc.setLayoutData(gdFact
+				.copy()
+				.span(2, 1)
+				.hint(pixelConverter.convertWidthInCharsToPixels(60),
+						pixelConverter.convertHeightInCharsToPixels(3))
+				.create());
 		// params
 		Label labelParams = new Label(info, SWT.NONE);
 		labelParams.setText(CodanUIMessages.CodanPreferencePage_Parameters);
@@ -161,8 +167,8 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 		infoParams = new Label(info, SWT.NONE);
 		infoParams.setLayoutData(gdFact.create());
 		infoButton = new Button(info, SWT.PUSH);
-		infoButton.setLayoutData(GridDataFactory.swtDefaults().align(SWT.END,
-				SWT.BEGINNING).create());
+		infoButton.setLayoutData(GridDataFactory.swtDefaults()
+				.align(SWT.END, SWT.BEGINNING).create());
 		infoButton.setText(CodanUIMessages.CodanPreferencePage_Customize);
 		infoButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -170,7 +176,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 				openCustomizeDialog();
 			}
 		});
-	    restoreWidgetValues();
+		restoreWidgetValues();
 	}
 
 	/**
@@ -205,15 +211,19 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 * 
 	 */
 	private void saveWidgetValues() {
-		CodanUIActivator.getDefault().getDialogSettings().put(getWidgetId(),
-				selectedProblem == null ? "" : selectedProblem.getId()); //$NON-NLS-1$
+		CodanUIActivator
+				.getDefault()
+				.getDialogSettings()
+				.put(getWidgetId(),
+						selectedProblem == null ? "" : selectedProblem.getId()); //$NON-NLS-1$
 	}
 
 	private void restoreWidgetValues() {
-		String id = CodanUIActivator.getDefault().getDialogSettings().get(
-				getWidgetId());
+		String id = CodanUIActivator.getDefault().getDialogSettings()
+				.get(getWidgetId());
 		if (id != null && id.length() > 0) {
-			checkedTreeEditor.getTreeViewer().setSelection(new StructuredSelection(profile.findProblem(id)), true);
+			checkedTreeEditor.getTreeViewer().setSelection(
+					new StructuredSelection(profile.findProblem(id)), true);
 		} else {
 			setSelectedProblem(null);
 		}
@@ -236,21 +246,20 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 			infoParams.setText(""); //$NON-NLS-1$
 			infoButton.setEnabled(false);
 		} else {
-			IProblemParameterInfo parameterInfo = selectedProblem
-					.getParameterInfo();
-			String desc = selectedProblem.getDescription();
-			if (desc == null)
-				desc = CodanUIMessages.CodanPreferencePage_NoInfo;
+			IProblemPreference pref = selectedProblem.getPreference();
+			String description = selectedProblem.getDescription();
+			if (description == null)
+				description = CodanUIMessages.CodanPreferencePage_NoInfo;
 			String messagePattern = selectedProblem.getMessagePattern();
 			String message = CodanUIMessages.CodanPreferencePage_NoInfo;
 			if (messagePattern != null) {
-				message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+				message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 			}
 			infoMessage.setText(message);
-			infoDesc.setText(desc);
+			infoDesc.setText(description);
 			infoParams
-					.setText(parameterInfo == null ? CodanUIMessages.CodanPreferencePage_NoInfo
-							: CodanUIMessages.CodanPreferencePage_HasParameters);
+					.setText(pref == null ? CodanUIMessages.CodanPreferencePage_NoInfo
+							: CodanUIMessages.CodanPreferencePage_HasPreferences);
 			infoButton.setEnabled(true);
 		}
 		info.layout(true);

@@ -14,6 +14,8 @@ import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -21,7 +23,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * @author Alena
+ * Helper class to load/save problem profile settings in persistent storage
  * 
  */
 public class CodanPreferencesLoader {
@@ -58,7 +60,7 @@ public class CodanPreferencesLoader {
 	 */
 	public void setProperty(String id, String s) {
 		IProblem prob = baseModel.findProblem(id);
-		if (!(prob instanceof CodanProblem))
+		if (!(prob instanceof IProblemWorkingCopy))
 			return;
 		String sevs = s;
 		boolean enabled = true;
@@ -66,14 +68,14 @@ public class CodanPreferencesLoader {
 			sevs = sevs.substring(1);
 			enabled = false;
 		}
-		((CodanProblem) prob).setEnabled(enabled);
+		((IProblemWorkingCopy) prob).setEnabled(enabled);
 		CodanSeverity sev;
 		try {
 			sev = CodanSeverity.valueOf(sevs);
 		} catch (RuntimeException e) {
 			sev = CodanSeverity.Warning;
 		}
-		((CodanProblem) prob).setSeverity(sev);
+		((IProblemWorkingCopy) prob).setSeverity(sev);
 	}
 
 	/*
@@ -117,7 +119,25 @@ public class CodanPreferencesLoader {
 			String s = storePreferences.get(id, null);
 			if (s != null) {
 				setProperty(id, s);
+				setParameterValues(id, storePreferences);
 			}
+		}
+	}
+
+	/**
+	 * @param problemId
+	 * @param storePreferences
+	 */
+	private void setParameterValues(String problemId,
+			Preferences storePreferences) {
+		IProblem prob = baseModel.findProblem(problemId);
+		String prefKey = getPreferencesKey(problemId);
+		if (prefKey == null)
+			return;
+		String exported = storePreferences.get(prefKey, null);
+		if (exported != null) {
+			System.err.println(prefKey + " import " + exported);
+			prob.getPreference().importValue(exported);
 		}
 	}
 
@@ -137,5 +157,31 @@ public class CodanPreferencesLoader {
 		if (prefNode == null)
 			return null;
 		return prefNode;
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	public String getPreferencesKey(String id) {
+		IProblem prob = baseModel.findProblem(id);
+		IProblemPreference pref = prob.getPreference();
+		if (pref == null)
+			return null;
+		return id + "." + pref.getKey(); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param id
+	 * @return
+	 */
+	public String getPreferencesString(String id) {
+		IProblem prob = baseModel.findProblem(id);
+		IProblemPreference pref = prob.getPreference();
+		if (pref == null)
+			return null;
+		String str = pref.exportValue();
+		//System.err.println(id + " set " + str);
+		return str;
 	}
 }

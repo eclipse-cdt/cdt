@@ -13,10 +13,9 @@ package org.eclipse.cdt.codan.internal.checkers;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
-import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
+import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.core.param.SingleParameterInfo;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -29,10 +28,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
  * 
  */
 public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
-		implements ICheckerWithParameters {
-	private static final String DEFAULT_PATTERN = "^[a-z]"; // default pattern name starts with english lowercase letter //$NON-NLS-1$
-	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
+		implements ICheckerWithPreferences {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"; //$NON-NLS-1$
+	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		final IProblem pt = getProblemById(ER_ID, getFile());
@@ -44,7 +42,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 
 				public int visit(IASTDeclaration element) {
 					if (element instanceof IASTFunctionDefinition) {
-						String parameter = (String) pt.getParameter(PARAM_KEY);
+						String parameter = (String) getPreference(pt,PARAM_KEY);
 						Pattern pattern = Pattern.compile(parameter);
 						IASTName astName = ((IASTFunctionDefinition) element)
 								.getDeclarator().getName();
@@ -65,13 +63,15 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckerWithParameters#initParameters
+	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
-	public void initParameters(IProblemWorkingCopy problem) {
-		problem.setParameterInfo(new SingleParameterInfo(PARAM_KEY,
-				CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern));
-		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN);
+	public void initPreferences(IProblemWorkingCopy problem) {
+		addPreference(
+				problem,
+				PARAM_KEY,
+				CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern,
+				"^[a-z]"); //$NON-NLS-1$
 	}
 
 	@Override

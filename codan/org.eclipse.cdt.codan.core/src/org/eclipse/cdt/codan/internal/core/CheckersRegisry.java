@@ -19,7 +19,7 @@ import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IChecker;
-import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
+import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemCategory;
@@ -81,14 +81,19 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 		for (Iterator<IChecker> iterator = problemList.keySet().iterator(); iterator
 				.hasNext();) {
 			IChecker c = iterator.next();
-			if (c instanceof ICheckerWithParameters) {
+			if (c instanceof ICheckerWithPreferences) {
 				Collection<IProblem> list = problemList.get(c);
 				for (Iterator<IProblem> iterator2 = list.iterator(); iterator2
 						.hasNext();) {
 					IProblem p = iterator2.next();
 					if (p instanceof IProblemWorkingCopy) {
-						((ICheckerWithParameters) c)
-								.initParameters((IProblemWorkingCopy) p);
+						try {
+							((ICheckerWithPreferences) c)
+									.initPreferences((IProblemWorkingCopy) p);
+						} catch (Throwable t) {
+							t.printStackTrace();
+							CodanCorePlugin.log(t);
+						}
 					}
 				}
 			}
@@ -161,7 +166,7 @@ public class CheckersRegisry implements Iterable<IChecker>, ICheckersRegistry {
 					addRefProblem(checkerObj, p);
 				}
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			CodanCorePlugin.log(e);
 		}
 	}

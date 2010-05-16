@@ -98,7 +98,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 	 */
 	protected boolean checkImplicitReturn(String id) {
 		final IProblem pt = getProblemById(id, getFile());
-		return (Boolean) pt.getParameter(PARAM_IMPLICIT);
+		return (Boolean) getPreference(pt,PARAM_IMPLICIT);
 	}
 
 	/**
@@ -158,11 +158,11 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		return type;
 	}
 
-	/* checker must implement @link ICheckerWithParameters */
-	public void initParameters(IProblemWorkingCopy problem) {
+	/* checker must implement @link ICheckerWithPreferences */
+	public void initPreferences(IProblemWorkingCopy problem) {
 		if (problem.getId().equals(RET_NO_VALUE_ID)
 				|| problem.getId().equals(RET_NORET_ID)) {
-			addParam(problem, PARAM_IMPLICIT,
+			addPreference(problem, PARAM_IMPLICIT,
 					CheckersMessages.ReturnChecker_Param0, Boolean.FALSE);
 		}
 	}

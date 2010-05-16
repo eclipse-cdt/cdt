@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -27,15 +28,14 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
  * Checker that detects statements without effect such as
  * 
  * a+b;
- * 
  * or
- * 
  * +b;
  * 
  * 
  */
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
+	private static final String PARAM_MACRO_ID = "macro";
 
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new CheckStmpVisitor());
@@ -110,5 +110,9 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			}
 			return false;
 		}
+	}
+
+	public void initPreferences(IProblemWorkingCopy problem) {
+		addPreference(problem, PARAM_MACRO_ID, "Check statements that belong to macro", Boolean.TRUE);
 	}
 }

@@ -41,6 +41,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		suite.addTestSuite(ExpressionRequiredInReturnCheckerTest.class);
 		suite.addTestSuite(CatchByReferenceTest.class);
+		suite.addTest(CodanFastTestSuite.suite());
 		return suite;
 	}
 }

@@ -22,7 +22,7 @@ public class CodanUIMessages extends NLS {
 	public static String CheckedTreeEditor_SelectionCannotBeEmpty;
 	public static String CodanPreferencePage_Customize;
 	public static String CodanPreferencePage_Description;
-	public static String CodanPreferencePage_HasParameters;
+	public static String CodanPreferencePage_HasPreferences;
 	public static String CodanPreferencePage_Info;
 	public static String CodanPreferencePage_MessageLabel;
 	public static String CodanPreferencePage_NoInfo;

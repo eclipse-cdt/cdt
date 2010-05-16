@@ -11,12 +11,13 @@
 package org.eclipse.cdt.codan.examples.checkers;
 
 import java.util.regex.Pattern;
+
 import org.eclipse.cdt.codan.core.cxx.model.AbstractCIndexChecker;
-import org.eclipse.cdt.codan.core.model.ICheckerWithParameters;
+import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.core.param.AbstractProblemParameterInfo;
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -27,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 public class NamingConventionFunctionIIndexChecker extends
-		AbstractCIndexChecker implements ICheckerWithParameters {
+		AbstractCIndexChecker implements ICheckerWithPreferences {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
@@ -45,7 +46,8 @@ public class NamingConventionFunctionIIndexChecker extends
 			unit.accept(new ICElementVisitor() {
 				public boolean visit(ICElement element) throws CoreException {
 					if (element.getElementType() == ICElement.C_FUNCTION) {
-						String parameter = (String) pt.getParameter(PARAM_KEY);
+						String parameter = (String) pt.getPreference()
+								.getValue();
 						Pattern pattern = Pattern.compile(parameter);
 						String name = element.getElementName();
 						if (!pattern.matcher(name).find()) {
@@ -67,21 +69,14 @@ public class NamingConventionFunctionIIndexChecker extends
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckerWithParameters#initParameters
+	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
-	public void initParameters(IProblemWorkingCopy problem) {
-		IProblemParameterInfo info = new AbstractProblemParameterInfo() {
-			public String getLabel() {
-				return "Name Pattern";
-			}
-
-			public String getKey() {
-				return PARAM_KEY;
-			}
-		};
-		problem.setParameterInfo(info);
-		problem.setParameter(PARAM_KEY, DEFAULT_PATTERN);
+	public void initPreferences(IProblemWorkingCopy problem) {
+		IProblemPreference info = new BasicProblemPreference(PARAM_KEY,
+				"Name Pattern");
+		info.setValue(DEFAULT_PATTERN);
+		problem.setPreference(info);
 	}
 
 	@Override

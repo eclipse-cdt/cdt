@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
-import java.util.HashMap;
-
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
-import org.eclipse.cdt.codan.core.param.IProblemParameterInfo;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 
 public class CodanProblem implements IProblemWorkingCopy {
 	private String id;
@@ -23,8 +21,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 	private String message;
 	private CodanSeverity severity = CodanSeverity.Warning;
 	private boolean enabled = true;
-	private HashMap<Object, Object> parameters = new HashMap<Object, Object>(0);
-	private IProblemParameterInfo parameterInfo;
+	private IProblemPreference preference;
 	private boolean frozen;
 	private String description;
 	private String markerType = IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE;
@@ -76,20 +73,12 @@ public class CodanProblem implements IProblemWorkingCopy {
 		return super.clone();
 	}
 
-	public void setParameter(Object key, Object value) {
-		parameters.put(key, value);
+	public void setPreference(IProblemPreference value) {
+		preference = value;
 	}
 
-	public void setParameterInfo(IProblemParameterInfo info) {
-		parameterInfo = info;
-	}
-
-	public Object getParameter(Object key) {
-		return parameters.get(key);
-	}
-
-	public IProblemParameterInfo getParameterInfo() {
-		return parameterInfo;
+	public IProblemPreference getPreference() {
+		return preference;
 	}
 
 	/*

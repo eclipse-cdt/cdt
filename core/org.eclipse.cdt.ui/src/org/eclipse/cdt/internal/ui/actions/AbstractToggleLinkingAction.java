@@ -27,9 +27,9 @@ public abstract class AbstractToggleLinkingAction extends Action {
 	 * Constructs a new action.
 	 */
 	public AbstractToggleLinkingAction() {
-		super(ActionMessages.getString("ToggleLinkingAction.label")); //$NON-NLS-1$
-		setDescription(ActionMessages.getString("ToggleLinkingAction.description")); //$NON-NLS-1$
-		setToolTipText(ActionMessages.getString("ToggleLinkingAction.tooltip")); //$NON-NLS-1$
+		super(ActionMessages.ToggleLinkingAction_label);
+		setDescription(ActionMessages.ToggleLinkingAction_description);
+		setToolTipText(ActionMessages.ToggleLinkingAction_tooltip);
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
 	}

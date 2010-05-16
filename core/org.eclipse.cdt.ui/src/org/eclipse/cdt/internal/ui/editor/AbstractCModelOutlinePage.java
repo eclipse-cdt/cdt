@@ -187,9 +187,9 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		AbstractCModelOutlinePage fOutLinePage;
 
 		public IncludeGroupingAction(AbstractCModelOutlinePage outlinePage) {
-			super(ActionMessages.getString("IncludesGroupingAction.label")); //$NON-NLS-1$
-			setDescription(ActionMessages.getString("IncludesGroupingAction.description")); //$NON-NLS-1$
-			setToolTipText(ActionMessages.getString("IncludesGroupingAction.tooltip")); //$NON-NLS-1$
+			super(ActionMessages.IncludesGroupingAction_label);
+			setDescription(ActionMessages.IncludesGroupingAction_description);
+			setToolTipText(ActionMessages.IncludesGroupingAction_tooltip);
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_GROUP_INCLUDE);
 
 			boolean enabled= isIncludesGroupingEnabled();
@@ -219,9 +219,9 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	protected static class MacroGroupingAction extends Action {
 
 		public MacroGroupingAction(AbstractCModelOutlinePage outlinePage) {
-			super(ActionMessages.getString("MacroGroupingAction.label")); //$NON-NLS-1$
-			setDescription(ActionMessages.getString("MacroGroupingAction.description")); //$NON-NLS-1$
-			setToolTipText(ActionMessages.getString("MacroGroupingAction.tooltip")); //$NON-NLS-1$
+			super(ActionMessages.MacroGroupingAction_label);
+			setDescription(ActionMessages.MacroGroupingAction_description);
+			setToolTipText(ActionMessages.MacroGroupingAction_tooltip);
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_MACROS);
 			this.setImageDescriptor(CPluginImages.DESC_OBJS_MACRO);
 			this.setDisabledImageDescriptor(CPluginImages.DESC_OBJS_MACRO);

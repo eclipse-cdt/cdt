@@ -156,12 +156,12 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			File file= new File(path);		
 			if (file.exists()) {
 				if (!file.canWrite()) {
-					final String msg= NLS.bind(ActionMessages.getString("CreateParserLogAction.readOnlyFile"), path); 
+					final String msg= NLS.bind(ActionMessages.CreateParserLogAction_readOnlyFile, path); 
 					MessageDialog.openError(fSite.getShell(), title, msg);
 					path= null;
 				}
 				else {
-					final String msg = NLS.bind(ActionMessages.getString("CreateParserLogAction.existingFile"), path); 
+					final String msg = NLS.bind(ActionMessages.CreateParserLogAction_existingFile, path); 
 					if (!MessageDialog.openQuestion(fSite.getShell(), title, msg)) {
 						path= null;
 					}

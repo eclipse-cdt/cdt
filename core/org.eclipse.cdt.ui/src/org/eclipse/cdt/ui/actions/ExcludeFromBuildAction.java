@@ -75,11 +75,12 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 						}
 						IResource res = null;
 						// only folders and files may be affected by this action
-						if (obs[i] instanceof ICContainer || obs[i] instanceof ITranslationUnit)
-							res = ((ICElement)obs[i]).getResource();
-						// project's configuration cannot be deleted
-						else if (obs[i] instanceof IResource)
-							res = (IResource)obs[i];
+						if (obs[i] instanceof ICContainer || obs[i] instanceof ITranslationUnit) {
+							res = ((ICElement) obs[i]).getResource();
+						} else if (obs[i] instanceof IResource) {
+							// project's configuration cannot be deleted
+							res = (IResource) obs[i];
+						}
 						if (res != null) {
 							ICConfigurationDescription[] cfgds = getCfgsRead(res);
 							if (cfgds == null || cfgds.length == 0) continue;
@@ -97,12 +98,15 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 									cfgNames.add(cfgds[j].getName());
 								}
 							} else {
-								if (cfgNames.size() != cfgds.length) cfgsOK = false;
-								else for (int j=0; j<cfgds.length; j++) {
-									if (! canExclude(res, cfgds[j]) ||
-										! cfgNames.contains(cfgds[j].getName())) {
-										cfgsOK = false;
-										break;
+								if (cfgNames.size() != cfgds.length) {
+									cfgsOK = false;
+								} else {
+									for (int j=0; j<cfgds.length; j++) {
+										if (! canExclude(res, cfgds[j]) ||
+											! cfgNames.contains(cfgds[j].getName())) {
+											cfgsOK = false;
+											break;
+										}
 									}
 								}
 							}
@@ -152,12 +156,12 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				cfgNames, 
 				createSelectionDialogContentProvider(), 
 				new LabelProvider() {}, 
-				ActionMessages.getString("ExcludeFromBuildAction.0")); //$NON-NLS-1$
-		dialog.setTitle(ActionMessages.getString("ExcludeFromBuildAction.1")); //$NON-NLS-1$
+				ActionMessages.ExcludeFromBuildAction_0);
+		dialog.setTitle(ActionMessages.ExcludeFromBuildAction_1);
 		
 		boolean[] status = new boolean[cfgNames.size()];
 		Iterator<IResource> it = objects.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			IResource res = it.next();
 			ICConfigurationDescription[] cfgds = getCfgsRead(res);
 			IPath p = res.getFullPath();
@@ -175,7 +179,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult(); // may be empty
 			Iterator<IResource> it2 = objects.iterator();
-			while(it2.hasNext()) {
+			while (it2.hasNext()) {
 				IResource res = it2.next();
 				IProject p = res.getProject();
 				if (!p.isOpen()) continue;
@@ -218,5 +222,4 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	public Menu getMenu(Menu parent) { return null; }
 	public Menu getMenu(Control parent) { return null; }
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
-	
 }

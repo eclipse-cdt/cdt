@@ -125,34 +125,34 @@ public class MemberFilterActionGroup extends ActionGroup {
 			fFilter.addFilter(FILTER_INACTIVE);
 	
 		// fields
-		String title= ActionMessages.getString("MemberFilterActionGroup.hide_fields.label"); //$NON-NLS-1$
+		String title= ActionMessages.MemberFilterActionGroup_hide_fields_label;
 		String helpContext= ICHelpContextIds.FILTER_FIELDS_ACTION;
 		MemberFilterAction hideFields= new MemberFilterAction(this, title, FILTER_FIELDS, helpContext, doHideFields);
-		hideFields.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_fields.description")); //$NON-NLS-1$
-		hideFields.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_fields.tooltip")); //$NON-NLS-1$
+		hideFields.setDescription(ActionMessages.MemberFilterActionGroup_hide_fields_description);
+		hideFields.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_fields_tooltip);
 		CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_FIELDS); 
 		
 		// static
-		title= ActionMessages.getString("MemberFilterActionGroup.hide_static.label"); //$NON-NLS-1$
+		title= ActionMessages.MemberFilterActionGroup_hide_static_label;
 		helpContext= ICHelpContextIds.FILTER_STATIC_ACTION;
 		MemberFilterAction hideStatic= new MemberFilterAction(this, title, FILTER_STATIC, helpContext, doHideStatic);
-		hideStatic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_static.description")); //$NON-NLS-1$
-		hideStatic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_static.tooltip")); //$NON-NLS-1$
+		hideStatic.setDescription(ActionMessages.MemberFilterActionGroup_hide_static_description);
+		hideStatic.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_static_tooltip);
 		CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_STATIC); 
 		
 		// non-public
-		title= ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.label"); //$NON-NLS-1$
+		title= ActionMessages.MemberFilterActionGroup_hide_nonpublic_label;
 		helpContext= ICHelpContextIds.FILTER_PUBLIC_ACTION;
 		MemberFilterAction hideNonPublic= new MemberFilterAction(this, title, FILTER_NONPUBLIC, helpContext, doHidePublic);
-		hideNonPublic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.description")); //$NON-NLS-1$
-		hideNonPublic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.tooltip")); //$NON-NLS-1$
+		hideNonPublic.setDescription(ActionMessages.MemberFilterActionGroup_hide_nonpublic_description);
+		hideNonPublic.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_nonpublic_tooltip);
 		CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC); 
 
 		// inactive
-		title= ActionMessages.getString("MemberFilterActionGroup.hide_inactive.label"); //$NON-NLS-1$
+		title= ActionMessages.MemberFilterActionGroup_hide_inactive_label;
 		MemberFilterAction hideInactive= new MemberFilterAction(this, title, FILTER_INACTIVE, null, doHideInactive);
-		hideInactive.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.description")); //$NON-NLS-1$
-		hideInactive.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.tooltip")); //$NON-NLS-1$
+		hideInactive.setDescription(ActionMessages.MemberFilterActionGroup_hide_inactive_description);
+		hideInactive.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_inactive_tooltip);
 		CPluginImages.setImageDescriptors(hideInactive, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_HIDE_INACTIVE); 
 
 		// order corresponds to order in toolbar
@@ -192,11 +192,11 @@ public class MemberFilterActionGroup extends ActionGroup {
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= ActionMessages.getString("MemberFilterActionGroup.hide_fields.label"); //$NON-NLS-1$
+			title= ActionMessages.MemberFilterActionGroup_hide_fields_label;
 			helpContext= ICHelpContextIds.FILTER_FIELDS_ACTION;
 			MemberFilterAction hideFields= new MemberFilterAction(this, title, filterProperty, helpContext, filterEnabled);
-			hideFields.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_fields.description")); //$NON-NLS-1$
-			hideFields.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_fields.tooltip")); //$NON-NLS-1$
+			hideFields.setDescription(ActionMessages.MemberFilterActionGroup_hide_fields_description);
+			hideFields.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_fields_tooltip);
 			CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, "fields_co.gif"); //$NON-NLS-1$
 			actions.add(hideFields);
 		}
@@ -208,11 +208,11 @@ public class MemberFilterActionGroup extends ActionGroup {
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= ActionMessages.getString("MemberFilterActionGroup.hide_static.label"); //$NON-NLS-1$
+			title= ActionMessages.MemberFilterActionGroup_hide_static_label;
 			helpContext= ICHelpContextIds.FILTER_STATIC_ACTION;
 			MemberFilterAction hideStatic= new MemberFilterAction(this, title, FILTER_STATIC, helpContext, filterEnabled);
-			hideStatic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_static.description")); //$NON-NLS-1$
-			hideStatic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_static.tooltip")); //$NON-NLS-1$
+			hideStatic.setDescription(ActionMessages.MemberFilterActionGroup_hide_static_description);
+			hideStatic.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_static_tooltip);
 			CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, "static_co.gif"); //$NON-NLS-1$
 			actions.add(hideStatic);
 		}
@@ -224,11 +224,11 @@ public class MemberFilterActionGroup extends ActionGroup {
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.label"); //$NON-NLS-1$
+			title= ActionMessages.MemberFilterActionGroup_hide_nonpublic_label;
 			helpContext= ICHelpContextIds.FILTER_PUBLIC_ACTION;
 			MemberFilterAction hideNonPublic= new MemberFilterAction(this, title, filterProperty, helpContext, filterEnabled);
-			hideNonPublic.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.description")); //$NON-NLS-1$
-			hideNonPublic.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_nonpublic.tooltip")); //$NON-NLS-1$
+			hideNonPublic.setDescription(ActionMessages.MemberFilterActionGroup_hide_nonpublic_description);
+			hideNonPublic.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_nonpublic_tooltip);
 			CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
 			actions.add(hideNonPublic);
 		}
@@ -240,10 +240,10 @@ public class MemberFilterActionGroup extends ActionGroup {
 			if (filterEnabled) {
 				fFilter.addFilter(filterProperty);
 			}
-			title= ActionMessages.getString("MemberFilterActionGroup.hide_inactive.label"); //$NON-NLS-1$
+			title= ActionMessages.MemberFilterActionGroup_hide_inactive_label;
 			MemberFilterAction hideInactive= new MemberFilterAction(this, title, filterProperty, null, filterEnabled);
-			hideInactive.setDescription(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.description")); //$NON-NLS-1$
-			hideInactive.setToolTipText(ActionMessages.getString("MemberFilterActionGroup.hide_inactive.tooltip")); //$NON-NLS-1$
+			hideInactive.setDescription(ActionMessages.MemberFilterActionGroup_hide_inactive_description);
+			hideInactive.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_inactive_tooltip);
 			CPluginImages.setImageDescriptors(hideInactive, CPluginImages.T_LCL, "filterInactive.gif"); //$NON-NLS-1$
 			actions.add(hideInactive);
 		}

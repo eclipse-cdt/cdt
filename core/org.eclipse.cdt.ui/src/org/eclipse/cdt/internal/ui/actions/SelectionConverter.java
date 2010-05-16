@@ -321,7 +321,7 @@ public class SelectionConverter {
 		try {
 			return codeResolveOrInput(editor);
 		} catch(CModelException e) {
-			ExceptionHandler.handle(e, shell, title, ActionMessages.getString("SelectionConverter.codeResolve_failed")); //$NON-NLS-1$
+			ExceptionHandler.handle(e, shell, title, ActionMessages.SelectionConverter_codeResolve_failed);
 		}
 		return null;
 	}
@@ -332,5 +332,4 @@ public class SelectionConverter {
 		return getInput(editor) != null;
 		
 	}
-	
 }

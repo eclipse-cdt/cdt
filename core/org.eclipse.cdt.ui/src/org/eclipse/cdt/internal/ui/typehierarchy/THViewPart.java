@@ -45,6 +45,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.Transfer;
@@ -71,6 +72,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -92,6 +94,7 @@ import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
@@ -138,6 +141,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private ArrayList<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
 	private int fIgnoreSelectionChanges= 0;
 
+	private Clipboard fClipboard;
+
     // widgets
     private PageBook fPagebook;
     private Label fInfoText;
@@ -171,6 +176,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     private Action fCancelAction;
 	private Action fHistoryAction;
 	private Action fOpenElement;
+	private CopyTreeAction fCopyAction;
 
 	private Action fHorizontalOrientation;
 	private Action fVerticalOrientation;
@@ -227,6 +233,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         createViewerPage();
                 
         initSelectionProvider();
+
+        fClipboard = new Clipboard(parent.getDisplay());
 
         initDragAndDrop();
         createActions();
@@ -407,11 +415,15 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		
 		// action groups
 		ISelection selection = getSite().getSelectionProvider().getSelection();
-		if (OpenViewActionGroup.canActionBeAdded(selection)){
+		if (OpenViewActionGroup.canActionBeAdded(selection)) {
 			fOpenViewActionGroup.fillContextMenu(menu);
 		}
 
-		if (SelectionSearchGroup.canActionBeAdded(selection)){
+		if (hierarchyView && fCopyAction.canActionBeAdded()) {
+        	menu.appendToGroup(ICommonMenuConstants.GROUP_EDIT, fCopyAction);
+		}
+
+		if (SelectionSearchGroup.canActionBeAdded(selection)) {
 			fSelectionSearchGroup.fillContextMenu(menu);
 		}
 		fRefactoringActionGroup.fillContextMenu(menu);
@@ -549,16 +561,14 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
     private void initDragAndDrop() {
         THDropTargetListener dropListener= new THDropTargetListener(this);
-        Transfer[] localSelectionTransfer= new Transfer[] {
-        		LocalSelectionTransfer.getTransfer()
-        };
+        Transfer[] localSelectionTransfer= new Transfer[] {	LocalSelectionTransfer.getTransfer() };
         DropTarget dropTarget = new DropTarget(fPagebook, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK | DND.DROP_DEFAULT);
         dropTarget.setTransfer(localSelectionTransfer);
         dropTarget.addDropListener(dropListener);
     }
 
     private void createActions() {
-    	// action gruops
+    	// action groups
     	fOpenViewActionGroup= new OpenViewActionGroup(this);
     	fOpenViewActionGroup.setSuppressTypeHierarchy(true);
     	fOpenViewActionGroup.setSuppressProperties(true);
@@ -716,8 +726,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			public void run() {
                 if (isChecked()) {
                     fMemberViewer.addFilter(fStaticFilter);
-                }
-                else {
+                } else {
                 	fMemberViewer.removeFilter(fStaticFilter);
                 }
             }
@@ -730,8 +739,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			public void run() {
                 if (isChecked()) {
                     fMemberViewer.addFilter(fNonPublicFilter);
-                }
-                else {
+                } else {
                 	fMemberViewer.removeFilter(fNonPublicFilter);
                 }
             }
@@ -747,7 +755,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         };
         fOpenElement.setToolTipText(Messages.THViewPart_Open_tooltip);
         fOpenElement.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
-        
+
         fShowFilesInLabelsAction= new Action(Messages.THViewPart_ShowFileNames, IAction.AS_CHECK_BOX) {
             @Override
 			public void run() {
@@ -775,6 +783,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         CPluginImages.setImageDescriptors(fCancelAction, CPluginImages.T_LCL, CPluginImages.IMG_LCL_CANCEL);       
 
         fHistoryAction = new THHistoryDropDownAction(this);
+
+        fCopyAction= new CopyTypeHierarchyAction(this, fClipboard, fHierarchyTreeViewer);
 
         // setup action bar
         // global action hooks
@@ -879,8 +889,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
                 IWorkingSet workingSet= fWorkingSetFilterUI.getWorkingSet();
             	if (workingSet == null) {	
             		message= label;
-            	}
-            	else {
+            	} else {
             		String scope= workingSet.getLabel();
                 	message= MessageFormat.format("{0} - {1}", new Object[] {label, scope}); //$NON-NLS-1$
             	}
@@ -940,8 +949,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     			fHierarchyTreeViewer.refresh();
     			fMemberViewer.refresh();
     			setSelections();
-    		}
-    		finally {
+    		} finally {
     			fIgnoreSelectionChanges--;
     		}
     	}
@@ -954,8 +962,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     			updateViewers();
     			updateDescription();
     			updateActionEnablement();
-    		}
-    		finally {
+    		} finally {
     			fIgnoreSelectionChanges--;
     		}
     	}
@@ -973,8 +980,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 			if (elem != null) {
 				fMemberViewer.setSelection(new StructuredSelection(elem));
 			}
-		}
-		finally {
+		} finally {
 			fIgnoreSelectionChanges--;
 		}
 	}
@@ -1106,9 +1112,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
 	private int getBestOrientation() {
 		Point size= fSplitter.getSize();
-		if (size.x != 0 && size.y != 0) {
-			if (3*size.x < 2*size.y) 
-				return ORIENTATION_VERTICAL;
+		if (size.x != 0 && size.y != 0 && 3 * size.x < 2 * size.y) { 
+			return ORIENTATION_VERTICAL;
 		}
 		return ORIENTATION_HORIZONTAL;
 	}
@@ -1123,5 +1128,12 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 
 	public IWorkbenchSiteProgressService getProgressService() {
 		return (IWorkbenchSiteProgressService) getSite().getAdapter(IWorkbenchSiteProgressService.class);	
+	}
+
+	private static class CopyTypeHierarchyAction extends CopyTreeAction {
+		public CopyTypeHierarchyAction(ViewPart view, Clipboard clipboard, TreeViewer viewer) {
+			super(Messages.THViewPart_CopyTypeHierarchy, view, clipboard, viewer);
+//			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.TYPE_HIERARCHY_COPY_ACTION);
+		}
 	}
 }

@@ -382,7 +382,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		super.fillContextMenu(menu);
-		MenuManager subMenu= new MenuManager(ActionMessages.getString("SourceMenu_label"), MENU_ID);  //$NON-NLS-1$
+		MenuManager subMenu= new MenuManager(ActionMessages.SourceMenu_label, MENU_ID);
 		subMenu.setActionDefinitionId(QUICK_MENU_ID);
 		int added= 0;
 		if (isEditorOwner()) {

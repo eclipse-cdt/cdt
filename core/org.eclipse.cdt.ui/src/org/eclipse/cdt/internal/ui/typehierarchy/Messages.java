@@ -49,6 +49,7 @@ public class Messages extends NLS {
 	public static String THViewPart_MethodPane_title;
 	public static String THViewPart_Open;
 	public static String THViewPart_Open_tooltip;
+	public static String THViewPart_CopyTypeHierarchy;
 	public static String THViewPart_Refresh;
 	public static String THViewPart_Refresh_tooltip;
 	public static String THViewPart_ShowFileNames;

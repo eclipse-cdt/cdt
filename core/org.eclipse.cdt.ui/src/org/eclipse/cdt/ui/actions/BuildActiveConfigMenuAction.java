@@ -36,7 +36,6 @@ import org.eclipse.cdt.internal.ui.cview.BuildGroup;
  * Implements a toolbar button that builds the active configuration
  * of selected projects. Also includes a menu that builds any of the
  * other configurations.
- *
  */
 public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 		implements IWorkbenchWindowPulldownDelegate2, ICProjectDescriptionListener {
@@ -128,16 +127,15 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 				if (prj != null){
 					ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
 					if (prjd != null) {
-						sb.append(ActionMessages.getFormattedString(
-										"BuildActiveConfigMenuAction_buildConfigTooltip", //$NON-NLS-1$
-										new Object[] { prjd.getActiveConfiguration().getName(), prj.getName() })).append(System.getProperty("line.separator")); //$NON-NLS-1$
+						sb.append(ActionMessages.bind(ActionMessages.BuildActiveConfigMenuAction_buildConfigTooltip,
+								prjd.getActiveConfiguration().getName(), prj.getName())).append(System.getProperty("line.separator")); //$NON-NLS-1$
 					}
 				}
 			}
 			toolTipText = sb.toString().trim();
 		}
 		if (toolTipText.length() == 0)
-			toolTipText = ActionMessages.getString("BuildActiveConfigMenuAction_defaultTooltip"); //$NON-NLS-1$
+			toolTipText = ActionMessages.BuildActiveConfigMenuAction_defaultTooltip;
 		action.setToolTipText(toolTipText);
 	}
 
@@ -146,5 +144,4 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 			updateBuildConfigMenuToolTip(actionMenuCache);
 		}
 	}
-
 }

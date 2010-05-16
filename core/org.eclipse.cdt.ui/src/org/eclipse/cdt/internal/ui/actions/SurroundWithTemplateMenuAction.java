@@ -72,7 +72,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	private static class ConfigureTemplatesAction extends Action {
 
 		public ConfigureTemplatesAction() {
-			super(ActionMessages.getString("SurroundWithTemplateMenuAction.ConfigureTemplatesActionName")); //$NON-NLS-1$
+			super(ActionMessages.SurroundWithTemplateMenuAction_ConfigureTemplatesActionName);
 		}
 
 		/**
@@ -88,7 +88,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		}
 	}
 
-	private static Action NONE_APPLICABLE_ACTION= new Action(ActionMessages.getString("SurroundWithTemplateMenuAction.NoneApplicable")) {  //$NON-NLS-1$
+	private static Action NONE_APPLICABLE_ACTION= new Action(ActionMessages.SurroundWithTemplateMenuAction_NoneApplicable) {
 		@Override
 		public void run() {
 			//Do nothing
@@ -118,7 +118,6 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 
 		public void partOpened(IWorkbenchPart part) {
 		}
-
 	};
 
 	protected void disposeMenuItems() {
@@ -126,7 +125,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			return;
 		}
 		MenuItem[] items = fMenu.getItems();
-		for (int i=0; i < items.length; i++) {
+		for (int i= 0; i < items.length; i++) {
 			MenuItem menuItem= items[i];
 			if (!menuItem.isDisposed()) {
 				menuItem.dispose();
@@ -205,7 +204,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		if (!(activePart instanceof CEditor))
 			return;
 
-		final CEditor editor= (CEditor)activePart;
+		final CEditor editor= (CEditor) activePart;
 
 		new QuickMenuCreator() {
 			@Override
@@ -290,7 +289,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		CContentAssistInvocationContext context = new CContentAssistInvocationContext( editor.getViewer(), textSelection.getOffset(), editor, true, false );
 	
 		List<ICompletionProposal> proposals= templateComputer.computeCompletionProposals(context, null);
-		if (proposals == null || proposals.size() == 0)
+		if (proposals == null || proposals.isEmpty())
 			return null;
 		
 		return getActionsFromProposals(proposals, context.getInvocationOffset(), editor.getViewer());
@@ -315,7 +314,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			final ICompletionProposal proposal= it.next();
 
 			StringBuffer actionName= new StringBuffer();
-			if (j<10) {
+			if (j < 10) {
 				actionName.append('&').append(j).append(' ');
 			}
 			actionName.append(proposal.getDisplayString());
@@ -352,7 +351,6 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 			public boolean ownsFocusShell() {
 				return false;
 			}
-
 		};
 
 		try {

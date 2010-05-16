@@ -56,7 +56,7 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	}
 
 	/**
-	 * Provide access to the CEditor corresponding to this CContentOutlinePage.
+	 * Provides access to the CEditor corresponding to this CContentOutlinePage.
 	 * @returns the CEditor corresponding to this CContentOutlinePage.
 	 */
 	public CEditor getEditor() {
@@ -165,9 +165,9 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	protected static class NamespaceGroupingAction extends Action {
 
 		public NamespaceGroupingAction(AbstractCModelOutlinePage outlinePage) {
-			super(ActionMessages.getString("NamespacesGroupingAction.label")); //$NON-NLS-1$
-			setDescription(ActionMessages.getString("NamespacesGroupingAction.description")); //$NON-NLS-1$
-			setToolTipText(ActionMessages.getString("NamespacesGroupingAction.tooltip")); //$NON-NLS-1$
+			super(ActionMessages.NamespacesGroupingAction_label);
+			setDescription(ActionMessages.NamespacesGroupingAction_description);
+			setToolTipText(ActionMessages.NamespacesGroupingAction_tooltip);
 			this.setImageDescriptor(CPluginImages.DESC_OBJS_NAMESPACE);
 			this.setDisabledImageDescriptor(CPluginImages.DESC_OBJS_NAMESPACE);
 
@@ -186,7 +186,6 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 		public boolean isNamspacesGroupingEnabled () {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES);
 		}
-
 	}
 	
 	/**
@@ -197,9 +196,9 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 	protected static class MemberGroupingAction extends Action {
 
 		public MemberGroupingAction(AbstractCModelOutlinePage outlinePage) {
-			super(ActionMessages.getString("MemberGroupingAction.label")); //$NON-NLS-1$
-			setDescription(ActionMessages.getString("MemberGroupingAction.description")); //$NON-NLS-1$
-			setToolTipText(ActionMessages.getString("MemberGroupingAction.tooltip")); //$NON-NLS-1$
+			super(ActionMessages.MemberGroupingAction_label);
+			setDescription(ActionMessages.MemberGroupingAction_description);
+			setToolTipText(ActionMessages.MemberGroupingAction_tooltip);
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ACTION_SHOW_PUBLIC);
 
 			boolean enabled= isMemberGroupingEnabled();
@@ -217,7 +216,6 @@ public class CContentOutlinePage extends AbstractCModelOutlinePage {
 		public boolean isMemberGroupingEnabled () {
 			return PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_MEMBERS);
 		}
-
 	}
 	
 	@Override

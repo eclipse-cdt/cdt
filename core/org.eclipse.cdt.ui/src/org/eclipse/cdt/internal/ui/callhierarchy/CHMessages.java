@@ -35,6 +35,7 @@ public class CHMessages extends NLS {
 	public static String CHViewPart_PreviousReference_tooltip;
 	public static String CHViewPart_Refresh_label;
 	public static String CHViewPart_Refresh_tooltip;
+	public static String CHViewPart_CopyCallHierarchy_label;
 	public static String CHViewPart_ShowCallees_label;
 	public static String CHViewPart_ShowCallees_tooltip;
 	public static String CHViewPart_ShowCallers_label;
@@ -55,9 +56,6 @@ public class CHMessages extends NLS {
 	public static String OpenElementInCallHierarchyAction_message;
 	public static String OpenElementInCallHierarchyAction_title;
 	public static String OpenElementInCallHierarchyAction_upperListLabel;
-	public static String CopyCallHierarchyAction_label;
-	public static String CopyCallHierarchyAction_problem;
-	public static String CopyCallHierarchyAction_clipboard_busy;
 
 	static {
 		// initialize resource bundle

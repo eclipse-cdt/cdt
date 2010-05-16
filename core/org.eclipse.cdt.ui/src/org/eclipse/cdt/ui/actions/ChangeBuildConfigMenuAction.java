@@ -75,8 +75,8 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 			cm.manage(obs, true);
 		} else {
 			MessageDialog.openInformation(CUIPlugin.getActiveWorkbenchShell(),
-					ActionMessages.getString("ChangeBuildConfigMenuAction.title"),  //$NON-NLS-1$
-					ActionMessages.getString("ChangeBuildConfigMenuAction.text")); //$NON-NLS-1$
+					ActionMessages.ChangeBuildConfigMenuAction_title,
+					ActionMessages.ChangeBuildConfigMenuAction_text);
 		}
 	}
 

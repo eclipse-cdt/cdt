@@ -49,7 +49,7 @@ public class SurroundWithActionGroup extends ActionGroup {
 		if (textSelection.getLength() == 0)
 			return;
 
-		String menuText= ActionMessages.getString("SurroundWithTemplateMenuAction.SubMenuName"); //$NON-NLS-1$
+		String menuText= ActionMessages.SurroundWithTemplateMenuAction_SubMenuName;
 
 		MenuManager subMenu = new MenuManager(menuText, SurroundWithTemplateMenuAction.SURROUND_WITH_QUICK_MENU_ACTION_ID);
 		subMenu.setActionDefinitionId(SurroundWithTemplateMenuAction.SURROUND_WITH_QUICK_MENU_ACTION_ID);
@@ -62,5 +62,4 @@ public class SurroundWithActionGroup extends ActionGroup {
 			}
 		});
 	}
-
 }

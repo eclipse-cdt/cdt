@@ -9,7 +9,7 @@
  *   Jesper Kamstrup Linnet (eclipse@kamstrup-linnet.dk) - initial API and implementation
  *   Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.callhierarchy;
+package org.eclipse.cdt.internal.ui.actions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -32,21 +33,23 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.cdt.internal.ui.util.SelectionUtil;
-import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
 
-class CopyCallHierarchyAction extends Action {
+/**
+ * Copies contents of a TreeViewer to the clipboard.
+ */
+public class CopyTreeAction extends Action {
 	private static final char INDENTATION= '\t';
 
-	private CHViewPart fView;
-	private ExtendedTreeViewer fViewer;
+	private ViewPart fView;
+	private TreeViewer fViewer;
 	private final Clipboard fClipboard;
 
-	public CopyCallHierarchyAction(CHViewPart view, Clipboard clipboard, ExtendedTreeViewer viewer) {
-		super(CHMessages.CopyCallHierarchyAction_label);
+	public CopyTreeAction(String label, ViewPart view, Clipboard clipboard, TreeViewer viewer) {
+		super(label);
 		Assert.isNotNull(clipboard);
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.CALL_HIERARCHY_COPY_ACTION);
 		fView= view;
 		fClipboard= clipboard;
 		fViewer= viewer;
@@ -72,8 +75,8 @@ class CopyCallHierarchyAction extends Action {
 	 */
 	@Override
 	public void run() {
-		StringBuffer buf= new StringBuffer();
-		addCalls(fViewer.getTree().getSelection()[0], 0, buf);
+		StringBuilder buf= new StringBuilder();
+		addChildren(fViewer.getTree().getSelection()[0], 0, buf);
 
 		TextTransfer plainTextTransfer= TextTransfer.getInstance();
 		try {
@@ -83,19 +86,21 @@ class CopyCallHierarchyAction extends Action {
 		} catch (SWTError e) {
 			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw e;
-			if (MessageDialog.openQuestion(fView.getViewSite().getShell(), CHMessages.CopyCallHierarchyAction_problem, CHMessages.CopyCallHierarchyAction_clipboard_busy))
+			if (MessageDialog.openQuestion(fView.getViewSite().getShell(),
+					ActionMessages.CopyTreeAction_problem, ActionMessages.CopyTreeAction_clipboard_busy)) {
 				run();
+			}
 		}
 	}
 
 	/**
-	 * Adds the specified {@link TreeItem}'s text to the StringBuffer.
+	 * Adds the specified {@link TreeItem}'s text to the StringBuilder.
 	 * 
 	 * @param item the tree item
 	 * @param indent the indent size
 	 * @param buf the string buffer
 	 */
-	private void addCalls(TreeItem item, int indent, StringBuffer buf) {
+	private void addChildren(TreeItem item, int indent, StringBuilder buf) {
 		for (int i= 0; i < indent; i++) {
 			buf.append(INDENTATION);
 		}
@@ -106,7 +111,7 @@ class CopyCallHierarchyAction extends Action {
 		if (item.getExpanded()) {
 			TreeItem[] items= item.getItems();
 			for (int i= 0; i < items.length; i++) {
-				addCalls(items[i], indent + 1, buf);
+				addChildren(items[i], indent + 1, buf);
 			}
 		}
 	}

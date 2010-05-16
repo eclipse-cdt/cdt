@@ -30,8 +30,8 @@ public class SelectAllAction extends Action {
 	 */
 	public SelectAllAction(TableViewer viewer) {
 		super("selectAll"); //$NON-NLS-1$
-		setText(ActionMessages.getString("SelectAllAction.label")); //$NON-NLS-1$
-		setToolTipText(ActionMessages.getString("SelectAllAction.tooltip")); //$NON-NLS-1$
+		setText(ActionMessages.SelectAllAction_label);
+		setToolTipText(ActionMessages.SelectAllAction_tooltip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.SELECT_ALL_ACTION);
 		Assert.isNotNull(viewer);
 		fViewer= viewer;

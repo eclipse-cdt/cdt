@@ -75,6 +75,7 @@ import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
@@ -133,7 +134,7 @@ public class CHViewPart extends ViewPart {
 	private Action fHistoryAction;
 	private Action fShowReference;
 	private Action fOpenElement;
-	private CopyCallHierarchyAction fCopyAction;
+	private CopyTreeAction fCopyAction;
 	
 	// action groups
 	private OpenViewActionGroup fOpenViewActionGroup;
@@ -477,8 +478,6 @@ public class CHViewPart extends ViewPart {
         fPreviousAction.setToolTipText(CHMessages.CHViewPart_PreviousReference_tooltip); 
         CPluginImages.setImageDescriptors(fPreviousAction, CPluginImages.T_LCL, CPluginImages.IMG_SHOW_PREV);       
 
-        fCopyAction= new CopyCallHierarchyAction(this, fClipboard, fTreeViewer);
-
         fRefreshAction = new Action(CHMessages.CHViewPart_Refresh_label) {
             @Override
 			public void run() {
@@ -489,6 +488,8 @@ public class CHViewPart extends ViewPart {
         CPluginImages.setImageDescriptors(fRefreshAction, CPluginImages.T_LCL, CPluginImages.IMG_REFRESH);       
 
         fHistoryAction = new CHHistoryDropDownAction(this);
+
+        fCopyAction= new CopyCallHierarchyAction(this, fClipboard, fTreeViewer);
 
         // setup action bar
         // global action hooks
@@ -807,5 +808,12 @@ public class CHViewPart extends ViewPart {
 
 	public TreeViewer getTreeViewer() {
 		return fTreeViewer;
+	}
+
+	private static class CopyCallHierarchyAction extends CopyTreeAction {
+		public CopyCallHierarchyAction(ViewPart view, Clipboard clipboard, TreeViewer viewer) {
+			super(CHMessages.CHViewPart_CopyCallHierarchy_label, view, clipboard, viewer);
+//			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.CALL_HIERARCHY_COPY_ACTION);
+		}
 	}
 }

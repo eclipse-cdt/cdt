@@ -114,8 +114,8 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				CUIPlugin.getActiveWorkbenchShell(), 
 				objects, 
 				createSelectionDialogContentProvider(), 
-				new LabelProvider() {}, ActionMessages.getString("DeleteResConfigsAction.0")); //$NON-NLS-1$
-		dialog.setTitle(ActionMessages.getString("DeleteResConfigsAction.1")); //$NON-NLS-1$
+				new LabelProvider() {}, ActionMessages.DeleteResConfigsAction_0);
+		dialog.setTitle(ActionMessages.DeleteResConfigsAction_1);
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected != null && selected.length > 0) {

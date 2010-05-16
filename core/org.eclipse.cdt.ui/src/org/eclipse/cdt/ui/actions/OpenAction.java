@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -183,7 +184,7 @@ public class OpenAction extends SelectionDispatchAction {
 				if (name != null) {
 					MessageDialog.openError(getShell(),
 						ActionMessages.OpenAction_error_messageProblems,
-						ActionMessages.bind(ActionMessages.OpenAction_error_messageArgs, name, x.getMessage()));			
+						NLS.bind(ActionMessages.OpenAction_error_messageArgs, name, x.getMessage()));			
 				}
 			}		
 		}

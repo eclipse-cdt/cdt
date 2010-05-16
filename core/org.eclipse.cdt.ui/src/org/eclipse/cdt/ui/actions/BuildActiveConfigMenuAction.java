@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
@@ -127,7 +128,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 				if (prj != null){
 					ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
 					if (prjd != null) {
-						sb.append(ActionMessages.bind(ActionMessages.BuildActiveConfigMenuAction_buildConfigTooltip,
+						sb.append(NLS.bind(ActionMessages.BuildActiveConfigMenuAction_buildConfigTooltip,
 								prjd.getActiveConfiguration().getName(), prj.getName())).append(System.getProperty("line.separator")); //$NON-NLS-1$
 					}
 				}

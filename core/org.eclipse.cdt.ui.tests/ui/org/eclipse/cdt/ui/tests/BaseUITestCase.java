@@ -140,8 +140,7 @@ public class BaseUITestCase extends BaseTestCase {
 				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
 					return;
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 				int time= (int) (endTime- System.currentTimeMillis());
 				if (time > 0) {
@@ -287,7 +286,7 @@ public class BaseUITestCase extends BaseTestCase {
 		Tree tree= null;
 		TreeItem root= null;
 		StringBuilder cands= new StringBuilder();
-		for (int i=0; i<400; i++) {
+		for (int i= 0; i < 400; i++) {
 			cands.setLength(0);
 			Control[] trees= findControls(part.getSite().getShell(), Tree.class);
 			for (int j = 0; j < trees.length; j++) {
@@ -301,11 +300,9 @@ public class BaseUITestCase extends BaseTestCase {
 						cands.append('|');
 					}
 					cands.append(root.getText());
-				} 
-				catch (SWTException e) {
+				} catch (SWTException e) {
 					// in case widget was disposed, item may be replaced
-				}
-				catch (IllegalArgumentException e) {
+				} catch (IllegalArgumentException e) {
 					// item does not yet exist.
 				}
 			}
@@ -326,11 +323,9 @@ public class BaseUITestCase extends BaseTestCase {
 				if (label.equals(root.getText())) {
 					return root;
 				}
-			} 
-			catch (SWTException e) {
+			} catch (SWTException e) {
 				// in case widget was disposed, item may be replaced
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				// item does not yet exist.
 			}
 		}

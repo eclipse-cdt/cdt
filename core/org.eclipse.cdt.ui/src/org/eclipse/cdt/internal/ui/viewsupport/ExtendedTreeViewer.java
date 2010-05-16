@@ -40,13 +40,11 @@ public class ExtendedTreeViewer extends TreeViewer {
 	protected void preservingSelection(Runnable updateCode) {
         if (fPreservingSelection) {
             updateCode.run();
-        }
-        else {
+        } else {
             fPreservingSelection= true;
             try {
                 super.preservingSelection(updateCode);
-            }
-            finally {
+            } finally {
                 fPreservingSelection= false;
             }
         }

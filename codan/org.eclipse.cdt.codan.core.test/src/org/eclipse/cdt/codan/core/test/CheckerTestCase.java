@@ -17,7 +17,6 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -25,7 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * 
  */
 public class CheckerTestCase extends CodanTestCase {
-	private static final IProgressMonitor NullPM = new NullProgressMonitor();
+
 	private IMarker[] markers;
 
 	public void checkErrorLine(int i) {
@@ -95,7 +94,7 @@ public class CheckerTestCase extends CodanTestCase {
 	 * 
 	 */
 	protected void runCodan() {
-		CodanRuntime.getInstance().getBuilder().processResource(cproject.getProject(), NullPM);
+		CodanRuntime.getInstance().getBuilder().processResource(cproject.getProject(), new NullProgressMonitor());
 		try {
 			markers = cproject.getProject().findMarkers(IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, 1);
 		} catch (CoreException e) {

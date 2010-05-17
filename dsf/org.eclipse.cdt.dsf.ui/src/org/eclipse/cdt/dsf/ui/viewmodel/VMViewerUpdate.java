@@ -143,8 +143,9 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
             listDelta = listDelta.getParentDelta();
             elementList.add(0, listDelta.getElement());
         }
+        Object viewerInput = elementList.remove(0);
         fClientUpdate = new ClientUpdatePlaceHolder(
-            new TreePath(elementList.toArray()), elementList.get(0), presentationContext);
+            new TreePath(elementList.toArray()), viewerInput, presentationContext);
         fRequestMonitor = requestMonitor;
     }
 

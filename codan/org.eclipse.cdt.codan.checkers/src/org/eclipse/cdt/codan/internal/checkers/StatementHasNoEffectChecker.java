@@ -13,7 +13,6 @@ package org.eclipse.cdt.codan.internal.checkers;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -23,10 +22,11 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Checker that detects statements without effect such as
@@ -118,12 +118,17 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	@SuppressWarnings("restriction")
 	public boolean isLValue(IASTBinaryExpression expr) {
 		if (expr instanceof CPPASTBinaryExpression) {
-			ICPPFunction op = ((CPPASTBinaryExpression) expr).getOverload();
-			if (op != null) {
-				try {
-					return CPPVisitor.isLValueReference(op.getType().getReturnType());
-				} catch (DOMException e) {
-				}
+			// unfortunately ICPPASTBinaryExpression does not have
+			// getOverload public method
+			CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) expr;
+			ICPPFunction overload = cppBin.getOverload();
+			if (overload != null)
+				return false;
+			IType expressionType = cppBin.getOperand1()
+					.getExpressionType();
+			if (!(expressionType instanceof IBasicType)) {
+				return false; // must be overloaded but parser could not
+				// find it
 			}
 		}
 		switch (expr.getOperator()) {

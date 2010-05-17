@@ -17,17 +17,21 @@ import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author Alena
  * 
  */
 public class CheckerTestCase extends CodanTestCase {
+	private static final IProgressMonitor NullPM = new NullProgressMonitor();
 	private IMarker[] markers;
 
 	public void checkErrorLine(int i) {
 		checkErrorLine(currentFile, i);
 	}
+
 	/**
 	 * @param i
 	 *            - line
@@ -51,21 +55,18 @@ public class CheckerTestCase extends CodanTestCase {
 			} catch (IOException e) {
 				fail(e.getMessage());
 			}
-			String mfile  = m.getResource().getName();
+			String mfile = m.getResource().getName();
 			if (line.equals(i)) {
 				found = true;
-				if (file!=null && !file.getName().equals(mfile))
-					found = false;
-				else
-					break;
+				if (file != null && !file.getName().equals(mfile)) found = false;
+				else break;
 			}
 		}
 		assertTrue("Error on line " + i + " not found ", found);
 	}
 
 	public void checkNoErrors() {
-		assertTrue("Found errors but should not", markers == null
-				|| markers.length == 0);
+		assertTrue("Found errors but should not", markers == null || markers.length == 0);
 	}
 
 	/**
@@ -84,21 +85,19 @@ public class CheckerTestCase extends CodanTestCase {
 		loadcode(code);
 		runCodan();
 	}
+
 	public void loadCodeAndRunCpp(String code) {
 		loadcode(code, true);
 		runCodan();
 	}
+
 	/**
 	 * 
 	 */
 	protected void runCodan() {
-		CodanRuntime.getInstance().getBuilder().processResource(
-				cproject.getProject(), NPM);
+		CodanRuntime.getInstance().getBuilder().processResource(cproject.getProject(), NullPM);
 		try {
-			markers = cproject.getProject()
-					.findMarkers(
-							IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE,
-							true, 1);
+			markers = cproject.getProject().findMarkers(IProblemReporter.GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, 1);
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}

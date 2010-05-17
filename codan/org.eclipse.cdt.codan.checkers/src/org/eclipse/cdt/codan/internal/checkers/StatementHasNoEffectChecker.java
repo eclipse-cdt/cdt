@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.internal.checkers;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -22,7 +23,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Checker that detects statements without effect such as
@@ -48,8 +52,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
-				if (hasNoEffect(((IASTExpressionStatement) stmt)
-						.getExpression())) {
+				if (hasNoEffect(((IASTExpressionStatement) stmt).getExpression())) {
 					reportProblem(ER_ID, stmt, stmt.getRawSignature());
 				}
 				return PROCESS_SKIP;
@@ -68,13 +71,11 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		private boolean hasNoEffect(IASTExpression e) {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
-				if (binExpr.isLValue())
-					return false;
+				if (isLValue(binExpr)) return false;
 				switch (binExpr.getOperator()) {
 					case IASTBinaryExpression.op_logicalOr:
 					case IASTBinaryExpression.op_logicalAnd:
-						return hasNoEffect(binExpr.getOperand1())
-								&& hasNoEffect(binExpr.getOperand2());
+						return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
 				}
 				return true;
 			}
@@ -101,9 +102,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					IASTNode parent2 = parent.getParent();
 					if (parent2 instanceof IASTCompoundStatement) {
 						IASTNode parent3 = parent2.getParent();
-						if (parent3 instanceof IGNUASTCompoundStatementExpression) {
-							return false;
-						}
+						if (parent3 instanceof IGNUASTCompoundStatementExpression) { return false; }
 					}
 				}
 				return true;
@@ -114,5 +113,33 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 	public void initPreferences(IProblemWorkingCopy problem) {
 		addPreference(problem, PARAM_MACRO_ID, "Check statements that belong to macro", Boolean.TRUE);
+	}
+
+	@SuppressWarnings("restriction")
+	public boolean isLValue(IASTBinaryExpression expr) {
+		if (expr instanceof CPPASTBinaryExpression) {
+			ICPPFunction op = ((CPPASTBinaryExpression) expr).getOverload();
+			if (op != null) {
+				try {
+					return CPPVisitor.isLValueReference(op.getType().getReturnType());
+				} catch (DOMException e) {
+				}
+			}
+		}
+		switch (expr.getOperator()) {
+			case IASTBinaryExpression.op_assign:
+			case IASTBinaryExpression.op_binaryAndAssign:
+			case IASTBinaryExpression.op_binaryOrAssign:
+			case IASTBinaryExpression.op_binaryXorAssign:
+			case IASTBinaryExpression.op_divideAssign:
+			case IASTBinaryExpression.op_minusAssign:
+			case IASTBinaryExpression.op_moduloAssign:
+			case IASTBinaryExpression.op_multiplyAssign:
+			case IASTBinaryExpression.op_plusAssign:
+			case IASTBinaryExpression.op_shiftLeftAssign:
+			case IASTBinaryExpression.op_shiftRightAssign:
+				return true;
+		}
+		return false;
 	}
 }

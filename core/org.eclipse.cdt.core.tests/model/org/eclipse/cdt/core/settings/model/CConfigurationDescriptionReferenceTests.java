@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.settings.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,7 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		return suite(CConfigurationDescriptionReferenceTests.class, "_");
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		p1 = CProjectHelper.createCCProject("p1", "bin");
 		p2 = CProjectHelper.createCCProject("p2", "bin");
@@ -215,15 +215,15 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		} finally {
 			if (p1 != null)
 				try {
-					p1.getProject().delete(true, NPM);
+					p1.getProject().delete(true, npm());
 				} catch (CoreException e){}
 			if (p2 != null)
 				try {
-					p2.getProject().delete(true, NPM);
+					p2.getProject().delete(true, npm());
 				} catch (CoreException e){}
 			if (p3 != null)
 				try {
-					p3.getProject().delete(true, NPM);
+					p3.getProject().delete(true, npm());
 				} catch (CoreException e){}
 		}
 	}
@@ -240,20 +240,21 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		assertEquals(expected.length, actual.length);
 		
 		List actualIds = new ArrayList();
-		for(int i=0; i<actual.length; i++) {
-			actualIds.add(actual[i].getId());
+		for (ICConfigurationDescription element : actual) {
+			actualIds.add(element.getId());
 		}
 		// check for each ID, don't use a Set so we detect duplicates
-		for(int i=0; i<expected.length; i++) {
-			assertTrue(expected[i].getId()+" is missing", actualIds.contains(expected[i].getId()));
+		for (ICConfigurationDescription element : expected) {
+			assertTrue(element.getId()+" is missing", actualIds.contains(element.getId()));
 		}
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
-		for(Iterator i = Arrays.asList(new ICProject[]{p1,p2,p3,p4}).iterator(); i.hasNext(); ) {
-			ICProject project = (ICProject) i.next();
+		for (Object element : Arrays.asList(new ICProject[]{p1,p2,p3,p4})) {
+			ICProject project = (ICProject) element;
 			try {
-				project.getProject().delete(true, NPM);
+				project.getProject().delete(true, npm());
 			} catch(CoreException ce) {
 				// try next one..
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			IPathEntry[] entries= new IPathEntry[] {
 					CoreModel.newIncludeEntry(fProject.getPath(),
 							null, fProject.getResource().getLocation())};
-			fProject.setRawPathEntries(entries, NPM);
+			fProject.setRawPathEntries(entries, npm());
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 	}
@@ -93,13 +93,13 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 
 	private void waitForIndexer() {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, npm()));
 	}
 
 	private void checkHeader(boolean all) throws Exception {
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] result= fIndex.findBindings(Pattern.compile(".*included"), true, IndexFilter.ALL, NPM);
+			IIndexBinding[] result= fIndex.findBindings(Pattern.compile(".*included"), true, IndexFilter.ALL, npm());
 			assertEquals(all ? 2 : 1, result.length);
 		} finally {
 			fIndex.releaseReadLock();
@@ -114,10 +114,10 @@ public class IndexIncludeTest extends IndexTestBase {
 		
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, NPM);
+				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, npm());
 				file.setLocalTimeStamp(timestamp+1000); 
 			}
-		}, NPM);
+		}, npm());
 		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
 		fIndex.acquireReadLock();
@@ -126,10 +126,10 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertNotNull("Can't find " + file.getLocation(), ifile);
 			assertTrue("timestamp not ok", ifile.getTimestamp() >= timestamp);
 
-			IIndexBinding[] result= fIndex.findBindings(Pattern.compile("testInclude_cpp"), true, IndexFilter.ALL, NPM);
+			IIndexBinding[] result= fIndex.findBindings(Pattern.compile("testInclude_cpp"), true, IndexFilter.ALL, npm());
 			assertEquals(1, result.length);
 
-			result= fIndex.findBindings("testInclude_cpp".toCharArray(), IndexFilter.ALL, NPM);
+			result= fIndex.findBindings("testInclude_cpp".toCharArray(), IndexFilter.ALL, npm());
 			assertEquals(1, result.length);
 		} finally {
 			fIndex.releaseReadLock();
@@ -248,9 +248,9 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(0, fIndex.findBindings("notIncluded_20070404".toCharArray(), IndexFilter.ALL, NPM).length);
-			assertEquals(1, fIndex.findBindings("source_20070404".toCharArray(), IndexFilter.ALL, NPM).length);
-			IBinding[] bindings= fIndex.findBindings("ctx_20070404x".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(0, fIndex.findBindings("notIncluded_20070404".toCharArray(), IndexFilter.ALL, npm()).length);
+			assertEquals(1, fIndex.findBindings("source_20070404".toCharArray(), IndexFilter.ALL, npm()).length);
+			IBinding[] bindings= fIndex.findBindings("ctx_20070404x".toCharArray(), IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof IVariable);
 		} finally {
@@ -266,8 +266,8 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(0, fIndex.findBindings("notIncluded_20070404".toCharArray(), IndexFilter.ALL, NPM).length);
-			IBinding[] bindings= fIndex.findBindings("ctx_20070404y".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(0, fIndex.findBindings("notIncluded_20070404".toCharArray(), IndexFilter.ALL, npm()).length);
+			IBinding[] bindings= fIndex.findBindings("ctx_20070404y".toCharArray(), IndexFilter.ALL, npm());
 			assertEquals(1, bindings.length);
 			assertTrue(bindings[0] instanceof IVariable);
 		} finally {
@@ -296,7 +296,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] binding= fIndex.findBindings("ok_1_220358".toCharArray(), IndexFilter.ALL_DECLARED, NPM);
+			IIndexBinding[] binding= fIndex.findBindings("ok_1_220358".toCharArray(), IndexFilter.ALL_DECLARED, npm());
 			assertEquals(1, binding.length);
 			assertTrue(binding[0] instanceof IVariable);
 		} finally {
@@ -308,7 +308,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, h2, INDEXER_WAIT_TIME);
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] binding= fIndex.findBindings("ok_2_220358".toCharArray(), IndexFilter.ALL_DECLARED, NPM);
+			IIndexBinding[] binding= fIndex.findBindings("ok_2_220358".toCharArray(), IndexFilter.ALL_DECLARED, npm());
 			assertEquals(1, binding.length);
 			assertTrue(binding[0] instanceof IVariable);
 		} finally {
@@ -351,7 +351,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(1, fIndex.findBindings("a20070426".toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			assertEquals(1, fIndex.findBindings("a20070426".toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
@@ -369,7 +369,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(1, fIndex.findBindings("b20070426".toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			assertEquals(1, fIndex.findBindings("b20070426".toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
@@ -452,7 +452,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	private void standardCheckUpdateIncludes(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
@@ -493,7 +493,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	private void checkUpdateIncludes1(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
@@ -524,7 +524,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	private void checkUpdateIncludes2(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
@@ -559,7 +559,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	private void checkUpdateIncludes3(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
 		try {
-			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
+			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));

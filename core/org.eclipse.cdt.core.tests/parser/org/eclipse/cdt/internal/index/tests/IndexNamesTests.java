@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,12 +48,14 @@ public class IndexNamesTests extends BaseTestCase {
 		return suite(IndexNamesTests.class);
 	}
 
+	@Override
 	protected void setUp() throws CoreException {
 		fCProject= CProjectHelper.createCCProject("__encNamesTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
+	@Override
 	protected void tearDown() throws CoreException {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
@@ -74,7 +76,7 @@ public class IndexNamesTests extends BaseTestCase {
 	}
 
 	protected void waitForIndexer() {
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, npm()));
 	}
 
 	protected Pattern[] getPattern(String qname) {
@@ -105,7 +107,7 @@ public class IndexNamesTests extends BaseTestCase {
 		
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, NPM);
+			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
 			assertLength(1, mainBS);
 			IIndexBinding mainB= mainBS[0];
 			
@@ -164,7 +166,7 @@ public class IndexNamesTests extends BaseTestCase {
 		
 		fIndex.acquireReadLock();
 		try {
-			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, NPM);
+			IIndexBinding[] mainBS= fIndex.findBindings(getPattern("main"), true, IndexFilter.ALL, npm());
 			assertLength(1, mainBS);
 			IIndexBinding mainB= mainBS[0];
 			
@@ -266,8 +268,7 @@ public class IndexNamesTests extends BaseTestCase {
 			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			IIndexName[] names= ifile.findNames(0, content.length());
 			int j= 0;
-			for (int i = 0; i < names.length; i++) {
-				IIndexName indexName = names[i];
+			for (IIndexName indexName : names) {
 				if (indexName.isReference() && indexName.toString().equals("vm")) {
 					assertEquals(couldbepolymorphic[j], indexName.couldBePolymorphicMethodCall());
 					assertEquals(container[j], fIndex.findBinding(indexName).getQualifiedName()[0]);

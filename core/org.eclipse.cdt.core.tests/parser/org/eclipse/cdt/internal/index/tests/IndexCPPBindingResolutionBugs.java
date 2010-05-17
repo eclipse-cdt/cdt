@@ -97,9 +97,9 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public void testBug208558() throws CoreException {
 		IIndex index= getIndex();
 		
-		IIndexMacro[] macrosA= index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, NPM);
-		IIndexMacro[] macrosB= index.findMacros("FUNC".toCharArray(), IndexFilter.ALL, NPM);
-		IIndexMacro[] macrosC= index.findMacros("FUNC2".toCharArray(), IndexFilter.ALL, NPM);
+		IIndexMacro[] macrosA= index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, npm());
+		IIndexMacro[] macrosB= index.findMacros("FUNC".toCharArray(), IndexFilter.ALL, npm());
+		IIndexMacro[] macrosC= index.findMacros("FUNC2".toCharArray(), IndexFilter.ALL, npm());
 		
 		assertEquals(1, macrosA.length);
 		assertEquals(1, macrosB.length);
@@ -126,12 +126,12 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertEquals(1, func2.getParameterList().length);
 		assertEquals("A", new String(func2.getParameterList()[0]));
 		
-		IIndexBinding[] bindings= index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, NPM);
+		IIndexBinding[] bindings= index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
 		assertEquals(3, bindings.length);
 		
-		IIndexBinding foo= index.findBindings("foo".toCharArray(), IndexFilter.ALL, NPM)[0];
-		IIndexBinding bar= index.findBindings("bar".toCharArray(), IndexFilter.ALL, NPM)[0];
-		IIndexBinding baz= index.findBindings("baz".toCharArray(), IndexFilter.ALL, NPM)[0];
+		IIndexBinding foo= index.findBindings("foo".toCharArray(), IndexFilter.ALL, npm())[0];
+		IIndexBinding bar= index.findBindings("bar".toCharArray(), IndexFilter.ALL, npm())[0];
+		IIndexBinding baz= index.findBindings("baz".toCharArray(), IndexFilter.ALL, npm())[0];
 		
 		assertEquals("foo", foo.getName());
 		assertEquals("bar", bar.getName());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +62,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -1173,7 +1173,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     		public boolean acceptBinding(IBinding binding) throws CoreException {
     			return !(binding instanceof ICPPSpecialization);
     		}
-    	}, NPM)[0];
+    	}, npm())[0];
     	
     	ICPPClassType b4= (ICPPClassType) getIndex().findBindings(new char[][] {"A".toCharArray(), "B".toCharArray()}, new IndexFilter() {
     		@Override
@@ -1185,7 +1185,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     				return false;
     			}
     		}
-    	}, NPM)[0];
+    	}, npm())[0];
     	
     	assertFalse(b0 instanceof ICPPSpecialization);
     	

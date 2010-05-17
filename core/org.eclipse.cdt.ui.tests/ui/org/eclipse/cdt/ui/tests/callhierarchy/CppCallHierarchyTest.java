@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -301,7 +301,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
 		CEditor editor= openEditor(cFile);
 		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		editor.selectAndReveal(cSource.indexOf("cfunc"), 2);
 		openCallHierarchy(editor);
@@ -347,7 +347,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= openEditor(cFile);
 		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		editor.selectAndReveal(cSource.indexOf("cfunc"), 2);
 		openCallHierarchy(editor, false);
@@ -416,7 +416,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile file= createFile(getProject(), "testTemplates.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		CEditor editor= openEditor(file);
 		int pos= source.indexOf("f(");

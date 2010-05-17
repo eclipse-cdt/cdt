@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject != null) {
-			fCProject.getProject().delete(true, NPM);
+			fCProject.getProject().delete(true, npm());
 		}
 		super.tearDown();
 	}
@@ -145,7 +145,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	
 	public void testNoIndexerEnabled_158955() throws Exception {
 		// rebuild the index with no indexer
-		CCorePlugin.getIndexManager().setIndexerId(fCProject, IIndexManager.ID_NO_INDEXER);
+		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_NO_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 		
@@ -293,7 +293,7 @@ public class BasicSearchTest extends BaseUITestCase {
 			public void run(boolean fork, boolean cancelable,
 					IRunnableWithProgress runnable)
 					throws InvocationTargetException, InterruptedException {
-				runnable.run(NPM);
+				runnable.run(npm());
 			}
 		}, query);
 		assertTrue(result[0] instanceof PDOMSearchResult);
@@ -313,7 +313,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		
 		String newContent= "void bar() {}";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
-		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, NPM);
+		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
@@ -331,7 +331,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		// whitespace s.t. new match offset is same as older 
 		String newContent= "void bar() {      foo();      }";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
-		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, NPM);
+		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());
 		runEventQueue(1000);
 		IIndexManager indexManager = CCorePlugin.getIndexManager();
 		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
@@ -340,7 +340,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertOccurrences(query, 2);
 		
 		String newContent2= "void bar() {foo(); foo();}";
-		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, NPM);
+		file.setContents(new ByteArrayInputStream(newContent2.getBytes()), IResource.FORCE, npm());
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 		assertTrue(indexManager.joinIndexer(360000, new NullProgressMonitor()));
 
@@ -353,7 +353,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	}
 	
 	private void assertOccurrences(PDOMSearchQuery query, int expected) {
-		query.run(NPM);
+		query.run(npm());
 		PDOMSearchResult result= (PDOMSearchResult) query.getSearchResult();
 		assertEquals(expected, result.getMatchCount());
 	}

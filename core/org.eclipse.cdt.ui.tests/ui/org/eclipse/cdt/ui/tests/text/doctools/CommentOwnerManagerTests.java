@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class CommentOwnerManagerTests extends BaseTestCase {
 	
 	IProject projectA, projectB, projectC;
 	
+	@Override
 	protected void setUp() throws Exception {
 		manager= DocCommentOwnerManager.getInstance();
 		
@@ -50,6 +51,7 @@ public class CommentOwnerManagerTests extends BaseTestCase {
 		OWNER_3= manager.getOwner("org.cdt.test.DCOM3");
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if(projectA != null) {
 			CProjectHelper.delete(CoreModel.getDefault().create(projectA));
@@ -99,13 +101,13 @@ public class CommentOwnerManagerTests extends BaseTestCase {
 		assertEquals(OWNER_3.getID(), manager.getCommentOwner(projectC.getFile("foo/bar/baz")).getID());
 		assertEquals(OWNER_3.getID(), manager.getCommentOwner(projectC.getFolder("foo/bar")).getID());
 		
-		projectA.close(NPM);
-		projectB.close(NPM);
-		projectC.close(NPM);
+		projectA.close(npm());
+		projectB.close(npm());
+		projectC.close(npm());
 		
-		projectA.open(NPM);
-		projectB.open(NPM);
-		projectC.open(NPM);
+		projectA.open(npm());
+		projectB.open(npm());
+		projectC.open(npm());
 		
 		assertEquals(OWNER_2.getID(), manager.getCommentOwner(projectA).getID());
 		assertEquals(OWNER_2.getID(), manager.getCommentOwner(projectA.getFile("foo/bar/baz")).getID());

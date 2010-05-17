@@ -52,12 +52,11 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		CallHierarchyUI.setIsJUnitTest(true);
 		String prjName= "chTest"+sProjectCounter++;
 		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewReference[] refs= page.getViewReferences();
-		for (int i = 0; i < refs.length; i++) {
-			IViewReference viewReference = refs[i];
+		for (IViewReference viewReference : refs) {
 			page.setPartState(viewReference, IWorkbenchPage.STATE_RESTORED);
 		}
 	}

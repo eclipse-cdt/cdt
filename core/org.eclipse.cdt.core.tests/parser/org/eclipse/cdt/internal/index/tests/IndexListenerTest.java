@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,14 @@ public class IndexListenerTest extends BaseTestCase {
 		return suite(IndexListenerTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fProject1 = CProjectHelper.createCCProject("testIndexListener1", null, IPDOMManager.ID_FAST_INDEXER);
 		fProject2 = CProjectHelper.createCCProject("testIndexListener2", null, IPDOMManager.ID_FAST_INDEXER);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor()));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		CProjectHelper.delete(fProject1);
 		CProjectHelper.delete(fProject2);
@@ -53,7 +55,7 @@ public class IndexListenerTest extends BaseTestCase {
 		final Object mutex= new Object();
 		final int[] state= new int[] {0, 0, 0};
 		IIndexManager im= CCorePlugin.getIndexManager();
-		assertTrue(im.joinIndexer(10000, NPM));
+		assertTrue(im.joinIndexer(10000, npm()));
 		
 		IIndexerStateListener listener = new IIndexerStateListener() {
 			public void indexChanged(IIndexerStateEvent event) {
@@ -96,7 +98,7 @@ public class IndexListenerTest extends BaseTestCase {
 		final List projects= new ArrayList();
 		IIndexManager im= CCorePlugin.getIndexManager();
 		
-		assertTrue(im.joinIndexer(10000, NPM));
+		assertTrue(im.joinIndexer(10000, npm()));
 		IIndexChangeListener listener = new IIndexChangeListener() {
 			public void indexChanged(IIndexChangeEvent event) {
 				synchronized (mutex) {

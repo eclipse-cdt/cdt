@@ -231,7 +231,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				}
 			};
 			
-			CCorePlugin.getIndexManager().joinIndexer(8000, NPM); // ensure IPM is called only once under test conditions
+			CCorePlugin.getIndexManager().joinIndexer(8000, npm()); // ensure IPM is called only once under test conditions
 			setExpectedNumberOfLoggedNonOKStatusObjects(3); // foo, bar and baz have no compatible fragments available
 			
 			ipm.reset(VERSION_405); ipm.startup();
@@ -286,7 +286,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				}
 			};
 			
-			CCorePlugin.getIndexManager().joinIndexer(8000, NPM); // ensure IPM is called only once under test conditions
+			CCorePlugin.getIndexManager().joinIndexer(8000, npm()); // ensure IPM is called only once under test conditions
 			setExpectedNumberOfLoggedNonOKStatusObjects(1); // contentA has no compatible fragments available
 			
 			ipm.reset(VERSION_502); ipm.startup();
@@ -336,7 +336,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			core.setProjectDescription(project, pd);
 			
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
-			CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
+			CCorePlugin.getIndexManager().joinIndexer(8000, npm());
 		
 			DPT.reset(DP1);
 			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
@@ -502,14 +502,14 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		ICProjectDescription pd= core.getProjectDescription(project);
 		pd.setActiveConfiguration(pd.getConfigurationById(cfg.getId()));
 		core.setProjectDescription(project, pd);
-		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(8000, npm());
 	}
 	
 	private void changeConfigRelations(IProject project, int option) throws CoreException {
 		ICProjectDescription pd= core.getProjectDescription(project);
 		pd.setConfigurationRelations(option);
 		core.setProjectDescription(project, pd);
-		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(8000, npm());
 	}
 }
 

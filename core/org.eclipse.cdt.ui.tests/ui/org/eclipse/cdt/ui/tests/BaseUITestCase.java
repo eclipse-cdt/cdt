@@ -144,7 +144,7 @@ public class BaseUITestCase extends BaseTestCase {
 				index.releaseReadLock();
 				int time= (int) (endTime- System.currentTimeMillis());
 				if (time > 0) {
-					CCorePlugin.getIndexManager().joinIndexer(time, NPM);
+					CCorePlugin.getIndexManager().joinIndexer(time, npm());
 				}
 			}
 		}

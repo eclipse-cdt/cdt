@@ -233,9 +233,9 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		wpdom.acquireReadLock();
 		try {
 			assertEquals(1, wpdom.findBindings(new char[][] { "foo"
-					.toCharArray() }, CLinkage, NPM).length);
+					.toCharArray() }, CLinkage, npm()).length);
 			assertEquals(0, wpdom.findBindings(new char[][] { "foo"
-					.toCharArray() }, CPPLinkage, NPM).length);
+					.toCharArray() }, CPPLinkage, npm()).length);
 		} finally {
 			wpdom.releaseReadLock();
 		}
@@ -257,7 +257,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	public void verifyProject2Content(WritablePDOM wpdom) throws Exception {
 		wpdom.acquireReadLock();
 		try {
-			IBinding[] bindings= wpdom.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, NPM);
+			IBinding[] bindings= wpdom.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, npm());
 			assertEquals(2, bindings.length);
 
 			int b= bindings[0].getName().equals("A") ? 1 : 0;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 			mj.join(); // in order we are sure the indexer task has been scheduled before joining the indexer
 
 			fPDOMManager.setIndexerId(project, IPDOMManager.ID_FAST_INDEXER);
-			assertTrue(fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM));
+			assertTrue(fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm()));
 			return project;
 		} finally {
 			mj.dispose();
@@ -103,8 +103,8 @@ public class TeamSharedIndexTest extends IndexTestBase {
 			workspace.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IProjectDescription desc= IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(prjName);
-					prjHandle.create(desc, NPM);
-					prjHandle.open(0, NPM);
+					prjHandle.create(desc, npm());
+					prjHandle.open(0, npm());
 				}
 			}, null);
 			pj.join();  // in order we are sure the indexer task has been scheduled before joining the indexer
@@ -121,7 +121,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		IIndex index= fPDOMManager.getIndex(prj);
 		index.acquireReadLock();
 		try {
-			IBinding[] binding= index.findBindings(var.toCharArray(), IndexFilter.ALL, NPM);
+			IBinding[] binding= index.findBindings(var.toCharArray(), IndexFilter.ALL, npm());
 			int count= 0;
 			assertTrue(binding.length < 2);
 			if (binding.length == 1) {
@@ -144,13 +144,13 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 1);
 
 		// export the project.
-		fPDOMManager.export(prj, loc, 0, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
@@ -180,8 +180,8 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		// export the project.
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.export(prj, loc, 0, NPM);
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		// change file
 		changeFile(prj);
@@ -201,7 +201,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		final IFile file = prj.getProject().getFile("a.cpp");
 		final File location = file.getLocation().toFile();
 		final long lm= location.lastModified();
-		file.setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, NPM);
+		file.setContents(new ByteArrayInputStream("int d;".getBytes()), true, false, npm());
 		if (location.lastModified() == lm) {
 			location.setLastModified(lm+1000);
 		}
@@ -210,7 +210,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 	private void deleteAndWait(ICProject prj) throws CoreException {
 		ModelJoiner dj= new ModelJoiner();
 		try {
-			prj.getProject().delete(false, true, NPM);
+			prj.getProject().delete(false, true, npm());
 			dj.join();
 		} finally {
 			dj.dispose();
@@ -226,14 +226,14 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 1);
 		
 		// export the project.
-		fPDOMManager.export(prj, loc, 0, NPM);
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
@@ -262,8 +262,8 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		// export the project.
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.export(prj, loc, 0, NPM);
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		// add file
 		TestSourceReader.createFile(prj.getProject(), "d.cpp", "int d;");
@@ -288,14 +288,14 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 1);
 		
 		// export the project.
-		fPDOMManager.export(prj, loc, 0, NPM);
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
@@ -325,11 +325,11 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		// export the project.
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.export(prj, loc, 0, NPM);
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		// delete file
-		prj.getProject().getFile("a.cpp").delete(true, NPM);
+		prj.getProject().getFile("a.cpp").delete(true, npm());
 		deleteAndWait(prj);
 		unregisterProject(prj);
 		
@@ -350,20 +350,20 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 1);
 		
 		// export the project.
-		fPDOMManager.export(prj, loc, 0, NPM);
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.export(prj, loc, 0, npm());
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		
 		// set indexer to the fake one.
 		fPDOMManager.setIndexerId(prj, FakeIndexer.ID);		
 		IndexerPreferences.setScope(prj.getProject(), IndexerPreferences.SCOPE_PROJECT_SHARED);
 		new ProjectScope(prj.getProject()).getNode(CCorePlugin.PLUGIN_ID).flush();
-		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, NPM);
+		fPDOMManager.joinIndexer(INDEXER_WAIT_TIME, npm());
 		checkVariable(prj, "a", 0);
 		checkVariable(prj, "b", 0);
 		checkVariable(prj, "c", 0);
 
 		// delete file
-		prj.getProject().getFile("a.cpp").delete(true, NPM);
+		prj.getProject().getFile("a.cpp").delete(true, npm());
 		deleteAndWait(prj);
 		unregisterProject(prj);
 		

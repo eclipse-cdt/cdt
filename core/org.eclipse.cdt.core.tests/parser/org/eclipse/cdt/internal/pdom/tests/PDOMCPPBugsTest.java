@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,12 +54,14 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		return suite(PDOMCPPBugsTest.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		cproject= CProjectHelper.createCCProject("PDOMBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -154,6 +156,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		pdom.acquireWriteLock();
 		try {
 			Thread other= new Thread() {
+				@Override
 				public void run() {
 					try {
 						pdom.acquireReadLock();
@@ -180,6 +183,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		pdom.acquireReadLock();
 		try {
 			Thread other= new Thread() {
+				@Override
 				public void run() {
 					try {
 						pdom.acquireReadLock();
@@ -205,7 +209,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	public void test191679() throws Exception {
 		IProject project= cproject.getProject();
 		IFolder cHeaders= cproject.getProject().getFolder("cHeaders");
-		cHeaders.create(true, true, NPM);
+		cHeaders.create(true, true, npm());
 		LanguageManager lm= LanguageManager.getInstance();
 		
 		IFile cHeader= TestSourceReader.createFile(cHeaders, "cSource.c", "void foo(int i){}");		
@@ -213,13 +217,13 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
-		CCorePlugin.getIndexManager().joinIndexer(10000, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(10000, npm());
 		
 		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();
 		try {
 			{ // test reference to 'foo' was resolved correctly
-				IIndexBinding[] ib= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL, NPM);
+				IIndexBinding[] ib= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL, npm());
 				assertEquals(2, ib.length);
 				if (ib[0] instanceof ICPPBinding) {
 					IIndexBinding h= ib[0]; ib[0]= ib[1]; ib[1]= h;

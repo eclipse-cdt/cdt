@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,14 +39,11 @@ import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BaseTestCase extends TestCase {
-	protected static final IProgressMonitor NPM= new NullProgressMonitor();
-
 	private boolean fExpectFailure= false;
 	private int fBugnumber= 0;
 	private int fExpectedLoggedNonOK= 0;
@@ -58,7 +55,11 @@ public class BaseTestCase extends TestCase {
 	public BaseTestCase(String name) {
 		super(name);
 	}
-	
+
+	public NullProgressMonitor npm() {
+		return new NullProgressMonitor();
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		CPPASTNameBase.sAllowRecursionBindings= false;
@@ -283,12 +284,12 @@ public class BaseTestCase extends TestCase {
     
     protected void waitForIndexer(ICProject project) throws InterruptedException {
 		final PDOMManager indexManager = CCoreInternals.getPDOMManager();
-		assertTrue(indexManager.joinIndexer(10000, NPM));
+		assertTrue(indexManager.joinIndexer(10000, npm()));
 		long waitms= 1;
 		while (waitms < 2000 && !indexManager.isProjectRegistered(project)) {
 			Thread.sleep(waitms);
 			waitms *= 2;
 		}
-		assertTrue(indexManager.joinIndexer(10000, NPM));
+		assertTrue(indexManager.joinIndexer(10000, npm()));
 	}
 }

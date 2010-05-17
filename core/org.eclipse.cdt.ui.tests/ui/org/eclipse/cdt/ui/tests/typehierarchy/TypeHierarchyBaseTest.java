@@ -56,7 +56,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__thTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
@@ -128,8 +128,7 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 			if (focus instanceof Text) {
 				Composite parent= focus.getParent();
 				Control[] children= parent.getChildren();
-				for (int j = 0; j < children.length; j++) {
-					Control child = children[j];
+				for (Control child : children) {
 					if (child instanceof Tree) {
 						return (Tree) child;
 					}

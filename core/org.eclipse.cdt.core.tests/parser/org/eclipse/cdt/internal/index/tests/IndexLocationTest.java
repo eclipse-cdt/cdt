@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class IndexLocationTest extends BaseTestCase {
 		File location = new File(CProjectHelper.freshDir(), "external2.h"); 
 		createExternalFile(location, "struct External {};\n");
 		IFolder content= cproject.getProject().getFolder("content");
-		content.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, NPM);
+		content.createLink(new Path(location.getParentFile().getAbsolutePath()), IResource.NONE, npm());
 		
 		CCorePlugin.getIndexManager().reindex(cproject);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor()));
@@ -168,7 +168,7 @@ public class IndexLocationTest extends BaseTestCase {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 		index.acquireReadLock();
 		try {
-			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, NPM);
+			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, npm());
 			assertEquals(1, bs.length);
 			IIndexName[] nms= index.findNames(bs[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, nms.length);
@@ -202,7 +202,7 @@ public class IndexLocationTest extends BaseTestCase {
 		waitForIndexer(cproject);
 		index.acquireReadLock();
 		try {
-			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, NPM);
+			IBinding[] bs= index.findBindings("External".toCharArray(), IndexFilter.ALL, npm());
 			assertEquals(1, bs.length);
 			IIndexName[] nms= index.findNames(bs[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(1, nms.length);

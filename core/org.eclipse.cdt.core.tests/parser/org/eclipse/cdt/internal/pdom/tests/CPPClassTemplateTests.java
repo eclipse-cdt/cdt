@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,8 +61,8 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	protected void setUpSections(int sections) throws Exception {
 		StringBuffer[] contents= TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
-		for(int i=0; i<contents.length; i++) {
-			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), contents[i].toString());
+		for (StringBuffer content : contents) {
+			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
 		}
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		for(int i=0; i<5 && !CCoreInternals.getPDOMManager().isProjectRegistered(cproject); i++) {
@@ -80,7 +80,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 			pdom.releaseReadLock();
 		}
 		pdom= null;
-		cproject.getProject().delete(true, NPM);
+		cproject.getProject().delete(true, npm());
 	}
 	
 	/*************************************************************************/
@@ -96,8 +96,8 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	//	Foo<A> a;
 	//	Foo<B> b;
 	public void testSpecializations() throws Exception {
-		IBinding[] as= pdom.findBindings(new char[][]{{'a'}}, IndexFilter.ALL, NPM);
-		IBinding[] bs= pdom.findBindings(new char[][]{{'b'}}, IndexFilter.ALL, NPM);
+		IBinding[] as= pdom.findBindings(new char[][]{{'a'}}, IndexFilter.ALL, npm());
+		IBinding[] bs= pdom.findBindings(new char[][]{{'b'}}, IndexFilter.ALL, npm());
 		
 		assertEquals(1, as.length);
 		assertEquals(1, bs.length);
@@ -136,7 +136,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// };
 	public void testSimpleDefinition() throws Exception {
 		assertDeclarationCount(pdom, "D", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, b.length);
 		assertTrue(b[0] instanceof ICPPClassTemplate);
 		ICPPClassTemplate ct= (ICPPClassTemplate) b[0];
@@ -155,7 +155,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// };
 	public void testDefinition() throws Exception {
 		assertDeclarationCount(pdom, "D", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, b.length);
 		assertTrue(b[0] instanceof ICPPClassTemplate);
 		ICPPClassTemplate ct= (ICPPClassTemplate) b[0];
@@ -181,7 +181,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	// };
 	public void testDefinition2() throws Exception {
 		assertDeclarationCount(pdom, "E", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'E'}}, IndexFilter.ALL_DECLARED, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'E'}}, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, b.length);
 		assertTrue(b[0] instanceof ICPPClassTemplate);
 		ICPPClassTemplate ct= (ICPPClassTemplate) b[0];
@@ -231,7 +231,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 	//    foo->f(*new A());
 	// }
 	public void testFunctionPointer() throws Exception {
-		IIndexFragmentBinding[] bs= pdom.findBindings(new char[][] {"foo".toCharArray()}, IndexFilter.ALL, NPM);
+		IIndexFragmentBinding[] bs= pdom.findBindings(new char[][] {"foo".toCharArray()}, IndexFilter.ALL, npm());
 		assertEquals(1, bs.length);
 		assertInstance(bs[0], ICPPVariable.class);
 		ICPPVariable var= (ICPPVariable) bs[0];
@@ -267,7 +267,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		
 		{
 			// template
-			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, NPM);
+			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {{'D'}}, IndexFilter.ALL_DECLARED, npm());
 			assertEquals(2, b.length);
 			assertTrue(!(b[0] instanceof ICPPClassTemplate) || !(b[1] instanceof ICPPClassTemplate));
 			int i= b[0] instanceof ICPPClassTemplate ? 0 : 1;
@@ -283,7 +283,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 
 		{
 			assertDeclarationCount(pdom, "dn", 1);
-			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"dn".toCharArray()}, IndexFilter.ALL, NPM);
+			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"dn".toCharArray()}, IndexFilter.ALL, npm());
 			assertEquals(1, b.length);
 			assertInstance(b[0], ICPPVariable.class);
 			ICPPVariable var= (ICPPVariable) b[0];
@@ -301,7 +301,7 @@ public class CPPClassTemplateTests extends PDOMTestBase {
 		
 		{
 			assertDeclarationCount(pdom, "dint", 1);
-			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"dint".toCharArray()}, IndexFilter.ALL, NPM);
+			IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"dint".toCharArray()}, IndexFilter.ALL, npm());
 			assertEquals(1, b.length);
 			assertTrue(b[0] instanceof ICPPVariable);
 			ICPPVariable var= (ICPPVariable) b[0];

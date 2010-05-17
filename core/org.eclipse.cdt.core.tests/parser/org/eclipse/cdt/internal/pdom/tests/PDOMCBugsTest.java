@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 	// typedef int (*J)(J);
 	public void test192165() throws Exception {
 		pdom.acquireReadLock();
-		IBinding[] bindings= pdom.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, NPM);
+		IBinding[] bindings= pdom.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
 		assertEquals(7, bindings.length);
 		Set bnames= new HashSet();
 		for (IBinding binding : bindings) {

@@ -232,11 +232,11 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 			};
 		String disturbContent= readTaggedComment(DISTURB_FILE_NAME);
 		IFile dfile= createFile(fProject, DISTURB_FILE_NAME, disturbContent);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
 		assertCompletionResults(expected);
 		
-		dfile.delete(true, NPM);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		dfile.delete(true, npm());
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, npm()));
 		assertCompletionResults(expected2);		
 	}
 	

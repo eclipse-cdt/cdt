@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation.
+ * Copyright (c) 2006, 2010 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 	
 	public void testPointerToFunctionType() throws Exception {
 		assertDeclarationCount(pdom, "int2intPtr", 1);
-		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"int2intPtr".toCharArray()}, IndexFilter.ALL, NPM);
+		IIndexFragmentBinding[] b= pdom.findBindings(new char[][] {"int2intPtr".toCharArray()}, IndexFilter.ALL, npm());
 		assertEquals(1, b.length);
 		assertInstance(b[0], ICPPVariable.class);
 		ICPPVariable v= (ICPPVariable) b[0];
@@ -202,8 +202,8 @@ public class CPPFunctionTests extends PDOMTestBase {
 			}
 		}
 
-		for (int i = 0; i < seen.length; i++) {
-			assertTrue(seen[i]);
+		for (boolean element : seen) {
+			assertTrue(element);
 		}
 	}
 

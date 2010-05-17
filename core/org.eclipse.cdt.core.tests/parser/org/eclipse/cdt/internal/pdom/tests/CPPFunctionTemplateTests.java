@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,8 +46,8 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 	protected void setUpSections(int sections) throws Exception {
 		StringBuffer[] contents= TestSourceReader.getContentsForTest(
 				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), sections);
-		for(int i=0; i<contents.length; i++) {
-			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), contents[i].toString());
+		for (StringBuffer content : contents) {
+			IFile file= TestSourceReader.createFile(cproject.getProject(), new Path("refs.cpp"), content.toString());
 		}
 		IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -62,7 +62,7 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 			pdom.releaseReadLock();
 		}
 		pdom= null;
-		cproject.getProject().delete(true, NPM);
+		cproject.getProject().delete(true, npm());
 	}
 	
 	/*************************************************************************/
@@ -88,7 +88,7 @@ public class CPPFunctionTemplateTests extends PDOMTestBase {
 	//	}
 	public void testSimpleInstantiation() throws Exception {
 		setUpSections(1);
-		IBinding[] bs= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL_DECLARED, NPM);
+		IBinding[] bs= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(2, bs.length);
 		assertInstance(bs[0], ICPPFunctionTemplate.class);
 		assertInstance(bs[1], ICPPFunctionTemplate.class);

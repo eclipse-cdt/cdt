@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,7 +131,7 @@ public class Bug246129 extends IndexTestBase {
 					CoreModel.newIncludeEntry(fProject.getPath(), null,
 							fIncludeFolder.getLocation()) };
 			
-			fProject.setRawPathEntries(entries, NPM);
+			fProject.setRawPathEntries(entries, npm());
 
 			// However, the scanner info provider used by the unit tests
 			// needs separate setup, and this one must be complete.
@@ -151,7 +151,7 @@ public class Bug246129 extends IndexTestBase {
 			fFalseFriendsAccepted = falseFriendDirectory.exists();
 			
 			CCorePlugin.getIndexManager().reindex(fProject);
-			assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, NPM));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(10000, npm()));
 			fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 		}
 	}
@@ -173,7 +173,7 @@ public class Bug246129 extends IndexTestBase {
 	private void assertSymbolInIndex(String symbolName) throws Exception {
 		IIndexBinding[] bindings = fIndex.findBindings(
 				symbolName
-				.toCharArray(), false, IndexFilter.ALL, NPM);
+				.toCharArray(), false, IndexFilter.ALL, npm());
 		assertTrue(bindings.length > 0);
 	}
 	

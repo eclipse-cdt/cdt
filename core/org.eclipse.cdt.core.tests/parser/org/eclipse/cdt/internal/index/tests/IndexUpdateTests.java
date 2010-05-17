@@ -100,7 +100,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		if (fCProject == null) {
 			fCProject= CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
 		}
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCppProject});
 	}
 
@@ -111,7 +111,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
 		fHeader= TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm()));
 	}
 
 	private void setupFile(int totalFileVersions, boolean cpp) throws Exception {
@@ -122,7 +122,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
 		fFile= TestSourceReader.createFile(project, "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm()));
 	}
 	
 	private void updateFile() throws Exception {
@@ -137,12 +137,12 @@ public class IndexUpdateTests extends IndexTestBase {
 	public void tearDown() throws Exception {
 		fIndex= null;
 		if (fFile != null) {
-			fFile.delete(true, NPM);
+			fFile.delete(true, npm());
 		}
 		if (fHeader != null) {
-			fHeader.delete(true, NPM);
+			fHeader.delete(true, npm());
 		}
-		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
 		super.tearDown();
 	}
 		
@@ -227,7 +227,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		for (int i = 0; i < nchars.length; i++) {
 			nchars[i]= names[i].toCharArray();
 		}
-		return fIndex.findBindings(nchars, IndexFilter.ALL_DECLARED, NPM)[0];
+		return fIndex.findBindings(nchars, IndexFilter.ALL_DECLARED, npm())[0];
 	}
 
 	private String msg() {
@@ -555,7 +555,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			final char[] nchars = name.toCharArray();
 			final String refType = name + " &";
 			final String constRefType = "const " + refType;
-			IIndexBinding[] ctors= fIndex.findBindings(new char[][]{nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM);
+			IIndexBinding[] ctors= fIndex.findBindings(new char[][]{nchars, nchars}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
 
 			int count= 0;
 			for (int i = 0; i < ctors.length; i++) {
@@ -574,7 +574,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			}
 			checkCppConstructor((ICPPConstructor) ctors[0], new String[]{"", constRefType}, m2);
 
-			IIndexBinding[] assignmentOps= fIndex.findBindings(new char[][]{nchars, "operator =".toCharArray()}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, NPM);
+			IIndexBinding[] assignmentOps= fIndex.findBindings(new char[][]{nchars, "operator =".toCharArray()}, IndexFilter.ALL_DECLARED_OR_IMPLICIT, npm());
 			count= 0;
 			for (int i = 0; i < assignmentOps.length; i++) {
 				IIndexBinding assignmentOp= assignmentOps[i];
@@ -934,7 +934,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 		fHeader= TestSourceReader.createFile(fHeader.getParent(), fHeader.getName(), fContents[0].toString().replaceAll("globalVar", "newVar"));
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, fHeader, INDEXER_WAIT_TIME);
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm()));
 
 		fIndex.acquireReadLock();
 		try {

@@ -19,24 +19,29 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
  */
 public final class CxxAstUtils {
 	private static CxxAstUtils instance;
-	private CxxAstUtils(){
+
+	private CxxAstUtils() {
 		// private constructor
 	}
-	public synchronized static CxxAstUtils getInstance(){
-		if (instance==null) instance = new CxxAstUtils();
+
+	public synchronized static CxxAstUtils getInstance() {
+		if (instance == null) instance = new CxxAstUtils();
 		return instance;
 	}
+
 	public IType unwindTypedef(IType type) {
 		if (!(type instanceof IBinding)) return type;
 		IBinding typeName = (IBinding) type;
 		// unwind typedef chain
-		while (typeName instanceof ITypedef) {
-			IType t = ((ITypedef) typeName).getType();
-			if (t instanceof IBinding)
-				typeName = (IBinding) t;
-			else
-				return t;
+		try {
+			while (typeName instanceof ITypedef) {
+				IType t = ((ITypedef) typeName).getType();
+				if (t instanceof IBinding) typeName = (IBinding) t;
+				else return t;
+			}
+		} catch (Exception e) { // in CDT 6.0 getType throws DOMException
+			Activator.log(e);
 		}
-		return (IType)typeName;
+		return (IType) typeName;
 	}
 }

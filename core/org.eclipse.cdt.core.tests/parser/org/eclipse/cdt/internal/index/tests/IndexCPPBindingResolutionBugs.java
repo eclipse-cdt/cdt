@@ -1192,7 +1192,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	void YetAnotherTest::test() {
 	//	  arr[0].member=0;
 	//	}
-	public void testXXXX_Bug303739() throws Exception {
+	public void testElaboratedTypeSpecifier_Bug303739() throws Exception {
     	getBindingFromASTName("member=0", -2, ICPPField.class);
 	}
 

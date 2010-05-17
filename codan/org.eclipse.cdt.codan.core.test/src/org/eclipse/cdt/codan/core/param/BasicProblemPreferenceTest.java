@@ -15,7 +15,6 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
-import org.junit.Test;
 
 /**
  * Test for BasicProblemPreference
@@ -30,7 +29,6 @@ public class BasicProblemPreferenceTest extends TestCase {
 		pref = new BasicProblemPreference(key, "My Value"); //$NON-NLS-1$
 	}
 
-	@Test
 	public void testIntegerExportValue() {
 		pref.setType(PreferenceType.TYPE_INTEGER);
 		pref.setValue(22);
@@ -38,14 +36,12 @@ public class BasicProblemPreferenceTest extends TestCase {
 		assertEquals(String.valueOf(22), value);
 	}
 
-	@Test
 	public void testIntegerImportValue() {
 		pref.setType(PreferenceType.TYPE_INTEGER);
 		pref.importValue("22"); //$NON-NLS-1$
 		assertEquals(22, pref.getValue());
 	}
 
-	@Test
 	public void testStringExportValue() {
 		pref.setType(PreferenceType.TYPE_STRING);
 		pref.setValue(TEST_STR);
@@ -53,14 +49,12 @@ public class BasicProblemPreferenceTest extends TestCase {
 		assertEquals(TEST_STR, value);
 	}
 
-	@Test
 	public void testStringImportValue() {
 		pref.setType(PreferenceType.TYPE_STRING);
 		pref.importValue(TEST_STR);
 		assertEquals(TEST_STR, pref.getValue());
 	}
 
-	@Test
 	public void testBooleanImportValue() {
 		pref.setType(PreferenceType.TYPE_BOOLEAN);
 		pref.setValue(Boolean.TRUE);
@@ -70,7 +64,6 @@ public class BasicProblemPreferenceTest extends TestCase {
 		assertEquals(Boolean.FALSE, pref.getValue());
 	}
 
-	@Test
 	public void testFileImportValue() {
 		pref.setType(PreferenceType.TYPE_FILE);
 		File file = new File("file.c"); //$NON-NLS-1$
@@ -99,7 +92,6 @@ public class BasicProblemPreferenceTest extends TestCase {
 		}
 	}
 
-	@Test
 	public void testStringImportValueNum() {
 		pref.setType(PreferenceType.TYPE_STRING);
 		pref.importValue("42.5");
@@ -116,7 +108,6 @@ public class BasicProblemPreferenceTest extends TestCase {
 		assertEquals(str, pref.getValue());
 	}
 
-	@Test
 	public void testStringExportSpecial() {
 		checkImportExport("a=b");
 		checkImportExport("\"");

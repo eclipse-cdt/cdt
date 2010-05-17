@@ -13,7 +13,6 @@ package org.eclipse.cdt.codan.core.param;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
-import org.junit.Test;
 
 /**
  * Test for BasicProblemPreference
@@ -55,14 +54,12 @@ public class MapProblemPreferenceTest extends TestCase {
 		return str;
 	}
 
-	@Test
 	public void testExportValueStr() {
 		BasicProblemPreference str = addPar(PAR1, "42.5"); //$NON-NLS-1$
 		String value = map.exportValue();
 		assertEquals("{" + str.getKey() + "=>42.5}", value); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	@Test
 	public void testImportValue() {
 		addPar(PAR1, "xxx"); //$NON-NLS-1$
 		String value = map.exportValue();
@@ -72,7 +69,6 @@ public class MapProblemPreferenceTest extends TestCase {
 		assertEquals("xxx", map2.getChildValue(PAR1)); //$NON-NLS-1$
 	}
 
-	@Test
 	public void testImportValueSpec() {
 		BasicProblemPreference str = addPar(PAR1, "a=b"); //$NON-NLS-1$
 		String value = map.exportValue();
@@ -82,7 +78,6 @@ public class MapProblemPreferenceTest extends TestCase {
 		assertEquals(str.getValue(), map2.getChildValue(PAR1));
 	}
 
-	@Test
 	public void testImportValue2() {
 		addPar(PAR1, "a=b"); //$NON-NLS-1$
 		BasicProblemPreference p2 = addPar(PAR2, "2,\"2"); //$NON-NLS-1$

@@ -771,25 +771,33 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					return;
 				}
 				
-				CTabItem tabItem = activeFolder.getSelection();
-				if (tabItem != null) {
-					if(memorySpaces.length > 0)	{
-						fGotoMemorySpaceControl.setVisible(true);
-						fGotoMemorySpaceControl.setItems(memorySpaces);
-						
-						// the n/a entry; don't think this needs to be translated
-						fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0); //$NON-NLS-1$ 
-					}
-					else {
-						fGotoMemorySpaceControl.setVisible(false);
-						fGotoMemorySpaceControl.setItems(new String[0]);
-					}
-	
-					updateMemorySpaceControlSelection(tabItem);
+				if (memorySpaces.length > 0)	{
+					fGotoMemorySpaceControl.setItems(memorySpaces);
+					fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0); //$NON-NLS-1$  the n/a entry; don't think this needs to be translated
+					setMemorySpaceControlVisible(true);
 				}
+				else {
+					fGotoMemorySpaceControl.setItems(new String[0]);
+					setMemorySpaceControlVisible(false);					
+				}
+
+				updateMemorySpaceControlSelection(activeFolder.getSelection());
+				
 				fStackLayout.topControl.getParent().layout(true);
 			}
 		});
+	}
+	
+	private void setMemorySpaceControlVisible(boolean visible) {
+		FormData data = (FormData)fGotoAddressBarControl.getLayoutData();
+		if (visible) {
+			data.left = new FormAttachment(fGotoMemorySpaceControl);
+		}
+		else {
+			data.left = new FormAttachment(0);
+		}
+		fGotoMemorySpaceControl.setVisible(visible);
+
 	}
 
 	/**
@@ -797,7 +805,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 * space being shown in the given tab
 	 * 
 	 * @param item
-	 *            the active tab
+	 *            the active tab; may be null if in a "fresh" memory browser instance
 	 */
 	private void updateMemorySpaceControlSelection(CTabItem item) {
 		String[] memorySpaces = fGotoMemorySpaceControl.getItems();
@@ -806,20 +814,24 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			// is one of the ones now available. If it isn't, then select
 			// the first available one and update the tab data 
 			boolean foundIt = false;
-			String currentMemorySpace = (String) item.getData(KEY_MEMORY_SPACE);
-			if (currentMemorySpace != null)			{
-				assert currentMemorySpace.length() > 0;
-				for (String memorySpace : memorySpaces) {
-					if (memorySpace.equals(currentMemorySpace)) {
-						foundIt = true;
-						fGotoMemorySpaceControl.setText(currentMemorySpace);
-						break;
+			if (item != null) {
+				String currentMemorySpace = (String) item.getData(KEY_MEMORY_SPACE);
+				if (currentMemorySpace != null)			{
+					assert currentMemorySpace.length() > 0;
+					for (String memorySpace : memorySpaces) {
+						if (memorySpace.equals(currentMemorySpace)) {
+							foundIt = true;
+							fGotoMemorySpaceControl.setText(currentMemorySpace);
+							break;
+						}
 					}
 				}
 			}
 			if (!foundIt) {
 				fGotoMemorySpaceControl.select(0);
-				item.setData(KEY_MEMORY_SPACE, null);
+				if (item != null) {
+					item.setData(KEY_MEMORY_SPACE, null);
+				}
 			}
 			fGotoMemorySpaceControl.setVisible(true);
 		}

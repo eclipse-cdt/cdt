@@ -5730,7 +5730,7 @@ public class AST2Tests extends AST2BaseTest {
 		checkToken(syntax, "IF_P", -5); syntax= syntax.getNext();
 		assertNull(syntax);
 
-		tu= parseAndCheckBindings(code + "IF_P_T ) {}}");
+		tu= parseAndCheckBindings(code + "IF_P_T) {}}");
 		f= getDeclaration(tu, 0); i= getStatement(f, 0); x= i.getConditionExpression();
 		try {
 			syntax= x.getLeadingSyntax();
@@ -6031,8 +6031,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 
-
-
 	private long memoryUsed() throws InterruptedException {
 		System.gc();Thread.sleep(200);System.gc();
 		final Runtime runtime = Runtime.getRuntime();
@@ -6233,7 +6231,6 @@ public class AST2Tests extends AST2BaseTest {
 			assertInstance(nodes[0], IASTPointerOperator.class);
 		}
     }
-    
 
     //  int a = -142;
     //  int b = 456L;
@@ -6344,8 +6341,7 @@ public class AST2Tests extends AST2BaseTest {
 			}
 		}
     }
-    
-    
+
     //  int a = -142.0;
     //  int b = 456.1f;
     //  int c = 100000.99F;
@@ -6426,8 +6422,7 @@ public class AST2Tests extends AST2BaseTest {
 		IASTInitializer init = ((IASTSimpleDeclaration)declarations[index]).getDeclarators()[0].getInitializer();
 		return (IBasicType)((IASTExpression)((IASTEqualsInitializer)init).getInitializerClause()).getExpressionType();
 	}
-	
-	
+
 	//	void test() {
 	//	    __DATE__;
 	//	    __FILE__;
@@ -6440,7 +6435,6 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.C);
 	}
 	
-	//
 	// long double longDouble = 1.0;
 	// double _double = 1.0;
 	// float _float= 1.0;
@@ -6470,9 +6464,7 @@ public class AST2Tests extends AST2BaseTest {
 	//    var = _int + longDouble;
 	//    var = shortInt + longDouble;
 	//    var = _char + longDouble;
-	//
 	// }
-	//
 	public void testTypePromotion_long_double() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6498,7 +6490,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
-	//
 	// double _double = 1.0;
 	// float _float= 1.0;
 	// long long int longLongInt = 1;
@@ -6526,7 +6517,6 @@ public class AST2Tests extends AST2BaseTest {
 	//    var = _char + _double;
 	//
 	// }
-	//
 	public void testTypePromotion_double() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6552,7 +6542,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
-	//
 	// float _float= 1.0;
 	// long long int longLongInt = 1;
 	// long int longInt = 1;
@@ -6576,7 +6565,6 @@ public class AST2Tests extends AST2BaseTest {
 	//    var = _char + _float;
 	//
 	// }
-	//
 	public void testTypePromotion_float() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6649,7 +6637,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
-	//
 	// long long int longLongInt = 1;
 	// long int longInt = 1;
 	// int _int = 1;
@@ -6669,7 +6656,6 @@ public class AST2Tests extends AST2BaseTest {
 	//    var = _char + longInt;
 	//
 	// }
-	//
 	public void testTypePromotion_longint() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6695,7 +6681,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
-	//
 	// int _int = 1;
 	// short int shortInt = 1;
 	// char _char = 1;
@@ -6711,7 +6696,6 @@ public class AST2Tests extends AST2BaseTest {
 	//    var = _char + _int;
 	//
 	// }
-	//
 	public void testTypePromotion_int() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6738,7 +6722,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
-	//
 	// short int shortInt = 1;
 	// char _char = 1;
 	//
@@ -6751,7 +6734,6 @@ public class AST2Tests extends AST2BaseTest {
 	//    var = _char + shortInt;
 	//
 	// }
-	//
 	public void testTypePromotion_short_int() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6779,7 +6761,6 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
-	//
 	// char _char = 1;
 	//
 	// float var;
@@ -6787,7 +6768,6 @@ public class AST2Tests extends AST2BaseTest {
 	//    /* The following should all be signed int */
 	//    var = _char + _char;
 	// }
-	//
 	public void testTypePromotion_char() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -6848,8 +6828,6 @@ public class AST2Tests extends AST2BaseTest {
 	//      /* (6) Should be an unsigned long int*/
 	//      var = unsignedLongInt + signedLongInt;	
 	//  }
-	//
-	//
 	public void testTypePromotion_signedAndUnsignedInts() throws Exception {
 		for (ParserLanguage lang : ParserLanguage.values()) {
 			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang);
@@ -7014,8 +6992,7 @@ public class AST2Tests extends AST2BaseTest {
 		assertNotNull(t);
 		assertTrue(t instanceof IEnumeration);
 	}
-	
-	
+
 	// /*Check that sizes are stored correctly in chains of IArrayType*/
 	//int a[2][3] = {{1,2,3},{4,5,6}};
 	//int b[3][2] = {{1,2},{3,4},{5,6}};
@@ -7058,8 +7035,7 @@ public class AST2Tests extends AST2BaseTest {
 			}
 		}
 	}
-	
-	
+
 	// /* Check that a parameter declared as a typedef'd array 
 	//  * is treated as a pointer
 	//  */
@@ -7070,13 +7046,10 @@ public class AST2Tests extends AST2BaseTest {
 	    for(ParserLanguage lang : ParserLanguage.values()) {
             IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), lang);
             assertTrue(tu.isFrozen());
-            IASTName n = ((IASTSimpleDeclaration)tu.getDeclarations()[1]).getDeclarators()[0].getName();
-            assertTrue(((IFunction)n.resolveBinding()).getType().getParameterTypes()[0] instanceof IPointerType);
+            IASTName n = ((IASTSimpleDeclaration) tu.getDeclarations()[1]).getDeclarators()[0].getName();
+            assertTrue(((IFunction) n.resolveBinding()).getType().getParameterTypes()[0] instanceof IPointerType);
 	    }
 	}
-	
-	
-	
 	
 	//
 	// /* check that enumerator values are evaluated correctly for
@@ -7092,15 +7065,15 @@ public class AST2Tests extends AST2BaseTest {
 	    for(ParserLanguage lang : ParserLanguage.values()) {
             IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), lang);
             IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier)((IASTSimpleDeclaration)tu.getDeclarations()[0]).getDeclSpecifier();
-            IEnumerator enumeratorBinding = (IEnumerator)enumSpec.getEnumerators()[0].getName().resolveBinding();
+            IEnumerator enumeratorBinding = (IEnumerator) enumSpec.getEnumerators()[0].getName().resolveBinding();
             IValue value = enumeratorBinding.getValue();
-            assertEquals( 2, value.numericalValue().longValue());
-            IEnumerator enumeratorBinding2 = (IEnumerator)enumSpec.getEnumerators()[1].getName().resolveBinding();
+            assertEquals(2, value.numericalValue().longValue());
+            IEnumerator enumeratorBinding2 = (IEnumerator) enumSpec.getEnumerators()[1].getName().resolveBinding();
             IValue value2 = enumeratorBinding2.getValue();
-            assertEquals( 1, value2.numericalValue().longValue());
+            assertEquals(1, value2.numericalValue().longValue());
 	    }
 	}
-	//
+
 	// extern void goo();
 	// struct MyStruct {
 	//      int a;
@@ -7111,7 +7084,6 @@ public class AST2Tests extends AST2BaseTest {
 	//     structure.a = 1;
 	//     structure.ptr = goo;
 	// }
-	//
 	public void testBindingsOnFields() throws Exception {
 	    IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, false);
 	    IASTCompoundStatement bodyStmt  = (IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[2]).getBody();
@@ -7120,7 +7092,7 @@ public class AST2Tests extends AST2BaseTest {
 	    IASTName n = ((IASTSimpleDeclaration)((IASTDeclarationStatement)bodyStmt.getStatements()[0]).getDeclaration()).getDeclarators()[0].getName();
 	    ICompositeType t = (ICompositeType)((IVariable)n.resolveBinding()).getType();
 	    IField[] fields = t.getFields();
-	    assertTrue( fields.length ==2 );
+	    assertTrue(fields.length == 2);
 
 	    // Get the IField for the first assignment
 	    IASTFieldReference ref1 = (IASTFieldReference)((IASTBinaryExpression)((IASTExpressionStatement)bodyStmt.getStatements()[1]).getExpression()).getOperand1();
@@ -7131,19 +7103,16 @@ public class AST2Tests extends AST2BaseTest {
 	    IBinding field2 = ref2.getFieldName().resolveBinding();
 
 	    // Compare the IField from the type and the assignments
-	    assertEquals( fields[0], field1);
-	    assertEquals( fields[1], field2); // fails
+	    assertEquals(fields[0], field1);
+	    assertEquals(fields[1], field2); // fails
 	    
 	    assertEquals(1, ((ICInternalBinding) field1).getDeclarations().length);
 	    assertEquals(1, ((ICInternalBinding) field2).getDeclarations().length);
 	}
 	
-	
-	
     //	/*
     //	 * Check that the type returned by CASTArraySubscriptExpression
     //	 * handles typedefs correctly.
-    //	 *
     //	 */
     //	struct s {
     //	    int a;
@@ -7173,12 +7142,12 @@ public class AST2Tests extends AST2BaseTest {
 	        assertTrue(tu.isFrozen());
 	        for (IASTDeclaration d : tu.getDeclarations()) {
 	            if (d instanceof IASTFunctionDefinition) {
-	                for (IASTStatement s : ((IASTCompoundStatement)((IASTFunctionDefinition)d).getBody()).getStatements()) {
-	                    IASTExpression op1 = ((IASTBinaryExpression)((IASTExpressionStatement)s).getExpression()).getOperand1();
-	                    IASTExpression owner = ((IASTFieldReference)op1).getFieldOwner();
+	                for (IASTStatement s : ((IASTCompoundStatement) ((IASTFunctionDefinition) d).getBody()).getStatements()) {
+	                    IASTExpression op1 = ((IASTBinaryExpression) ((IASTExpressionStatement) s).getExpression()).getOperand1();
+	                    IASTExpression owner = ((IASTFieldReference) op1).getFieldOwner();
 	                    IType t = owner.getExpressionType();
-	                    assertTrue( t instanceof ICompositeType );
-	                    assertEquals( "s",((ICompositeType)t).getName());
+	                    assertTrue(t instanceof ICompositeType);
+	                    assertEquals("s",((ICompositeType)t).getName());
 	                }
 	            }
 	        }

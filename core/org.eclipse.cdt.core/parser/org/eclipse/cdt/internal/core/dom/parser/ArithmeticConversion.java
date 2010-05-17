@@ -54,21 +54,21 @@ public abstract class ArithmeticConversion {
 		// Multiplicative operators
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_modulo:
-		case IASTBinaryExpression.op_multiply :
+		case IASTBinaryExpression.op_multiply:
 		// Additive operators
-		case IASTBinaryExpression.op_minus :
-		case IASTBinaryExpression.op_plus :
+		case IASTBinaryExpression.op_minus:
+		case IASTBinaryExpression.op_plus:
 		// Bitwise operators
 		case IASTBinaryExpression.op_binaryAnd:
 		case IASTBinaryExpression.op_binaryOr:
 		case IASTBinaryExpression.op_binaryXor:
 		// Gcc's minimum/maximum operators
-		case IASTBinaryExpression.op_max :
-		case IASTBinaryExpression.op_min :
+		case IASTBinaryExpression.op_max:
+		case IASTBinaryExpression.op_min:
 			return convert(op1, op2);
 
-		case IASTBinaryExpression.op_shiftLeft :
-		case IASTBinaryExpression.op_shiftRight :
+		case IASTBinaryExpression.op_shiftLeft:
+		case IASTBinaryExpression.op_shiftRight:
 			return promote(op1, getDomain(op1));
 			
 		default:

@@ -34,30 +34,30 @@ public class LocalApplicationCDebuggerTab extends CDebuggerTab {
 	 * default settings saved.
 	 * Bug 281970
 	 */
-	private boolean fSetDefaultCalled;
-
+	private final static String DEFAULTS_SET = "org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab.DEFAULTS_SET"; //$NON-NLS-1$
+	
     public LocalApplicationCDebuggerTab() {
         super(SessionType.LOCAL, false);
     }
     
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    	fSetDefaultCalled = true;
+		config.setAttribute(DEFAULTS_SET, true);
     	
     	super.setDefaults(config);
     }
     
     @Override
     public void initializeFrom(ILaunchConfiguration config) {
-		if (fSetDefaultCalled == false) {
-			try {
-				ILaunchConfigurationWorkingCopy wc;
-				wc = config.getWorkingCopy();
-				setDefaults(wc);
-				wc.doSave();
-			} catch (CoreException e) {
-			}
-		}
+    	try {
+    		if (config.hasAttribute(DEFAULTS_SET) == false) {
+    			ILaunchConfigurationWorkingCopy wc;
+    			wc = config.getWorkingCopy();
+    			setDefaults(wc);
+    			wc.doSave();
+    		}
+    	} catch (CoreException e) {
+    	}
 
 		super.initializeFrom(config);
     }

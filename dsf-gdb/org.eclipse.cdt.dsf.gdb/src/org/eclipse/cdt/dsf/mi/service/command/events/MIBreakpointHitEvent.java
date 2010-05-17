@@ -25,7 +25,6 @@ import org.eclipse.cdt.dsf.mi.service.MIBreakpointsManager;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIFrame;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.gdb.internal.eventbkpts.GdbCatchpoints;
@@ -55,12 +54,8 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
         return bkptno;
     }
     
-    /**
-     * @param miStreamRecords 
-     * @since 3.0
-     */
     @ConfinedToDsfExecutor("")    
-    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, MIStreamRecord[] miStreamRecords) {
+    public static MIBreakpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results) {
        int bkptno = -1;
 
        for (int i = 0; i < results.length; i++) {

@@ -21,11 +21,11 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandListener;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandResult;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandToken;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
@@ -61,7 +61,6 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOOBRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResult;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIStreamRecord;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
@@ -134,7 +133,7 @@ public class MIRunControlEventProcessor_7_0
     					if (var.equals("reason")) { //$NON-NLS-1$
     						if (val instanceof MIConst) {
     							String reason = ((MIConst) val).getString();
-    							MIEvent<?> e = createEvent(reason, exec, ((MIOutput)output).getStreamRecords());
+    							MIEvent<?> e = createEvent(reason, exec);
     							if (e != null) {
     								events.add(e);
     								continue;
@@ -146,7 +145,7 @@ public class MIRunControlEventProcessor_7_0
         			// GDB for temporary breakpoints will not send the
         			// "reason" ??? still fire a stopped event.
         			if (events.isEmpty()) {
-        				MIEvent<?> e = createEvent(STOPPED_REASON, exec, ((MIOutput)output).getStreamRecords());
+        				MIEvent<?> e = createEvent(STOPPED_REASON, exec);
 						if (e != null) {
 							events.add(e);
 						}
@@ -157,7 +156,7 @@ public class MIRunControlEventProcessor_7_0
         			}
     			}
     			else if (RUNNING_REASON.equals(state)) {
-					MIEvent<?> event = createEvent(RUNNING_REASON, exec, ((MIOutput)output).getStreamRecords());
+					MIEvent<?> event = createEvent(RUNNING_REASON, exec);
 					if (event != null) {
 						fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
 					}
@@ -246,18 +245,8 @@ public class MIRunControlEventProcessor_7_0
     	}
     }
 
-	/**
-	 * @since 3.0
-	 * @param miStreamRecords
-	 *            the stream records that preceded 'exec'. Determining which
-	 *            type of event to create may require additional insight
-	 *            available in those records. One example is catchpoint hits.
-	 *            They are reported by gdb (>= 7.0)as a simple breakpoint hit.
-	 *            However, gdb also sends a stream record that reveals that it's
-	 *            a catchpoint hit.
-	 */
     @ConfinedToDsfExecutor("")     
-    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec, MIStreamRecord[] miStreamRecords) {
+    protected MIEvent<?> createEvent(String reason, MIExecAsyncOutput exec) {
     	MIEvent<?> event = null;
 
     	if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -321,7 +310,7 @@ public class MIRunControlEventProcessor_7_0
     		}
 
     		if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
-    			event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults(), miStreamRecords);
+    			event = MIBreakpointHitEvent.parse(execDmc, exec.getToken(), exec.getMIResults());
     		} else if (
     				"watchpoint-trigger".equals(reason) //$NON-NLS-1$
     				|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$

@@ -17,9 +17,11 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -200,7 +202,7 @@ public class CASTBinaryExpression extends ASTNode implements
     	if (type != null) {
     		return type;
     	}
-		switch(op) {
+		switch (op) {
 			case op_lessEqual:
 			case op_lessThan:
 			case op_greaterEqual:
@@ -210,15 +212,19 @@ public class CASTBinaryExpression extends ASTNode implements
 			case op_equals:
 			case op_notequals:
 				return new CBasicType(Kind.eInt, 0, this);
-			case IASTBinaryExpression.op_plus:
-				if (t2 instanceof IPointerType) {
-					return t2;
-				}
-				break;
+	        case IASTBinaryExpression.op_plus:
+	        	if (t1 instanceof IArrayType) {
+	        		return arrayTypeToPointerType((ICArrayType) t1);
+	        	} else if (t2 instanceof IPointerType) {
+	        		return t2;
+	        	} else if (t2 instanceof IArrayType) {
+	        		return arrayTypeToPointerType((ICArrayType) t2);
+	        	}
+	        	break;
 
 			case IASTBinaryExpression.op_minus:
-				if (t2 instanceof IPointerType) {
-					if (t1 instanceof IPointerType) {
+				if (t2 instanceof IPointerType || t2 instanceof IArrayType) {
+					if (t1 instanceof IPointerType || t1 instanceof IArrayType) {
 		    			return CVisitor.getPtrDiffType(this);
 					}
 					return t1;
@@ -227,6 +233,13 @@ public class CASTBinaryExpression extends ASTNode implements
 		}
 		return t1;
     }
+
+	private IType arrayTypeToPointerType(ICArrayType type) {
+		return new CPointerType(type.getType(),
+				(type.isConst() ? CPointerType.IS_CONST : 0) |
+				(type.isRestrict() ? CPointerType.IS_RESTRICT : 0) |
+				(type.isVolatile() ? CPointerType.IS_VOLATILE : 0));
+	}
     
 	public boolean isLValue() {
 		switch (getOperator()) {

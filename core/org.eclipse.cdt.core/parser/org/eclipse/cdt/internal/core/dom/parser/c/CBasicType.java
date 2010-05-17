@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -26,9 +27,9 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	private int fModifiers = 0;
 	private IASTExpression value = null;
 	
-	public CBasicType(Kind kind, int modifiers, IASTExpression value ){
+	public CBasicType(Kind kind, int modifiers, IASTExpression value) {
 		if (kind == Kind.eUnspecified) {
-			if ( (modifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
+			if ((modifiers & (IS_COMPLEX | IS_IMAGINARY)) != 0) {
 				fKind= Kind.eFloat;
 			} else {
 				fKind= Kind.eInt;
@@ -49,17 +50,17 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	}
 	
 	private static int getQualifiers(ICASTSimpleDeclSpecifier sds) {
-		return ( sds.isLong()    ? IS_LONG  : 0 ) |
-		( sds.isShort()   ? IS_SHORT : 0 ) |
-		( sds.isSigned()  ? IS_SIGNED: 0 ) |
-		( sds.isUnsigned()? IS_UNSIGNED : 0 ) |
-		( sds.isLongLong()? IS_LONG_LONG : 0 ) |
-		( sds.isComplex() ? IS_COMPLEX : 0 ) |
-		( sds.isImaginary()?IS_IMAGINARY : 0 );
+		return (sds.isLong() ? IS_LONG  : 0) |
+				(sds.isShort() ? IS_SHORT : 0) |
+				(sds.isSigned() ? IS_SIGNED: 0) |
+				(sds.isUnsigned() ? IS_UNSIGNED : 0) |
+				(sds.isLongLong() ? IS_LONG_LONG : 0) |
+				(sds.isComplex() ? IS_COMPLEX : 0) |
+				(sds.isImaginary() ? IS_IMAGINARY : 0);
 	}
 	
 	private static Kind getKind(ICASTSimpleDeclSpecifier sds) {
-		switch(sds.getType()) {
+		switch (sds.getType()) {
 		case IASTSimpleDeclSpecifier.t_bool:
 			return Kind.eBoolean;
 		case IASTSimpleDeclSpecifier.t_char:
@@ -128,11 +129,11 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	}
 	
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
@@ -147,14 +148,14 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isComplex()
 	 */
 	public boolean isComplex() {
-		return ( fModifiers & IS_COMPLEX) != 0;
+		return (fModifiers & IS_COMPLEX) != 0;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isImaginary()
 	 */
 	public boolean isImaginary() {
-		return ( fModifiers & IS_IMAGINARY) != 0;
+		return (fModifiers & IS_IMAGINARY) != 0;
 	}
 
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
@@ -204,5 +205,10 @@ public class CBasicType implements ICBasicType, ISerializableType {
 			return t_unspecified;
 		}
 		return t_unspecified;
+	}
+	
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -314,14 +315,18 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         	return new CPPBasicType(Kind.eBoolean, 0, this);
 
         case IASTBinaryExpression.op_plus:
-        	if (type2 instanceof IPointerType) {
+        	if (type1 instanceof IArrayType) {
+        		return arrayTypeToPointerType((IArrayType) type1);
+        	} else if (type2 instanceof IPointerType) {
         		return type2;
+        	} else if (type2 instanceof IArrayType) {
+        		return arrayTypeToPointerType((IArrayType) type2);
         	}
         	break;
 
         case IASTBinaryExpression.op_minus:
-        	if (type2 instanceof IPointerType) {
-        		if (type1 instanceof IPointerType) {
+        	if (type2 instanceof IPointerType || type2 instanceof IArrayType) {
+        		if (type1 instanceof IPointerType || type1 instanceof IArrayType) {
         			return CPPVisitor.getPointerDiffType(this);
         		}
         		return type1;
@@ -336,5 +341,9 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray());
         }
 		return type1;
+	}
+
+	private IType arrayTypeToPointerType(IArrayType type) {
+		return new CPPPointerType(type.getType());
 	}
 }

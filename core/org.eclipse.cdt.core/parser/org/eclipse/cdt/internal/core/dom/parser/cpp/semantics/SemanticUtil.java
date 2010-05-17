@@ -94,7 +94,7 @@ public class SemanticUtil {
 		if (decs != null) {
 			for (ICPPMethod method : decs) {
 				if (isConversionOperator(method)) {
-					methods= (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, methods, method);
+					methods= ArrayUtil.append(methods, method);
 				}
 			}
 		}
@@ -112,7 +112,7 @@ public class SemanticUtil {
 		ICPPMethod[] methods= ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		ObjectSet<ICPPClassType> ancestry= inheritanceClosure(clazz);
 		for (int i = 0; i < ancestry.size(); i++) {
-			methods= (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
+			methods= ArrayUtil.addAll(methods, getDeclaredConversionOperators(ancestry.keyAt(i)));
 		}
 		return methods;
 	}
@@ -162,7 +162,7 @@ public class SemanticUtil {
 			if (name.length > OPERATOR_CHARS.length + 1 &&
 					CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
 				if (name[OPERATOR_CHARS.length] == ' ') {
-					result= !cas.containsKey(name, OPERATOR_CHARS.length+1, name.length - (OPERATOR_CHARS.length+1));
+					result= !cas.containsKey(name, OPERATOR_CHARS.length + 1, name.length - (OPERATOR_CHARS.length+1));
 				}
 			}
 		}

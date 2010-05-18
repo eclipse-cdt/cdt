@@ -771,7 +771,10 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					return;
 				}
 				
-				if (memorySpaces.length > 0)	{
+				// Don't expose the memory spaces widget if there are none or
+				// only one memory space involved.
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
+				if (memorySpaces.length >= 2) {
 					fGotoMemorySpaceControl.setItems(memorySpaces);
 					fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0); //$NON-NLS-1$  the n/a entry; don't think this needs to be translated
 					setMemorySpaceControlVisible(true);

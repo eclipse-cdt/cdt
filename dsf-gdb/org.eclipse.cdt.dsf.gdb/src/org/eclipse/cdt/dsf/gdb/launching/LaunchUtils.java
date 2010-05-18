@@ -17,14 +17,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -267,8 +277,8 @@ public class LaunchUtils {
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
         Process process = null;
         String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
-        try {                        
-        	process = ProcessFactory.getFactory().exec(cmd);
+        try {
+        	process = ProcessFactory.getFactory().exec(cmd, getLaunchEnvironment(configuration));
         } catch(IOException e) {
         	throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, 
         			"Error while launching command: " + cmd, e.getCause()));//$NON-NLS-1$
@@ -331,5 +341,63 @@ public class LaunchUtils {
     	}
     	return SessionType.LOCAL;
     }
+	
+	/**
+	 * Gets the CDT environment from the CDT project's configuration referenced by the
+	 * launch
+	 * @since 3.0
+	 */
+	public static String[] getLaunchEnvironment(ILaunchConfiguration config) throws CoreException {
+		// Get the project
+		String projectName = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+		if (projectName == null)
+			return null;
+
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		if (project == null || !project.isAccessible())
+			return null;
+
+		ICProjectDescription projDesc =	CoreModel.getDefault().getProjectDescription(project, false);
+
+		// Not a CDT project?
+		if (projDesc == null)
+		    return null;
+
+		String buildConfigID = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
+		ICConfigurationDescription cfg = null;
+		if (buildConfigID.length() != 0)
+		    cfg = projDesc.getConfigurationById(buildConfigID);
+
+		// if configuration is null fall-back to active
+		if (cfg == null)
+		    cfg = projDesc.getActiveConfiguration();
+
+		// Environment variables and inherited vars
+		HashMap<String, String> envMap = new HashMap<String, String>();
+		IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg, true);
+		for (IEnvironmentVariable var : vars)
+			envMap.put(var.getName(), var.getValue());
+
+		// Add variables from build info
+		ICdtVariable[] build_vars = CCorePlugin.getDefault().getCdtVariableManager().getVariables(cfg);
+		for (ICdtVariable var : build_vars) {
+			try {
+				envMap.put(var.getName(), var.getStringValue());
+			} catch (CdtVariableException e) {
+				// Some Eclipse dynamic variables can't be resolved dynamically... we don't care.
+			}
+		}
+
+		// Turn it into an envp format
+		List<String> strings= new ArrayList<String>(envMap.size());
+		for (Entry<String, String> entry : envMap.entrySet()) {
+			StringBuffer buffer= new StringBuffer(entry.getKey());
+			buffer.append('=').append(entry.getValue());
+			strings.add(buffer.toString());
+		}
+
+		return strings.toArray(new String[strings.size()]);
+	}
+	
 }
 

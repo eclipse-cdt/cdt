@@ -350,7 +350,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	protected Process launchGDBProcess(String commandLine) throws CoreException {
         Process proc = null;
 		try {
-			proc = ProcessFactory.getFactory().exec(commandLine);
+			proc = ProcessFactory.getFactory().exec(commandLine, LaunchUtils.getLaunchEnvironment(fLaunchConfiguration));
 		} catch (IOException e) {
             String message = "Error while launching command " + commandLine;   //$NON-NLS-1$
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, message, e));

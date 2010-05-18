@@ -310,6 +310,8 @@
 			<replacefilter token="@buildType@" value="${buildType}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
+		<chmod file="${copyToDir}/index.html" perm="664"/>
+
 	</target>
 	
 	<target name="copy" depends="init" unless="hasErrors">

@@ -268,8 +268,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	public static CProjectDescriptionManager getInstance(){
 		if(fInstance == null)
 			synchronized(CProjectDescriptionManager.class) {
-				if (fInstance == null)
+				if (fInstance == null) {
 					fInstance = new CProjectDescriptionManager();
+					fInstance.initProviderInfo();
+				}
 			}
 		return fInstance;
 	}

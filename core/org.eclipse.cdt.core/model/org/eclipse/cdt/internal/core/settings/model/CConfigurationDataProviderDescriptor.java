@@ -51,6 +51,11 @@ public class CConfigurationDataProviderDescriptor {
 			fNatureIds = new String[0];
 			fConflictingNatureIds = new String[0];
 		}
+		try {
+			fProvider = createProvider(extension);
+		} catch (CoreException e) {
+			CCorePlugin.log(e.getStatus());
+		}
 	}
 	
 	private static String[] toArray(String value){

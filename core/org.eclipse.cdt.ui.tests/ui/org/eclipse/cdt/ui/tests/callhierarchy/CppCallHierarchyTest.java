@@ -252,9 +252,9 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		openCallHierarchy(editor, false);
 		TreeViewer tv = getCHTreeViewer();
 
-		TreeItem item= checkTreeNode(tv.getTree(), 0, "main()");
-		TreeItem nextItem= checkTreeNode(item, 0,  "MyClass::method1()");
-		checkTreeNode(item, 1, null); item= nextItem;
+		checkTreeNode(tv.getTree(), 0, "main()");
+		TreeItem item= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method1()");
+		checkTreeNode(tv.getTree(), 0, 1, null);
 		tv.setExpandedState(item.getData(), true); 
 
 		TreeItem item0= checkTreeNode(item, 0, "MyClass::method1()");
@@ -264,21 +264,21 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		// method 1
 		try {
 			tv.setExpandedState(item0.getData(), true); 
-			nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
+			checkTreeNode(item0, 0,  "MyClass::method2()");
 		}
 		catch (Throwable e) {
 			TreeItem tmp= item0; item0= item1; item1= tmp;
 		}
 		expandTreeItem(item0); 
-		nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
-		checkTreeNode(item0, 1, null); item0= nextItem;
+		item= checkTreeNode(item0, 0,  "MyClass::method2()");
+		checkTreeNode(item0, 1, null); item0= item;
 		tv.setExpandedState(item0.getData(), true); 
 		checkTreeNode(item0, 0, null);
 		
 		// method 2
 		tv.setExpandedState(item1.getData(), true); 
-		nextItem= checkTreeNode(item1, 0,  "MyClass::method3()");
-		checkTreeNode(item1, 1, null); item1= nextItem;
+		item= checkTreeNode(item1, 0,  "MyClass::method3()");
+		checkTreeNode(item1, 1, null); item1= item;
 		tv.setExpandedState(item1.getData(), true); 
 		checkTreeNode(item1, 0, null);
 	}

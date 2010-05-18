@@ -123,6 +123,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         		}
         	}
 			else if (token.startsWith("-m") ||		 //$NON-NLS-1$
+					token.startsWith("--sysroot") || //$NON-NLS-1$
         			token.equals("-ansi") ||		 //$NON-NLS-1$
         			token.equals("-nostdinc") ||	 //$NON-NLS-1$
         			token.equals("-posix") ||		 //$NON-NLS-1$

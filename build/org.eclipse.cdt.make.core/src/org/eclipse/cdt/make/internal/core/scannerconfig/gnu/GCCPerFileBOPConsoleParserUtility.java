@@ -128,6 +128,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         	String token = tokens[i];
         	//Target specific options: see GccScannerInfoConsoleParser
 			if (token.startsWith("-m") ||		//$NON-NLS-1$
+				token.startsWith("--sysroot") || //$NON-NLS-1$
 				token.equals("-ansi") ||		//$NON-NLS-1$
 				token.equals("-posix") ||		//$NON-NLS-1$
 				token.equals("-pthread") ||		//$NON-NLS-1$

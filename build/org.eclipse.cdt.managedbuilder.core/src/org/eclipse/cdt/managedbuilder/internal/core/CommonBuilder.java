@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
-import org.eclipse.cdt.build.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -557,11 +556,6 @@ public class CommonBuilder extends ACBuilder {
 
 		if(isForeground)
 			updateOtherConfigs(info, builders, kind);
-
-		if (kind == INCREMENTAL_BUILD || kind == FULL_BUILD || kind == AUTO_BUILD) {
-			// Update project model with scanner info
-			ScannerConfigBuilder.build(activeCfg, ScannerConfigBuilder.SKIP_SI_DISCOVERY, new SubProgressMonitor(monitor, 1));
-		}
 
 		monitor.done();
 		return refProjects;

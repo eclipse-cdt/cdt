@@ -45,7 +45,7 @@ public class ScannerConfigNature implements IProjectNature {
 		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
 		command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
-		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
 
 		ICommand[] newCommands = new ICommand[commands.length + 1];
 		System.arraycopy(commands, 0, newCommands, 0, commands.length);

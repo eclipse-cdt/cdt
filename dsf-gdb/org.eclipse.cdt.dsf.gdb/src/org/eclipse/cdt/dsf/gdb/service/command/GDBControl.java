@@ -103,12 +103,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
     private IGDBBackend fMIBackend;
     
-    private boolean fConnected = false;
+    private boolean fConnected;
     
     private MIRunControlEventProcessor fMIEventProcessor;
     private CLIEventProcessor fCLICommandProcessor;
     private AbstractCLIProcess fCLIProcess;
-    private MIInferiorProcess fInferiorProcess = null;
+    private MIInferiorProcess fInferiorProcess;
     
     private PTY fPty;
 
@@ -383,6 +383,14 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	} else {
     		fInferiorProcess = new GDBInferiorProcess(GDBControl.this, fMIBackend, fPty);
     	}
+    	
+    	// Create the CLI event processor each time this method is called
+    	// to reset the internal thread id count
+    	// Bug 313372
+    	if (fCLICommandProcessor != null) {
+    		fCLICommandProcessor.dispose();
+    	}
+    	fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
     }
     
     public boolean isConnected() {
@@ -537,7 +545,6 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
             createInferiorProcess();
             
-            fCLICommandProcessor = new CLIEventProcessor(GDBControl.this, fControlDmc);
             fMIEventProcessor = new MIRunControlEventProcessor(GDBControl.this, fControlDmc);
 
             requestMonitor.done();

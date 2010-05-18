@@ -11,13 +11,30 @@
 package org.eclipse.cdt.codan.core.param;
 
 /**
- * Value of the problem preference. If more than one it can be composite, i.e.
- * map. Instead of implementing this interface use
- * {@link AbstractProblemPreference} class.
+ * Composite descriptor. For descriptors like map and list.
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IProblemPreference extends Cloneable, IProblemPreferenceValue,
-		IProblemPreferenceDescriptor {
+public interface IProblemPreferenceCompositeDescriptor {
+	/**
+	 * Available if type is composite. Returns value of subdescriptor with the
+	 * name of key. For the "list" type key is the number (index).
+	 * 
+	 * @param key
+	 *            - name of the subdescriptor.
+	 * @return
+	 */
+	IProblemPreference getChildDescriptor(String key);
+
+	/**
+	 * Available if type is list or map. Returns array of children.
+	 * 
+	 * @return
+	 */
+	IProblemPreference[] getChildDescriptors();
+
+	void addChildDescriptor(IProblemPreference info);
+
+	void removeChildDescriptor(IProblemPreference info);
 }

@@ -16,7 +16,9 @@ import java.io.StreamTokenizer;
 import java.util.regex.Pattern;
 
 /**
- * ParameterInfo representing a single checker parameter
+ * Preference representing a problem preference of a basic type.
+ * 
+ * @see IProblemPreferenceDescriptor.PreferenceType for types.
  * 
  */
 public class BasicProblemPreference extends AbstractProblemPreference {

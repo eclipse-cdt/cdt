@@ -15,14 +15,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Problem parameter usually key=value settings that allows to alter checker
+ * Problem parameter usually key=value settings that allow to alter checker
  * behaviour for given problem. For example if checker finds violation of naming
  * conventions for function, parameter would be the pattern of allowed names.
- * ProblemParameterInfo represent parameter meta-info for the ui. If more that
- * one parameter required ParameterInfo should describe hash or array of
- * parameters. This is only needed for auto-generated ui for parameter editing.
- * For complex case custom ui control should be used. Extend
- * AbstractProblemParamterInfo class
+ * 
+ * IProblemPreferenceDescriptor represent preference's meta-info for the ui. If
+ * more than one parameter is required it can be map or list of sub-preferences.
+ * This is only needed for auto-generated ui for parameter
+ * editing. For more complex cases custom ui control should be used. Extend
+ * {@link AbstractProblemPreference} class
  * to implement this interface.
  * 
  * @noextend This interface is not intended to be extended by clients.
@@ -112,28 +113,6 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 	 * @return the toolTip text
 	 */
 	String getToolTip();
-
-	/**
-	 * Available if type is composite. Returns value of subdescriptor with the
-	 * name of key. For the "list" type key is the number (index).
-	 * 
-	 * @param key
-	 *            - name of the subdescriptor.
-	 * @return
-	 */
-	IProblemPreference getChildDescriptor(String key);
-
-	/**
-	 * Available if type is list or map. Returns array of children.
-	 * Of size 0 for basic types, keys for map, and arrays of 0 element for
-	 * array type
-	 * (since all elements are the same).
-	 * 
-	 * @return
-	 */
-	IProblemPreference[] getChildDescriptors();
-
-	void addChildDescriptor(IProblemPreference info);
 
 	Object clone();
 

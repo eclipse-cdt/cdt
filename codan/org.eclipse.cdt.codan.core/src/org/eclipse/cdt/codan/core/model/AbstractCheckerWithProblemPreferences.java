@@ -16,7 +16,10 @@ import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceT
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 
 /**
- * AbstarctChecker that has extra method to simplify adding parameters
+ * AbstarctChecker that has extra methods to simplify adding problem
+ * preferences.
+ * Checker can produce several problems, but preferences are per problem.
+ * Shared are not supported now.
  */
 public abstract class AbstractCheckerWithProblemPreferences extends
 		AbstractChecker implements ICheckerWithPreferences {

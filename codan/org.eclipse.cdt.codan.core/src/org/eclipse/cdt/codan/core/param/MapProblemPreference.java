@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009 Alena Laskavaia 
+ * Copyright (c) 2009,2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
@@ -15,17 +15,22 @@ import java.io.StreamTokenizer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
+
 /**
- * HashParamterInfo - for checker that needs more than one parameter and they
- * all different "named".
- * For example checker has 2 optional boolean parameters. For example checker
- * for parameter names
- * shadowing would have two boolean options: "check contructors" and
+ * MapProblemPreference - for checker that needs more than one preferences and
+ * they all differently "named".
+ * For example checker for parameter names shadowing would have two boolean
+ * options:
+ * "check contructors" and
  * "check setters". In this case you use this type.
+ * {@link AbstractCheckerWithProblemPreferences} class has map as default top
+ * level parameter preference.
  * 
+ * @noextend This class is not intended to be extended by clients.
  */
 public class MapProblemPreference extends AbstractProblemPreference implements
-		IProblemPreferenceContainer {
+		IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
 	protected LinkedHashMap<String, IProblemPreference> hash = new LinkedHashMap<String, IProblemPreference>();
 
 	public MapProblemPreference() {
@@ -57,7 +62,6 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 	 * Get parameter into for element by key
 	 * 
 	 */
-	@Override
 	public IProblemPreference getChildDescriptor(String key) {
 		return hash.get(key);
 	}
@@ -69,14 +73,12 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 	 * @param i
 	 * @param info
 	 */
-	@Override
 	public void addChildDescriptor(IProblemPreference info) {
 		IProblemPreference desc = (IProblemPreference) info.clone();
 		desc.setParent(this);
 		hash.put(info.getKey(), desc);
 	}
 
-	@Override
 	public IProblemPreference[] getChildDescriptors() {
 		return hash.values().toArray(
 				new IProblemPreference[hash.values().size()]);
@@ -149,5 +151,9 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		} catch (IOException e) {
 			throw new IllegalArgumentException(str);
 		}
+	}
+
+	public void removeChildDescriptor(IProblemPreference info) {
+		hash.remove(info);
 	}
 }

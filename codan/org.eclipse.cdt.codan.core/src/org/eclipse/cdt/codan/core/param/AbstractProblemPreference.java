@@ -15,7 +15,8 @@ import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 
 /**
- * Default implementation for single parameter checker of type string.
+ * Default implementation of problem preference. It keeps preference metadata
+ * together with preference itself.
  * 
  */
 public abstract class AbstractProblemPreference implements IProblemPreference {
@@ -90,18 +91,6 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	}
 
 	public void setValue(Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	public IProblemPreference getChildDescriptor(String key) {
-		throw new UnsupportedOperationException();
-	}
-
-	public IProblemPreference[] getChildDescriptors() {
-		throw new UnsupportedOperationException();
-	}
-
-	public void addChildDescriptor(IProblemPreference info) {
 		throw new UnsupportedOperationException();
 	}
 

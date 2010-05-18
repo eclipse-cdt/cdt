@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009 Alena Laskavaia 
+ * Copyright (c) 2009,2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
@@ -16,11 +16,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * @author Alena
+ * List implementation of IProblemPreference.
  * 
+ * @noextend This class is not intended to be extended by clients.
  */
 public class ListProblemPreference extends AbstractProblemPreference implements
-		IProblemPreferenceContainer {
+		IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
 	protected ArrayList<IProblemPreference> list = new ArrayList<IProblemPreference>(
 			1);
 
@@ -44,29 +45,28 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * Get parameter into for element equal to key's int value,
+	 * Get parameter into for element equal to key's int value.
 	 * 
 	 * @throws NumberFormatException
 	 *             if key is not number
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             is index is out of bound
 	 */
-	@Override
 	public IProblemPreference getChildDescriptor(String key)
 			throws NumberFormatException {
 		if (key == null) {
 			// special case if all element are the same return first, if key is
 			// null
-			return (IProblemPreference) getChildPreference(0).clone();
+			return (IProblemPreference) getChildDescriptor(0).clone();
 		}
 		Integer iv = Integer.valueOf(key);
 		if (iv.intValue() >= list.size()) {
 			// special case if all element are the same return first clone
-			IProblemPreference childInfo = (IProblemPreference) getChildPreference(
+			IProblemPreference childInfo = (IProblemPreference) getChildDescriptor(
 					0).clone();
 			return childInfo;
 		}
-		return getChildPreference(iv.intValue());
+		return getChildDescriptor(iv.intValue());
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	 * @param i
 	 * @param info
 	 */
-	public void setChildPreference(int i, IProblemPreference info) {
+	public void setChildDescriptor(int i, IProblemPreference info) {
 		if (info != null) {
 			while (i >= list.size()) {
 				list.add(null);
@@ -90,21 +90,19 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 
 	/**
 	 * If all list elements have same info it is enough to set only first one
-	 * (index 0)
+	 * (index 0). When value is set for the other it will be replicated.
 	 */
-	@Override
 	public void addChildDescriptor(IProblemPreference info) {
 		Integer iv = Integer.valueOf(info.getKey());
 		IProblemPreference desc = (IProblemPreference) info.clone();
 		desc.setParent(this);
-		setChildPreference(iv, desc);
+		setChildDescriptor(iv, desc);
 	}
 
-	public IProblemPreference getChildPreference(int i) {
+	public IProblemPreference getChildDescriptor(int i) {
 		return list.get(i);
 	}
 
-	@Override
 	public IProblemPreference[] getChildDescriptors() {
 		return list.toArray(new IProblemPreference[list.size()]);
 	}
@@ -117,8 +115,8 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	public void addChildValue(String key, Object value) {
 		IProblemPreference pref = getChildDescriptor(key);
 		pref.setValue(value);
-		// because descriptor can be phantom  we have to set preference phisically 
-		setChildPreference(Integer.parseInt(key), pref);
+		// because descriptor can be phantom we have to set preference forcefully
+		setChildDescriptor(Integer.parseInt(key), pref);
 	}
 
 	public void removeChildValue(String key) {
@@ -173,5 +171,9 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		} catch (IOException e) {
 			throw new IllegalArgumentException(str);
 		}
+	}
+
+	public void removeChildDescriptor(IProblemPreference info) {
+		list.remove(info);
 	}
 }

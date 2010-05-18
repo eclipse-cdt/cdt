@@ -11,9 +11,12 @@
 package org.eclipse.cdt.codan.core.param;
 
 /**
- * Interface for container type preferences
+ * Interface for container type preferences, such as map or list
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IProblemPreferenceContainer {
+public interface IProblemPreferenceCompositeValue {
 	Object getChildValue(String key);
 
 	void addChildValue(String key, Object value);

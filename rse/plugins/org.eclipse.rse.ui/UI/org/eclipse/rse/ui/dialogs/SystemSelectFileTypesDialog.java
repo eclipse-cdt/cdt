@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen (IBM) - [312171] TVT36:TCT186: TVT_KOR: Truncation on button 
  *******************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -227,6 +228,9 @@ public class SystemSelectFileTypesDialog
 		//Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, GenericMessages.getString("WizardTransferPage.deselectAll"), false); //$NON-NLS-1$
 		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, 
 		                                     SystemResources.RESID_SELECTFILES_DESELECTALL_BUTTON_ROOT_LABEL, false); 
+		
+		GridData buttonData = (GridData)deselectButton.getLayoutData();
+		buttonData.widthHint = buttonData.widthHint * 130 / 100;
 		
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

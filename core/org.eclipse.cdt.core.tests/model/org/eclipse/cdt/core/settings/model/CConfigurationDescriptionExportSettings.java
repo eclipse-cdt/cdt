@@ -299,7 +299,7 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 	 * causes referencing projects to correctly pick up changes to the project exports.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=312575
 	 */
-	public void _testExportedSettingsExternalUpdate() throws Exception {
+	public void testExportedSettingsExternalUpdate() throws Exception {
 		final IProject libProj = ResourceHelper.createCDTProjectWithConfig("libProj312575");
 		final IProject mainProj = ResourceHelper.createCDTProjectWithConfig("mainProj312575");
 

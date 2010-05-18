@@ -22,7 +22,11 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettinsDeltaCalculator.ExtSettingMapKey;
 
+/**
+ * The raw external settings as exported by a project configuration.
+ */
 public class CExternalSettingsHolder extends CExternalSettingsContainer {
+
 	private Map<ExtSettingMapKey, CExternalSetting> fSettingsMap;
 	static final String ELEMENT_EXT_SETTINGS_CONTAINER = "externalSettings"; //$NON-NLS-1$
 	

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -73,9 +74,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return fInstance;
 	}
 	
+	/**
+	 * A simple class representing an external settings container.
+	 * These are uniquely identifiable by the factoryId + factory
+	 * specific container id
+	 */
 	public final static class CContainerRef {
-		private String fFactoryId;
-		private String fContainerId;
+		private final String fFactoryId;
+		private final String fContainerId;
 		
 		public CContainerRef(String factoryId, String containerId){
 			fFactoryId = factoryId;
@@ -350,45 +356,49 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		FactoryDescriptor dr = getFactoryDescriptor(id);
 		return dr.getFactory();
 	}
-	
-	public void settingsChanged(IProject project, String cfgId,
-			CExternalSettingChangeEvent event) {
-		ProjDesCfgList[] lists = null;
-		CExternalSettingsContainerChangeInfo[] infos = event.getChangeInfos();
-		for (CExternalSettingsContainerChangeInfo info : infos) {
-			switch(info.getEventType()){
-			case CExternalSettingsContainerChangeInfo.CHANGED:
-				int flags = info.getChangeFlags();
-				if((flags & CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS) != 0){
-					if(lists == null)
-						lists = createCfgListsForEvent(project, cfgId);
-					for (ProjDesCfgList list : lists) {
-						for(int i = 0; i < list.size(); i++){
-							CfgListCfgContainer cr = new CfgListCfgContainer(list, i);
-							processContainerChange(OP_CHANGED, cr, new CfgContainerRefInfoContainer(cr), info.getContainerInfo());
+
+	/**
+	 * External settings call-back from the setting container factories
+	 * to notify that settings have changed in a container.
+	 * 
+	 * Schedules a runnable to update any referencing projects
+	 */
+	public void settingsChanged(final IProject project, final String cfgId,	final CExternalSettingChangeEvent event) {
+		// Modifying the project description in an asynchronous runnable is likely bad...
+		// Unfortunately there's nothing else we can do as it's not safe to modify the referencing configurations in place
+		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				ProjDesCfgList[] lists = null;
+				for (CExternalSettingsContainerChangeInfo info : event.getChangeInfos()) {
+					switch(info.getEventType()){
+					case CExternalSettingsContainerChangeInfo.CHANGED:
+						int flags = info.getChangeFlags();
+						if((flags & CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS) != 0){
+							if(lists == null)
+								// Potentially all configuration in all projects need to be considered for be
+								lists = createCfgListsForEvent(project, cfgId);
+							for (ProjDesCfgList list : lists) {
+								for(int i = 0; i < list.size(); i++){
+									CfgListCfgContainer cr = new CfgListCfgContainer(list, i);
+									processContainerChange(OP_CHANGED, cr, new CfgContainerRefInfoContainer(cr), info.getContainerInfo());
+								}
+							}
 						}
+						break;
 					}
 				}
-				break;
-			}
-		}
-		
-		// TODO modifying the project description in an asynchronous runnable is likely bad...
-		if(lists != null) {
-			final List<ICProjectDescription> list = getModifiedProjDesList(lists);
-			if(list.size() != 0){
-				IWorkspaceRunnable r = new IWorkspaceRunnable(){
-			
-					public void run(IProgressMonitor monitor) throws CoreException {
-						for(int i = 0; i < list.size(); i++){
+				if (lists != null) {
+					final List<ICProjectDescription> list = getModifiedProjDesList(lists);
+					if(list.size() != 0) {
+						for(int i = 0; i < list.size(); i++) {
 							ICProjectDescription des = list.get(i);
 							CProjectDescriptionManager.getInstance().setProjectDescription(des.getProject(), des, false, monitor);
 						}
 					}
-				};
-				CProjectDescriptionManager.runWspModification(r, new NullProgressMonitor());
+				}
 			}
-		}
+		};
+		CProjectDescriptionManager.runWspModification(r, new NullProgressMonitor());
 	}
 	
 	private List<ICProjectDescription> getModifiedProjDesList(ProjDesCfgList[] lists){
@@ -507,6 +517,12 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return null;
 	}
 
+	/**
+	 * Respond to Project Description events.
+	 *  - DATA_APPLIED: Data has been applied, and the description is still
+	 *                  writable, store cached external settings into the configuration
+	 *  - LOADED: Check whether a reconcile is needed and update the settings atomically
+	 */
 	public void handleEvent(CProjectDescriptionEvent event) {
 		switch(event.getEventType()){
 		case CProjectDescriptionEvent.DATA_APPLIED: {
@@ -522,33 +538,33 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 					store(cfg, cr.fRefInfo);
 				}
 			}
-
 			break;
 		}
 		case CProjectDescriptionEvent.LOADED:
-			ProjDesCfgList list = new ProjDesCfgList(event.getNewCProjectDescription(), null);
-			boolean changed = false;
-			for(int i = 0; i < list.size(); i++){
-				CfgListCfgContainer cfgCr = new CfgListCfgContainer(list, i);
-				CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cfgCr);
-				CContainerRef[] refs = ric.getRefInfo(false).getReferences();
-				for(int k = 0; k < refs.length; k++) {
-					if(processContainerChange(OP_CHANGED, cfgCr, new CfgContainerRefInfoContainer(cfgCr), refs[k]))
-						changed = true;
-				}
-			}
-			// TODO firing an asynchronous setProjectDescription here is likely to lead to trouble...
-			final ICProjectDescription prjDesc = list.fProjDes;
-			if(changed){
-				IWorkspaceRunnable r = new IWorkspaceRunnable(){
-
-					public void run(IProgressMonitor monitor) throws CoreException {
-						CProjectDescriptionManager.getInstance().setProjectDescription(prjDesc.getProject(), prjDesc);
+			// Note using an asynchronous get / set here is bad.
+			// Unfortunately there's no other way to make this work without re-writing the project model to allow
+			// us to reconcile / update the cached configuration during load
+			final IProject project = event.getProject();
+			IWorkspaceRunnable r = new IWorkspaceRunnable(){
+				public void run(IProgressMonitor monitor) throws CoreException {
+					if (!project.isAccessible())
+						return;
+					ProjDesCfgList list = new ProjDesCfgList(CoreModel.getDefault().getProjectDescription(project), null);
+					boolean changed = false;
+					for(int i = 0; i < list.size(); i++){
+						CfgListCfgContainer cfgCr = new CfgListCfgContainer(list, i);
+						CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cfgCr);
+						CContainerRef[] refs = ric.getRefInfo(false).getReferences();
+						for(int k = 0; k < refs.length; k++) {
+							if(processContainerChange(OP_CHANGED, cfgCr, new CfgContainerRefInfoContainer(cfgCr), refs[k]))
+								changed = true;
+						}
 					}
-					
-				};
-				CProjectDescriptionManager.runWspModification(r, null);
-			}
+					if (changed)
+						CProjectDescriptionManager.getInstance().setProjectDescription(project, list.fProjDes);
+				}
+			};
+			CProjectDescriptionManager.runWspModification(r, null);
 			break;
 		}
 	}

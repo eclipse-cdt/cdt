@@ -212,12 +212,31 @@ public class CfgExportSettingContainerFactory extends
 	}
 
 	/**
-	 * Notify the ExternalSettingManager that there's been a change in the configurations mapped by this external settings provider
-	 * (as a result of a proejct configuration change)
+	 * Notify the ExternalSettingManager that there's been a change in the configuration which may require referencing configs to update
+	 * their cache of the external settings
 	 */
 	public void handleEvent(CProjectDescriptionEvent event) {
 		switch(event.getEventType()){
-			case CProjectDescriptionEvent.LOADED:
+			case CProjectDescriptionEvent.LOADED: {
+				// Bug 312575 on Project load, event.getProjectDelta() == null => report all configs as potentially changed
+				// Referencing projects should be reconciled and potentially updated.
+				String projName = event.getProject().getName();
+				ICConfigurationDescription[] descs = event.getNewCProjectDescription().getConfigurations();
+				CExternalSettingsContainerChangeInfo[] changeInfos = new CExternalSettingsContainerChangeInfo[descs.length + 1];
+				int i = 0;
+				for (ICConfigurationDescription desc : event.getNewCProjectDescription().getConfigurations())
+					changeInfos[i++] = new CExternalSettingsContainerChangeInfo(
+							CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS,
+							new CContainerRef(FACTORY_ID, createId(projName, desc.getId())),
+							null);
+				// Active configuration too
+				changeInfos[i] = new CExternalSettingsContainerChangeInfo(
+						CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS,
+						new CContainerRef(FACTORY_ID, createId(projName, ACTIVE_CONFIG_ID)),
+						null);
+				notifySettingsChange(null, null, changeInfos);
+				break;
+			}
 			case CProjectDescriptionEvent.APPLIED:
 				String[] ids = getContainerIds(event.getProjectDelta());
 				if(ids.length != 0){

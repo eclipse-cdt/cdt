@@ -18,8 +18,12 @@ import org.eclipse.core.resources.IProject;
 public interface ICExternalSettingsListener {
 
 	/**
-	 * Notifies the listener that the configuration with id cfgId has changed in the project
-	 * project.
+	 * Notifies the listener that external settings in a particular container have changed.
+	 * The CExternalSettingsManager will try to reconcile changes into the project + config
+	 * specified by the call-back. If these are null (which they currently always are)
+	 * the external settings manager will check all projects and configurations to see
+	 * if there are any referencing configs which need reconciling.
+	 *
 	 * @param project or null indicating all projects should be considered
 	 * @param cfgId or null indicating all configurations should be considered
 	 * @param event CExternalSettingsChangeEvent

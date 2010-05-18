@@ -26,8 +26,9 @@ import org.eclipse.cdt.core.settings.model.util.EntryNameKey;
 import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CContainerRef;
 
 class CSettingsRefInfo {
-	final static String ELEMENT_REFERENCE_INFO = "referenceInfo";  //$NON-NLS-1$
-	/** External Settings Holder Map */
+
+	/** External Settings Holder Map 
+	 *  From references container -> to concrete held settings */
 	private HashMap<CContainerRef, CRefSettingsHolder> fESHolderMap = new LinkedHashMap<CContainerRef, CRefSettingsHolder>();
 
 	CSettingsRefInfo(){

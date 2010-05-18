@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.settings.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -367,6 +368,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		// Modifying the project description in an asynchronous runnable is likely bad...
 		// Unfortunately there's nothing else we can do as it's not safe to modify the referencing configurations in place
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+			@SuppressWarnings("unchecked")
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ProjDesCfgList[] lists = null;
 				for (CExternalSettingsContainerChangeInfo info : event.getChangeInfos()) {
@@ -380,7 +382,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 							for (ProjDesCfgList list : lists) {
 								for(int i = 0; i < list.size(); i++){
 									CfgListCfgContainer cr = new CfgListCfgContainer(list, i);
-									processContainerChange(OP_CHANGED, cr, new CfgContainerRefInfoContainer(cr), info.getContainerInfo());
+									if (processContainerChange(OP_CHANGED, cr, new CfgContainerRefInfoContainer(cr), info.getContainerInfo())) {
+										// Ensure the newly discovered settings are in the right order...
+										// we do this by removing and re-adding the references list
+										ICConfigurationDescription desc = cr.getConfguration(true);
+										Map<String, String> references = desc.getReferenceInfo();
+										desc.setReferenceInfo(Collections.EMPTY_MAP);
+										cr.getConfguration(true).setReferenceInfo(references);
+									}
 								}
 							}
 						}
@@ -546,6 +555,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			// us to reconcile / update the cached configuration during load
 			final IProject project = event.getProject();
 			IWorkspaceRunnable r = new IWorkspaceRunnable(){
+				@SuppressWarnings("unchecked")
 				public void run(IProgressMonitor monitor) throws CoreException {
 					if (!project.isAccessible())
 						return;
@@ -556,8 +566,15 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 						CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cfgCr);
 						CContainerRef[] refs = ric.getRefInfo(false).getReferences();
 						for(int k = 0; k < refs.length; k++) {
-							if(processContainerChange(OP_CHANGED, cfgCr, new CfgContainerRefInfoContainer(cfgCr), refs[k]))
+							if(processContainerChange(OP_CHANGED, cfgCr, new CfgContainerRefInfoContainer(cfgCr), refs[k])) {
+								// Ensure the newly discovered settings are in the right order...
+								// we do this by removing and re-adding the references list
+								ICConfigurationDescription desc = cfgCr.getConfguration(true);
+								Map<String, String> references = desc.getReferenceInfo();
+								desc.setReferenceInfo(Collections.EMPTY_MAP);
+								cfgCr.getConfguration(true).setReferenceInfo(references);
 								changed = true;
+							}
 						}
 					}
 					if (changed)

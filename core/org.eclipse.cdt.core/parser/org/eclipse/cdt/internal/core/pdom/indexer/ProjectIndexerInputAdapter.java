@@ -242,6 +242,9 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public FileContent getCodeReader(Object tuo) {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
+		if (tu.getLocation() == null)
+			return null;
+		
 		final FileContent reader= FileContent.create(tu);
 		if (reader != null) {
 			IIndexFileLocation ifl= IndexLocationFactory.getIFL(tu);

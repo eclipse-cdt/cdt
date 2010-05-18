@@ -15,6 +15,7 @@ import java.io.File;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
+import org.eclipse.cdt.codan.core.param.IProblemPreferenceCompositeDescriptor;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -77,7 +78,7 @@ public class ParametersComposite extends Composite {
 						break;
 					}
 					case TYPE_MAP: {
-						IProblemPreference[] childrenDescriptor = info
+						IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) info)
 								.getChildDescriptors();
 						for (int i = 0; i < childrenDescriptor.length; i++) {
 							IProblemPreference desc = childrenDescriptor[i];
@@ -127,7 +128,7 @@ public class ParametersComposite extends Composite {
 				break;
 			case TYPE_MAP:
 			case TYPE_LIST:
-				IProblemPreference[] childrenDescriptor = desc
+				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
 						.getChildDescriptors();
 				for (int i = 0; i < childrenDescriptor.length; i++) {
 					IProblemPreference chi = childrenDescriptor[i];
@@ -159,7 +160,7 @@ public class ParametersComposite extends Composite {
 				break;
 			case TYPE_MAP:
 			case TYPE_LIST: {
-				IProblemPreference[] childrenDescriptor = desc
+				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
 						.getChildDescriptors();
 				for (int i = 0; i < childrenDescriptor.length; i++) {
 					IProblemPreference chi = childrenDescriptor[i];

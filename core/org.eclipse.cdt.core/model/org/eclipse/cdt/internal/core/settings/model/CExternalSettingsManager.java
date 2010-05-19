@@ -358,6 +358,8 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		return dr.getFactory();
 	}
 
+	private volatile IWorkspaceRunnable workspaceReconcileRunnable; 
+
 	/**
 	 * External settings call-back from the setting container factories
 	 * to notify that settings have changed in a container.
@@ -365,11 +367,22 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	 * Schedules a runnable to update any referencing projects
 	 */
 	public void settingsChanged(final IProject project, final String cfgId,	final CExternalSettingChangeEvent event) {
+		// Performance: If workspace reconcile already scheduled, then nothing to do...
+		// Current project && cfgId always null (i.e. always reconcile at the workspace level) but don't assume this for the future
+		final boolean isWorkspaceReconcile = project == null && cfgId == null;
+		IWorkspaceRunnable r = workspaceReconcileRunnable;
+		if (r != null && isWorkspaceReconcile)
+			return;
+
 		// Modifying the project description in an asynchronous runnable is likely bad...
 		// Unfortunately there's nothing else we can do as it's not safe to modify the referencing configurations in place
-		IWorkspaceRunnable r = new IWorkspaceRunnable() {
+		r = new IWorkspaceRunnable() {
 			@SuppressWarnings("unchecked")
 			public void run(IProgressMonitor monitor) throws CoreException {
+				// Unset workspaceReconcileRunnable
+				if (isWorkspaceReconcile)
+					workspaceReconcileRunnable = null;
+
 				ProjDesCfgList[] lists = null;
 				for (CExternalSettingsContainerChangeInfo info : event.getChangeInfos()) {
 					switch(info.getEventType()){
@@ -407,9 +420,12 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 				}
 			}
 		};
+		if (isWorkspaceReconcile)
+			workspaceReconcileRunnable = r;
+		// schedule / run in-line
 		CProjectDescriptionManager.runWspModification(r, new NullProgressMonitor());
 	}
-	
+
 	private List<ICProjectDescription> getModifiedProjDesList(ProjDesCfgList[] lists){
 		List<ICProjectDescription> list = new ArrayList<ICProjectDescription>();
 		for(int i = 0; i < lists.length; i++){
@@ -550,6 +566,18 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			break;
 		}
 		case CProjectDescriptionEvent.LOADED:
+			// If the project description has no references, short-circuit:
+			boolean needsReconcile = false;
+			for (ICConfigurationDescription desc : event.getNewCProjectDescription().getConfigurations()) {
+				if (!desc.getReferenceInfo().isEmpty() || 
+						(desc.getExternalSettingsProviderIds() != null && desc.getExternalSettingsProviderIds().length > 0)) {
+					needsReconcile = true;
+					break;
+				}
+			}
+			if (!needsReconcile)
+				return;
+
 			// Note using an asynchronous get / set here is bad.
 			// Unfortunately there's no other way to make this work without re-writing the project model to allow
 			// us to reconcile / update the cached configuration during load

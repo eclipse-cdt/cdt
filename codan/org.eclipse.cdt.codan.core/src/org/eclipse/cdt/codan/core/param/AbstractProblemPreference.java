@@ -57,6 +57,8 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	}
 
 	protected boolean isValidIdentifier(String id) {
+		if (id == null)
+			return false;
 		int n = id.length();
 		if (n == 0)
 			return false;

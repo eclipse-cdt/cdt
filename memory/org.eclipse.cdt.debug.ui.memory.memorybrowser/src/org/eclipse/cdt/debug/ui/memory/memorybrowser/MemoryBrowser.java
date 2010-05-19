@@ -951,42 +951,42 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 */
 	private IMemoryRendering populateTabWithRendering(final CTabItem tab, final IMemoryBlockRetrieval retrieval, Object context, String memorySpaceId, String expression) throws DebugException {
 		IMemoryRenderingType type = DebugUITools.getMemoryRenderingManager().getRenderingType(getDefaultRenderingTypeId());
-			IMemoryRenderingContainer container = (IMemoryRenderingContainer)tab.getData(KEY_CONTAINER);
-			if (container == null) {
-				container = new MemoryBrowserRenderingContainer();
-				fCurrentContainers.add(container);
+		IMemoryRenderingContainer container = (IMemoryRenderingContainer)tab.getData(KEY_CONTAINER);
+		if (container == null) {
+			container = new MemoryBrowserRenderingContainer();
+			fCurrentContainers.add(container);
+		}
+		
+		IMemoryRendering rendering = getRenderings(tab).get(memorySpaceId);
+		if (rendering == null) {
+			// No rendering yet. Create rendering and associated memory block.
+			// createMemoryBlock will throw if expression cannot be resolved 
+			IMemoryBlockExtension block = createMemoryBlock(retrieval, expression, context, memorySpaceId); //$NON-NLS-1$
+			try {
+				rendering = type.createRendering();
+			} catch (CoreException e) {
+				MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "", e)); //$NON-NLS-1$
+				return null;
 			}
 			
-			IMemoryRendering rendering = getRenderings(tab).get(memorySpaceId);
-			if (rendering == null) {
-				// No rendering yet. Create rendering and associated memory block.
-				// createMemoryBlock will throw if expression cannot be resolved 
-				IMemoryBlockExtension block = createMemoryBlock(retrieval, expression, context, memorySpaceId); //$NON-NLS-1$
-				try {
-					rendering = type.createRendering();
-				} catch (CoreException e) {
-					MemoryBrowserPlugin.getDefault().getLog().log(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, "", e)); //$NON-NLS-1$
-					return null;
-				}
-				
-				rendering.init(container, block);
-				container.addMemoryRendering(rendering);
-				rendering.createControl(tab.getParent());
-				getRenderings(tab).put(memorySpaceId, rendering);
-				getMemoryBlocks(tab).add(block);
-				rendering.addPropertyChangeListener(new RenderingPropertyChangeListener(tab, rendering));
-			}
-			
-			tab.setControl(rendering.getControl());
-			tab.getParent().setSelection(0);
-			tab.setData(KEY_RENDERING, rendering);
-			tab.setData(KEY_MEMORY_SPACE, memorySpaceId);
-			tab.setData(KEY_CONTAINER, container);
-			tab.setData(KEY_RENDERING_TYPE, type);
-			getSite().getSelectionProvider().setSelection(new StructuredSelection(tab.getData(KEY_RENDERING)));
-			updateLabel(tab, rendering);
-			
-			return rendering;
+			rendering.init(container, block);
+			container.addMemoryRendering(rendering);
+			rendering.createControl(tab.getParent());
+			getRenderings(tab).put(memorySpaceId, rendering);
+			getMemoryBlocks(tab).add(block);
+			rendering.addPropertyChangeListener(new RenderingPropertyChangeListener(tab, rendering));
+		}
+		
+		tab.setControl(rendering.getControl());
+		tab.getParent().setSelection(0);
+		tab.setData(KEY_RENDERING, rendering);
+		tab.setData(KEY_MEMORY_SPACE, memorySpaceId);
+		tab.setData(KEY_CONTAINER, container);
+		tab.setData(KEY_RENDERING_TYPE, type);
+		getSite().getSelectionProvider().setSelection(new StructuredSelection(tab.getData(KEY_RENDERING)));
+		updateLabel(tab, rendering);
+		
+		return rendering;
 	}
 	
 

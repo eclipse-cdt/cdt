@@ -465,13 +465,11 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		// interface.
 		String label = rendering.getLabel();
 		
-		// We create all memory blocks using address 0 regardless of where the
-		// user wants to see memory. We then go-to the requested location. So,
-		// if we rely on the default rendering label, all tabs will show
-		// address zero, which will be confusing. To avoid this, the rendering
-		// object should implement this interface that allows us to get to the
-		// first address being shown. We'll use that for the label
-		if (rendering instanceof IMemoryRenderingViewportProvider) {
+		// If the rendering provides access to its viewport address (the first
+		// address shown in the rendering, subject to scrolling), display that
+		// in the tab rather than the expression that was used when the tab was
+		// first created.
+		if (rendering instanceof IMemoryRenderingViewportProvider) { 
 			BigInteger viewportAddress = ((IMemoryRenderingViewportProvider)rendering).getViewportAddress();
 			
 			// The base label generation puts the rendering type name in "<>" and
@@ -489,7 +487,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			if (memorySpaceID != null) {
 				IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) tab.getParent().getData(KEY_RETRIEVAL);
 				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-					label = ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID);
+					label = ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID) + ' ' + renderingType;
 				}
 			}
 			if (label == null) {

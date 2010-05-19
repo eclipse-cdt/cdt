@@ -59,7 +59,7 @@ public class TestSourceReader {
 	/**
 	 * Returns an array of StringBuffer objects for each comment section found preceding the named
 	 * test in the source code. 
-	 * @param bundle the bundle containing the source
+	 * @param bundle the bundle containing the source, if null can try to load using classpath (source folder has to be in the classpath for this to work)
 	 * @param srcRoot the directory inside the bundle containing the packages
 	 * @param clazz the name of the class containing the test
 	 * @param testName the name of the test
@@ -71,11 +71,16 @@ public class TestSourceReader {
 	public static StringBuffer[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName, int sections) throws IOException {
 		String fqn = clazz.getName().replace('.', '/');
 		fqn = fqn.indexOf("$")==-1 ? fqn : fqn.substring(0,fqn.indexOf("$"));
-		IPath filePath= new Path(srcRoot + '/' + fqn + ".java");
-	    
+		String classFile = fqn + ".java";
+		IPath filePath= new Path(srcRoot + '/' + classFile);
+	
 		InputStream in;
 		try {
-			in = FileLocator.openStream(bundle, filePath, false);
+			if (bundle != null)
+				in = FileLocator.openStream(bundle, filePath, false);
+			else {
+				in = clazz.getResourceAsStream('/'+classFile);
+			}
 		} catch(IOException e) {
 			if(clazz.getSuperclass()!=null && !clazz.equals(TestCase.class)) {
 		    	return getContentsForTest(bundle, srcRoot, clazz.getSuperclass(), testName, sections);

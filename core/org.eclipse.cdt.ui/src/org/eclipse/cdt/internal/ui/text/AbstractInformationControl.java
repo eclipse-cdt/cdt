@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
@@ -68,13 +69,13 @@ import org.eclipse.cdt.internal.ui.util.StringMatcher;
  * @since 4.0
  */
 public abstract class AbstractInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
+	private final String COLON_COLON = String.valueOf(Keywords.cpCOLONCOLON);
 
 	/**
 	 * The NamePatternFilter selects the elements which
 	 * match the given string patterns.
 	 */
 	protected class NamePatternFilter extends ViewerFilter {
-		private final String COLON_COLON = String.valueOf(Keywords.cpCOLONCOLON);
 
 		public NamePatternFilter() {
 		}
@@ -91,11 +92,7 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 
 			String matchName= ((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
 			if (matchName != null) {
-				if (matcher.match(matchName))
-					return true;
-				// check for qualified name
-				int idx= matchName.lastIndexOf(COLON_COLON);
-				if (idx >= 0 && matcher.match(matchName.substring(idx+COLON_COLON.length())))
+				if (nameMatches(matchName, matcher))
 					return true;
 			}
 
@@ -422,19 +419,19 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 
 	private ICElement findElement(TreeItem[] items) {
 		ILabelProvider labelProvider= (ILabelProvider)fTreeViewer.getLabelProvider();
-		for (TreeItem item2 : items) {
-			Object item= item2.getData();
+		for (TreeItem treeItem : items) {
+			Object data= treeItem.getData();
 			ICElement element= null;
-			if (item instanceof ICElement) {
-				element= (ICElement)item;
+			if (data instanceof ICElement) {
+				element= (ICElement)data;
 				if (fStringMatcher == null)
 					return element;
 	
 				String label= labelProvider.getText(element);
-				if (fStringMatcher.match(label))
+				if (label != null && nameMatches(label, fStringMatcher))
 					return element;
 			}
-			element= findElement(item2.getItems());
+			element= findElement(treeItem.getItems());
 			if (element != null)
 				return element;
 		}
@@ -676,5 +673,20 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 			fViewMenuButtonComposite.setTabList(new Control[] { fFilterText });
 			composite.setTabList(new Control[] { fViewMenuButtonComposite, fTreeViewer.getTree() });
 		}
+	}
+
+	/**
+	 * Checks whether a given name is selected by the matcher
+	 */
+	boolean nameMatches(String name, StringMatcher matcher) {
+		if (matcher.match(name))
+			return true;
+		
+		// Check last segment of a qualified name
+		int idx= name.lastIndexOf(COLON_COLON);
+		if (idx >= 0 && matcher.match(name.substring(idx+COLON_COLON.length())))
+			return true;
+		
+		return false;
 	}
 }

@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems, Inc. - extended implementation
+ *     Navid Mehregani (TI) - Bugzilla 310191 - Detail pane does not clear up when DSF-GDB session is terminated
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail;
 
@@ -272,6 +273,10 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
             fViewerInput = viewerInput;
             fElements = elements;
         }
+                
+        public IProgressMonitor getDetailMonitor() {
+        	return fMonitor;
+        }
         
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -307,6 +312,11 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
                     new DataRequestMonitor<Map<String,Object>>(executor, null) {
                         @Override
                         protected void handleCompleted() {
+                        	
+                        	// Bugzilla 310191: Detail pane does not clear up when DSF-GDB session is terminated
+                        	if (fMonitor.isCanceled())
+                        		return;
+                        	
                             Set<String> properties = new HashSet<String>(1);
                             properties.add(IElementPropertiesProvider.PROP_NAME);
                             final String[] formats = (String[])getData().get(
@@ -727,6 +737,11 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     protected void clearTextViewer(){
         if (fDetailJob != null) {
             fDetailJob.cancel();
+            
+            // Bugzilla 310191: Detail pane does not clear up when DSF-GDB session is terminated
+            IProgressMonitor progressMonitor = fDetailJob.getDetailMonitor();
+            if (progressMonitor!=null)
+            	progressMonitor.setCanceled(true);
         }
         fLastDisplayed = null;
         fDetailDocument.set(""); //$NON-NLS-1$

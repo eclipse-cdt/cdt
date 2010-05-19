@@ -2577,10 +2577,12 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					
 				case IOption.STRING_LIST :
 				case IOption.INCLUDE_FILES :
+				case IOption.INCLUDE_PATH :
 				case IOption.LIBRARY_PATHS :
 				case IOption.LIBRARY_FILES :
 				case IOption.MACRO_FILES :
 				case IOption.UNDEF_INCLUDE_FILES :
+				case IOption.UNDEF_INCLUDE_PATH :
 				case IOption.UNDEF_LIBRARY_PATHS :
 				case IOption.UNDEF_LIBRARY_FILES :
 				case IOption.UNDEF_MACRO_FILES :				{
@@ -2592,32 +2594,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							String[] list = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
 							if(list != null){
 								for (String temp : list) {
-									if(temp.length() > 0)
+									if(temp.length() > 0 && !temp.equals(EMPTY_QUOTED_STRING))
 										sb.append( evaluateCommand( listCmd, temp ) + WHITE_SPACE );
 								}
 							}
 						}
 					}
 					break;
-					
-				case IOption.INCLUDE_PATH :
-				case IOption.UNDEF_INCLUDE_PATH :{
-					String incCmd = option.getCommand();
-					IMacroContextInfo info = provider.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE,
-							new FileContextData(inputFileLocation, outputFileLocation, option, this));
-					if(info != null) {
-						macroSubstitutor.setMacroContextInfo(info);
-						String[] paths = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
-						if(paths != null){
-							for (String temp : paths) {
-								if(temp.length() > 0 && !temp.equals(EMPTY_QUOTED_STRING))
-									sb.append( evaluateCommand( incCmd, temp ) + WHITE_SPACE);
-							}
-						}
-					}
-				}
-					break;
-	
+
 				case IOption.PREPROCESSOR_SYMBOLS :
 				case IOption.UNDEF_PREPROCESSOR_SYMBOLS :{
 					String defCmd = option.getCommand();

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [216252] [api][nls] Resource Strings specific to subsystems should be moved from rse.ui into files.ui / shells.ui / processes.ui where possible
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * David Dykstal    (IBM)        - [148977] New Filter dialog should propose a default filter name on the 2nd page
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -861,5 +862,25 @@ public class SystemFileFilterStringEditPane
 		else {
 			return super.canSaveImplicitly();
 		}
+	}
+	
+	public String getDefaultFilterName()
+	{
+		String defaultFilterName = ""; //$NON-NLS-1$
+		if (folderCombo != null) {
+			String folderName = folderCombo.getText().trim();
+			if (folderName.length() > 0) {
+				String separator = inputSubsystemConfiguration.getSeparator();
+				if (folderName.endsWith(separator)) {
+					folderName = folderName.substring(0, folderName.length() - separator.length());
+				}
+				int p = folderName.lastIndexOf(separator);
+				p += separator.length();
+				if (p < folderName.length()) {
+					defaultFilterName = folderName.substring(p);					
+				}
+			}
+		}
+		return defaultFilterName;
 	}
 }

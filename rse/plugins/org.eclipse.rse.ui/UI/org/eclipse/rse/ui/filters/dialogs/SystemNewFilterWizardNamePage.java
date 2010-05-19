@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [226948] [api][regression] SystemNewFilterWizard.createNamePage() is no longer available
  * David McKnight   (IBM)        - [249482] Duplicate Filters can be created if changing the filter pool
+ * David Dykstal    (IBM)        - [148977] New Filter dialog should propose a default filter name on the 2nd page
  *******************************************************************************/
 
 package org.eclipse.rse.ui.filters.dialogs;
@@ -160,8 +161,8 @@ public class SystemNewFilterWizardNamePage
 
 		SystemWidgetHelpers.createVerbiage(composite_prompts, configurator.getPage2NameVerbiage(), nbrColumns, false, 200);
 		nameText = SystemWidgetHelpers.createLabeledTextField(composite_prompts, null, configurator.getPage2NamePromptLabel(), configurator.getPage2NamePromptTooltip());
-
-        addSeparatorLine(composite_prompts, nbrColumns);
+		
+        addSeparatorLine(composite_prompts, nbrColumns);       
         addFillerLine(composite_prompts, nbrColumns);
 
         // allow the user to create this filter uniquely for this connection, which means putting it in a
@@ -537,10 +538,26 @@ public class SystemNewFilterWizardNamePage
 			if (!userEditedName && (nameText!=null))
 			{
 				String defaultName = ((SystemNewFilterWizard)getWizard()).getDefaultFilterName();
-				if (defaultName != null)
-				{
+				if (defaultName != null) {
+					if (defaultName.length() > 0) {
+						if (nameValidator != null) {
+							String nameProposal = defaultName;
+							boolean invalid = true;
+							int times = 0;
+							while (invalid && times < 20) { // try only 20 times
+								if (nameValidator.validate(nameProposal) != null) {
+									times++;
+									nameProposal = defaultName + " " + times; //$NON-NLS-1$
+								} else {
+									invalid = false;
+									defaultName = nameProposal;
+								}
+							}
+						}				
+					}
 					ignoreChanges = true;
 				    nameText.setText(defaultName);
+				    nameText.selectAll();
 				    ignoreChanges = false;
 				}
 			}

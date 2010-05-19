@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -338,6 +342,7 @@ public class CDebugCorePlugin extends Plugin {
 		createBreakpointListenersList();
 		createDisassemblyContextService();
 		setSessionManager( new SessionManager() );
+		setDefaultLaunchDelegates();
 	}
 
 	/* (non-Javadoc)
@@ -429,4 +434,67 @@ public class CDebugCorePlugin extends Plugin {
         if ( fDisassemblyContextService != null )
             fDisassemblyContextService.dispose();
     }
+    
+	private void setDefaultLaunchDelegates() {
+		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
+		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
+
+		HashSet<String> debugSet = new HashSet<String>();
+		debugSet.add(ILaunchManager.DEBUG_MODE);
+
+		ILaunchConfigurationType localCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
+		try {
+			if (localCfg.getPreferredDelegate(debugSet) == null) {
+				ILaunchDelegate[] delegates = localCfg.getDelegates(debugSet);
+				for (ILaunchDelegate delegate : delegates) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE.equals(delegate.getId())) {
+						localCfg.setPreferredDelegate(debugSet, delegate);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {}
+
+		ILaunchConfigurationType attachCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
+		try {
+			if (attachCfg.getPreferredDelegate(debugSet) == null) {
+				ILaunchDelegate[] delegates = attachCfg.getDelegates(debugSet);
+				for (ILaunchDelegate delegate : delegates) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE.equals(delegate.getId())) {
+						attachCfg.setPreferredDelegate(debugSet, delegate);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {}
+
+		ILaunchConfigurationType postMortemCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_POST_MORTEM);
+		try {
+			if (postMortemCfg.getPreferredDelegate(debugSet) == null) {
+				ILaunchDelegate[] delegates = postMortemCfg.getDelegates(debugSet);
+				for (ILaunchDelegate delegate : delegates) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_POSTMORTEM_LAUNCH_DELEGATE.equals(delegate.getId())) {
+						postMortemCfg.setPreferredDelegate(debugSet, delegate);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {}
+
+		HashSet<String> runSet = new HashSet<String>();
+		runSet.add(ILaunchManager.RUN_MODE);
+
+		try {
+			if (localCfg.getPreferredDelegate(runSet) == null) {
+				ILaunchDelegate[] delegates = localCfg.getDelegates(runSet);
+				for (ILaunchDelegate delegate : delegates) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE.equals(delegate.getId())) {
+						localCfg.setPreferredDelegate(runSet, delegate);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {}
+	}
+	
 }

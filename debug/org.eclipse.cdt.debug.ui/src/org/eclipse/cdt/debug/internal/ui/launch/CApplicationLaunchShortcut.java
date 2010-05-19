@@ -15,7 +15,6 @@ package org.eclipse.cdt.debug.internal.ui.launch;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -202,26 +201,6 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
 
-	        // Workaround for bug 262840
-			try {
-				HashSet<String> set = new HashSet<String>();
-				set.add(ILaunchManager.RUN_MODE);
-	            if (wc.getPreferredDelegate(set) == null && wc.getType().getPreferredDelegate(set) == null) {
-					wc.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_RUN_LAUNCH_DELEGATE);
-				}
-			} catch (CoreException e) {}
-			
-			// We must also set the debug mode delegate because this configuration can be re-used
-			// in Debug mode.
-	        try {
-	        	HashSet<String> set = new HashSet<String>();
-	        	set.add(ILaunchManager.DEBUG_MODE);
-	            if (wc.getPreferredDelegate(set) == null && wc.getType().getPreferredDelegate(set) == null) {
-                    wc.setPreferredLaunchDelegate(set, ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE);
-	            }
-	        } catch (CoreException e) {}
-			// End workaround for bug 262840
-	        
 			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
 			if (projDes != null)
 			{

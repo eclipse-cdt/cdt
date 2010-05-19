@@ -14,6 +14,7 @@ package org.eclipse.cdt.codan.core.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.codan.core.cxx.CxxAstUtilsTest;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreferenceTest;
 import org.eclipse.cdt.codan.core.param.ListProblemPreferenceTest;
 import org.eclipse.cdt.codan.core.param.MapProblemPreferenceTest;
@@ -39,6 +40,7 @@ public class CodanFastTestSuite extends TestSuite {
 		suite.addTestSuite(BasicProblemPreferenceTest.class);
 		suite.addTestSuite(ListProblemPreferenceTest.class);
 		suite.addTestSuite(MapProblemPreferenceTest.class);
+		suite.addTestSuite(CxxAstUtilsTest.class);
 		return suite;
 	}
 }

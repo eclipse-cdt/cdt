@@ -54,7 +54,7 @@ public class TestUtils {
 					srcRoot + "/" + classFile);
 			st = resource.openStream();
 		} else {
-			st = clazz.getResourceAsStream(classFile);
+			st = clazz.getResourceAsStream("/" + classFile);
 		}
 		return st;
 	}

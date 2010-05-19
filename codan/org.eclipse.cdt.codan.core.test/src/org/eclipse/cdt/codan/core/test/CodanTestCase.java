@@ -16,8 +16,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
@@ -65,6 +63,7 @@ public class CodanTestCase extends BaseTestCase {
 		return false;
 	}
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		removeLeftOverProjects();
@@ -72,6 +71,7 @@ public class CodanTestCase extends BaseTestCase {
 		tmpDir = cproject.getProject().getLocation().makeAbsolute().toFile();
 	}
 
+	@Override
 	public void tearDown() throws CoreException {
 		if (cproject != null) {
 			try {
@@ -120,7 +120,6 @@ public class CodanTestCase extends BaseTestCase {
 				}
 			}, null);
 			mj.join();
-
 		} finally {
 			mj.dispose();
 		}
@@ -175,9 +174,6 @@ public class CodanTestCase extends BaseTestCase {
 	protected StringBuffer[] getContents(int sections) {
 		try {
 			CodanCoreTestActivator plugin = CodanCoreTestActivator.getDefault();
-			if (plugin == null)
-				throw new AssertionFailedError(
-						"This test must be run as a JUnit plugin test");
 			return TestSourceReader.getContentsForTest(plugin.getBundle(),
 					"src", getClass(), getName(), sections);
 		} catch (IOException e) {

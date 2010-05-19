@@ -10,6 +10,8 @@
  *     Clare Richardson (Motorola) - Bug 281397 building specific configs
  *     Dmitry Kozlov (CodeSourcery) - Bug 309909 Headless build import fails
  *                                    silently with relative pathname
+ *                                  - Bug 300554 Build status not propagated
+ *                                    to exit code
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.core;
@@ -32,12 +34,15 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -202,7 +207,7 @@ public class HeadlessBuilder implements IApplication {
 
 	/**
 	 * Import a project into the workspace
-	 * @param uri base URI string
+	 * @param projURIStr base URI string
 	 * @param recurse should we recurse down the URI importing all projects?
 	 * @return int OK / ERROR
 	 */
@@ -300,7 +305,20 @@ public class HeadlessBuilder implements IApplication {
 		return OK;
 	}
 
+	private boolean isProjectSuccesfullyBuild(IProject project) {
+		boolean result = false;
+		try {
+			result = project.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE) < IMarker.SEVERITY_ERROR;
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return result;
+	}
+
 	public Object start(IApplicationContext context) throws Exception {
+		// Build result: whether projects were built successfully
+		boolean buildSuccessful = true;
+
 		// Check its OK to use this workspace as IDEApplication does
 		if (!checkInstanceLocation())
 			return ERROR;
@@ -379,12 +397,16 @@ public class HeadlessBuilder implements IApplication {
 
 					System.out.println(HeadlessBuildMessages.HeadlessBuilder_building_all);
 					root.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+					for(IProject p : root.getProjects())
+						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
 				} else {
 					// Resolve the regular expression project names to build configurations
 					for (String regEx : projectRegExToBuild)
 						matchConfigurations(regEx, allProjects, configsToBuild);
 					// Build the list of configurations
 					buildConfigurations(configsToBuild, monitor, IncrementalProjectBuilder.FULL_BUILD);
+					for(IProject p : configsToBuild.keySet())
+						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
 				}
 			} finally {
 				// Reset the build_all_configs preference value to its previous state
@@ -401,7 +423,7 @@ public class HeadlessBuilder implements IApplication {
 			root.getWorkspace().setDescription(desc);
 		}
 
-		return OK;
+		return buildSuccessful ? OK : ERROR;
 	}
 
     /**
@@ -446,7 +468,7 @@ public class HeadlessBuilder implements IApplication {
 	 *   -cleanBuild {project_name_reg_ex/config_name_reg_ex | all}
 	 *
 	 * Each argument may be specified more than once
-	 * @param args
+	 * @param args String[] of arguments to parse
 	 * @return boolean indicating success
 	 */
 	public boolean getArguments(String[] args) {

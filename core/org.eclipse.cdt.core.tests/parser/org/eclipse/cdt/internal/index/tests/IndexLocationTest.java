@@ -197,8 +197,8 @@ public class IndexLocationTest extends BaseTestCase {
 		assertTrue(content2.getFile("external2.h").exists());
 
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
-		TestSourceReader.waitUntilFileIsIndexed(index, file, 10000);
 		CCorePlugin.getIndexManager().reindex(cproject);
+		TestSourceReader.waitUntilFileIsIndexed(index, file, 10000);
 		waitForIndexer(cproject);
 		index.acquireReadLock();
 		try {

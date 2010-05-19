@@ -337,13 +337,16 @@ public class BaseUITestCase extends BaseTestCase {
 	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
 		TreeItem item= null;
 		String itemText= null;
+		SWTException ex= null;
+		String firstItemText= null;
 		for (int millis=0; millis < 5000; millis= millis==0 ? 1 : millis*2) {
 			runEventQueue(millis);
 			TreeItem root= tree.getItem(i0);
+			ex= null;
 			try {
 				TreeItem firstItem= root.getItem(0);
-				final String text= firstItem.getText();
-				if (text.length() > 0 && !text.equals("...")) {
+				firstItemText= firstItem.getText();
+				if (firstItemText.length() > 0 && !firstItemText.equals("...")) {
 					item= root.getItem(i1);
 					itemText= item.getText();
 					assertNotNull("Unexpected tree node " + itemText, label);
@@ -362,9 +365,13 @@ public class BaseUITestCase extends BaseTestCase {
 				return null;
 			} catch (SWTException e) {
 				// widget was disposed, try again.
+				ex= e;
 			}
 		}
-		assertEquals("Timeout expired waiting for tree node {" + i0 + "," + i1 + "}", label, itemText);
+		if (ex != null)
+			throw ex;
+		
+		assertEquals("Timeout expired waiting for tree node {" + i0 + "," + i1 + "}; firstItem=" + firstItemText, label, itemText);
 		return null;
 	}
 	

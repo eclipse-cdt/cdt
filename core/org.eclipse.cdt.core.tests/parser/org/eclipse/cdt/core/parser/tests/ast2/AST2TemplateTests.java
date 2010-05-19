@@ -19,6 +19,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateType;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -4962,5 +4963,35 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testBug306213c() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
+	}
+	
+	//	template<typename T1, typename T2> class CT {};
+	//	template<> class CT<int,char> {};
+	//	template<> class CT<char,char> {};
+	public void testBug311164() throws Exception {
+		CPPASTNameBase.sAllowNameComputation= true;
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		final IASTTranslationUnit tu = bh.getTranslationUnit();
+
+		IBinding b= bh.assertNonProblem("CT {", 2);
+		IName[] names = tu.getDeclarationsInAST(b);
+		assertEquals(1, names.length);
+		assertEquals("CT", names[0].toString());
+		names= tu.getReferences(b);
+		assertEquals(2, names.length);
+		assertEquals("CT", names[0].toString());
+		assertEquals("CT", names[1].toString());
+
+		b= bh.assertNonProblem("CT<int,char>", 0);
+		names = tu.getDeclarationsInAST(b);
+		assertEquals(1, names.length);
+		assertEquals("CT<int, char>", names[0].toString());
+
+		b= bh.assertNonProblem("CT<char,char>", 0);
+		names = tu.getDeclarationsInAST(b);
+		assertEquals(1, names.length);
+		assertEquals("CT<char, char>", names[0].toString());
 	}
 }

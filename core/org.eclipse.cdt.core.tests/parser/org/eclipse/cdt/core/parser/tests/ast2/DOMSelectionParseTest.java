@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -1728,28 +1727,5 @@ public class DOMSelectionParseTest extends DOMSelectionParseBaseTest {
     	assertEquals(offset, loc.getNodeOffset());
     	assertEquals(length, loc.getNodeLength());
 	}
-
-	public void testBug92632() throws Exception
-    {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("namespace N{ \n"); //$NON-NLS-1$
-        buffer.append("            template < class T > class AAA { T _t; };\n"); //$NON-NLS-1$
-        buffer.append("}       \n"); //$NON-NLS-1$
-        buffer.append("N::AAA<int> a;  \n"); //$NON-NLS-1$
-        
-        String code = buffer.toString();
-        int index = code.indexOf("AAA<int>"); //$NON-NLS-1$
-        IASTNode node = parse( code, index, index + 8, true );
-        assertNotNull( node );
-        assertTrue( node instanceof IASTName );
-        assertTrue( ((IASTName)node).resolveBinding() instanceof ICPPTemplateInstance );
-        assertEquals( ((IASTName)node).toString(), "AAA<int>" ); //$NON-NLS-1$
-        IName[] decls = getDeclarationOffTU((IASTName)node);
-        assertEquals(decls.length, 1);
-        assertEquals( decls[0].toString(), "AAA" ); //$NON-NLS-1$
-        assertEquals( ((ASTNode)decls[0]).getOffset(), 53);
-        assertEquals( ((ASTNode)decls[0]).getLength(), 3);
-    }
-    
 }
 

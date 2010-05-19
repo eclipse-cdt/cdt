@@ -1139,4 +1139,18 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	IASTNode node= testF3(file, offset);
     	assertContents(code, node.getFileLocation().getNodeOffset(), "func(T a, T b)");
     }
+    
+    //    namespace N {
+    //    	template <typename T> class AAA { T _t; };
+    //    }
+    //    N::AAA<int> a;
+	public void testBug92632() throws Exception {
+    	String code= getContentsForTest(1)[0].toString();
+    	IFile file = importFile("testBug92632.cpp", code); 
+        int index = code.indexOf("AAA<int>"); //$NON-NLS-1$
+    	IASTNode node= testF3(file, index);
+    	assertContents(code, node.getFileLocation().getNodeOffset(), "AAA");
+    	node= testF3(file, index+4);
+    	assertContents(code, node.getFileLocation().getNodeOffset(), "AAA");
+    }
 }

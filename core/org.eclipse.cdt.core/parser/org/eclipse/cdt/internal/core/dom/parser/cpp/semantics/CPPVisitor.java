@@ -1437,10 +1437,9 @@ public class CPPVisitor extends ASTQueries {
 		}
 
 		private boolean isDeclarationsBinding(IBinding nameBinding) {
-			nameBinding= unwindBinding(nameBinding);
 			if (nameBinding != null) {
 				for (IBinding binding : bindings) {
-					if (nameBinding.equals(unwindBinding(binding))) {
+					if (nameBinding.equals(binding)) {
 						return true;
 					}
 					// a using declaration is a declaration for the references of its delegates

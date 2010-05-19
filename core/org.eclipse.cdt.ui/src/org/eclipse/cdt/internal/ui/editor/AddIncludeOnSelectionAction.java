@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -442,7 +443,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private IIndexFile getRepresentativeFile(IIndexFile headerFile, IIndex index) {
 		try {
-			if (ResourceLookup.findFilesForLocationURI(headerFile.getLocation().getURI()).length > 0) {
+			if (isWorkspaceFile(headerFile.getLocation().getURI())) {
 				return headerFile;
 			}
 			// TODO(sprigogin): Change to ArrayDeque when Java 5 support is no longer needed.
@@ -461,7 +462,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 					IIndexFile includer = include.getIncludedBy();
 					if (!processed.contains(includer)) {
 						URI uri = includer.getLocation().getURI();
-						if (isSource(uri.getPath()) || ResourceLookup.findFilesForLocationURI(uri).length > 0) {
+						if (isSource(uri.getPath()) || isWorkspaceFile(uri)) {
 							return file;
 						}
 						front.add(includer);
@@ -473,6 +474,15 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 			CUIPlugin.log(e);
 		}
 		return headerFile;
+	}
+
+	private boolean isWorkspaceFile(URI uri) {
+		for (IFile file : ResourceLookup.findFilesForLocationURI(uri)) {
+			if (file.exists()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean hasExtension(String path) {

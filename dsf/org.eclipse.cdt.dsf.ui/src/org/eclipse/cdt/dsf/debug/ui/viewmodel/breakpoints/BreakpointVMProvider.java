@@ -234,7 +234,7 @@ public class BreakpointVMProvider extends AbstractVMProvider
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointsListener);
         IWorkbenchWindow window = getPresentationContext().getWindow();
         if (window != null) {
-            DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(
+            DebugUITools.getDebugContextManager().getContextService(window).removeDebugContextListener(
                 fDebugContextListener);
         }        
         super.dispose();

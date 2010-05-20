@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -1263,5 +1264,30 @@ public class IndexUpdateTests extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
+	}
+	
+	// class X {};
+
+	// class X {};
+	public void testFileLocalBinding() throws Exception {
+		setupFile(2, true);
+		long id1, id2;
+		fIndex.acquireReadLock();
+		try { 
+			final IIndexBinding binding = findBinding("X");
+			id1= ((PDOMFile) binding.getLocalToFile()).getRecord();
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try { 
+			final IIndexBinding binding = findBinding("X");
+			id2= ((PDOMFile) binding.getLocalToFile()).getRecord();
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		assertEquals(id1, id2);
 	}
 }

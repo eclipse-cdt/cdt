@@ -972,6 +972,10 @@ public class CCorePlugin extends Plugin {
 				provider = fNewCProjectDescriptionManager.getScannerInfoProviderProxy(project);
 			project.setSessionProperty(scannerInfoProviderName, provider);
 		} catch (CoreException e) {
+			// Bug 313725: When project is being closed, don't report an error.
+			if (!project.isOpen())
+				return null;
+			
 			log(e);
  		}
 		

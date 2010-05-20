@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Nokia and others.
+ * Copyright (c) 2006, 2010 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,9 @@ public class CSourceNotFoundEditorInput extends CommonSourceNotFoundEditorInput 
 
 	@Override
 	public String getName() {
-		if (getArtifact() instanceof CSourceNotFoundElement) {
-			String description = ((CSourceNotFoundElement)getArtifact()).getDescription();
+		Object artifact = getArtifact();
+		if (artifact instanceof CSourceNotFoundElement) {
+			String description = ((CSourceNotFoundElement)artifact).getDescription();
 			if (description != null) {
 				return description;
 			}

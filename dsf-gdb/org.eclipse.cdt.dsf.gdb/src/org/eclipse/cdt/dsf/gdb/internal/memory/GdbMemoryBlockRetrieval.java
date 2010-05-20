@@ -78,12 +78,11 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 
  		BundleContext bundle = GdbPlugin.getBundleContext();
  		
-		// Create a tracker for the MemoryPageService
- 		String memoryPageServiceFilter = DsfServices.createServiceFilter(IMemorySpaces.class, session.getId());
-
+		// Create a tracker for the memory spaces service
+ 		String filter = DsfServices.createServiceFilter(IMemorySpaces.class, session.getId());
  		try {
 			fMemorySpaceServiceTracker = new ServiceTracker(
-					bundle,	bundle.createFilter(memoryPageServiceFilter), null);
+					bundle,	bundle.createFilter(filter), null);
 		} catch (InvalidSyntaxException e) {
 			throw new DebugException(new Status(IStatus.ERROR,
 					GdbPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
@@ -194,9 +193,9 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		        if (context instanceof IAdaptable) {
 		        	dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
 		            if (dmc != null) {
-		        		IMemorySpaces memoryPageService = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
-		                if (memoryPageService != null) {
-		        			memoryPageService.getMemorySpaces(
+		        		IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+		                if (service != null) {
+		        			service.getMemorySpaces(
 		        				dmc, 
 		        				new DataRequestMonitor<String[]>(getExecutor(), drm) {
 			            			@Override
@@ -246,9 +245,9 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#decodeAddress(java.lang.String)
 	 */
 	public DecodeResult decodeAddress(String str) throws CoreException {
-    	IMemorySpaces memoryPageService = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
-    	if (memoryPageService != null) {
-    		final IMemorySpaces.DecodeResult result = memoryPageService.decodeAddress(str);
+    	IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+    	if (service != null) {
+    		final IMemorySpaces.DecodeResult result = service.decodeAddress(str);
     		if (result != null) {	// service can return null to tell use to use default decoding 
 	    		return new DecodeResult() {
 					public String getMemorySpaceId() { return result.getMemorySpaceId(); }
@@ -367,9 +366,9 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#creatingBlockRequiresMemorySpaceID()
 	 */
 	public boolean creatingBlockRequiresMemorySpaceID() {
-		IMemorySpaces memoryPageService = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
-        if (memoryPageService != null) {
-        	return memoryPageService.creatingBlockRequiresMemorySpaceID();
+		IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+        if (service != null) {
+        	return service.creatingBlockRequiresMemorySpaceID();
         }
 		return false;
 	}

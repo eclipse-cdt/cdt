@@ -33,6 +33,8 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -94,12 +96,15 @@ public class GDBProcesses extends MIProcesses {
 		IContainerDMContext containerDmc = createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 		fGdb.getInferiorProcess().setContainerContext(containerDmc);
 
+		getSession().addServiceEventListener(this, null);		
+
 		requestMonitor.done();
 	}
 
 	@Override
 	public void shutdown(RequestMonitor requestMonitor) {
 		unregister();
+		getSession().removeServiceEventListener(this);		
 		super.shutdown(requestMonitor);
 	}
 	
@@ -291,4 +296,13 @@ public class GDBProcesses extends MIProcesses {
             rm.done();
 	    }
 	}
+	
+    /**
+	 * @since 3.0
+	 */
+    @DsfServiceEventHandler
+    public void eventDispatched(MIStoppedEvent e) {
+    	// Get the PID of the inferior through gdb (if we don't have it already) 
+    	fGdb.getInferiorProcess().update();
+    }
 }

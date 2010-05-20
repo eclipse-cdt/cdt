@@ -42,6 +42,7 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
@@ -104,13 +105,20 @@ public class MIInferiorProcess extends Process
      */
     private int fSuppressTargetOutputCounter = 0;
 
+	/**
+	 * Flag we use to avoid making repeated CLI 'info program' requests to get
+	 * the PID when gdb doesn't provide the PID in the response.
+	 */
+    @ConfinedToDsfExecutor("fSession#getExecutor")    
+    private boolean fGiveUpOnPidQuery;
+
     @ThreadSafe
     Integer fExitCode = null;
 
     private State fState = State.RUNNING;
     
     @ConfinedToDsfExecutor("fSession#getExecutor")
-    private String fInferiorPid = null;
+    private String fInferiorPid;
 
     /**
      * Creates an inferior process object which uses the given output stream 
@@ -421,18 +429,23 @@ public class MIInferiorProcess extends Process
     public PTY getPTY() {
         return fPty;
     }
-    
-    /**
-     * @since 1.1
-     */
+
+	/**
+	 * Return the PID of this inferior, or null if not known.
+	 * 
+	 * @since 1.1
+	 */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     public String getPid() { 
     	return fInferiorPid;
     }
-    
-    /**
-     * @since 1.1
-     */
+
+	/**
+	 * Record the PID of this inferior. The PID may not be known at the time of
+	 * our instantiation.
+	 * 
+	 * @since 1.1
+	 */
     @ConfinedToDsfExecutor("fSession#getExecutor")
     public void setPid(String pid) { 
     	fInferiorPid = pid;
@@ -511,4 +524,36 @@ public class MIInferiorProcess extends Process
         else if ("exit".equals(state))    { setState(State.TERMINATED); }//$NON-NLS-1$            
         else if ("error".equals(state))   { setState(State.STOPPED); }//$NON-NLS-1$            
     }
+
+    /**
+	 * @since 3.0
+	 */
+    @ConfinedToDsfExecutor("fSession#getExecutor")    
+	public void update() {
+    	// If we don't already know the PID of the inferior, ask GDB for it.
+    	if (getPid() == null && fContainerDMContext != null && !fGiveUpOnPidQuery) {
+        	getCommandControlService().queueCommand(
+            		fCommandFactory.createCLIInfoProgram(fContainerDMContext), 
+                    new DataRequestMonitor<CLIInfoProgramInfo>(fSession.getExecutor(), null) {
+						@Override
+                        protected void handleSuccess() {
+                        	if (getPid() == null) {	// check again
+                        		Long pid = getData().getPID();
+                        		if (pid != null) {
+                       				setPid(Long.toString(pid));
+                        		}
+                        		else {
+									// We made the 'program info' request to
+									// GDB, it gave us an answer, but it either
+									// doesn't provide the process PID or we
+									// can't make it out. No point in trying
+									// again.
+                        			fGiveUpOnPidQuery = true;
+                        			assert false;	// investigate why this is happening
+                        		}
+                        	}
+                        }
+                    });
+    	}
+	}
 }

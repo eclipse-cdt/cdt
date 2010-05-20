@@ -20,12 +20,11 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 public interface ICSourceNotFoundDescription {
 
 	/**
-	 * Returns a description of the debug element suitable for
-	 * use by the CSourceNotFoundEditor. This description is then
-	 * used by the editor to inform the user when describing what
-	 * it can't locate source for.
+	 * Returns a description of the debug element suitable for use by the
+	 * CSourceNotFoundEditor. This description is then used by the editor to
+	 * inform the user when describing what it can't locate source for.
 	 * 
-	 * @return the description of the debug element.
+	 * @return the description of the debug element, or null if not available
 	 */
 	String getDescription();
 

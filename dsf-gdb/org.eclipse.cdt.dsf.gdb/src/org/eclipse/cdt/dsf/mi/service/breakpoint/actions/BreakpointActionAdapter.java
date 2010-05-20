@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.core.runtime.IAdaptable;
 
+/**
+ * @since 3.0
+ */
 public class BreakpointActionAdapter implements IAdaptable {
 
     private final DsfExecutor fExecutor;
@@ -30,8 +33,8 @@ public class BreakpointActionAdapter implements IAdaptable {
         fContext = context;
     }
 
-    @SuppressWarnings("unchecked")
-    public Object getAdapter(Class adapter) {
+    @SuppressWarnings("rawtypes")
+	public Object getAdapter(Class adapter) {
         if (adapter.equals(ILogActionEnabler.class)) {
             return new MILogActionEnabler(fExecutor, fServiceTracker, fContext);
         }

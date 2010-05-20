@@ -14,6 +14,9 @@ package org.eclipse.cdt.dsf.mi.service.command.commands.macos;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 
+/**
+ * @since 3.0
+ */
 public class MacOSMIEnvironmentCD extends MIEnvironmentCD {
 
 	// We need to send the following format:

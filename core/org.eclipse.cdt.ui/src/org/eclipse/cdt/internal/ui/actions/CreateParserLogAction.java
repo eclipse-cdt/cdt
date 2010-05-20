@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
@@ -208,6 +209,13 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		IStatus status = Status.OK_STATUS;
 		final ICProject cproject = tu.getCProject();
 		final String projectName= cproject == null ? null : cproject.getElementName();
+		String scannerInfoProvider= "null";
+		if (cproject != null) {
+			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(cproject.getProject());
+			if (provider != null) {
+				scannerInfoProvider= provider.getClass().getName();
+			}
+		}	
 		
 		ITranslationUnit ctx= tu;
 		if (tu instanceof TranslationUnit) {
@@ -219,9 +227,10 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		final MyVisitor visitor= new MyVisitor();
 		ast.accept(visitor);
 		
-		out.println("Project:              " + projectName); 
-		out.println("Index Version:        " + PDOM.getDefaultVersion()); 
-		out.println("Build Configuration:  " + getBuildConfig(cproject));
+		out.println("Project:               " + projectName); 
+		out.println("Index Version:         " + PDOM.versionString(PDOM.getDefaultVersion())); 
+		out.println("Scanner Info Provider: " + scannerInfoProvider);
+		out.println("Build Configuration:   " + getBuildConfig(cproject));
 		out.println("File:      " + tu.getLocationURI()); 
 		out.println("Context:   " + ctx.getLocationURI()); 
 		out.println("Language:  " + lang.getName()); 

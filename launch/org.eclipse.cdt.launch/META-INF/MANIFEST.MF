@@ -8,6 +8,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.launch,
  org.eclipse.cdt.launch.internal;x-internal:=true,
+ org.eclipse.cdt.launch.internal.refactoring;x-internal:=true,
  org.eclipse.cdt.launch.internal.ui;x-friends:="org.eclipse.cdt.debug.edc.ui",
  org.eclipse.cdt.launch.ui
 Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.2.0,4.0.0)",

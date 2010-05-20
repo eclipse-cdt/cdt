@@ -14,3 +14,6 @@ Require-Bundle: org.eclipse.debug.core,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.transport.MemoryTransportPlugin
+Export-Package: org.eclipse.cdt.debug.ui.memory.transport,
+ org.eclipse.cdt.debug.ui.memory.transport.actions,
+ org.eclipse.cdt.debug.ui.memory.transport.model

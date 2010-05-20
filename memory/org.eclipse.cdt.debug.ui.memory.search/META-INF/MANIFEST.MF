@@ -17,3 +17,4 @@ Bundle-Activator: org.eclipse.cdt.debug.ui.memory.search.MemorySearchPlugin
 Bundle-Vendor: %providerName
 Import-Package: org.eclipse.debug.ui.memory
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.eclipse.cdt.debug.ui.memory.search

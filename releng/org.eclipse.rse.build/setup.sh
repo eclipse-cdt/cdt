@@ -52,7 +52,7 @@ ep_ver=3.6RC1
 ep_date="-201005131500"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3644b.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.6.0.v3647a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -116,7 +116,7 @@ if [ ! -f ${DROPIN}/eclipse/plugins/org.eclipse.emf.doc_${EMFBRANCH}.v${EMFDATE}
   rm emf-xsd-SDK-${EMFVER}.zip
   cd ${DROPUP}
 fi
-if [ ! -f eclipse/plugins/org.junit_3.8.2.v20090203-1005/junit.jar ]; then
+if [ ! -f eclipse/plugins/org.junit_3.8.2.v3_8_2_v20100427-1100/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
   wget "http://download.eclipse.org/eclipse/downloads/drops/${ep_rel}${ep_ver}${ep_date}/eclipse-test-framework-${ep_ver}.zip"
@@ -126,9 +126,12 @@ fi
 if [ ! -f ${DROPIN}/eclipse/plugins/gnu.io.rxtx_2.1.7.4_v20071016.jar ]; then
   echo "Getting RXTX..."
   cd ${DROPIN}
-  wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"
-  unzip -o RXTX-SDK-I20071016-1945.zip
-  rm RXTX-SDK-I20071016-1945.zip
+  #wget "http://rxtx.qbang.org/eclipse/downloads/RXTX-SDK-I20071016-1945.zip"
+  #unzip -o RXTX-SDK-I20071016-1945.zip
+  #rm RXTX-SDK-I20071016-1945.zip
+  wget "http://download.eclipse.org/athena/runnables/RXTX-runtime-I20071016-1945.zip"
+  unzip -o RXTX-runtime-I20071016-1945.zip
+  rm RXTX-runtime-I20071016-1945.zip
   cd ${DROPUP}
 fi
 

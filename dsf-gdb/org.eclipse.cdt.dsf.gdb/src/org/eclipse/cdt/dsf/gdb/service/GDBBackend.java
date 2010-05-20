@@ -418,6 +418,20 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
         }
     }
 
+    /**
+	 * @since 3.0
+	 */
+    public void interruptInferiorAndWait(long pid, int timeout, RequestMonitor rm) {
+        if (fProcess instanceof Spawner) {
+            Spawner gdbSpawner = (Spawner) fProcess;
+            gdbSpawner.raise((int)pid, gdbSpawner.INT);
+            fInterruptFailedJob = new MonitorInterruptJob(timeout, rm);
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Cannot interrupt.", null)); //$NON-NLS-1$
+            rm.done();
+        }
+    }
+
     public void destroy() {
 		// destroy() should be supported even if it's not spawner. 
     	if (getState() == State.STARTED) {

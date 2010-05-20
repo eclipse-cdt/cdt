@@ -23,12 +23,13 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 public class GDBRunControl extends MIRunControl {
@@ -75,6 +77,7 @@ public class GDBRunControl extends MIRunControl {
 	
     private IGDBBackend fGdb;
 	private IMIProcesses fProcService;
+	private IGDBControl fGbControlService;
 	private CommandFactory fCommandFactory;
 	
 	// Record list of execution contexts
@@ -101,6 +104,7 @@ public class GDBRunControl extends MIRunControl {
     	
         fGdb = getServicesTracker().getService(IGDBBackend.class);
         fProcService = getServicesTracker().getService(IMIProcesses.class);
+        fGbControlService = getServicesTracker().getService(IGDBControl.class);
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
         register(new String[]{IRunControl.class.getName(), 
@@ -138,7 +142,27 @@ public class GDBRunControl extends MIRunControl {
                 @Override
                 protected void handleSuccess() {
                     if (getData()) {
-                        fGdb.interruptAndWait(IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+						// A local Windows attach session requires us to interrupt
+						// the inferior instead of gdb. This deficiency was fixed
+                    	// in gdb 7.0. Note that there's a GDBRunControl_7_0,
+                    	// so we're dealing with gdb < 7.0 if we get here.
+	                    // Refer to https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c56
+	                    // if you have the stomach for it.
+                    	if (fGdb.getIsAttachSession() 
+                    			&& fGdb.getSessionType() != SessionType.REMOTE
+                    			&& Platform.getOS().equals(Platform.OS_WIN32)) {
+                    		String inferiorPid = fGbControlService.getInferiorProcess().getPid();
+                    		if (inferiorPid != null) {
+                    			fGdb.interruptInferiorAndWait(Long.parseLong(inferiorPid), IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+                    		}
+                    		else {
+                    			assert false : "why don't we have the inferior's pid?";  //$NON-NLS-1$
+                    			fGdb.interruptAndWait(IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+                    		}
+                    	}
+                    	else {
+                            fGdb.interruptAndWait(IGDBBackend.INTERRUPT_TIMEOUT_DEFAULT, rm);
+                    	}
                     } else {
                         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Context cannot be suspended.", null)); //$NON-NLS-1$
                         rm.done();

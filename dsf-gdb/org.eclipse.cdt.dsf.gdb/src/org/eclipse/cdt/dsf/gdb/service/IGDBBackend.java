@@ -125,6 +125,15 @@ public interface IGDBBackend extends IMIBackend {
 	public void interruptAndWait(int timeout, RequestMonitor rm);
 
 	/**
+	 * Same as {@link #interruptAndWait(int, RequestMonitor)}, except the
+	 * inferior process is directly interrupted.
+	 *
+	 * @param pid the PID of the inferior
+	 * @since 3.0
+	 */
+	public void interruptInferiorAndWait(long pid, int timeout, RequestMonitor rm);
+
+	/**
 	 * @return The type of the session currently ongoing with the backend
 	 */
 	public SessionType getSessionType();

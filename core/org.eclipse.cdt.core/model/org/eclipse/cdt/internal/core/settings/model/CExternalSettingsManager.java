@@ -132,6 +132,9 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		
 		private CExternalSettingsContainer fContainer;
 
+		/** Stash error messages so we're not too noisy if things go wrong */
+		private static Set<String> failingProvidersMessages;
+
 		private ContainerDescriptor(FactoryDescriptor factoryDr,
 				String containerId, 
 				IProject project,
@@ -141,12 +144,17 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			try {
 				fContainer = fFactoryDr.getFactory().createContainer(containerId, project, cfgDes, previousSettings);
 			} catch (CoreException e) {
-				CCorePlugin.log(e);
+				if (failingProvidersMessages == null)
+					failingProvidersMessages = new HashSet<String>();
+				// only report the error once per session
+				if (!failingProvidersMessages.contains(e.getMessage()))
+					CCorePlugin.log(e.getMessage());
+				failingProvidersMessages.add(e.getMessage());
 			}
 			if(fContainer == null)
 				fContainer = NullContainer.INSTANCE;
 		}
-		
+
 		public CExternalSetting[] getExternalSettings(){
 			if(fHolder == null){
 				fHolder = new CExternalSettingsHolder();

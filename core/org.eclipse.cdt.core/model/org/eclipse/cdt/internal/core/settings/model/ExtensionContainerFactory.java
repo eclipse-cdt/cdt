@@ -179,7 +179,9 @@ public class ExtensionContainerFactory extends CExternalSettingContainerFactoryW
 		CExtensionSettingProviderDescriptor dr = getProviderDescriptorMap().get(id);
 		if(dr != null)
 			return dr.getContainer(project, cfgDes, previousSettings);
-		return CExternalSettingsManager.NullContainer.INSTANCE;
+		// Notify the manager that there's no external settings manager matching id.
+		throw new CoreException(CCorePlugin.createStatus("External settings provider: \"" + id + "\" couldn't be found for " +  //$NON-NLS-1$//$NON-NLS-2$
+			cfgDes.getProjectDescription().getProject() + ":"+cfgDes.getName())); //$NON-NLS-1$
 	}
 	
 	public static String[] getReferencedProviderIds(ICConfigurationDescription cfg){

@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [220547] [api][breaking] SimpleSystemMessage needs to specify a message id and some messages should be shared
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
  * David McKnight  (IBM)         - [279307] NPE when select a filter remove search dialog
+ * Kit Lo  (IBM)         - [312923]  TVT36:TCT252: JPN: Extra spaces in front of the second Regular expression checkbox  (edit)  
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -1309,15 +1310,21 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		fileNameCaseSensitiveButton.setLayoutData(gd);
 		fileNameCaseSensitiveButton.setSelection(initialFileNameCaseSensitive);
 		
+		// dummy label for alignment
+		Label dummyLabel = new Label(comp, SWT.LEFT);
+		dummyLabel.setText(""); //$NON-NLS-1$
+		
+		gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 2;
+		dummyLabel.setLayoutData(gd);
+		
 		// checkbox for regex
 		fileNameRegexButton = new Button(comp, SWT.CHECK);
 		fileNameRegexButton.setText(FileResources.RESID_SEARCH_FILENAME_REGEX_LABEL);
 		fileNameRegexButton.setToolTipText(FileResources.RESID_SEARCH_FILENAME_REGEX_TOOLTIP);
 		
-		//gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.horizontalSpan = 3;
 		
 		fileNameRegexButton.setLayoutData(gd);
 		fileNameRegexButton.setSelection(initialFileNameRegex);

@@ -302,7 +302,14 @@ public class GDBProcesses extends MIProcesses {
 	 */
     @DsfServiceEventHandler
     public void eventDispatched(MIStoppedEvent e) {
-    	// Get the PID of the inferior through gdb (if we don't have it already) 
-    	fGdb.getInferiorProcess().update();
+
+// Post-poned because 'info program' yields different result on different platforms.
+// https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20
+//
+//    	// Get the PID of the inferior through gdb (if we don't have it already) 
+//    	
+//    	
+//    	fGdb.getInferiorProcess().update();
+    	
     }
 }

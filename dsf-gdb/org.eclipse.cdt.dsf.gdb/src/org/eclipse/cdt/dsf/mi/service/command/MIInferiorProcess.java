@@ -42,7 +42,6 @@ import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses.ContainerExitedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICommand;
-import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoProgramInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIConst;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIExecAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
@@ -525,35 +524,41 @@ public class MIInferiorProcess extends Process
         else if ("error".equals(state))   { setState(State.STOPPED); }//$NON-NLS-1$            
     }
 
-    /**
-	 * @since 3.0
-	 */
-    @ConfinedToDsfExecutor("fSession#getExecutor")    
-	public void update() {
-    	// If we don't already know the PID of the inferior, ask GDB for it.
-    	if (getPid() == null && fContainerDMContext != null && !fGiveUpOnPidQuery) {
-        	getCommandControlService().queueCommand(
-            		fCommandFactory.createCLIInfoProgram(fContainerDMContext), 
-                    new DataRequestMonitor<CLIInfoProgramInfo>(fSession.getExecutor(), null) {
-						@Override
-                        protected void handleSuccess() {
-                        	if (getPid() == null) {	// check again
-                        		Long pid = getData().getPID();
-                        		if (pid != null) {
-                       				setPid(Long.toString(pid));
-                        		}
-                        		else {
-									// We made the 'program info' request to
-									// GDB, it gave us an answer, but it either
-									// doesn't provide the process PID or we
-									// can't make it out. No point in trying
-									// again.
-                        			fGiveUpOnPidQuery = true;
-                        			assert false;	// investigate why this is happening
-                        		}
-                        	}
-                        }
-                    });
-    	}
-	}
+//    
+// Post-poned because 'info program' yields different result on different platforms.
+// https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20
+//
+//    /**
+//	 * @since 3.0
+//	 */
+//    @ConfinedToDsfExecutor("fSession#getExecutor")    
+//	public void update() {
+//    	// If we don't already know the PID of the inferior, ask GDB for it.
+//    	if (getPid() == null && fContainerDMContext != null && !fGiveUpOnPidQuery) {
+//        	getCommandControlService().queueCommand(
+//            		fCommandFactory.createCLIInfoProgram(fContainerDMContext), 
+//                    new DataRequestMonitor<CLIInfoProgramInfo>(fSession.getExecutor(), null) {
+//						@Override
+//                        protected void handleSuccess() {
+//                        	if (getPid() == null) {	// check again
+//                        		Long pid = getData().getPID();
+//                        		if (pid != null) {
+//                       				setPid(Long.toString(pid));
+//                        		}
+//                        		else {
+//									// We made the 'program info' request to
+//									// GDB, it gave us an answer, but it either
+//									// doesn't provide the process PID or we
+//									// can't make it out. No point in trying
+//									// again.
+//                        			fGiveUpOnPidQuery = true;
+//                        			assert false;	// investigate why this is happening
+//                        		}
+//                        	}
+//                        }
+//                    });
+//    	}
+//	}
+//
+
 }

@@ -183,6 +183,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private final boolean fIsFastIndexer;
 	private long fFileSizeLimit= 0;
 	private InternalFileContentProvider fCodeReaderFactory;
+	private int fSwallowOutOfMemoryError= 5;
 
 	public AbstractIndexerTask(Object[] filesToUpdate, Object[] filesToRemove, IndexerInputAdapter resolver, boolean fastIndexer) {
 		super(resolver);
@@ -765,6 +766,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		} catch (AssertionError e) {
 			th= e;
 		} catch (OutOfMemoryError e) {
+			if (--fSwallowOutOfMemoryError < 0)
+				throw e;
 			th= e;
 		}
 		if (th != null) {

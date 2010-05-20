@@ -647,60 +647,96 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
-	public void displaySource(Object context, final IWorkbenchPage page,
-			final boolean force) {
+	public void displaySource(Object context, final IWorkbenchPage page, final boolean force) {
 		fStepCount = 0;
 
+		IExecutionDMContext displayThread = null;
 		IFrameDMContext displayFrame = null;
 		if (context instanceof IDMVMContext) {
 			IDMContext dmc = ((IDMVMContext) context).getDMContext();
-			if (dmc instanceof IFrameDMContext)
+			if (dmc instanceof IFrameDMContext) {
 				displayFrame = (IFrameDMContext) dmc;
-		} else if (context instanceof IFrameDMContext)
+			} else if (dmc instanceof IExecutionDMContext) {
+			    displayThread = (IExecutionDMContext)dmc;
+			}
+		} else if (context instanceof IFrameDMContext) {
 			displayFrame = (IFrameDMContext) context;
+		} else if (context instanceof IExecutionDMContext) {
+            displayThread = (IExecutionDMContext)context;
+        }
 
 		// Quick test. DMC is checked again in source lookup participant, but
 		// it's much quicker to test here.
-		if (displayFrame != null)
-			doDisplaySource(displayFrame, page, force, false);
+		if (displayFrame != null) {
+			doDisplayFrameSource(displayFrame, page, force, false);
+		} else if (displayThread != null) {
+		    doDisplayThreadSource(displayThread, page, force, false);
+		}
 	}
 
-	private void doDisplaySource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {
+	private void doDisplayThreadSource(final IExecutionDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {
+        fExecutor.execute(new DsfRunnable() { 
+            public void run() {
+                // We need to retrieve the frame level and line number from the service.  
+                IStack stackService = fServicesTracker.getService(IStack.class); 
+                if (stackService == null) {
+                    return;
+                }	    
+                stackService.getTopFrame(
+                    context, 
+                    new DataRequestMonitor<IFrameDMContext>(fExecutor, null) {
+                        @Override
+                        protected void handleSuccess() {
+                            doDisplayFrameSource(getData(), page, force, eventTriggered);
+                        }
+                    });
+            }
+        });
+	}
+	
+	private void doDisplayFrameSource(final IFrameDMContext context, final IWorkbenchPage page, final boolean force, final boolean eventTriggered) {
     	if (context.getLevel() < 0) {
     		return;
     	}
         // Re-dispatch to executor thread before accessing job lists.
-        fExecutor.execute(new DsfRunnable() { public void run() {
-            // We need to retrieve the frame level and line number from the service.  
-        	IStack stackService = fServicesTracker.getService(IStack.class); 
-            if (stackService == null) {
-                return;
+        fExecutor.execute(new DsfRunnable() { 
+            public void run() {
+                // We need to retrieve the frame level and line number from the service.  
+            	IStack stackService = fServicesTracker.getService(IStack.class); 
+                if (stackService == null) {
+                    return;
+                }
+            	stackService.getFrameData(
+                    context, 
+                    new DataRequestMonitor<IFrameDMData>(fExecutor, null) { 
+    					@Override
+    					public void handleSuccess() {
+    						FrameData frameData = new FrameData();
+    						frameData.fDmc = context;
+    						frameData.fLevel = context.getLevel();
+    						// Document line numbers are 0-based. While debugger line numbers are 1-based.
+    						IFrameDMData data = getData();
+    						frameData.fLine = data.getLine() - 1;
+    						frameData.fFile = data.getFile();
+    						if (!force && frameData.equals(fPrevFrameData)) {
+    							fPrevResult.updateArtifact(context);
+    							startDisplayJob(fPrevResult, frameData, page, eventTriggered);
+    						} else {
+    							startLookupJob(frameData, page, eventTriggered);
+    						}
+    					}
+    					@Override
+    					protected void handleFailure() {
+    					    doneStepping(context);
+    					}
+    					
+    					@Override
+    					protected void handleRejectedExecutionException() {
+                            doneStepping(context);
+    					}
+        			});
             }
-        	stackService.getFrameData(
-                context, 
-                new DataRequestMonitor<IFrameDMData>(fExecutor, null) { 
-					@Override
-					public void handleSuccess() {
-						FrameData frameData = new FrameData();
-						frameData.fDmc = context;
-						frameData.fLevel = context.getLevel();
-						// Document line numbers are 0-based. While debugger line numbers are 1-based.
-						IFrameDMData data = getData();
-						frameData.fLine = data.getLine() - 1;
-						frameData.fFile = data.getFile();
-						if (!force && frameData.equals(fPrevFrameData)) {
-							fPrevResult.updateArtifact(context);
-							startDisplayJob(fPrevResult, frameData, page, eventTriggered);
-						} else {
-							startLookupJob(frameData, page, eventTriggered);
-						}
-					}
-					@Override
-					protected void handleFailure() {
-					    doneStepping(context);
-					}
-    			});
-        }});
+        });
 	}
 
     private void executeFromJob(Runnable runnable) {
@@ -838,7 +874,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 				        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
 				        if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
 				        	IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-							doDisplaySource((IFrameDMContext) dmc, page, false, true);
+							doDisplayFrameSource((IFrameDMContext) dmc, page, false, true);
 							return;
 				        }
 			        }

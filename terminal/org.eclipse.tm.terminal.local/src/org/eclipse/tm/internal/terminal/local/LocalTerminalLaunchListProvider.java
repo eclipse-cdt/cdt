@@ -51,7 +51,7 @@ public class LocalTerminalLaunchListProvider implements IStructuredContentProvid
 	public Object[] getElements(Object input) {
 
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = LocalTerminalUtilities.PROGRAM_LAUNCH_TYPE;
+		ILaunchConfigurationType type = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE;
 		ILaunchConfiguration[] configurations = null;
 		try {
 

@@ -38,7 +38,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * and the line separator string.
  *
  * @author Mirko Raner
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  **/
 public class LocalTerminalSettingsTab extends AbstractLaunchConfigurationTab
 implements SelectionListener {
@@ -228,6 +228,23 @@ implements SelectionListener {
 		configuration.setAttribute(LocalTerminalLaunchUtilities.ATTR_LOCAL_ECHO, false);
 		configuration.setAttribute(LocalTerminalLaunchUtilities.ATTR_CTRL_C, false);
 		configuration.setAttribute(LocalTerminalLaunchUtilities.ATTR_LINE_SEPARATOR, NULL);
+	}
+
+	/**
+	 * Prevents Terminal launch configurations from being started directly from the launch
+	 * configuration dialog. The <b>Run</b> button in the dialog will only be enabled if all tabs
+	 * consider a launch configuration valid.
+	 *
+	 * TODO: previously used launches can still be launched via the launch history
+	 *       (see {@code ExternalToolMenuDelegate#fillMenu(Menu)})
+	 *
+	 * @param configuration the {@link ILaunchConfiguration}
+	 * @return always {@code false}
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration configuration) {
+
+		return false;
 	}
 
 	/**

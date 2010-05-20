@@ -34,12 +34,10 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 * @author Mirko Raner
 * @version $Revision: 1.1 $
 **/
-public class LocalTerminalLaunchTabGroup extends AbstractLaunchConfigurationTabGroup
-implements IDebugUIConstants {
+public class LocalTerminalLaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	private final static String ID = "id"; //$NON-NLS-1$
 	private final static String CLASS = "class"; //$NON-NLS-1$
-	private final static String LC_TAB_GROUPS = EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS;
 	private final static String PROGRAM_TAB_GROUP =
 		"org.eclipse.ui.externaltools.launchConfigurationTabGroup.program"; //$NON-NLS-1$
 
@@ -81,7 +79,8 @@ implements IDebugUIConstants {
 		//
 		IConfigurationElement[] element;
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		element = registry.getConfigurationElementsFor(IDebugUIConstants.PLUGIN_ID, LC_TAB_GROUPS);
+		final String TAB_GROUPS = IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS;
+		element = registry.getConfigurationElementsFor(IDebugUIConstants.PLUGIN_ID, TAB_GROUPS);
 		int numberOfElements = element.length;
 		for (int index = 0; index < numberOfElements; index++) {
 

@@ -32,6 +32,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalActivator;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalMessages;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalUtilities;
+import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.ui.PlatformUI;
 
@@ -43,7 +44,7 @@ import org.eclipse.ui.PlatformUI;
  * {@link ProcessFactory}, which allows the process to run with a pseudo-terminal ({@link PTY}).
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -79,6 +80,20 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch,
 	IProgressMonitor progressMonitor) throws CoreException {
+
+		String processFactoryID;
+		processFactoryID = configuration.getAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, EMPTY);
+		if (!LocalTerminalProcessFactory.ID.equals(processFactoryID)) {
+
+			// This launch was not launched via the terminal connector UI but via the launch dialog;
+			// the launch needs to be explicitly connected to a terminal (otherwise it will appear
+			// in the regular console), so launching from the launch dialog or from the launch
+			// history is not supported right now.
+			//
+			String message = LocalTerminalMessages.errorDirectLaunch;
+			IStatus status = new Status(IStatus.ERROR, LocalTerminalActivator.PLUGIN_ID, message);
+			throw new CoreException(status);
+		}
 
 		// Extract all relevant information from the ILaunchConfiguration; the original
 		// ProgramLaunchDelegate class checks for cancellation again and again after each step,

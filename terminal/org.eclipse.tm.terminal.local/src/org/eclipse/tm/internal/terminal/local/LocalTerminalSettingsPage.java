@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchUtilities;
 import org.eclipse.tm.internal.terminal.local.ui.DependentHeightComposite;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -46,7 +47,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * local program connections.
  *
  * @author Mirko Raner
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalSettingsPage
 implements ISettingsPage, ISelectionChangedListener, SelectionListener {
@@ -78,6 +79,8 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 	 */
 	public void createControl(Composite parent) {
 
+		ILaunchConfiguration defaultConfiguration;
+		defaultConfiguration = LocalTerminalLaunchUtilities.createDefaultLaunchConfiguration();
 		Composite enclosing = parent.getParent();
 		Layout enclosingLayout = enclosing.getLayout();
 		int extra = 0;
@@ -127,6 +130,13 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 		//       in having it be a part of the ISettingsPage interface
 		//
 		loadSettings();
+		if (defaultConfiguration != null) {
+
+			// If there is only one configuration (the default one), then make sure it gets
+			// selected:
+			//
+			viewer.setSelection(new StructuredSelection(defaultConfiguration), true);
+		}
 	}
 
 	/**
@@ -229,8 +239,8 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 			ILaunchConfigurationWorkingCopy newlyCreatedConfiguration;
 			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 			String baseName = LocalTerminalMessages.newTerminalLaunchName;
-			String uniqueName = launchManager.generateUniqueLaunchConfigurationNameFrom(baseName);
-			ILaunchConfigurationType type = LocalTerminalUtilities.PROGRAM_LAUNCH_TYPE;
+			String uniqueName = launchManager.generateLaunchConfigurationName(baseName);
+			ILaunchConfigurationType type = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE;
 			try {
 
 				newlyCreatedConfiguration = type.newInstance(null, uniqueName);

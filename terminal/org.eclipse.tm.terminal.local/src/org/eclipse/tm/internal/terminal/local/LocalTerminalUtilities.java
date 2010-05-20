@@ -28,7 +28,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * methods.
  *
  * @author Mirko Raner
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalUtilities {
 
@@ -56,10 +56,10 @@ public class LocalTerminalUtilities {
 	public final static ILaunchManager LAUNCH_MANAGER = DebugPlugin.getDefault().getLaunchManager();
 
 	/**
-	 * The {@link ILaunchConfigurationType} for "Program" launches (in the "External Tools"
+	 * The {@link ILaunchConfigurationType} for "Terminal" launches (in the "External Tools"
 	 * category).
 	 */
-	public final static ILaunchConfigurationType PROGRAM_LAUNCH_TYPE =
+	public final static ILaunchConfigurationType TERMINAL_LAUNCH_TYPE =
 		LAUNCH_MANAGER.getLaunchConfigurationType(LOCAL_TERMINAL);
 
 	/**
@@ -74,7 +74,7 @@ public class LocalTerminalUtilities {
 
 		ILaunchConfiguration[] configuration;
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		configuration = manager.getLaunchConfigurations(LocalTerminalUtilities.PROGRAM_LAUNCH_TYPE);
+		configuration = manager.getLaunchConfigurations(LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE);
 		int numberOfConfigurations = configuration.length;
 		for (int index = 0; index < numberOfConfigurations; index++) {
 

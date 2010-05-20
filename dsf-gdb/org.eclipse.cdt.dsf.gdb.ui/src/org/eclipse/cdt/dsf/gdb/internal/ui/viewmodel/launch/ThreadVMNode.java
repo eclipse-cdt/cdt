@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems and others.
+ * Copyright (c) 2006, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,9 @@ public class ThreadVMNode extends AbstractThreadVMNode
                     
                     @Override
                     public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
-                        return !((Boolean)properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED)).booleanValue();
+                    	// prop has been seen to be null during session shutdown [313823]
+                    	Boolean prop = (Boolean)properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED);
+                    	return (prop != null) ? !prop.booleanValue() : false;
                     };
                 },
                 new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED)),

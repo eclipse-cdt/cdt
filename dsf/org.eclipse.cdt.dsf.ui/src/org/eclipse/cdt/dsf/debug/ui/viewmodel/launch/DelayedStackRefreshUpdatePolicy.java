@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,9 +58,11 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 						if (((IFrameDMContext) dmc).getLevel() == 0) {
 							return FLUSH;
 						}
+					} else if (dmc instanceof IExecutionDMContext) {
+						return fBaseTester.getUpdateFlags(viewerInput, path);
 					}
 					return DIRTY;
-				} else if (dmc instanceof IExecutionDMContext) {
+				} else if (dmc instanceof IContainerDMContext) {
 					return fBaseTester.getUpdateFlags(viewerInput, path);
 				}
 			}

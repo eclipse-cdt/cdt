@@ -367,11 +367,15 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	}
 	
 	private void performGo(boolean inNewTab) {
-		// Index zero is the 'auto' (n/a) memory space entry
+		// Index zero is the 'auto' (n/a) memory space entry, unless the backend
+		// said we need to force a memory space selection
 		String memorySpace = null;
-		if (fGotoMemorySpaceControl.isVisible() && (fGotoMemorySpaceControl.getSelectionIndex() != 0)) {
+		if (fGotoMemorySpaceControl.isVisible()) {
 			memorySpace = fGotoMemorySpaceControl.getText();
-			assert (memorySpace != null) && (memorySpace.length() > 0);
+			if (memorySpace.equals(NA_MEMORY_SPACE_ID)) {
+				memorySpace = null;
+			}
+			assert (memorySpace == null) || (memorySpace.length() > 0);
 		}
 		
 		String expression = fGotoAddressBar.getExpressionText();
@@ -855,7 +859,16 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=309032#c50
 				if (memorySpaces.length >= 2) {
 					fGotoMemorySpaceControl.setItems(memorySpaces);
-					fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0); //$NON-NLS-1$  the n/a entry; don't think this needs to be translated
+					
+					// Add the '----' (N/A) entry unless the retrieval object
+					// says it requires a memory space ID in all cases
+					boolean addNA = true;	
+					if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
+						addNA = !((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).creatingBlockRequiresMemorySpaceID();
+					}
+					if (addNA) {
+						fGotoMemorySpaceControl.add(NA_MEMORY_SPACE_ID, 0); 
+					}
 					setMemorySpaceControlVisible(true);
 				}
 				else {

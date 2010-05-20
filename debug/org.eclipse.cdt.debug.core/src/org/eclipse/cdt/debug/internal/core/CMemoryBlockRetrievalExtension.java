@@ -473,4 +473,13 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		// Nope; use default decoding
 		return decodeAddressDefault(str);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#creatingBlockRequiresMemorySpaceID()
+	 */
+	public boolean creatingBlockRequiresMemorySpaceID() {
+		// A behavioral control we're not extending to CDI clients, but is being
+		// extended to DSF ones.
+		return false;
+	}
 }

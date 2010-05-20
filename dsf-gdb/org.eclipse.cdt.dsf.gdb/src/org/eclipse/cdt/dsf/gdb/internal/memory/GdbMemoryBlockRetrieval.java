@@ -362,4 +362,15 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
             DebugPlugin.getDefault().getMemoryBlockManager().addMemoryBlocks( blocks.toArray(new IMemoryBlock[blocks.size()]));
 	    }
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#creatingBlockRequiresMemorySpaceID()
+	 */
+	public boolean creatingBlockRequiresMemorySpaceID() {
+		IMemorySpaces memoryPageService = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
+        if (memoryPageService != null) {
+        	return memoryPageService.creatingBlockRequiresMemorySpaceID();
+        }
+		return false;
+	}
 }

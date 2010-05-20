@@ -92,5 +92,12 @@ public interface IMemorySpaceAwareMemoryBlockRetrieval extends IMemoryBlockRetri
 	 *             if unable to retrieve the specified memory
 	 */
 	public IMemorySpaceAwareMemoryBlock getMemoryBlock(String expression, Object context, String memorySpaceID) throws DebugException;
-	
+
+	/**
+	 * Return true if creating a memory block with a null memory space ID is NOT
+	 * supported. Some debuggers may not have the ability to infer the memory
+	 * space from an expression, in which case the user should be forced to
+	 * select a memory space when being prompted for a memory location.
+	 */
+	public boolean creatingBlockRequiresMemorySpaceID();
 }

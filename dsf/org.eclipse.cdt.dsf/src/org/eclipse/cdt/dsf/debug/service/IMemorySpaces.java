@@ -68,12 +68,23 @@ public interface IMemorySpaces extends IDsfService{
 		String getMemorySpaceId();
 		String getExpression();
 	}
-	
+
 	/**
 	 * Provides the memory spaces available in the given context.
 	 * 
-	 * @param ctx a DM context
-     * @param rm the asynchronous data request monitor
+	 * @param ctx
+	 *            a DM context
+	 * @param rm
+	 *            the asynchronous data request monitor. Returns a collection of
+	 *            memory space IDs.
 	 */
-	void getMemorySpaces(IDMContext context, final DataRequestMonitor<String[]> rm);	
+	void getMemorySpaces(IDMContext context, final DataRequestMonitor<String[]> rm);
+	
+	/**
+	 * Return true if creating a memory block with a null memory space ID is NOT
+	 * supported. Some debuggers may not have the ability to infer the memory
+	 * space from an expression, in which case the user should be forced to
+	 * select a memory space when being prompted for a memory location.
+	 */
+	public boolean creatingBlockRequiresMemorySpaceID();
 }

@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -33,6 +34,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
@@ -223,7 +225,9 @@ public class ExpressionManagerVMNode extends AbstractVMNode
             
         for (int i = 0; i < columnIds.length; i++) {
             if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i])) {
-                update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__newExpression_label, i);                
+                update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__newExpression_label, i);
+                // TODO: replace with an API image consant after bug 313828 is addressed.
+                update.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION), i);
                 FontData fontData = JFaceResources.getFontDescriptor(IDebugUIConstants.PREF_VARIABLE_TEXT_FONT).getFontData()[0];
                 fontData.setStyle(SWT.ITALIC);  // Bugzilla 287598: Distinguish 'Add new expression' entry from actual expressions                
                 update.setFontData(fontData, i);

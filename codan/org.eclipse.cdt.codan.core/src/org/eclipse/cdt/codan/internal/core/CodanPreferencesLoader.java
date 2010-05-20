@@ -136,7 +136,7 @@ public class CodanPreferencesLoader {
 			return;
 		String exported = storePreferences.get(prefKey, null);
 		if (exported != null) {
-			System.err.println(prefKey + " import " + exported);
+			//System.err.println(prefKey + " import " + exported);
 			prob.getPreference().importValue(exported);
 		}
 	}

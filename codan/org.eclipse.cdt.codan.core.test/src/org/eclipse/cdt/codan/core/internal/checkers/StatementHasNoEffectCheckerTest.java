@@ -13,7 +13,12 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
+import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker;
 
 /**
  * Test for {@see StatementHasNoEffectChecker} class
@@ -105,7 +110,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		checkErrorLine(f1, 3);
 		checkErrorLine(f2, 4);
 	}
-	
+
 	// main() {
 	// 	for (a=b;a;a=a->next);
 	// }
@@ -113,6 +118,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
 	// void main() {
 	// bool a;
 	// class c {};
@@ -123,7 +129,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		loadCodeAndRunCpp(getAboveComment());
 		checkNoErrors();
 	}
-	
+
 	// main() {
 	// A a,b;
 	//
@@ -132,5 +138,49 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	public void testOverloadedBinaryExpression() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	//#define FUNC(a) a
+	// main() {
+	// int a;
+	//   FUNC(a); // error by default 
+	// }
+	@SuppressWarnings("restriction")
+	public void testInMacro() {
+		IProblemPreference macro = getMapPreference(
+				StatementHasNoEffectChecker.ER_ID,
+				StatementHasNoEffectChecker.PARAM_MACRO_ID);
+		macro.setValue(Boolean.TRUE);
+		loadCodeAndRun(getAboveComment());
+		checkErrorLine(4);
+	}
+
+	//#define FUNC(a) a
+	// main() {
+	// int a;
+	//   FUNC(a); // no error if macro exp turned off
+	// }
+	@SuppressWarnings("restriction")
+	public void testInMacroParamOff() {
+		IProblemPreference macro = getMapPreference(
+				StatementHasNoEffectChecker.ER_ID,
+				StatementHasNoEffectChecker.PARAM_MACRO_ID);
+		macro.setValue(Boolean.FALSE);
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	/**
+	 * @param problemId
+	 * @param paramId
+	 * @return
+	 */
+	protected IProblemPreference getMapPreference(String problemId,
+			String paramId) {
+		IProblem problem = CodanRuntime.getInstance().getChechersRegistry()
+				.getWorkspaceProfile().findProblem(problemId);
+		IProblemPreference pref = ((MapProblemPreference) problem
+				.getPreference()).getChildDescriptor(paramId);
+		return pref;
 	}
 }

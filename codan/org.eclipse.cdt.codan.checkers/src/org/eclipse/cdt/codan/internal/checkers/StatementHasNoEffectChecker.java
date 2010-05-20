@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
+import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -38,8 +39,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
  * 
  */
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
-	private static final String PARAM_MACRO_ID = "macro";
+	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
+	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new CheckStmpVisitor());
@@ -52,8 +53,15 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTExpressionStatement) {
-				if (hasNoEffect(((IASTExpressionStatement) stmt).getExpression())) {
-					reportProblem(ER_ID, stmt, stmt.getRawSignature());
+				IASTExpression expression = ((IASTExpressionStatement) stmt)
+						.getExpression();
+				if (hasNoEffect(expression)) {
+					boolean inMacro = CxxAstUtils.getInstance().isInMacro(
+							expression);
+					boolean shouldReportInMacro = shouldReportInMacro();
+					if (inMacro && !shouldReportInMacro)
+						return PROCESS_SKIP;
+					reportProblem(ER_ID, stmt, expression.getRawSignature());
 				}
 				return PROCESS_SKIP;
 			}
@@ -71,11 +79,13 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		private boolean hasNoEffect(IASTExpression e) {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
-				if (isLValue(binExpr)) return false;
+				if (isLValue(binExpr))
+					return false;
 				switch (binExpr.getOperator()) {
 					case IASTBinaryExpression.op_logicalOr:
 					case IASTBinaryExpression.op_logicalAnd:
-						return hasNoEffect(binExpr.getOperand1()) && hasNoEffect(binExpr.getOperand2());
+						return hasNoEffect(binExpr.getOperand1())
+								&& hasNoEffect(binExpr.getOperand2());
 				}
 				return true;
 			}
@@ -102,7 +112,9 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					IASTNode parent2 = parent.getParent();
 					if (parent2 instanceof IASTCompoundStatement) {
 						IASTNode parent3 = parent2.getParent();
-						if (parent3 instanceof IGNUASTCompoundStatementExpression) { return false; }
+						if (parent3 instanceof IGNUASTCompoundStatementExpression) {
+							return false;
+						}
 					}
 				}
 				return true;
@@ -112,7 +124,17 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	}
 
 	public void initPreferences(IProblemWorkingCopy problem) {
-		addPreference(problem, PARAM_MACRO_ID, "Check statements that belong to macro", Boolean.TRUE);
+		addPreference(problem, PARAM_MACRO_ID,
+				CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
+				Boolean.TRUE);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean shouldReportInMacro() {
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
+				PARAM_MACRO_ID);
 	}
 
 	@SuppressWarnings("restriction")
@@ -124,8 +146,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			ICPPFunction overload = cppBin.getOverload();
 			if (overload != null)
 				return false;
-			IType expressionType = cppBin.getOperand1()
-					.getExpressionType();
+			IType expressionType = cppBin.getOperand1().getExpressionType();
 			if (!(expressionType instanceof IBasicType)) {
 				return false; // must be overloaded but parser could not
 				// find it

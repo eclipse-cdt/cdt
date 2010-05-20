@@ -1373,8 +1373,11 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				List<String> projectSymbols = (List<String>) projectScannerInfo
 						.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
 
-				for (String symbol : projectSymbols) {
-					symbols.put(symbol, "1"); //$NON-NLS-1$
+				if (projectSymbols != null) {
+
+					for (String symbol : projectSymbols) {
+						symbols.put(symbol, "1"); //$NON-NLS-1$
+					}
 				}
 			}
 

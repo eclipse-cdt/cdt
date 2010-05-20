@@ -28,30 +28,23 @@
   RSE runs on Java 1.4.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M6-201003160452/index.php">TM 3.2M6</a>:
+<!--
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/index.php">TM 3.2M6</a>:
 <ul>
   <li>Releng: TM now embeds repository information in released bundles. This allows PDE versions
       newer than Eclipse 3.6M7 to import source from the Eclipse CVS Repository directly from
       an installed binary TM bundle, and thus makes it much easier to contribute patches
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=311447">311447</a>].</li>
-<!--
-  <li>API: The IServerLogger interface File types can now be specified as "XML", in addition to the existing "binary"
-      and "text" file types. The special property of XML files is that they are transferred
-      in binary mode, but the local character encoding is determined by looking at the XML
-      magic inside the file. The XML filetype association can be configured by the
-      <tt>remoteFileTypes</tt> extension point, or in the Remote Files Preference Page.
-      This feature required new API to be added, for details see
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=283033">283033</a>].</li>
--->
 </ul>
 </li>
-<li>At least 17 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-05-05;chfield=resolution;query_format=advanced;chfieldfrom=2010-03-16;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[6];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20M7;product=Target%20Management">
+-->
+<li>At least 5 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-05-20;chfield=resolution;query_format=advanced;chfieldfrom=2010-05-03;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[67];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20RC1;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M6-201003160452/">
-  TM 3.2M6</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M6-201003160452/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/">
+  TM 3.2M7</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -118,7 +111,7 @@ and may require changes in client code even though they are binary compatible.
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM @buildId@ API Specification Updates
+<li>TM 3.2M7 API Specification Updates
 <ul>
   <li>The <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.dstore.doc.isv/reference/api/org/eclipse/dstore/core/server/IServerLogger.html">IServerLogger</a></code>
       interface was marked as <b>@noimplement</b> in order to allow adding a new method. Clients must extend the 

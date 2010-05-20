@@ -25,6 +25,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceVariableDMData;
@@ -111,6 +113,21 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		}
 	}
 
+	private final class ActionExitVisualizationModeDetails extends Action {
+		public ActionExitVisualizationModeDetails() {
+			setText(TracepointsMessages.TraceControlView_action_exit_visualization_mode);
+			setImageDescriptor(TracepointImageRegistry.getImageDescriptor(TracepointImageRegistry.ICON_Exit_Visualization));
+		}
+		@Override
+		public void run() {
+			asyncExec(new Runnable() {
+				public void run() {
+					exitVisualizationMode();
+					updateActionEnablement();
+				}});
+		}
+	}
+	
 	private ISelectionListener fDebugViewListener;
 	private String fDebugSessionId;
 	private DsfServicesTracker fServicesTracker;
@@ -119,8 +136,11 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 	private StyledText fStatusText;
 	protected Action fActionRefreshView;
 	protected Action fOpenTraceVarDetails;
+	protected Action fActionExitVisualization;
 	private boolean fTracingSupported;
 
+	private boolean fTraceVisualization;
+	
 	public TraceControlView() {
 	}
 	
@@ -176,6 +196,10 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		fOpenTraceVarDetails = new ActionOpenTraceVarDetails();
 		manager.add(fOpenTraceVarDetails);
 		
+		// Create the action to exit visualization mode
+		fActionExitVisualization = new ActionExitVisualizationModeDetails();
+		manager.add(fActionExitVisualization);
+
 		bars.updateActionBars();
 		updateActionEnablement();
 	}
@@ -242,7 +266,38 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 
 		return EMPTY_STRING;
 	}
-
+		
+	protected void exitVisualizationMode() {
+		if (fDebugSessionId == null || getSession() == null) {
+			return;
+		}
+		
+		final ITraceTargetDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ITraceTargetDMContext.class);
+		if (ctx == null) {
+			return;
+		}
+		
+		Query<Object> query = new Query<Object>() {
+			@Override
+			protected void execute(DataRequestMonitor<Object> rm) {
+				final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
+				if (traceControl != null) {
+					ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, -1);
+       				traceControl.selectTraceRecord(emptyDmc, rm);
+				} else {
+					rm.setData(null);
+					rm.done();
+				}
+			}
+		};
+		try {
+			getSession().getExecutor().execute(query);
+			query.get();
+		} catch (InterruptedException exc) {
+		} catch (ExecutionException exc) {
+		}
+	}
+	
 	protected void updateDebugContext() {
 		IAdaptable debugContext = DebugUITools.getDebugContext();
 		if (debugContext instanceof IDMVMContext) {
@@ -322,12 +377,17 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 	}
 
 	protected void updateActionEnablement() {
-		enableActions(fTracingSupported);
-	}
-	
-	protected void enableActions(boolean enabled) {
-		fOpenTraceVarDetails.setEnabled(enabled);
-		fActionRefreshView.setEnabled(enabled);
+		fOpenTraceVarDetails.setEnabled(fTracingSupported);
+		fActionRefreshView.setEnabled(fTracingSupported);
+		
+		// This hack is to avoid adding an API late in the release.
+		// For the next release, we should have a proper call to know if 
+		// we can stop visualization or not
+		if (fStatusText != null && fStatusText.getText().toLowerCase().indexOf("off-line") != -1) { //$NON-NLS-1$
+			fActionExitVisualization.setEnabled(false);
+		} else {
+			fActionExitVisualization.setEnabled(fTraceVisualization);
+		}
 	}
 	
 	private void asyncExec(Runnable runnable) {
@@ -361,6 +421,15 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		updateContent();
 	}
 
+	@DsfServiceEventHandler
+	public void handleEvent(ITraceRecordSelectedChangedDMEvent event) {
+    	if (event.isVisualizationModeEnabled()) {
+    		fTraceVisualization = true;
+    	} else {
+    		fTraceVisualization = false;
+    	}
+		updateContent();
+	}
 	/*
 	 * Since something suspended, might as well refresh our status
 	 * to show the latest.
@@ -480,14 +549,14 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 							}
 							FailedTraceVariableCreationException e = 
 								new FailedTraceVariableCreationException(message);
-				            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Backend error", e));
+				            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Backend error", e)); //$NON-NLS-1$
 							rm.done();
 						};
 					});
 				} else {
 					FailedTraceVariableCreationException e = 
 						new FailedTraceVariableCreationException(TracepointsMessages.TraceControlView_trace_variable_tracing_unavailable);
-		            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Tracing unavailable", e));
+		            rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Tracing unavailable", e)); //$NON-NLS-1$
 					rm.done();
 				}
 			}

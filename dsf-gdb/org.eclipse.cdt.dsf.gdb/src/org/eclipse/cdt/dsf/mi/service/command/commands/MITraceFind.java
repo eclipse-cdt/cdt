@@ -51,8 +51,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceFindInfo;
  * @since 3.0
  */
 public class MITraceFind extends MICommand<MITraceFindInfo> {
-	public MITraceFind(ITraceTargetDMContext ctx, int frameReference) {
-		super(ctx, "-trace-find", null, new String[] { "frame-number", Integer.toString(frameReference) }); //$NON-NLS-1$ //$NON-NLS-2$
+	public MITraceFind(ITraceTargetDMContext ctx, String[] params) {
+		super(ctx, "-trace-find", null, params); //$NON-NLS-1$
 	}
 	
     @Override

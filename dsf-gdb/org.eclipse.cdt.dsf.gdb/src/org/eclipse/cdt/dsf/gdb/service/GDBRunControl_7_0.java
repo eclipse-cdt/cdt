@@ -22,11 +22,11 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -607,9 +607,14 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	 */
     @DsfServiceEventHandler 
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    	// We have started looking at trace records.  We can no longer
-    	// do run control operations.
-    	fRunControlOperationsEnabled = false;
+    	if (e.isVisualizationModeEnabled()) {
+    		// We have started looking at trace records.  We can no longer
+    		// do run control operations.
+    		fRunControlOperationsEnabled = false;
+    	} else {
+    		// We stopped looking at trace data and gone back to debugger mode
+    		fRunControlOperationsEnabled = true;
+    	}
     }
 
     /** @since 2.0 */

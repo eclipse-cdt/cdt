@@ -17,8 +17,6 @@ import org.eclipse.osgi.util.NLS;
  */
 public final class TracepointsMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints.TracepointsMessages";//$NON-NLS-1$
-
 	private TracepointsMessages() {
 		// Do not instantiate
 	}
@@ -38,8 +36,9 @@ public final class TracepointsMessages extends NLS {
 	public static String TraceControlView_trace_variable_details_value_label;
 	public static String TraceControlView_create_variable_error;
 	public static String TraceControlView_create_variable_empty_name_error;
+	public static String TraceControlView_action_exit_visualization_mode;
 	
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, TracepointsMessages.class);
+		NLS.initializeMessages(TracepointsMessages.class.getName(), TracepointsMessages.class);
 	}
 }

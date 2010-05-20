@@ -56,7 +56,9 @@ public interface IGDBTraceControl extends IDsfService {
     }
     public interface ITracingStartedDMEvent extends IDMEvent<ITraceTargetDMContext> {}
     public interface ITracingStoppedDMEvent extends IDMEvent<ITraceTargetDMContext> {}
-    public interface ITraceRecordSelectedChangedDMEvent extends IDMEvent<ITraceRecordDMContext> {}
+    public interface ITraceRecordSelectedChangedDMEvent extends IDMEvent<ITraceRecordDMContext> {
+    	boolean isVisualizationModeEnabled();
+    }
 
     /**
      * Returns whether tracing can be started on the specified trace target

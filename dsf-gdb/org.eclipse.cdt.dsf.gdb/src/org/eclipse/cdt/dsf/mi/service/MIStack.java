@@ -1004,10 +1004,14 @@ public class MIStack extends AbstractDsfService
     /** @since 3.0 */
     @DsfServiceEventHandler
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    	// Once we start looking at a trace record, we remain in 
-    	// trace visualization mode.
-    	fTraceVisualization = true;
+    	if (e.isVisualizationModeEnabled()) {
+    		fTraceVisualization = true;
+    	} else {
+    		fTraceVisualization = false;
+    		fCachedStoppedEvent = null;
+    	}
     }
+    
     /**
      * {@inheritDoc}
      * @since 1.1

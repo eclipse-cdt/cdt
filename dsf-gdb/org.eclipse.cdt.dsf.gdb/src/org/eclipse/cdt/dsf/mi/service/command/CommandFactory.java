@@ -108,6 +108,8 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadListIds;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIThreadSelect;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceDefineVariable;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFind;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFindFrameNumber;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceFindNone;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceListVariables;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceSave;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MITraceStart;
@@ -682,10 +684,16 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMITraceDefineVariable(ITraceTargetDMContext ctx, String varName, String varValue) {
 		return new MITraceDefineVariable(ctx, varName, varValue);
 	}
-	
-    public ICommand<MITraceFindInfo> createMITraceFind(ITraceTargetDMContext ctx, int frameReference) {
-        return new MITraceFind(ctx, frameReference);
-    }
+
+	public ICommand<MITraceFindInfo> createMITraceFind(ITraceTargetDMContext ctx, String[] params) {
+		return new MITraceFind(ctx, params);
+	}
+	public ICommand<MITraceFindInfo> createMITraceFindFrameNumber(ITraceTargetDMContext ctx, int frameReference) {
+		return new MITraceFindFrameNumber(ctx, frameReference);
+	}
+	public ICommand<MITraceFindInfo> createMITraceFindNone(ITraceTargetDMContext ctx) {
+		return new MITraceFindNone(ctx);
+	}
 
 	public ICommand<MITraceListVariablesInfo> createMITraceListVariables(ITraceTargetDMContext ctx) {
 		return new MITraceListVariables(ctx);

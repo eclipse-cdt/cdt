@@ -611,12 +611,18 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     /** @since 3.0 */
     @DsfServiceEventHandler 
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
-    	// Once we start looking at trace frames, we should not use
-    	// the --thread or --frame options because GDB does not handle
-    	// it well, there are no actual threads running.
-    	// We only need to do this once, but it won't hurt to do it
-    	// every time.
-    	setUseThreadAndFrameOptions(false);
+    	if (e.isVisualizationModeEnabled()) {
+    		// Once we start looking at trace frames, we should not use
+    		// the --thread or --frame options because GDB does not handle
+    		// it well, there are no actual threads running.
+    		// We only need to do this once, but it won't hurt to do it
+    		// every time.
+    		setUseThreadAndFrameOptions(false);
+    	} else {
+    		// We stopped looking at trace frames, so we can start
+    		// using --thread and --frame again
+    		setUseThreadAndFrameOptions(true);
+    	}
     }
 
     public static class InitializationShutdownStep extends Sequence.Step {

@@ -319,9 +319,16 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	
 	public static class TraceRecordSelectedChangedEvent extends AbstractDMEvent<ITraceRecordDMContext>
 	implements ITraceRecordSelectedChangedDMEvent {
+		final boolean fVisualModeEnabled;
+		
         public TraceRecordSelectedChangedEvent(ITraceRecordDMContext context) {
         	super(context);
+        	fVisualModeEnabled = !(context instanceof InvalidTraceRecordDMContext);
         }
+
+		public boolean isVisualizationModeEnabled() {
+			return fVisualModeEnabled;
+		}
 	}	
 
     private CommandCache fTraceCache;
@@ -838,8 +845,16 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 
     	if (context instanceof MITraceRecordDMContext) {
     		ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(context, ITraceTargetDMContext.class);
+    		final int reference = ((MITraceRecordDMContext)context).getReference();
+    		if (reference < 0) {
+    			// This is how we indicate that we want to exit visualization mode
+    			// We should have a specific call in the IGDBTraceControl interface to do this.
+    			stopVisualizingTraceData(targetDmc, rm);
+        		return;
+    		}
+    		
     		fConnection.queueCommand(
-    				fCommandFactory.createMITraceFind(targetDmc, ((MITraceRecordDMContext)context).getReference()),
+    				fCommandFactory.createMITraceFindFrameNumber(targetDmc, reference),
     				new DataRequestMonitor<MITraceFindInfo>(getExecutor(), rm) {
     					@Override
     					protected void handleSuccess() {
@@ -935,7 +950,37 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	}
     }
 
+    private void stopVisualizingTraceData(final ITraceTargetDMContext context, final RequestMonitor rm) {
+    	if (fIsTracingCurrentlySupported == false) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
+    		rm.done();
+    		return;
+    	}
 
+    	if (fBackend.getSessionType() == SessionType.CORE) {
+    		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Cannot stop visualizing for a post mortem session", null)); //$NON-NLS-1$
+    		rm.done();
+    		return;
+    	}
+
+    	fConnection.queueCommand(
+    			fCommandFactory.createMITraceFindNone(context),
+    			new DataRequestMonitor<MITraceFindInfo>(getExecutor(), rm) {
+    				@Override
+    				protected void handleSuccess() {
+    					assert getData().isFound() == false;
+    					fCurrentRecordDmc = null;
+    					// This event will indicate to the other services that we are no longer visualizing trace data.
+    					ITraceRecordDMContext invalidDmc = new InvalidTraceRecordDMContext(getSession(), context);
+    					getSession().dispatchEvent(new TraceRecordSelectedChangedEvent(invalidDmc), getProperties());
+
+
+    					rm.done();
+    					return;
+    				}
+    			});
+    }
+    
 	public void getTraceRecordData(ITraceRecordDMContext context, DataRequestMonitor<ITraceRecordDMData> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Not implemented.", null)); //$NON-NLS-1$
 		rm.done();

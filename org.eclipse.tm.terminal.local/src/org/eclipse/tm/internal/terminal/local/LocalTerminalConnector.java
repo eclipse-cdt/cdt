@@ -13,7 +13,12 @@
 package org.eclipse.tm.internal.terminal.local;
 
 import java.io.OutputStream;
+import java.text.Format;
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -26,6 +31,9 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchUtilities;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessFactory;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessRegistry;
@@ -42,7 +50,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * <code>vi</code> editor).
  *
  * @author Mirko Raner
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalConnector extends TerminalConnectorImpl
 implements IDebugEventSetListener {
@@ -171,22 +179,48 @@ implements IDebugEventSetListener {
 		control.setState(TerminalState.CONNECTING);
 		ILaunchConfigurationWorkingCopy workingCopy = null;
 		ILaunchConfiguration configuration = null;
+		String configurationName = null;
 		try {
 
-			String configurationName = settings.getLaunchConfigurationName();
+			configurationName = settings.getLaunchConfigurationName();
 			configuration = LocalTerminalUtilities.findLaunchConfiguration(configurationName);
+		}
+		catch (CoreException exception) {
 
-			// Always set the the process factory ID and enable console output (there is no need
-			// to restore these attributes afterwards; disabling console output does not make
-			// sense for terminal launches and will be overridden when the configuration is
-			// actually launched):
-			//
+			Shell shell = Display.getDefault().getActiveShell();
+			String title = LocalTerminalMessages.errorTitleCouldNotConnectToTerminal;
+			Format text;
+			text = new MessageFormat(LocalTerminalMessages.errorLaunchConfigurationNoLongerExists);
+			String message = text.format(new Object[] {configurationName});
+			IStatus status = new Status(IStatus.ERROR, LocalTerminalActivator.PLUGIN_ID, message);
+			ErrorDialog.openError(shell, title, null, status);
+			control.setState(TerminalState.CLOSED);
+			return;
+		}
+		try {
+
+			String oldFactoryID = configuration.getAttribute(ATTR_PROCESS_FACTORY_ID, (String)null);
 			workingCopy = configuration.getWorkingCopy();
 			workingCopy.setAttribute(ATTR_CAPTURE_OUTPUT, true);
 			workingCopy.setAttribute(ATTR_CAPTURE_IN_CONSOLE, true);
 			workingCopy.setAttribute(ATTR_PROCESS_FACTORY_ID, LocalTerminalProcessFactory.ID);
 			configuration = workingCopy.doSave();
-			launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+			try {
+
+				launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+			}
+			finally {
+
+				// The process factory ID is used to distinguish between launches that originate
+				// from the terminal connector and launches that originate from the launch dialog.
+				// After launching, the original ID is restored so that the launch is not mistaken
+				// as originating from the terminal connector UI when it is launched via the launch
+				// dialog the next time:
+				//
+				workingCopy = configuration.getWorkingCopy();
+				workingCopy.setAttribute(ATTR_PROCESS_FACTORY_ID, oldFactoryID);
+				workingCopy.doSave();
+			}
 
 			// To prevent a console from being allocated, the launch will actually not contain a
 			// reference to the runtime process. The process has to be obtained from the
@@ -257,9 +291,9 @@ implements IDebugEventSetListener {
 			//
 			LocalTerminalProcessRegistry.addProcessBackToFinishedLaunch(launch);
 
-			// Now, terminate the process if it hasn't been terminated already:
+			// Now, terminate the process if it was ever started and hasn't been terminated already:
 			//
-			if (launch.canTerminate()) {
+			if (launch != null && launch.canTerminate()) {
 
 				launch.terminate();
 				//

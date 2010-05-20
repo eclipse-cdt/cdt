@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * messages used by the Local Terminal Connector.
  *
  * @author Mirko Raner
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalMessages extends NLS {
 
@@ -79,6 +79,15 @@ public class LocalTerminalMessages extends NLS {
 
 	/** The error message for an invalid working directory location. */
 	public static String invalidWorkingDirectory;
+
+	/** The error message for attempting to directly launch a Terminal launch configuration. */
+	public static String errorDirectLaunch;
+
+	/** The error message for attempting to launch a no longer existing launch configuration. */
+	public static String errorLaunchConfigurationNoLongerExists;
+
+	/** The error dialog title for failed terminal connections. */
+	public static String errorTitleCouldNotConnectToTerminal;
 
 	/** The title string of the warning displayed when terminal launches are still running. */
 	public static String warningTitleTerminalsStillRunning;

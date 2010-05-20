@@ -16,16 +16,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalActivator;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalMessages;
+import org.eclipse.tm.internal.terminal.local.LocalTerminalUtilities;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 
 /**
@@ -35,7 +39,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * because the original class is not part of the public API of its plug-in.
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalLaunchUtilities {
 
@@ -174,6 +178,84 @@ public class LocalTerminalLaunchUtilities {
 			return parseStringIntoList(expanded);
 		}
 		return null;
+	}
+
+	/**
+	 * Creates an initial default launch configuration for starting a shell if no terminal/program
+	 * launch configurations are defined yet.
+	 *
+	 * @return new {@link ILaunchConfiguration}, or {@code null} if there were already some
+	 * terminal/program launch configurations defined
+	 */
+	public static ILaunchConfiguration createDefaultLaunchConfiguration() {
+
+		ILaunchConfiguration[] configs;
+		ILaunchManager manager = LocalTerminalUtilities.LAUNCH_MANAGER;
+		try {
+
+			configs = manager.getLaunchConfigurations(LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE);
+			if (configs == null || configs.length == 0) {
+
+				// Create a default launch configuration only if there aren't any terminal launch
+				// configurations defined at all:
+				//
+				ILaunchConfigurationWorkingCopy workingCopy;
+				workingCopy = createNewLaunchConfigurationWorkingCopy();
+				return workingCopy.doSave();
+			}
+		}
+		catch (CoreException exception)
+		{
+			exception.printStackTrace(); // TODO: implement proper exception handling
+		}
+		return null;
+	}
+
+	/**
+	 * Creates an {@link ILaunchConfigurationWorkingCopy} that uses the default shell as its
+	 * executable and the user's home directory as the working directory.
+	 *
+	 * @return an unsaved {@link ILaunchConfigurationWorkingCopy}
+	 * @throws CoreException if the {@link ILaunchConfigurationWorkingCopy} could not be
+	 * instantiated
+	 * @see #getDefaultShell()
+	 */
+	public static ILaunchConfigurationWorkingCopy createNewLaunchConfigurationWorkingCopy()
+	throws CoreException {
+
+		ILaunchConfigurationWorkingCopy workingCopy;
+		ILaunchManager manager = LocalTerminalUtilities.LAUNCH_MANAGER;
+		String userHome = System.getProperty("user.home", "/"); //$NON-NLS-1$//$NON-NLS-2$
+		String name = manager.generateLaunchConfigurationName("Terminal"); //$NON-NLS-1$
+		workingCopy = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE.newInstance(null, name);
+		workingCopy.setAttribute(ATTR_LOCATION, getDefaultShell().getAbsolutePath());
+		workingCopy.setAttribute(ATTR_WORKING_DIRECTORY, userHome);
+		return workingCopy;
+	}
+
+	/**
+	 * Returns the system's default shell. First, this method will read the value of the environment
+	 * variable {@code SHELL}. If that variable is not set, it will default to {@code cmd.exe} on
+	 * Windows systems, and to {@code /bin/sh} on all other systems.
+	 *
+	 * @return a {@link File} pointing to the default shell (the underlying file is not guaranteed
+	 * to exist in the file system)
+	 */
+	public static File getDefaultShell() {
+
+		String shell = System.getenv("SHELL"); //$NON-NLS-1$
+		if (shell == null) {
+
+			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+
+				shell = "C:\\Windows\\System32\\cmd.exe"; //$NON-NLS-1$
+			}
+			else {
+
+				shell = "/bin/sh"; //$NON-NLS-1$
+			}
+		}
+		return new File(shell);
 	}
 
 	//------------------------------------- PRIVATE SECTION --------------------------------------//

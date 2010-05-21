@@ -375,6 +375,9 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 // programming error.
                 logException(e);
                 throw e;
+            } catch (Error e) {
+                logException(e);
+                throw e;
             }
         }
     }

@@ -127,6 +127,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		addPreference(problem, PARAM_MACRO_ID,
 				CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
 				Boolean.TRUE);
+
 	}
 
 	/**
@@ -139,19 +140,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 
 	@SuppressWarnings("restriction")
 	public boolean isLValue(IASTBinaryExpression expr) {
-		if (expr instanceof CPPASTBinaryExpression) {
-			// unfortunately ICPPASTBinaryExpression does not have
-			// getOverload public method
-			CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) expr;
-			ICPPFunction overload = cppBin.getOverload();
-			if (overload != null)
-				return false;
-			IType expressionType = cppBin.getOperand1().getExpressionType();
-			if (!(expressionType instanceof IBasicType)) {
-				return false; // must be overloaded but parser could not
-				// find it
-			}
-		}
+
 		switch (expr.getOperator()) {
 			case IASTBinaryExpression.op_assign:
 			case IASTBinaryExpression.op_binaryAndAssign:
@@ -165,6 +154,19 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			case IASTBinaryExpression.op_shiftLeftAssign:
 			case IASTBinaryExpression.op_shiftRightAssign:
 				return true;
+		}
+		if (expr instanceof CPPASTBinaryExpression) {
+			// unfortunately ICPPASTBinaryExpression does not have
+			// getOverload public method
+			CPPASTBinaryExpression cppBin = (CPPASTBinaryExpression) expr;
+			ICPPFunction overload = cppBin.getOverload();
+			if (overload != null)
+				return true;
+			IType expressionType = cppBin.getOperand1().getExpressionType();
+			if (!(expressionType instanceof IBasicType)) {
+				return true; // must be overloaded but parser could not
+				// find it
+			}
 		}
 		return false;
 	}

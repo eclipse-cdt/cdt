@@ -21,7 +21,7 @@ import java.net.URI;
  * with the CDT team.
  *
  * @author crecoskie
- * @since 5.0.3
+ * @since 5.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  *

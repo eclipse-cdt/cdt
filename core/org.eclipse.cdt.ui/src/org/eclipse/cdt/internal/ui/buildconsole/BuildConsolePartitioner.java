@@ -8,16 +8,25 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
+ *     Andrew Gvozdev (Quoin Inc.)  - Copy build log (bug 306222)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -30,6 +39,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.osgi.service.prefs.Preferences;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
@@ -44,6 +54,8 @@ public class BuildConsolePartitioner
 			IDocumentPartitionerExtension,
 			IConsole,
 			IPropertyChangeListener {
+
+	private IProject fProject;
 
 	/**
 	 * List of partitions
@@ -61,7 +73,6 @@ public class BuildConsolePartitioner
 	DocumentMarkerManager fDocumentMarkerManager;
 	boolean killed;
 	BuildConsoleManager fManager;
-	Boolean outputStreamClosed = new Boolean(false);
 
 	/**
 	 * A queue of stream entries written to standard out and standard err.
@@ -71,21 +82,40 @@ public class BuildConsolePartitioner
 	 */
 	Vector<StreamEntry> fQueue = new Vector<StreamEntry>(5);
 
-	//private boolean fAppending;
+	private URI fLogURI;
+	private OutputStream fLogStream;
 
-	class StreamEntry {
+	private class StreamEntry {
+		static public final int EVENT_APPEND = 0;
+		static public final int EVENT_OPEN_LOG = 1;
+		static public final int EVENT_CLOSE_LOG = 2;
 
 		/** Identifier of the stream written to. */
 		private BuildConsoleStreamDecorator fStream;
 		/** The text written */
-		private StringBuffer fText = null;		
+		private StringBuffer fText = null;
 		/** Problem marker corresponding to the line of text */
 		private ProblemMarkerInfo fMarker;
+		/** Type of event **/
+		private int eventType;
 
-		StreamEntry(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
+		public StreamEntry(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 			fText = new StringBuffer(text);
 			fStream = stream;
 			fMarker = marker;
+			eventType = EVENT_APPEND;
+		}
+
+		/**
+		 * This constructor is used for special events such as clear console or close log.
+		 *
+		 * @param event - kind of event.
+		 */
+		public StreamEntry(int event) {
+			fText = null;
+			fStream = null;
+			fMarker = null;
+			eventType = event;
 		}
 
 		/**
@@ -117,24 +147,73 @@ public class BuildConsolePartitioner
 			return fMarker;
 		}
 
+		/**
+		 * Returns type of event
+		 */
+		public int getEventType() {
+			return eventType;
+		}
+
 	}
 
-	public BuildConsolePartitioner(BuildConsoleManager manager) {
+	public BuildConsolePartitioner(IProject project, BuildConsoleManager manager) {
+		fProject = project;
 		fManager = manager;
 		fMaxLines = BuildConsolePreferencePage.buildConsoleLines();
 		fDocument = new BuildConsoleDocument();
 		fDocument.setDocumentPartitioner(this);
 		fDocumentMarkerManager = new DocumentMarkerManager(fDocument, this);
 		connect(fDocument);
+
+		fLogURI = null;
+		fLogStream = null;
+	}
+
+	/**
+	 * Sets the indicator that stream was opened so logging can be started. Should be called
+	 * when opening the output stream.
+	 */
+	public void setStreamOpened() {
+		fQueue.add(new StreamEntry(StreamEntry.EVENT_OPEN_LOG));
+		asyncProcessQueue();
+	}
+
+	/**
+	 * Sets the indicator that stream was closed so logging should be stopped. Should be called when
+	 * build process has finished. Note that there could still be unprocessed console
+	 * stream entries in the queue being worked on in the background.
+	 */
+	public void setStreamClosed() {
+		fQueue.add(new StreamEntry(StreamEntry.EVENT_CLOSE_LOG));
+		asyncProcessQueue();
+	}
+
+	/**
+	 * @return {@link URI} of build log or {@code null} if not available.
+	 */
+	static private URI getLogURI(IProject project) {
+		URI logURI = null;
+
+		Preferences prefs = BuildConsoleManager.getBuildLogPreferences(project);
+		boolean keepLog = prefs.getBoolean(BuildConsoleManager.KEY_KEEP_LOG, BuildConsoleManager.CONSOLE_KEEP_LOG_DEFAULT);
+		if (keepLog) {
+			String strLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, BuildConsoleManager.getDefaultConsoleLogLocation(project));
+			if (strLocation.trim().length()>0) {
+				logURI = URIUtil.toURI(strLocation);
+			}
+			if (logURI==null) {
+				IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,"Can't determine URI for location=["+strLocation+"]");  //$NON-NLS-1$ //$NON-NLS-2$
+				CUIPlugin.log(status);
+			}
+		}
+		return logURI;
 	}
 
 	/**
 	 * Adds the new text to the document.
-	 * 
-	 * @param text
-	 *            the text to append
-	 * @param stream
-	 *            the stream to append to
+	 *
+	 * @param text - the text to append.
+	 * @param stream - the stream to append to.
 	 */
 	public void appendToDocument(String text, BuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 		boolean addToQueue = true;
@@ -144,7 +223,7 @@ public class BuildConsolePartitioner
 				StreamEntry entry = fQueue.get(i - 1);
 				// if last stream is the same and we have not exceeded our
 				// display write limit, append.
-				if (entry.getStream() == stream && entry.size() < 10000 && entry.getMarker() == marker) {
+				if (entry.getStream()==stream && entry.getEventType()==StreamEntry.EVENT_APPEND && entry.getMarker()==marker && entry.size()<10000) {
 					entry.appendText(text);
 					addToQueue = false;
 				}
@@ -153,8 +232,18 @@ public class BuildConsolePartitioner
 				fQueue.add(new StreamEntry(text, stream, marker));
 			}
 		}
-		Runnable r = new Runnable() {
+		if (addToQueue) {
+			asyncProcessQueue();
+		}
+	}
 
+	/**
+	 * Asynchronous processing of stream entries to append to console.
+	 * Note that all these are processed by the same by the user-interface thread
+	 * as of {@link Display#asyncExec(Runnable)}.
+	 */
+	private void asyncProcessQueue() {
+		Runnable r = new Runnable() {
 			public void run() {
 				StreamEntry entry;
 				try {
@@ -162,24 +251,77 @@ public class BuildConsolePartitioner
 				} catch (ArrayIndexOutOfBoundsException e) {
 					return;
 				}
-				fLastStream = entry.getStream();
-				try {
-					warnOfContentChange(fLastStream);
+				switch (entry.getEventType()) {
+				case StreamEntry.EVENT_OPEN_LOG:
+					logOpen();
+					break;
+				case StreamEntry.EVENT_APPEND:
+					fLastStream = entry.getStream();
+					try {
+						warnOfContentChange(fLastStream);
 
-					if ( fLastStream == null ) {
-						// special case to empty document
-						fPartitions.clear();
-						fDocumentMarkerManager.clear();
-						fDocument.set(""); //$NON-NLS-1$
+						if (fLastStream == null) {
+							// special case to empty document
+							fPartitions.clear();
+							fDocumentMarkerManager.clear();
+							fDocument.set(""); //$NON-NLS-1$
+						}
+						addStreamEntryToDocument(entry);
+						log(entry.getText());
+						checkOverflow();
+					} catch (BadLocationException e) {
 					}
-					addStreamEntryToDocument(entry);
-					checkOverflow();
-				} catch (BadLocationException e) {
+					break;
+				case StreamEntry.EVENT_CLOSE_LOG:
+					logClose();
+					break;
 				}
 			}
+			private void logOpen() {
+				fLogURI = getLogURI(fProject);
+				if (fLogURI!=null) {
+					try {
+						IFileStore logStore = EFS.getStore(fLogURI);
+						fLogStream = logStore.openOutputStream(EFS.NONE, null);
+					} catch (CoreException e) {
+						CUIPlugin.log(e);
+					} finally {
+						BuildConsoleManager.refreshWorkspaceFiles(fLogURI);
+					}
+				}
+			}
+
+			private void log(String text) {
+				if (fLogStream!=null) {
+					try {
+						fLogStream.write(text.getBytes());
+						if (fQueue.isEmpty()) {
+							fLogStream.flush();
+						}
+					} catch (IOException e) {
+						CUIPlugin.log(e);
+					} finally {
+						BuildConsoleManager.refreshWorkspaceFiles(fLogURI);
+					}
+				}
+			}
+
+			private void logClose() {
+				if (fLogStream!=null) {
+					try {
+						fLogStream.close();
+					} catch (IOException e) {
+						CUIPlugin.log(e);
+					} finally {
+						BuildConsoleManager.refreshWorkspaceFiles(fLogURI);
+					}
+					fLogStream = null;
+				}
+			}
+
 		};
 		Display display = CUIPlugin.getStandardDisplay();
-		if (addToQueue && display != null) {
+		if (display != null) {
 			display.asyncExec(r);
 		}
 	}
@@ -187,21 +329,21 @@ public class BuildConsolePartitioner
 	private void addStreamEntryToDocument(StreamEntry entry) throws BadLocationException {
 		if ( entry.getMarker() == null ) {
 			// It is plain unmarkered console output
-			addPartition(new BuildConsolePartition(fLastStream, 
-					fDocument.getLength(), 
+			addPartition(new BuildConsolePartition(fLastStream,
+					fDocument.getLength(),
 					entry.getText().length(),
 					BuildConsolePartition.CONSOLE_PARTITION_TYPE));
 		} else {
-			// this text line in entry is markered with ProblemMarkerInfo, 
+			// this text line in entry is markered with ProblemMarkerInfo,
 			// create special partition for it.
-			addPartition(new BuildConsolePartition(fLastStream, 
-					fDocument.getLength(), 
+			addPartition(new BuildConsolePartition(fLastStream,
+					fDocument.getLength(),
 					entry.getText().length(),
 					BuildConsolePartition.ERROR_PARTITION_TYPE, entry.getMarker()));
 		}
 		fDocument.replace(fDocument.getLength(), 0, entry.getText());
 	}
-	
+
 	void warnOfContentChange(BuildConsoleStreamDecorator stream) {
 		if (stream != null) {
 			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
@@ -268,7 +410,7 @@ public class BuildConsolePartitioner
 			ITypedRegion partition = fPartitions.get(i);
 			int partitionStart = partition.getOffset();
 			int partitionEnd = partitionStart + partition.getLength();
-			if ( (offset >= partitionStart && offset <= partitionEnd) || 
+			if ( (offset >= partitionStart && offset <= partitionEnd) ||
 					(offset < partitionStart && end >= partitionStart)) {
 				list.add(partition);
 			}
@@ -339,9 +481,9 @@ public class BuildConsolePartitioner
 						int offset = region.getOffset();
 						if (offset < overflow) {
 							int endOffset = offset + region.getLength();
-							if (endOffset < overflow || 
+							if (endOffset < overflow ||
 									messageConsolePartition.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
-								// remove partition, 
+								// remove partition,
 								// partitions with problem markers can't be split - remove them too
 							} else {
 								// split partition
@@ -410,13 +552,15 @@ public class BuildConsolePartitioner
 			});
 		}
 
+		fLogURI = null;
+		fLogStream = null;
+
 		if (BuildConsolePreferencePage.isClearBuildConsole()) {
 			appendToDocument("", null, null); //$NON-NLS-1$
 		}
 	}
 
 	public ConsoleOutputStream getOutputStream() throws CoreException {
-		outputStreamClosed = Boolean.FALSE;
 		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
 	}
 
@@ -427,7 +571,7 @@ public class BuildConsolePartitioner
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}
-	
+
 	/** This method is useful for future debugging and bugfixing */
 	@SuppressWarnings("unused")
 	private void printDocumentPartitioning() {
@@ -451,8 +595,15 @@ public class BuildConsolePartitioner
 			if (text.endsWith("\n")) { //$NON-NLS-1$
 				text = text.substring(0, text.length() - 1);
 			}
-			System.out.println("    " + isError + " " + start + "-" + end + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-					":[" + text + "]"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			System.out.println("    " + isError + " " + start + "-" + end + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					":[" + text + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+
+	/**
+	 * @return {@link URI} location of log file.
+	 */
+	public URI getLogURI() {
+		return fLogURI;
 	}
 }

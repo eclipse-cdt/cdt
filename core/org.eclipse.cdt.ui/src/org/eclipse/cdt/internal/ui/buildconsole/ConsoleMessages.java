@@ -34,7 +34,15 @@ public final class ConsoleMessages extends NLS {
 	public static String PreviousErrorAction_Tooltip;
 	public static String NextErrorAction_Tooltip;
 	public static String ShowErrorAction_Tooltip;
-	public static String SaveConsole_ActionTooltip;
+	public static String CopyLog_ActionTooltip;
+	public static String CopyLog_BuildNotLogged;
+	public static String CopyLog_ChooseDestination;
+	public static String CopyLog_ErrorCopyingFile;
+	public static String CopyLog_ErrorWhileCopyingLog;
+	public static String CopyLog_InvalidDestination;
+	public static String CopyLog_LogFileIsNotAvailable;
+	public static String CopyLog_UnableToAccess;
+	public static String CopyLog_UnavailableLog;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);

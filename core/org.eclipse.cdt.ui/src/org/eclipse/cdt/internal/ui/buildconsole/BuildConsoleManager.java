@@ -12,19 +12,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -40,6 +44,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
+import org.osgi.service.prefs.Preferences;
 
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -47,9 +52,16 @@ import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 
+import org.eclipse.cdt.internal.core.LocalProjectScope;
+
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 public class BuildConsoleManager implements IBuildConsoleManager, IResourceChangeListener, IPropertyChangeListener {
+	private static final String QUALIFIER = CUIPlugin.PLUGIN_ID;
+	private static final String BUILD_CONSOLE_NODE = "buildConsole"; //$NON-NLS-1$
+	public static final String KEY_KEEP_LOG = "keepLog"; //$NON-NLS-1$
+	public static final String KEY_LOG_LOCATION = "logLocation"; //$NON-NLS-1$
+	public static final boolean CONSOLE_KEEP_LOG_DEFAULT = true;
 
 	ListenerList listeners = new ListenerList();
 	BuildConsole fConsole;
@@ -319,7 +331,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	private BuildConsolePartitioner getConsolePartioner(IProject project) {
 		BuildConsolePartitioner partioner = fConsoleMap.get(project);
 		if (partioner == null) {
-			partioner = new BuildConsolePartitioner(this);
+			partioner = new BuildConsolePartitioner(project, this);
 			fConsoleMap.put(project, partioner);
 		}
 		return partioner;
@@ -340,6 +352,42 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	public void removeConsoleListener(IBuildConsoleListener listener) {
 		listeners.remove(listener);
+	}
+
+	/**
+	 * @return logging preferences for a given project. 
+	 * @param project to get logging preferences for.
+	 */
+	public static Preferences getBuildLogPreferences(IProject project) {
+		return new LocalProjectScope(project).getNode(QUALIFIER).node(BUILD_CONSOLE_NODE);
+	}
+
+	/**
+	 * @return default location of logs for a project.
+	 * @param project to get default log location for.
+	 */
+	public static String getDefaultConsoleLogLocation(IProject project) {
+		IPath defaultLogLocation = CUIPlugin.getDefault().getStateLocation().append(project.getName()+".build.log"); //$NON-NLS-1$
+		return defaultLogLocation.toOSString();
+	}
+
+	/**
+	 * Refresh output file when it happens to belong to Workspace. There could
+	 * be multiple workspace {@link IFile} associated with one URI.
+	 *
+	 * @param uri - URI of the file.
+	 */
+	static void refreshWorkspaceFiles(URI uri) {
+		if (uri!=null) {
+			IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri);
+			for (IFile file : files) {
+				try {
+					file.refreshLocal(IResource.DEPTH_ZERO, null);
+				} catch (CoreException e) {
+					CUIPlugin.log(e);
+				}
+			}
+		}
 	}
 
 }

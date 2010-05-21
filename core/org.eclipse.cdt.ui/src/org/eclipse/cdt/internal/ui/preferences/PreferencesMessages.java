@@ -145,6 +145,10 @@ public final class PreferencesMessages extends NLS {
 	public static String AppearancePreferencePage_note;
 	public static String AppearancePreferencePage_preferenceOnlyForNewViews;
 	public static String AppearancePreferencePage_showSourceRootsAtTopOfProject_label;
+	public static String BuildLogPreferencePage_Browse;
+	public static String BuildLogPreferencePage_ChooseLogFile;
+	public static String BuildLogPreferencePage_EnableLogging;
+	public static String BuildLogPreferencePage_LogLocation;
 	public static String CEditorPreferencePage_folding_title;
 	public static String FoldingConfigurationBlock_enable;
 	public static String FoldingConfigurationBlock_combo_caption;

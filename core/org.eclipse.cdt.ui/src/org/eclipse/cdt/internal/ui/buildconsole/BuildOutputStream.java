@@ -31,7 +31,8 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	public BuildOutputStream(BuildConsolePartitioner partitioner, 
 			BuildConsoleStreamDecorator stream) {
 		fPartitioner = partitioner;
-		fStream = stream;		
+		fPartitioner.setStreamOpened();
+		fStream = stream;
 	}
 
 	@Override
@@ -41,6 +42,7 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	@Override
 	public void close() throws IOException {
 		flush();
+		fPartitioner.setStreamClosed();
 	}
 
 	@Override

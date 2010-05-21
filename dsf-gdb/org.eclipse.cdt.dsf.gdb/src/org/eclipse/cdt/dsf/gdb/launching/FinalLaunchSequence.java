@@ -135,6 +135,50 @@ public class FinalLaunchSequence extends Sequence {
         	}
         }},
     	/*
+    	 * Specify GDB's working directory
+    	 */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+   			IPath dir = null;
+       		try {
+       			dir = fGDBBackend.getGDBWorkingDirectory();
+       		} catch (CoreException e) {
+       			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
+       			requestMonitor.done();
+       			return;
+      		}
+
+        	if (dir != null) {
+        		fCommandControl.queueCommand(
+        				fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
+        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        	} else {
+        		requestMonitor.done();
+        	}
+        }},
+    	/*
+    	 * Specify environment variables if needed
+    	 */
+        new Step() { @Override
+        public void execute(final RequestMonitor requestMonitor) {
+        	boolean clear = false;
+   			Properties properties = new Properties();
+       		try {
+       			clear = fGDBBackend.getClearEnvironment();
+       			properties = fGDBBackend.getEnvironmentVariables();
+       		} catch (CoreException e) {
+       			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get environment information", e)); //$NON-NLS-1$
+       			requestMonitor.done();
+       			return;
+      		}
+
+        	if (clear == true || properties.size() > 0) {
+        		fCommandControl.setEnvironment(properties, clear, requestMonitor);
+        	} else {
+        		requestMonitor.done();
+        	}
+        }},
+    	/*
     	 * Specify the executable file to be debugged and read the symbol table.
     	 */
         new Step() { @Override
@@ -178,50 +222,6 @@ public class FinalLaunchSequence extends Sequence {
     			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get inferior arguments", e)); //$NON-NLS-1$
     			requestMonitor.done();
     		}    		
-        }},
-    	/*
-    	 * Specify GDB's working directory
-    	 */
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-   			IPath dir = null;
-       		try {
-       			dir = fGDBBackend.getGDBWorkingDirectory();
-       		} catch (CoreException e) {
-       			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
-       			requestMonitor.done();
-       			return;
-      		}
-
-        	if (dir != null) {
-        		fCommandControl.queueCommand(
-        				fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
-        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-        	} else {
-        		requestMonitor.done();
-        	}
-        }},
-    	/*
-    	 * Specify environment variables if needed
-    	 */
-        new Step() { @Override
-        public void execute(final RequestMonitor requestMonitor) {
-        	boolean clear = false;
-   			Properties properties = new Properties();
-       		try {
-       			clear = fGDBBackend.getClearEnvironment();
-       			properties = fGDBBackend.getEnvironmentVariables();
-       		} catch (CoreException e) {
-       			requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot get environment information", e)); //$NON-NLS-1$
-       			requestMonitor.done();
-       			return;
-      		}
-
-        	if (clear == true || properties.size() > 0) {
-        		fCommandControl.setEnvironment(properties, clear, requestMonitor);
-        	} else {
-        		requestMonitor.done();
-        	}
         }},
     	/*
     	 * Enable non-stop mode if necessary

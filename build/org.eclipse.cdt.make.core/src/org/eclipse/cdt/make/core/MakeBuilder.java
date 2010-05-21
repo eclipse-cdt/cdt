@@ -9,7 +9,8 @@
  *     QNX Software Systems - Initial API and implementation
  *     Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
  *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
- *                                    Save build output    
+ *                                    Save build output  (bug 294106)
+ *     Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
@@ -30,7 +31,6 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.internal.core.BuildOutputLogger;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
@@ -218,8 +218,7 @@ public class MakeBuilder extends ACBuilder {
 				}
 				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, info.getErrorParsers());
 				epm.setOutputStream(cos);
-				BuildOutputLogger bol = new BuildOutputLogger(getProject(), epm.getOutputStream());
-				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), bol, last.intValue());
+				StreamMonitor streamMon = new StreamMonitor(new SubProgressMonitor(monitor, 100), epm, last.intValue());
 				OutputStream stdout = streamMon;
 				OutputStream stderr = streamMon;
 				// Sniff console output for scanner info

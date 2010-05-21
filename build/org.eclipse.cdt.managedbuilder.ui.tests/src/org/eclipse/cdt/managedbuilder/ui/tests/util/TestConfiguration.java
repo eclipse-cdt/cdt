@@ -559,22 +559,4 @@ public class TestConfiguration implements IConfiguration {
 		
 	}
 
-	public String getBuildLogFilename() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isSavingBuildLog() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setBuildLogFilename(String fileName) {
-		// TODO Auto-generated method stub
-	}
-
-	public void setSavingBuildLog(boolean saveBuildLog) {
-		// TODO Auto-generated method stub
-	}
-	
 }

@@ -8,7 +8,8 @@
  * Contributors:
  * IBM - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
- * Dmitry Kozlov (CodeSourcery) - Save build output preferences
+ * Dmitry Kozlov (CodeSourcery) - Save build output preferences (bug 294106)
+ * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -158,8 +159,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private static final String RC_CHANGE_STATE = "rcState";  //$NON-NLS-1$
 	//resource change state
 	private int resourceChangeState = -1;
-	private String buildLogFilename = null;
-	private boolean savingBuildLog = false;	
 
 	//Internal Builder state
 	//NOTE: these are temporary properties
@@ -3058,33 +3057,4 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setBuildLogFilename()
-	 */
-	public void setBuildLogFilename(String fileName) {
-		buildLogFilename = fileName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getBuildLogFilename()
-	 */
-	public String getBuildLogFilename() {
-		return buildLogFilename;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setSavingBuildLog()
-	 */
-	public void setSavingBuildLog(boolean save) {
-		savingBuildLog = save;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#isSavingBuildLog()
-	 */
-	public boolean isSavingBuildLog() {
-		return savingBuildLog;
-	}
-
 }

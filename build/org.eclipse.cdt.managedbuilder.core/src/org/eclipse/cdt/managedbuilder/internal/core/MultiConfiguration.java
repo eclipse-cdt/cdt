@@ -7,7 +7,8 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
- * Dmitry Kozlov (CodeSourcery) - Save build output preferences
+ * Dmitry Kozlov (CodeSourcery) - Save build output preferences (bug 294106)
+ * Andrew Gvozdev (Quoin Inc)   - Saving build output implemented in different way (bug 306222)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
@@ -1254,39 +1255,4 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		}
 		return res;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setBuildLogFilename()
-	 * Multiconfiguration implementation is not provided 
-	 * since the control is disabled in properties in this mode.
-	 */
-	public String getBuildLogFilename() {
-		return ""; //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#isSavingBuildLog()
-	 * Multiconfiguration implementation is not provided 
-	 * since the control is disabled in properties in this mode.
-	 */
-	public boolean isSavingBuildLog() {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setBuildLogFilename()
-	 * Multiconfiguration implementation is not provided 
-	 * since the control is disabled in properties in this mode.
-	 */
-	public void setBuildLogFilename(String fileName) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setSavingBuildLog()
-	 * Multiconfiguration implementation is not provided 
-	 * since the control is disabled in properties in this mode. 
-	 */
-	public void setSavingBuildLog(boolean saveBuildLog) {
-	}
-	
 }

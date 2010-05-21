@@ -87,6 +87,13 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				}
 			}
 		}
+		if (file!=null) {
+			String filePath = new Path(fileName).toString();
+			String foundLocation = file.getLocation().toString();
+			if (!foundLocation.endsWith(filePath)) {
+				file = null;
+			}
+		}
 		return file;
 	}
 	

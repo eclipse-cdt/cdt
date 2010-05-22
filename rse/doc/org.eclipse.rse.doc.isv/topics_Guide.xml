@@ -29,7 +29,7 @@
 		<topic label="RSE Model API" href="guide/api/modelAPI.html" />
 	</topic>
 	<!-- topic label="Plugging into the RSE" href="guide/plugin.html" -->
-	<topic label="Plugging into the RSE" href="provisional_api.html">
+	<topic label="Plugging into the RSE">
 		<topic label="Extensions" href="guide/Extensions.html"/>
 		<topic label="Plugging in a Popup Menu" href="guide/plugin/popup.html" />
 		<topic label="Plugging in a Property Page" href="guide/plugin/propertypage.html" />

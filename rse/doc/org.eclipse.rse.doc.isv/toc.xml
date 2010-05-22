@@ -19,7 +19,7 @@
 		<link toc="topics_Guide.xml" />
 		<anchor id="guide_additions"/>
 	</topic>
-	<topic label="Reference" href="provisional_api.html">
+	<topic label="Reference">
 		<link toc="topics_Reference.xml" />
 		<anchor id="reference_additions"/>
 	</topic>

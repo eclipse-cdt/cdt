@@ -26,8 +26,8 @@
 		</topic>
 		<anchor id="guide_additions"/>
 	</topic>
-	<topic label="Reference" href="provisional_api.html">
-		<topic label="DataStore API Reference" href="provisional_api.html">
+	<topic label="Reference">
+		<topic label="DataStore API Reference" href="reference/api/overview-summary.html">
 		     <topic label="org.eclipse.dstore.core.model" href="reference/api/org/eclipse/dstore/core/model/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.client" href="reference/api/org/eclipse/dstore/core/client/package-summary.html" />
 		     <topic label="org.eclipse.dstore.core.server" href="reference/api/org/eclipse/dstore/core/server/package-summary.html" />

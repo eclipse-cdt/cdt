@@ -29,10 +29,8 @@ import org.eclipse.tm.terminal.model.Style;
 public class TextLineRenderer implements ILinelRenderer {
 	private final ITextCanvasModel fModel;
 	StyleMap fStyleMap=new StyleMap();
-	Color fBackgroundColor;
 	public TextLineRenderer(TextCanvas c, ITextCanvasModel model) {
 		fModel=model;
-		fBackgroundColor=Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 	/* (non-Javadoc)
 	 * @see com.imagicus.thumbs.view.ICellRenderer#getCellWidth()
@@ -88,15 +86,17 @@ public class TextLineRenderer implements ILinelRenderer {
 
 	private void fillBackground(GC gc, int x, int y, int width, int height) {
 		Color bg=gc.getBackground();
-		gc.setBackground(getBackgroundColor());
+		gc.setBackground(getDefaultBackgroundColor());
 		gc.fillRectangle (x,y,width,height);
 		gc.setBackground(bg);
 
 	}
 
-	private Color getBackgroundColor() {
-		return fBackgroundColor;
+	public Color getDefaultBackgroundColor() {
+		// null == default style
+		return fStyleMap.getBackgroundColor(null);
 	}
+	
 	private void drawCursor(ITextCanvasModel model, GC gc, int row, int x, int y, int colFirst) {
 		if(!model.isCursorOn())
 			return;

@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2008 Mirko Raner.
+ * Copyright (c) 2008, 2010 Mirko Raner.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * messages used by the Local Terminal Connector.
  *
  * @author Mirko Raner
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LocalTerminalMessages extends NLS {
 

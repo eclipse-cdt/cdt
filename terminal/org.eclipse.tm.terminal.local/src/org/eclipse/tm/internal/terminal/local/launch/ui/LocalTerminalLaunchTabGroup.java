@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2008 Mirko Raner.
+ * Copyright (c) 2008, 2010 Mirko Raner.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 * which can be publicly accessed from the <code>org.eclipse.debug.ui</code> plug-in.
 *
 * @author Mirko Raner
-* @version $Revision: 1.1 $
+* @version $Revision: 1.2 $
 **/
 public class LocalTerminalLaunchTabGroup extends AbstractLaunchConfigurationTabGroup {
 

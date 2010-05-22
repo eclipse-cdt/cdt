@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2008 Mirko Raner and others.
+ * Copyright (c) 2008, 2010 Mirko Raner and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ import org.eclipse.ui.PlatformUI;
  * {@link ProcessFactory}, which allows the process to run with a pseudo-terminal ({@link PTY}).
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 

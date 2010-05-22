@@ -24,6 +24,7 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -278,7 +279,6 @@ public class TextCanvas extends GridCanvas {
 	}
 	/**
 	 * If set then if the size changes
-	 * @param scrollLock
 	 */
 	public void setScrollLock(boolean scrollLock) {
 		fScrollLock=scrollLock;
@@ -290,7 +290,9 @@ public class TextCanvas extends GridCanvas {
 	}
 	protected void drawLine(GC gc, int line, int x, int y, int colFirst, int colLast) {
 		fCellRenderer.drawLine(fCellCanvasModel, gc,line,x,y,colFirst, colLast);
-
+	}
+	protected Color getTerminalBackgroundColor() {
+		return fCellRenderer.getDefaultBackgroundColor();
 	}
 	protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
 		fCellCanvasModel.setVisibleRectangle(y,x,height,width);

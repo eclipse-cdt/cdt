@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.internal.checkers;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  */
 public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
+	private static final String PARAM_NOT = "paramNot";
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -50,7 +52,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 				if (isInParentesis(expression))
 					return PROCESS_CONTINUE;
 				if (precedence == 2) { // unary not
-					if (isUsedAsOperand(expression)) {
+					if (isParamNot() && isUsedAsOperand(expression)) {
 						reportProblem(ER_ID, expression);
 						return PROCESS_SKIP;
 					}
@@ -113,5 +115,17 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 			}
 		}
 		return false;
+	}
+	public boolean isParamNot(){
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_NOT);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences#initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
+	 */
+	@Override
+	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
+		addPreference(problem, PARAM_NOT, "Suggest parentesis around not operator", Boolean.FALSE);
+		
 	}
 }

@@ -41,6 +41,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
 	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
+	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new CheckStmpVisitor());
@@ -61,7 +62,9 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 					boolean shouldReportInMacro = shouldReportInMacro();
 					if (inMacro && !shouldReportInMacro)
 						return PROCESS_SKIP;
-					reportProblem(ER_ID, stmt, expression.getRawSignature());
+					String arg = expression.getRawSignature();
+					if (!isFilteredArg(arg))
+						reportProblem(ER_ID, stmt, arg);
 				}
 				return PROCESS_SKIP;
 			}
@@ -79,7 +82,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		private boolean hasNoEffect(IASTExpression e) {
 			if (e instanceof IASTBinaryExpression) {
 				IASTBinaryExpression binExpr = (IASTBinaryExpression) e;
-				if (isLValue(binExpr))
+				if (isPossibleAssignment(binExpr))
 					return false;
 				switch (binExpr.getOperator()) {
 					case IASTBinaryExpression.op_logicalOr:
@@ -127,7 +130,27 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		addPreference(problem, PARAM_MACRO_ID,
 				CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
 				Boolean.TRUE);
+		addListPreference(
+				problem,
+				PARAM_EXCEPT_ARG_LIST,
+				CheckersMessages.StatementHasNoEffectChecker_ParameterExceptions,
+				CheckersMessages.StatementHasNoEffectChecker_ParameterExceptionsItem);
+	}
 
+	/**s
+	 * @param paramExceptArgList
+	 * @param arg
+	 * @return
+	 */
+	public boolean isFilteredArg(String arg) {
+		Object[] arr = (Object[]) getPreference(
+				getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
+		for (int i = 0; i < arr.length; i++) {
+			String str = (String) arr[i];
+			if (arg.equals(str))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -139,8 +162,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	}
 
 	@SuppressWarnings("restriction")
-	public boolean isLValue(IASTBinaryExpression expr) {
-
+	public boolean isPossibleAssignment(IASTBinaryExpression expr) {
 		switch (expr.getOperator()) {
 			case IASTBinaryExpression.op_assign:
 			case IASTBinaryExpression.op_binaryAndAssign:

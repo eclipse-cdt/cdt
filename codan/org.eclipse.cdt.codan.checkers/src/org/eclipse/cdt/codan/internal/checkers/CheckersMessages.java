@@ -19,6 +19,8 @@ public class CheckersMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.codan.internal.checkers.messages"; //$NON-NLS-1$
 	public static String NamingConventionFunctionChecker_LabelNamePattern;
 	public static String ReturnChecker_Param0;
+	public static String StatementHasNoEffectChecker_ParameterExceptions;
+	public static String StatementHasNoEffectChecker_ParameterExceptionsItem;
 	public static String StatementHasNoEffectChecker_ParameterMacro;
 	static {
 		// initialize resource bundle

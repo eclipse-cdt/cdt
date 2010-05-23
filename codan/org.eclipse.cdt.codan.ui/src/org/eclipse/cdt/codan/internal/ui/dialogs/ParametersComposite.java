@@ -16,11 +16,15 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceCompositeDescriptor;
+import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -59,7 +63,8 @@ public class ParametersComposite extends Composite {
 			/**
 			 * @param info
 			 */
-			private void createFieldEditorsForParameters(IProblemPreference info) {
+			private void createFieldEditorsForParameters(
+					final IProblemPreference info) {
 				if (info == null)
 					return;
 				switch (info.getType()) {
@@ -77,7 +82,53 @@ public class ParametersComposite extends Composite {
 						addField(fe);
 						break;
 					}
-					case TYPE_MAP: {
+					case TYPE_LIST:
+						ListEditor le = new ListEditor(info.getQualifiedKey(),
+								info.getLabel(), getFieldEditorParent()) {
+							@Override
+							protected String[] parseString(String stringList) {
+								ListProblemPreference list = (ListProblemPreference) info;
+								IProblemPreference[] childDescriptors = list
+										.getChildDescriptors();
+								if (childDescriptors.length == 0)
+									return new String[0];
+								String res[] = new String[childDescriptors.length];
+								for (int i = 0; i < childDescriptors.length; i++) {
+									IProblemPreference item = childDescriptors[i];
+									res[i] = String.valueOf(item.getValue());
+								}
+								return res;
+							}
+
+							@Override
+							protected String getNewInputObject() {
+								ListProblemPreference list = (ListProblemPreference) info;
+								String label = list
+										.getChildDescriptor()
+										.getLabel();
+								InputDialog dialog = new InputDialog(
+										getShell(), CodanUIMessages.ParametersComposite_NewValue, label, "", null); //$NON-NLS-1$
+								if (dialog.open() == Window.OK) {
+									return dialog.getValue();
+								}
+								return null;
+							}
+
+							@Override
+							protected String createList(String[] items) {
+								ListProblemPreference list = (ListProblemPreference) info
+										.clone();
+								list.clear();
+								for (int i = 0; i < items.length; i++) {
+									String val = items[i];
+									list.addChildValue(val);
+								}
+								return list.exportValue();
+							}
+						};
+						addField(le);
+						break;
+					case TYPE_MAP:
 						IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) info)
 								.getChildDescriptors();
 						for (int i = 0; i < childrenDescriptor.length; i++) {
@@ -85,7 +136,6 @@ public class ParametersComposite extends Composite {
 							createFieldEditorsForParameters(desc);
 						}
 						break;
-					}
 					default:
 						throw new UnsupportedOperationException(info.getType()
 								.toString());
@@ -126,8 +176,10 @@ public class ParametersComposite extends Composite {
 			case TYPE_FILE:
 				desc.setValue(new File(prefStore.getString(key)));
 				break;
-			case TYPE_MAP:
 			case TYPE_LIST:
+				desc.importValue(prefStore.getString(key));
+				break;
+			case TYPE_MAP:
 				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
 						.getChildDescriptors();
 				for (int i = 0; i < childrenDescriptor.length; i++) {
@@ -158,8 +210,10 @@ public class ParametersComposite extends Composite {
 			case TYPE_FILE:
 				prefStore.setValue(key, ((File) desc.getValue()).getPath());
 				break;
+			case TYPE_LIST:
+				prefStore.setValue(key, desc.exportValue());
+				break;
 			case TYPE_MAP:
-			case TYPE_LIST: {
 				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
 						.getChildDescriptors();
 				for (int i = 0; i < childrenDescriptor.length; i++) {
@@ -167,7 +221,6 @@ public class ParametersComposite extends Composite {
 					initPrefStore(chi);
 				}
 				break;
-			}
 			default:
 				throw new UnsupportedOperationException(desc.getType()
 						.toString());

@@ -62,6 +62,8 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		int n = id.length();
 		if (n == 0)
 			return false;
+		if (id.equals("#")) //$NON-NLS-1$
+			return true;
 		for (int i = 0; i < n; i++)
 			if (!Character.isJavaIdentifierPart(id.charAt(i)))
 				return false;
@@ -144,4 +146,10 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 			return getKey();
 		return parent.getQualifiedKey() + "." + getKey(); //$NON-NLS-1$
 	}
+
+	/**
+	 * @param tokenizer
+	 * @return
+	 */
+	public abstract void importValue(StreamTokenizer tokenizer);
 }

@@ -34,7 +34,7 @@ public interface IProblemPreferenceCompositeDescriptor {
 	 */
 	IProblemPreference[] getChildDescriptors();
 
-	void addChildDescriptor(IProblemPreference info);
+	IProblemPreference addChildDescriptor(IProblemPreference info);
 
 	void removeChildDescriptor(IProblemPreference info);
 }

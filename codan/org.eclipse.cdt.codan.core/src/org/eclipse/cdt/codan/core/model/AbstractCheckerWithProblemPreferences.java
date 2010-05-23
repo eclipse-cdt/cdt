@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.core.model;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
+import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 
 /**
@@ -53,6 +54,30 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 		return info;
 	}
 
+	/**
+	 * Add preference of type list with default string type, list is empty by
+	 * default
+	 * 
+	 * @param problem
+	 *            - problem
+	 * @param key
+	 *            - preference key
+	 * @param label
+	 *            - preference label
+	 * @return preference instance of of the list, can be used to add default
+	 *         values or set different element type
+	 * 
+	 */
+	public ListProblemPreference addListPreference(IProblemWorkingCopy problem,
+			String key, String label, String itemLabel) {
+		MapProblemPreference map = getTopLevelPreferenceMap(problem);
+		ListProblemPreference list = new ListProblemPreference(key, label);
+		list.setChildDescriptor(new BasicProblemPreference(
+				ListProblemPreference.COMMON_DESCRIPTOR_KEY, itemLabel,
+				PreferenceType.TYPE_STRING));
+		return (ListProblemPreference) map.addChildDescriptor(list);
+	}
+
 	public IProblemPreference addPreference(IProblemWorkingCopy problem,
 			IProblemPreference info, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
@@ -70,7 +95,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 			String key, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
 		if (map.getChildValue(key) == null)
-			map.addChildValue(key, defaultValue);
+			map.setChildValue(key, defaultValue);
 	}
 
 	/**

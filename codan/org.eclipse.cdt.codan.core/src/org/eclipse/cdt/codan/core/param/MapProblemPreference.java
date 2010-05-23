@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
 
@@ -73,10 +74,10 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 	 * @param i
 	 * @param info
 	 */
-	public void addChildDescriptor(IProblemPreference info) {
-		IProblemPreference desc = (IProblemPreference) info.clone();
+	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
 		desc.setParent(this);
-		hash.put(info.getKey(), desc);
+		hash.put(desc.getKey(), desc);
+		return desc;
 	}
 
 	public IProblemPreference[] getChildDescriptors() {
@@ -89,7 +90,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		return childInfo.getValue();
 	}
 
-	public void addChildValue(String key, Object value) {
+	public void setChildValue(String key, Object value) {
 		getChildDescriptor(key).setValue(value);
 	}
 
@@ -120,40 +121,96 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 
 	public void importValue(String str) {
 		StreamTokenizer tokenizer = getImportTokenizer(str);
+		try {
+			importValue(tokenizer);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(str + ":" + e.toString(), e); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * @param tokenizer
+	 */
+	@Override
+	public void importValue(StreamTokenizer tokenizer) {
 		int token;
 		try {
 			token = tokenizer.nextToken();
-			if (token != '{')
-				throw new IllegalArgumentException(str);
+			String chara = String.valueOf((char) token);
+			if (token != '{') {
+				throw new IllegalArgumentException(chara);
+			}
 			while (true) {
 				token = tokenizer.nextToken();
 				String key = tokenizer.sval;
 				token = tokenizer.nextToken();
 				if (token != '=')
-					throw new IllegalArgumentException(str);
+					throw new IllegalArgumentException(chara);
 				token = tokenizer.nextToken();
 				if (token != '>')
-					throw new IllegalArgumentException(str);
-				token = tokenizer.nextToken();
-				String val = tokenizer.sval;
+					throw new IllegalArgumentException(chara);
 				IProblemPreference desc = getChildDescriptor(key);
-				if (desc != null) {
-					desc.importValue(val);
-				} else {
-					//putChildValue(key, val);
+				if (desc != null && desc instanceof AbstractProblemPreference) {
+					((AbstractProblemPreference) desc).importValue(tokenizer);
+					setChildValue(key, desc.getValue());
 				}
 				token = tokenizer.nextToken();
 				if (token == '}')
 					break;
 				if (token != ',')
-					throw new IllegalArgumentException(str);
+					throw new IllegalArgumentException(chara);
 			}
 		} catch (IOException e) {
-			throw new IllegalArgumentException(str);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	public void removeChildDescriptor(IProblemPreference info) {
 		hash.remove(info);
+	}
+
+	public int size() {
+		return hash.size();
+	}
+
+	public void clear() {
+		hash.clear();
+	}
+
+	@Override
+	public String toString() {
+		return hash.values().toString();
+	}
+
+	@Override
+	public Object getValue() {
+		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+		for (Iterator<IProblemPreference> iterator = hash.values().iterator(); iterator
+				.hasNext();) {
+			IProblemPreference pref = iterator.next();
+			map.put(pref.getKey(), pref.getValue());
+		}
+		return map;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setValue(Object value) {
+		Map<String, Object> map = (Map<String, Object>) value;
+		LinkedHashMap<String, IProblemPreference> hash2 = (LinkedHashMap<String, IProblemPreference>) hash
+				.clone();
+		hash.clear();
+		for (Iterator<String> iterator = map.keySet().iterator(); iterator
+				.hasNext();) {
+			String key = iterator.next();
+			Object value2 = map.get(key);
+			if (value2 instanceof IProblemPreference) {
+				hash.put(key, (IProblemPreference) value2);
+			} else {
+				IProblemPreference pref = hash2.get(key);
+				pref.setValue(value2);
+				hash.put(key, pref);
+			}
+		}
 	}
 }

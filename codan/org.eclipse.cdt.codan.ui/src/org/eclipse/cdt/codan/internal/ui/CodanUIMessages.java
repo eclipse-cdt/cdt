@@ -39,6 +39,7 @@ public class CodanUIMessages extends NLS {
 	public static String CustomizeProblemDialog_Message;
 	public static String CustomizeProblemDialog_Title;
 	public static String Job_TitleRunningAnalysis;
+	public static String ParametersComposite_NewValue;
 	public static String ParametersComposite_None;
 	static {
 		// initialize resource bundle

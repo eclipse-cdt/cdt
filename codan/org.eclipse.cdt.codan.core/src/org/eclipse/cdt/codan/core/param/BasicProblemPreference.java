@@ -129,4 +129,20 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 		String sval = tokenizer.sval;
 		return sval;
 	}
+
+	@Override
+	public String toString() {
+		return "(" + type + ")" + key + ((value == null) ? "" : "=" + value); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+	}
+
+	@Override
+	public void importValue(StreamTokenizer tokenizer) {
+		try {
+			tokenizer.nextToken();
+			String val = tokenizer.sval;
+			importValue(val);
+		} catch (IOException e) {
+			new IllegalArgumentException(e);
+		}
+	}
 }

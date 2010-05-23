@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.param;
 
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
@@ -37,7 +39,7 @@ public class ListProblemPreferenceTest extends TestCase {
 	protected BasicProblemPreference addPar(String key, Object parval) {
 		BasicProblemPreference str = makePar(key, parval);
 		list.addChildDescriptor(str);
-		return str;
+		return (BasicProblemPreference) list.getChildDescriptor(key);
 	}
 
 	/**
@@ -99,5 +101,32 @@ public class ListProblemPreferenceTest extends TestCase {
 		list.importValue(value);
 		assertEquals("a=b", list.getChildValue(PAR1)); //$NON-NLS-1$
 		assertEquals(p2.getValue(), list.getChildValue(PAR2));
+	}
+
+	public void testGetValue() {
+		list.setChildDescriptor(new BasicProblemPreference("#", "Value")); //$NON-NLS-1$//$NON-NLS-2$
+		String x[] = { "a", "b" }; //$NON-NLS-1$ //$NON-NLS-2$
+		list.addChildValue(x[0]);
+		list.addChildValue(x[1]);
+		Object[] values = list.getValues();
+		assertTrue(Arrays.deepEquals(x, values));
+	}
+
+	public void testSetValue() {
+		list.setChildDescriptor(new BasicProblemPreference("#", "Value")); //$NON-NLS-1$//$NON-NLS-2$
+		String x[] = { "a", "b" }; //$NON-NLS-1$ //$NON-NLS-2$
+		list.setValue(x);
+		Object[] values = list.getValues();
+		assertTrue(Arrays.deepEquals(x, values));
+	}
+
+	public void testSetValueImport() {
+		list.setChildDescriptor(new BasicProblemPreference("#", "Value")); //$NON-NLS-1$//$NON-NLS-2$
+		String x[] = { "a", "b" }; //$NON-NLS-1$ //$NON-NLS-2$
+		list.setValue(x);
+		list.importValue("(x)"); //$NON-NLS-1$
+		Object[] values = list.getValues();
+		assertEquals(1, values.length);
+		assertEquals("x", values[0]); //$NON-NLS-1$
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.core.param;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -22,8 +23,9 @@ import java.util.Iterator;
  */
 public class ListProblemPreference extends AbstractProblemPreference implements
 		IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
-	protected ArrayList<IProblemPreference> list = new ArrayList<IProblemPreference>(
-			1);
+	public static final String COMMON_DESCRIPTOR_KEY = "#"; //$NON-NLS-1$
+	protected ArrayList<Object> list = new ArrayList<Object>();
+	protected IProblemPreference childDescriptor;
 
 	/**
 	 * @param key
@@ -45,66 +47,78 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * Get parameter into for element equal to key's int value.
+	 * Set child descriptor (all elements have the same)
+	 * 
+	 * @param i
+	 * @param info
+	 * @return
+	 */
+	public IProblemPreference setChildDescriptor(IProblemPreference info) {
+		childDescriptor = info;
+		childDescriptor.setValue(null);
+		((AbstractProblemPreference) childDescriptor)
+				.setKey(COMMON_DESCRIPTOR_KEY);
+		return info;
+	}
+
+	/**
+	 * Sets common descriptor for all elements, if value if not null sets the
+	 * value for its key also. Do not make assumptions of values of desc after
+	 * you pass it to this function.
+	 * 
+	 * @return read only preference matching the key
+	 */
+	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
+		Object value = desc.getValue();
+		String key = desc.getKey();
+		setChildDescriptor(desc);
+		setChildValue(key, value);
+		return getChildDescriptor(key);
+	}
+
+	public IProblemPreference getChildDescriptor() {
+		return childDescriptor;
+	}
+
+	public IProblemPreference getChildDescriptor(int i) {
+		Object value = list.get(i);
+		AbstractProblemPreference desc = (AbstractProblemPreference) childDescriptor
+				.clone();
+		desc.setKey(String.valueOf(i));
+		desc.setValue(value);
+		return desc;
+	}
+
+	/**
+	 * Get read only problem preference for element equal to key's int value.
+	 * If key is null or # return generic descriptor with null value.
 	 * 
 	 * @throws NumberFormatException
 	 *             if key is not number
-	 * @throws ArrayIndexOutOfBoundsException
-	 *             is index is out of bound
 	 */
 	public IProblemPreference getChildDescriptor(String key)
 			throws NumberFormatException {
-		if (key == null) {
-			// special case if all element are the same return first, if key is
-			// null
-			return (IProblemPreference) getChildDescriptor(0).clone();
+		if (key == null || key.equals(COMMON_DESCRIPTOR_KEY)) {
+			// return common descriptor
+			return getChildDescriptor();
 		}
 		Integer iv = Integer.valueOf(key);
 		if (iv.intValue() >= list.size()) {
-			// special case if all element are the same return first clone
-			IProblemPreference childInfo = (IProblemPreference) getChildDescriptor(
-					0).clone();
-			return childInfo;
+			// create one
+			AbstractProblemPreference clone = (AbstractProblemPreference) childDescriptor
+					.clone();
+			clone.setKey(key);
+			return clone;
 		}
 		return getChildDescriptor(iv.intValue());
 	}
 
-	/**
-	 * Set i'th element of parameter info, if all are the same i is 0
-	 * 
-	 * @param i
-	 * @param info
-	 */
-	public void setChildDescriptor(int i, IProblemPreference info) {
-		if (info != null) {
-			while (i >= list.size()) {
-				list.add(null);
-			}
-			list.set(i, info);
-		} else {
-			while (i == list.size() - 1) {
-				list.remove(i);
-			}
-		}
-	}
-
-	/**
-	 * If all list elements have same info it is enough to set only first one
-	 * (index 0). When value is set for the other it will be replicated.
-	 */
-	public void addChildDescriptor(IProblemPreference info) {
-		Integer iv = Integer.valueOf(info.getKey());
-		IProblemPreference desc = (IProblemPreference) info.clone();
-		desc.setParent(this);
-		setChildDescriptor(iv, desc);
-	}
-
-	public IProblemPreference getChildDescriptor(int i) {
-		return list.get(i);
-	}
-
 	public IProblemPreference[] getChildDescriptors() {
-		return list.toArray(new IProblemPreference[list.size()]);
+		IProblemPreference[] res = new IProblemPreference[list.size()];
+		for (int i = 0; i < res.length; i++) {
+			res[i] = getChildDescriptor(i);
+		}
+		return res;
 	}
 
 	public Object getChildValue(String key) {
@@ -112,11 +126,30 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		return childInfo.getValue();
 	}
 
-	public void addChildValue(String key, Object value) {
-		IProblemPreference pref = getChildDescriptor(key);
-		pref.setValue(value);
-		// because descriptor can be phantom we have to set preference forcefully
-		setChildDescriptor(Integer.parseInt(key), pref);
+	public void setChildValue(String key, Object value) {
+		int i = Integer.valueOf(key).intValue();
+		setChildValue(i, value);
+	}
+
+	/**
+	 * @param i
+	 * @param value
+	 */
+	protected void setChildValue(int i, Object value) {
+		if (value != null) {
+			while (i >= list.size()) {
+				list.add(null);
+			}
+			list.set(i, value);
+		} else {
+			while (i == list.size() - 1) {
+				list.remove(i);
+			}
+		}
+	}
+
+	public void addChildValue(Object value) {
+		list.add(value);
 	}
 
 	public void removeChildValue(String key) {
@@ -128,15 +161,15 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	@Override
 	public Object clone() {
 		ListProblemPreference list1 = (ListProblemPreference) super.clone();
-		list1.list = (ArrayList<IProblemPreference>) list.clone();
+		list1.list = (ArrayList<Object>) list.clone();
 		return list1;
 	}
 
 	public String exportValue() {
 		StringBuffer buf = new StringBuffer("("); //$NON-NLS-1$
-		for (Iterator<IProblemPreference> iterator = list.iterator(); iterator
-				.hasNext();) {
-			IProblemPreference d = iterator.next();
+		for (Iterator<Object> iterator = list.iterator(); iterator.hasNext();) {
+			IProblemPreference d = (IProblemPreference) childDescriptor.clone();
+			d.setValue(iterator.next());
 			buf.append(d.exportValue());
 			if (iterator.hasNext())
 				buf.append(","); //$NON-NLS-1$
@@ -146,34 +179,86 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 
 	public void importValue(String str) {
 		StreamTokenizer tokenizer = getImportTokenizer(str);
+		try {
+			importValue(tokenizer);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(str, e);
+		}
+	}
+
+	/**
+	 * @param tokenizer
+	 */
+	@Override
+	public void importValue(StreamTokenizer tokenizer) {
+		clear();
 		int token;
 		int index = 0;
 		try {
 			token = tokenizer.nextToken();
+			String chara = String.valueOf((char) token);
 			if (token != '(')
-				throw new IllegalArgumentException(str);
+				throw new IllegalArgumentException(chara);
+			token = tokenizer.nextToken();
+			if (token != ')')
+				tokenizer.pushBack();
+			else
+				return;
 			while (true) {
-				token = tokenizer.nextToken();
-				String val = tokenizer.sval;
 				String ik = String.valueOf(index);
 				IProblemPreference desc = getChildDescriptor(ik);
-				if (desc != null) {
-					desc.importValue(val);
-					addChildValue(ik, desc.getValue());
+				if (desc != null && desc instanceof AbstractProblemPreference) {
+					((AbstractProblemPreference) desc).importValue(tokenizer);
+					setChildValue(ik, desc.getValue());
 				}
 				token = tokenizer.nextToken();
 				if (token == ')')
 					break;
 				if (token != ',')
-					throw new IllegalArgumentException(str);
+					throw new IllegalArgumentException(chara);
 				index++;
 			}
 		} catch (IOException e) {
-			throw new IllegalArgumentException(str);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	public void removeChildDescriptor(IProblemPreference info) {
-		list.remove(info);
+		throw new UnsupportedOperationException();
+	}
+
+	public int size() {
+		return list.size();
+	}
+
+	public void clear() {
+		list.clear();
+	}
+
+	@Override
+	public Object getValue() {
+		return getValues();
+	}
+
+	@Override
+	public void setValue(Object value) {
+		Object[] values = (Object[]) value;
+		if (Arrays.deepEquals(getValues(), values)) {
+			return;
+		}
+		list.clear();
+		for (int i = 0; i < values.length; i++) {
+			Object object = values[i];
+			list.add(object);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return childDescriptor + ":" + list.toString(); //$NON-NLS-1$
+	}
+
+	public Object[] getValues() {
+		return list.toArray(new Object[list.size()]);
 	}
 }

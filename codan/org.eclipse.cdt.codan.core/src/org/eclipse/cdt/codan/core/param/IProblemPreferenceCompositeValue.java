@@ -19,7 +19,7 @@ package org.eclipse.cdt.codan.core.param;
 public interface IProblemPreferenceCompositeValue {
 	Object getChildValue(String key);
 
-	void addChildValue(String key, Object value);
+	void setChildValue(String key, Object value);
 
 	void removeChildValue(String key);
 }

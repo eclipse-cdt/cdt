@@ -13,7 +13,7 @@
             defaultSeverity="Warning"
             description="Finds statements like  &apos;if (a=b)&apos;"
             id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"
-            messagePattern="Possible assignment in condition"
+            messagePattern="Possible assignment in condition &apos;&apos;{0}&apos;&apos;"
             name="Assignment in condition">
       </problem>
       
@@ -39,6 +39,7 @@
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
+            description="If destructor is not declared virtual - destructor of derived class would not be called."
             id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"
             messagePattern="Class &apos;&apos;{0}&apos;&apos; has virtual method &apos;&apos;{1}&apos;&apos; but non-virtual destructor &apos;&apos;{2}&apos;&apos;"
             name="Class has a virtual method and non-virtual destructor">
@@ -55,7 +56,7 @@
             description="Catching by reference is recommended by C++ experts, &quot;Throw by value, catch by reference&quot;. For one thing, this avoids copying and potentially slicing the exception."
             id="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
             name="Catching by reference is recommended"
-            messagePattern="Catching by reference is recommended for non-basic types">
+            messagePattern="Catching by reference is recommended &apos;&apos;{0}&apos;&apos;">
       </problem>
       </checker>
       <checker
@@ -65,8 +66,9 @@
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
+            description="This checker finds problems related to either lack of understanding precedence of operators or misspelling of operators in expression. For example (!a&lt;10) or (a &amp;&amp; b &amp; c)"
             id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"
-            messagePattern="Suggested parenthesis around expression"
+            messagePattern="Suggested parenthesis around expression &apos;&apos;{0}&apos;&apos;"
             name="Suggested parenthesis around expression">
       </problem>
       </checker>

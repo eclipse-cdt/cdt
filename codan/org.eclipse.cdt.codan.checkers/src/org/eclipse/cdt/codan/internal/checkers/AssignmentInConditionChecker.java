@@ -35,7 +35,7 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 		public int visit(IASTExpression expression) {
 			if (isAssignmentExpression(expression)
 					&& isUsedAsCondition(expression)) {
-				reportProblem(ER_ID, expression);
+				reportProblem(ER_ID, expression, expression.getRawSignature());
 			}
 			return PROCESS_CONTINUE;
 		}

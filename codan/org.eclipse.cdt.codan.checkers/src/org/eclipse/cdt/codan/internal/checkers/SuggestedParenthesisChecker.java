@@ -56,14 +56,14 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 					return PROCESS_CONTINUE;
 				if (precedence == 2) { // unary not
 					if (isParamNot() && isUsedAsOperand(expression)) {
-						reportProblem(ER_ID, expression);
+						reportProblem(ER_ID, expression, expression.getRawSignature());
 						return PROCESS_SKIP;
 					}
 				} else if (precedence >= 0) {
 					int pp = getPrecedence(parentExpr);
 					if (pp == -1 || pp == precedence)
 						return PROCESS_CONTINUE;
-					reportProblem(ER_ID, expression);
+					reportProblem(ER_ID, expression, expression.getRawSignature());
 				}
 			}
 			return PROCESS_CONTINUE;
@@ -136,6 +136,6 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_NOT,
-				"Suggest parentesis around not operator", Boolean.FALSE);
+				CheckersMessages.SuggestedParenthesisChecker_SuggestParanthesesAroundNot, Boolean.FALSE);
 	}
 }

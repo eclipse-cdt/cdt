@@ -75,7 +75,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 											|| typeName instanceof IPointerType
 											|| typeName == null)
 										continue;
-									reportProblem(ER_ID, decl);
+									reportProblem(ER_ID, decl, decl.getRawSignature());
 								}
 							}
 						}

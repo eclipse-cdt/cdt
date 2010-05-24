@@ -53,11 +53,8 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         fViewer = createViewer(fDisplay, fShell);
         
-        fListener = new TestModelUpdatesListener(false, false);
-        fViewer.addViewerUpdateListener(fListener);
-        fViewer.addLabelUpdateListener(fListener);
-        fViewer.addModelChangedListener(fListener);
-        
+        fListener = new TestModelUpdatesListener(fViewer, false, false);
+       
         fModel = new TestModel();
         fModel.setRoot( new TestElement(fModel, "root", new TestElement[0] ) ); 
         fModel.setElementChildren(TreePath.EMPTY, makeModelElements(fModel, getTestModelDepth(), "model"));
@@ -76,9 +73,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
     protected void tearDown() throws Exception {
         fVMAdapter.dispose();
         
-        fViewer.removeLabelUpdateListener(fListener);
-        fViewer.removeViewerUpdateListener(fListener);
-        fViewer.removeModelChangedListener(fListener);
+        fListener.dispose();
         fViewer.getPresentationContext().dispose();
         // Close the shell and exit.
         fShell.close();

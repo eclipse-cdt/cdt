@@ -18,13 +18,14 @@ curdir=`pwd`
 cd `dirname $0`
 mydir=`pwd`
 cd "${curdir}"
+tmpdir=/tmp/${USER}.$$
 
 # Accept environment variables set outside the script
 if [ "${UPDATE_SITE}" = "" ]; then
   UPDATE_SITE=$HOME/downloads-tm/updates/3.2milestones
 fi
 if [ "${SIGNED_JAR_SOURCE}" = "" ]; then
-  SIGNED_JAR_SOURCE=${curdir}/eclipse_ext/tm
+  SIGNED_JAR_SOURCE=${tmpdir}/eclipse_ext/tm
 fi
 if [ "${BASEBUILDER}" = "" ]; then
   BASEBUILDER=$HOME/ws2/eclipse
@@ -45,15 +46,19 @@ echo "SIGNED_JAR_SOURCE: ${SIGNED_JAR_SOURCE}"
 echo "BASEBUILDER: ${BASEBUILDER}"
 echo "DROPDIR: ${DROPDIR}"
 echo ""
+if [ "$1" != "-go" ]; then
+  echo "use -go to actually perform the operation."
+  exit 0
+fi
 
 #Use Java5 on build.eclipse.org
 #export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
 export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/jre/bin:/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
 #export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
-OUTPUT=${curdir}/output.$$
-RESULT=${curdir}/result.$$
-TMPD=${curdir}/tmp.$$
+OUTPUT=${tmpdir}/output.$$
+RESULT=${tmpdir}/result.$$
+TMPD=${tmpdir}/tmp.$$
 
 # Provision update site into SIGNED_JAR_SOURCE
 if [ ! -d "${SIGNED_JAR_SOURCE}/eclipse" ]; then
@@ -83,6 +88,7 @@ if [ "${have_server}" = "" ]; then
     win_server=`ls ${DROPDIR} | grep 'rseserver-.*-windows\.zip'`
     if [ "${win_server}" = "" ]; then
       echo "Error: No rseserver found in DROPDIR."
+      rm -rf ${tmpdir}
       exit 1
     fi
     if [ ! -d /home/data/httpd/download-staging.priv/dsdp/tm ]; then
@@ -120,6 +126,7 @@ if [ "${have_server}" = "" ]; then
   if [ "${have_server}" = "" ]; then
     echo 'ERROR: signed rseserver-*.zip not found!'
     echo "Please sign a server zip on build.eclipse.org, upload and retry."
+    rm -rf ${tmpdir}
     exit 1
   fi
 fi
@@ -198,16 +205,15 @@ echo ""
 echo "ls ${OUTPUT}"
 ls ${OUTPUT}
 echo ""
-echo "cd ${DROPDIR}"
+cd "${DROPDIR}"
 if [ ! -d ${DROPDIR}.unsigned ]; then
   DROPBASE=`basename "${DROPDIR}"`
-  echo "mkdir ../${DROPBASE}.unsigned"
-  echo "tar cf - . | (cd ../${DROPBASE}.unsigned ; tar xf -)" 
-  echo "chmod -R g+w ../${DROPBASE}.unsigned"
+  mkdir ../${DROPBASE}.unsigned
+  tar cf - . | (cd ../${DROPBASE}.unsigned ; tar xf -) 
+  chmod -R g+w ../${DROPBASE}.unsigned
 fi
 echo "cp -f ${OUTPUT}/* ."
 echo "rm -rf signed"
 echo "cd ${curdir}"
 echo "rm -rf install-ws eclipse_ext"
-echo "rm -rf ${OUTPUT}"
-echo "rm -rf ${RESULT}"
+echo "rm -rf ${tmpdir}"

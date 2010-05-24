@@ -241,7 +241,9 @@ public class Executable extends PlatformObject {
 						tu = new ExternalTranslationUnit(cproject, uri, id);
 					}
 
-					sourceFiles.add(tu);
+					if (!sourceFiles.contains(tu)) {
+						sourceFiles.add(tu);
+					}
 
 					if (!orgPath.equals(filename)) {
 						remappedPaths.put(tu, orgPath);

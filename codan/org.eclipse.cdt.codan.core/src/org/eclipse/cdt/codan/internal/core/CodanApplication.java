@@ -6,8 +6,8 @@ import java.util.Collection;
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -40,8 +40,8 @@ public class CodanApplication implements IApplication {
 		runtime.setProblemReporter(new CodanMarkerProblemReporter() {
 			@Override
 			public void reportProblem(String id, String markerType,
-					int severity, IFile file, int lineNumber, int startChar,
-					int endChar, String message) {
+					int severity, IResource file, int lineNumber,
+					int startChar, int endChar, String message) {
 				System.out.println(file.getLocation() + ":" + lineNumber + ": " //$NON-NLS-1$ //$NON-NLS-2$
 						+ message);
 			}
@@ -55,7 +55,8 @@ public class CodanApplication implements IApplication {
 				log(Messages.CodanApplication_LogRunProject + project);
 				IProject wProject = root.getProject(project);
 				if (!wProject.exists()) {
-					System.err.println( //
+					System.err
+							.println( //
 							NLS.bind(
 									Messages.CodanApplication_Error_ProjectDoesNotExists,
 									project));

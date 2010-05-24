@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Interface to describe problem location. Usually contains file and linenumber,
@@ -24,7 +24,7 @@ public interface IProblemLocation {
 	 * 
 	 * @return File for the problem - absolute full paths
 	 */
-	IFile getFile();
+	IResource getFile();
 
 	/**
 	 * 

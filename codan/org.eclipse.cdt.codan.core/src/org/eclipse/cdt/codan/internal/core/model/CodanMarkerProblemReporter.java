@@ -22,7 +22,6 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,14 +37,14 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 	 * java.lang.Object[])
 	 */
 	public void reportProblem(String id, IProblemLocation loc, Object... args) {
-		IFile file = loc.getFile();
+		IResource file = loc.getFile();
 		int lineNumber = loc.getLineNumber();
 		if (file == null)
 			throw new NullPointerException("file"); //$NON-NLS-1$
 		if (id == null)
 			throw new NullPointerException("id"); //$NON-NLS-1$
-		IProblem problem = CheckersRegistry.getInstance().getResourceProfile(
-				file).findProblem(id);
+		IProblem problem = CheckersRegistry.getInstance()
+				.getResourceProfile(file).findProblem(id);
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered:" + id); //$NON-NLS-1$
 		if (problem.isEnabled() == false)
@@ -71,7 +70,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 	 * lang.String, org.eclipse.core.resources.IFile, int, java.lang.String)
 	 */
 	public void reportProblem(String id, String markerType, int severity,
-			IFile file, int lineNumber, int startChar, int endChar,
+			IResource file, int lineNumber, int startChar, int endChar,
 			String message) {
 		try {
 			// Do not put in duplicates
@@ -115,9 +114,11 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 
 	public void deleteAllProblems() {
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(
-					GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-					IResource.DEPTH_INFINITE);
+			ResourcesPlugin
+					.getWorkspace()
+					.getRoot()
+					.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+							IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			CodanCorePlugin.log(e);
 		}

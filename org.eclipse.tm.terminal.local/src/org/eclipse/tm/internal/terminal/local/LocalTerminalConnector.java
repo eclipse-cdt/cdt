@@ -50,7 +50,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * <code>vi</code> editor).
  *
  * @author Mirko Raner
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LocalTerminalConnector extends TerminalConnectorImpl
 implements IDebugEventSetListener {
@@ -269,6 +269,9 @@ implements IDebugEventSetListener {
 		}
 		catch (CoreException exception) {
 
+			control.setState(TerminalState.CLOSED);
+			Shell shell = LocalTerminalSettingsPage.getShell();
+			ErrorDialog.openError(shell, null, null, exception.getStatus());
 			Logger.logException(exception);
 		}
 	}

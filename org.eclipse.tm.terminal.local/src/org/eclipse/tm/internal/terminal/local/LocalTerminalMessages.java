@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * messages used by the Local Terminal Connector.
  *
  * @author Mirko Raner
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LocalTerminalMessages extends NLS {
 
@@ -40,6 +40,9 @@ public class LocalTerminalMessages extends NLS {
 
 	/** The label for the "Edit..." button. */
 	public static String labelEdit;
+
+	/** The label for the "Delete" button. */
+	public static String labelDelete;
 
 	/** The label for the "Enable terminal echo" check box. */
 	public static String enableLocalEcho;
@@ -79,6 +82,12 @@ public class LocalTerminalMessages extends NLS {
 
 	/** The error message for an invalid working directory location. */
 	public static String invalidWorkingDirectory;
+
+	/** The question message for confirming deletion of a launch configuration. */
+	public static String questionDeleteLaunchConfiguration;
+
+	/** The question title for confirming deletion of a launch configuration. */
+	public static String questionTitleDeleteLaunchConfiguration;
 
 	/** The error message for attempting to directly launch a Terminal launch configuration. */
 	public static String errorDirectLaunch;

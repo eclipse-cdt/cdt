@@ -14,7 +14,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
+import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -113,5 +116,19 @@ public class CheckerTestCase extends CodanTestCase {
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
+	}
+
+	/**
+	 * @param problemId
+	 * @param paramId
+	 * @return
+	 */
+	protected IProblemPreference getPreference(String problemId,
+			String paramId) {
+		IProblem problem = CodanRuntime.getInstance().getChechersRegistry()
+				.getWorkspaceProfile().findProblem(problemId);
+		IProblemPreference pref = ((MapProblemPreference) problem
+				.getPreference()).getChildDescriptor(paramId);
+		return pref;
 	}
 }

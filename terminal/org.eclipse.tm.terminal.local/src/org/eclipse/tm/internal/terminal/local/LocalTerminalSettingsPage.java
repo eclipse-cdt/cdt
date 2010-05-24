@@ -12,14 +12,13 @@
 package org.eclipse.tm.internal.terminal.local;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -41,13 +40,16 @@ import org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchUtilitie
 import org.eclipse.tm.internal.terminal.local.ui.DependentHeightComposite;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The class {@link LocalTerminalSettingsPage} is an implementation {@link ISettingsPage} for
  * local program connections.
  *
  * @author Mirko Raner
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LocalTerminalSettingsPage
 implements ISettingsPage, ISelectionChangedListener, SelectionListener {
@@ -56,6 +58,7 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 	private TableViewer viewer;
 	private Button buttonEdit;
 	private Button buttonNew;
+	private Button buttonDelete;
 
 	/**
 	 * Creates a new {@link LocalTerminalSettingsPage} that reflects the settings of the specified
@@ -117,10 +120,12 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 		viewer.setContentProvider(new LocalTerminalLaunchListProvider());
 		viewer.setInput(new Object());
 		viewer.addSelectionChangedListener(this);
-		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 0, 2));
+		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 0, 3));
 		buttonNew = pushButton(tableAndButtons, LocalTerminalMessages.labelNew, false);
-		buttonEdit = pushButton(tableAndButtons, LocalTerminalMessages.labelEdit, true);
+		buttonEdit = pushButton(tableAndButtons, LocalTerminalMessages.labelEdit, false);
 		buttonEdit.setEnabled(settings.getLaunchConfigurationName() != null);
+		buttonDelete = pushButton(tableAndButtons, LocalTerminalMessages.labelDelete, true);
+		buttonDelete.setEnabled(settings.getLaunchConfigurationName() != null);
 		//
 		// NOTE: echo and line separator settings were moved to the launch configuration!
 
@@ -196,14 +201,15 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 	}
 
 	/**
-	 * Enables or disables the Edit... button depending on whether a launch configuration is
-	 * currently selected in the viewer.
+	 * Enables or disables the Edit... and Delete buttons depending on whether a launch
+	 * configuration is currently selected in the viewer.
 	 *
 	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 
 		buttonEdit.setEnabled(!event.getSelection().isEmpty());
+		buttonDelete.setEnabled(!event.getSelection().isEmpty());
 	}
 
 	/**
@@ -236,15 +242,11 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 		}
 		if (widget.equals(buttonNew)) {
 
-			ILaunchConfigurationWorkingCopy newlyCreatedConfiguration;
-			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-			String baseName = LocalTerminalMessages.newTerminalLaunchName;
-			String uniqueName = launchManager.generateLaunchConfigurationName(baseName);
-			ILaunchConfigurationType type = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE;
 			try {
 
-				newlyCreatedConfiguration = type.newInstance(null, uniqueName);
-				configuration = newlyCreatedConfiguration.doSave();
+				ILaunchConfigurationWorkingCopy newLaunch;
+				newLaunch = LocalTerminalLaunchUtilities.createNewLaunchConfigurationWorkingCopy();
+				configuration = newLaunch.doSave();
 			}
 			catch (CoreException couldNotCreateNewLaunchConfiguration) {
 
@@ -254,7 +256,6 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 		if (widget.equals(buttonEdit) || configuration != null) {
 
 			ILaunchGroup group;
-			Shell shell = DebugUIPlugin.getShell();
 			IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 			if (configuration == null) {
 
@@ -262,14 +263,11 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 			}
 			group = DebugUITools.getLaunchGroup(configuration, ILaunchManager.RUN_MODE);
 			String groupID = group.getIdentifier();
-			DebugUITools.openLaunchConfigurationDialog(shell, configuration, groupID, null);
+			DebugUITools.openLaunchConfigurationDialog(getShell(), configuration, groupID, null);
 			//
 			// TODO: handle return value (maybe start terminal right away if "Run" was selected)
 			// - a return value of Window.CANCEL indicates that "Close" was selected
 			// - a return value of Window.OK indicates that "Run" was selected
-			// TODO: prevent "Run" button from launching in the regular console
-			//       (maybe tweak process factory settings before opening the configuration in the
-			//       dialog?)
 
 			viewer.refresh();
 			viewer.setSelection(new StructuredSelection(configuration), true);
@@ -279,6 +277,37 @@ implements ISettingsPage, ISelectionChangedListener, SelectionListener {
 			//       creates a different ILaunchConfiguration object, rather than just renaming the
 			//       existing one)
 		}
+		if (widget.equals(buttonDelete)) {
+
+			String title = LocalTerminalMessages.questionTitleDeleteLaunchConfiguration;
+			String question = LocalTerminalMessages.questionDeleteLaunchConfiguration;
+			if (MessageDialog.openQuestion(getShell(), title, question)) {
+
+				IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+				configuration = (ILaunchConfiguration)selection.getFirstElement();
+				try {
+
+					configuration.delete();
+				}
+				catch (CoreException exception) {
+
+					ErrorDialog.openError(getShell(), null, null, exception.getStatus());
+				}
+				viewer.refresh();
+			}
+		}
+	}
+
+	static Shell getShell() {
+
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+		if (activeWindow != null) {
+
+			return activeWindow.getShell();
+		}
+		IWorkbenchWindow[] allWindows = workbench.getWorkbenchWindows();
+		return allWindows.length > 0? allWindows[0].getShell():null;
 	}
 
 	//------------------------------------ PRIVATE SECTION ---------------------------------------//

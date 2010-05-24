@@ -39,7 +39,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * because the original class is not part of the public API of its plug-in.
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LocalTerminalLaunchUtilities {
 
@@ -226,10 +226,13 @@ public class LocalTerminalLaunchUtilities {
 		ILaunchConfigurationWorkingCopy workingCopy;
 		ILaunchManager manager = LocalTerminalUtilities.LAUNCH_MANAGER;
 		String userHome = System.getProperty("user.home", "/"); //$NON-NLS-1$//$NON-NLS-2$
-		String name = manager.generateLaunchConfigurationName("Terminal"); //$NON-NLS-1$
+		String defaultShell = getDefaultShell().getAbsolutePath();
+		String name = defaultShell.substring(defaultShell.lastIndexOf(File.separator) + 1);
+		name = manager.generateLaunchConfigurationName("Terminal (" + name + ')'); //$NON-NLS-1$
 		workingCopy = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE.newInstance(null, name);
-		workingCopy.setAttribute(ATTR_LOCATION, getDefaultShell().getAbsolutePath());
+		workingCopy.setAttribute(ATTR_LOCATION, defaultShell);
 		workingCopy.setAttribute(ATTR_WORKING_DIRECTORY, userHome);
+		workingCopy.setAttribute(ATTR_LOCAL_ECHO, runningOnWindows());
 		return workingCopy;
 	}
 
@@ -246,7 +249,7 @@ public class LocalTerminalLaunchUtilities {
 		String shell = System.getenv("SHELL"); //$NON-NLS-1$
 		if (shell == null) {
 
-			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			if (runningOnWindows()) {
 
 				shell = "C:\\Windows\\System32\\cmd.exe"; //$NON-NLS-1$
 			}
@@ -259,6 +262,11 @@ public class LocalTerminalLaunchUtilities {
 	}
 
 	//------------------------------------- PRIVATE SECTION --------------------------------------//
+
+	private static boolean runningOnWindows() {
+
+		return Platform.OS_WIN32.equals(Platform.getOS());
+	}
 
 	private static IStringVariableManager getStringVariableManager() {
 

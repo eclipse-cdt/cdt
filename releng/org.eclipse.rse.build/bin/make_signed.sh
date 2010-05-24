@@ -61,6 +61,7 @@ RESULT=${tmpdir}/result.$$
 TMPD=${tmpdir}/tmp.$$
 
 # Provision update site into SIGNED_JAR_SOURCE
+cd ${tmpdir}
 if [ ! -d "${SIGNED_JAR_SOURCE}/eclipse" ]; then
   mkdir -p "${SIGNED_JAR_SOURCE}/eclipse"
   echo "Provisioning with repo2runnable..."
@@ -88,6 +89,7 @@ if [ "${have_server}" = "" ]; then
     win_server=`ls ${DROPDIR} | grep 'rseserver-.*-windows\.zip'`
     if [ "${win_server}" = "" ]; then
       echo "Error: No rseserver found in DROPDIR."
+      cd ${curdir}
       rm -rf ${tmpdir}
       exit 1
     fi
@@ -113,14 +115,18 @@ if [ "${have_server}" = "" ]; then
       result=`jarsigner -verify clientserver.jar | head -1`
     done
     signed_server=`echo ${win_server} | sed -e 's,-windows,-windows-signed,'`
-    echo "Signing OK, copy to ${DROPDIR}/signed/${signed_server}"
-    mkdir -p ${DROPDIR}/signed
-    cp out/${win_server} ${DROPDIR}/signed/${signed_server}
+    echo "Signing OK, copy to ${tmpdir}/signed/${signed_server}"
+    mkdir -p ${tmpdir}/signed
+    cp out/${win_server} ${tmpdir}/signed/${signed_server}
     cd ..
     rm -rf ${SIGN_TMP}
   fi
   cd ${SIGNED_JAR_SOURCE}/server
-  unzip ${DROPDIR}/signed/${signed_server}
+  if [ -f ${tmpdir}/signed/${signed_server} ]; then
+    unzip ${tmpdir}/signed/${signed_server}
+  elif [ -f {$DROPDIR}/signed/${signed_server} ]; then
+    unzip ${DROPDIR}/signed/${signed_server}
+  fi
   have_server=`ls *.jar 2>/dev/null`
   cd "${curdir}"
   if [ "${have_server}" = "" ]; then
@@ -213,7 +219,4 @@ if [ ! -d ${DROPDIR}.unsigned ]; then
   chmod -R g+w ../${DROPBASE}.unsigned
 fi
 echo "cp -f ${OUTPUT}/* ."
-echo "rm -rf signed"
-echo "cd ${curdir}"
-echo "rm -rf install-ws eclipse_ext"
 echo "rm -rf ${tmpdir}"

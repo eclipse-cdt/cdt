@@ -41,6 +41,40 @@ public class CodanUIMessages extends NLS {
 	public static String Job_TitleRunningAnalysis;
 	public static String ParametersComposite_NewValue;
 	public static String ParametersComposite_None;
+	//
+	public static String ExclusionInclusionDialog_title;
+	public static String ExclusionInclusionDialog_description;
+	public static String ExclusionInclusionDialog_description2;
+	public static String ExclusionInclusionDialog_exclusion_pattern_label;
+	public static String ExclusionInclusionDialog_inclusion_pattern_label;
+	public static String ExclusionInclusionDialog_inclusion_pattern_add;
+	public static String ExclusionInclusionDialog_inclusion_pattern_add_multiple;
+	public static String ExclusionInclusionDialog_inclusion_pattern_remove;
+	public static String ExclusionInclusionDialog_inclusion_pattern_edit;
+	public static String ExclusionInclusionDialog_exclusion_pattern_add;
+	public static String ExclusionInclusionDialog_exclusion_pattern_add_multiple;
+	public static String ExclusionInclusionDialog_exclusion_pattern_remove;
+	public static String ExclusionInclusionDialog_exclusion_pattern_edit;
+	public static String ExclusionInclusionDialog_ChooseExclusionPattern_title;
+	public static String ExclusionInclusionDialog_ChooseExclusionPattern_description;
+	public static String ExclusionInclusionDialog_ChooseInclusionPattern_title;
+	public static String ExclusionInclusionDialog_ChooseInclusionPattern_description;
+	public static String ExclusionInclusionEntryDialog_exclude_add_title;
+	public static String ExclusionInclusionEntryDialog_exclude_edit_title;
+	public static String ExclusionInclusionEntryDialog_exclude_description;
+	public static String ExclusionInclusionEntryDialog_exclude_pattern_label;
+	public static String ExclusionInclusionEntryDialog_include_add_title;
+	public static String ExclusionInclusionEntryDialog_include_edit_title;
+	public static String ExclusionInclusionEntryDialog_include_description;
+	public static String ExclusionInclusionEntryDialog_include_pattern_label;
+	public static String ExclusionInclusionEntryDialog_pattern_button;
+	public static String ExclusionInclusionEntryDialog_error_empty;
+	public static String ExclusionInclusionEntryDialog_error_notrelative;
+	public static String ExclusionInclusionEntryDialog_error_exists;
+	public static String ExclusionInclusionEntryDialog_ChooseExclusionPattern_title;
+	public static String ExclusionInclusionEntryDialog_ChooseExclusionPattern_description;
+	public static String ExclusionInclusionEntryDialog_ChooseInclusionPattern_title;
+	public static String ExclusionInclusionEntryDialog_ChooseInclusionPattern_description;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CodanUIMessages.class);

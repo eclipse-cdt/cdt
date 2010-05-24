@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.param;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 
@@ -150,6 +151,39 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	/**
 	 * @param tokenizer
 	 * @return
+	 * @throws IOException
 	 */
-	public abstract void importValue(StreamTokenizer tokenizer);
+	public abstract void importValue(StreamTokenizer tokenizer)
+			throws IOException;
+
+	public void importValue(String str) {
+		StreamTokenizer tokenizer = getImportTokenizer(str);
+		try {
+			importValue(tokenizer);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(str, e);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	protected String escape(String x) {
+		x = x.replaceAll("[\"\\\\]", "\\\\$0"); //$NON-NLS-1$//$NON-NLS-2$
+		return "\"" + x + "\""; //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	/**
+	 * @param str
+	 * @return
+	 */
+	protected String unescape(String str) {
+		StreamTokenizer tokenizer = getImportTokenizer(str);
+		try {
+			tokenizer.nextToken();
+		} catch (IOException e) {
+			return null;
+		}
+		String sval = tokenizer.sval;
+		return sval;
+	}
 }

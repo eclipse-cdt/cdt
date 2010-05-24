@@ -279,7 +279,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	protected void openCustomizeDialog() {
 		CustomizeProblemDialog d = new CustomizeProblemDialog(getShell(),
-				selectedProblem);
+				selectedProblem, (IResource) getElement());
 		d.open();
 	}
 }

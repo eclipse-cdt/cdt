@@ -98,11 +98,15 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		hash.remove(key);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() {
 		MapProblemPreference map = (MapProblemPreference) super.clone();
-		map.hash = (LinkedHashMap<String, IProblemPreference>) hash.clone();
+		map.hash = new LinkedHashMap<String, IProblemPreference>();
+		for (Iterator<String> iterator = hash.keySet().iterator(); iterator
+				.hasNext();) {
+			String key = iterator.next();
+			map.hash.put(key, (IProblemPreference) hash.get(key).clone());
+		}
 		return map;
 	}
 
@@ -119,6 +123,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		return buf.toString() + "}"; //$NON-NLS-1$
 	}
 
+	@Override
 	public void importValue(String str) {
 		StreamTokenizer tokenizer = getImportTokenizer(str);
 		try {

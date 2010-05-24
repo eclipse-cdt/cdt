@@ -36,7 +36,8 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 		TYPE_BOOLEAN("boolean"), //$NON-NLS-1$
 		TYPE_FILE("file"), //$NON-NLS-1$
 		TYPE_LIST("list"), //$NON-NLS-1$
-		TYPE_MAP("map"); //$NON-NLS-1$
+		TYPE_MAP("map"), //$NON-NLS-1$
+		TYPE_CUSTOM("custom"); //$NON-NLS-1$
 		private String literal;
 
 		private PreferenceType(String literal) {
@@ -75,8 +76,7 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 				return TYPE_LIST;
 			if (value instanceof Map)
 				return TYPE_MAP;
-			throw new IllegalArgumentException(
-					"Cannot determine type for " + value.getClass()); //$NON-NLS-1$
+			return TYPE_CUSTOM;
 		}
 	}
 

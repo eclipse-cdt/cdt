@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
+import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceDescriptor.PreferenceType;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * AbstarctChecker that has extra methods to simplify adding problem
@@ -28,7 +34,55 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * Checker that actually has parameter must override this
 	 */
 	public void initPreferences(IProblemWorkingCopy problem) {
-		// do nothing
+		// by default add file scope preference
+		addPreference(problem, new FileScopeProblemPreference(), null);
+	}
+
+	/**
+	 * @param problem
+	 * @return
+	 */
+	public FileScopeProblemPreference getScopePreference(IProblem problem) {
+		FileScopeProblemPreference scope = (FileScopeProblemPreference) getTopLevelPreferenceMap(
+				problem).getChildDescriptor(FileScopeProblemPreference.KEY);
+		return scope;
+	}
+
+	/**
+	 * User can scope out some resources for this checker. Checker can use this
+	 * call to test if it should run on this resource at all or not. Test should
+	 * be done within processResource method not in enabledInContext.
+	 * 
+	 * @param res
+	 * @return
+	 */
+	public boolean shouldProduceProblems(IResource res) {
+		Collection<IProblem> refProblems = getRuntime().getChechersRegistry()
+				.getRefProblems(this);
+		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator
+				.hasNext();) {
+			IProblem checkerProblem = iterator.next();
+			if (shouldProduceProblem(
+					getProblemById(checkerProblem.getId(), res),
+					res.getLocation()))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean shouldProduceProblem(IProblem problem, IPath resource) {
+		FileScopeProblemPreference scope = getScopePreference(problem);
+		if (scope == null)
+			return true;
+		return scope.isInScope(resource);
+	}
+
+	@Override
+	public void reportProblem(String problemId, IProblemLocation loc,
+			Object... args) {
+		if (shouldProduceProblem(getProblemById(problemId, loc.getFile()), loc
+				.getFile().getLocation()))
+			super.reportProblem(problemId, loc, args);
 	}
 
 	/**
@@ -102,13 +156,14 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @param problem
 	 * @return
 	 */
-	protected MapProblemPreference getTopLevelPreferenceMap(
-			IProblemWorkingCopy problem) {
+	protected MapProblemPreference getTopLevelPreferenceMap(IProblem problem) {
 		MapProblemPreference map = (MapProblemPreference) problem
 				.getPreference();
 		if (map == null) {
 			map = new MapProblemPreference("params", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			problem.setPreference(map);
+			if (problem instanceof IProblemWorkingCopy) {
+				((IProblemWorkingCopy) problem).setPreference(map);
+			}
 		}
 		return map;
 	}

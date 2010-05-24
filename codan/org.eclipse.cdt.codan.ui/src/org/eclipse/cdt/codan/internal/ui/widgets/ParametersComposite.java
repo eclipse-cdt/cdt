@@ -8,12 +8,13 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.ui.dialogs;
+package org.eclipse.cdt.codan.internal.ui.widgets;
 
 import java.io.File;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
+import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreferenceCompositeDescriptor;
 import org.eclipse.cdt.codan.core.param.ListProblemPreference;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.ListEditor;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -67,6 +69,8 @@ public class ParametersComposite extends Composite {
 					final IProblemPreference info) {
 				if (info == null)
 					return;
+				if (info.getKey() == FileScopeProblemPreference.KEY)
+					return; // skip the scope
 				switch (info.getType()) {
 					case TYPE_STRING: {
 						StringFieldEditor fe = new StringFieldEditor(
@@ -103,11 +107,12 @@ public class ParametersComposite extends Composite {
 							@Override
 							protected String getNewInputObject() {
 								ListProblemPreference list = (ListProblemPreference) info;
-								String label = list
-										.getChildDescriptor()
+								String label = list.getChildDescriptor()
 										.getLabel();
 								InputDialog dialog = new InputDialog(
-										getShell(), CodanUIMessages.ParametersComposite_NewValue, label, "", null); //$NON-NLS-1$
+										getShell(),
+										CodanUIMessages.ParametersComposite_NewValue,
+										label, "", null); //$NON-NLS-1$
 								if (dialog.open() == Window.OK) {
 									return dialog.getValue();
 								}
@@ -136,6 +141,20 @@ public class ParametersComposite extends Composite {
 							createFieldEditorsForParameters(desc);
 						}
 						break;
+					case TYPE_CUSTOM: {
+						StringFieldEditor fe = new StringFieldEditor(
+								info.getQualifiedKey(), info.getLabel(),
+								getFieldEditorParent());
+						addField(fe);
+						break;
+					}
+					case TYPE_FILE: {
+						FileFieldEditor fe = new FileFieldEditor(
+								info.getQualifiedKey(), info.getLabel(),
+								getFieldEditorParent());
+						addField(fe);
+						break;
+					}
 					default:
 						throw new UnsupportedOperationException(info.getType()
 								.toString());
@@ -179,6 +198,9 @@ public class ParametersComposite extends Composite {
 			case TYPE_LIST:
 				desc.importValue(prefStore.getString(key));
 				break;
+			case TYPE_CUSTOM:
+				desc.importValue(prefStore.getString(key));
+				break;
 			case TYPE_MAP:
 				IProblemPreference[] childrenDescriptor = ((IProblemPreferenceCompositeDescriptor) desc)
 						.getChildDescriptors();
@@ -211,6 +233,9 @@ public class ParametersComposite extends Composite {
 				prefStore.setValue(key, ((File) desc.getValue()).getPath());
 				break;
 			case TYPE_LIST:
+				prefStore.setValue(key, desc.exportValue());
+				break;
+			case TYPE_CUSTOM:
 				prefStore.setValue(key, desc.exportValue());
 				break;
 			case TYPE_MAP:

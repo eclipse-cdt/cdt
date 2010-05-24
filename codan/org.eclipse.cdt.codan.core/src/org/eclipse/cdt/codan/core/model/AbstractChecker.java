@@ -65,9 +65,9 @@ public abstract class AbstractChecker implements IChecker {
 	 *            - file in scope
 	 * @return problem instance
 	 */
-	public IProblem getProblemById(String id, IFile file) {
-		IProblem problem = CheckersRegistry.getInstance().getResourceProfile(
-				file).findProblem(id);
+	public IProblem getProblemById(String id, IResource file) {
+		IProblem problem = CheckersRegistry.getInstance()
+				.getResourceProfile(file).findProblem(id);
 		if (problem == null)
 			throw new IllegalArgumentException("Id is not registered"); //$NON-NLS-1$
 		return problem;
@@ -143,5 +143,10 @@ public abstract class AbstractChecker implements IChecker {
 	 */
 	public boolean runInEditor() {
 		return this instanceof IRunnableInEditorChecker;
+	}
+
+	public void reportProblem(String problemId, IProblemLocation loc,
+			Object... args) {
+		getProblemReporter().reportProblem(problemId, loc, args);
 	}
 }

@@ -63,6 +63,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	}
 
 	public synchronized boolean processResource(IResource resource) {
+		if (!shouldProduceProblems(resource)) return false;
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
 			try {
@@ -102,7 +103,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 		else
 			loc = getRuntime().getProblemLocationFactory()
 					.createProblemLocation(astFile, line);
-		getProblemReporter().reportProblem(id, loc, args);
+		reportProblem(id, loc, args);
 	}
 
 	@Override

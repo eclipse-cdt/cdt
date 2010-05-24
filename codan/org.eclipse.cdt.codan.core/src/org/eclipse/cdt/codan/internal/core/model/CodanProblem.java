@@ -70,7 +70,11 @@ public class CodanProblem implements IProblemWorkingCopy {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+		CodanProblem prob = (CodanProblem) super.clone();
+		if (preference != null) {
+			prob.preference = (IProblemPreference) preference.clone();
+		}
+		return prob;
 	}
 
 	public void setPreference(IProblemPreference value) {

@@ -8,16 +8,16 @@
  * Contributors:
  *    Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.codan.internal.ui.dialogs;
+package org.eclipse.cdt.codan.internal.ui.widgets;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -29,17 +29,21 @@ public class CustomizeProblemComposite extends Composite {
 	private Composite parametersTab;
 	private IProblem problem;
 	private ParametersComposite problemsComposite;
+	private FileScopeComposite scopeComposite;
+	private IResource resource;
 
 	/**
 	 * @param parent
 	 * @param selectedProblem
+	 * @param resource
 	 * @param style
 	 */
-	public CustomizeProblemComposite(Composite parent, IProblem selectedProblem) {
+	public CustomizeProblemComposite(Composite parent,
+			IProblem selectedProblem, IResource resource) {
 		super(parent, SWT.NONE);
-	
 		this.setLayout(new GridLayout(1, false));
 		this.problem = selectedProblem;
+		this.resource = resource;
 		final TabFolder tabFolder = new TabFolder(this, SWT.TOP);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// createMainTab(tabFolder);
@@ -49,6 +53,7 @@ public class CustomizeProblemComposite extends Composite {
 
 	public void save(IProblemWorkingCopy problem) {
 		problemsComposite.save(problem);
+		scopeComposite.save(problem);
 	}
 
 	/**
@@ -61,7 +66,8 @@ public class CustomizeProblemComposite extends Composite {
 		tabItem1.setControl(parametersTab);
 		parametersTab.setLayout(new GridLayout());
 		problemsComposite = new ParametersComposite(parametersTab, problem);
-		problemsComposite.setLayoutData(new GridData(SWT.BEGINNING,SWT.BEGINNING, true, false));
+		problemsComposite.setLayoutData(new GridData(SWT.BEGINNING,
+				SWT.BEGINNING, true, false));
 	}
 
 	/**
@@ -73,8 +79,8 @@ public class CustomizeProblemComposite extends Composite {
 		Composite comp = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(comp);
 		comp.setLayout(new GridLayout());
-		Label label = new Label(comp, SWT.NONE);
-		label.setText("Scope: TODO"); //$NON-NLS-1$
-		label.setLayoutData(new GridData(GridData.FILL_BOTH));
+		scopeComposite = new FileScopeComposite(comp, problem, resource);
+		scopeComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING,
+				true, false));
 	}
 }

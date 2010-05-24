@@ -157,11 +157,16 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		list.remove(index);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() {
 		ListProblemPreference list1 = (ListProblemPreference) super.clone();
-		list1.list = (ArrayList<Object>) list.clone();
+		list1.list = new ArrayList<Object>();
+		list1.setChildDescriptor((IProblemPreference) getChildDescriptor()
+				.clone());
+		for (Iterator<Object> iterator = list.iterator(); iterator.hasNext();) {
+			Object value = iterator.next();
+			list1.addChildValue(value);
+		}
 		return list1;
 	}
 
@@ -177,6 +182,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		return buf.toString() + ")"; //$NON-NLS-1$
 	}
 
+	@Override
 	public void importValue(String str) {
 		StreamTokenizer tokenizer = getImportTokenizer(str);
 		try {

@@ -81,11 +81,6 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 		return x;
 	}
 
-	protected String escape(String x) {
-		x = x.replaceAll("[\"\\\\]", "\\\\$0"); //$NON-NLS-1$//$NON-NLS-2$
-		return "\"" + x + "\""; //$NON-NLS-1$//$NON-NLS-2$
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -93,6 +88,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 	 * org.eclipse.cdt.codan.core.param.IProblemPreferenceValue#importValue(
 	 * java.lang.String)
 	 */
+	@Override
 	public void importValue(String str) {
 		if (str.startsWith("\"")) //$NON-NLS-1$
 			str = unescape(str);
@@ -113,21 +109,6 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 				throw new IllegalArgumentException(getType()
 						+ " is not supported for basic type"); //$NON-NLS-1$
 		}
-	}
-
-	/**
-	 * @param str
-	 * @return
-	 */
-	protected String unescape(String str) {
-		StreamTokenizer tokenizer = getImportTokenizer(str);
-		try {
-			tokenizer.nextToken();
-		} catch (IOException e) {
-			return null;
-		}
-		String sval = tokenizer.sval;
-		return sval;
 	}
 
 	@Override

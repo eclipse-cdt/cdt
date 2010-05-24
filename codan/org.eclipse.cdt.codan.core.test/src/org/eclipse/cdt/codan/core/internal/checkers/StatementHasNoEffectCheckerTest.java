@@ -13,10 +13,7 @@ package org.eclipse.cdt.codan.core.internal.checkers;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.cdt.codan.core.CodanRuntime;
-import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
-import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker;
 
@@ -147,7 +144,7 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// }
 	@SuppressWarnings("restriction")
 	public void testInMacro() {
-		IProblemPreference macro = getMapPreference(
+		IProblemPreference macro = getPreference(
 				StatementHasNoEffectChecker.ER_ID,
 				StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.TRUE);
@@ -162,25 +159,11 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 	// }
 	@SuppressWarnings("restriction")
 	public void testInMacroParamOff() {
-		IProblemPreference macro = getMapPreference(
+		IProblemPreference macro = getPreference(
 				StatementHasNoEffectChecker.ER_ID,
 				StatementHasNoEffectChecker.PARAM_MACRO_ID);
 		macro.setValue(Boolean.FALSE);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
-	}
-
-	/**
-	 * @param problemId
-	 * @param paramId
-	 * @return
-	 */
-	protected IProblemPreference getMapPreference(String problemId,
-			String paramId) {
-		IProblem problem = CodanRuntime.getInstance().getChechersRegistry()
-				.getWorkspaceProfile().findProblem(problemId);
-		IProblemPreference pref = ((MapProblemPreference) problem
-				.getPreference()).getChildDescriptor(paramId);
-		return pref;
 	}
 }

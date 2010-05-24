@@ -21,7 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 /**
- * This checker finds a problems which are caused by lack of understanding operator
+ * This checker finds a problems which are caused by lack of understanding
+ * operator
  * precedence in C. In any case it is better to surround expressions in
  * parenthesis to improve readability. Example: ! x>0 && x<10 (this would be
  * (!x)>0 && x<10 in C) We only look for &&, || and ! operators (and binary | &
@@ -31,8 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * 
  */
 public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
-	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
-	private static final String PARAM_NOT = "paramNot";
+	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
+	public static final String PARAM_NOT = "paramNot"; //$NON-NLS-1$
+
+
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -116,16 +119,23 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 		}
 		return false;
 	}
-	public boolean isParamNot(){
-		return (Boolean) getPreference(getProblemById(ER_ID, getFile()), PARAM_NOT);
+
+	public boolean isParamNot() {
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
+				PARAM_NOT);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences#initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences
+	 * #initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addPreference(problem, PARAM_NOT, "Suggest parentesis around not operator", Boolean.FALSE);
-		
+		addPreference(problem, PARAM_NOT,
+				"Suggest parentesis around not operator", Boolean.FALSE);
 	}
 }

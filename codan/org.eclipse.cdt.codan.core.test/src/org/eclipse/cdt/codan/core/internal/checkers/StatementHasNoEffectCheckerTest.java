@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker;
+import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see StatementHasNoEffectChecker} class
@@ -154,6 +155,17 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 
 	//#define FUNC(a) a
 	// main() {
+	// int x;
+	//   FUNC(x); //  error
+	// }
+	public void testMessageInMacro() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		IMarker m = checkErrorLine(4);
+		assertMessageMatch("'FUNC(x)'", m); //$NON-NLS-1$
+	}
+
+	//#define FUNC(a) a
+	// main() {
 	// int a;
 	//   FUNC(a); // no error if macro exp turned off
 	// }
@@ -165,5 +177,15 @@ public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
 		macro.setValue(Boolean.FALSE);
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
+	}
+
+	// main() {
+	// int a;
+	// +a; // error here on line 3
+	// }
+	public void testMessage() throws IOException {
+		loadCodeAndRun(getAboveComment());
+		IMarker m = checkErrorLine(3);
+		assertMessageMatch("'\\+a'", m); //$NON-NLS-1$
 	}
 }

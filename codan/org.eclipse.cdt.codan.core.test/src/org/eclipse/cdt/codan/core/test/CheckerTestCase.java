@@ -29,22 +29,24 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class CheckerTestCase extends CodanTestCase {
 	private IMarker[] markers;
 
-	public void checkErrorLine(int i) {
-		checkErrorLine(currentFile, i);
+	public IMarker checkErrorLine(int i) {
+		return checkErrorLine(currentFile, i);
 	}
 
 	/**
 	 * @param expectedLine
 	 *            - line
+	 * @return
 	 */
-	public void checkErrorLine(File file, int expectedLine) {
+	public IMarker checkErrorLine(File file, int expectedLine) {
 		assertTrue(markers != null);
 		assertTrue("No problems found but should", markers.length > 0); //$NON-NLS-1$
 		boolean found = false;
 		Integer line = null;
 		String mfile = null;
+		IMarker m = null;
 		for (int j = 0; j < markers.length; j++) {
-			IMarker m = markers[j];
+			m = markers[j];
 			Object pos;
 			try {
 				line = (Integer) m.getAttribute(IMarker.LINE_NUMBER);
@@ -70,6 +72,8 @@ public class CheckerTestCase extends CodanTestCase {
 		if (file != null)
 			assertEquals(file.getName(), mfile);
 		assertTrue(found);
+		assertNotNull(m);
+		return m;
 	}
 
 	public void checkNoErrors() {
@@ -123,12 +127,27 @@ public class CheckerTestCase extends CodanTestCase {
 	 * @param paramId
 	 * @return
 	 */
-	protected IProblemPreference getPreference(String problemId,
-			String paramId) {
+	protected IProblemPreference getPreference(String problemId, String paramId) {
 		IProblem problem = CodanRuntime.getInstance().getChechersRegistry()
 				.getWorkspaceProfile().findProblem(problemId);
 		IProblemPreference pref = ((MapProblemPreference) problem
 				.getPreference()).getChildDescriptor(paramId);
 		return pref;
+	}
+
+	/**
+	 * @param string
+	 * @param m
+	 */
+	public void assertMessageMatch(String pattern, IMarker m) {
+		try {
+			String attribute = (String) m.getAttribute(IMarker.MESSAGE);
+			if (attribute.matches(pattern)) {
+				fail("Expected " + attribute + " to match with /" + pattern //$NON-NLS-1$ //$NON-NLS-2$
+						+ "/"); //$NON-NLS-1$
+			}
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
 	}
 }

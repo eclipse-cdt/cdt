@@ -59,7 +59,7 @@ void locals2() {
 	char lCharVar = 'i';
 	char *lCharPtr = &lCharVar;
 	bool *lBoolPtr2 = (bool*)0xABCDE123;
-	
+	lBoolPtr2 = 0;	// step up to this line to ensure all locals are in scope
 	return;
 }
 
@@ -86,7 +86,7 @@ void testLocals() {
     bool *lBoolPtr2 = (bool*)0x123ABCDE;
 
     locals2();
-	
+	lBoolPtr2 = (bool*)0;	// step-out from locals2() will land here; ensures our vars are still visible
     return;
 }
 
@@ -118,12 +118,14 @@ int testSameName1(int newVal) {
 	int a = newVal;
 	Z z;
 	z.x = newVal;
+	z.x = newVal; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 	return a;
 }
 int testSameName1(int newVal, int ignore) {
 	int a = newVal;
 	Z z;
 	z.x = newVal;
+	a = newVal; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 	return a;
 }
 
@@ -184,7 +186,7 @@ int testUpdateChildren2(int val) {
 int testDeleteChildren() {
 	foo f;
 	int a[1111];
-	
+	a[0] = 0; // this line is here to ensure a step-over after running to this function leaves our locals visible	
 	return 1;
 }
 
@@ -200,7 +202,8 @@ int testUpdateGDBBug() {
 
 int testUpdateIssue() {
 	double a = 1.99;
-	a = 1.22;	
+	a = 1.22;
+	a = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
 }
 
 int testUpdateIssue2() {
@@ -210,6 +213,7 @@ int testUpdateIssue2() {
 	
 	z.d = 1.0;
 	z.d = 1.22;
+	z.d = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible	
 }
 
 int testConcurrentReadAndUpdateChild() {
@@ -227,6 +231,7 @@ int testConcurrentUpdateOutOfScopeChildThenParent1() {
 	}z;
 
 	z.d = 1;
+	z.d = 1; // this redundant line is here to ensure 2 steps after running to this func leaves locals visible
 }
 
 int testConcurrentUpdateOutOfScopeChildThenParent2() {
@@ -235,6 +240,7 @@ int testConcurrentUpdateOutOfScopeChildThenParent2() {
 	}z;
 
 	z.d = 2;
+	z.d = 2; // this redundant line is here to ensure 2 steps after running to this func leaves locals visible
 }
 
 int testConcurrentUpdateOutOfScopeChildThenParent() {
@@ -255,6 +261,7 @@ int testUpdateOfPointer() {
 
 	z.b = &c;
 	z.a = 2;
+	z.a = 2; // this redundant line is here to ensure 6 steps after running to this func leaves locals visible
 }
 
 int testCanWrite() {

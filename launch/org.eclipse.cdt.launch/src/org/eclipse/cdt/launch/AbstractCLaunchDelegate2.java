@@ -58,8 +58,6 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
  * unmodified because it is commonly used by CDT clients and contains lots of obscure code
  * created long ago to handle issues whose relevance is unclear today.
  *
- */
-/**
  * @since 6.1
  *
  */

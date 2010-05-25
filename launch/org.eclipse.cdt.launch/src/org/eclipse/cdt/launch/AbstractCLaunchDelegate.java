@@ -74,6 +74,14 @@ import org.eclipse.debug.ui.RefreshTab;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.MessageFormat;
 
+/**
+ * AbstractCLaunchDelegate is the launch delegate used by most CDI based debuggers.
+ * It has been superseded by AbstractCLaunchDelegate2 which is used by most DSF based
+ * debuggers. AbstractCLaunchDelegate has been left unmodified because it is commonly
+ * used by CDT clients and contains lots of obscure code created long ago to handle
+ * issues whose relevance is unclear today.
+ *
+ */
 abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegate {
 
     /**

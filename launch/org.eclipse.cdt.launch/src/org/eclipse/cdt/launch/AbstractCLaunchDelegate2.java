@@ -37,7 +37,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 
 /**
- * @author Ken Ryall
+ * AbstractCLaunchDelegate2 is used by most DSF based debuggers. It replaces AbstractCLaunchDelegate
+ * which is the launch delegate used by most CDI based debuggers.
+ * 
+ * While it is technically possible to merge the two, AbstractCLaunchDelegate has been left
+ * unmodified because it is commonly used by CDT clients and contains lots of obscure code
+ * created long ago to handle issues whose relevance is unclear today.
+ *
+ */
+/**
  * @since 6.1
  *
  */

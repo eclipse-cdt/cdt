@@ -12,6 +12,7 @@ package org.eclipse.cdt.dsf.internal.ui;
 
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.CSourceNotFoundDescriptionFactory;
+import org.eclipse.cdt.dsf.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyBackendDsfFactory;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceDocumentProvider;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -60,6 +61,8 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 	    DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.cdt.dsf.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 
         fSourceDocumentProvider = new SourceDocumentProvider();
+        
+		EvaluationContextManager.startup();
         
 		// Register the DSF backend for our disassembly view (the CDT debug UI
 		// plugin registers the CDI one)

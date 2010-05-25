@@ -729,6 +729,38 @@
       </factory>	  
    </extension>	
 
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.cdt.debug.ui.disassembly.actions.popup"
+            targetID="#DisassemblyPartContext">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
+               helpContextId="resume_at_line_action_context"
+               icon="icons/resume_at_line.gif"
+               id="org.eclipse.cdt.dsf.ui.actions.popup.ResumeAtLine"
+               label="%popup.resumeAtLine.label"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate"
+               helpContextId="move_to_line_action_context"
+               icon="icons/move_to_line.gif"
+               id="org.eclipse.cdt.dsf.ui.actions.popup.MoveToLine"
+               label="%popup.moveToLine.label"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               id="org.eclipse.cdt.dsf.ui.actions.popup.RunToLine"
+               label="%popup.runToLine.label"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+
    <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
       <toggleTargetFactory
             id="org.eclipse.cdt.dsf.ui.ToggleBreakpointsTargetFactory"

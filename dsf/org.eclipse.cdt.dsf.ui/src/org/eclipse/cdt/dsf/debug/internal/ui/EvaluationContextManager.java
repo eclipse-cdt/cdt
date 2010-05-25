@@ -8,12 +8,14 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Ericsson             - DSF-GDB version
+ * Nokia				- Made generic to DSF
  *******************************************************************************/
-package org.eclipse.cdt.dsf.gdb.internal.ui; 
+package org.eclipse.cdt.dsf.debug.internal.ui; 
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,8 +42,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {
 
-	// Must use a different ID than for CDI
-	private final static String DEBUGGER_ACTIVE = GdbUIPlugin.getUniqueIdentifier() + ".debuggerActive"; //$NON-NLS-1$
+	// Must use the same ID than the base CDT uses since we want to enable actions that are registered by base CDT. 
+	private final static String DEBUGGER_ACTIVE = CDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"; //$NON-NLS-1$
 
 	protected static EvaluationContextManager fgManager;
 

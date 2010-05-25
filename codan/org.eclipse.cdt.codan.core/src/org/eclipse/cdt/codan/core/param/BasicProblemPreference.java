@@ -22,30 +22,32 @@ import java.util.regex.Pattern;
  * 
  */
 public class BasicProblemPreference extends AbstractProblemPreference {
-	Object value;
-	{
-		key = PARAM;
-		type = PreferenceType.TYPE_STRING;
+	protected Object value;
+	private PreferenceType type = PreferenceType.TYPE_STRING;
+
+	public PreferenceType getType() {
+		return type;
+	}
+
+	public void setType(PreferenceType type) {
+		if (type == null)
+			throw new NullPointerException("Type cannot be null"); //$NON-NLS-1$
+		this.type = type;
 	}
 
 	/**
 	 * Generate an info with given key and label
 	 * 
 	 * @param key
-	 *            - property id (use in actual property hash of a checker)
+	 *        - property id (use in actual property hash of a checker)
 	 * @param label
-	 *            - label to be shown to user
+	 *        - label to be shown to user
 	 * @param type
-	 *            - parameter type
+	 *        - parameter type
 	 * @return
 	 */
 	public BasicProblemPreference(String key, String label, PreferenceType type) {
-		if (key == null)
-			throw new NullPointerException("key"); //$NON-NLS-1$
-		if (type == null)
-			throw new NullPointerException("type"); //$NON-NLS-1$
-		setKey(key);
-		setLabel(label);
+		this(key, label);
 		setType(type);
 	}
 
@@ -53,9 +55,9 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 	 * Generate an info with given key and label
 	 * 
 	 * @param key
-	 *            - property id (use in actual property hash of a checker)
+	 *        - property id (use in actual property hash of a checker)
 	 * @param label
-	 *            - label to be shown to user
+	 *        - label to be shown to user
 	 * @return
 	 */
 	public BasicProblemPreference(String key, String label) {
@@ -113,7 +115,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 
 	@Override
 	public String toString() {
-		return "(" + type + ")" + key + ((value == null) ? "" : "=" + value); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+		return "(" + type + ")" + getKey() + ((value == null) ? "" : "=" + value); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 	}
 
 	@Override

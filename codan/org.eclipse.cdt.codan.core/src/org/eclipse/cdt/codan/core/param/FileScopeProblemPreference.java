@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.internal.core.CharOperation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +27,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * TODO: add description
+ * Custom preference for resource scope
+ * 
+ * @noextend This class is not intended to be extended by clients.
  */
 public class FileScopeProblemPreference extends AbstractProblemPreference {
 	public static final String KEY = "fileScope"; //$NON-NLS-1$
@@ -38,13 +41,18 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 
 	public FileScopeProblemPreference() {
 		setKey(KEY);
-		setLabel("File Exclusion and Inclusion");
-		setType(PreferenceType.TYPE_CUSTOM);
+		setLabel(Messages.FileScopeProblemPreference_Label);
+	}
+
+	public PreferenceType getType() {
+		return PreferenceType.TYPE_CUSTOM;
 	}
 
 	/**
+	 * Get attribute. Possible keys are EXCUSION and INCLUSION
+	 * 
 	 * @param key
-	 * @return
+	 * @return class attribute for given key
 	 */
 	public IPath[] getAttribute(String key) {
 		if (key == EXCLUSION)
@@ -54,6 +62,11 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		return null;
 	}
 
+	/**
+	 * Set attribute to a value. Possible keys are EXCUSION and INCLUSION
+	 * 
+	 * @param key
+	 */
 	public void setAttribute(String key, IPath[] value) {
 		if (key == EXCLUSION)
 			exclusion = value.clone();
@@ -62,7 +75,8 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	}
 
 	/**
-	 * @return
+	 * @return null for workspace, or project of the resource it is applicable
+	 *         for
 	 */
 	public IProject getProject() {
 		if (resource != null)
@@ -71,7 +85,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	}
 
 	/**
-	 * @return
+	 * @return path of the resource it is applicable to
 	 */
 	public IPath getPath() {
 		if (resource != null)
@@ -83,14 +97,14 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 
 	/**
 	 * @param resource
-	 *            the resource to set
+	 *        the resource to set
 	 */
 	public void setResource(IResource resource) {
 		this.resource = resource;
 	}
 
 	/**
-	 * @return the resource
+	 * @return the resource for which scope is define. Null if workspace.
 	 */
 	public IResource getResource() {
 		return resource;
@@ -101,12 +115,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 				+ exportPathList(EXCLUSION, exclusion);
 	}
 
-	/**
-	 * @param inclusion2
-	 * @param inclusion3
-	 * @return
-	 */
-	private String exportPathList(String key, IPath[] arr) {
+	protected String exportPathList(String key, IPath[] arr) {
 		String res = key + "=>("; //$NON-NLS-1$
 		for (int i = 0; i < arr.length; i++) {
 			if (i != 0)
@@ -116,13 +125,6 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		return res + ")"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.param.AbstractProblemPreference#importValue
-	 * (java.io.StreamTokenizer)
-	 */
 	@Override
 	public void importValue(StreamTokenizer tokenizer) throws IOException {
 		List<IPath> inc = importPathList(tokenizer, INCLUSION);
@@ -132,11 +134,6 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		exclusion = exc.toArray(new IPath[exc.size()]);
 	}
 
-	/**
-	 * @param tokenizer
-	 * @param c
-	 * @throws IOException
-	 */
 	private void checkChar(StreamTokenizer tokenizer, char c)
 			throws IOException {
 		tokenizer.nextToken();
@@ -144,12 +141,6 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 			throw new IllegalArgumentException("Expected " + c); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param tokenizer
-	 * @param inclusion2
-	 * @throws IOException
-	 * @throws IllegalAccessException
-	 */
 	private void checkKeyword(StreamTokenizer tokenizer, String keyword)
 			throws IOException {
 		tokenizer.nextToken();
@@ -219,28 +210,29 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	}
 
 	/**
-	 * @param file
-	 * @return
+	 * Checks that resource denotated by the given path is in scope (defined by
+	 * exclusion/inclusion settings of this class). In inclusion list is defined
+	 * check first if it belongs to it, returns false if not.
+	 * Then checks if it belongs to exclusion list and return false if it is.
+	 * 
+	 * @param path
+	 *        - resource path
+	 * @return true is given path is in scope
 	 */
-	public boolean isInScope(IPath file) {
+	public boolean isInScope(IPath path) {
 		//System.err.println("test " + file + " " + exportValue());
 		if (inclusion.length > 0) {
-			if (!matchesFilter(file, inclusion))
+			if (!matchesFilter(path, inclusion))
 				return false;
 		}
 		if (exclusion.length > 0) {
-			if (matchesFilter(file, exclusion))
+			if (matchesFilter(path, exclusion))
 				return false;
 		}
 		return true;
 	}
 
-	/**
-	 * @param resourcePath
-	 * @param inclusion2
-	 * @return
-	 */
-	private boolean matchesFilter(IPath resourcePath, IPath[] paths) {
+	public boolean matchesFilter(IPath resourcePath, IPath[] paths) {
 		char[] path = resourcePath.toString().toCharArray();
 		for (int i = 0, length = paths.length; i < length; i++) {
 			char[] pattern = paths[i].toString().toCharArray();

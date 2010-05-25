@@ -40,27 +40,21 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 
 	/**
 	 * @param key
-	 *            - key for itself
+	 *        - key for itself
 	 * @param label
-	 *            - label for this group of parameters
+	 *        - label for this group of parameters
 	 */
 	public MapProblemPreference(String key, String label) {
 		setKey(key);
 		setLabel(label);
 	}
 
-	@Override
 	public PreferenceType getType() {
 		return PreferenceType.TYPE_MAP;
 	}
 
-	@Override
-	public void setType(PreferenceType type) {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
-	 * Get parameter into for element by key
+	 * Get parameter preference for element by key
 	 * 
 	 */
 	public IProblemPreference getChildDescriptor(String key) {
@@ -68,32 +62,52 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * Put parameter info into the map for element with the key equals to
-	 * info.getKey()
+	 * Adds or replaces child descriptor and value for the element with the key
+	 * equals to desc.getKey(). The desc object would be put in the map, some of
+	 * its field may be modified.
 	 * 
-	 * @param i
-	 * @param info
+	 * @param desc
 	 */
 	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
-		desc.setParent(this);
+		((AbstractProblemPreference) desc).setParent(this);
 		hash.put(desc.getKey(), desc);
 		return desc;
 	}
 
+	/**
+	 * Return list of child descriptors. Client should threat returned value as
+	 * read only,
+	 * and not assume that modifying its elements would modify actual child
+	 * values.
+	 */
 	public IProblemPreference[] getChildDescriptors() {
 		return hash.values().toArray(
 				new IProblemPreference[hash.values().size()]);
 	}
 
+	/**
+	 * Returns value of the child element by its key
+	 */
 	public Object getChildValue(String key) {
 		IProblemPreference childInfo = getChildDescriptor(key);
 		return childInfo.getValue();
 	}
 
+	/**
+	 * Set child value by its key
+	 */
 	public void setChildValue(String key, Object value) {
-		getChildDescriptor(key).setValue(value);
+		IProblemPreference pref = getChildDescriptor(key);
+		if (pref == null)
+			throw new IllegalArgumentException("Preference for " + key //$NON-NLS-1$
+					+ " must exists before setting its value"); //$NON-NLS-1$
+		pref.setValue(value);
+		hash.put(key, pref); // cannot assume getChildDescriptor returns shared value
 	}
 
+	/**
+	 * Removes child value and descriptor by key
+	 */
 	public void removeChildValue(String key) {
 		hash.remove(key);
 	}
@@ -170,8 +184,11 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		}
 	}
 
+	/**
+	 * Removes child descriptor by its key
+	 */
 	public void removeChildDescriptor(IProblemPreference info) {
-		hash.remove(info);
+		hash.remove(info.getKey());
 	}
 
 	public int size() {
@@ -187,6 +204,11 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		return hash.values().toString();
 	}
 
+	/**
+	 * Value of this preference is a map key=>value of child preferences.
+	 * Modifying this returned map would not change internal state of this
+	 * object.
+	 */
 	@Override
 	public Object getValue() {
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
@@ -198,6 +220,14 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		return map;
 	}
 
+	/**
+	 * Set values for this object child elements. Elements are not present in
+	 * this map would be removed.
+	 * Preference descriptors for the keys must be set before calling this
+	 * method, unless value if instanceof IProblemPreference.
+	 * 
+	 * @param value - must be Map<String,Object>
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
@@ -212,6 +242,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 			if (value2 instanceof IProblemPreference) {
 				hash.put(key, (IProblemPreference) value2);
 			} else {
+				setChildValue(key, value2);
 				IProblemPreference pref = hash2.get(key);
 				pref.setValue(value2);
 				hash.put(key, pref);

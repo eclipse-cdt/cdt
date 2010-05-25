@@ -11,9 +11,13 @@
 package org.eclipse.cdt.codan.core.param;
 
 /**
- * Value of the problem preference. If more than one it can be composite, i.e.
- * map. Instead of implementing this interface use
+ * Problem preference. If problem has more than one it can be composite, i.e.
+ * map. Instead of implementing this interface clients must extend
  * {@link AbstractProblemPreference} class.
+ * 
+ * Problem Preference constist of preference metadata
+ * (IProblemPreferenceDescriptor)
+ * and value of preference (IProblemPreferenceValue).
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

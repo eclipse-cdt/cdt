@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Problem parameter usually key=value settings that allow to alter checker
+ * Problem parameter usually key=value settings that allows to alter checker
  * behaviour for given problem. For example if checker finds violation of naming
  * conventions for function, parameter would be the pattern of allowed names.
  * 
@@ -84,17 +84,18 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 
 	/**
 	 * type of the parameter, supports boolean, integer, string, file, list and
-	 * hash. If list is the value - it is an array - subparameter can be
-	 * accessed by number, if hash is the value - it is a hash - subparameter
-	 * can be accesses by name
+	 * map. For list type child preference can be
+	 * accessed by number (index), if map is the type child preference can be
+	 * accessed by a key (string)
 	 * 
-	 * @return string value of the type
+	 * @return type of the preference
 	 */
 	PreferenceType getType();
 
 	/**
 	 * Additional info on how it is represented in the ui, for example boolean
-	 * can be represented as checkbox, drop-down and so on, Values TBD
+	 * can be represented as checkbox, drop-down and so on, Values TBD.
+	 * Not supported at the moment.
 	 * 
 	 * @return ui info or null if not set
 	 */
@@ -108,7 +109,7 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 	String getLabel();
 
 	/**
-	 * Detailed explanation of parameter
+	 * Detailed explanation of parameter. Not supported at the moment.
 	 * 
 	 * @return the toolTip text
 	 */
@@ -118,7 +119,10 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 
 	IProblemPreference getParent();
 
-	public void setParent(IProblemPreference parent);
-
+	/**
+	 * Combined key of values from parents plus itself separated by dot
+	 * 
+	 * @return
+	 */
 	String getQualifiedKey();
 }

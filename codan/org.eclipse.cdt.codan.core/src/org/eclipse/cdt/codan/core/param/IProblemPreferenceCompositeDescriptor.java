@@ -28,7 +28,7 @@ public interface IProblemPreferenceCompositeDescriptor {
 	IProblemPreference getChildDescriptor(String key);
 
 	/**
-	 * Available if type is list or map. Returns array of children.
+	 * Available for composite types. Returns array of children.
 	 * 
 	 * @return
 	 */

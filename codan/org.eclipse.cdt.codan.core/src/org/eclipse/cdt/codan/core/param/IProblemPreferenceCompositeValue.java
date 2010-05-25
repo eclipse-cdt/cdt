@@ -17,9 +17,26 @@ package org.eclipse.cdt.codan.core.param;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemPreferenceCompositeValue {
+	/**
+	 * Returns value of the child element of a given key
+	 * 
+	 * @param key
+	 * @return
+	 */
 	Object getChildValue(String key);
 
+	/**
+	 * Sets the value of the child element of a given key
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	void setChildValue(String key, Object value);
 
+	/**
+	 * Removes child element matching the given key
+	 * 
+	 * @param key
+	 */
 	void removeChildValue(String key);
 }

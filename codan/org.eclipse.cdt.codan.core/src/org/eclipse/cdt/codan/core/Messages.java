@@ -25,6 +25,7 @@ public class Messages extends NLS {
 	public static String CodanApplication_Usage;
 	public static String CodanApplication_verbose_option;
 	public static String CodanBuilder_Code_Analysis_On;
+	public static String FileScopeProblemPreference_Label;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

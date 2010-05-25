@@ -29,36 +29,34 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 
 	/**
 	 * @param key
+	 *        - key to access this preference
 	 * @param label
+	 *        - label to be shown in UI
 	 */
 	public ListProblemPreference(String key, String label) {
 		setKey(key);
 		setLabel(label);
 	}
 
-	@Override
 	public PreferenceType getType() {
 		return PreferenceType.TYPE_LIST;
 	}
 
-	@Override
-	public void setType(PreferenceType type) {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
-	 * Set child descriptor (all elements have the same)
+	 * Set child descriptor (all elements have the same). Value and key
+	 * of the it would be ignored and reset.
 	 * 
-	 * @param i
-	 * @param info
+	 * @param desc
 	 * @return
 	 */
-	public IProblemPreference setChildDescriptor(IProblemPreference info) {
-		childDescriptor = info;
-		childDescriptor.setValue(null);
-		((AbstractProblemPreference) childDescriptor)
-				.setKey(COMMON_DESCRIPTOR_KEY);
-		return info;
+	public IProblemPreference setChildDescriptor(IProblemPreference desc) {
+		childDescriptor = desc;
+		if (desc != null) {
+			childDescriptor.setValue(null);
+			((AbstractProblemPreference) childDescriptor)
+					.setKey(COMMON_DESCRIPTOR_KEY);
+		}
+		return desc;
 	}
 
 	/**
@@ -76,10 +74,22 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		return getChildDescriptor(key);
 	}
 
+	/**
+	 * Returns descriptor of the child elements
+	 * 
+	 * @return
+	 */
 	public IProblemPreference getChildDescriptor() {
 		return childDescriptor;
 	}
 
+	/**
+	 * Returns cloned descriptor of the i'th child. Modifying return value would
+	 * not affect internal state of the list element.
+	 * 
+	 * @param i
+	 * @return
+	 */
 	public IProblemPreference getChildDescriptor(int i) {
 		Object value = list.get(i);
 		AbstractProblemPreference desc = (AbstractProblemPreference) childDescriptor
@@ -94,7 +104,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	 * If key is null or # return generic descriptor with null value.
 	 * 
 	 * @throws NumberFormatException
-	 *             if key is not number
+	 *         if key is not number
 	 */
 	public IProblemPreference getChildDescriptor(String key)
 			throws NumberFormatException {
@@ -113,6 +123,9 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		return getChildDescriptor(iv.intValue());
 	}
 
+	/**
+	 * Return array of clones values of child preferences.
+	 */
 	public IProblemPreference[] getChildDescriptors() {
 		IProblemPreference[] res = new IProblemPreference[list.size()];
 		for (int i = 0; i < res.length; i++) {
@@ -122,8 +135,12 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	public Object getChildValue(String key) {
-		IProblemPreference childInfo = getChildDescriptor(key);
-		return childInfo.getValue();
+		int index = Integer.parseInt(key);
+		return getChildValue(index);
+	}
+
+	public Object getChildValue(int index) {
+		return list.get(index);
 	}
 
 	public void setChildValue(String key, Object value) {
@@ -131,11 +148,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		setChildValue(i, value);
 	}
 
-	/**
-	 * @param i
-	 * @param value
-	 */
-	protected void setChildValue(int i, Object value) {
+	public void setChildValue(int i, Object value) {
 		if (value != null) {
 			while (i >= list.size()) {
 				list.add(null);
@@ -229,23 +242,44 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		}
 	}
 
+	/**
+	 * If info key is '#' resets common descritors to null, otherwise removes
+	 * value
+	 */
 	public void removeChildDescriptor(IProblemPreference info) {
-		throw new UnsupportedOperationException();
+		if (info.getKey().equals(COMMON_DESCRIPTOR_KEY))
+			setChildDescriptor(null);
+		else
+			removeChildValue(info.getKey());
 	}
 
+	/**
+	 * @return children size
+	 */
 	public int size() {
 		return list.size();
 	}
 
+	/**
+	 * Removes all values from the list
+	 */
 	public void clear() {
 		list.clear();
 	}
 
+	/**
+	 * Return array of values of children elements.
+	 */
 	@Override
 	public Object getValue() {
 		return getValues();
 	}
 
+	/**
+	 * Sets list value to values of array given as argument.
+	 * 
+	 * @param value - must be Object[]
+	 */
 	@Override
 	public void setValue(Object value) {
 		Object[] values = (Object[]) value;
@@ -264,6 +298,9 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		return childDescriptor + ":" + list.toString(); //$NON-NLS-1$
 	}
 
+	/**
+	 * Return array of values of children elements.
+	 */
 	public Object[] getValues() {
 		return list.toArray(new Object[list.size()]);
 	}

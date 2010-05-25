@@ -17,21 +17,16 @@ import java.io.StreamTokenizer;
 
 /**
  * Default implementation of problem preference. It keeps preference metadata
- * together with preference itself.
+ * together with preference value. Some implementations may separate them.
  * 
  */
 public abstract class AbstractProblemPreference implements IProblemPreference {
 	public static final String PARAM = "param"; //$NON-NLS-1$
-	protected String key;
-	protected String label;
-	protected String toolTip = null;
-	protected PreferenceType type;
-	protected String uiInfo;
+	private String key = PARAM;
+	private String label = ""; //$NON-NLS-1$
+	private String toolTip = null;
+	private String uiInfo;
 	private IProblemPreference parent;
-
-	public PreferenceType getType() {
-		return type;
-	}
 
 	public String getLabel() {
 		return label;
@@ -50,11 +45,13 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	}
 
 	public void setKey(String key) {
+		if (key == null)
+			throw new NullPointerException("key"); //$NON-NLS-1$
 		if (isValidIdentifier(key))
 			this.key = key;
 		else
 			throw new IllegalArgumentException(
-					"Key must have java identifier syntax or number, i.e no dots and other funky stuff"); //$NON-NLS-1$
+					"Key must have java identifier syntax or number, i.e no dots and other funky stuff: " + key); //$NON-NLS-1$
 	}
 
 	protected boolean isValidIdentifier(String id) {
@@ -79,12 +76,6 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	public void setToolTip(String tooltip) {
 		this.toolTip = tooltip;
-	}
-
-	public void setType(PreferenceType type) {
-		if (type == null)
-			throw new NullPointerException("Type cannot be null"); //$NON-NLS-1$
-		this.type = type;
 	}
 
 	public void setUiInfo(String uiinfo) {
@@ -136,7 +127,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	/**
 	 * @param parent
-	 *            the parent to set
+	 *        the parent to set
 	 */
 	public void setParent(IProblemPreference parent) {
 		this.parent = parent;

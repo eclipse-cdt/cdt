@@ -469,7 +469,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 					for (IProject proj : projects) {
 						// The array will contain the top level project.
 						// Ignore it since we handled it above
-						if (proj == project) {
+						if (proj.equals(project)) {
 							continue;
 						}
 						

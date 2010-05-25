@@ -535,9 +535,9 @@ public class BreakpointTests extends AbstractDebugTest {
 		 * Create a break point on a generic function with an valid condition
 		 **********************************************************************/
 		cond = cdiTarget.createCondition(0, "x<10");
-		location = cdiTarget.createFunctionLocation(null, "func1");
+		ICDILineLocation location2 = cdiTarget.createLineLocation("main.c", 9);
 		assertNotNull(location);
-		cdiTarget.setFunctionBreakpoint(0, location, cond, false);
+		cdiTarget.setLineBreakpoint(0, location2, cond, false);
 	}
 	
 	public void testCondBreakError() {
@@ -566,7 +566,7 @@ public class BreakpointTests extends AbstractDebugTest {
 		resumeCurrentTarget();
 		waitSuspend(currentTarget);
 	}
-	public void testHitCondWithError_xfail() throws CoreException, MIException, IOException, CDIException, InterruptedException {
+	public void testHitCondWithError() throws CoreException, MIException, IOException, CDIException, InterruptedException {
 		// this currently fails sometimes - after set bad breakpoint it does not hit any
 		// only reproducible when setting invalid condition breakpoint, reason unknown
 		setBreakOnMain();

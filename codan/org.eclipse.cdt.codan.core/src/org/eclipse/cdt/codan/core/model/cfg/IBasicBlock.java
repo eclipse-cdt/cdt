@@ -1,6 +1,5 @@
 package org.eclipse.cdt.codan.core.model.cfg;
 
-import java.util.Iterator;
 
 /**
  * 
@@ -12,9 +11,9 @@ import java.util.Iterator;
  * <li>{@link I}
  */
 public interface IBasicBlock {
-	Iterator<IBasicBlock> getIncomingIterator();
+	IBasicBlock[] getIncomingNodes();
 
-	Iterator<IBasicBlock> getOutgoingIterator();
+	IBasicBlock[] getOutgoingNodes();
 
 	int getIncomingSize();
 

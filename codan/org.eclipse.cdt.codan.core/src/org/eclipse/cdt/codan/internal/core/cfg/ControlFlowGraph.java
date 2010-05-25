@@ -79,10 +79,9 @@ public class ControlFlowGraph implements IControlFlowGraph {
 				+ ((AbstractBasicBlock) node).toStringData());
 		if (node instanceof IDecisionNode) {
 			// todo
-			Iterator<IBasicBlock> branches = ((IDecisionNode) node)
-					.getOutgoingIterator();
-			for (; branches.hasNext();) {
-				IBasicBlock brNode = branches.next();
+			IBasicBlock[] branches = ((IDecisionNode) node).getOutgoingNodes();
+			for (int i = 0; i < branches.length; i++) {
+				IBasicBlock brNode = branches[i];
 				System.out.println("{"); //$NON-NLS-1$
 				print(brNode);
 				System.out.println("}"); //$NON-NLS-1$
@@ -139,9 +138,9 @@ public class ControlFlowGraph implements IControlFlowGraph {
 		if (result.contains(start))
 			return;
 		result.add(start);
-		for (Iterator<IBasicBlock> outgoingIterator = start
-				.getOutgoingIterator(); outgoingIterator.hasNext();) {
-			IBasicBlock b = outgoingIterator.next();
+		IBasicBlock[] outgoingNodes = start.getOutgoingNodes();
+		for (int i = 0; i < outgoingNodes.length; i++) {
+			IBasicBlock b = outgoingNodes[i];
 			getNodes(b, result);
 		}
 	}

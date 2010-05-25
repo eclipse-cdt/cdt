@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
@@ -46,8 +45,8 @@ public class DecisionNode extends AbstractSingleIncomingNode implements
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#
 	 * getOutgoingIterator()
 	 */
-	public Iterator<IBasicBlock> getOutgoingIterator() {
-		return next.iterator();
+	public IBasicBlock[] getOutgoingNodes() {
+		return next.toArray(new IBasicBlock[next.size()]);
 	}
 
 	/*

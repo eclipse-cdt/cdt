@@ -1,7 +1,5 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
@@ -19,8 +17,8 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 		super();
 	}
 
-	public Iterator<IBasicBlock> getOutgoingIterator() {
-		return new OneElementIterator<IBasicBlock>(jump);
+	public IBasicBlock[] getOutgoingNodes() {
+		return new IBasicBlock[] { jump };
 	}
 
 	public int getOutgoingSize() {

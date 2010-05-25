@@ -11,7 +11,6 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
@@ -39,8 +38,8 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#
 	 * getIncomingIterator()
 	 */
-	public Iterator<IBasicBlock> getIncomingIterator() {
-		return incoming.iterator();
+	public IBasicBlock[] getIncomingNodes() {
+		return incoming.toArray(new IBasicBlock[incoming.size()]);
 	}
 
 	/*

@@ -14,6 +14,7 @@ package org.eclipse.cdt.codan.core.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.codan.core.cfg.ControlFlowGraphTest;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtilsTest;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreferenceTest;
 import org.eclipse.cdt.codan.core.param.ListProblemPreferenceTest;
@@ -41,6 +42,7 @@ public class CodanFastTestSuite extends TestSuite {
 		suite.addTestSuite(ListProblemPreferenceTest.class);
 		suite.addTestSuite(MapProblemPreferenceTest.class);
 		suite.addTestSuite(CxxAstUtilsTest.class);
+		suite.addTestSuite(ControlFlowGraphTest.class);
 		return suite;
 	}
 }

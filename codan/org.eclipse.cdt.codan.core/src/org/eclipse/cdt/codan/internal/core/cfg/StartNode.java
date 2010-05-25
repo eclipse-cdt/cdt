@@ -1,8 +1,5 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import java.util.Collections;
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
@@ -15,9 +12,8 @@ public class StartNode extends AbstractSingleOutgoingNode implements IStartNode 
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
-	public Iterator<IBasicBlock> getIncomingIterator() {
-		return Collections.EMPTY_LIST.iterator();
+	public IBasicBlock[] getIncomingNodes() {
+		return EMPTY_LIST;
 	}
 
 	public int getIncomingSize() {

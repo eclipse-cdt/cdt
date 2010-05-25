@@ -2,7 +2,6 @@ package org.eclipse.cdt.codan.ui.cfgview.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph;
@@ -122,13 +121,11 @@ public class ControlFlowGraphView extends ViewPart {
 				return blocks.toArray();
 			} else if (parent instanceof IDecisionNode) {
 				ArrayList blocks = new ArrayList();
-				Iterator<IBasicBlock> iter = ((IDecisionNode) parent)
-						.getOutgoingIterator();
-				if (iter.hasNext()) {
-					for (; iter.hasNext();) {
-						IBasicBlock arc = iter.next();
-						blocks.add(arc);
-					}
+				IBasicBlock[] outgoingNodes = ((IDecisionNode) parent)
+						.getOutgoingNodes();
+				for (int i = 0; i < outgoingNodes.length; i++) {
+					IBasicBlock arc= outgoingNodes[i];
+					blocks.add(arc);
 				}
 				blocks.add(((IDecisionNode) parent).getMergeNode());
 				return blocks.toArray();

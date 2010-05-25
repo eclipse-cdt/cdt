@@ -1,8 +1,5 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import java.util.Collections;
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
@@ -18,9 +15,8 @@ public class ExitNode extends AbstractSingleIncomingNode implements IExitNode {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
-	public Iterator<IBasicBlock> getOutgoingIterator() {
-		return Collections.EMPTY_LIST.iterator();
+	public IBasicBlock[] getOutgoingNodes() {
+		return EMPTY_LIST;
 	}
 
 	public int getOutgoingSize() {

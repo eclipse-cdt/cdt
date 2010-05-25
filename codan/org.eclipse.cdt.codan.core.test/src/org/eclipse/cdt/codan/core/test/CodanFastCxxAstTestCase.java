@@ -48,7 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 @SuppressWarnings("restriction")
 public abstract class CodanFastCxxAstTestCase extends TestCase {
-	IASTTranslationUnit tu;
+	protected IASTTranslationUnit tu;
 
 	protected String getAboveComment() {
 		return getContents(1)[0].toString();
@@ -118,6 +118,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 				assertEquals(problems.length, 0);
 			}
 		}
+		this.tu = tu;
 		return tu;
 	}
 

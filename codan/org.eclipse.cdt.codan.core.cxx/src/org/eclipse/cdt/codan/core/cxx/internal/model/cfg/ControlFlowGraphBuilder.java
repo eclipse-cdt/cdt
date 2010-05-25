@@ -161,6 +161,8 @@ public class ControlFlowGraphBuilder {
 			CxxPlainNode node = factory.createPlainNode(body);
 			addOutgoing(prev, node);
 			return node;
+		} else if (body == null) {
+			// skip - sometimes body is empty such as no else
 		} else {
 			System.err.println("unknown statement for cfg: " + body); //$NON-NLS-1$
 		}
@@ -172,16 +174,24 @@ public class ControlFlowGraphBuilder {
 	 * @return
 	 */
 	private boolean isThrowStatement(IASTNode body) {
-		if (!(body instanceof IASTExpressionStatement)) return false;
-		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
-		if (!(expression instanceof IASTUnaryExpression)) return false;
+		if (!(body instanceof IASTExpressionStatement))
+			return false;
+		IASTExpression expression = ((IASTExpressionStatement) body)
+				.getExpression();
+		if (!(expression instanceof IASTUnaryExpression))
+			return false;
 		return ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_throw;
 	}
+
 	private boolean isExitStatement(IASTNode body) {
-		if (!(body instanceof IASTExpressionStatement)) return false;
-		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
-		if (!(expression instanceof IASTFunctionCallExpression)) return false;
-		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
+		if (!(body instanceof IASTExpressionStatement))
+			return false;
+		IASTExpression expression = ((IASTExpressionStatement) body)
+				.getExpression();
+		if (!(expression instanceof IASTFunctionCallExpression))
+			return false;
+		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression)
+				.getFunctionNameExpression();
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
 	}
 

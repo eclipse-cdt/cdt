@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder;
+import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
@@ -23,47 +24,20 @@ import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 import org.eclipse.cdt.codan.core.model.cfg.IPlainNode;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
-import org.eclipse.cdt.codan.core.test.CodanTestCase;
+import org.eclipse.cdt.codan.core.test.CodanFastCxxAstTestCase;
 import org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock;
 import org.eclipse.cdt.codan.internal.core.cfg.ControlFlowGraph;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
  * TODO: add description
  */
-public class ControlFlowGraphTest extends CodanTestCase {
+public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 	ControlFlowGraph graph;
-
-	void processFile(IFile file) throws CoreException, InterruptedException {
-		// create translation unit and access index
-		ICElement model = CoreModel.getDefault().create(file);
-		if (!(model instanceof ITranslationUnit))
-			return; // not a C/C++ file
-		ITranslationUnit tu = (ITranslationUnit) model;
-		IIndex index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
-		// lock the index for read access
-		index.acquireReadLock();
-		try {
-			// create index based ast
-			IASTTranslationUnit ast = tu.getAST(index,
-					ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
-			// traverse the ast using the visitor pattern.
-			processAst(ast);
-		} finally {
-			index.releaseReadLock();
-		}
-	}
 
 	/**
 	 * @param ast
@@ -74,6 +48,7 @@ public class ControlFlowGraphTest extends CodanTestCase {
 				shouldVisitDeclarations = true;
 			}
 
+			@Override
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof IASTFunctionDefinition) {
 					graph = new ControlFlowGraphBuilder()
@@ -84,17 +59,6 @@ public class ControlFlowGraphTest extends CodanTestCase {
 			}
 		};
 		ast.accept(visitor);
-	}
-
-	void buildCfg() {
-		try {
-			IResource el = cproject.getProject().findMember(
-					currentFile.getName());
-			processFile((IFile) el);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
 	}
 
 	/**
@@ -115,16 +79,16 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	 * @param node
 	 */
 	private void checkNode(IBasicBlock node) {
-		for (Iterator<IBasicBlock> iterator = node.getIncomingIterator(); iterator
-				.hasNext();) {
-			IBasicBlock b = iterator.next();
-			if (!contains(node, b.getOutgoingIterator()))
+		IBasicBlock[] incomingNodes = node.getIncomingNodes();
+		for (int i = 0; i < incomingNodes.length; i++) {
+			IBasicBlock b = incomingNodes[i];
+			if (!contains(node, b.getOutgoingNodes()))
 				fail("Block " + node + " inconsitent prev/next " + b);
 		}
-		for (Iterator<IBasicBlock> iterator = node.getOutgoingIterator(); iterator
-				.hasNext();) {
-			IBasicBlock b = iterator.next();
-			if (!contains(node, b.getIncomingIterator()))
+		IBasicBlock[] outgoingNodes = node.getOutgoingNodes();
+		for (int i = 0; i < outgoingNodes.length; i++) {
+			IBasicBlock b = outgoingNodes[i];
+			if (!contains(node, b.getIncomingNodes()))
 				fail("Block " + node + " inconsitent next/prev " + b);
 		}
 		if (node instanceof IDecisionNode) {
@@ -139,9 +103,9 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	 * @param outgoingIterator
 	 * @return
 	 */
-	private boolean contains(IBasicBlock node, Iterator<IBasicBlock> iterator) {
-		for (; iterator.hasNext();) {
-			IBasicBlock b = iterator.next();
+	private boolean contains(IBasicBlock node, IBasicBlock[] blocks) {
+		for (int i = 0; i < blocks.length; i++) {
+			IBasicBlock b = blocks[i];
 			if (b.equals(node))
 				return true;
 		}
@@ -151,16 +115,26 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	protected void buildAndCheck(String code) {
 		buildAndCheck(code, false);
 	}
+
 	protected void buildAndCheck_cpp(String code) {
 		buildAndCheck(code, true);
 	}
+
 	/**
 	 * @param file
 	 */
 	protected void buildAndCheck(String code, boolean cpp) {
-		loadcode(code, cpp);
-		buildCfg();
+		buildCfg(code, cpp);
 		checkCfg();
+	}
+
+	/**
+	 * @param code
+	 * @param cpp
+	 */
+	private void buildCfg(String code, boolean cpp) {
+		parse(code, cpp ? ParserLanguage.CPP : ParserLanguage.C, true);
+		processAst(tu);
 	}
 
 	/**
@@ -178,9 +152,10 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	 * @return
 	 */
 	private IBasicBlock branchEnd(IDecisionNode des, String label) {
-		for (Iterator<IBasicBlock> iterator = des.getOutgoingIterator(); iterator
-				.hasNext();) {
-			IBranchNode bn = (IBranchNode) iterator.next();
+		IBasicBlock[] outgoingNodes = des.getOutgoingNodes();
+		for (int i = 0; i < outgoingNodes.length; i++) {
+			IBasicBlock iBasicBlock = outgoingNodes[i];
+			IBranchNode bn = (IBranchNode) iBasicBlock;
 			if (label.equals(bn.getLabel()))
 				return bn.getOutgoing();
 		}
@@ -274,6 +249,17 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	}
 
 	//	 main() {
+	//	      return;
+	//	      a++;
+	//	 }
+	public void test_dead() {
+		buildCfg(getAboveComment(), false);
+		IStartNode startNode = graph.getStartNode();
+		IExitNode ret = (IExitNode) startNode.getOutgoing();
+		assertEquals(1, graph.getUnconnectedNodeSize());
+	}
+
+	//	 main() {
 	//	   int a=10;
 	//	   if (a--) {
 	//	      return;
@@ -281,7 +267,7 @@ public class ControlFlowGraphTest extends CodanTestCase {
 	//	   }
 	//	 }
 	public void test_if_dead() {
-		buildAndCheck(getAboveComment());
+		buildCfg(getAboveComment(), false);
 		IStartNode startNode = graph.getStartNode();
 		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
 		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
@@ -336,5 +322,15 @@ public class ControlFlowGraphTest extends CodanTestCase {
 		Iterator<IExitNode> exitNodeIterator = graph.getExitNodeIterator();
 		IExitNode exit = exitNodeIterator.next();
 		assertEquals("exit(0);", data(exit));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.test.CodanFastCxxAstTestCase#getChecker()
+	 */
+	@Override
+	public IChecker getChecker() {
+		return null;
 	}
 }

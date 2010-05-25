@@ -1,7 +1,5 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleIncoming;
 
@@ -17,8 +15,8 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock
 		super();
 	}
 
-	public Iterator<IBasicBlock> getIncomingIterator() {
-		return new OneElementIterator<IBasicBlock>(prev);
+	public IBasicBlock[] getIncomingNodes() {
+		return new IBasicBlock[] { prev };
 	}
 
 	public int getIncomingSize() {

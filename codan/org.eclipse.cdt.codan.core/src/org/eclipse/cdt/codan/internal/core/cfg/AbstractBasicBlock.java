@@ -6,17 +6,24 @@ import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 
 public abstract class AbstractBasicBlock implements IBasicBlock, ICfgData {
+	public final static IBasicBlock[] EMPTY_LIST = new IBasicBlock[0];
 	private Object data;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.codan.internal.core.cfg.ICfgData#getData()
 	 */
 	public Object getData() {
 		return data;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.codan.internal.core.cfg.ICfgData#setData(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.cdt.codan.internal.core.cfg.ICfgData#setData(java.lang.Object
+	 * )
 	 */
 	public void setData(Object data) {
 		this.data = data;

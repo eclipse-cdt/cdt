@@ -1,7 +1,5 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 
@@ -17,8 +15,8 @@ public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock
 		super();
 	}
 
-	public Iterator<IBasicBlock> getOutgoingIterator() {
-		return new OneElementIterator<IBasicBlock>(next);
+	public IBasicBlock[] getOutgoingNodes() {
+		return new IBasicBlock[] { next };
 	}
 
 	public int getOutgoingSize() {

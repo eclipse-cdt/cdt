@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.utils.CygPath;
-import org.eclipse.cdt.utils.FileSystemUtilityManager;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -458,10 +458,7 @@ outer:
 		URI uri;
 		if (!path.isAbsolute()) {
 			URI workingDirectoryURI = getWorkingDirectoryURI();
-			String workingDirPath = FileSystemUtilityManager.getDefault().getPathFromURI(workingDirectoryURI);
-			IPath newPath = new Path(workingDirPath).append(path);
-			uri = FileSystemUtilityManager.getDefault().replacePath(workingDirectoryURI, newPath.toString());
-			//uri = URIUtil.append(getWorkingDirectoryURI(), path.toString());
+			uri = EFSExtensionManager.getDefault().append(getWorkingDirectoryURI(), path.toString());
 		}
 		else {
 			uri = toURI(path);
@@ -712,7 +709,7 @@ outer:
 			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
 			    uriString = IPath.SEPARATOR + uriString;
 			
-			return FileSystemUtilityManager.getDefault().replacePath(baseURI, uriString);
+			return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
 	}
 
 	/**

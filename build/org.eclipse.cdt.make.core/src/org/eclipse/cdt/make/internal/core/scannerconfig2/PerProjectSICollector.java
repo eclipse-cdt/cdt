@@ -45,7 +45,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
-import org.eclipse.cdt.utils.FileSystemUtilityManager;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -290,7 +290,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 						URI projectLocationURI = discPathInfo.getProject().getLocationURI();
 						
 						// use the project's location... create a URI that uses the same provider but that points to the include path
-						URI includeURI = FileSystemUtilityManager.getDefault().replacePath(projectLocationURI, include);
+						URI includeURI = EFSExtensionManager.getDefault().createNewURIFromPath(projectLocationURI, include);
 						
 						// ask EFS if the path exists
 						try {

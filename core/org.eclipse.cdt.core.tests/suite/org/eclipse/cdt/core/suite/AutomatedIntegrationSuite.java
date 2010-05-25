@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorOldTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManagerTests;
+import org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionTests;
 import org.eclipse.cdt.core.internal.errorparsers.tests.ErrorParserTests;
 import org.eclipse.cdt.core.internal.tests.PositionTrackerTests;
 import org.eclipse.cdt.core.internal.tests.ResourceLookupTests;
@@ -70,6 +71,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
         suite.addTest(AllLanguageTests.suite());
         suite.addTest(RewriteTests.suite());
 		suite.addTest(CommandLineUtilTest.suite());
+		suite.addTest(EFSExtensionTests.suite());
 				
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());

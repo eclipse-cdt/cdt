@@ -53,7 +53,7 @@ import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
-import org.eclipse.cdt.utils.FileSystemUtilityManager;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -858,7 +858,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			return path;
 		}
 		URI uri= ifl.getURI();
-		return new Path(FileSystemUtilityManager.getDefault().getPathFromURI(uri));
+		return new Path(EFSExtensionManager.getDefault().getPathFromURI(uri));
 	}
 
 	private void swallowError(IPath file, Throwable e) throws CoreException {

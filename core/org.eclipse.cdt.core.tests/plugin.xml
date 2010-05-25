@@ -176,4 +176,11 @@
          </pattern>
       </errorparser>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.EFSExtensionProvider">
+      <EFSExtensionProvider
+            class="org.eclipse.cdt.core.internal.efsextension.tests.EFSExtensionProviderTestsProvider"
+            scheme="EFSExtensionProviderTestsScheme">
+      </EFSExtensionProvider>
+   </extension>
 </plugin>

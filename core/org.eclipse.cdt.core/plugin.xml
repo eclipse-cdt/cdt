@@ -628,7 +628,7 @@
    <extension-point id="templateProcessTypes" name="%templateProcessTypes.name" schema="schema/templateProcessTypes.exsd"/>
    <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>
    <extension-point id="ScannerInfoProvider2" name="%scannerInfoProvider2.name" schema="schema/ScannerInfoProvider2.exsd"/>
-   <extension-point id="FileSystemUtility" name="File System Utility" schema="schema/FileSystemUtility.exsd"/>
+   <extension-point id="EFSExtensionProvider" name="EFSExtensionProvider" schema="schema/EFSExtensionProvider.exsd"/>
 
    <extension
          point="org.eclipse.cdt.core.templateProcessTypes">

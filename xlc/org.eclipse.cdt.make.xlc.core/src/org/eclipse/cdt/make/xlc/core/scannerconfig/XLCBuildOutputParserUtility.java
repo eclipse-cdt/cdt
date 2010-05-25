@@ -29,7 +29,7 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.KVStringPair;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SCDOptionsEnum;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.xlc.core.scannerconfig.util.XLCCommandDSC;
-import org.eclipse.cdt.utils.FileSystemUtilityManager;
+import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -614,7 +614,7 @@ public class XLCBuildOutputParserUtility {
 			// to the given path
 			URI projectURI = project.getLocationURI();
 
-			URI newURI = FileSystemUtilityManager.getDefault().replacePath(projectURI, path.toString());
+			URI newURI = EFSExtensionManager.getDefault().createNewURIFromPath(projectURI, path.toString());
 
 			IFile[] files = root.findFilesForLocationURI(newURI);
 

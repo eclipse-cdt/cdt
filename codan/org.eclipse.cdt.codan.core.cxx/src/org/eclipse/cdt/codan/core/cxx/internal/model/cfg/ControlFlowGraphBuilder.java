@@ -48,6 +48,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 
 /**
  * This class creates C control flow graph
@@ -163,10 +165,39 @@ public class ControlFlowGraphBuilder {
 			return node;
 		} else if (body == null) {
 			// skip - sometimes body is empty such as no else
+		} else if (body instanceof ICPPASTTryBlockStatement) {
+			return createTry(prev, (ICPPASTTryBlockStatement) body);
 		} else {
 			System.err.println("unknown statement for cfg: " + body); //$NON-NLS-1$
 		}
 		return prev;
+	}
+
+	/**
+	 * @param prev
+	 * @param body
+	 * @return
+	 */
+	private IBasicBlock createTry(IBasicBlock prev,
+			ICPPASTTryBlockStatement body) {
+		DecisionNode ifNode = factory.createDecisionNode(body);
+		addOutgoing(prev, ifNode);
+		IConnectorNode mergeNode = factory.createConnectorNode();
+		ifNode.setMergeNode(mergeNode);
+		IBranchNode thenNode = factory.createBranchNode(IBranchNode.THEN);
+		addOutgoing(ifNode, thenNode);
+		IBasicBlock then = createSubGraph(thenNode, body.getTryBody());
+		addJump(then, mergeNode);
+		ICPPASTCatchHandler[] catchHandlers = body.getCatchHandlers();
+		for (int i = 0; i < catchHandlers.length; i++) {
+			ICPPASTCatchHandler handler = catchHandlers[i];
+			IBranchNode handlerNode = factory
+					.createBranchNode(handler.getDeclaration());
+			addOutgoing(ifNode, handlerNode);
+			IBasicBlock els = createSubGraph(handlerNode, handler.getCatchBody());
+			addJump(els, mergeNode);
+		}
+		return mergeNode;
 	}
 
 	/**

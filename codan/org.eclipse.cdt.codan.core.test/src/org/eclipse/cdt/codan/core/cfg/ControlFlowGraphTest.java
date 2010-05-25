@@ -333,4 +333,31 @@ public class ControlFlowGraphTest extends CodanFastCxxAstTestCase {
 	public IChecker getChecker() {
 		return null;
 	}
+
+	//	 int foo() {
+	// void * p;
+	//	 	try {
+	//          *p = 1;
+	//      } catch (int e) {
+	//      };
+	//	 }
+	public void test_try() {
+		buildAndCheck_cpp(getAboveComment());
+		IStartNode startNode = graph.getStartNode();
+		IPlainNode decl = (IPlainNode) startNode.getOutgoing();
+		IDecisionNode des = (IDecisionNode) decl.getOutgoing();
+		//assertEquals("", data(des));
+		IPlainNode bThen = (IPlainNode) branchEnd(des, IBranchNode.THEN);
+		assertEquals("*p = 1;", data(bThen));
+		IBasicBlock bElse = null;
+		IBasicBlock[] outgoingNodes = des.getOutgoingNodes();
+		for (int i = 1; i < outgoingNodes.length; i++) {
+			IBasicBlock iBasicBlock = outgoingNodes[i];
+			IBranchNode bn = (IBranchNode) iBasicBlock;
+			bElse = bn;
+		}
+		IBasicBlock m2 = jumpEnd(bThen);
+		IBasicBlock m1 = jumpEnd(bElse);
+		assertSame(m1, m2);
+	}
 }

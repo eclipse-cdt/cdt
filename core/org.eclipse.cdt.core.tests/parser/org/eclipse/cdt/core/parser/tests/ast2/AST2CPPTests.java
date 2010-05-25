@@ -8554,4 +8554,12 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}		
+	
+	//	void test() {
+	//	    void *libHandle (0);
+	//	}
+	public void testCTorInitializerForVoidPtr_314113() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}		
 }

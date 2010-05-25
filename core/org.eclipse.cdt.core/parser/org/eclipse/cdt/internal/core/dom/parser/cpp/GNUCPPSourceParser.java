@@ -2795,7 +2795,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			if (CPPVisitor.doesNotSpecifyType(declspec)) {
 				return false;
 			}
-			if (sspec.getType() == IASTSimpleDeclSpecifier.t_void) {
+			if (sspec.getType() == IASTSimpleDeclSpecifier.t_void && dtor != null &&
+					dtor.getPointerOperators().length == 0 && dtor.getNestedDeclarator() == null) {
 				return false;
 			}
 		}		

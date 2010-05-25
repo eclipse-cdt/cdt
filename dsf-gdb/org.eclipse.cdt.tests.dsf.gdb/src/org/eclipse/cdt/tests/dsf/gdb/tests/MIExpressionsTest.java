@@ -2317,6 +2317,7 @@ public class MIExpressionsTest extends BaseTestCase {
      * to make sure that the parent is re-created once and only once.
      * We had a bug where we would enter an infinite loop in this case.
      */
+    @Test
     public void testConcurrentUpdateOutOfScopeChildThenParent() throws Throwable {
         SyncUtil.runToLocation("testConcurrentUpdateOutOfScopeChildThenParent");
         MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);

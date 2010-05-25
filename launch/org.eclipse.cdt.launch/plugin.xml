@@ -234,6 +234,18 @@
             plugin="org.eclipse.cdt.launch"
             class="org.eclipse.cdt.launch.internal.ui.CoreFilePrompter"
             id="org.eclipse.cdt.launch.statusHandler.coreFilePrompter">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.cdt.launch.internal.ui.BuildErrPrompter"
+            code="1002"
+            id="org.eclipse.cdt.launch.statusHandler.buildErrPrompter"
+            plugin="org.eclipse.cdt.launch">
+      </statusHandler>  
+      <statusHandler
+            class="org.eclipse.cdt.launch.internal.ui.BuildErrPrompter"
+            code="1003"
+            id="org.eclipse.cdt.launch.statusHandler.buildErrPrompter"
+            plugin="org.eclipse.cdt.launch">
       </statusHandler>  
 	</extension>
 

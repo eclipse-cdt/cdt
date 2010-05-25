@@ -101,11 +101,14 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	}
 
 	/**
-	 * Even though we override the base behavior and only build the single
-	 * project referenced in the launch configuration (and not any of the
-	 * projects it references), we still want to implement this as the base will
-	 * also use the list to determine what files need be saved, and there it's
-	 * not much of a burden to include any referenced projects
+	 * Even though this launcher overrides the base behavior and only builds the
+	 * single project referenced in the launch configuration (and not any of the
+	 * projects it references), we still want to implement this method, as the
+	 * base will also call it to determine what files need be saved. We want to
+	 * respond with all referenced projects since building the single top level
+	 * project will, under the covers, cause its CDT-referenced projects to be
+	 * built as well (a function of CDT build). So, any files in such projects
+	 * should be saved before launch.
 	 * 
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String)

@@ -14,15 +14,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTEnumerator;
@@ -92,8 +91,7 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
 	public IType getType() {
 	    IASTEnumerator etor = (IASTEnumerator) enumName.getParent();
 		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) etor.getParent();
-		IEnumeration enumeration = (IEnumeration) enumSpec.getName().resolveBinding();
-		return enumeration;
+		return (IType) enumSpec.getName().resolveBinding();
 	}
 
     /* (non-Javadoc)

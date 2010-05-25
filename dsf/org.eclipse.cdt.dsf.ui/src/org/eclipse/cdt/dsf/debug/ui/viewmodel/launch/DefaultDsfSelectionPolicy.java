@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -99,6 +102,8 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 								IRunControl runControl= servicesTracker.getService(IRunControl.class);
 								if (runControl != null) {
 									rm.setData(runControl.isSuspended(execContext));
+								} else {
+								    rm.setData(false);
 								}
 							} finally {
 								servicesTracker.dispose();
@@ -154,11 +159,85 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 				IExecutionDMContext currExecContext= DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
 				if (currExecContext != null) {
 					IExecutionDMContext candExecContext= DMContexts.getAncestorOfType(cand, IExecutionDMContext.class);
-					return currExecContext.equals(candExecContext) || !isSticky(existing);
+					return currExecContext.equals(candExecContext) || 
+					    !isSticky(existing) || 
+					    frameOverrides((IFrameDMContext)curr, (IFrameDMContext)cand);
 				}
 			}
 		}
 		return !isSticky(existing);
+	}
+	
+	/**
+	 * Last test for whether a stack frame overrides another stack frame.
+	 * If two stack frames are from the same execution container (process) and 
+	 * the entire process has stopped (as in all-stop run control), and the 
+	 * current frame's thread was stopped due to the container stopping, then
+	 * the new frame selection should override the current one.  This is because
+	 * the new thread is most likely a the thread that triggered the container 
+	 * to stop.   
+	 * @param curr Currently selected stack frame.
+	 * @param cand Candidate stack frame to be selected.
+	 * @return <code>true</code> if the new frame should override current selection. 
+	 */
+	private boolean frameOverrides(final IFrameDMContext curr, final IFrameDMContext cand) {
+	    // We're assuming that frames are from different execution contexts. 
+	    
+	    // Check if they are from the same container context:
+        final IContainerDMContext currContContext= DMContexts.getAncestorOfType(curr, IContainerDMContext.class);
+        IContainerDMContext candContContext= DMContexts.getAncestorOfType(cand, IContainerDMContext.class);
+        if (currContContext == null || !currContContext.equals(candContContext)) {
+            // If from different containers, frames should not override each other.
+            return false;
+        }
+        
+        Query<Boolean> query = new Query<Boolean>() {
+            @Override
+            protected void execute(final DataRequestMonitor<Boolean> rm) {
+                DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), curr.getSessionId());
+
+                // Check if container is not suspended.
+                IRunControl runControl= servicesTracker.getService(IRunControl.class);
+                if (runControl != null && runControl.isSuspended(currContContext)) {
+                    IExecutionDMContext execDmc = DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
+                    // If container is suspended, check whether the current thread was stopped due 
+                    // to container suspended event.
+                    runControl.getExecutionData(
+                        execDmc, 
+                        new DataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), rm) {
+                            @Override
+                            protected void handleSuccess() {
+                                rm.setData( getData().getStateChangeReason() == IRunControl.StateChangeReason.CONTAINER );
+                                rm.done();
+                            };
+                        });
+                } else {
+                    // If container is not suspended it's running, then do not override the selection.
+                    rm.setData(false);
+                    rm.done();
+                } 
+                // In either case, we won't need the services tracker anymore.
+                servicesTracker.dispose();
+            }
+        };
+        
+        DsfSession session = DsfSession.getSession(curr.getSessionId());
+        if (session != null) {
+            if (session.getExecutor().isInExecutorThread()) {
+                query.run();
+            } else {
+                session.getExecutor().execute(query);
+            }
+            try {
+                Boolean result = query.get();
+                return result != null && result.booleanValue();
+            } catch (InterruptedException exc) {
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException exc) {
+                DsfUIPlugin.log(exc);
+            }
+        }
+        return false;
 	}
 
 	/*

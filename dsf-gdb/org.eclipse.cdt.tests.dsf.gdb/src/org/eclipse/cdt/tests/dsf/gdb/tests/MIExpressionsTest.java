@@ -2317,7 +2317,6 @@ public class MIExpressionsTest extends BaseTestCase {
      * to make sure that the parent is re-created once and only once.
      * We had a bug where we would enter an infinite loop in this case.
      */
-    @Test(timeout=5000)
     public void testConcurrentUpdateOutOfScopeChildThenParent() throws Throwable {
         SyncUtil.runToLocation("testConcurrentUpdateOutOfScopeChildThenParent");
         MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
@@ -2368,7 +2367,7 @@ public class MIExpressionsTest extends BaseTestCase {
         	}
         });
         
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
 
@@ -2400,7 +2399,7 @@ public class MIExpressionsTest extends BaseTestCase {
         	}
         });
         
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
 
@@ -2448,7 +2447,7 @@ public class MIExpressionsTest extends BaseTestCase {
         	}
         });
         
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
         

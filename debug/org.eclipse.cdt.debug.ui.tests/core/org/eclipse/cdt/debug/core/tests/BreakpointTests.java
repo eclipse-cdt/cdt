@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.ListEditor;
 
 /**
  * @author Peter Graves
@@ -396,22 +397,24 @@ public class BreakpointTests extends AbstractDebugTest {
 		 * Make sure deleteBreakpoints works when given 1 breakpoint to delete
 		 **********************************************************************/
 		savedbreakpoints = new ICDIBreakpoint[1];
-		for (int x = 0; x < 10; x++) {
-			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + 1);
+		int lineStart = 6;
+		int maxBreakpoints = 5;
+		for (int x = 0; x < maxBreakpoints; x++) {
+			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + lineStart);
 			ICDILocationBreakpoint bp = (ICDILocationBreakpoint) cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
 			assertNotNull(bp);
-			assertEquals(x + 1, (bp.getLocator().getLineNumber()));
+			assertEquals(x + lineStart, (bp.getLocator().getLineNumber()));
 			savedbreakpoints[0] = bp;
 		}
 		cdiTarget.deleteBreakpoints(savedbreakpoints);
 		pause();
-		/* We should now have 9 breakpoints left. */
+		/* We should now have N-1 breakpoints left. */
 		breakpoints = cdiTarget.getBreakpoints();
-		assertTrue(breakpoints.length == 9);
-		/* Make sure we have the correct 9 breakpoints left, we deleted one at line 10 */
+		assertTrue(breakpoints.length == maxBreakpoints-1);
+		/* Make sure we have the correct N-1 breakpoints left, we deleted one at line N */
 		for (int x = 0; x < breakpoints.length; x++) {
 			curbreak = (ICDILocationBreakpoint) breakpoints[x];
-			assertNotEquals(10, curbreak.getLocator().getLineNumber());
+			assertNotEquals(lineStart + x, curbreak.getLocator().getLineNumber());
 		}
 		cdiTarget.deleteAllBreakpoints();
 		pause();
@@ -421,22 +424,22 @@ public class BreakpointTests extends AbstractDebugTest {
 		 * Make sure deleteBreakpoints works when given more then 1 but less
 		 * then all breakpoints to delete
 		 **********************************************************************/
-		savedbreakpoints = new ICDIBreakpoint[4];
-		for (int x = 0; x < 10; x++) {
-			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + 1);
-			savedbreakpoints[x % 4] = cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
-			assertNotNull(savedbreakpoints[x % 4]);
+		savedbreakpoints = new ICDIBreakpoint[2];
+		for (int x = 0; x < maxBreakpoints; x++) {
+			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + lineStart);
+			savedbreakpoints[x % 2] = cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
+			assertNotNull(savedbreakpoints[x % 2]);
 		}
 		cdiTarget.deleteBreakpoints(savedbreakpoints);
 		pause();
 
 		/* We should now have 6 breakpoints left. */
 		breakpoints = cdiTarget.getBreakpoints();
-		assertTrue(breakpoints.length == 6);
+		assertTrue(breakpoints.length == maxBreakpoints/2);
 		/* Make sure we have the correct 6 breakpoints left */
 		for (int x = 0; x < breakpoints.length; x++) {
 			curbreak = (ICDILocationBreakpoint) breakpoints[x];
-			assertEquals(x+1, curbreak.getLocator().getLineNumber());
+			assertEquals(x+lineStart, curbreak.getLocator().getLineNumber());
 		}
 		cdiTarget.deleteAllBreakpoints();
 		pause();
@@ -445,9 +448,9 @@ public class BreakpointTests extends AbstractDebugTest {
 		/***********************************************************************
 		 * Make sure deleteBreakpoints works when given all the breakpoints
 		 **********************************************************************/
-		savedbreakpoints = new ICDIBreakpoint[10];
-		for (int x = 0; x < 10; x++) {
-			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + 1);
+		savedbreakpoints = new ICDIBreakpoint[maxBreakpoints];
+		for (int x = 0; x < maxBreakpoints; x++) {
+			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + lineStart);
 			savedbreakpoints[x] = cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
 			assertNotNull(savedbreakpoints[x]);
 		}
@@ -461,8 +464,8 @@ public class BreakpointTests extends AbstractDebugTest {
 		 * Make sure deleteAllBreakpoints works
 		 **********************************************************************/
 
-		for (int x = 0; x < 10; x++) {
-			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + 1);
+		for (int x = 0; x < maxBreakpoints; x++) {
+			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + lineStart);
 			curbreak = cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
 			assertNotNull(curbreak);
 		}

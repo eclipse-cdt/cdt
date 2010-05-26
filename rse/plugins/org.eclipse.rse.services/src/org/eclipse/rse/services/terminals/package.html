@@ -3,7 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="Martin Oberhuber (Wind River)">
-   <meta name="Copyright" content="Copyright (c) 2008 Wind River Systems, Inc. and others.">
+   <meta name="Copyright" content="Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.">
    <meta name="License" content="Made available under the terms of the Eclipse Public License v1.0.">
    <title>Package-level Javadoc</title>
 </head>
@@ -34,7 +34,7 @@ pattern:
     ensures that future evolving of the ITerminalShell interface
     can be done without breaking binary compatibility with extenders implementing it.</li>
 <li><code><a href="BaseShellDecorator.html">BaseShellDecorator</a></code> and
-    <code><a href="">TerminalShellDecorator</a></code> abstract base 
+    <code><a href="TerminalShellDecorator">TerminalShellDecorator</a></code> abstract base 
     classes should be used when clients want to add functionality by decorating
     an existing IBaseShell or ITerminalShell object they have. Again, extending 
     these not only saves the extender typing default delegation methods, but also
@@ -43,7 +43,7 @@ pattern:
     is the RSE Service Interface, and currently only 
     provides one factory method <code>launchTerminal()</code> for creating
     a new Terminal Connection.
-    <code><a href="">AbstractTerminalService</a></code> must be used as base
+    <code><a href="AbstractTerminalService">AbstractTerminalService</a></code> must be used as base
     class by extenders who wish to implement the ITerminalService, in order to ensure
     binary compatibility in case the interface evolves - even though
     the AbstractTerminalService is currently empty.</li>  
@@ -51,8 +51,7 @@ pattern:
 The classes and interfaces in this package are designed to have only minimal 
 dependency into Eclipse core APIs, such that Services can eventually be re-used in
 environments outside Eclipse. Especially 
-<code><a href="IBaseShell.html">IBaseShell</a></code>, along with
-<code><a href="ProcessBaseShell.html">ProcessBaseShell</a></code> and
+<code><a href="IBaseShell.html">IBaseShell</a></code> and
 <code><a href="BaseShellDecorator.html">BaseShellDecorator</a></code> are usable in
 any environment, provided that mock objects are provided for Eclipse
 IAdaptable and PlatformObject.

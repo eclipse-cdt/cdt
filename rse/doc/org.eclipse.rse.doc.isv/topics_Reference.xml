@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?><!--
-     Copyright (c) 2005, 2008 IBM Corporation and others.
+     Copyright (c) 2005, 2010 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -43,7 +43,6 @@
 			<topic label="org.eclipse.rse.core" href="reference/api/org/eclipse/rse/core/package-summary.html" />
 			<topic label="org.eclipse.rse.core.comm" href="reference/api/org/eclipse/rse/core/comm/package-summary.html" />
 			<topic label="org.eclipse.rse.core.events" href="reference/api/org/eclipse/rse/core/events/package-summary.html" />
-			<topic label="org.eclipse.rse.core.servicesubsystem" href="reference/api/org/eclipse/rse/core/servicesubsystem/package-summary.html" />
 			<topic label="org.eclipse.rse.core.subsystems" href="reference/api/org/eclipse/rse/core/subsystems/package-summary.html" />
 	    </topic>
 	    <topic label="Logging">

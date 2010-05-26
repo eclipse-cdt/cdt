@@ -64,7 +64,6 @@ org.eclipse.rse.core.events
 org.eclipse.rse.core.filters
 org.eclipse.rse.core.model
 org.eclipse.rse.core.references
-org.eclipse.rse.core.servicesubsystem
 org.eclipse.rse.core.subsystems
 org.eclipse.rse.dstore.universal.miners
 org.eclipse.rse.files.ui

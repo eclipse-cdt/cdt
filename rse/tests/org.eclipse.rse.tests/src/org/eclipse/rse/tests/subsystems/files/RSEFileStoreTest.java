@@ -26,6 +26,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -283,6 +284,36 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		info = f.fetchInfo();
 		//SSH is capable of modifying modtime of read-only files
 		//assertTrue("2.6.2", info.getLastModified() <= parentModified); //not actually changed
+	}
+
+	public void testBrokenSymlink() throws Exception {
+		//-test-author-:MartinOberhuber
+		if (isTestDisabled())
+			return;
+		if (fHomeDirectory != null && fHomeDirectory.getSeparatorChar() == '/' && fHomeDirectory.getParentRemoteFileSubSystem().isCaseSensitive()) {
+			String testFileName = "broken.txt"; //$NON-NLS-1$
+			IRemoteCmdSubSystem rcmd = getShellServiceSubSystem();
+			SimpleCommandOperation op = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
+			op.runCommand("ln -s notExisting2.txt \"" + fTestStorePath + "/" + testFileName + "\"", true);
+			while (op.isActive()) {
+				Thread.sleep(200);
+			}
+			if ("localConnection.properties".equals(fPropertiesFileName)) {
+				//RSE-Local on UNIX: check native EFS in addition to RSE-Local
+				IFileStore efsStore = EFS.getStore(URIUtil.toURI(fTestStorePath+'/'+testFileName));
+				IFileInfo efsInfo = efsStore.fetchInfo();
+				assertFalse("0.1", efsInfo.exists());
+				assertTrue("0.2", efsInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+				assertEquals("0.3", "notExisting2.txt", efsInfo.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET));
+				//bug 314494: RSE-Local does not support broken symlinks yet
+				return;
+			}
+			IFileStore brokenStore = fTestStore.getChild(testFileName);
+			IFileInfo info = brokenStore.fetchInfo();
+			assertFalse("1.0", info.exists());
+			assertTrue("1.1", info.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+			assertEquals("1.2", "notExisting2.txt", info.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET));
+		}
 	}
 
 	public void testDeleteSpecialCases() throws Exception {

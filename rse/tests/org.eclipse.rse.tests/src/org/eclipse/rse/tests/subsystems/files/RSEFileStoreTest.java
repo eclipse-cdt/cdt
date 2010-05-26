@@ -175,9 +175,12 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 			} finally {
 				try {
 					fTestStore.delete(EFS.NONE, getDefaultProgressMonitor());
-				} catch (CoreException ce) {
-					/* might be expected if fTestStore had no permissions */
-				} finally {
+				} catch (Throwable t) {
+					/* CoreException might be expected if fTestStore had no permissions */
+					if (! (t instanceof CoreException)) {
+						System.err.println("Unexpected exception in tearDown():"); //$NON-NLS-1$
+						t.printStackTrace();
+					}
 					IRemoteCmdSubSystem rcmd = getShellServiceSubSystem();
 					if (rcmd!=null) {
 						SimpleCommandOperation op = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
@@ -438,10 +441,15 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 		assertTrue("1.1", !info.exists());
 
 		// delete non-Existing
-		store.delete(EFS.NONE, getDefaultProgressMonitor());
-		// TODO IFileStore.delete() does not specify whether deleting a
-		// non-existing file should throw an Exception.
-		// EFS.getLocalFileSystem() does not throw the exception.
+		try {
+			store.delete(EFS.NONE, getDefaultProgressMonitor());
+		} catch(CoreException ce) {
+			// TODO IFileStore.delete() does not specify whether deleting a
+			// non-existing file should throw an Exception.
+			// EFS.getLocalFileSystem() does not throw the exception.
+			// Local and SSH don't either. DStore does throw. 
+			// For now, ignore this.
+		}
 		info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
 		assertTrue("1.2", !info.exists());
 

@@ -2376,48 +2376,5 @@
             commandId="org.eclipse.cdt.debug.ui.command.castToArray">
       </handler>
 	</extension>	
-
- 
-    <extension
-         point="org.eclipse.ui.activities">
- 
-      <category
-            name="%category.name"
-            description="%category.description"
-            id="org.eclipse.cdt.debug.ui.cdtCategory">
-      </category>
-  
-       <categoryActivityBinding
-            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-            categoryId="org.eclipse.cdt.debug.ui.cdtCategory">
-      </categoryActivityBinding>
-  
-      <activity
-            name="%activity.name"
-            description="%activity.description"
-            id="org.eclipse.cdt.debug.ui.cdtActivity">
-       </activity>
-
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.CDebugPreferencePage">
-      </activityPatternBinding>
-   
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage">
-      </activityPatternBinding>
-   
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.SourcePreferencePage">
-      </activityPatternBinding>
-      
-		<defaultEnablement id="org.eclipse.cdt.debug.ui.cdtActivity" /> 
-       
-     </extension>
  
 </plugin>

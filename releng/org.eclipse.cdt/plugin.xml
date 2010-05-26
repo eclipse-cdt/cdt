@@ -20,6 +20,101 @@
             content="$nl$/intro/whatsNewExtensionContent.xml"/>
 
    </extension>
+ 
+  
+    <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            id="org.eclipse.cdt.dsf.ui.activity.updateModes"
+            name="%activity.name">
+         <enabledWhen>
+	        <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+         </enabledWhen>
+      </activity>
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.dsf.ui.activity.updateModes"
+            pattern="org\.eclipse\.cdt\.dsf\.ui/org\.eclipse\.cdt\.dsf\.debug\.ui\.[A-Za-z]+\.viewmodel\.update\.actions\.refresh">
+      </activityPatternBinding>
+   </extension>
+    
+     <extension
+         point="org.eclipse.ui.activities">
+  
+      <activity
+            name="%activity.name.dsf"
+            description="%activity.description.dsf"
+            id="org.eclipse.cdt.dsf.ui.dsfActivity">
+       </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.dsf.ui/org.eclipse.cdt.dsf.debug.ui.preferences">
+      </activityPatternBinding>
+ 
+      <activity
+            name="%activity.name.dsfgdb"
+            description="%activity.description.dsfgdb"
+            id="org.eclipse.cdt.debug.dsfgdbActivity">
+       </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.dsfgdbActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.dsf.gdb.ui/org.eclipse.cdt.dsf.gdb.ui.preferences">
+      </activityPatternBinding>
+      
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.dsfgdbActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.dsf.gdb.ui/org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage">
+      </activityPatternBinding>
+ 
+       <activity
+            name="%activity.name.cdtdebug"
+            description="%activity.description.cdtdebug"
+            id="org.eclipse.cdt.debug.ui.cdtActivity">
+       </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.CDebugPreferencePage">
+      </activityPatternBinding>
+   
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.breakpointactions.ActionsPreferencePage">
+      </activityPatternBinding>
+   
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.SourcePreferencePage">
+      </activityPatternBinding>
+      
+		<defaultEnablement id="org.eclipse.cdt.debug.ui.cdtActivity" /> 
+		
+        <activity
+            name="%activity.name.cdigdb"
+            description="%activity.description.cdigdb"
+            id="org.eclipse.cdt.debug.cdigdbActivity">
+       </activity>
+
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.cdigdbActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.mi.ui/org.eclipse.cdt.debug.mi.ui.MIPreferencePage">
+      </activityPatternBinding>
+   
+      <activityPatternBinding
+            activityId="org.eclipse.cdt.debug.cdigdbActivity"
+           	isEqualityPattern="true" 
+            pattern="org.eclipse.cdt.debug.ui/org.eclipse.cdt.debug.ui.DebuggerTypesPreferencePage">
+      </activityPatternBinding>
+    
+   </extension>
    
    <!--extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet

@@ -447,40 +447,7 @@
              name="%tracepointActionsPrefPage.name">
       </page> 
    </extension>
-       <extension
-         point="org.eclipse.ui.activities">
- 
-      <category
-            name="%category.name"
-            description="%category.description"
-            id="org.eclipse.cdt.debug.dsfgdbCategory">
-      </category>
-  
-       <categoryActivityBinding
-            activityId="org.eclipse.cdt.debug.dsfgdbActivity"
-            categoryId="org.eclipse.cdt.debug.dsfgdbCategory">
-      </categoryActivityBinding>
-  
-      <activity
-            name="%activity.name"
-            description="%activity.description"
-            id="org.eclipse.cdt.debug.dsfgdbActivity">
-       </activity>
-
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.dsfgdbActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.dsf.gdb.ui/org.eclipse.cdt.dsf.gdb.ui.preferences">
-      </activityPatternBinding>
-      
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.dsfgdbActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.dsf.gdb.ui/org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage">
-      </activityPatternBinding>
-         
-     </extension>
-   <extension
+    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant
             class="org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsolePageParticipant"

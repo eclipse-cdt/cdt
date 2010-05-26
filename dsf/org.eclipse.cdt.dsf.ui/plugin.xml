@@ -671,48 +671,6 @@
          </description>
       </colorDefinition>
    </extension>
-   <extension
-         point="org.eclipse.ui.activities">
-      <activity
-            id="org.eclipse.cdt.dsf.ui.activity.updateModes"
-            name="%activity.name">
-         <enabledWhen>
-	        <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
-         </enabledWhen>
-      </activity>
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.dsf.ui.activity.updateModes"
-            pattern="org\.eclipse\.cdt\.dsf\.ui/org\.eclipse\.cdt\.dsf\.debug\.ui\.[A-Za-z]+\.viewmodel\.update\.actions\.refresh">
-      </activityPatternBinding>
-      
-   </extension>
-       <extension
-         point="org.eclipse.ui.activities">
- 
-      <category
-            name="%category.name"
-            description="%category.description"
-            id="org.eclipse.cdt.dsf.ui.dsfCategory">
-      </category>
-  
-       <categoryActivityBinding
-            activityId="org.eclipse.cdt.dsf.ui.dsfActivity"
-            categoryId="org.eclipse.cdt.dsf.ui.dsfCategory">
-      </categoryActivityBinding>
-  
-      <activity
-            name="%activity.name.0"
-            description="%activity.description"
-            id="org.eclipse.cdt.dsf.ui.dsfActivity">
-       </activity>
-
-      <activityPatternBinding
-            activityId="org.eclipse.cdt.debug.ui.cdtActivity"
-           	isEqualityPattern="true" 
-            pattern="org.eclipse.cdt.dsf.ui/org.eclipse.cdt.dsf.debug.ui.preferences">
-      </activityPatternBinding>
-       
-     </extension>
    
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 

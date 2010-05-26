@@ -156,15 +156,15 @@ public class BaseTestCase extends TestCase {
 			}
 			
 			if (statusLog.size() != fExpectedLoggedNonOK) {
-				StringBuffer msg= new StringBuffer("Expected number ("+fExpectedLoggedNonOK+") of ");
-				msg.append("non-OK status objects differs from actual ("+statusLog.size()+").\n");
+				StringBuffer msg= new StringBuffer("Expected number (" + fExpectedLoggedNonOK + ") of ");
+				msg.append("non-OK status objects differs from actual (" + statusLog.size() + ").\n");
 				Throwable cause= null;
 				if (!statusLog.isEmpty()) {
 					for (IStatus status : statusLog) {
 						IStatus[] ss= {status};
 						ss= status instanceof MultiStatus ? ((MultiStatus) status).getChildren() : ss; 
 						for (IStatus s : ss) {
-							msg.append("\t" + s.getMessage()+" ");
+							msg.append("\t" + s.getMessage() + " ");
 							
 							Throwable t= s.getException();
 							cause= cause != null ? cause : t;

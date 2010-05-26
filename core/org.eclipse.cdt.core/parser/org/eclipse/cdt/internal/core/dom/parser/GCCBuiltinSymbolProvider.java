@@ -15,12 +15,12 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
@@ -246,7 +246,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
     static final private  IType c_unsigned_int;
     static final private  IType c_unsigned_long;
     static final private  IType c_unsigned_long_long;
-    static final private  IFunctionType c_va_list;
+    static final private  IType c_va_list;
     static final private  IType c_void;
     static final private  IType c_void_p;
     static final private  IType c_void_p_r;
@@ -277,7 +277,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
     static final private  IType cpp_unsigned_int;
     static final private  IType cpp_unsigned_long;
     static final private  IType cpp_unsigned_long_long;
-    static final private  IFunctionType cpp_va_list;
+    static final private  IType cpp_va_list;
     static final private  IType cpp_void;
     static final private  IType cpp_void_p;
     static final private  IType cpp_void_p_r;
@@ -309,7 +309,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		c_unsigned_long = new CBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 		c_unsigned_long_long = new CBasicType(Kind.eInt, IBasicType.IS_LONG_LONG | IBasicType.IS_UNSIGNED);
 
-		c_va_list = new CFunctionType(c_char_p, new IType[0]); // assumed: char* va_list();
+		c_va_list = new CPointerType(new CFunctionType(c_char_p, new IType[0]), 0); // assumed: char* va_list();
 		c_size_t = c_unsigned_long; // assumed unsigned long int
 		
 		c_void = new CBasicType(Kind.eVoid, 0);
@@ -346,7 +346,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		cpp_unsigned_long_long = new CPPBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG_LONG, null);
 		
 		cpp_size_t = cpp_unsigned_long; // assumed unsigned long int
-		cpp_va_list = new CPPFunctionType(cpp_char_p, new IType[0]); // assumed: char* va_list();
+		cpp_va_list = new CPPPointerType(new CPPFunctionType(cpp_char_p, new IType[0])); // assumed: char* va_list();
 		
 		cpp_void = new CPPBasicType(Kind.eVoid, 0);
 		cpp_void_p = new CPPPointerType(cpp_void);

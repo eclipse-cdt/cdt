@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -7227,5 +7228,21 @@ public class AST2Tests extends AST2BaseTest {
         final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.C, true);
 		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+	}
+	
+	//	void test() {
+	//	    __builtin_va_list result;
+	//	}
+	public void testLocalVariableOfTypeVaList_313270() throws Exception {
+        final String code = getAboveComment();
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+        IBinding var= bh.assertNonProblem("result", 0);
+        assertInstance(var, IVariable.class);
+        assertTrue(var.getScope().getKind() == EScopeKind.eLocal);
+
+        bh= new BindingAssertionHelper(code, true);
+        var= bh.assertNonProblem("result", 0);
+        assertInstance(var, IVariable.class);
+        assertTrue(var.getScope().getKind() == EScopeKind.eLocal);
 	}
 }

@@ -5,7 +5,7 @@
 // Copyright   : Ericsson AB
 // Description : Breakpoint test application
 //============================================================================
-#include <unistd.h>
+#include "Sleep.h"
 #include <iostream>
 using namespace std;
 
@@ -45,7 +45,7 @@ int main()
 	zeroBlocks(1);
 	loop();
 	setBlocks();
-	sleep(1);
+	SLEEP(1);
 	a++;
 	return 0;
 }

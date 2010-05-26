@@ -1,5 +1,5 @@
 #include <iostream>
-#include <unistd.h>
+#include "Sleep.h"
 int g_i = 0;
 int main() {
 	for (; g_i < 8; g_i++) {
@@ -14,7 +14,7 @@ int main() {
 	
 	// For setting a catchpoint while target is running
 	std::cout << "Sleeping..." << std::endl;
-	sleep(2);
+	SLEEP(2);
 	std::cout << "...awake!" << std::endl;
 	try {
 		std::cout << "Throwing exception" << std::endl;

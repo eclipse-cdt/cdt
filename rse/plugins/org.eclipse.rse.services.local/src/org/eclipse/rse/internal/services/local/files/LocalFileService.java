@@ -45,6 +45,7 @@
  * Martin Oberhuber (Wind River) - [285942] Throw exception when listing a non-folder
  * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
+ * Martin Oberhuber (Wind River) - [314461] NPE deleting a folder w/o permission
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1101,16 +1102,20 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 	{
 		boolean result = true;
 		File[] files = folder.listFiles();
-		for (int i = 0; i < files.length && result; i++)
+		if (files!=null)
 		{
-			File file = files[i];
-			if (file.isDirectory())
+			//bug 314461: java.io.File returns null if folder has no permissions
+			for (int i = 0; i < files.length && result; i++)
 			{
-				result = deleteContents(file, monitor);
-			}
-			else
-			{
-				result = file.delete();
+				File file = files[i];
+				if (file.isDirectory())
+				{
+					result = deleteContents(file, monitor);
+				}
+				else
+				{
+					result = file.delete();
+				}
 			}
 		}
 		if (result)

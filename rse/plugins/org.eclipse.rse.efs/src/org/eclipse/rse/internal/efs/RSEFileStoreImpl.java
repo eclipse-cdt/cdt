@@ -34,6 +34,7 @@
  * David McKnight  (IBM)         - [287185] EFS provider should interpret the URL host component as RSE connection name rather than a hostname
  * David McKnight  (IBM)         - [291738] [efs] repeated queries to RSEFileStoreImpl.fetchInfo() in short time-span should be reduced
  * Szymon Brandys  (IBM)         - [303092] [efs] RSE portion to deal with FileSystemResourceManager makes second call to efs provider on exception due to cancel
+ * Martin Oberhuber (Wind River) - [314496] [efs] Symlink target not reported
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -549,19 +550,25 @@ public class RSEFileStoreImpl extends FileStore
 		String classification = (remoteFile==null) ? null : remoteFile.getClassification();
 
 		FileInfo info = new FileInfo(_store.getName());
-		if (remoteFile == null || !remoteFile.exists()) {
+		if (remoteFile == null) {
 			info.setExists(false);
+			return info;
+		}
+		if (classification!=null && classification.startsWith("broken symbolic link")) { //$NON-NLS-1$
 			//broken symbolic link handling
-			if (classification!=null && classification.startsWith("broken symbolic link")) { //$NON-NLS-1$
-				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
-				int i1 = classification.indexOf('\'');
-				if (i1>0) {
-					int i2 = classification.indexOf('´');
-					if (i2>i1) {
-						info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, classification.substring(i1+1,i2));
-					}
+			info.setExists(false);
+			info.setLastModified(remoteFile.getLastModified());
+			info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
+			int i1 = classification.indexOf('`');
+			if (i1>0) {
+				int i2 = classification.indexOf('\'');
+				if (i2>i1) {
+					info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, classification.substring(i1+1,i2));
 				}
 			}
+			return info;
+		} else if (!remoteFile.exists()) {
+			info.setExists(false);
 			return info;
 		}
 

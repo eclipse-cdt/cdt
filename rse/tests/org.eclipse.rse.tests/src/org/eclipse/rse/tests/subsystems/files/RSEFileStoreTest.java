@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [240729] More flexible disabling of testcases
+ * Martin Oberhuber (Wind River) - [314439] testDeleteSpecialCases fails on Linux
  *******************************************************************************/
 
 package org.eclipse.rse.tests.subsystems.files;
@@ -147,30 +148,50 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 	}
 
 	public void tearDown() throws Exception {
-		if (fIS != null) {
-			try {
-				fIS.close();
-			} catch (IOException e) {
-				System.err.println("Exception in tearDown.closeInputStream:");
-				e.printStackTrace();
-			}
-		}
-		if (fOS != null) {
-			try {
-				fOS.close();
-			} catch (IOException e) {
-				System.err.println("Exception in tearDown.closeOutputStream:");
-				e.printStackTrace();
-			}
-		}
-		//Try..catch to allow super.tearDown() to run
 		try {
-			fTestStore.delete(EFS.NONE, getDefaultProgressMonitor());
-		} catch (CoreException ce) {
-			System.err.println("Exception in tearDown.deleteTestStore:");
-			ce.printStackTrace();
+			if (fIS != null) {
+				try {
+					fIS.close();
+				} catch (IOException e) {
+					System.err.println("Exception in tearDown.closeInputStream:");
+					e.printStackTrace();
+				}
+			}
+			if (fOS != null) {
+				try {
+					fOS.close();
+				} catch (IOException e) {
+					System.err.println("Exception in tearDown.closeOutputStream:");
+					e.printStackTrace();
+				}
+			}
+			//Try..catch to allow super.tearDown() to run
+			try {
+				IFileInfo info = fTestStore.fetchInfo();
+				info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+				info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
+				fTestStore.putInfo(info, EFS.SET_ATTRIBUTES, getDefaultProgressMonitor());
+			} finally {
+				try {
+					fTestStore.delete(EFS.NONE, getDefaultProgressMonitor());
+				} catch (CoreException ce) {
+					/* might be expected if fTestStore had no permissions */
+				} finally {
+					IRemoteCmdSubSystem rcmd = getShellServiceSubSystem();
+					if (rcmd!=null) {
+						SimpleCommandOperation op = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
+						op.runCommand("chmod 777 \"" + fTestStorePath + "\"", true);
+						while (op.isActive()) {
+							Thread.sleep(200);
+						}
+						//no more exception expected.
+						fTestStore.delete(EFS.NONE, getDefaultProgressMonitor());
+					}
+				}
+			}
+		} finally {
+			super.tearDown();
 		}
-		super.tearDown();
 	}
 
 	protected IFileStore createFile(String name) throws Exception {
@@ -287,8 +308,13 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 			System.out.println("Good! " + ce);
 			assertTrue("1.1.1", ce.getStatus().getCode() == EFS.ERROR_DELETE);
 		}
-		if (fPropertiesFileName != null || File.separatorChar != '\\') {
-			// On Windows, no exception is thrown (read-only stuff can be deleted)
+		// restore deletable
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
+		fTestStore.putInfo(info, EFS.SET_ATTRIBUTES, getDefaultProgressMonitor());
+		if (fPropertiesFileName != null && File.separatorChar != '\\') {
+			// Do not check Eclipse EFS due to bug 314448
+			// Do not check RSE-EFS on Windows (read-only stuff can be deleted)
 			if (fHomeDirectory == null || fHomeDirectory.getSeparatorChar() != '\\') {
 				assertTrue("1.1", exceptionThrown);
 				IFileInfo info2 = store.fetchInfo();
@@ -296,10 +322,6 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 			}
 		}
 
-		// restore deletable
-		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
-		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
-		fTestStore.putInfo(info, EFS.SET_ATTRIBUTES, getDefaultProgressMonitor());
 		store.delete(EFS.NONE, getDefaultProgressMonitor());
 		info = store.fetchInfo(EFS.NONE, getDefaultProgressMonitor());
 		assertTrue("1.2", !info.exists());
@@ -343,7 +365,10 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 				System.out.println("Good! " + ce);
 				assertTrue("1.5.1", ce.getStatus().getCode() == EFS.ERROR_DELETE);
 			}
-			assertTrue("1.5", exceptionThrown);
+			if (!"localConnection.properties".equals(fPropertiesFileName)) {
+				//bug 314439: java.io.File cannot tell between no-permission and not-exists
+				assertTrue("1.5", exceptionThrown);
+			}
 
 			exceptionThrown = false;
 			try {
@@ -353,10 +378,13 @@ public class RSEFileStoreTest extends FileServiceBaseTest {
 				System.out.println("Good! " + ce);
 				assertTrue("1.6.1", ce.getStatus().getCode() == EFS.ERROR_READ);
 			}
-			assertTrue("1.6", exceptionThrown);
+			if (!"localConnection.properties".equals(fPropertiesFileName)) {
+				//bug 314439: java.io.File cannot tell between no-permission and not-exists
+				assertTrue("1.6", exceptionThrown);
+			}
 			SimpleCommandOperation op4 = new SimpleCommandOperation(rcmd, fHomeDirectory, true);
 			op4.runCommand("chmod 777 \"" + fTestStorePath + "\"", true);
-			while (op3.isActive()) {
+			while (op4.isActive()) {
 				Thread.sleep(200);
 			}
 			//Experience shows that we need to wait a little longer until the filesystem calms down

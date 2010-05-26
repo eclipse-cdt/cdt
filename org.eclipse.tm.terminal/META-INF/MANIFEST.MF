@@ -23,12 +23,14 @@ Export-Package: org.eclipse.tm.internal.terminal.connector;x-friends:="org.eclip
   x-friends:="org.eclipse.tm.terminal.serial,
    org.eclipse.tm.terminal.ssh,
    org.eclipse.tm.terminal.telnet,
+   org.eclipse.tm.terminal.local,
    org.eclipse.tm.terminal.view,
    org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.provisional.api.provider;
   x-friends:="org.eclipse.tm.terminal.serial,
    org.eclipse.tm.terminal.ssh,
    org.eclipse.tm.terminal.telnet,
+   org.eclipse.tm.terminal.local,
    org.eclipse.tm.terminal.test",
  org.eclipse.tm.internal.terminal.textcanvas;x-friends:="org.eclipse.tm.terminal.test",
  org.eclipse.tm.terminal.model

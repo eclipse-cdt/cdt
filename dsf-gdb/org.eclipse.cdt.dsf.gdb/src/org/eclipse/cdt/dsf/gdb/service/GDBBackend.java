@@ -708,13 +708,16 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
      * 
      * The specified timeout is used to indicate how many milliseconds
      * this job should wait for. INTERRUPT_TIMEOUT_DEFAULT indicates
-     * to use the default of 500 ms.  The default is also use if the 
+     * to use the default of 5 seconds.  The default is also use if the 
      * timeout value is 0 or negative.
      * 
      * @since 3.0
      */
     protected class MonitorInterruptJob extends Job {
-    	private final static int TIMEOUT_DEFAULT_VALUE = 500;
+    	// Bug 310274.  Until we have a preference to configure timeouts,
+    	// we need a large enough default timeout to accommodate slow
+    	// remote sessions.
+    	private final static int TIMEOUT_DEFAULT_VALUE = 5000;
         private final RequestMonitor fRequestMonitor;
 
         public MonitorInterruptJob(int timeout, RequestMonitor rm) {
@@ -723,7 +726,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
             fRequestMonitor = rm;
             
             if (timeout == INTERRUPT_TIMEOUT_DEFAULT || timeout <= 0) {
-            	timeout = TIMEOUT_DEFAULT_VALUE; // default of 0.5 seconds
+            	timeout = TIMEOUT_DEFAULT_VALUE; // default of 5 seconds
             }
             
            	schedule(timeout);

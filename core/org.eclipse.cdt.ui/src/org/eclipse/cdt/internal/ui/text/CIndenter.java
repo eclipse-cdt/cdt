@@ -1091,6 +1091,11 @@ public final class CIndenter {
 			// if not: take the start of the list ( LPAREN, LBRACE, LBRACKET ) and either align or
 			// indent by list-indent
 			return skipToPreviousListItemOrListStart();
+
+		case Symbols.TokenRETURN:
+			fIndent = fPrefs.prefContinuationIndent;
+			return fPosition;
+			
 		default:
 			// inside whatever we don't know about: similar to the list case:
 			// if we are inside a continued expression, then either align with a previous line that
@@ -1674,6 +1679,10 @@ public final class CIndenter {
 					fIndent = fPrefs.prefContinuationIndent;
 				}
 				return 0;
+
+			case Symbols.TokenRETURN:
+				fIndent = fPrefs.prefContinuationIndent;
+				return fPosition;
 			}
 		}
 	}

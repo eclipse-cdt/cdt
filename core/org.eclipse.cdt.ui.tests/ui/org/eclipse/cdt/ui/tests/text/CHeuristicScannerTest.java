@@ -117,7 +117,7 @@ public class CHeuristicScannerTest extends TestCase {
 			"");
 		
 		int pos= fScanner.findReferencePosition(29);
-		Assert.assertEquals(28, pos);
+		Assert.assertEquals(21, pos);
 	}
 	
 	public void testPrevIndentationUnit5() {
@@ -331,7 +331,7 @@ public class CHeuristicScannerTest extends TestCase {
 			"\t\treturn a");
 		
 		String indent= fScanner.computeIndentation(28).toString();
-		Assert.assertEquals("\t\t", indent);
+		Assert.assertEquals("\t\t\t", indent);
 	}
 	
 	public void testIndentation3() {
@@ -340,7 +340,7 @@ public class CHeuristicScannerTest extends TestCase {
 			"\t\treturn a;");
 		
 		String indent= fScanner.computeIndentation(29).toString();
-		Assert.assertEquals("\t\t", indent);
+		Assert.assertEquals("\t\t\t", indent);
 	}
 	
 	public void testIndentation4() {
@@ -350,7 +350,7 @@ public class CHeuristicScannerTest extends TestCase {
 			"");
 		
 		String indent= fScanner.computeIndentation(29).toString();
-		Assert.assertEquals("\t\t", indent);
+		Assert.assertEquals("\t\t\t", indent);
 	}
 	
 	public void testIndentation5() {

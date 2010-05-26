@@ -248,6 +248,19 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			if (buildConfigID.length() == 0) {
 				buildConfigID = null;
 			}
+
+			// There's no guarantee the ID stored in the launch config is valid.
+			// The user may have deleted the build configuration.
+			if (buildConfigID != null) {
+				boolean idIsGood = false;
+				ICProjectDescription desc = CCorePlugin.getDefault().getProjectDescription(project, false);
+				if (desc != null) {
+					idIsGood = desc.getConfigurationById(buildConfigID) != null;
+				}
+				if (!idIsGood) {
+					buildConfigID = null;	// use active configuration
+				}
+			}
 	
 			buildProject(project, buildConfigID, submon.newChild(1));
 			return false;
@@ -263,13 +276,14 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 	 * This is an specialization of the platform method
 	 * LaunchConfigurationDelegate#buildProjects(IProject[], IProgressMonitor).
 	 * It builds only one project and it builds a particular CDT build
-	 * configuration of it. It was added to address bug 309126 and 312709 
+	 * configuration of it. It was added to address bug 309126 and 312709
 	 * 
 	 * @param project
 	 *            the project to build
 	 * @param buildConfigID
 	 *            the specific build configuration to build, or null to build
-	 *            the active one
+	 *            the active one. Caller must guarantee validity of ID (that
+	 *            [project] actually contains such a configuration)
 	 * @param monitor
 	 *            progress monitor
 	 * @throws CoreException
@@ -405,15 +419,13 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			if (desc != null) {
 				ICConfigurationDescription cfgDescActive = desc.getActiveConfiguration();
 				ICConfigurationDescription cfgDesc = desc.getConfigurationById(buildConfigId);
-				if (cfgDesc != cfgDescActive) {
-					if (cfgDesc != null) {
-						args[2] = cfgDesc.getName();
-					}
-					else {
-						// TODO: not sure if and when this could ever happen, but just in case...
-						args[2] = "???";	 //$NON-NLS-1$
-					}
+				if ((cfgDesc != null) && (cfgDesc != cfgDescActive)) {
+					args[2] = cfgDesc.getName();
 				}
+				
+				// Note that we use the active build configuration if the ID in
+				// the launch config is no longer valid. This is consistent with
+				// the logic in buildForLaunch()
 			}
 		}
 		

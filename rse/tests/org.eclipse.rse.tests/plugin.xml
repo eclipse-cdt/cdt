@@ -36,11 +36,11 @@
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem"
 			systemTypeIds="org.eclipse.rse.systemtype.local;org.eclipse.rse.systemtype.windows"
-			name="%testSubSystemName"
+			name="Tests"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"
-			vendor="%providerName"
-			description="%testSubSystemDescription"
+			vendor="Eclipse.org"
+			description="Test Subsystem"
 			iconlive="icons/systemconnectionlive.gif"
 			icon="icons/systemconnection.gif"
       priority="50000">
@@ -49,11 +49,11 @@
 		<configuration
 			id="org.eclipse.rse.tests.subsystems.TestSubSystem2"
 			systemTypeIds="org.eclipse.rse.tests.*"
-			name="%testSubSystem2Name"
+			name="Tests2"
 			class="org.eclipse.rse.tests.internal.testsubsystem.TestSubSystemConfiguration"
 			category="users"
-			vendor="%providerName"
-			description="%testSubSystem2Description"
+			vendor="Eclipse.org"
+			description="Test Subsystem 2"
 			iconlive="icons/systemconnectionlive.gif"
 			icon="icons/systemconnection.gif"
 			priority="100000">

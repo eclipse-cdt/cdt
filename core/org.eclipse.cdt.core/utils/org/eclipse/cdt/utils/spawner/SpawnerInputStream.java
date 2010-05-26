@@ -61,7 +61,7 @@ class SpawnerInputStream extends InputStream {
 		} else if (len == 0) {
 			return 0;
 		}
-		byte[] tmpBuf = off > 0 ? new byte[len - off] : buf;
+		byte[] tmpBuf = off > 0 ? new byte[len] : buf;
 
 		len = read0(fd, tmpBuf, len);
 		if (len <= 0)

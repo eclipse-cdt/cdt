@@ -141,9 +141,8 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 		addDefaultRenderings(memBlock, memRendSite);
 	}
 
-	private void showExpressionInMemoryView(VariableExpressionVMC context, IExpressionDMData exprData, 
+	private IStatus showExpressionInMemoryView(VariableExpressionVMC context, IExpressionDMData exprData, 
 			IMemoryRenderingSite memRendSite) {
-		try {
 			BasicType type = exprData.getBasicType();
 			String exprString;
 			if (type == BasicType.array || type == BasicType.pointer) {
@@ -152,17 +151,19 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 			else {
 				exprString = "&(" + context.getExpression() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			try {
 			IDMContext dmc = context.getDMContext();
 			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) context.getAdapter(IMemoryBlockRetrieval.class);
 			if (retrieval == null && context instanceof IDebugElement)
 				retrieval = ((IDebugElement)context).getDebugTarget();
 			if (retrieval == null || !(retrieval instanceof DsfMemoryBlockRetrieval))
-				return;
+				return Status.OK_STATUS;
 			DsfMemoryBlockRetrieval dsfRetrieval = (DsfMemoryBlockRetrieval) retrieval;
 			IMemoryBlockExtension memBlock = dsfRetrieval.getExtendedMemoryBlock(exprString, dmc);
 			renderMemoryBlock(memBlock, memRendSite);
+			return Status.OK_STATUS;
 		} catch (DebugException e) {
-			DsfUIPlugin.log(e);
+			return DsfUIPlugin.newErrorStatus(IStatus.OK, "Can't view memory on " + exprString, e); //$NON-NLS-1$
 		}
 	}
 
@@ -198,8 +199,7 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 										Job job = new Job("View Memory") { //$NON-NLS-1$
 											@Override
 											protected IStatus run(IProgressMonitor monitor) {
-												showExpressionInMemoryView(context, exprData, memRendSite);
-												return Status.OK_STATUS;
+												return showExpressionInMemoryView(context, exprData, memRendSite);
 											}
 										};
 										job.setSystem(true);

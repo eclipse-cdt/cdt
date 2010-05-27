@@ -73,6 +73,38 @@ public class BaseTestCase {
     }
     
     public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
+
+	/**
+	 * We listen for the target to stop at the main breakpoint. This listener is
+	 * installed when the session is created and we uninstall ourselves when we
+	 * get to the breakpoint state, as we have no further need to monitor events
+	 * beyond that point.
+	 */
+    protected class SessionEventListener {
+		@DsfServiceEventHandler 
+    	public void eventDispatched(IDMEvent<?> event) {
+    		if (event instanceof MIStoppedEvent) {
+    			// We get this low-level event first. Record the MI event; various
+    			// tests use it for context
+    			synchronized(this) {
+    				fInitialStoppedEvent = (MIStoppedEvent)event;
+    			}
+    		}
+    		else if (event instanceof ISuspendedDMEvent) {
+    			// We get this higher level event shortly thereafter. We don't want
+    			// to consider the session suspended until we get it. Set the event
+    			// semaphore that will allow the test to proceed
+    			synchronized (fTargetSuspendedSem) {
+    				fTargetSuspended = true;
+    				fTargetSuspendedSem.notify();	
+    			}
+
+    			// no further need for this listener
+    			fLaunch.getSession().removeServiceEventListener(this);
+    		}
+    	}
+    }
+    private final SessionEventListener fSessionEventListener = new SessionEventListener();
     
     @BeforeClass
     public static void baseBeforeClassMethod() {
@@ -120,7 +152,7 @@ public class BaseTestCase {
 		// occur. We want to find out when the break on main() occurs.
  		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
 			public void sessionStarted(DsfSession session) {
-				session.addServiceEventListener(BaseTestCase.this, null);
+				session.addServiceEventListener(fSessionEventListener, null);
 			}
 		}; 		
 
@@ -153,35 +185,6 @@ public class BaseTestCase {
  		// Now initialize our SyncUtility, since we have the launcher
  		SyncUtil.initialize(fLaunch.getSession());
 
-	}
-
-	/**
-	 * We listen for the target to stop at the main breakpoint. This listener is
-	 * installed when the session is created and we uninstall ourselves when we
-	 * get to the breakpoint state, as we have no further need to monitor events
-	 * beyond that point.
-	 */
-	@DsfServiceEventHandler 
-	public void eventDispatched(IDMEvent<?> event) {
-		if (event instanceof MIStoppedEvent) {
-			// We get this low-level event first. Record the MI event; various
-			// tests use it for context
-			synchronized(this) {
-				fInitialStoppedEvent = (MIStoppedEvent)event;
-			}
-		}
-		else if (event instanceof ISuspendedDMEvent) {
-			// We get this higher level event shortly thereafter. We don't want
-			// to consider the session suspended until we get it. Set the event
-			// semaphore that will allow the test to proceed
-			synchronized (fTargetSuspendedSem) {
-				fTargetSuspended = true;
-				fTargetSuspendedSem.notify();	
-			}
-
-			// no further need for this listener
-			fLaunch.getSession().removeServiceEventListener(BaseTestCase.this);
-		}
 	}
 
  	@After

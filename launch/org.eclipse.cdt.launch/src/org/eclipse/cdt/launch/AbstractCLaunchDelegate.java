@@ -129,7 +129,6 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
     
     public AbstractCLaunchDelegate() {
 		super();
-		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.cdigdbActivity", true); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -781,6 +780,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		if(monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+		
+		if(!mode.equals(ILaunchManager.RUN_MODE))
+			org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.cdigdbActivity", true); //$NON-NLS-1$
+
 
 		workspaceBuildBeforeLaunch = false;
 

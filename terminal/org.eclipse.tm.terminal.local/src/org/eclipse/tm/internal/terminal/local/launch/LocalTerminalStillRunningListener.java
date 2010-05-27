@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2008 Mirko Raner and others.
+ * Copyright (c) 2008, 2010 Mirko Raner and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.tm.internal.terminal.local.LocalTerminalActivator;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalUtilities;
 import org.eclipse.tm.internal.terminal.local.launch.ui.LocalTerminalStillRunningDialog;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -66,6 +68,11 @@ public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 		if (forced) {
 
 			return true;
+		}
+		IPreferenceStore store = LocalTerminalActivator.getDefault().getPreferenceStore();
+		if (!store.getBoolean(LocalTerminalActivator.PREF_CONFIRM_TERMINATE_ON_SHUTDOWN)) {
+
+			//return true;
 		}
 		ILaunchConfigurationType launchType;
 		String launchTypeID = LocalTerminalLaunchDelegate.LAUNCH_CONFIGURATION_TYPE_ID;

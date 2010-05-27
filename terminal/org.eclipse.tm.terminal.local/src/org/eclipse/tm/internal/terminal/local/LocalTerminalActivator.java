@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2008 Mirko Raner and others.
+ * Copyright (c) 2008, 2010 Mirko Raner and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
  * Connector plug-in.
  *
  * @author Mirko Raner
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.1 $
  */
 public class LocalTerminalActivator extends AbstractUIPlugin {
 
@@ -28,6 +28,16 @@ public class LocalTerminalActivator extends AbstractUIPlugin {
 	 * The plug-in ID of the Local Terminal Connector plug-in.
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.tm.terminal.local"; //$NON-NLS-1$
+
+	/**
+	 * The preference key for confirming process termination during workbench shutdown.
+	 * Value: "CONFIRM_TERMINATE".
+	 * If the corresponding Preference slot is set to "true", a confirmation dialog
+	 * will be shown when quitting Workbench while a local Terminal is still running.
+	 * For details, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313643
+	 * @since 0.1
+	 */
+	public final static String PREF_CONFIRM_TERMINATE_ON_SHUTDOWN = "CONFIRM_TERMINATE";//$NON-NLS-1$
 
 	private static LocalTerminalActivator plugin;
 

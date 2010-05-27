@@ -23,15 +23,15 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
-import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMData;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsAddedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsRemovedEvent;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsUpdatedEvent;
+import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -39,8 +39,8 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpointDMData;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
-import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
+import org.eclipse.cdt.dsf.mi.service.MIRunControl;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIWatchpointScopeEvent;
@@ -513,7 +513,7 @@ public class MIBreakpointsTest extends BaseTestCase {
                 }
             };
 
-        // Issue the remove breakpoint request
+        // Issue the remove insertion request
         fBreakpointService.getExecutor().submit(new Runnable() {
             public void run() {
                 fBreakpointService.insertBreakpoint(context, attributes, drm);
@@ -2409,7 +2409,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(false, 2);
+		waitForBreakpointEvent(2);
+		
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT_ADDED event(s), received "
@@ -2427,10 +2428,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		MIStoppedEvent event = SyncUtil.waitForStop();
-
 		// Ensure that right BreakpointEvents were received
-		waitForBreakpointEvent(2);
+		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
 				+ fBreakpointEventCount, fBreakpointEventCount == 2);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "

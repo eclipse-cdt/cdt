@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class ProcessList implements IProcessList {
 		String command = null;
 		InputStream in = null;
 		Bundle bundle = Platform.getBundle(CCorePlugin.PLUGIN_ID);
+		IProcessInfo[] procInfos = NOPROCESS;
 
 		try {
 			URL url = FileLocator.find(bundle, new Path("$os$/listtasks.exe"), null); //$NON-NLS-1$
@@ -53,16 +54,23 @@ public class ProcessList implements IProcessList {
 				if (file.exists()) {
 					command = file.getCanonicalPath();
 					if (command != null) {
-						p = ProcessFactory.getFactory().exec(command);
-						in = p.getInputStream();
-						InputStreamReader reader = new InputStreamReader(in);
-						return parseListTasks(reader);
+						try {
+							p = ProcessFactory.getFactory().exec(command);
+							in = p.getInputStream();
+							InputStreamReader reader = new InputStreamReader(in);
+							procInfos = parseListTasks(reader);
+						} finally {
+							if (in != null)
+								in.close();
+							if (p != null)
+								p.destroy();
+						}
 					}
 				}
 			}
 		} catch (IOException e) {
 		}
-		return NOPROCESS;
+		return procInfos;
 	}
  
 	public IProcessInfo[] parseListTasks(InputStreamReader reader) {

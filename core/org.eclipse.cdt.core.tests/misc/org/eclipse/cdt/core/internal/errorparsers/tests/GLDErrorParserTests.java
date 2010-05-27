@@ -112,4 +112,29 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] {GLD_ERROR_PARSER_ID}
 		);
 	}
+	
+	public void testLinkerMessages_PrecedingPath_bug314253() throws IOException {
+		runParserTest(
+				new String[] {
+						"ld: warning: libstdc++.so.5, needed by testlib_1.so, may conflict with libstdc++.so.6",
+						"/usr/bin/ld: warning: libstdc++.so.5, needed by testlib_2.so, may conflict with libstdc++.so.6",
+						"C:\\bin\\ld.exe: warning: libstdc++.so.5, needed by testlib_3.so, may conflict with libstdc++.so.6",
+						"c:/bin/ld.exe: warning: libstdc++.so.5, needed by testlib_4.so, may conflict with libstdc++.so.6",
+						"D:\\mingw\\bin\\..\\lib\\gcc-lib\\mingw32\\3.2.3\\..\\..\\..\\..\\mingw32\\bin\\ld.exe: cannot find -ljpeg",
+						"notld: warning: ld error parser has no business parsing this message",
+				},
+				1, // errors
+				4, // warnings
+				0, // Infos
+				null,
+				new String[] {
+						"libstdc++.so.5, needed by testlib_1.so, may conflict with libstdc++.so.6",
+						"libstdc++.so.5, needed by testlib_2.so, may conflict with libstdc++.so.6",
+						"libstdc++.so.5, needed by testlib_3.so, may conflict with libstdc++.so.6",
+						"libstdc++.so.5, needed by testlib_4.so, may conflict with libstdc++.so.6",
+						"cannot find -ljpeg",
+					},
+				new String[] {GLD_ERROR_PARSER_ID}
+		);
+	}
 }

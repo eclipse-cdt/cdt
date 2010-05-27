@@ -220,14 +220,14 @@
                regex="%CDTGNULinkerErrorParser.regex.TextError"
                severity="Error"/>
          <pattern
-               description-expr="$2"
+               description-expr="$3"
                eat-processed-line="true"
                file-expr=""
                line-expr=""
                regex="%CDTGNULinkerErrorParser.regex.ldWarning"
                severity="Warning"/>
          <pattern
-               description-expr="$2"
+               description-expr="$3"
                eat-processed-line="true"
                file-expr=""
                line-expr=""

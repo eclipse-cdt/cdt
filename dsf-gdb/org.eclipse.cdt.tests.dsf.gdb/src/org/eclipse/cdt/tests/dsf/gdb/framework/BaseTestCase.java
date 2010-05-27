@@ -17,9 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.datamodel.IDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
+import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.dsf.service.DsfSession.SessionStartedListener;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,6 +36,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -51,7 +57,14 @@ public class BaseTestCase {
 	private static Map<String, Object> attrs = new HashMap<String, Object>();
     private static Process gdbserverProc = null;
     
-	private MIStoppedEvent fInitialStoppedEvent = null;
+	/** The MI event associated with the breakpoint at main() */
+	private MIStoppedEvent fInitialStoppedEvent;
+	
+	/** Flag we set to true when the target has reached the breakpoint at main() */
+	private boolean fTargetSuspended;
+	
+	/** Event semaphore we set when the target has reached the breakpoint at main() */ 
+	final private String fTargetSuspendedSem = new String(); // just used as a semaphore
 	
     public GdbLaunch getGDBLaunch() { return fLaunch; }
     
@@ -59,7 +72,7 @@ public class BaseTestCase {
     	attrs.put(key, value);
     }
     
-    public MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
+    public synchronized MIStoppedEvent getInitialStoppedEvent() { return fInitialStoppedEvent; }
     
     @BeforeClass
     public static void baseBeforeClassMethod() {
@@ -96,29 +109,42 @@ public class BaseTestCase {
 
  		ILaunchConfigurationWorkingCopy lcWorkingCopy = lcType.newInstance(
  				null, 
- 				launchMgr.generateUniqueLaunchConfigurationNameFrom("Test Launch")); //$NON-NLS-1$
+ 				launchMgr.generateLaunchConfigurationName("Test Launch")); //$NON-NLS-1$
  		assert lcWorkingCopy != null;
  		lcWorkingCopy.setAttributes(attrs);
 
  		final ILaunchConfiguration lc = lcWorkingCopy.doSave();
- 		assert lc != null;
+ 		
+		// Register ourselves as a listener for the new session so that we can
+		// register ourselves with that particular session before any events
+		// occur. We want to find out when the break on main() occurs.
+ 		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
+			public void sessionStarted(DsfSession session) {
+				session.addServiceEventListener(BaseTestCase.this, null);
+			}
+		}; 		
 
+		// Launch the debug session. The session-started listener will be called
+		// before the launch() call returns (unless, of course, there was a
+		// problem launching and no session is created).
+ 		DsfSession.addSessionStartedListener(sessionStartedListener);
  		fLaunch = (GdbLaunch)lc.launch(ILaunchManager.DEBUG_MODE, new NullProgressMonitor());
- 		assert fLaunch != null;
- 		 		
-		try {
-			// Also wait for the program to stop before allowing tests to start
-			// This should be done as soon as we have the launch, to avoid missing the Stopped
-			// event.  If we do miss it, we'll just have a 10 second delay.
-			final ServiceEventWaitor<MIStoppedEvent> eventWaitor =
-				new ServiceEventWaitor<MIStoppedEvent>(
-						fLaunch.getSession(),
-						MIStoppedEvent.class);
-			
-			// In practice, most launches happen within 100-300 milliseconds
-			fInitialStoppedEvent = eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
-		} catch (Exception e) {}
+ 		DsfSession.removeSessionStartedListener(sessionStartedListener);
 
+		// Wait for the program to hit the breakpoint at main() before
+		// proceeding. All tests assume that stable initial state. Two
+		// seconds is plenty; we typically get to that state in a few
+		// hundred milliseconds with the tiny test programs we use.
+ 		synchronized (fTargetSuspendedSem) {
+ 			fTargetSuspendedSem.wait(TestsPlugin.massageTimeout(2000));
+ 	 		Assert.assertTrue(fTargetSuspended);
+ 		}
+
+ 		// This should be a given if the above check passes
+ 		synchronized(this) {
+ 			Assert.assertNotNull(fInitialStoppedEvent);
+ 		}
+ 		 		
  		// If we started a gdbserver add it to the launch to make sure it is killed at the end
  		if (gdbserverProc != null) {
             DebugPlugin.newProcess(fLaunch, gdbserverProc, "gdbserver");
@@ -127,6 +153,35 @@ public class BaseTestCase {
  		// Now initialize our SyncUtility, since we have the launcher
  		SyncUtil.initialize(fLaunch.getSession());
 
+	}
+
+	/**
+	 * We listen for the target to stop at the main breakpoint. This listener is
+	 * installed when the session is created and we uninstall ourselves when we
+	 * get to the breakpoint state, as we have no further need to monitor events
+	 * beyond that point.
+	 */
+	@DsfServiceEventHandler 
+	public void eventDispatched(IDMEvent<?> event) {
+		if (event instanceof MIStoppedEvent) {
+			// We get this low-level event first. Record the MI event; various
+			// tests use it for context
+			synchronized(this) {
+				fInitialStoppedEvent = (MIStoppedEvent)event;
+			}
+		}
+		else if (event instanceof ISuspendedDMEvent) {
+			// We get this higher level event shortly thereafter. We don't want
+			// to consider the session suspended until we get it. Set the event
+			// semaphore that will allow the test to proceed
+			synchronized (fTargetSuspendedSem) {
+				fTargetSuspended = true;
+				fTargetSuspendedSem.notify();	
+			}
+
+			// no further need for this listener
+			fLaunch.getSession().removeServiceEventListener(BaseTestCase.this);
+		}
 	}
 
  	@After

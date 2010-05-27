@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.internal.checkers;
 import org.eclipse.cdt.codan.checkers.CodanCheckersActivator;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
+import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -40,6 +42,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
  */
 public class CatchByReference extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CatchByReference"; //$NON-NLS-1$
+	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
+	public static final String PARAM_UNKNOWN_TYPE = "unknown"; //$NON-NLS-1$
 
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
@@ -75,7 +79,12 @@ public class CatchByReference extends AbstractIndexAstChecker {
 											|| typeName instanceof IPointerType
 											|| typeName == null)
 										continue;
-									reportProblem(ER_ID, decl, decl.getRawSignature());
+									if (typeName instanceof IProblemBinding && !shouldReportForUnknownType())
+										continue;
+									String arg = spec.getRawSignature();
+									if (!isFilteredArg(arg)) {
+										reportProblem(ER_ID, decl, arg);
+									}
 								}
 							}
 						}
@@ -116,5 +125,34 @@ public class CatchByReference extends AbstractIndexAstChecker {
 			}
 			return false;
 		}
+	}
+
+	@Override
+	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
+		addPreference(problem, PARAM_UNKNOWN_TYPE,
+				CheckersMessages.CatchByReference_ReportForUnknownType, Boolean.FALSE);
+		addListPreference(problem, PARAM_EXCEPT_ARG_LIST,
+				CheckersMessages.GenericParameter_ParameterExceptions,
+				CheckersMessages.GenericParameter_ParameterExceptionsItem);
+	}
+
+	public boolean isFilteredArg(String arg) {
+		Object[] arr = (Object[]) getPreference(
+				getProblemById(ER_ID, getFile()), PARAM_EXCEPT_ARG_LIST);
+		for (int i = 0; i < arr.length; i++) {
+			String str = (String) arr[i];
+			if (arg.equals(str))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean shouldReportForUnknownType() {
+		return (Boolean) getPreference(getProblemById(ER_ID, getFile()),
+				PARAM_UNKNOWN_TYPE);
 	}
 }

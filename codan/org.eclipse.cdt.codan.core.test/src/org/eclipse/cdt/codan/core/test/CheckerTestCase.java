@@ -35,7 +35,7 @@ public class CheckerTestCase extends CodanTestCase {
 
 	/**
 	 * @param expectedLine
-	 *            - line
+	 *        - line
 	 * @return
 	 */
 	public IMarker checkErrorLine(File file, int expectedLine) {
@@ -133,6 +133,13 @@ public class CheckerTestCase extends CodanTestCase {
 		IProblemPreference pref = ((MapProblemPreference) problem
 				.getPreference()).getChildDescriptor(paramId);
 		return pref;
+	}
+
+	protected IProblemPreference setPreferenceValue(String problemId,
+			String paramId, Object value) {
+		IProblemPreference param = getPreference(problemId, paramId);
+		param.setValue(value);
+		return param;
 	}
 
 	/**

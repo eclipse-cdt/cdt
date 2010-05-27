@@ -11,12 +11,14 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.cdt.codan.internal.checkers.CatchByReference;
 
 /**
  * Test for {@see CatchByReference} class
  * 
  */
 public class CatchByReferenceTest extends CheckerTestCase {
+	@Override
 	public boolean isCpp() {
 		return true;
 	}
@@ -31,6 +33,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
 	// class C {};	
 	// void main() {
 	//		try {
@@ -42,6 +45,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(5);
 	}
+
 	// class C {};	
 	// void main() {
 	//		try {
@@ -53,7 +57,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
-	
+
 	// class C {};	
 	// void main() {
 	//		try {
@@ -65,6 +69,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
 	// typedef int A;
 	// void main() {
 	//		try {
@@ -76,6 +81,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
 	// typedef int A;
 	// typedef A B;
 	//	void main() {
@@ -88,6 +94,7 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
+
 	// void main() {
 	//		try {
 	//			foo();
@@ -95,9 +102,25 @@ public class CatchByReferenceTest extends CheckerTestCase {
 	//		}
 	//	}
 	public void test_class_unknown() {
+		setPreferenceValue(CatchByReference.ER_ID,
+				CatchByReference.PARAM_UNKNOWN_TYPE, false);
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// void main() {
+	//		try {
+	//			foo();
+	//		} catch (C e) {
+	//		}
+	//	}
+	public void test_class_unknown_on() {
+		setPreferenceValue(CatchByReference.ER_ID,
+				CatchByReference.PARAM_UNKNOWN_TYPE, true);
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
+
 	// class C {};
 	// typedef C B;
 	// void main() {

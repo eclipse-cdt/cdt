@@ -10,23 +10,25 @@
      Mirko Raner - initial implementation for Eclipse Bug 196337
      Martin Oberhuber (Wind River) - Import to Eclipse DSDP
  -->
-<feature id="org.eclipse.tm.terminal.local"
- label="%featureName"
- version="0.1.0.qualifier"
- provider-name="%providerName"
- image="eclipse_update_120.jpg">
+<feature
+      id="org.eclipse.tm.terminal.local"
+      label="%featureName"
+      version="0.1.0.qualifier"
+      provider-name="%providerName"
+      os="aix,hpux,linux,macosx,solaris"
+      image="eclipse_update_120.jpg">
 
- <description>
-  %description
- </description>
+   <description>
+      %description
+   </description>
 
- <copyright>
-  %copyright
- </copyright>
+   <copyright>
+      %copyright
+   </copyright>
 
- <license url="%licenseURL">
-  %license
- </license>
+   <license url="%licenseURL">
+      %license
+   </license>
 
    <url>
       <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.2"/>
@@ -37,31 +39,29 @@
          id="org.eclipse.tm.terminal"
          version="0.0.0"/>
 
- <requires>
- <!--
-  <import plugin="org.eclipse.tm.terminal" version="2.0.0" match="compatible"/>
- -->
-  <import plugin="org.eclipse.cdt.core" version="5.2.0" match="compatible"/>
-  <import plugin="org.eclipse.core.runtime"/>
-  <import plugin="org.eclipse.debug.core"/>
-  <import plugin="org.eclipse.debug.ui"/>
-  <import plugin="org.eclipse.jface"/>
-  <import plugin="org.eclipse.ui"/>
-  <import plugin="org.eclipse.ui.externaltools"/>
- </requires>
+   <requires>
+      <import plugin="org.eclipse.cdt.core" version="5.2.0" match="compatible"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.externaltools"/>
+   </requires>
 
- <plugin id="org.eclipse.tm.terminal.local"
-  download-size="18"
-  install-size="47"
-  version="0.0.0"
-  unpack="false"
- />
+   <plugin
+         id="org.eclipse.tm.terminal.local"
+         os="aix,hpux,linux,macosx,solaris"
+         download-size="18"
+         install-size="47"
+         version="0.0.0"
+         unpack="false"/>
 
- <plugin
-  id="org.eclipse.tm.terminal.local.source"
-  download-size="25"
-  install-size="43"
-  version="0.0.0"
-  unpack="false"/>
+   <plugin
+         id="org.eclipse.tm.terminal.local.source"
+         download-size="25"
+         install-size="43"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

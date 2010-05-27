@@ -51,7 +51,6 @@
 
    <plugin
          id="org.eclipse.tm.terminal.local"
-         os="aix,hpux,linux,macosx,solaris"
          download-size="18"
          install-size="47"
          version="0.0.0"

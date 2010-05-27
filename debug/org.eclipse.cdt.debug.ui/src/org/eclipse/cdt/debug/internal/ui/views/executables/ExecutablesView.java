@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Nokia and others.
+ * Copyright (c) 2008, 2010 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.views.executables;
@@ -370,7 +371,7 @@ public class ExecutablesView extends ViewPart {
 	}
 
 	private Action createRemoveAction() {
-		Action action = new Action("Remove") {
+		Action action = new Action(Messages.ExecutablesView_Remove) {
 			
 			public void run() {				
 				ISelection selection = getExecutablesViewer().getSelection();
@@ -384,11 +385,11 @@ public class ExecutablesView extends ViewPart {
 					}
 					final Executable[] selectedExesArray = selectedExes.toArray(new Executable[selectedExes.size()]);
 					
-					boolean confirm = MessageDialog.openConfirm(getSite().getShell(), "Confirm Remove Executables", "Are you sure you want to remove the selected executables?");
+					boolean confirm = MessageDialog.openConfirm(getSite().getShell(), Messages.ExecutablesView_ConfirmRemoveExe, Messages.ExecutablesView_ConfirmRemoveSelected);
 					
 					if (confirm)
 					{
-						Job removeJob = new UIJob("Remove Executables") {
+						Job removeJob = new UIJob(Messages.ExecutablesView_RemoveExes) {
 
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 								IStatus result = ExecutablesManager.getExecutablesManager().removeExecutables(selectedExesArray, monitor);					
@@ -402,7 +403,7 @@ public class ExecutablesView extends ViewPart {
 											message.append(children[i].getMessage()); 
 										}
 									}
-									MessageDialog.openWarning(getSite().getShell(), "Remove Executables", message.toString());
+									MessageDialog.openWarning(getSite().getShell(), Messages.ExecutablesView_RemoveExes, message.toString());
 								}
 								return result;
 							}
@@ -413,7 +414,7 @@ public class ExecutablesView extends ViewPart {
 				
 			}
 		};
-		action.setToolTipText("Remove the selected executables");
+		action.setToolTipText(Messages.ExecutablesView_RemoveSelectedExes);
 		action.setImageDescriptor(ExecutablesView.DESC_REMOVE);
 		action.setDisabledImageDescriptor(ExecutablesView.DESC_REMOVE_DISABLED);
 		action.setEnabled(false);

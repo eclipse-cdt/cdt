@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Nokia and others.
+ * Copyright (c) 2008, 2010 Nokia and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Nokia - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
@@ -17,6 +18,8 @@ public class Messages extends NLS {
 	public static String ExecutablesContentProvider_FetchingExecutables;
 	public static String ExecutablesView_Columns;
 	public static String ExecutablesView_ConfigureColumns;
+	public static String ExecutablesView_ConfirmRemoveExe;
+	public static String ExecutablesView_ConfirmRemoveSelected;
 	public static String ExecutablesView_ExeData;
 	public static String ExecutablesView_ExeLocation;
 	public static String ExecutablesView_ExeName;
@@ -29,6 +32,9 @@ public class Messages extends NLS {
 	public static String ExecutablesView_ImportExecutables;
 	public static String ExecutablesView_Refresh;
 	public static String ExecutablesView_RefreshList;
+	public static String ExecutablesView_Remove;
+	public static String ExecutablesView_RemoveExes;
+	public static String ExecutablesView_RemoveSelectedExes;
 	public static String ExecutablesView_Select_Executable;
 	public static String ExecutablesView_SelectColumns;
 	public static String ExecutablesView_SelectExeFile;

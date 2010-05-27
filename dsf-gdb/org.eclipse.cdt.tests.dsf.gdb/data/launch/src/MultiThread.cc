@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
 #ifdef __MINGW32__
 		{
 			uintptr_t rc = _beginthreadex(NULL, 0, PrintHello, (void*)t, 0, &threads[t]);
+	    	SLEEP(1); // debugger should for sure receive thread creation event after stepping over this sleep; not guaranteed to happen simply stepping over the thread creation call   
 		    if (rc == 0)
 		    {
 				printf("ERROR; _beginthreadex() failed. errno = %d\n", errno);
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
 #else
 		{
 	        int rc = pthread_create(&threads[t], NULL, PrintHello, (void *)t);
+	    	SLEEP(1); // debugger should for sure receive thread creation event after stepping over this sleep; not guaranteed to happen simply stepping over the thread creation call	        
 		    if (rc)
 		    {
 				printf("ERROR; return code from pthread_create() is %d\n", rc);
@@ -59,4 +61,6 @@ int main(int argc, char *argv[])
 		}
 #endif
 	}
+	
+	return 0;
 }

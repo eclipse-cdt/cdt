@@ -36,10 +36,13 @@ import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMData;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
+import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -87,6 +90,7 @@ public class MIRegistersTest extends BaseTestCase {
 	private DsfServicesTracker fServicesTracker;
 	private IContainerDMContext fContainerDmc;
     private IRegisters fRegService;
+    private IRunControl fRunControl;
     
 	@Before
 	public void init() throws Exception {
@@ -102,6 +106,7 @@ public class MIRegistersTest extends BaseTestCase {
 
 		
 		fRegService = fServicesTracker.getService(IRegisters.class);
+		fRunControl = fServicesTracker.getService(IRunControl.class);
 	}
 	
 	@BeforeClass
@@ -321,11 +326,51 @@ public class MIRegistersTest extends BaseTestCase {
     
     @Test
     public void compareRegisterForMultipleExecutionContexts() throws Throwable {
-        MIStoppedEvent stoppedEvent = SyncUtil.runToLine(SRC_NAME, "22");
-    	IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);
 
+    	// Run past the line that creates a thread and past the sleep that
+		// follows it. This is a bit tricky because the code that creates the
+		// thread is conditional depending on environment. Run to the printf
+		// before it (which is common), then do step operations over the
+		// non-common code (but same number of lines)
+        SyncUtil.runToLine(SRC_NAME, Integer.toString(MIRunControlTest.LINE_MAIN_PRINTF));
+        SyncUtil.step(StepType.STEP_OVER);	// over the printf
+        SyncUtil.step(StepType.STEP_OVER);	// over the create-thread call
+        MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER, TestsPlugin.massageTimeout(2000));	// over the one second sleep
+    	
+        // Get the thread IDs
+    	final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(stoppedEvent.getDMContext(), IContainerDMContext.class);
+    	
+    	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        final DataRequestMonitor<IExecutionDMContext[]> drm = 
+        	new DataRequestMonitor<IExecutionDMContext[]>(fRegService.getExecutor(), null) {
+            @Override
+            protected void handleCompleted() {
+               if (isSuccess()) {
+                    wait.setReturnInfo(getData());
+                }
+                wait.waitFinished(getStatus());
+            }
+        };
+    	    	
+    	fRegService.getExecutor().submit(new Runnable() {
+            public void run() {
+            	fRunControl.getExecutionContexts(containerDmc, drm);
+            }
+    	});
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+
+        IExecutionDMContext[] ctxts = (IExecutionDMContext[])wait.getReturnInfo();
+        wait.waitReset();
+
+		Assert.assertNotNull(ctxts);
+		Assert.assertTrue(ctxts.length > 1);
+		
+		int tid1 = ((IMIExecutionDMContext)ctxts[0]).getThreadId();
+		int tid2 = ((IMIExecutionDMContext)ctxts[1]).getThreadId();
+    	
     	// Get execution context to thread 2
-        IExecutionDMContext execDmc = SyncUtil.createExecutionContext(containerDmc, 2);
+        IExecutionDMContext execDmc = SyncUtil.createExecutionContext(containerDmc, tid2);
         IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(execDmc, 0);
         
     	String thread2RegVal0 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 0);
@@ -336,7 +381,7 @@ public class MIRegistersTest extends BaseTestCase {
     	String thread2RegVal5 = getModelDataForRegisterDataValue(frameDmc2, IFormattedValues.NATURAL_FORMAT, 5);
 
     	// Get execution context to thread 1
-        execDmc = SyncUtil.createExecutionContext(containerDmc, 2);
+        execDmc = SyncUtil.createExecutionContext(containerDmc, tid1);
         IFrameDMContext frameDmc1 = SyncUtil.getStackFrame(execDmc, 0);
     	getModelDataForRegisterDataValue(frameDmc1, IFormattedValues.NATURAL_FORMAT, 0);
 

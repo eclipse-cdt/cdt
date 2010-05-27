@@ -83,6 +83,10 @@ public class MIRunControlTest extends BaseTestCase {
 	private IContainerDMContext fContainerDmc;
 	private IExecutionDMContext fThreadExecDmc;
 	
+	// line numbers in MultiThread.cc
+	static final int LINE_MAIN_RETURN = 63;
+	static final int LINE_MAIN_PRINTF = 41;
+	
 	/*
 	 * Path to executable
 	 */
@@ -197,7 +201,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionContexts(containerDmc, rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
 
         /*
@@ -230,7 +234,7 @@ public class MIRunControlTest extends BaseTestCase {
 	 * Testing for two execution DMC with id 1 & 2
 	 */
 	@Test
-	public void getExecutionContexts() throws InterruptedException{
+	public void getExecutionContexts() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 		/*
 		 * Create a request monitor 
@@ -252,25 +256,18 @@ public class MIRunControlTest extends BaseTestCase {
             		getGDBLaunch().getSession(),
             		IStartedDMEvent.class);
 		
-        try{
-        	/*
-        	 * Run till line for 2 threads to be created
-        	 */
-        	SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, "22", true);	
-        }
-        catch(Throwable t){
-        	Assert.fail("Exception in SyncUtil.SyncRunToLine: " + t.getMessage());
-        }
+		// Run past the line that creates a thread and past the sleep that
+		// follows it. This is a bit tricky because the code that creates the
+		// thread is conditional depending on environment. Run to the printf
+		// before it (which is common), then do step operations over the
+		// non-common code (but same number of lines)
+        SyncUtil.runToLine(fContainerDmc, SOURCE_NAME, Integer.toString(LINE_MAIN_PRINTF), true);
+        SyncUtil.step(StepType.STEP_OVER);	// over the printf
+        SyncUtil.step(StepType.STEP_OVER);	// over the create-thread call
+        SyncUtil.step(StepType.STEP_OVER, TestsPlugin.massageTimeout(2000));	// over the one second sleep
         
-		// Make sure thread started event was received because it could arrive
-        // after the stopped event is received
-        IStartedDMEvent startedEvent = null;
-        try {
-        	startedEvent = startedEventWaitor.waitForEvent(1000);
-        } catch (Exception e) {
-        	Assert.fail("Timeout waiting for Thread create event");
-        	return;
-        }
+		// Make sure thread started event was received 
+        IStartedDMEvent startedEvent = startedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
 
         Assert.assertEquals("Thread created event is for wrong thread id", sProgramIsCygwin ? 3 : 2, ((IMIExecutionDMContext)startedEvent.getDMContext()).getThreadId());
         
@@ -284,7 +281,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionContexts(containerDmc, rmExecutionCtxts);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
         /*
@@ -341,7 +338,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(((MIRunControl)fRunCtrl).createMIExecutionContext(containerDmc, 1), rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
@@ -389,7 +386,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
@@ -413,7 +410,7 @@ public class MIRunControlTest extends BaseTestCase {
 		/* 
 		 * Add a breakpoint
 		 */
-	    SyncUtil.addBreakpoint(SOURCE_NAME + ":21", false);
+	    SyncUtil.addBreakpoint(SOURCE_NAME + ":" + LINE_MAIN_PRINTF, false);
 		
 		/*
 		 * Resume till the breakpoint is hit
@@ -435,7 +432,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(stoppedEvent.getDMContext(), rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
@@ -481,7 +478,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionData(fContainerDmc, rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         
         IRunControl.IExecutionDMData data = rm.getData();
@@ -518,7 +515,7 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.getExecutionContexts(fContainerDmc, rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue(wait.getMessage(), !wait.isOK());
         
         IStatus status = rm.getStatus();
@@ -571,10 +568,10 @@ public class MIRunControlTest extends BaseTestCase {
             	fRunCtrl.resume(containerDmc, rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
 
         try {
-			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
 		} catch (Exception e) {
 			Assert.fail("Exception raised:: " + e.getMessage());
 			e.printStackTrace();
@@ -591,7 +588,7 @@ public class MIRunControlTest extends BaseTestCase {
 			}
 		});
 
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
 
         wait.waitReset();
@@ -619,9 +616,9 @@ public class MIRunControlTest extends BaseTestCase {
            		fRunCtrl.resume(fContainerDmc, rm);
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         try {
-			eventWaitor.waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(5000));
 			//TestsPlugin.debug("DsfMIRunningEvent received");	
 		} catch (Exception e) {
 			Assert.fail("Exception raised:: " + e.getMessage());
@@ -642,20 +639,24 @@ public class MIRunControlTest extends BaseTestCase {
             }
         });
 
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertFalse("Target is suspended. It should have been running", (Boolean)wait.getReturnInfo());
 
         wait.waitReset();
     }
     
     @Test
-    public void runToLine() throws InterruptedException{
+    public void runToLine() throws Throwable {
 	    final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+        		getGDBLaunch().getSession(),
+        		ISuspendedDMEvent.class);
 
  
          fRunCtrl.getExecutor().submit(new Runnable() {
             public void run() {
-           		fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, 27, true,
+           		fRunCtrl.runToLine(fThreadExecDmc, SOURCE_NAME, LINE_MAIN_RETURN, true,
            				new RequestMonitor(fRunCtrl.getExecutor(), null) {
            			@Override
            			protected void handleCompleted() {
@@ -664,19 +665,14 @@ public class MIRunControlTest extends BaseTestCase {
                 });
             }
         });
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+         
+		// The program takes five seconds to run. There's five iterations of a
+		// loop that has a one second sleep in it
+        wait.waitUntilDone(TestsPlugin.massageTimeout(10000));
         Assert.assertTrue(wait.getMessage(), wait.isOK());
         wait.waitReset();
         
-        try {
-            new ServiceEventWaitor<ISuspendedDMEvent>(
-            		getGDBLaunch().getSession(),
-            		ISuspendedDMEvent.class).waitForEvent(ServiceEventWaitor.WAIT_FOREVER);
-		} catch (Exception e) {
-			Assert.fail("Exception raised:: " + e.getMessage());
-			e.printStackTrace();
-			return;
-		}
+        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(000));
 		
         final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
         
@@ -687,7 +683,7 @@ public class MIRunControlTest extends BaseTestCase {
             }
         });
 
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        wait.waitUntilDone(TestsPlugin.massageTimeout(5000));
         Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
 
         wait.waitReset();

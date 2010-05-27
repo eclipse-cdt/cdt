@@ -273,8 +273,8 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					if (DEBUG) System.out.println("retrieveFrameAddress done "+ DisassemblyUtils.getAddressText(addressValue)); //$NON-NLS-1$
 					fCallback.asyncExec(new Runnable() {
 						public void run() {
-							if (address.getSize() * 4 > fCallback.getAddressSize()) {
-								fCallback.addressSizeChanged(address.getSize() * 4);
+							if (address.getSize() * 8 > fCallback.getAddressSize()) {
+								fCallback.addressSizeChanged(address.getSize() * 8);
 							}
 							if (frame == 0) {
 								fCallback.updatePC(addressValue);

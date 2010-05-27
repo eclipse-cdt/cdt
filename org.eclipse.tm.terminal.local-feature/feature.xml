@@ -15,7 +15,6 @@
       label="%featureName"
       version="0.1.0.qualifier"
       provider-name="%providerName"
-      os="aix,hpux,linux,macosx,solaris"
       image="eclipse_update_120.jpg">
 
    <description>

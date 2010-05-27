@@ -75,6 +75,9 @@ public abstract class EFSExtensionProvider {
 	 * null on error.
 	 * 
 	 * The default implementation places the path in the path field of the URI, ensuring that there is a leading slash.
+	 * It also determines whether or not to convert backslashes in the provided path based on whether or not the
+	 * local operating system's file separator is a backslash, thus ensuring proper behaviour for URIs corresponding
+	 * to the local filesystem.
 	 * 
 	 * @param locationOnSameFilesystem
 	 * @param path An absolute path.
@@ -84,7 +87,7 @@ public abstract class EFSExtensionProvider {
 		URI uri = locationOnSameFilesystem;
 		
 		Path p = new Path(path);
-		String pathString = p.toString(); // to convert any backslashes to slashes
+		String pathString = p.toString(); // to convert any backslashes to slashes if we are on Windows
 		final int length = pathString.length();
 		StringBuffer pathBuf = new StringBuffer(length + 1);
 

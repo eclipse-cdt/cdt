@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.efsextension.tests;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -109,7 +110,15 @@ public class EFSExtensionTests extends TestCase {
 		URI expected = null;
 		try {
 			originalURI = new URI("file", "/c:/foo", null);
-			expected = new URI("file", "/c:/foo/subdirectory", null);
+			
+			if(java.io.File.separatorChar == '\\') {
+				expected = new URI("file", "/c:/foo/subdirectory", null);
+			}
+			else {
+				// if we're not on Windows then backslash is not the path separator, and instead
+				// is a valid filename character.  Using a backslash will result in it being escaped.
+				expected = new URI("file", "/c:%5Cfoo%5Csubdirectory", null);
+			}
 		} catch (URISyntaxException e) {
 			fail(e.getMessage());
 		}

@@ -133,8 +133,8 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		addListPreference(
 				problem,
 				PARAM_EXCEPT_ARG_LIST,
-				CheckersMessages.StatementHasNoEffectChecker_ParameterExceptions,
-				CheckersMessages.StatementHasNoEffectChecker_ParameterExceptionsItem);
+				CheckersMessages.GenericParameter_ParameterExceptions,
+				CheckersMessages.GenericParameter_ParameterExceptionsItem);
 	}
 
 	/**s

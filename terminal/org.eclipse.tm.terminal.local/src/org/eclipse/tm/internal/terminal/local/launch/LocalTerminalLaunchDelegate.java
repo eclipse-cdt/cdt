@@ -32,6 +32,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalActivator;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalMessages;
 import org.eclipse.tm.internal.terminal.local.LocalTerminalUtilities;
+import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcess;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessFactory;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.ui.PlatformUI;
@@ -44,7 +45,7 @@ import org.eclipse.ui.PlatformUI;
  * {@link ProcessFactory}, which allows the process to run with a pseudo-terminal ({@link PTY}).
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 
@@ -154,12 +155,14 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 		// Create the low-level Process object:
 		//
 		Process spawner;
+		PTY pty = null;
 		try {
 
 			ProcessFactory factory = ProcessFactory.getFactory();
 			if (PTY.isSupported()) {
 
-				spawner = factory.exec(commandLine, environment, workingDirectoryAsFile, new PTY(false));
+				pty = new PTY(false);
+				spawner = factory.exec(commandLine, environment, workingDirectoryAsFile, pty);
 			}
 			else {
 
@@ -205,6 +208,10 @@ public class LocalTerminalLaunchDelegate extends LaunchConfigurationDelegate {
 			String errorMessage = LocalTerminalMessages.couldNotCreateIProcess;
 			Status error = new Status(IStatus.ERROR, pluginID, IStatus.ERROR, errorMessage, null);
 			throw new CoreException(error);
+		}
+		if (process instanceof LocalTerminalProcess) {
+
+			((LocalTerminalProcess)process).setPTY(pty);
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(commandLine));
 

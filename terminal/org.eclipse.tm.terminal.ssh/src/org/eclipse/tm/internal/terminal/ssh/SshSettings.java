@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Mikhail Kalugin <fourdman@xored.com> - [201867] Improve Terminal SSH connection summary string
  * Johnson Ma (Wind River) - [218880] Add UI setting for ssh keepalives
+ *  Bryan Hunt - [313991] cannot programatically pass password to SshConnector
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -41,6 +42,10 @@ public class SshSettings implements ISshSettings {
 	public void load(ISettingsStore store) {
 		fHost = store.get("Host");//$NON-NLS-1$
 		fUser = store.get("User");//$NON-NLS-1$
+		// ISettingsStore providers have to make sure that
+		// the password is not saved in some as plain text
+		// on disk. [bug 313991] 
+		fPassword = store.get("Password");//$NON-NLS-1$
 		fPort = store.get("Port");//$NON-NLS-1$
 		fTimeout = store.get("Timeout");//$NON-NLS-1$
 		fKeepalive = store.get("Keepalive");//$NON-NLS-1$
@@ -51,6 +56,9 @@ public class SshSettings implements ISshSettings {
 		store.put("Host", fHost);//$NON-NLS-1$
 		store.put("User", fUser);//$NON-NLS-1$
 		store.put("Port", fPort);//$NON-NLS-1$
+		// We do *not* store the password in the settings because
+		// this can cause the password to be stored as plain text
+		// in some settings file
 		store.put("Timeout", fTimeout);//$NON-NLS-1$
 		store.put("Keepalive", fKeepalive);//$NON-NLS-1$
 	}

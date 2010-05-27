@@ -15,7 +15,7 @@ package org.eclipse.tm.internal.terminal.local;
 import java.io.OutputStream;
 import java.text.Format;
 import java.text.MessageFormat;
-
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -27,7 +27,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -35,6 +34,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchUtilities;
+import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcess;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessFactory;
 import org.eclipse.tm.internal.terminal.local.process.LocalTerminalProcessRegistry;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
@@ -50,7 +50,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * <code>vi</code> editor).
  *
  * @author Mirko Raner
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LocalTerminalConnector extends TerminalConnectorImpl
 implements IDebugEventSetListener {
@@ -67,8 +67,10 @@ implements IDebugEventSetListener {
 	private ILocalTerminalSettings settings;
 	private IStreamMonitor outputMonitor;
 	private IStreamMonitor errorMonitor;
-	private IProcess process;
+	private LocalTerminalProcess process;
 	private ILaunch launch;
+	private int lastHeight;
+	private int lastWidth;
 
 	/**
 	 * Creates a new {@link LocalTerminalConnector}. This constructor is invoked by the framework.
@@ -307,6 +309,26 @@ implements IDebugEventSetListener {
 		catch (DebugException couldNotTerminate) {
 
 			Logger.logException(couldNotTerminate);
+		}
+	}
+
+	/**
+	 * Notifies the {@link PTY pty} that the size of the terminal has changed.
+	 * This method gets called rather frequently, even if the terminal size has actually not
+	 * changed. The method stores the last known width and height and will only call
+	 * {@link PTY#setTerminalSize(int, int)} if it was different.
+	 *
+	 * @param width the new terminal width (in columns)
+	 * @param height the new terminal height (in lines)
+	 */
+	public void setTerminalSize(int width, int height) {
+
+		PTY pty = process.getPTY();
+		if (pty != null && (width != lastWidth || height != lastHeight)) {
+
+			pty.setTerminalSize(width, height);
+			lastWidth = width;
+			lastHeight = height;
 		}
 	}
 

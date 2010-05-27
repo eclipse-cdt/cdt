@@ -7,11 +7,17 @@
  *
  * Contributors:
  * Mirko Raner - [196337] Adapted from org.eclipse.ui.externaltools/ExternalToolsUtil
+ * Mirko Raner - [314195] vi editor unusable in tcsh local terminal on Linux RHEL4
  **************************************************************************************************/
 
 package org.eclipse.tm.internal.terminal.local.launch;
 
 import java.io.File;
+import java.text.Format;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -39,7 +45,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.Logger;
  * because the original class is not part of the public API of its plug-in.
  *
  * @author Mirko Raner and others
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LocalTerminalLaunchUtilities {
 
@@ -57,6 +63,9 @@ public class LocalTerminalLaunchUtilities {
 
 	private final static String[] EMPTY = {};
 	private final static String STRING = null;
+	private final static String TERM = "TERM"; //$NON-NLS-1$
+	private final static String ANSI = "ansi"; //$NON-NLS-1$
+	private final static Map TERM_ANSI = Collections.singletonMap(TERM, ANSI);
 
 	// These constants were copied from IExternalToolConstants to avoid references to internal API:
 	//
@@ -228,8 +237,12 @@ public class LocalTerminalLaunchUtilities {
 		String userHome = System.getProperty("user.home", "/"); //$NON-NLS-1$//$NON-NLS-2$
 		String defaultShell = getDefaultShell().getAbsolutePath();
 		String name = defaultShell.substring(defaultShell.lastIndexOf(File.separator) + 1);
-		name = manager.generateLaunchConfigurationName("Terminal (" + name + ')'); //$NON-NLS-1$
+		Format terminalLaunchName = new MessageFormat(LocalTerminalMessages.newTerminalLaunchName);
+		name = terminalLaunchName.format(new Object[] {name});
+		name = manager.generateLaunchConfigurationName(name);
 		workingCopy = LocalTerminalUtilities.TERMINAL_LAUNCH_TYPE.newInstance(null, name);
+		workingCopy.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap(TERM_ANSI));
+		workingCopy.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		workingCopy.setAttribute(ATTR_LOCATION, defaultShell);
 		workingCopy.setAttribute(ATTR_WORKING_DIRECTORY, userHome);
 		workingCopy.setAttribute(ATTR_LOCAL_ECHO, runningOnWindows());

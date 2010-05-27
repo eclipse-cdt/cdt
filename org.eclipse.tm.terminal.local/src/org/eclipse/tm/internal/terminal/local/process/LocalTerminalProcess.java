@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2008 Mirko Raner.
+ * Copyright (c) 2008, 2010 Mirko Raner.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.tm.internal.terminal.local.process;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.Spawner;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -56,7 +57,7 @@ import org.eclipse.debug.core.model.RuntimeProcess;
  * extension point as proposed in bug 242373 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=242373).
  *
  * @author Mirko Raner
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.1 $
  */
 public final class LocalTerminalProcess extends RuntimeProcess {
 
@@ -66,6 +67,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 	public final static String PROCESS_TYPE = "org.eclipse.tm.terminal.localProcess"; //$NON-NLS-1$
 
 	private boolean resetStreamsProxy;
+	private PTY pty;
 
 	/**
 	 * Creates a new {@link LocalTerminalProcess}.
@@ -122,6 +124,26 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 	protected void resetStreamsProxy() {
 
 		resetStreamsProxy = true;
+	}
+
+	/**
+	 * Sets the pseudo-terminal associated with this process.
+	 *
+	 * @param pty the {@link PTY}
+	 */
+	public void setPTY(PTY pty) {
+
+		this.pty = pty;
+	}
+
+	/**
+	 * Gets the pseudo-terminal associated with this process.
+	 *
+	 * @return the {@link PTY}
+	 */
+	public PTY getPTY() {
+
+		return pty;
 	}
 
 	/**

@@ -66,7 +66,7 @@
 	<feature id="org.eclipse.cdt.p2" url="features/org.eclipse.cdt.p2_1.0.0.@timeStamp@.jar" version="1.0.0.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
-	<feature id="org.eclipse.cdt.bupc" url="features/org.eclipse.cdt.bupc_1.0.2.@timeStamp@.jar" version="1.0.2.@timeStamp@">
+	<feature id="org.eclipse.cdt.bupc" url="features/org.eclipse.cdt.bupc_1.0.3.@timeStamp@.jar" version="1.0.3.@timeStamp@">
 		<category name="CDT Optional Features"/>
 	</feature>
 	<feature id="org.eclipse.cdt.codan.feature" url="features/org.eclipse.cdt.codan.feature_1.0.0.@timeStamp@.jar" version="1.0.0.@timeStamp@">

@@ -11,14 +11,14 @@
 
 <extension
       id="org.eclipse.cdt.managedbuilder.bupc.ui.upcBuildDefinitions"
-      name="UPC toolchain"
+      name="%extension.name"
       point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
       
   <tool
 	command="upcc"
 	id = "org.eclipse.cdt.managedbuild.tool.bupc.compiler"
 	isAbstract="false"
-	name = "Berkeley UPC Compiler"
+	name = "%tool.compiler"
 	natureFilter = "both"
 	outputFlag = "-o">
 	<supportedProperties>
@@ -30,13 +30,13 @@
 	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
 		id = "bupc.ui.optionCategory.compiler.gen"
-		name = "General"/>
+		name = "%optionCategory.compiler.general"/>
    <option
    		category="bupc.ui.optionCategory.compiler.gen"
-   		command="-g"
+   		command="-E"
    		id="bupc.ui.compiler.general.preprocess"
    		isAbstract="false"
-   		name = "Preprocess only (-E)"
+   		name = "%option.compiler.preprocess"
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false"/>
@@ -45,7 +45,7 @@
    		command="-g"
    		id="bupc.ui.compiler.general.debug"
    		isAbstract="false"
-   		name = "Debug"
+   		name = "%option.compiler.debug"
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false">
@@ -64,7 +64,7 @@
    		command="-O"
    		id="bupc.ui.compiler.general.opt"
    		isAbstract="false"
-   		name = "Generate optimized objects"
+   		name = "%option.compiler.opt"
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false"/>
@@ -73,87 +73,87 @@
    		command="-opt"
    		id="bupc.ui.compiler.general.opt.exp"
    		isAbstract="false"
-   		name = "Enable experimental UPC translator optimizations"
+   		name = "%option.compiler.opt.exp"
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false"/>
    		
    	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
-		name="UPC options"
+		name="%optionCategory.compiler.upc"
 		id="bupc.ui.optionCategory.compiler.upc">
 	</optionCategory>
 	
     <option
-	  	name="Network API"
+	  	name="%option.compiler.network"
 	  	category="bupc.ui.optionCategory.compiler.upc"
 	  	id="bupc.ui.compiler.network"
 	  	valueType="enumerated">
 
 		  <enumeratedOptionValue
-		  		  name="Default"
+		  		  name="%enumeratedOptionValue.default"
 				  isDefault="true"
 				  command=""
 				  id="bupc.ui.compiler.network.default">
 		  </enumeratedOptionValue>  	
 		  <enumeratedOptionValue
-		  		  name="MPI"
+		  		  name="%enumeratedOptionValue.mpi"
 				  isDefault="false"
 				  command="-network=mpi"
 				  id="bupc.ui.compiler.network.mpi">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="UDP"
+				  name="%enumeratedOptionValue.udp"
 				  command="-network=udp"
 				  id="bupc.ui.compiler.network.udp">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="ELAN"
+				  name="%enumeratedOptionValue.elan"
 				  command="-network=elan"
 				  id="bupc.ui.compiler.network.elan">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="IBM LAPI"
+				  name="%enumeratedOptionValue.lapi"
 				  command="-network=lapi"
 				  id="bupc.ui.compiler.network.lapi">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="Myrinet GM"
+				  name="%enumeratedOptionValue.gm"
 				  command="-network=gm"
 				  id="bupc.ui.compiler.network.gm">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="SMP"
+				  name="%enumeratedOptionValue.smp"
 				  command="-network=smp"
 				  id="bupc.ui.compiler.network.smp">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="VAPI"
+				  name="%enumeratedOptionValue.vapi"
 				  command="-network=vapi"
 				  id="bupc.ui.compiler.network.vapi">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="OpenIB"
+				  name="%enumeratedOptionValue.ibv"
 				  command="-network=ibv"
 				  id="bupc.ui.compiler.network.ibv">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="Dolphin SCI"
+				  name="%enumeratedOptionValue.sci"
 				  command="-network=sci"
 				  id="bupc.ui.compiler.network.sci">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="SHMEM"
+				  name="%enumeratedOptionValue.shmem"
 				  command="-network=shmem"
 				  id="bupc.ui.compiler.network.shmem">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="Cray XT Portals"
+				  name="%enumeratedOptionValue.portals"
 				  command="-network=portals"
 				  id="bupc.ui.compiler.network.portals">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="BlueGene/P DCMF"
+				  name="%enumeratedOptionValue.dcmf"
 				  command="-network=dcmf"
 				  id="bupc.ui.compiler.network.dcmf">
 		  </enumeratedOptionValue>
@@ -163,7 +163,7 @@
 		command="-shared-heap="
 		id="bupc.ui.compiler.upc.sharedheap"
 		isAbstract="false"
-		name="-shared-heap="
+		name="%option.compiler.sharedheap"
 		resourceFilter="project"
 		valueType="string"/>
    	<option
@@ -171,24 +171,24 @@
 		command="-T="
 		id="bupc.ui.compiler.upc.fixedthreads"
 		isAbstract="false"
-		name="-T="
+		name="%option.compiler.fixedthreads"
 		resourceFilter="project"
 		valueType="string"/>
 
 	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
-		name="Symbols"
+		name="%optionCategory.compiler.symbols"
 		id="bupc.ui.optionCategory.compiler.symbols">
 	</optionCategory>
    		<option
-			  name="Defined symbols (-D)"
+			  name="%option.compiler.defsymbols"
 			  category="bupc.ui.optionCategory.compiler.symbols"
 			  command="-D"
 			  id="bupc.ui.compiler.def.symbol"
 			  valueType="definedSymbols">
 		  </option>
 		  <option
-			  name="Undefined symbols (-U)"
+			  name="%option.compiler.undefsymbols"
 			  category="bupc.ui.optionCategory.compiler.symbols"
 			  command="-U"
 			  id="bupc.ui.compiler.undef.symbol"
@@ -196,11 +196,11 @@
 		  </option>
 	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
-		name="Directories"
+		name="%optionCategory.compiler.dirs"
 		id="bupc.ui.optionCategory.compiler.dirs">
 	</optionCategory>
 		  <option
-			  name="Include paths (-I)"
+			  name="%option.compiler.incpath"
 			  category="bupc.ui.optionCategory.compiler.dirs"
 			  command="-I"
 			  id="bupc.ui.compiler.general.incpath"
@@ -209,41 +209,41 @@
 		  </option>		
 	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
-		id = "bupc.ui.optionCategory.compiler.upcOptions"
-		name = "Advanced options"/>
-	<option
-		category="bupc.ui.optionCategory.compiler.upcOptions"
-		command="-pthreads="
-		id="bupc.ui.compiler.advOptions.pthread"
-		isAbstract="false"
-		name="-pthreads="
-		resourceFilter="project"
-		valueType="string"/>
+		id = "bupc.ui.optionCategory.compiler.advOptions"
+		name = "%optionCategory.compiler.advanced"/>
+			<option
+				category="bupc.ui.optionCategory.compiler.advOptions"
+				command="-pthreads="
+				id="bupc.ui.compiler.advOptions.pthread"
+				isAbstract="false"
+				name="%option.compiler.pthreads"
+				resourceFilter="project"
+				valueType="string"/>
 	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.compiler"
 		id = "bupc.ui.optionCategory.compiler.miscOptions"
-		name = "Miscellaneous"/>
+		name = "%optionCategory.compiler.misc"/>
 	<option
 	    defaultValue="-c"
 		category="bupc.ui.optionCategory.compiler.miscOptions"
 		command=""
 		id="bupc.ui.compiler.miscOptions.other"
 		isAbstract="false"
-		name="Other options"
+		name="%option.compiler.other"
 		resourceFilter="project"
 		valueType="string"/>
 	<option
 		defaultValue="false"
-		name="Verbose (-v)"
+		name="%option.compiler.verbose"
 		category="bupc.ui.optionCategory.compiler.miscOptions"
 		command="-v"
 		id="bupc.ui.compiler.miscOptions.verbose"
 		valueType="boolean"/>
 	<option
 		defaultValue="false"
-		name="Extra verbose (-vv)"
+		name="%option.compiler.extraverbose"
 		category="bupc.ui.optionCategory.compiler.miscOptions"
-		command="-v"
+		command="-vv"
 		id="bupc.ui.compiler.miscOptions.extraVerbose"
 		valueType="boolean"/>
 	<inputType
@@ -251,7 +251,7 @@
 		multipleOfType ="false"
 	    dependencyContentType="org.eclipse.cdt.core.cHeader"
 		dependencyExtensions="h"      					
-		name = "UPC sources"
+		name = "%inputType.upc"
 		primaryInput = "true"
 		languageId="org.eclipse.cdt.core.parser.upc.upc"      					
 		superClass="org.eclipse.cdt.build.core.settings.holder.inType"						
@@ -259,7 +259,7 @@
 	</inputType>
 	<outputType
        id="cdt.managedbuild.tool.bupc.compiler.output"
-       name="Object Files"
+       name="%outputType.obj"
        outputs="o"
        buildVariable="OBJS"
        primaryInputType="cdt.managedbuild.tool.bupc.compiler.input"
@@ -271,7 +271,7 @@
 	command="upcc"
 	id = "org.eclipse.cdt.managedbuild.tool.bupc.linker"
 	isAbstract="false"
-	name = "Berkeley UPC Linker"
+	name = "%tool.linker"
 	natureFilter = "both"
 	outputFlag = "-o">
 	<supportedProperties>
@@ -282,13 +282,13 @@
     </supportedProperties>
 	<optionCategory
 		id = "bupc.ui.optionCategory.linker.gen"
-		name = "General"/>
+		name = "%optionCategory.linker.general"/>
 	<option
    		category="bupc.ui.optionCategory.linker.gen"
    		command="-g"
    		id="bupc.ui.linker.general.debug"
    		isAbstract="false"
-   		name = "Debug"
+   		name = "%option.linker.debug"
    		resourceFilter="project"
    		valueType="boolean"
    		defaultValue="false">
@@ -307,87 +307,87 @@
 		id = "bupc.ui.linker.general.strip"
 		command = "-s"
 		isAbstract = "false"
-		name = "Strip the symbolic information from the final executable"
+		name = "%option.linker.strip"
 		resourceFilter = "project"
 		valueType = "boolean" 
 		defaultValue="false"/>
 
    	<optionCategory
 		owner="org.eclipse.cdt.managedbuild.tool.bupc.linker"
-		name="UPC options"
+		name="%optionCategory.linker.upc"
 		id="bupc.ui.optionCategory.linker.upc">
 	</optionCategory>
 	
     <option
-	  	name="Network API"
+	  	name="%option.linker.network"
 	  	category="bupc.ui.optionCategory.linker.upc"
 	  	id="bupc.ui.linker.upc.network"
 	  	valueType="enumerated">
 
 		  <enumeratedOptionValue
-		  		  name="Default"
+		  		  name="%enumeratedOptionValue.default"
 				  isDefault="true"
 				  command=""
 				  id="bupc.ui.linker.upc.network.default">
 		  </enumeratedOptionValue>  	
 		  <enumeratedOptionValue
-		  		  name="MPI"
+		  		  name="%enumeratedOptionValue.mpi"
 				  isDefault="false"
 				  command="-network=mpi"
 				  id="bupc.ui.linker.upc.network.mpi">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="UDP"
+				  name="%enumeratedOptionValue.udp"
 				  command="-network=udp"
 				  id="bupc.ui.linker.upc.network.udp">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="ELAN"
+				  name="%enumeratedOptionValue.elan"
 				  command="-network=elan"
 				  id="bupc.ui.linker.upc.network.elan">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="IBM LAPI"
+				  name="%enumeratedOptionValue.lapi"
 				  command="-network=lapi"
 				  id="bupc.ui.linker.upc.network.lapi">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="Myrinet GM"
+				  name="%enumeratedOptionValue.gm"
 				  command="-network=gm"
 				  id="bupc.ui.linker.upc.network.gm">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="SMP"
+				  name="%enumeratedOptionValue.smp"
 				  command="-network=smp"
 				  id="bupc.ui.linker.upc.network.smp">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="VAPI"
+				  name="%enumeratedOptionValue.vapi"
 				  command="-network=vapi"
 				  id="bupc.ui.linker.upc.network.vapi">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="OpenIB"
+				  name="%enumeratedOptionValue.ibv"
 				  command="-network=ibv"
 				  id="bupc.ui.linker.upc.network.ibv">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="Dolphin SCI"
+				  name="%enumeratedOptionValue.sci"
 				  command="-network=sci"
 				  id="bupc.ui.linker.upc.network.sci">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="SHMEM"
+				  name="%enumeratedOptionValue.shmem"
 				  command="-network=shmem"
 				  id="bupc.ui.linker.upc.network.shmem">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="Cray XT Portals"
+				  name="%enumeratedOptionValue.portals"
 				  command="-network=portals"
 				  id="bupc.ui.linker.upc.network.portals">
 		  </enumeratedOptionValue>
 		  <enumeratedOptionValue
-				  name="BlueGene/P DCMF"
+				  name="%enumeratedOptionValue.dcmf"
 				  command="-network=dcmf"
 				  id="bupc.ui.linker.upc.network.dcmf">
 		  </enumeratedOptionValue>
@@ -397,7 +397,7 @@
 		command="-shared-heap="
 		id="bupc.ui.linker.upc.sharedheap"
 		isAbstract="false"
-		name="-shared-heap="
+		name="%option.linker.sharedheap"
 		resourceFilter="project"
 		valueType="string"/>
    	<option
@@ -405,17 +405,17 @@
 		command="-T="
 		id="bupc.ui.linker.upc.fixedthreads"
 		isAbstract="false"
-		name="-T="
+		name="%option.linker.fixedthreads"
 		resourceFilter="project"
 		valueType="string"/>
 
     <optionCategory
                owner="org.eclipse.cdt.managedbuild.tool.bupc.linker"
-               name="Libraries"
+               name="%optionCategory.linker.libs"
                id="bupc.ui.optionCategory.linker.libs">
     </optionCategory>
      <option
-           name="Libraries (-l)"
+           name="%option.linker.libs"
            category="bupc.ui.optionCategory.linker.libs"
            command="-l"
            id="bupc.ui.linker.libs"
@@ -423,7 +423,7 @@
            valueType="libs">
      </option>
      <option
-           name="Library search path (-L)"
+           name="%option.linker.libpaths"
            category="bupc.ui.optionCategory.linker.libs"
            command="-L"
            id="bupc.ui.linker.paths"
@@ -433,13 +433,13 @@
    		    					
 	<optionCategory
 		id = "bupc.ui.optionCategory.linker.advOptions"
-		name = "Advanced options"/>
+		name = "%optionCategory.linker.advanced"/>
 	<option
 		category="bupc.ui.optionCategory.linker.advOptions"
 		command="-pthreads="
 		id="bupc.ui.linker.advOptions.pthread"
 		isAbstract="false"
-		name="-pthreads="
+		name="%option.linker.pthreads"
 		resourceFilter="project"
 		valueType="string"/>
 	<option
@@ -447,7 +447,7 @@
 		command=""
 		id="bupc.ui.linker.advOptions.other"
 		isAbstract="false"
-		name="Other options"
+		name="%option.linker.other"
 		resourceFilter="project"
 		valueType="string"/>
 				
@@ -465,7 +465,7 @@
 	
 	<outputType
        id="cdt.managedbuild.tool.bupc.linker.output"
-       name="Executables"
+       name="%outputType.exe"
        outputs=""
        buildVariable="EXECUTABLES"
        primaryInputType="cdt.managedbuild.tool.bupc.linker.input"
@@ -475,15 +475,15 @@
       
   <toolChain
           archList="all"
-          osList="linux,hpux,aix,qnx"
-          name="Berkeley UPC"
+          osList="linux,hpux,aix,qnx,solaris"
+          name="%toolChain.linux.name"
           targetTool="org.eclipse.cdt.managedbuild.tool.bupc.linker"
           id="cdt.managedbuild.toolchain.bupc.exe.base">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.bupc.platform.base"
-		              name="Debug Platform"
+		              name="%targetPlatform.name"
 		              binaryParser="org.eclipse.cdt.core.ELF"
-		              osList="linux,hpux,aix,qnx"
+		              osList="linux,hpux,aix,qnx,solaris"
 		              archList="all">
 	              </targetPlatform>
 		     	  
@@ -500,9 +500,37 @@
                   <tool
                       id="org.eclipse.cdt.managedbuild.tool.bupc.linker.base"
                       superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker"/>
- 
 	</toolChain>
       
+    <toolChain
+          archList="all"
+          osList="macosx"
+          name="%toolChain.macosx.name"
+          targetTool="org.eclipse.cdt.managedbuild.tool.bupc.linker"
+          id="cdt.managedbuild.toolchain.bupc.macosx.exe.base">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.bupc.platform.macosx.base"
+		              name="%targetPlatform.name"
+		              osList="macosx"
+		              archList="all"
+		              binaryParser="org.eclipse.cdt.core.MachO64">
+	              </targetPlatform>
+		     	  
+		     	  <builder
+					id="org.eclipse.cdt.managedbuilder.bupc.builder.macosx.base"
+					isAbstract="false"
+					isVariableCaseSensitive="false"
+					superClass="org.eclipse.cdt.build.core.internal.builder">
+				</builder>
+		     	    
+                  <tool
+                      id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.macosx.base"
+                      superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler"/>
+                  <tool
+                      id="org.eclipse.cdt.managedbuild.tool.bupc.linker.macosx.base"
+                      superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker"/>
+	</toolChain>
+	
       <projectType
       	id = "cdt.managedbuild.target.bupc.exe"
       	buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.exe"
@@ -510,10 +538,10 @@
       	isTest="false">
       	<configuration
       		cleanCommand = "rm -rf"
-      		description = "Debug configuration"
+      		description = "%configuration.debug.desc"
       		id = "cdt.managedbuild.config.bupc.exe.debug"
       		buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
-      		name = "Debug">
+      		name = "%configuration.debug.name">
       		<toolChain
       			superClass="cdt.managedbuild.toolchain.bupc.exe.base"
       			id = "cdt.managedbuild.toolchain.bupc.exe.debug">	
@@ -558,10 +586,10 @@
       </configuration>
       <configuration
       		cleanCommand = "rm -rf"
-      		description = "Release configuration"
+      		description = "%configuration.release.desc"
       		id = "cdt.managedbuild.config.bupc.exe.release"
       		buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
-      		name = "Release">
+      		name = "%configuration.release.name">
       		<toolChain
       			superClass="cdt.managedbuild.toolchain.bupc.exe.base"
       			id = "cdt.managedbuild.toolchain.bupc.exe.release">	
@@ -605,5 +633,110 @@
       	</toolChain>
       </configuration>
      </projectType>
+     
+     <!-- =================== -->
+ 
+     <projectType
+      	id = "cdt.managedbuild.target.bupc.macosx.exe"
+      	buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.exe"
+      	isAbstract="false"
+      	isTest="false">
+      	<configuration
+      		cleanCommand = "rm -rf"
+      		description = "%configuration.debug.desc"
+      		id = "cdt.managedbuild.config.bupc.exe.macosx.debug"
+      		buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+      		name = "%configuration.debug.name">
+      		<toolChain
+      			superClass="cdt.managedbuild.toolchain.bupc.macosx.exe.base"
+      			id = "cdt.managedbuild.toolchain.bupc.exe.macosx.debug">	
+      			<targetPlatform
+      				superClass="cdt.managedbuild.target.bupc.platform.macosx.base"
+		        	id="cdt.managedbuild.target.bupc.platform.exe.macosx.debug">
+		        </targetPlatform>
+      			<builder
+					superClass="org.eclipse.cdt.managedbuilder.bupc.builder.macosx.base"
+					id="org.eclipse.cdt.managedbuilder.bupc.builder.exe.macosx.debug">
+				</builder>
+				<tool
+                	id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.exe.macosx.debug"
+                    superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler.macosx.base">
+                    <!--                      
+                    <option
+				    	id="gnu.cpp.compiler.exe.debug.option.optimization.level"
+                        superClass="gnu.cpp.compiler.option.optimization.level">
+                    </option>
+                    -->  
+                    <option
+						id="bupc.ui.compiler.exe.macosx.debug.option.debug"
+                        superClass="bupc.ui.compiler.general.debug">
+                    </option>
+                </tool>
+	              <tool
+	                  id="org.eclipse.cdt.managedbuild.tool.bupc.linker.exe.macosx.debug"
+	                  superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker.macosx.base">
+	                  <!--                     
+			  	      <option
+					      id="gnu.c.compiler.exe.debug.option.optimization.level"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  -->
+					  <option   
+					      id="bupc.ui.linker.exe.macosx.debug.option.debug"					     
+					      superClass="bupc.ui.linker.general.debug">
+					  </option>
+				  </tool>
+      	</toolChain>
+      </configuration>
+      <configuration
+      		cleanCommand = "rm -rf"
+      		description = "%configuration.release.desc"
+      		id = "cdt.managedbuild.config.bupc.exe.macosx.release"
+      		buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+      		name = "%configuration.release.name">
+      		<toolChain
+      			superClass="cdt.managedbuild.toolchain.bupc.macosx.exe.base"
+      			id = "cdt.managedbuild.toolchain.bupc.exe.macosx.release">	
+      			<targetPlatform
+      				superClass="cdt.managedbuild.target.bupc.platform.macosx.base"
+		        	id="cdt.managedbuild.target.bupc.platform.exe.macosx.release">
+		        </targetPlatform>
+      			<builder
+					superClass="org.eclipse.cdt.managedbuilder.bupc.builder.base"
+					id="org.eclipse.cdt.managedbuilder.bupc.builder.exe.macosx.release">
+				</builder>
+				<tool
+                	id="org.eclipse.cdt.managedbuild.tool.bupc.compiler.exe.macosx.release"
+                    superClass="org.eclipse.cdt.managedbuild.tool.bupc.compiler.macosx.base">
+                    
+                    <!--                      
+                    <option
+				    	id="gnu.cpp.compiler.exe.debug.option.optimization.level"
+                        superClass="gnu.cpp.compiler.option.optimization.level">
+                    </option>
+                    -->  
+                    <option
+						id="bupc.ui.compiler.exe.macosx.release.option.debug"
+                        superClass="bupc.ui.compiler.general.debug">
+                    </option>
+                </tool>
+	              <tool
+	                  id="org.eclipse.cdt.managedbuild.tool.bupc.linker.exe.macosx.release"
+	                  superClass="org.eclipse.cdt.managedbuild.tool.bupc.linker.macosx.base">
+	                  <!--                     
+			  	      <option
+					      id="gnu.c.compiler.exe.debug.option.optimization.level"
+						  superClass="gnu.c.compiler.option.optimization.level">
+					  </option>
+					  -->
+					  <option   
+					      id="bupc.ui.linker.exe.macosx.release.option.debug"	     
+					      superClass="bupc.ui.linker.general.debug">
+					  </option>
+				  </tool>
+      	</toolChain>
+      </configuration>
+     </projectType>
+     
 </extension>
 </plugin>

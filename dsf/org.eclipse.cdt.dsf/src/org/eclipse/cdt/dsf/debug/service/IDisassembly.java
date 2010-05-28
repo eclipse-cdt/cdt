@@ -26,7 +26,7 @@ public interface IDisassembly extends IDsfService {
 
     public interface IDisassemblyDMContext extends IDMContext {}
 
-    /**
+	/**
 	 * Gets a block of disassembled code given an address range.
 	 * 
 	 * @param context
@@ -35,10 +35,12 @@ public interface IDisassembly extends IDsfService {
 	 *            Beginning address, inclusive. If null, disassemble from the
 	 *            instruction pointer.
 	 * @param endAddress
-	 *            End address, exclusive.
+	 *            End address, exclusive. If null, implementation should attempt
+	 *            to disassemble some reasonable, default number of
+	 *            instructions. That default is implementation specific.
 	 * @param drm
 	 *            Disassembled code
-     */
+	 */
     public void getInstructions(
             IDisassemblyDMContext context,
             BigInteger startAddress, 
@@ -57,9 +59,10 @@ public interface IDisassembly extends IDsfService {
 	 *            Starting point. 1-based line number within the file. If the
 	 *            line does not represent compiled code, disassembly will start
 	 *            at the first subsequent line that does.
-	 * @param lines
-	 *            Number of lines of disassembled code to produce. -1 means all.
-	 *            
+	 * @param instructionCount
+	 *            Number of instructions to disassemble. -1 means all
+	 *            available instructions (starting at [linenum])
+	 * 
 	 * @param drm
 	 *            Disassembled code
 	 */
@@ -67,7 +70,7 @@ public interface IDisassembly extends IDsfService {
             IDisassemblyDMContext context,
             String filename, 
             int    linenum, 
-            int    lines,
+            int    instrtuctionCount,
             DataRequestMonitor<IInstruction[]> drm);
 
 	/**
@@ -100,8 +103,9 @@ public interface IDisassembly extends IDsfService {
 	 *            Starting point. 1-based line number within the file. If the
 	 *            line does not represent compiled code, disassembly will start
 	 *            at the first subsequent line that does.
-	 * @param lines
-	 *            Number of lines of disassembled code to produce. -1 means all.
+	 * @param instructionCount
+	 *            Number of instructions to disassemble. -1 means all
+	 *            available instructions (starting at [linenum])
 	 * @param drm
 	 *            Disassembled code
 	 */
@@ -109,7 +113,7 @@ public interface IDisassembly extends IDsfService {
             IDisassemblyDMContext context,
             String filename, 
             int    linenum, 
-            int    lines,
+            int    instructionCount,
             DataRequestMonitor<IMixedInstruction[]> drm);
 
 }

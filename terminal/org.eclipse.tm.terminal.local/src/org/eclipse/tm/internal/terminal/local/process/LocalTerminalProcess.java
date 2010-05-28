@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Mirko Raner - initial implementation for Eclipse Bug 196337
+ * Mirko Raner - [314607] Launching a terminal also pops up the console view
  **************************************************************************************************/
 
 package org.eclipse.tm.internal.terminal.local.process;
@@ -50,6 +51,15 @@ import org.eclipse.debug.core.model.RuntimeProcess;
  * <code>null</code>. After the launch is terminated it will appear in the Debug view with the
  * terminated process as its child element. The exit value of the terminal process can also be seen
  * in that view. <p>
+ * {@link #getStreamsProxy()} will also return <code>null</code> during initialization of a
+ * {@link LocalTerminalProcess} object until after the
+ * {@link RuntimeProcess#RuntimeProcess(ILaunch, Process, String, Map) super constructor} invocation
+ * has been completed. This disables a code path that caused a Console view to pop up when the
+ * {@link org.eclipse.debug.core.model.IStreamMonitor IStreamMonitor} already contained data (like,
+ * for example, a shell's initial prompt) when the <code>ProcessConsoleManager</code> received an
+ * {@link org.eclipse.debug.core.ILaunchListener#launchChanged(ILaunch)} notification (which cannot
+ * be avoided). See <a href="https://bugs.eclipse.org/314607">https://bugs.eclipse.org/314607</a>
+ * for additional details. <p/>
  *
  * This solution for preventing standard consoles from being opened does certainly not deserve the
  * cleanliness award for straightforward coding, but at least it doesn't rely on internal API at
@@ -57,7 +67,7 @@ import org.eclipse.debug.core.model.RuntimeProcess;
  * extension point as proposed in bug 242373 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=242373).
  *
  * @author Mirko Raner
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public final class LocalTerminalProcess extends RuntimeProcess {
 
@@ -66,6 +76,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 	 */
 	public final static String PROCESS_TYPE = "org.eclipse.tm.terminal.localProcess"; //$NON-NLS-1$
 
+	private boolean enableStreamsProxy;
 	private boolean resetStreamsProxy;
 	private PTY pty;
 
@@ -80,6 +91,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 	protected LocalTerminalProcess(ILaunch launch, Process process, String name, Map attributes) {
 
 		super(launch, process, name, setProcessType(attributes));
+		enableStreamsProxy = true;
 		LocalTerminalProcessRegistry.registerWithLaunch(launch, this);
 		launch.removeProcess(this);
 	}
@@ -110,7 +122,7 @@ public final class LocalTerminalProcess extends RuntimeProcess {
 	 */
 	public IStreamsProxy getStreamsProxy() {
 
-		if (resetStreamsProxy) {
+		if (resetStreamsProxy || !enableStreamsProxy) {
 
 			return null;
 		}

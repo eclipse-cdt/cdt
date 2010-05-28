@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [274688] [api][dstore] DStoreConnectorService.internalConnect() needs to be cleaned up
  * David McKnight   (IBM)        - [258529] Unable to display connection failure error message
  * David McKnight   (IBM)        - [306989] [dstore] workspace in strange condition if expanding projects during  logon
+ * David McKnight   (IBM)        - [313653] [dstore] Not Secured using SSL message appears twice per connect
  *******************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -120,9 +121,12 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	private class ConnectionStatusPair {
 		private ConnectionStatus _connectStatus;
 		private ConnectionStatus _launchStatus;
-		public ConnectionStatusPair(ConnectionStatus connectStatus, ConnectionStatus launchStatus){
+		private Boolean _alertedNonSSL;
+		
+		public ConnectionStatusPair(ConnectionStatus connectStatus, ConnectionStatus launchStatus, Boolean alertedNonSSL){
 			_connectStatus = connectStatus;
 			_launchStatus = launchStatus;
+			_alertedNonSSL = alertedNonSSL;
 		}
 		
 		public ConnectionStatus getConnectStatus(){
@@ -131,6 +135,10 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		
 		public ConnectionStatus getLaunchStatus(){
 			return _launchStatus;
+		}
+		
+		public Boolean getAlertedNonSSL(){
+			return _alertedNonSSL;
 		}
 	}
 	
@@ -792,7 +800,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			}
 		} 
 
-		return new ConnectionStatusPair(connectStatus, launchStatus);
+		return new ConnectionStatusPair(connectStatus, launchStatus, alertedNONSSL);
 	}
 	
 	/**
@@ -1335,6 +1343,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				ConnectionStatusPair connectStatusPair = connectWithDaemon(info, serverLauncher, alertedNONSSL, monitor);
 				connectStatus = connectStatusPair.getConnectStatus();
 				launchStatus = connectStatusPair.getLaunchStatus();
+				alertedNONSSL = connectStatusPair.getAlertedNonSSL();
 			}
 			else if (serverLauncherType == ServerLaunchType.RUNNING_LITERAL){ // connect to running server
 				connectStatus = connectWithRunning(monitor);

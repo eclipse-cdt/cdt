@@ -121,10 +121,23 @@
 
 		<!-- build terminal -->
 		<zip destfile="${buildDirectory}/${buildLabel}/TM-terminal-${buildAlias}.zip" update="true">
-			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**, **/org.eclipse.tm.terminal.local*, **/org.eclipse.tm.terminal.local*/**">
 				<include name="**/org.eclipse.tm.terminal*" />
 				<include name="**/org.eclipse.tm.terminal*/**" />
 				<include name="**/org.eclipse.tm.terminal*/**/**" />
+			</zipfileset>
+			<zipfileset refid="rootfiles" />
+		</zip>
+
+		<!-- build terminal.local -->
+		<zip destfile="${buildDirectory}/${buildLabel}/TM-terminal-local-incubation-${buildAlias}.zip" update="true">
+			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+				<include name="**/org.eclipse.tm.terminal_*" />
+				<include name="**/org.eclipse.tm.terminal_*/**" />
+				<include name="**/org.eclipse.tm.terminal_*/**/**" />
+				<include name="**/org.eclipse.tm.terminal.local*" />
+				<include name="**/org.eclipse.tm.terminal.local*/**" />
+				<include name="**/org.eclipse.tm.terminal.local*/**/**" />
 			</zipfileset>
 			<zipfileset refid="rootfiles" />
 		</zip>

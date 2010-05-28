@@ -54,6 +54,7 @@ import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
 import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
 import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
 
@@ -116,7 +117,12 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 			fProjectSetup.setUp();
 		}
 		assertNotNull(fgHighlightRGB);
-		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
+		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
+	    // TLETODO temporary fix for bug 314635
+		store.setValue(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX 
+				            + SemanticHighlightings.OVERLOADED_OPERATOR 
+				            + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX, true);
 		fEditor= openCEditor(new Path("/" + PROJECT + "/src/occurrences.cpp"));
 		assertNotNull(fEditor);
 		fTextWidget= fEditor.getViewer().getTextWidget();
@@ -153,6 +159,12 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
+		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
+		store.setToDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES);
+	    // TLETODO temporary fix for bug 314635
+		store.setToDefault(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX 
+				            + SemanticHighlightings.OVERLOADED_OPERATOR 
+				            + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
 		SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fSelWASTListener);
 		EditorTestHelper.closeAllEditors();
 		if (fProjectSetup != null) {

@@ -3283,18 +3283,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		if (name != null) {
-//			try {
-//				IASTFileLocation location= name.getFileLocation();
-//				if (!document.get(location.getNodeOffset(), location.getNodeLength()).equals(name.toString())) {
-//					System.err.println("CEditor.updateOccurrenceAnnotations() invalid ast");
-//					return;
-//				}
-//			} catch (BadLocationException exc) {
-//			}
 			IBinding binding= name.resolveBinding();
 			if (binding != null) {
 				OccurrencesFinder occurrencesFinder= new OccurrencesFinder();
 				if (occurrencesFinder.initialize(astRoot, name) == null) {
+				    // TLETODO temporary fix for bug 314635
+				    boolean overloadedOperatorsEnabled = getPreferenceStore().getBoolean(
+				            PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX 
+				            + SemanticHighlightings.OVERLOADED_OPERATOR 
+				            + PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
+				    if (!overloadedOperatorsEnabled) {
+				        occurrencesFinder.setOptions(OccurrencesFinder.OPTION_EXCLUDE_IMPLICIT_REFERENCES);
+				    }
 					locations= occurrencesFinder.getOccurrences();
 				}
 			}

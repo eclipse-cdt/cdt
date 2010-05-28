@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,12 +32,19 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	
 	public static final String ID= "OccurrencesFinder"; //$NON-NLS-1$
 	
+	/**
+	 * If set, don't search for implicit references.
+	 */
+	public static final int OPTION_EXCLUDE_IMPLICIT_REFERENCES = 1;
+	
 	private IASTTranslationUnit fRoot;
 	private IASTName fSelectedNode;
 	private IBinding fTarget;
 
 	private List<OccurrenceLocation> fResult;
 	private String fDescription;
+
+	private int fOptions;
 	
 	public OccurrencesFinder() {
 		super();
@@ -56,6 +63,15 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return null;
 	}
 	
+	/**
+	 * Specify search options.
+	 * 
+	 * @param options
+	 */
+	public void setOptions(int options) {
+		fOptions = options;
+	}
+	
 	private void performSearch() {
 		if (fResult == null) {
 			fResult= new ArrayList<OccurrenceLocation>();
@@ -71,7 +87,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 					addUsage(candidate, candidate.resolveBinding());
 				}
 			}
-			if (canHaveImplicitReference(fTarget)) {
+			if (needImplicitReferences() && canHaveImplicitReference(fTarget)) {
 				names= CPPVisitor.getImplicitReferences(fRoot, fTarget);
 				for (IASTName candidate : names) {
 					if (candidate.isPartOfTranslationUnitFile()) {
@@ -82,6 +98,10 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		}
 	}
 	
+	private boolean needImplicitReferences() {
+		return (fOptions & OPTION_EXCLUDE_IMPLICIT_REFERENCES) == 0;
+	}
+
 	private boolean canHaveImplicitReference(IBinding binding) {
 		final char[] op = Keywords.cOPERATOR;
 		final char[] nameCharArray = binding.getNameCharArray();

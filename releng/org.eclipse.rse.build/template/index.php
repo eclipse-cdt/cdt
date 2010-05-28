@@ -63,12 +63,7 @@
     </b></td></tr>
     <tr><td>
       For core RSE and TM-Terminal, the Eclipse <b>Platform Runtime Binary</b> is sufficient.
-      Of course you can also use the popular <b>SDK</b> or one of the <b>Packages</b>. 
-      Prerequisites for the discovery add-on (EMF) can be retrieved from the
-      <a href="http://download.eclipse.org/releases/europa/">Europa</a>, 
-      <a href="http://download.eclipse.org/releases/ganymede/">Ganymede</a> or
-      <a href="http://download.eclipse.org/releases/galileo/">Galileo</a>
-      Discovery Sites</a>.
+      Of course you can also use the popular <b>SDK</b> or any one of the downloadable <b>Packages</b>, all of which include the Eclipse Platform. 
     </td></tr> 
   </tbody>
 </table>
@@ -83,7 +78,7 @@
 		<font face="Arial,Helvetica" color="#FFFFFF"><b>All-in-one</b> (includes runtime and documentation for <b>dstore, ftp, local, ssh, and telnet</b>)</font></td>
 	</tr>
 	<tr><td align="LEFT">
-	For tool writers, <b>the SDK</b> also includes the runtime as listed, plus programmer documentation and source.
+	For tool writers, <b>the RSE SDK</b> also includes the runtime as listed, plus programmer documentation and source.
 	</td></tr>
 </table>
 <table border="0" cellspacing="2" cellpadding="0" width="100%">
@@ -160,11 +155,12 @@
 	    	An API and DNS-SD / Zeroconf based 
 			implementation for remote network service discovery. 
 			Runs stand-alone or integrated with RSE.
-			Requires EMF 2.2.0 or later. Includes Source.
+			Requires EMF 2.2.0 or later. Includes Source.<br/>
+			<i>Note: This component is no longer actively developed and may be discontinued.</i>
         </td>
     </tr>
 </table>
-<b>Note:</b> As of TM 3.1, the <b>RSE-remotecdt</b> integration for remote launch and debug through gdbserver has moved into CDT 6.0.
+<b>Note:</b> As of TM 3.1 (Eclipse Galileo / June 2009), the <b>RSE-remotecdt</b> integration for remote launch and debug through gdbserver has moved into CDT 6.0.
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>
@@ -199,7 +195,7 @@
         <td>All <img src="egg.gif" width=20 height=20></td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-local-incubation-@buildId@.zip">TM-terminal-local-incubation-@buildId@.zip</a></td>
         <td>
-			A local terminal (console) integrated into Eclipse. Requires CDT 7.0.0 M6 or higher. Includes Source.
+			A local terminal (console) integrated into Eclipse. Works on Linux, Solaris and Mac OS X, but currently <i>not on Windows</i>. Requires CDT 7.0 (Eclipse Helios / June 2010) or higher. Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
@@ -230,16 +226,16 @@
 		<td width="30%"><b>Platform</b></td>
 		<td width="63%"><b>Download</b></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>Windows (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
+        <td>Windows</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-windows.zip">rseserver-@buildId@-windows.zip</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>Linux (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
+        <td>Linux</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-linux.tar">rseserver-@buildId@-linux.tar</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>Other Unix (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments">Supported Versions</a>)</td>
+        <td>Other Unix</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-unix.tar">rseserver-@buildId@-unix.tar</a></td></tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
-        <td>Mac OS X (<a href="http://www.eclipse.org/dsdp/tm/development/plan.php#OperatingEnvironments"><i>Experimental</i></a>)</td>
+        <td>Mac OS X (<i>Experimental</i>)</td>
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/rseserver-@buildId@-macosx.tar">rseserver-@buildId@-macosx.tar</a></td></tr>
 </table>
 <table border="0" cellspacing="5" cellpadding="2" width="100%">

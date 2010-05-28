@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -117,6 +118,8 @@ public class TargetBuild {
 				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 			}
 		};
+		// workaround for bug 270326, initialize CUIPlugin preference store to avoid race condition
+		CUIPlugin.getDefault().getPreferenceStore().getString("dummy"); //$NON-NLS-1$
 		targetJob.schedule();
 
 		if (!MakePreferencePage.isBuildTargetInBackground()) {

@@ -391,7 +391,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		});
 
 		// Wait for completion
-		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+		fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
 		// Return the string formatted by the back-end
@@ -436,7 +436,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         });
 
         // Wait for completion
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
         assertTrue(fWait.getMessage(), fWait.isOK());
 
         // Return the string formatted by the back-end
@@ -478,7 +478,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         });
 
         // Wait for completion
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
         assertTrue(fWait.getMessage(), fWait.isOK());
 
         // Return the string formatted by the back-end
@@ -521,7 +521,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         });
 
         // Wait for the result and return the breakpoint id
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
         return drm.getData();
     }
 
@@ -560,7 +560,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         });
 
         // Wait for the result
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
     }
 
     /* ------------------------------------------------------------------------
@@ -599,7 +599,7 @@ public class MIBreakpointsTest extends BaseTestCase {
         });
 
         // Wait for the result
-        fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
     }
 
     // ========================================================================
@@ -1685,7 +1685,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 			// Remove the selected breakpoint
 			IBreakpointDMContext index = breakpoints[indices[i]];
 			removeBreakpoint(index);
-			fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+			fWait.waitUntilDone(TestsPlugin.massageTimeout(2000));
 			assertTrue(fWait.getMessage(), fWait.isOK());
 			breakpoints_left--;
 

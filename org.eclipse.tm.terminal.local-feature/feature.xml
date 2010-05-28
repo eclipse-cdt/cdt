@@ -35,9 +35,11 @@
       <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.2"/>
    </url>
 
+<!--
    <includes
          id="org.eclipse.tm.terminal"
          version="0.0.0"/>
+-->
 
    <requires>
       <import plugin="org.eclipse.cdt.core" version="5.2.0" match="compatible"/>

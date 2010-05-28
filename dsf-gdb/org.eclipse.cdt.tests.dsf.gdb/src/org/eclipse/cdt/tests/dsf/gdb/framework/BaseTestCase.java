@@ -81,6 +81,13 @@ public class BaseTestCase {
 	 * beyond that point.
 	 */
     protected class SessionEventListener {
+    	private DsfSession fSession;
+
+		SessionEventListener(DsfSession session) {
+    		fSession = session;
+    		Assert.assertNotNull(session);
+    	}
+    	
 		@DsfServiceEventHandler 
     	public void eventDispatched(IDMEvent<?> event) {
     		if (event instanceof MIStoppedEvent) {
@@ -99,13 +106,12 @@ public class BaseTestCase {
     				fTargetSuspendedSem.notify();	
     			}
 
-    			// no further need for this listener
-    			fLaunch.getSession().removeServiceEventListener(this);
+    			// no further need for this listener. Note fLaunch could be null if the test ran into a failure
+   				fSession.removeServiceEventListener(this);
     		}
     	}
     }
-    private final SessionEventListener fSessionEventListener = new SessionEventListener();
-    
+   
     @BeforeClass
     public static void baseBeforeClassMethod() {
 		// Setup information for the launcher
@@ -152,7 +158,7 @@ public class BaseTestCase {
 		// occur. We want to find out when the break on main() occurs.
  		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
 			public void sessionStarted(DsfSession session) {
-				session.addServiceEventListener(fSessionEventListener, null);
+				session.addServiceEventListener(new SessionEventListener(session), null);
 			}
 		}; 		
 

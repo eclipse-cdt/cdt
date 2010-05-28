@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
 import org.eclipse.cdt.debug.internal.core.CRequest;
+import org.eclipse.cdt.debug.ui.provisional.IRepositionableMemoryRendering2;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -442,7 +443,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 							if (block.supportBaseAddressModification()) {
 								block.setBaseAddress(newBase);
 							}
-							renderingFinal.goToAddress(newBase);
+							if(renderingFinal instanceof IRepositionableMemoryRendering2) {
+								((IRepositionableMemoryRendering2)renderingFinal).goToAddress(newBase, expression);
+							}
+							else {
+								renderingFinal.goToAddress(newBase);
+							}
 							fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 							runOnUIThread(new Runnable(){
 								public void run() {

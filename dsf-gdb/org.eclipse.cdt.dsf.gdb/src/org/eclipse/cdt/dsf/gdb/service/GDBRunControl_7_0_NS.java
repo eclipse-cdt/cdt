@@ -994,6 +994,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				rm.done();
 			}
 		}
+		@Override
+		public void rollBack(RequestMonitor rm) {
+		    Sequence.Step restoreStep = new RestoreTargetStateStep();
+		    restoreStep.execute(rm);
+		}
 	};
 
 	/**

@@ -1238,6 +1238,54 @@ public class MIBreakpointsTest extends BaseTestCase {
 				   ((MIBreakpointHitEvent)event).getNumber() == ref.getReference());
 	}
 	
+	// ------------------------------------------------------------------------
+	// insertInvalidBreakpoint_WhileTargetRunning
+	// Set an invalid breakpoint while the target is running, then set a valid
+	// breakpoint and make sure the second breakpoints eventually gets hit.
+	//
+	// We had a problem where an invalid breakpoint set when the target was running
+	// would leave us in a bad state (Bug 314628)
+	// ------------------------------------------------------------------------
+	@Test
+	public void insertInvalidBreakpoint_WhileTargetRunning() throws Throwable {
+
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, "Bad file name");
+		breakpoint.put(LINE_NUMBER_TAG, LINE_NUMBER_5);
+
+		// Run the program. It will make a two second sleep() call, during which time... 
+		SyncUtil.resume();
+
+		// ...we install the bad breakpoint and check that it failed
+		insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), !fWait.isOK());
+
+		// Now install a proper breakpoint an see that it hits without having to resume
+		// the target.  This will show that the target was still properly running.
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
+
+		// Wait for breakpoint to hit.
+		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		
+    	// Ensure the correct BreakpointEvent was received
+		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
+		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
+				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
+		assertTrue("BreakpointService problem: breakpoint mismatch",
+				fBreakpointRef == breakpoint1.getNumber());
+		clearEventCounters();
+		
+		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
+				event.getClass().getCanonicalName(), event instanceof MIBreakpointHitEvent);
+		assertTrue("Did not stop because of the correct breakpoint at line " + LINE_NUMBER_5,
+				   ((MIBreakpointHitEvent)event).getNumber() == ref.getReference());
+	}
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Add Watchpoint tests
 	///////////////////////////////////////////////////////////////////////////

@@ -1012,6 +1012,11 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 				rm.done();
 			}
 		}
+		@Override
+		public void rollBack(RequestMonitor rm) {
+		    Sequence.Step restoreStep = new RestoreTargetStateStep();
+		    restoreStep.execute(rm);
+		}
 	};
 
 	/**

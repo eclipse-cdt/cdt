@@ -28,7 +28,7 @@ public interface IMIRunControl extends IRunControl2
 	 * to receive commands.  Once the specified steps are executed, the target should be
 	 * returned to its original availability.
 	 * 
-	 * This can is of value for breakpoints commands; e.g., breakpoints need to be inserted
+	 * This is of value for breakpoints commands; e.g., breakpoints need to be inserted
 	 * even when the target is running, so this call would suspend the target, insert the
 	 * breakpoint, and resume the target again.
 	 * 

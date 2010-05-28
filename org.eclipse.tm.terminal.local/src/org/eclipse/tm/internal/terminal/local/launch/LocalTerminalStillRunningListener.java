@@ -42,7 +42,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * mechanism.
  *
  * @author Mirko Raner
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 
@@ -72,7 +72,7 @@ public class LocalTerminalStillRunningListener implements IWorkbenchListener {
 		IPreferenceStore store = LocalTerminalActivator.getDefault().getPreferenceStore();
 		if (!store.getBoolean(LocalTerminalActivator.PREF_CONFIRM_TERMINATE_ON_SHUTDOWN)) {
 
-			//return true;
+			return true;
 		}
 		ILaunchConfigurationType launchType;
 		String launchTypeID = LocalTerminalLaunchDelegate.LAUNCH_CONFIGURATION_TYPE_ID;

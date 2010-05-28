@@ -30,7 +30,8 @@ public interface IRepositionableMemoryRendering2 extends IRepositionableMemoryRe
 	 *            that expression. Null if n/a. <i>This is for informational
 	 *            purposes only</i>. Implementation should behave just as if
 	 *            {@link IRepositionableMemoryRendering#goToAddress(BigInteger)}
-	 *            had been called.
+	 *            had been called, though the implementation may want to
+	 *            consider the expression when providing the label and/or image.
 	 * @throws DebugException
 	 *             when there is a problem repositioning the rendering to the
 	 *             address

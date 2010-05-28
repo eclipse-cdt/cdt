@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class IncludeReference extends Openable implements IIncludeReference {
 	
-	IIncludeEntry fIncludeEntry;
-	IPath fPath;
+	final IIncludeEntry fIncludeEntry;
+	final IPath fPath;
 
 	public IncludeReference(ICProject cproject, IIncludeEntry entry) {
 		this(cproject, entry, entry.getFullIncludePath());
@@ -59,6 +59,20 @@ public class IncludeReference extends Openable implements IIncludeReference {
 		return null;
 	}
 
+	/*
+	 * @see org.eclipse.cdt.internal.core.model.CElement#exists()
+	 */
+	@Override
+	public boolean exists() {
+		File file = null;
+		if (fPath != null) {
+			file = fPath.toFile();
+		} else if (fIncludeEntry != null) {
+			file = fIncludeEntry.getFullIncludePath().toFile();
+		}
+		return file != null && file.isDirectory();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
 	 */
@@ -93,39 +107,39 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	 * @see org.eclipse.cdt.internal.core.model.CContainer#computeChildren(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.resources.IResource)
 	 */
 	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-			ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
-			File file = null;
-			if (fPath != null) {
-				file = fPath.toFile();
-			} else if (fIncludeEntry != null) {
-				file = fIncludeEntry.getFullIncludePath().toFile();
-			}
-			String[] names = null;
-			if (file != null && file.isDirectory()) {
-				names = file.list();
+		ArrayList<ICElement> vChildren = new ArrayList<ICElement>();
+		File file = null;
+		if (fPath != null) {
+			file = fPath.toFile();
+		} else if (fIncludeEntry != null) {
+			file = fIncludeEntry.getFullIncludePath().toFile();
+		}
+		String[] names = null;
+		if (file != null && file.isDirectory()) {
+			names = file.list();
 
-				if (names != null) {
-					IPath path = new Path(file.getAbsolutePath());
-					for (String name : names) {
-						File child = new File(file, name);
-						ICElement celement = null;
-						if (child.isDirectory()) {
-							celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
-						} else if (child.isFile()){
-							String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), name);
-							if (id != null) {
-								// TODO:  should use URI
-								celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(name)), id);
-							}
+			if (names != null) {
+				IPath path = new Path(file.getAbsolutePath());
+				for (String name : names) {
+					File child = new File(file, name);
+					ICElement celement = null;
+					if (child.isDirectory()) {
+						celement = new IncludeReference(this, fIncludeEntry, new Path(child.getAbsolutePath()));
+					} else if (child.isFile()){
+						String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), name);
+						if (id != null) {
+							// TODO:  should use URI
+							celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(name)), id);
 						}
-						if (celement != null) {
-							vChildren.add(celement);
-						}
+					}
+					if (celement != null) {
+						vChildren.add(celement);
 					}
 				}
 			}
-			info.setChildren(vChildren);
-			return true;
+		}
+		info.setChildren(vChildren);
+		return true;
 	}
 
 	/* (non-Javadoc)

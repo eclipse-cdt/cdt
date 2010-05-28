@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,10 @@ public class ExecutionContextLabelText extends LabelText {
         if ( ILaunchVMConstants.PROP_STATE_CHANGE_REASON.equals(propertyName) ) {
             String reason = (String)properties.get(ILaunchVMConstants.PROP_STATE_CHANGE_REASON);
             String reasonLabel = "invalid reason"; //$NON-NLS-1$
-            if (StateChangeReason.BREAKPOINT.name().equals(reason)) {
+            if (reason == null) {
+            	// In non-stop mode threads that are running have no state change reason
+            	reasonLabel = ""; //$NON-NLS-1$
+            } else if (StateChangeReason.BREAKPOINT.name().equals(reason)) {
                 reasonLabel = MessagesForLaunchVM.State_change_reason__Breakpoint__label;
             } else if (StateChangeReason.CONTAINER.name().equals(reason)) {
                 reasonLabel = MessagesForLaunchVM.State_change_reason__Container__label;

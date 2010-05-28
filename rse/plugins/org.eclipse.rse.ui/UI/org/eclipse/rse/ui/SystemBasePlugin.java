@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,6 +17,7 @@
  * David McKnight   (IBM)        - [244454] SystemBasePlugin.getWorkBench() incorrectly returns null when called during Eclipse startup
  * David McKnight   (IBM)  [246406] [performance] Timeout waiting when loading SystemPreferencesManager$ModelChangeListener during startup
  * Martin Oberhuber (Wind River) - [246406] Timeout waiting when loading RSE
+ * David McKnight   (IBM)        - [314943] Write to the message to log instead of console
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -217,7 +218,7 @@ public abstract class SystemBasePlugin extends AbstractUIPlugin
 					wb.addWorkbenchListener(workbenchListener);
 				} catch (IllegalStateException e) {
 					/* will try again later when workbench becomes available */
-					System.out.println("Workbench not yet available"); //$NON-NLS-1$
+					logWarning("Workbench not yet available"); //$NON-NLS-1$
 				}
 			}
 		}

@@ -117,7 +117,7 @@ public class EFSExtensionTests extends TestCase {
 			else {
 				// if we're not on Windows then backslash is not the path separator, and instead
 				// is a valid filename character.  Using a backslash will result in it being escaped.
-				expected = new URI("file", "/c:%5Cfoo%5Csubdirectory", null);
+				expected = new URI("file", "/c:\\foo\\subdirectory", null);
 			}
 		} catch (URISyntaxException e) {
 			fail(e.getMessage());

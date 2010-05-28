@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="copyright" content="Copyright (c) 2006, 2008 Wind River Systems, Inc. and others. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." />
+<meta name="copyright" content="Copyright (c) 2006, 2010 Wind River Systems, Inc. and others. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." />
 <link rel="stylesheet" type="text/css" href="../book.css" />
 <title>Installing the RSE</title>
 </head>
@@ -15,6 +15,7 @@ available at http://www.eclipse.org/legal/epl-v10.html
 
 Contributors:
 David Dykstal (IBM) - [203337] RSE user guide - TOC differs from Chapter for setting up a dstore server
+Martin Oberhuber (Wind River) - [314217] "Installing RSE" is outdated in RSE user docs
 -->
 
 <body id="g1installing-body">
@@ -22,17 +23,25 @@ David Dykstal (IBM) - [203337] RSE user guide - TOC differs from Chapter for set
 <h1 class="topictitle1">Installing the Remote System Explorer</h1>
 <div>
 <p>
-The simplest way to get RSE is via the Update Manager: From your running instance
-of Eclipse 3.3, choose <i>Help &gt; Software Updates &gt; Find and Install...</i>.
-Choose "Search for New Features to Install", and select the "add a new Remote Site named
-"RSE" and pointing to <a href="http://download.eclipse.org/dsdp/tm/updates/2.0/">
-http://download.eclipse.org/dsdp/tm/updates/2.0/</a>.
-Select the RSE SDK feature, and perform the update process as usual.</p>
+The simplest way to get RSE is via Software Updates: From your running instance
+of Eclipse 3.4 or newer, choose <i>Help &gt; Install New Software...</i>.
+to open the software installation wizard.</p>
+
+<p>
+In case an update site is not pre-configured, consult the 
+<a href="http://www.eclipse.org/dsdp/tm">Eclipse DSDP-TM Homepage</a> for finding
+the latest update site to use, or enable an Eclipse Release Train Repository,
+like the <a href="http://download.eclipse.org/releases/helios">http://download.eclipse.org/releases/helios</a>
+repository for Eclipse 3.6 (June 2010).
+
+Type <i>"Remote"</i> in the filter box and press ENTER to find the RSE downloads;
+for the stand-alone Terminal view, find <i>"Terminal"</i>. Select what you want to install 
+and finish the wizard.</p>
 
 <p>If you prefer manual installation, you can download RSE SDK from the
 DSDP <a href="http://download.eclipse.org/dsdp/tm/downloads/">Target
-Management Download Site</a> and extract it into your installation of
-Eclipse 3.3 or later, or link it as product extension.</p>
+Management Download Site</a> and extract it into the dropins folder of
+Eclipse 3.4 or later, or link it as product extension.</p>
 <p>Start Eclipse Workbench, and choose <i>Window &gt; Open Perspective &gt; 
 Other &gt; Remote System Explorer</i>.</p>
 </div>

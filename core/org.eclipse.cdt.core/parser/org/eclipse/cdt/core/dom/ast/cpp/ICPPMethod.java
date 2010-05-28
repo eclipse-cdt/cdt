@@ -22,8 +22,8 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	public static final ICPPMethod [] EMPTY_CPPMETHOD_ARRAY = new ICPPMethod[0];
 	
 	/**
-	 * is this a virtual method
-	 * @throws DOMException
+	 * Returns whether this method is declared to be virtual. Does not detect whether
+	 * the method is virtual because of overriding a virtual method from a base class.
 	 */
 	public boolean isVirtual() throws DOMException;
 	

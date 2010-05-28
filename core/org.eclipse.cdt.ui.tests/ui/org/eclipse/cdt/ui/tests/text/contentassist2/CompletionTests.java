@@ -789,12 +789,30 @@ public class CompletionTests extends AbstractContentAssistTest {
 	//   void blah(const vector3& v) { x += v./*cursor*/; }
 	//   float x;
 	// };
-	public void _testForwardMembersInInlineMethods_Bug185652() throws Exception {
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=185652
+	public void testForwardMembersInInlineMethods_Bug103857a() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=103857
 		final String[] expected= {
 				"x"
 		};
 		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+
+	//	struct S {
+	//		int mem;
+	//	};
+	//	class X {
+	//		void test() {
+	//			T t;
+	//			t.m/*cursor*/;
+	//		}
+	//		typedef S T;
+	//	};
+	public void testForwardMembersInInlineMethods_Bug103857b() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=185652
+		final String[] expected= {
+				"mem"
+		};
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 
 	// void Pri/*cursor*/

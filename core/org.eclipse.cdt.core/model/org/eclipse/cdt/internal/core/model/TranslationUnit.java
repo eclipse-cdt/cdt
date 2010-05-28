@@ -894,7 +894,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		fLanguageOfContext= language;
 		if (language != null) {
 			IncludeFileContentProvider crf= getIncludeFileContentProvider(style, index, language.getLinkageID());
-			return language.getCompletionNode(fileContent, scanInfo, crf, index, ParserUtil.getParserLogService(), offset);
+			IASTCompletionNode result = language.getCompletionNode(fileContent, scanInfo, crf, index, ParserUtil.getParserLogService(), offset);
+			if (result != null) {
+				final IASTTranslationUnit ast = result.getTranslationUnit();
+				if (ast != null) {
+					ast.setIsHeaderUnit(!isSourceUnit());
+				}
+			}
+			return result;
 		}
 		return null;
 	}

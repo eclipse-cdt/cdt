@@ -62,6 +62,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private boolean fIsHeader= true;
 	private IIndexFileSet fIndexFileSet;
 	private INodeFactory fNodeFactory;
+	private boolean fForContentAssist;
 	
 	
     @Override
@@ -339,6 +340,14 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		fIsHeader= headerUnit;
 	}
 	
+	public boolean isForContentAssist() {
+		return fForContentAssist;
+	}
+
+	public final void setIsForContentAssist(boolean forContentAssist) {
+		fForContentAssist= forContentAssist;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener#skippedFile(org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent)
 	 */
@@ -378,6 +387,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		copy.setIsHeaderUnit(fIsHeader);
 		copy.setASTNodeFactory(fNodeFactory);
 		copy.setLocationResolver(fLocationResolver);
+		copy.setIsForContentAssist(fForContentAssist);
 		
 		for(IASTDeclaration declaration : getDeclarations())
 			copy.addDeclaration(declaration == null ? null : declaration.copy());

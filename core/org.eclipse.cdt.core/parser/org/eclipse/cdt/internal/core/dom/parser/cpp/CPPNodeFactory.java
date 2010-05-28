@@ -109,6 +109,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.dom.parser.NodeFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
 
 /**
@@ -535,6 +536,9 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		
 		if (scanner != null) {
 			tu.setLocationResolver(scanner.getLocationResolver());
+			if (scanner instanceof CPreprocessor) {
+				tu.setIsForContentAssist(((CPreprocessor) scanner).isContentAssistMode());
+			}
 		}
 		tu.setASTNodeFactory(this);
 		return tu;

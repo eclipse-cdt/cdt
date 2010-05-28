@@ -141,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
@@ -155,6 +156,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -1031,13 +1033,33 @@ public class CPPSemantics {
    }
 
    static IBinding[] getBindingsFromScope(ICPPScope scope, final IIndexFileSet fileSet, LookupData data) throws DOMException {
-		IBinding[] bindings;
+		// For internal scopes we need to check the point of declaration
 		if (scope instanceof ICPPASTInternalScope) {
-			bindings= ((ICPPASTInternalScope) scope).getBindings(data.astName, true, data.prefixLookup, fileSet, data.checkPointOfDecl);
-		} else {
-			bindings= scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
-		}
-		return bindings;
+			final IASTName astName = data.astName;
+			final ICPPASTInternalScope internalScope = (ICPPASTInternalScope) scope;
+			IBinding[] bindings= internalScope.getBindings(astName, true, data.prefixLookup, fileSet, data.checkPointOfDecl);
+			
+			// Bug 103857: Members declared after the point of completion cannot be
+			//     found in the partial AST, we look them up in the index
+			if (data.checkWholeClassScope && scope instanceof ICPPClassScope) {
+				final IASTTranslationUnit tu = astName.getTranslationUnit();
+				if (tu instanceof ASTTranslationUnit && ((ASTTranslationUnit) tu).isForContentAssist()) {
+					IIndex index = tu.getIndex();
+					IASTNode node = internalScope.getPhysicalNode();
+					if (index != null && node != null && node.contains(astName)) {
+						IBinding indexBinding= index.adaptBinding(((ICPPClassScope) scope).getClassType());
+						if (indexBinding instanceof ICPPClassType) {
+							IScope scopeInIndex= ((ICPPClassType) indexBinding).getCompositeScope();
+							bindings= ArrayUtil.addAll(bindings, scopeInIndex.getBindings(astName, true, data.prefixLookup, fileSet));
+						}
+					}
+				}
+			}
+			return bindings;
+		} 
+		
+		// For index scopes the point of declaration is ignored.
+		return scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
 	}
 
 	static void removeObjects(final IBinding[] bindings) {

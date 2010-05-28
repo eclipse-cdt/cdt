@@ -251,6 +251,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		fContentAssistLimit= offset;
 		fRootLexer.setContentAssistMode(offset);
 	}
+	
+	public boolean isContentAssistMode() {
+		return fRootLexer.isContentAssistMode();
+	}
 
 	public void setProcessInactiveCode(boolean val) {
 		fRootContext.setParseInactiveCode(val);

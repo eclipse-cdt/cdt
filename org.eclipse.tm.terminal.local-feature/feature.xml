@@ -15,6 +15,7 @@
       label="%featureName"
       version="0.1.0.qualifier"
       provider-name="%providerName"
+      os="linux"
       image="eclipse_update_120.jpg">
 
    <description>
@@ -50,16 +51,18 @@
 
    <plugin
          id="org.eclipse.tm.terminal.local"
+         os="linux"
          download-size="18"
          install-size="47"
          version="0.0.0"
          unpack="false"/>
 
+<!--
    <plugin
          id="org.eclipse.tm.terminal.local.source"
          download-size="25"
          install-size="43"
          version="0.0.0"
          unpack="false"/>
-
+-->
 </feature>

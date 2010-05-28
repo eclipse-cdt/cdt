@@ -26,7 +26,8 @@ import java.nio.charset.CodingErrorAction;
  * soft references.
  */
 public class FileCharArray extends LazyCharArray {
-	
+	private static final String UTF8_CHARSET_NAME = "UTF-8"; //$NON-NLS-1$
+
 	public static AbstractCharArray create(String fileName, String charSet, InputStream in) throws IOException {
 		// no support for non-local files
 		if (!(in instanceof FileInputStream)) {
@@ -49,10 +50,21 @@ public class FileCharArray extends LazyCharArray {
 		ByteBuffer byteBuffer = ByteBuffer.allocate(lsize);
 		channel.read(byteBuffer);
 		byteBuffer.flip();
-
+		skipUTF8ByteOrderMark(byteBuffer, charSet);
+		
 		CharBuffer charBuffer = Charset.forName(charSet).decode(byteBuffer);
 		char[] buf= extractChars(charBuffer);
 		return new CharArray(buf);
+	}
+
+	private static void skipUTF8ByteOrderMark(ByteBuffer buf, String charset) {
+		if (charset.equals(UTF8_CHARSET_NAME) && buf.remaining() >= 3) {
+			int pos = buf.position();
+			if (buf.get(pos) == (byte) 0xEF && buf.get(++pos) == (byte) 0xBB &&
+					buf.get(++pos) == (byte) 0xBF) {
+				buf.position(++pos);
+			}
+		}
 	}
 	
 	private static char[] extractChars(CharBuffer charBuffer) {
@@ -103,7 +115,7 @@ public class FileCharArray extends LazyCharArray {
 		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
 				.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
-		int needBytes = (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
+		int needBytes = 3 + (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
 		final ByteBuffer in = ByteBuffer.allocate(needBytes);
 		final CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
 
@@ -118,6 +130,9 @@ public class FileCharArray extends LazyCharArray {
 			
 			endOfInput= count < in.capacity();
 			in.flip();
+			if (fileOffset == 0) {
+				skipUTF8ByteOrderMark(in, fCharSet);
+			}
 			decoder.decode(in, dest, endOfInput);
 			fileOffset+= in.position();
 		}
@@ -160,6 +175,9 @@ public class FileCharArray extends LazyCharArray {
 		in.clear();
 		channel.read(in);
 		in.flip();
+		if (fileOffset == 0) {
+			skipUTF8ByteOrderMark(in, fCharSet);
+		}
 		decoder.decode(in, dest, true);
 	}
 }

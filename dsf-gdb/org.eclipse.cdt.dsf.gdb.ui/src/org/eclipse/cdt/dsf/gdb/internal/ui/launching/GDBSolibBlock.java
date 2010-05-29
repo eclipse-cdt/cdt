@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,10 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	
 	private boolean fAutoSolib = false;
 
-	private boolean fUseSolibForApp = true;
+	// Bug 314536 and Bug 314554
+	// This option will make the DSF-GDB launch fail, and on Linux we have a problem where it will hand
+	// Since this option was added for multi-process but it has not been completed for Linux yet, just hide it completely for now
+	private boolean fUseSolibForApp = false;
 
 	public GDBSolibBlock( IMILaunchConfigurationComponent solibSearchBlock, boolean autoSolib, boolean stopOnSolibEvents ) {
 		super();

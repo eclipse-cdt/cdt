@@ -44,7 +44,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	private boolean fAutoSolib = false;
 
 	// Bug 314536 and Bug 314554
-	// This option will make the DSF-GDB launch fail, and on Linux we have a problem where it will hand
+	// This option will make the DSF-GDB launch fail, and on Linux we have a problem where it will hang
 	// Since this option was added for multi-process but it has not been completed for Linux yet, just hide it completely for now
 	private boolean fUseSolibForApp = false;
 

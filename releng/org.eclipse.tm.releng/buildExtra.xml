@@ -18,6 +18,21 @@
 		-->
 	</target>
 
+	<target name="getDependencies">
+		<!-- TODO: if your project requires more dependencies, add them here; if it does not require all of these, remove those not required -->
+		<echo message="Download, then unpack CDT and EMF" />
+		<ant target="getUpdateSiteDependency"
+		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
+			<property name="url" value="${tools.cdt.master.url}" />
+			<property name="file" value="${tools.cdt.master.file}" />
+		</ant>
+		<ant target="getDependency"
+		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
+			<property name="url" value="${modeling.emf.runtime.url}" />
+			<property name="file" value="${modeling.emf.runtime.file}" />
+		</ant>
+	</target>
+
 	<target name="extraPackaging">
 		<!-- USE PDE PACKAGER TO ASSEMBLE THESE ZIPS -->
 

@@ -157,6 +157,22 @@
 			<zipfileset refid="rootfiles" />
 		</zip>
 
+		<!-- build WinCE plugins -->
+		<zip destfile="${buildDirectory}/${buildLabel}/RSE-wince-incubation-${buildAlias}.zip" update="true">
+			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+				<include name="**/org.eclipse.rse.wince*" />
+				<include name="**/org.eclipse.rse.wince*/**" />
+				<include name="**/org.eclipse.rse.wince*/**/**" />
+				<include name="**/org.eclipse.rse.subsystems.wince*" />
+				<include name="**/org.eclipse.rse.subsystems.wince*/**" />
+				<include name="**/org.eclipse.rse.subsystems.wince*/**/**" />
+				<include name="**/org.eclipse.tm.rapi*" />
+				<include name="**/org.eclipse.tm.rapi*/**" />
+				<include name="**/org.eclipse.tm.rapi*/**/**" />
+			</zipfileset>
+			<zipfileset refid="rootfiles" />
+		</zip>
+
 		
 	</target>
 

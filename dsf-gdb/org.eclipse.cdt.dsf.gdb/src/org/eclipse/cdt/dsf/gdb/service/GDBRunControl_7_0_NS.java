@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
@@ -318,6 +319,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 */
 	private MIStoppedEvent fSilencedSignalEvent;
 
+	/**
+	 * This variable allows us to know if run control operation
+	 * should be enabled or disabled.  Run control operations are
+	 * always enabled except when visualizing tracepoints.
+	 */
+	private boolean fRunControlOperationsEnabled = true;
+	
 	///////////////////////////////////////////////////////////////////////////
 	// Initialization and shutdown
 	///////////////////////////////////////////////////////////////////////////
@@ -394,7 +402,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-
+		if (fRunControlOperationsEnabled == false) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		
 		// Thread case
 		if (context instanceof IMIExecutionDMContext) {
 			rm.setData(doCanSuspend(context));
@@ -470,7 +483,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// ------------------------------------------------------------------------
 
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
-
+		if (fRunControlOperationsEnabled == false) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		
 		// Thread case
 		if (context instanceof IMIExecutionDMContext) {
 			rm.setData(doCanResume(context));
@@ -573,7 +591,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
-
+		if (fRunControlOperationsEnabled == false) {
+			rm.setData(false);
+			rm.done();
+			return;
+		}
+		
 		// If it's a thread, just look it up
 		if (context instanceof IMIExecutionDMContext) {
 	    	if (stepType == StepType.STEP_RETURN) {
@@ -1259,6 +1282,21 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     	}
     }
 
+    /**
+	 * @since 3.0
+	 */
+    @DsfServiceEventHandler 
+    public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
+    	if (e.isVisualizationModeEnabled()) {
+    		// We have started looking at trace records.  We can no longer
+    		// do run control operations.
+    		fRunControlOperationsEnabled = false;
+    	} else {
+    		// We stopped looking at trace data and gone back to debugger mode
+    		fRunControlOperationsEnabled = true;
+    	}
+    }
+    
 	public void flushCache(IDMContext context) {
 	}
 

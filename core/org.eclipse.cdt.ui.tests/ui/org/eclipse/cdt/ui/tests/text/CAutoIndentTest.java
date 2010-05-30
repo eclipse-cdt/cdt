@@ -48,11 +48,9 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
  * Testing the auto indent strategies.
  */
 public class CAutoIndentTest extends AbstractAutoEditTest {
-
 	private HashMap<String, String> fOptions;
 	private List<IStatus> fStatusLog;
 	private ILogListener fLogListener;
-
 	
 	/**
 	 * @param name
@@ -85,7 +83,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 		if (plugin != null) {
 			plugin.getLog().addLogListener(fLogListener);
 		}
-}
+	}
 	
 	/*
 	 * @see junit.framework.TestCase#tearDown()

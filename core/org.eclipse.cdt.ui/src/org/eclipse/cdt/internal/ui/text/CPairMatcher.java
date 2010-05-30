@@ -182,7 +182,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 */
 	private boolean isTemplateParameterOpenBracket(int offset, IDocument document, CHeuristicScanner scanner) {
 		int prevToken= scanner.previousToken(offset - 1, Math.max(0, offset - ANGLE_BRACKETS_SEARCH_BOUND));
-		if (prevToken == Symbols.TokenIDENT) {
+		if (prevToken == Symbols.TokenIDENT || prevToken == Symbols.TokenTEMPLATE) {
 			return true;
 		}
 

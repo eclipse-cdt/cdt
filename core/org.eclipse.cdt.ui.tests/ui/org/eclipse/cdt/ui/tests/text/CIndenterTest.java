@@ -255,6 +255,21 @@ public class CIndenterTest extends BaseUITestCase {
 		assertIndenterResult();
 	}
 
+	//new pair<int, int>(a,
+	//b);
+
+	//new pair<int, int>(a,
+	//                   b);
+	public void testCallOfTemplateFunction() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION, 
+				DefaultCodeFormatterConstants.createAlignmentValue(false, DefaultCodeFormatterConstants.WRAP_COMPACT,
+						DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+		assertIndenterResult();
+	}
+
 	//struct x {
 	// int f1 : 1;
 	// int f2 : 1;

@@ -984,6 +984,7 @@ public final class CIndenter {
 			if (!skipScope())
 				fPosition= pos;
 			return skipToStatementStart(danglingElse, false);
+
 		case Symbols.TokenSEMICOLON:
 			// this is the 90% case: after a statement block
 			// the end of the previous statement / block previous.end
@@ -1049,6 +1050,12 @@ public final class CIndenter {
 		case Symbols.TokenTRY:
 			return skipToStatementStart(danglingElse, false);
 
+		case Symbols.TokenRETURN:
+		case Symbols.TokenTYPEDEF:
+		case Symbols.TokenUSING:
+			fIndent = fPrefs.prefContinuationIndent;
+			return fPosition;
+
 		case Symbols.TokenCONST:
 			nextToken();
 			if (fToken != Symbols.TokenRPAREN) {
@@ -1086,18 +1093,14 @@ public final class CIndenter {
 			return skipToPreviousListItemOrListStart();
 
 		case Symbols.TokenCOMMA:
-			// inside a list of some type
-			// easy if there is already a list item before with its own indentation - we just align
-			// if not: take the start of the list ( LPAREN, LBRACE, LBRACKET ) and either align or
-			// indent by list-indent
+			// Inside a list of some type.
+			// Easy if there is already a list item before with its own indentation - we just align.
+			// If not: take the start of the list (LPAREN, LBRACE, LBRACKET) and either align or
+			// indent by list-indent.
 			return skipToPreviousListItemOrListStart();
 
-		case Symbols.TokenRETURN:
-			fIndent = fPrefs.prefContinuationIndent;
-			return fPosition;
-			
 		default:
-			// inside whatever we don't know about: similar to the list case:
+			// Inside whatever we don't know about: similar to the list case:
 			// if we are inside a continued expression, then either align with a previous line that
 			// has indentation or indent from the expression start line (either a scope introducer
 			// or the start of the expression).
@@ -1361,7 +1364,6 @@ public final class CIndenter {
 			case Symbols.TokenEOF:
 				if (isInBlock)
 					fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
-				// else: fIndent set by previous calls
 				return fPreviousPos;
 
 			case Symbols.TokenCOLON:
@@ -1611,9 +1613,9 @@ public final class CIndenter {
 	private int skipToPreviousListItemOrListStart() {
 		int startLine= fLine;
 		int startPosition= fPosition;
-		boolean seenEqual = fToken == Symbols.TokenEQUAL;
-		boolean seenShiftLeft = fToken == Symbols.TokenSHIFTLEFT;
-		boolean seenRightParen = fToken == Symbols.TokenRPAREN;
+		boolean continuationLineCandidate =
+				fToken == Symbols.TokenEQUAL || fToken == Symbols.TokenSHIFTLEFT ||
+				fToken == Symbols.TokenRPAREN;
 		while (true) {
 			nextToken();
 
@@ -1624,7 +1626,7 @@ public final class CIndenter {
 					int bound= Math.min(fDocument.getLength(), startPosition + 1);
 					if ((fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenRBRACE ||
 							fToken == Symbols.TokenLBRACE && !looksLikeArrayInitializerIntro() && !looksLikeEnumDeclaration()) &&
-							(seenEqual || seenShiftLeft || seenRightParen)) {
+							continuationLineCandidate) {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
 						fAlign= fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
@@ -1642,7 +1644,7 @@ public final class CIndenter {
 			switch (fToken) {
 			// scopes: skip them
 			case Symbols.TokenRPAREN:
-				seenRightParen = true;
+				continuationLineCandidate = true;
 				//$FALL-THROUGH$
 			case Symbols.TokenRBRACKET:
 			case Symbols.TokenRBRACE:
@@ -1667,22 +1669,21 @@ public final class CIndenter {
 				return fPosition;
 
 			case Symbols.TokenEQUAL:
-				seenEqual = true;
+			case Symbols.TokenSHIFTLEFT:
+				continuationLineCandidate = true;
 				break;
 
-			case Symbols.TokenSHIFTLEFT:
-				seenShiftLeft = true;
-				break;
+			case Symbols.TokenRETURN:
+			case Symbols.TokenTYPEDEF:
+			case Symbols.TokenUSING:
+				fIndent = fPrefs.prefContinuationIndent;
+				return fPosition;
 
 			case Symbols.TokenEOF:
-				if (seenEqual || seenShiftLeft || seenRightParen) {
+				if (continuationLineCandidate) {
 					fIndent = fPrefs.prefContinuationIndent;
 				}
 				return 0;
-
-			case Symbols.TokenRETURN:
-				fIndent = fPrefs.prefContinuationIndent;
-				return fPosition;
 			}
 		}
 	}
@@ -1712,11 +1713,13 @@ public final class CIndenter {
 			nextToken();
 			switch (fToken) {
 				case Symbols.TokenIDENT:
+					fPosition = storedPosition;
 					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
 						return true;
 					break;
 				case Symbols.TokenQUESTIONMARK:
 				case Symbols.TokenGREATERTHAN:
+					fPosition = storedPosition;
 					if (skipScope(Symbols.TokenLESSTHAN, Symbols.TokenGREATERTHAN))
 						return true;
 					break;
@@ -2233,9 +2236,9 @@ public final class CIndenter {
 	}
 
 	/**
-	 * Returns <code>true</code> if the current tokens look like a method
-	 * call header (i.e. an identifier as opposed to a keyword taking parenthesized
-	 * parameters such as <code>if</code>).
+	 * Returns <code>true</code> if the current tokens look like beginning of a method
+	 * call (i.e. an identifier as opposed to a keyword taking parenthesized parameters
+	 * such as <code>if</code>).
 	 * <p>The heuristic calls <code>nextToken</code> and expects an identifier
 	 * (method name).
 	 *
@@ -2243,8 +2246,12 @@ public final class CIndenter {
 	 *         header.
 	 */
 	private boolean looksLikeMethodCall() {
-		// TODO add awareness for constructor calls with templates: new complex<float>()
 		nextToken();
+		if (fToken == Symbols.TokenGREATERTHAN) {
+			if (!skipScope())
+				return false;
+			nextToken();
+		}
 		return fToken == Symbols.TokenIDENT; // method name
 	}
 

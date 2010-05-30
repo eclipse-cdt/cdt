@@ -513,12 +513,9 @@ public final class CHeuristicScanner implements Symbols {
 			}
 
 			return getToken(identOrKeyword);
-
-
 		}
 		// operators, number literals etc
 		return TokenOTHER;
-
 	}
 
 	/**
@@ -541,7 +538,7 @@ public final class CHeuristicScanner implements Symbols {
 		if (fPos >= 0) {
 			try {
 				return fDocument.getChar(fPos);
-			} catch (BadLocationException exc) {
+			} catch (BadLocationException e) {
 			}
 		}
 		return (char)-1;
@@ -588,14 +585,16 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenCATCH;
 				if ("class".equals(s)) //$NON-NLS-1$
 					return TokenCLASS;
+				if ("const".equals(s)) //$NON-NLS-1$
+					return TokenCONST;
 				if ("while".equals(s)) //$NON-NLS-1$
 					return TokenWHILE;
 				if ("union".equals(s)) //$NON-NLS-1$
 					return TokenUNION;
+				if ("using".equals(s)) //$NON-NLS-1$
+					return TokenUSING;
 				if ("throw".equals(s)) //$NON-NLS-1$
 					return TokenTHROW;
-				if ("const".equals(s)) //$NON-NLS-1$
-					return TokenCONST;
 				break;
 			case 6:
 				if ("delete".equals(s)) //$NON-NLS-1$
@@ -618,12 +617,18 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenDEFAULT;
 				if ("private".equals(s)) //$NON-NLS-1$
 					return TokenPRIVATE;
+				if ("typedef".equals(s)) //$NON-NLS-1$
+					return TokenTYPEDEF;
 				if ("virtual".equals(s)) //$NON-NLS-1$
 					return TokenVIRTUAL;
 				break;
 			case 8:
 				if ("operator".equals(s)) //$NON-NLS-1$
 					return TokenOPERATOR;
+				if ("template".equals(s)) //$NON-NLS-1$
+					return TokenTEMPLATE;
+				if ("typename".equals(s)) //$NON-NLS-1$
+					return TokenTYPENAME;
 				break;
 			case 9:
 				if ("namespace".equals(s)) //$NON-NLS-1$
@@ -635,8 +640,8 @@ public final class CHeuristicScanner implements Symbols {
 	}
 
 	/**
-	 * Returns the position of the closing peer character (forward search). Any scopes introduced by opening peers
-	 * are skipped. All peers accounted for must reside in the default partition.
+	 * Returns the position of the closing peer character (forward search). Any scopes introduced
+	 * by opening peers are skipped. All peers accounted for must reside in the default partition.
 	 *
 	 * <p>Note that <code>start</code> must not point to the opening peer, but to the first
 	 * character being searched.</p>
@@ -1089,7 +1094,6 @@ public final class CHeuristicScanner implements Symbols {
 	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
 	 * @return <code>true</code> if the current position looks like a composite type definition
 	 */
-	@SuppressWarnings("fallthrough")
 	public boolean looksLikeCompositeTypeDefinitionBackward(int start, int bound) {
 		int token= previousToken(start - 1, bound);
 		switch (token) {
@@ -1140,7 +1144,7 @@ public final class CHeuristicScanner implements Symbols {
 			switch (token) {
 			case Symbols.TokenVIRTUAL:
 				token= previousToken(getPosition(), bound);
-				/* fallthrough */
+				//$FALL-THROUGH$
 			case Symbols.TokenPUBLIC:
 			case Symbols.TokenPROTECTED:
 			case Symbols.TokenPRIVATE:
@@ -1162,7 +1166,7 @@ public final class CHeuristicScanner implements Symbols {
 				}
 				if (token != Symbols.TokenCOLON) // colon after class def identifier
 					return false;
-				/* fallthrough */
+				//$FALL-THROUGH$
 			case Symbols.TokenCOLON:
 				token= previousToken(getPosition(), bound);
 				break outerWhile;

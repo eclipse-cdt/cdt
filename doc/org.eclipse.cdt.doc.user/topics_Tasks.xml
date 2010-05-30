@@ -46,7 +46,6 @@
 			<topic label="Dealing with compilation and other build errors" href="tasks/cdt_o_builderrors.htm">
 				<topic label="Jumping to errors" href="tasks/cdt_t_jumperror.htm"/>
 				<topic label="Filtering the Problems view" href="tasks/cdt_t_filtererror.htm"/>
-				<topic label="Setting reminders" href="tasks/cdt_t_setreminder.htm"/>
 			</topic>
 		</topic>
 		<topic label="Running and debugging projects" href="tasks/cdt_o_run.htm">

@@ -32,6 +32,11 @@
    <topic href="reference/cdt_u_problems_view.htm"
    	label="Problems view (C/C++)"/>
 </context>
+<context id ="tasks_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_tasks_view.htm"
+   	label="Tasks view"/>
+</context>
 <context id ="properties_view">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_properties_view.htm"

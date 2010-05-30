@@ -631,7 +631,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					case '<':
 						if (!(fCloseAngularBrackets && fCloseBrackets)
 								|| nextToken == Symbols.TokenLESSTHAN
-								|| prevToken != Symbols.TokenIDENT 
+								|| prevToken != Symbols.TokenIDENT
 								|| !isAngularIntroducer(previous))
 							return;
 						break;
@@ -1297,7 +1297,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	private boolean fEnableScalablilityMode = false;
 
 	/**
-	 * Flag indicating wheter the reconciler is currently running.
+	 * Flag indicating whether the reconciler is currently running.
 	 */
 	private volatile boolean fIsReconciling;
 
@@ -1318,7 +1318,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		angularIntroducers.add("hash_set"); //$NON-NLS-1$
 		angularIntroducers.add("hash_multimap"); //$NON-NLS-1$
 		angularIntroducers.add("hash_multiset"); //$NON-NLS-1$
+		angularIntroducers.add("unordered_map"); //$NON-NLS-1$
+		angularIntroducers.add("unordered_set"); //$NON-NLS-1$
+		angularIntroducers.add("unordered_multimap"); //$NON-NLS-1$
+		angularIntroducers.add("unordered_multiset"); //$NON-NLS-1$
 		angularIntroducers.add("pair"); //$NON-NLS-1$
+		angularIntroducers.add("tuple"); //$NON-NLS-1$
 		angularIntroducers.add("include"); //$NON-NLS-1$
 	}
 

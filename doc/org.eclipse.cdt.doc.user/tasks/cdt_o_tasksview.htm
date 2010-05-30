@@ -4,15 +4,29 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Viewing and managing compile errors</title>
+<title>Dealing with compilation and other build errors</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
 <body>
 
-<h1>Viewing and managing compile errors</h1>
+<h1>Dealing with compilation and other build errors</h1>
 
-<p>The following topics describe how to view and manage compile errors. The CDT displays compile errors in the Console view.</p>
+<p>After a build finishes, CDT displays the build output in the Console View. The build output shows
+the result of build and a user can inspect it to find out if it was successful or not. To assist with that
+CDT Error Parsers scan build output and create Problem Markers which are presented in a variety of ways:
+<ul>
+	<li>as highlighted lines on the console,</li>
+	<li>in the Problems View,</li>
+	<li>as icon decorators in the Project Explorer on the file, its parent folders and the project,</li>
+	<li>icons in editor's overview rulers,</li>
+	<li>as squiggly line marking the problematic code in editor.</li>
+</ul>
+There are 3 types of Problem Markers: Errors, Warnings and Info. A user can control how the markers are
+generated on "Error Parsers" Preference page.
+</p>
+
+<p>The following topics describe how to view and manage compile errors.</p>
 		<img src="../images/trans.gif" border="0" width="25" height="1" alt=""><a style="text-decoration:none" href="cdt_t_jumperror.htm">Jumping to errors</a><br>
 		<img src="../images/trans.gif" border="0" width="25" height="1" alt=""><a style="text-decoration:none" href="cdt_t_filtererror.htm">Filtering the Problems view</a><br>
 		<img src="../images/trans.gif" border="0" width="25" height="1" alt=""><a style="text-decoration:none" href="cdt_t_setreminder.htm">Setting reminders</a><br>

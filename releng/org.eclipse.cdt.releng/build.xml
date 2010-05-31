@@ -157,8 +157,12 @@
 		</replace>
 		<move file="${zipsdir}/${masterFile}" todir="${buildDirectory}"/>
 		<unzip src="${buildDirectory}/${masterFile}" dest="${buildDirectory}/site"/>
+		<!--
 		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/epl-v10.html" todir="${buildDirectory}/site/eclipse"/>
 		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/notice.html" todir="${buildDirectory}/site/eclipse"/>
+		-->
+		<copy file="epl-v10.html" tofile="${buildDirectory}/site/eclipse/epl-v10.html"/>
+		<copy file="notice.html" tofile="${buildDirectory}/site/eclipse/notice.html"/>
 		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
 		<replace file="${buildDirectory}/site/eclipse/site.xml">
 			<replacefilter token="@buildVersion@" value="${branchVersion}"/>

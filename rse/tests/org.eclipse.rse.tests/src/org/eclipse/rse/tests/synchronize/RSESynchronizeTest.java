@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - Adapted from org.eclipse.rse.tests / FileServiceTest
+ * Martin Oberhuber (Wind River) - [314547] NPE in RSESynchronizeTest
  *******************************************************************************/
 package org.eclipse.rse.tests.synchronize;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -20,8 +22,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.rse.internal.importexport.files.Utilities;
 import org.eclipse.rse.internal.synchronize.SynchronizeData;
 import org.eclipse.rse.internal.synchronize.provisional.ISynchronizeConnectionManager;
+import org.eclipse.rse.internal.synchronize.provisional.ISynchronizeOperation;
 import org.eclipse.rse.internal.synchronize.provisional.ISynchronizer;
 import org.eclipse.rse.internal.synchronize.provisional.SynchronizeConnectionManager;
 import org.eclipse.rse.internal.synchronize.provisional.SynchronizeOperation;
@@ -111,26 +115,37 @@ public class RSESynchronizeTest extends SynchronizeTestBase {
 		IFolder folder = project.getFolder("folder");
 		IFile file = project.getFile("file.txt");
 		IFile subFile = folder.getFile("subfile.txt");
-		IResource[] resources = new IResource[] { project, folder, file, subFile };
+		IFile subFile2 = folder.getFile("subfile2.txt");
+		IResource[] resources = new IResource[] { project, folder, file, subFile, subFile2 };
 		ensureExistsInWorkspace(resources, true);
 
 		// Initial export of test project to remote folder
 		SynchronizeData sd = new SynchronizeData();
-		// //What to do here?
-		// sd.addChild(new SynchronizeDataNode());
+
+		// sync only folder and subFile
+		IResource[] resourcesToSync = new IResource[] { folder, subFile };
+		sd.setElements(Arrays.asList(resourcesToSync));
+		String remoteLocation = Utilities.getAsString(remoteTempDir);
+		sd.setRemoteLocation(remoteLocation);
+		sd.setSynchronizeType(ISynchronizeOperation.SYNC_MODE_OVERRIDE_DEST);
+		
 		ISynchronizer synchronizer = new Synchronizer(sd);
 		synchronizer.run(new SynchronizeOperation());
 
 		// Check file files and folders exist on the remote
-		IRemoteFile rFolder = fss.getRemoteFileObject(remoteTempDir, "folder", getDefaultProgressMonitor());
+		IRemoteFile rProject = fss.getRemoteFileObject(remoteTempDir, project.getName(), getDefaultProgressMonitor());
+		assertTrue("1.0", rProject.exists());
+		IRemoteFile rFolder = fss.getRemoteFileObject(rProject, "folder", getDefaultProgressMonitor());
 		assertTrue("1.1", rFolder.exists());
 		assertTrue("1.2", rFolder.isDirectory());
-		IRemoteFile rFile = fss.getRemoteFileObject(remoteTempDir, "file.txt", getDefaultProgressMonitor());
-		assertTrue("2.1", rFile.exists());
-		assertTrue("2.2", rFile.isFile());
+		IRemoteFile rFile = fss.getRemoteFileObject(rProject, "file.txt", getDefaultProgressMonitor());
+		assertFalse("2.1", rFile.exists());
 		IRemoteFile rSubFile = fss.getRemoteFileObject(rFolder, "subfile.txt", getDefaultProgressMonitor());
 		assertTrue("3.1", rSubFile.exists());
 		assertTrue("3.2", rSubFile.isFile());
+		//bug....
+		//IRemoteFile rSubFile2 = fss.getRemoteFileObject(rFolder, "subfile2.txt", getDefaultProgressMonitor());
+		//assertFalse("4.1", rSubFile2.exists());
 
 		// TODO: Check file contents, timestamp etc
 

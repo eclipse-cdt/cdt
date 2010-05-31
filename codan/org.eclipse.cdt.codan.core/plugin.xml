@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="checkers" name="Code Analysis Checkers" schema="schema/checkers.exsd"/>
+   <extension-point id="checkers" name="%extension-point.name.CodeAnalysis" schema="schema/checkers.exsd"/>
 
    <extension
          id="codanBuilder"
-         name="Code Analysis Project Builder"
+         name="%extension.name.Builder"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">
@@ -16,7 +16,7 @@
    </extension>
    <extension
          id="codanNature"
-         name="Code Analysis Nature"
+         name="%extension.name.Nature"
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
@@ -29,7 +29,7 @@
    </extension>
    <extension
          id="codanProblem"
-         name="Code Analysis Problem"
+         name="%extension.name.Marker"
          point="org.eclipse.core.resources.markers">
 
       <super type="org.eclipse.core.resources.problemmarker"/> 
@@ -59,11 +59,11 @@
 
       <category
       id="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
-      name="Potential programming problems"
+      name="%category.name.ProgrammingErrors"
       />
             <category
       id="org.eclipse.cdt.codan.core.categories.CodeStyle"
-      name="Coding Style"
+      name="%category.name.CodeStyle"
       >
       </category>
    </extension>

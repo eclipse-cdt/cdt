@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Code Analysis Core
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.CodanCorePlugin
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy

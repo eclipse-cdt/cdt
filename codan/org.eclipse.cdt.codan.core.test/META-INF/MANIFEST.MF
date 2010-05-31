@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Codan Core Tests
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.core.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.test.CodanCoreTestActivator
@@ -14,4 +14,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %Bundle-Vendor
+Export-Package: org.eclipse.cdt.codan.core.cfg,
+ org.eclipse.cdt.codan.core.cxx,
+ org.eclipse.cdt.codan.core.internal.checkers,
+ org.eclipse.cdt.codan.core.param,
+ org.eclipse.cdt.codan.core.test

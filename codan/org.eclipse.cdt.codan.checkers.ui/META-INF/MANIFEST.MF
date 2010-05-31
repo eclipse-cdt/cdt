@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Codan Checkers Ui
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.checkers.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator
@@ -12,4 +12,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %Bundle-Vendor
+Export-Package: org.eclipse.cdt.codan.internal.checkers.ui;x-internal:=true,
+ org.eclipse.cdt.codan.internal.checkers.ui.quickfix;x-internal:=true

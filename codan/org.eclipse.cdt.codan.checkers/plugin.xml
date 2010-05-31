@@ -8,13 +8,13 @@
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionChecker"
             id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionChecker"
-            name="Assignment in condition">
+            name="%checker.name.AssignmentInCondition">
       <problem
             defaultSeverity="Warning"
-            description="Finds statements like  &apos;if (a=b)&apos;"
+            description="%problem.description.AssignmentInCondition"
             id="org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"
-            messagePattern="Possible assignment in condition &apos;&apos;{0}&apos;&apos;"
-            name="Assignment in condition">
+            messagePattern="%problem.messagePattern.AssignmentInCondition"
+            name="%problem.name.AssignmentInCondition">
       </problem>
       
       
@@ -22,101 +22,101 @@
             <checker
             class="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker"
             id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectChecker"
-            name="StatementHasNoEffectChecker">
+            name="%checker.name.StatementHasNoEffect">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            description="Finds statements like &apos;a;&apos; or &apos;-a;&apos; or &apos;a-b;&apos; which do no seems to have any side effect therefore suspicious"
+            description="%problem.description.StatementHasNoEffect"
             id="org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"
-            messagePattern="Statement has no effect ''{0}''"
-            name="Statement has no effect"/>
+            messagePattern="%problem.messagePattern.StatementHasNoEffect"
+            name="%problem.name.StatementHasNoEffect"/>
       </checker>
       
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructor"
             id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDescructor"
-            name="NonVirtualDescructorChecker">
+            name="%checker.name.NonVirtualDescructor">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            description="If destructor is not declared virtual - destructor of derived class would not be called."
+            description="%problem.description.NonVirtualDescructor"
             id="org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"
-            messagePattern="Class &apos;&apos;{0}&apos;&apos; has virtual method &apos;&apos;{1}&apos;&apos; but non-virtual destructor &apos;&apos;{2}&apos;&apos;"
-            name="Class has a virtual method and non-virtual destructor">
+            messagePattern="%problem.messagePattern.NonVirtualDescructor"
+            name="%problem.name.NonVirtualDescructor">
       </problem>
       </checker>
 
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
             id="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
-            name="CatchByReferenceChecker">
+            name="%checker.name.CatchByReference">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            description="Catching by reference is recommended by C++ experts, &quot;Throw by value, catch by reference&quot;. For one thing, this avoids copying and potentially slicing the exception."
+            description="%problem.description.CatchByReference"
             id="org.eclipse.cdt.codan.internal.checkers.CatchByReference"
-            name="Catching by reference is recommended"
-            messagePattern="Catching by reference is recommended &apos;&apos;{0}&apos;&apos;">
+            name="%problem.name.CatchByReference"
+            messagePattern="%problem.messagePattern.CatchByReference">
       </problem>
       </checker>
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisChecker"
             id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisChecker"
-            name="SuggestedParenthesisChecker">
+            name="%checker.name.SuggestedParenthesis">
       <problem
             category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
             defaultSeverity="Warning"
-            description="This checker finds problems related to either lack of understanding precedence of operators or misspelling of operators in expression. For example (!a&lt;10) or (a &amp;&amp; b &amp; c)"
+            description="%problem.description.SuggestedParenthesis"
             id="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"
-            messagePattern="Suggested parenthesis around expression &apos;&apos;{0}&apos;&apos;"
-            name="Suggested parenthesis around expression">
+            messagePattern="%problem.messagePattern.SuggestedParenthesis"
+            name="%problem.name.SuggestedParenthesis">
       </problem>
       </checker>
       
              <checker
             class="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
             id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
-            name="NamingConventionFunctionChecker">
+            name="%checker.name.NamingConventionFunction">
       <problem
             category="org.eclipse.cdt.codan.core.categories.CodeStyle"
             defaultEnabled="false"
             defaultSeverity="Info"
-            description="Finds and reports functions name of which does not match pattern parameter"
+            description="%problem.description.NamingConventionFunction"
             id="org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"
-            messagePattern="Bad function name &quot;{0}&quot; (pattern /{1}/)"
-            name="Name convention for function">
+            messagePattern="%problem.messagePattern.NamingConventionFunction"
+            name="%problem.name.NamingConventionFunction">
       </problem>
       </checker>
              <checker
                    class="org.eclipse.cdt.codan.internal.checkers.ReturnChecker"
                    id="org.eclipse.cdt.codan.internal.checkers.ReturnChecker"
-                   name="Return inconsistencies">
+                   name="%checker.name.ReturnChecker">
                 <problem
                       category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
                       defaultEnabled="true"
                       defaultSeverity="Error"
-                      description="Return statment has no return value, if somebody would use return value from this function it would be random"
+                      description="%problem.description.NoReturnValue"
                       id="org.eclipse.cdt.codan.checkers.noreturn"
-                      messagePattern="Return without value, in function returning non-void"
-                      name="No return value">
+                      messagePattern="%problem.messagePattern.NoReturnValue"
+                      name="%problem.name.NoReturnValue">
                 </problem>
                 <problem
                       category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
                       defaultEnabled="true"
                       defaultSeverity="Error"
-                      description="Return statement has a value, but function is declared to return void. Did you mean to declare function with return value?"
+                      description="%problem.description.UnusedReturnValue"
                       id="org.eclipse.cdt.codan.checkers.errreturnvalue"
-                      messagePattern="Return has value, in function returning void"
-                      name="Unused return value">
+                      messagePattern="%problem.messagePattern.UnusedReturnValue"
+                      name="%problem.name.UnusedReturnValue">
                 </problem>
                      <problem
                       category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
                       defaultEnabled="true"
                       defaultSeverity="Warning"
-                      description="No return statement in a function which is declared to return value"
+                      description="%problem.description.NoReturn"
                       id="org.eclipse.cdt.codan.checkers.errnoreturn"
-                      messagePattern="No return, in function returning non-void"
-                      name="No return">
+                      messagePattern="%problem.messagePattern.NoReturn"
+                      name="%problem.name.NoReturn">
                 </problem>
              </checker>
        

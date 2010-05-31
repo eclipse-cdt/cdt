@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Code Analysis Core for C/C++
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.core.cxx;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.cxx.Activator
@@ -14,4 +14,4 @@ Export-Package: org.eclipse.cdt.codan.core.cxx,
  org.eclipse.cdt.codan.core.cxx.internal.model.cfg;x-friends:="org.eclipse.cdt.codan.core.test",
  org.eclipse.cdt.codan.core.cxx.model
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %Bundle-Vendor

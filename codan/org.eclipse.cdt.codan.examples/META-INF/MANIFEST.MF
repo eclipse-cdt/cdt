@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Code Analysis Checker Examples
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.examples;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.examples.Activator
-Bundle-Vendor: Eclipse CDT
+Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.codan.core.cxx;bundle-version="1.0.0",
  org.eclipse.cdt.codan.core;bundle-version="1.0.0",
@@ -13,3 +13,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.codan.ui;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.cdt.codan.examples,
+ org.eclipse.cdt.codan.examples.checkers,
+ org.eclipse.cdt.codan.examples.uicontrib

@@ -56,6 +56,13 @@ fi
 export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/jre/bin:/shared/dsdp/tm/ibm-java2-ppc64-50/bin:$PATH
 #export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
+if [ ! -d ${tmpdir} ]; then
+  mkdir -p ${tmpdir}
+  if [ ! -d {tmpdir} ]; then
+    echo "ERROR: could not create tmpdir in ${tmpdir}"
+    exit 1
+  fi
+fi
 OUTPUT=${tmpdir}/output.$$
 RESULT=${tmpdir}/result.$$
 TMPD=${tmpdir}/tmp.$$

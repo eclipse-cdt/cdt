@@ -27,36 +27,37 @@ public interface ICheckersRegistry extends Iterable<IChecker> {
 	/**
 	 * Iterator for registered checkers
 	 * 
-	 * @return
+	 * @return iterator for registered checkers
 	 */
-	public abstract Iterator<IChecker> iterator();
+	public Iterator<IChecker> iterator();
 
 	/**
-	 * Add another checker
+	 * Add a checker
 	 * 
-	 * @param checker
+	 * @param checker instance
 	 */
-	public abstract void addChecker(IChecker checker);
+	public void addChecker(IChecker checker);
 
 	/**
-	 * Add problem p with default category by category id into default profile,
-	 * category must exists in default profile
+	 * Add problem p into a category defined by a category id into default
+	 * profile, category must exists in default profile
 	 * 
 	 * @param p
-	 *            - problem
+	 *        - problem
 	 * @param categoryId
-	 *            - category id
+	 *        - category id
 	 */
-	public abstract void addProblem(IProblem p, String categoryId);
+	public void addProblem(IProblem p, String categoryId);
 
 	/**
-	 * Add subcategory with id categoryId into parent category, if parent does
-	 * not exist in default, profile - if not will be added to the root
+	 * Add subcategory category into parent category with the id of
+	 * parentCategoryId, if parent does not exist in the default profile or it
+	 * is a null - it will be added to the root
 	 * 
 	 * @param category
-	 *            - new category
+	 *        - new category
 	 * @param parentCategoryId
-	 *            - parent category id
+	 *        - parent category id
 	 */
 	public abstract void addCategory(IProblemCategory category,
 			String parentCategoryId);
@@ -67,9 +68,9 @@ public interface ICheckersRegistry extends Iterable<IChecker> {
 	 * enabled.
 	 * 
 	 * @param c
-	 *            - checker
+	 *        - checker
 	 * @param p
-	 *            - problem
+	 *        - problem
 	 */
 	public void addRefProblem(IChecker c, IProblem p);
 
@@ -77,55 +78,57 @@ public interface ICheckersRegistry extends Iterable<IChecker> {
 	 * Return collection of problem that this checker can produce
 	 * 
 	 * @param checker
-	 * @return
+	 * @return collection of problems
 	 */
 	public Collection<IProblem> getRefProblems(IChecker checker);
 
 	/**
-	 * Get default profile, default profile is kind of "Installation Default".
-	 * Always the same, comes from default in checker extensions
+	 * Default profile is kind of "Installation Default".
+	 * Always the same, comes from defaults in checker extensions or APIs added
 	 * 
-	 * @return
+	 * @return default profile
 	 */
-	public abstract IProblemProfile getDefaultProfile();
+	public IProblemProfile getDefaultProfile();
 
 	/**
 	 * Get workspace profile. User can change setting for workspace profile.
 	 * 
-	 * @return profile
+	 * @return workspace profile
 	 */
-	public abstract IProblemProfile getWorkspaceProfile();
+	public IProblemProfile getWorkspaceProfile();
 
 	/**
-	 * Get resource profile. For example given directory can have different
-	 * profile than parent project.
+	 * Get resource profile. For example given project can have different
+	 * profile than a workspace.
 	 * 
 	 * @param element
-	 *            - resource
-	 * @return profile
+	 *        - resource
+	 * @return resource profile
 	 */
-	public abstract IProblemProfile getResourceProfile(IResource element);
+	public IProblemProfile getResourceProfile(IResource element);
 
 	/**
 	 * Returns profile working copy for given resource element. (If profile is
 	 * not specified for given element it will search for parent resource and so
-	 * on).
+	 * on). If you planning on editing it this method should be used instead of
+	 * getResourceProfile. You have to save your changes after updating a
+	 * working copy, using {@link #updateProfile(IResource, IProblemProfile)}
+	 * method.
 	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 * @param element
-	 * @return
+	 * @return resource profile
 	 */
-	public abstract IProblemProfile getResourceProfileWorkingCopy(
-			IResource element);
+	public IProblemProfile getResourceProfileWorkingCopy(IResource element);
 
 	/**
 	 * Set profile for resource.
 	 * 
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @param resource
-	 *            - resource
+	 *        - resource
 	 * @param profile
-	 *            - problems profile
+	 *        - problems profile
 	 */
-	public abstract void updateProfile(IResource resource,
-			IProblemProfile profile);
+	public void updateProfile(IResource resource, IProblemProfile profile);
 }

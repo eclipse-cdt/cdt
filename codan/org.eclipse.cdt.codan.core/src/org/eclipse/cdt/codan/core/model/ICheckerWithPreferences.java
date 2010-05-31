@@ -13,8 +13,9 @@ package org.eclipse.cdt.codan.core.model;
 /**
  * Interface for checker with parameters, if checker implements this interface
  * method would be called on initialization so checker has a chance to set
- * default values for its parameters
- * <p>
+ * default values for its parameters. It is recommended to use
+ * {@link AbstractCheckerWithProblemPreferences} insted of implementing it
+ * directly.<p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
  * it will remain the same.
@@ -28,7 +29,7 @@ public interface ICheckerWithPreferences {
 	 * parameters.
 	 * 
 	 * @param problem
-	 *            - instance of problem working copy
+	 *        - instance of problem working copy
 	 */
 	void initPreferences(IProblemWorkingCopy problem);
 }

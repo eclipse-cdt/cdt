@@ -17,10 +17,10 @@ import org.eclipse.cdt.codan.core.param.IProblemPreference;
  * "Null Pointer Dereference" is a problem. It has user visible Name and Message
  * (translatable), as well as some other parameters, changeable by user such as
  * enablement, severity and so on. Same problem cannot have two severities
- * determined by runtime. If it is the case - two Problem should be created
- * (i.e. one for error and one for warning).
+ * determined by runtime. If it is the case - two Problems should be created
+ * (i.e. one for error and one for warning). All of problem attributes are
+ * defined in a checker extension point.
  * 
- * Clients may implement and extend this interface.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
@@ -33,6 +33,8 @@ import org.eclipse.cdt.codan.core.param.IProblemPreference;
 public interface IProblem extends IProblemElement {
 	/**
 	 * Name of the problem - user visible "title", not the message
+	 * 
+	 * @return title of the problem
 	 */
 	String getName();
 
@@ -40,7 +42,7 @@ public interface IProblem extends IProblemElement {
 	 * Unique problem id. Should be qualified by plugin name to maintain
 	 * uniqueness.
 	 * 
-	 * @return
+	 * @return unique problem id
 	 */
 	String getId();
 
@@ -66,25 +68,24 @@ public interface IProblem extends IProblemElement {
 	String getMessagePattern();
 
 	/**
-	 * Get root preference descriptor - contains description of types of all the
-	 * parameters or null if not defined (used by ui to generate user controls
-	 * for changing parameters)
+	 * Get root preference descriptor or null if not defined (used by ui to
+	 * generate user controls for changing parameters)
 	 * 
-	 * @return
+	 * @return root preference or null
 	 */
 	public IProblemPreference getPreference();
 
 	/**
 	 * Get short description of a problem
 	 * 
-	 * @return
+	 * @return description
 	 */
 	public String getDescription();
 
 	/**
 	 * Return marker id for the problem
 	 * 
-	 * @return
+	 * @return marker id
 	 */
 	public String getMarkerType();
 }

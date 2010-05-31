@@ -14,21 +14,36 @@ import org.eclipse.core.resources.IMarker;
 
 /**
  * 
- * Represents Severity of the codan problem. It is directly mapped to markers severity,
+ * Represents Severity of the codan problem. It is directly mapped to markers
+ * severity,
  * therefore not intended to be extended.
  * 
  * @noextend This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- *
+ * 
  */
 public enum CodanSeverity {
-	Info(IMarker.SEVERITY_INFO), Warning(IMarker.SEVERITY_WARNING), Error(IMarker.SEVERITY_ERROR);
+	/**
+	 * Info severity
+	 */
+	Info(IMarker.SEVERITY_INFO),
+	/**
+	 * Warning severity
+	 */
+	Warning(IMarker.SEVERITY_WARNING),
+	/**
+	 * Error severity
+	 */
+	Error(IMarker.SEVERITY_ERROR);
 	private int value;
 
 	private CodanSeverity(int value) {
 		this.value = value;
 	}
 
+	/**
+	 * @return int value of the severity
+	 */
 	public int intValue() {
 		return value;
 	}

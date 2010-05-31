@@ -14,10 +14,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Interface for "Codan Builder". Clients can cann processResource method to
- * traverse the resource tree, calling all the checker (this interface allows
- * to call framework without using UI). You can obtain instance of this
- * class as CodanRuntime.getInstance().getBuilder()
+ * Interface for "Codan Builder". Clients can call processResource method to
+ * traverse the resource tree. It will be calling all the checkers (this
+ * interface allows to call framework without using UI). You can obtain instance
+ * of this class as CodanRuntime.getInstance().getBuilder()
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ICodanBuilder {
 	/**
 	 * Run code analysis on given resource
+	 * 
 	 * @param resource - resource to process
 	 * @param monitor - progress monitor
 	 */

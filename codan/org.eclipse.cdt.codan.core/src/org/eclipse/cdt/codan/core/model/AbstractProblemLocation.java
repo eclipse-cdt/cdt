@@ -52,6 +52,11 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 		return extra;
 	}
 
+	/**
+	 * Sets extra data for the problem location
+	 * 
+	 * @param data
+	 */
 	public void setData(Object data) {
 		this.extra = data;
 	}
@@ -65,19 +70,15 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 		return file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getLine()
+	/**
+	 * Problem line number referenced in problem view in location field
 	 */
 	public int getLineNumber() {
 		return getStartingLineNumber();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getStartLine()
+	/**
+	 * @return line number where problem starts
 	 */
 	public int getStartingLineNumber() {
 		return line;

@@ -29,6 +29,11 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 		return type;
 	}
 
+	/**
+	 * Set preferene type
+	 * 
+	 * @param type
+	 */
 	public void setType(PreferenceType type) {
 		if (type == null)
 			throw new NullPointerException("Type cannot be null"); //$NON-NLS-1$
@@ -44,7 +49,6 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 	 *        - label to be shown to user
 	 * @param type
 	 *        - parameter type
-	 * @return
 	 */
 	public BasicProblemPreference(String key, String label, PreferenceType type) {
 		this(key, label);
@@ -58,7 +62,6 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 	 *        - property id (use in actual property hash of a checker)
 	 * @param label
 	 *        - label to be shown to user
-	 * @return
 	 */
 	public BasicProblemPreference(String key, String label) {
 		setKey(key);

@@ -22,19 +22,30 @@ public interface IProblemPreferenceCompositeDescriptor {
 	 * name of key. For the "list" type key is the number (index).
 	 * 
 	 * @param key
-	 *            - name of the subdescriptor.
-	 * @return
+	 *        - name of the subdescriptor.
+	 * @return child preference of the given key
 	 */
 	IProblemPreference getChildDescriptor(String key);
 
 	/**
 	 * Available for composite types. Returns array of children.
 	 * 
-	 * @return
+	 * @return array of children. 0 size of none.
 	 */
 	IProblemPreference[] getChildDescriptors();
 
-	IProblemPreference addChildDescriptor(IProblemPreference info);
+	/**
+	 * Add preference
+	 * 
+	 * @param preference
+	 * @return added preference
+	 */
+	IProblemPreference addChildDescriptor(IProblemPreference preference);
 
-	void removeChildDescriptor(IProblemPreference info);
+	/**
+	 * Remove preference
+	 * 
+	 * @param preference
+	 */
+	void removeChildDescriptor(IProblemPreference preference);
 }

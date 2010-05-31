@@ -21,7 +21,10 @@ import java.io.StreamTokenizer;
  * 
  */
 public abstract class AbstractProblemPreference implements IProblemPreference {
-	public static final String PARAM = "param"; //$NON-NLS-1$
+	/**
+	 * default key for a preference
+	 */
+	public static final String PARAM = "params"; //$NON-NLS-1$
 	private String key = PARAM;
 	private String label = ""; //$NON-NLS-1$
 	private String toolTip = null;
@@ -44,6 +47,11 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		return uiInfo;
 	}
 
+	/**
+	 * Set preference key for itself
+	 * 
+	 * @param key
+	 */
 	public void setKey(String key) {
 		if (key == null)
 			throw new NullPointerException("key"); //$NON-NLS-1$
@@ -68,16 +76,31 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		return true;
 	}
 
+	/**
+	 * Sets a label for UI control
+	 * 
+	 * @param label
+	 */
 	public void setLabel(String label) {
 		if (label == null)
 			throw new NullPointerException("Label cannot be null"); //$NON-NLS-1$
 		this.label = label;
 	}
 
+	/**
+	 * Sets tooltip for ui control. Not supported now.
+	 * 
+	 * @param tooltip
+	 */
 	public void setToolTip(String tooltip) {
 		this.toolTip = tooltip;
 	}
 
+	/**
+	 * Sets uiinfo for ui control. Not supported now.
+	 * 
+	 * @param uiinfo
+	 */
 	public void setUiInfo(String uiinfo) {
 		this.uiInfo = uiinfo;
 	}
@@ -141,7 +164,6 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 
 	/**
 	 * @param tokenizer
-	 * @return
 	 * @throws IOException
 	 */
 	public abstract void importValue(StreamTokenizer tokenizer)

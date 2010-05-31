@@ -66,6 +66,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 	 * Set attribute to a value. Possible keys are EXCUSION and INCLUSION
 	 * 
 	 * @param key
+	 * @param value
 	 */
 	public void setAttribute(String key, IPath[] value) {
 		if (key == EXCLUSION)

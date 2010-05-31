@@ -28,7 +28,7 @@ public interface IProblemWorkingCopy extends IProblem {
 	 * in profile not by checker when printing problems.
 	 * 
 	 * @param sev
-	 *            - codan severity
+	 *        - codan severity
 	 */
 	void setSeverity(CodanSeverity sev);
 
@@ -36,7 +36,7 @@ public interface IProblemWorkingCopy extends IProblem {
 	 * Set checker enablement.
 	 * 
 	 * @param enabled
-	 *            - true if problem is enabled in profile
+	 *        - true if problem is enabled in profile
 	 */
 	void setEnabled(boolean enabled);
 
@@ -46,7 +46,7 @@ public interface IProblemWorkingCopy extends IProblem {
 	 * pattern should be set in checker extension
 	 * 
 	 * @param messagePattern
-	 *            - java style message patter i.e. "Variable {0} is never used"
+	 *        - java style message patter i.e. "Variable {0} is never used"
 	 */
 	void setMessagePattern(String messagePattern);
 
@@ -55,6 +55,8 @@ public interface IProblemWorkingCopy extends IProblem {
 	 * initialization only, which would the default. User control this values
 	 * through ui later.
 	 * 
+	 * @param pref - preference to set
+	 * 
 	 */
 	public void setPreference(IProblemPreference pref);
 
@@ -62,7 +64,7 @@ public interface IProblemWorkingCopy extends IProblem {
 	 * Set problem description
 	 * 
 	 * @param desc
-	 *            - problem description - short version, but longer than name
+	 *        - problem description - short version, but longer than name
 	 */
 	public void setDescription(String desc);
 }

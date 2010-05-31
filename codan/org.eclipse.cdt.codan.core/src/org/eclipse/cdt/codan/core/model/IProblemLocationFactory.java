@@ -27,9 +27,9 @@ public interface IProblemLocationFactory {
 	 * Create and return instance of IProblemLocation
 	 * 
 	 * @param file
-	 *            - file where problem is found
+	 *        - file where problem is found
 	 * @param line
-	 *            - line number where problem is found, starts with 1
+	 *        - line number where problem is found, starts with 1
 	 * @return instance of IProblemLocation
 	 */
 	public IProblemLocation createProblemLocation(IFile file, int line);
@@ -38,12 +38,12 @@ public interface IProblemLocationFactory {
 	 * Create and return instance of IProblemLocation
 	 * 
 	 * @param file
-	 *            - file where problem is found
+	 *        - file where problem is found
 	 * @param startChar
-	 *            - start char of the problem in the file, is zero-relative
+	 *        - start char of the problem in the file, is zero-relative
 	 * @param endChar
-	 *            - end char of the problem in the file, is zero-relative and
-	 *            exclusive.
+	 *        - end char of the problem in the file, is zero-relative and
+	 *        exclusive.
 	 * @return instance of IProblemLocation
 	 */
 	public IProblemLocation createProblemLocation(IFile file, int startChar,
@@ -52,17 +52,16 @@ public interface IProblemLocationFactory {
 	/**
 	 * Create and return instance of IProblemLocation
 	 * 
-	 * @param file
-	 *            - file where problem is found
-	 * @param startChar
-	 *            - start char of the problem in the file, is zero-relative
-	 * @param endChar
-	 *            - end char of the problem in the file, is zero-relative and
-	 *            exclusive.
+	 * @param astFile - file where problem is found
+	 * @param startChar - start char of the problem in the file, is
+	 *        zero-relative
+	 * @param endChar - end char of the problem in the file, is zero-relative and
+	 *        exclusive.
+	 * 
 	 * @param line
-	 *            - start line number (for visualisation purposes)
+	 *        - start line number (for visualisation purposes)
 	 * @return instance of IProblemLocation
 	 */
 	public IProblemLocation createProblemLocation(IFile astFile,
-			int nodeOffset, int i, int line);
+			int startChar, int endChar, int line);
 }

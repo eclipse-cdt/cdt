@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.core.model;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.codan.core.param.AbstractProblemPreference;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreference;
 import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
  * AbstarctChecker that has extra methods to simplify adding problem
  * preferences.
  * Checker can produce several problems, but preferences are per problem.
- * Shared are not supported now.
+ * Sharing preferences between problems is not supported now.
  */
 public abstract class AbstractCheckerWithProblemPreferences extends
 		AbstractChecker implements ICheckerWithPreferences {
@@ -39,8 +40,11 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	}
 
 	/**
-	 * @param problem
-	 * @return
+	 * Scope preference - special preference that all file checkers should have,
+	 * it allows user to include/exclude files for this specific problem.
+	 * 
+	 * @param problem - problem for which scope preference is need
+	 * @return scope problem preference, null if not defined
 	 */
 	public FileScopeProblemPreference getScopePreference(IProblem problem) {
 		FileScopeProblemPreference scope = (FileScopeProblemPreference) getTopLevelPreferenceMap(
@@ -52,9 +56,11 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * User can scope out some resources for this checker. Checker can use this
 	 * call to test if it should run on this resource at all or not. Test should
 	 * be done within processResource method not in enabledInContext.
+	 * This test uses user "scope" preference for the all problems that this
+	 * checker can produce.
 	 * 
-	 * @param res
-	 * @return
+	 * @param res - resource to test on
+	 * @return true if checker should report problems, fails otherwise.
 	 */
 	public boolean shouldProduceProblems(IResource res) {
 		Collection<IProblem> refProblems = getRuntime().getChechersRegistry()
@@ -70,6 +76,21 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 		return false;
 	}
 
+	/**
+	 * User can scope out some resources for this checker. Checker can use this
+	 * call to test if it should run on this resource at all or produce a
+	 * specific problem on this resource. Test should
+	 * be done within processResource method not in enabledInContext, or just
+	 * before printing of a problem.
+	 * This test uses user "scope" preference for the given problem. If scope is
+	 * not defined preference it returns true.
+	 * 
+	 * @param problem - problem to test for
+	 * @param resource - resource to test on
+	 * 
+	 * @return true if problem should be report for given resource, fails
+	 *         otherwise.
+	 */
 	public boolean shouldProduceProblem(IProblem problem, IPath resource) {
 		FileScopeProblemPreference scope = getScopePreference(problem);
 		if (scope == null)
@@ -89,13 +110,13 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * Add a parameter
 	 * 
 	 * @param problem
-	 *            - problem that has parameter
+	 *        - problem that has parameter
 	 * @param key
-	 *            - parameter key
+	 *        - parameter key
 	 * @param label
-	 *            - parameter label - user visible
+	 *        - parameter label - user visible
 	 * @param defaultValue
-	 *            - parameter default value
+	 *        - parameter default value
 	 * @return - parameter info object
 	 */
 	public IProblemPreference addPreference(IProblemWorkingCopy problem,
@@ -109,15 +130,16 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	}
 
 	/**
-	 * Add preference of type list with default string type, list is empty by
+	 * Add preference of type list of strings, list is empty by
 	 * default
 	 * 
 	 * @param problem
-	 *            - problem
+	 *        - problem
 	 * @param key
-	 *            - preference key
+	 *        - preference key
 	 * @param label
-	 *            - preference label
+	 *        - preference label
+	 * @param itemLabel
 	 * @return preference instance of of the list, can be used to add default
 	 *         values or set different element type
 	 * 
@@ -132,18 +154,30 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 		return (ListProblemPreference) map.addChildDescriptor(list);
 	}
 
+	/**
+	 * Add preference for the given problem with default value
+	 * 
+	 * @param problem
+	 * @param pref - preference
+	 * @param defaultValue - default value of the preference
+	 * @return added preference
+	 */
 	public IProblemPreference addPreference(IProblemWorkingCopy problem,
-			IProblemPreference info, Object defaultValue) {
+			IProblemPreference pref, Object defaultValue) {
 		MapProblemPreference map = getTopLevelPreferenceMap(problem);
-		map.addChildDescriptor(info);
-		setDefaultPreferenceValue(problem, info.getKey(), defaultValue);
-		return info;
+		String key = pref.getKey();
+		pref = map.addChildDescriptor(pref);
+		setDefaultPreferenceValue(problem, key, defaultValue);
+		return pref;
 	}
 
 	/**
-	 * @param problem
-	 * @param key
-	 * @param defaultValue
+	 * Convenience method for setting default preference value for checker that
+	 * uses "map" as top level problem preference.
+	 * 
+	 * @param problem - problem for which to set default value for a prefence
+	 * @param key - preference key
+	 * @param defaultValue - value of preference to be set
 	 */
 	protected void setDefaultPreferenceValue(IProblemWorkingCopy problem,
 			String key, Object defaultValue) {
@@ -153,14 +187,20 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	}
 
 	/**
+	 * Return "map" problem preference for a give problem, if problem
+	 * has preference different than a map, it will throw ClassCastException.
+	 * If top level preference does not exist create a map preference with name
+	 * "params"
+	 * and return it.
+	 * 
 	 * @param problem
-	 * @return
+	 * @return top level preference if it is a map
 	 */
 	protected MapProblemPreference getTopLevelPreferenceMap(IProblem problem) {
 		MapProblemPreference map = (MapProblemPreference) problem
 				.getPreference();
 		if (map == null) {
-			map = new MapProblemPreference("params", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			map = new MapProblemPreference(AbstractProblemPreference.PARAM, ""); //$NON-NLS-1$
 			if (problem instanceof IProblemWorkingCopy) {
 				((IProblemWorkingCopy) problem).setPreference(map);
 			}
@@ -169,11 +209,12 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	}
 
 	/**
-	 * Return value for the key in the top level preference map
+	 * Returns value of the preference for the key in the top level
+	 * preference map for the given problem
 	 * 
-	 * @param problem
-	 * @param key
-	 * @return
+	 * @param problem - problem for which to get the preference
+	 * @param key - preference key
+	 * @return value of the preference
 	 */
 	public Object getPreference(IProblem problem, String key) {
 		return ((MapProblemPreference) problem.getPreference())

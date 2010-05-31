@@ -24,6 +24,9 @@ import org.eclipse.core.resources.IResource;
 public abstract class AbstractChecker implements IChecker {
 	protected String name;
 
+	/**
+	 * Default constructor
+	 */
 	public AbstractChecker() {
 	}
 
@@ -39,15 +42,15 @@ public abstract class AbstractChecker implements IChecker {
 	 * Reports a simple problem for given file and line
 	 * 
 	 * @param id
-	 *            - problem id
+	 *        - problem id
 	 * @param file
-	 *            - file
+	 *        - file
 	 * @param lineNumber
-	 *            - line
+	 *        - line
 	 * @param args
-	 *            - problem arguments, if problem does not define error message
-	 *            it will be error message (not recommended because of
-	 *            internationalization)
+	 *        - problem arguments, if problem does not define error message
+	 *        it will be error message (not recommended because of
+	 *        internationalization)
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber,
 			Object... args) {
@@ -60,9 +63,9 @@ public abstract class AbstractChecker implements IChecker {
 	 * specific file
 	 * 
 	 * @param id
-	 *            - problem id
+	 *        - problem id
 	 * @param file
-	 *            - file in scope
+	 *        - file in scope
 	 * @return problem instance
 	 */
 	public IProblem getProblemById(String id, IResource file) {
@@ -78,11 +81,11 @@ public abstract class AbstractChecker implements IChecker {
 	 * from problem definition
 	 * 
 	 * @param id
-	 *            - problem id
+	 *        - problem id
 	 * @param file
-	 *            - file
+	 *        - file
 	 * @param lineNumber
-	 *            - line
+	 *        - line
 	 */
 	public void reportProblem(String id, IFile file, int lineNumber) {
 		getProblemReporter().reportProblem(id,
@@ -109,9 +112,9 @@ public abstract class AbstractChecker implements IChecker {
 	 * Convenience method to create and return instance of IProblemLocation
 	 * 
 	 * @param file
-	 *            - file where problem is found
+	 *        - file where problem is found
 	 * @param line
-	 *            - line number 1-relative
+	 *        - line number 1-relative
 	 * @return instance of IProblemLocation
 	 */
 	protected IProblemLocation createProblemLocation(IFile file, int line) {
@@ -123,12 +126,12 @@ public abstract class AbstractChecker implements IChecker {
 	 * Convenience method to create and return instance of IProblemLocation
 	 * 
 	 * @param file
-	 *            - file where problem is found
+	 *        - file where problem is found
 	 * @param startChar
-	 *            - start char of the problem in the file, is zero-relative
+	 *        - start char of the problem in the file, is zero-relative
 	 * @param endChar
-	 *            - end char of the problem in the file, is zero-relative and
-	 *            exclusive.
+	 *        - end char of the problem in the file, is zero-relative and
+	 *        exclusive.
 	 * @return instance of IProblemLocation
 	 */
 	protected IProblemLocation createProblemLocation(IFile file, int startChar,
@@ -145,6 +148,13 @@ public abstract class AbstractChecker implements IChecker {
 		return this instanceof IRunnableInEditorChecker;
 	}
 
+	/**
+	 * report a problem
+	 * 
+	 * @param problemId - id of a problem
+	 * @param loc - problem location
+	 * @param args - extra problem arguments
+	 */
 	public void reportProblem(String problemId, IProblemLocation loc,
 			Object... args) {
 		getProblemReporter().reportProblem(problemId, loc, args);

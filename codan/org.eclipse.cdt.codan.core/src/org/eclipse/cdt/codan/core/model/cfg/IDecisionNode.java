@@ -10,7 +10,7 @@ public interface IDecisionNode extends IBasicBlock, ISingleIncoming {
 	/**
 	 * Node where branches of decision node merge
 	 * 
-	 * @return
+	 * @return the "merge" node
 	 */
 	IConnectorNode getMergeNode();
 }

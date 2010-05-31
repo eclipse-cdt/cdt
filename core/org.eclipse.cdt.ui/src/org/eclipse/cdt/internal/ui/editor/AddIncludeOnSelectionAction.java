@@ -202,9 +202,11 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	}
 
 	/**
-	 * Extract the includes for the given selection.  This can be both used to perform
+	 * Extracts the includes for the given selection.  This can be both used to perform
 	 * the work as well as being invoked when there is a change.
-	 * @param index 
+	 * @param selection a text selection.
+	 * @param ast an AST.
+	 * @param lookupName a one-element array used to return the selected name.
 	 */
 	private void deduceInclude(ITextSelection selection, IASTTranslationUnit ast, String[] lookupName)
 			throws CoreException {
@@ -250,7 +252,6 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				}
 			}
 		}
-
 
 		for (IIndexBinding indexBinding : bindings) {
 			// Replace ctor with the class itself.
@@ -653,7 +654,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	}
 
 	/**
-	 * Get the fully qualified name for a given index binding.
+	 * Returns the fully qualified name for a given index binding.
 	 * @param binding
 	 * @return binding's fully qualified name
 	 * @throws CoreException

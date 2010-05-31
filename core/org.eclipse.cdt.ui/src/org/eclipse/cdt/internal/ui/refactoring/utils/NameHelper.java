@@ -16,13 +16,17 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 
@@ -33,8 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
  * 
  */
 public class NameHelper {
-
-	
 	private static final String localVariableRegexp = "[a-z_A-Z]\\w*"; //$NON-NLS-1$
 
 	public static boolean isValidLocalVariableName(String name) {
@@ -63,14 +65,14 @@ public class NameHelper {
 	 * @throws CoreException 
 	 */
 	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, IFile declarationFile, int selectionOffset, IFile insertFile, int insertLocation) 
-		throws CoreException {
+			throws CoreException {
 		ICPPASTQualifiedName qname = new CPPASTQualifiedName();
 		
 		IASTName[] declarationNames = NamespaceHelper.getSurroundingNamespace(declarationFile, selectionOffset).getNames();
 		IASTName[] implementationNames = NamespaceHelper.getSurroundingNamespace(insertFile, insertLocation).getNames();
 		
-		for(int i = 0; i < declarationNames.length; i++) {
-			if(i >= implementationNames.length) {
+		for (int i = 0; i < declarationNames.length; i++) {
+			if (i >= implementationNames.length) {
 				qname.addName(declarationNames[i]);
 			} else if (!String.valueOf(declarationNames[i].toCharArray()).equals(String.valueOf(implementationNames[i].toCharArray()))) {
 				qname.addName(declarationNames[i]);
@@ -93,54 +95,59 @@ public class NameHelper {
 		char[] letters = fieldName.toCharArray();
 		int start = 0;
 		int end = letters.length - 1;
-		try{
-			
-		// Trim, non-letters at the beginning
-		while(!Character.isLetterOrDigit(letters[start]) && start < end) {
-			++start;
-		}
-		
-		// If the next character is not a letter or digit, 
-		// look ahead because the first letter might not be needed
-		if (start + 1 <= end
-				&& !Character.isLetterOrDigit(letters[start + 1])) {
-			int lookAhead = 1;
-			while (start + lookAhead <= end) {
-				// Only change the start if something is found after the non-letters
-				if (Character.isLetterOrDigit(letters[start + lookAhead])) {
-					start += lookAhead;
-					break;
-				}
-				lookAhead++;
+		try {
+			// Trim, non-letters at the beginning
+			while (!Character.isLetterOrDigit(letters[start]) && start < end) {
+				++start;
 			}
-		} else if (start + 1 <= end
-				&& Character.isUpperCase(letters[start + 1])) {
-			start++;
-		}
-		
-		// Trim, non-letters at the end
-		while((!Character.isLetter(letters[end]) && !Character.isDigit(letters[end])) && start < end) {
-			--end;
-		}
-		}catch(IndexOutOfBoundsException e){}	
+			
+			// If the next character is not a letter or digit, 
+			// look ahead because the first letter might not be needed
+			if (start + 1 <= end
+					&& !Character.isLetterOrDigit(letters[start + 1])) {
+				int lookAhead = 1;
+				while (start + lookAhead <= end) {
+					// Only change the start if something is found after the non-letters
+					if (Character.isLetterOrDigit(letters[start + lookAhead])) {
+						start += lookAhead;
+						break;
+					}
+					lookAhead++;
+				}
+			} else if (start + 1 <= end && Character.isUpperCase(letters[start + 1])) {
+				start++;
+			}
+			
+			// Trim, non-letters at the end
+			while ((!Character.isLetter(letters[end]) && !Character.isDigit(letters[end])) && start < end) {
+				--end;
+			}
+		} catch (IndexOutOfBoundsException e) {
+		}	
 		
 		return new String(letters, start, end - start + 1);
-
 	}
 	
 	public static String makeFirstCharUpper(String name) {
-		if(Character.isLowerCase(name.charAt(0))){
+		if (Character.isLowerCase(name.charAt(0))){
 			name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
 		}
 		return name;
 	} 
 
 	public static String getTypeName(IASTParameterDeclaration parameter) {
-		IASTDeclSpecifier parameterDeclSpecifier = parameter.getDeclSpecifier();
-		if (parameterDeclSpecifier instanceof ICPPASTNamedTypeSpecifier) {
-			return ((ICPPASTNamedTypeSpecifier) parameterDeclSpecifier).getName().getRawSignature();
-		} else {
-			return parameterDeclSpecifier.getRawSignature();
+		IASTName name = parameter.getDeclarator().getName();
+		IBinding binding = name.resolveBinding();
+		if (binding instanceof IVariable) {
+			try {
+				IType type = ((IVariable) binding).getType();
+				if (type != null) {
+					return ASTTypeUtil.getType(type);
+				}
+			} catch (DOMException e) {
+				CUIPlugin.log(e);
+			}
 		}
+		return ""; //$NON-NLS-1$
 	}
 }

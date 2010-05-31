@@ -29,23 +29,22 @@ public class PseudoNameGenerator {
 	}
 	
 	public String generateNewName(String typeName) {
-		
 		String[] nameParts = typeName.split("::"); //$NON-NLS-1$
 		typeName = nameParts[nameParts.length - 1];
-		if(typeName.contains("<")) { //$NON-NLS-1$
+		if (typeName.contains("<")) { //$NON-NLS-1$
 			typeName = typeName.substring(0, typeName.indexOf('<'));
 		}
-		if(typeName.length() != 0) {
+		if (typeName.length() != 0) {
 			typeName = typeName.substring(0, 1).toLowerCase() + typeName.substring(1);
 		}
 
 		nameParts = typeName.split("\\s"); //$NON-NLS-1$
 		for (int i = 0; i < nameParts.length; i++) {
-			if(i <= 0) {
+			if (i <= 0) {
 				typeName = nameParts[i];
-			}else {
+			} else {
 				typeName = typeName.concat(nameParts[i].substring(0,1).toUpperCase());
-				if(nameParts[i].length() > 1) {
+				if (nameParts[i].length() > 1) {
 					typeName = typeName.concat(nameParts[i].substring(1));
 				}
 			}
@@ -57,12 +56,14 @@ public class PseudoNameGenerator {
 		
 		do {
 			newNameCandidate = typeName + numberString;
+			if (!NameHelper.isValidLocalVariableName(newNameCandidate)) {
+				return ""; //$NON-NLS-1$
+			}
 			index++;
 			numberString = Integer.toString(index);
-		} while(names.contains(newNameCandidate) || !NameHelper.isValidLocalVariableName(newNameCandidate) || NameHelper.isKeyword(newNameCandidate));
+		} while (names.contains(newNameCandidate) || NameHelper.isKeyword(newNameCandidate));
 		
 		names.add(newNameCandidate);
-		
 		return newNameCandidate;
 	}
 }

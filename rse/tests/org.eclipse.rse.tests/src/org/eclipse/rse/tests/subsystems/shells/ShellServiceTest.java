@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Anna Dushistova  (MontaVista) - adapted from FileServiceTest
  * Anna Dushistova  (MontaVista) - [249102][testing] Improve ShellService Unittests
+ * Martin Oberhuber (Wind River) - [315055] ShellServiceTest fails on Windows
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.shells;
 
@@ -15,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -131,26 +133,34 @@ public class ShellServiceTest extends RSEBaseConnectionTestCase {
 	}
 
 	public void testLaunchShell() throws Exception {
-		Object[] allOutput = launchShell("", "echo test", new String[] {});
+		//Bug 315055: Windows needs a PATH which includes cmd.exe
+		//On Linux, the "echo test" also works without any PATH
+		//Object[] allOutput = launchShell("", "echo test", new String[] {});
+		Object[] allOutput = launchShell("", "echo test", shellService.getHostEnvironment());
 		boolean matchFound = false;
 		for (int i = 0; i < allOutput.length; i++) {
 			matchFound = ((IHostOutput) allOutput[i]).getString()
 					.equals("test");
-			System.out.println(((IHostOutput) allOutput[i]).getString());
+			//System.out.println(((IHostOutput) allOutput[i]).getString());
 			if (matchFound)
 				break;
 		}
-		assertTrue(matchFound);
+		assertTrue("Missing output of \"echo test\": "+Arrays.asList(allOutput), matchFound);
+
 		// now set working directory -- Linux only
-		allOutput = launchShell("/", "echo test", new String[] {});
+		//Bug 315055: Windows needs a PATH which includes cmd.exe
+		//On Linux, the "echo test" also works without any PATH
+		//allOutput = launchShell("/", "echo test", new String[] {});
+		allOutput = launchShell("/", "echo test", shellService.getHostEnvironment());
 		matchFound = false;
 		for (int i = 0; i < allOutput.length; i++) {
 			matchFound = ((IHostOutput) allOutput[i]).getString()
 					.equals("test");
-			System.out.println(((IHostOutput) allOutput[i]).getString());
+			//System.out.println(((IHostOutput) allOutput[i]).getString());
 			if (matchFound)
 				break;
 		}
+		assertTrue("Missing output of \"echo test\": "+Arrays.asList(allOutput), matchFound);
 	}
 
 	public Object[] launchShell(String workingDirectory, String cmd,

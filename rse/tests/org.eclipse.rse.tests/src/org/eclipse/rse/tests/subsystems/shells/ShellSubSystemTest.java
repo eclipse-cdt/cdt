@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,12 @@
  * Contributors:
  * Anna Dushistova  (MontaVista) - adapted from FileServiceTest
  * Anna Dushistova  (MontaVista) - [249102][testing] Improve ShellService Unittests
+ * Martin Oberhuber (Wind River) - [315055] ShellServiceTest fails on Windows
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.shells;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -139,8 +141,11 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 
 	public void testRunCommand() throws Exception {
 		if (shellSubSystem.canRunCommand()) {
-			Object[] results = shellSubSystem
-					.runCommand("echo test\r\nexit", null, mon);
+			//Bug 315055: Windows cmd invocation does not split commands on \r\n
+			//String cmd = "echo test\r\nexit"; //$NON-NLS-1$
+			String commandSeparator = shellSubSystem.getParentRemoteCmdSubSystemConfiguration().getCommandSeparator();
+			String cmd = "echo test"+commandSeparator+"exit"; //$NON-NLS-1$
+			Object[] results = shellSubSystem.runCommand(cmd, null, mon);
 
 			boolean matchFound = false;
 			Object cmdObject = results[0];
@@ -159,7 +164,7 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 						break;
 				}
 			
-			assertTrue(matchFound);
+			assertTrue("Missing output of \"echo test\": "+Arrays.asList(result), matchFound);
 		}
 	}
 
@@ -167,8 +172,15 @@ public class ShellSubSystemTest extends RSEBaseConnectionTestCase {
 		if (shellSubSystem.canRunShell()) {
 			IRemoteCommandShell cmd = shellSubSystem.runShell(null, mon);
 			shellSubSystem.cancelShell(cmd, mon);
-			assertFalse(cmd.isActive());
-
+			//Bug 315055 - Race condition on Windows: 
+			//cancelShell() is not synchronous, so we need to wait a little (max 2 sec)
+			int tries = 0; 
+			while(tries <20 && cmd.isActive()) {
+				Thread.sleep(100);
+				tries++;
+			}
+			assertFalse("Shell not canceled", cmd.isActive());
+			System.out.println("Shell canceled after "+tries*100+" msec.");
 		}
 	}
 }

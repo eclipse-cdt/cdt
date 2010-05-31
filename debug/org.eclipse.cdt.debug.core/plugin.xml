@@ -253,7 +253,7 @@
       </breakpoint>
        <breakpoint
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CEventBreakpoint"
-            name="%cEventBreakpoint.name"
+            name="%cEventBreakpoints.name"
             markerType="org.eclipse.cdt.debug.core.cEventBreakpointMarker"
             id="cEventBreakpoint">
       </breakpoint>

@@ -70,6 +70,9 @@
    <includes
          id="org.eclipse.tm.tcf.feature"
          version="0.0.0"/>
+   <includes
+         id="org.eclipse.tm.tcf.source"
+         version="0.0.0"/>
    <plugin
          id="org.apache.commons.net"
          download-size="0"

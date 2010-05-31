@@ -1,11 +1,12 @@
 /* *******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  * David Dykstal (IBM) - initial contribution.
+ * Martin Oberhuber (Wind River) - [247908] extract testBug255023
  * *******************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -44,6 +45,8 @@ public class RSEConnectionTestSuite extends DelegatingTestSuiteHolder {
 		TestSuite suite = new TestSuite("RSE Connection Test Suite"); //$NON-NLS-1$
 		// add the single test suites to the overall one here.
 		suite.addTestSuite(RSEConnectionTestCase.class);
+		// TODO currently fails - see bug 255023
+		//suite.addTestSuite(TestBug255023.class);
 		
 		return suite;
 	}

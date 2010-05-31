@@ -173,6 +173,15 @@
 			<zipfileset refid="rootfiles" />
 		</zip>
 
+		<!-- build TCF -->
+		<zip destfile="${buildDirectory}/${buildLabel}/TCF-SDK-incubation-${buildAlias}.zip" update="true">
+			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+				<include name="**/org.eclipse.tm.tcf*" />
+				<include name="**/org.eclipse.tm.tcf*/**" />
+				<include name="**/org.eclipse.tm.tcf*/**/**" />
+			</zipfileset>
+			<zipfileset refid="rootfiles" />
+		</zip>
 		
 	</target>
 

@@ -534,7 +534,7 @@
    <topic href="tasks/cdt_t_conv_proj.htm" label="Converting a C or C++ nature for a project"/>
 </context>
 <context id="cdt_creating_cpp_file_context" title="Creating your C++ file">
-   <topic href="getting_started/cdt_w_creating_cpp_file.html" label="Creating your C++ file"/>
+   <topic href="getting_started/cdt_w_newcpp.htm" label="Creating your C++ file"/>
 </context>
 <context id="project_explorer_context" title="Project Explorer">
    <description>The Project Explorer displays project information.</description>

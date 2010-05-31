@@ -11,8 +11,8 @@
 package org.eclipse.cdt.build.core.scannerconfig;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.build.internal.core.scannerconfig.jobs.CfgSCJobsUtil;
@@ -199,8 +199,9 @@ public class ScannerConfigBuilder extends ACBuilder {
             // update and persist scanner configuration
             CfgSCJobsUtil.updateScannerConfiguration(project, context, instance, buildInfo2, new SubProgressMonitor(monitor, 30));
             
-            // this erroneously removes the infor right after it gets created... bad
-            //CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, context, false);
+            // Remove the previous discovered path info to ensure it get's regenerated.
+            // TODO we should really only do this if the information has changed
+            CfgDiscoveredPathManager.getInstance().removeDiscoveredInfo(project, context, false);
             
 			if((flags & PERFORM_CORE_UPDATE) != 0)
 				CfgDiscoveredPathManager.getInstance().updateCoreSettings(project, new IConfiguration[]{cfg});

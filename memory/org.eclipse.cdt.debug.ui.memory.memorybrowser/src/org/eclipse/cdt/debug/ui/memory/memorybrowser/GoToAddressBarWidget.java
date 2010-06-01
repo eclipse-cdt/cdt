@@ -106,10 +106,6 @@ public class GoToAddressBarWidget {
 		else 
 			fEmptyExpression.hide();
 
-		clearError();
-	}
-
-	private void clearError() {
 		fWrongExpression.hide();
 	}
 
@@ -144,7 +140,7 @@ public class GoToAddressBarWidget {
 	 */
 	public void handleExpressionStatus(final IStatus message) {
 		if (message.isOK()) {
-			clearError();
+			fWrongExpression.hide();
 		} else {
 			fWrongExpression.setDescriptionText(message.getMessage());
 			fWrongExpression.show();

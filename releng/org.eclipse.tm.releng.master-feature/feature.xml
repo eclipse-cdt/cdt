@@ -60,11 +60,11 @@
    <includes
          id="org.eclipse.tm.terminal.test"
          version="0.0.0"/>
-
+<!--
    <includes
          id="org.eclipse.rse.wince"
          version="0.0.0"/>
-
+-->
    <includes
          id="org.eclipse.tm.tcf.feature"
          version="0.0.0"/>

@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,9 +76,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -2502,16 +2505,14 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @param outputFileLocation
 	 * @param macroSubstitutor
 	 * @return the command flags with the build macros resolved
-	 * @throws BuildException
 	 */
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation,
 				SupplierBasedCdtVariableSubstitutor macroSubstitutor,
-				IMacroContextInfoProvider provider) throws BuildException {
+				IMacroContextInfoProvider provider) {
 		IOption[] opts = getOptions();
 		ArrayList<String> flags = new ArrayList<String>();
 		StringBuilder sb = new StringBuilder();
-		for (IOption op : opts) {
-			IOption option = op;
+		for (IOption option : opts) {
 			if (option == null)
 				continue;
 			sb.setLength( 0 );
@@ -2626,8 +2627,16 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 					
 				if (sb.toString().trim().length() > 0)
 					flags.add(sb.toString().trim());
+
+				} catch (BuildException e) {
+					// Bug 315187 one broken option shouldn't cascade to all other options breaking the build...
+					Status s = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), MessageFormat.format(ManagedMakeMessages.getString("Tool_Problem_Discovering_Args_For_Option"), option, //$NON-NLS-1$
+							option.getId()), e);
+					ManagedBuilderCorePlugin.log(new CoreException(s));
 				} catch (CdtVariableException e) {
-					
+					Status s = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), MessageFormat.format(ManagedMakeMessages.getString("Tool_Problem_Discovering_Args_For_Option"), option, //$NON-NLS-1$
+							option.getId()), e);
+					ManagedBuilderCorePlugin.log(new CoreException(s));
 				}
 			}
 		}

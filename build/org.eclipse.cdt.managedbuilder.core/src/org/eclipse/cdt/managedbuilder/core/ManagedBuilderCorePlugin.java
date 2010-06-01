@@ -211,7 +211,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 			e = ((InvocationTargetException) e).getTargetException();
 		IStatus status = null;
 		if (e instanceof CoreException)
-			status = ((CoreException) e).getStatus();
+			status = new Status(((CoreException) e).getStatus().getSeverity(), getUniqueIdentifier(), e.getMessage(), e);
 		else
 			status = new Status(IStatus.ERROR, getUniqueIdentifier(), IStatus.OK, e.getMessage(), e);
 		log(status);

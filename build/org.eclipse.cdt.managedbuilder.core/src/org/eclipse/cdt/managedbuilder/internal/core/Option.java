@@ -168,9 +168,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public Option(IHoldsOptions parent, String Id, String name, Option option){
 		this.holder = parent;
 		superClass = option.superClass;
-		if (superClass != null) {
+		if (superClass != null)
 			superClassId = option.superClass.getId();
-		}
+		else if (option.superClassId != null)
+			superClassId = option.superClassId;
 		setId(Id);
 		setName(name);
 		isExtensionOption = false;
@@ -708,7 +709,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void serialize(ICStorageElement element) throws BuildException {
 		if (superClass != null)
 			element.setAttribute(IProjectType.SUPERCLASS, superClass.getId());
-		
+		else if (superClassId != null)
+			element.setAttribute(IProjectType.SUPERCLASS, superClassId);
+
 		element.setAttribute(IBuildObject.ID, id);
 		
 		if (name != null) {

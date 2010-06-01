@@ -80,8 +80,11 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		}
 		
 		// also check for device or UNC
+		int firstSep = path.indexOf("/"); //$NON-NLS-1$
 		int idx = path.indexOf(":"); //$NON-NLS-1$
-		if (idx > 0) {
+		// ':' indicates a Windows device separator if it comes before
+		// the first segment separator
+		if (idx > 0 && (firstSep < 0 || idx < firstSep)) {
 			String device = path.substring(0, idx + 1);
 			path = path.substring(idx + 1);
 			return new Path(path).setDevice(device);

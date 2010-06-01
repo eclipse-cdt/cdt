@@ -77,15 +77,13 @@ public class GoToAddressBarWidget {
 			}
 		});
 		fEmptyExpression = new ControlDecoration(expression, SWT.LEFT | SWT.CENTER);
-		fEmptyExpression.setDescriptionText("Enter an expression to position rendering");
-		FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
-		.getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
-		fEmptyExpression.setImage(fieldDecoration.getImage());
+		fEmptyExpression.setDescriptionText(Messages.getString("GoToAddressBarWidget.EnterExpressionMessage")); //$NON-NLS-1$
+		FieldDecoration fieldDec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
+		fEmptyExpression.setImage(fieldDec.getImage());
 
 		fWrongExpression = new ControlDecoration(expression, SWT.LEFT | SWT.TOP);
-		fieldDecoration = FieldDecorationRegistry.getDefault()
-		.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
-		fWrongExpression.setImage(fieldDecoration.getImage());
+		fieldDec = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+		fWrongExpression.setImage(fieldDec.getImage());
 		fWrongExpression.hide();
 		
 		// leave enough room for decorators
@@ -96,7 +94,7 @@ public class GoToAddressBarWidget {
 	}
 		
 	protected void updateButtons() {
-		boolean empty = fExpression.getText().trim().length() == 0;
+		boolean empty = getExpressionText().length() == 0;
 		
 		fOKNewTabButton.setEnabled(!empty);
 		fOKButton.setEnabled(!empty);

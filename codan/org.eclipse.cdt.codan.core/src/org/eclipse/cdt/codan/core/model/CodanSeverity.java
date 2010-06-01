@@ -15,11 +15,7 @@ import org.eclipse.core.resources.IMarker;
 /**
  * 
  * Represents Severity of the codan problem. It is directly mapped to markers
- * severity,
- * therefore not intended to be extended.
- * 
- * @noextend This class is not intended to be extended by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * severity.
  * 
  */
 public enum CodanSeverity {

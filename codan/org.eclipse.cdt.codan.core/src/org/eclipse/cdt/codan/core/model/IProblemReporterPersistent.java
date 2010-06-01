@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResource;
  * IProblemReporterPersistent - interface to report problems, which are
  * persistent, ex. markers
  * 
- * Clients may implement and extend this interface
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that

@@ -29,6 +29,9 @@ import java.util.Iterator;
  * change of control direction
  * <li> {@link IBranchNode} - usually node where decision node connect to,
  * labels represent a way where controls goes to
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IControlFlowGraph {
 	/**

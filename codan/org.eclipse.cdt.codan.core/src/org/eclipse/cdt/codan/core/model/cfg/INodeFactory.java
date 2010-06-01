@@ -12,6 +12,8 @@ package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
  * Control Flow Graph Node factory
+ * 
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface INodeFactory {
 	/**

@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IResource;
  * Convenience implementation of IChecker interface. Has a default
  * implementation for common methods.
  * 
- * Clients may extend this class.
  */
 public abstract class AbstractChecker implements IChecker {
 	protected String name;

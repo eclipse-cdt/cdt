@@ -4,6 +4,9 @@ package org.eclipse.cdt.codan.core.model.cfg;
  * Control flow graph's basic block node - super interface of all nodes.
  * It has set on incoming nodes and outgoing nodes.
  * <p/>
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBasicBlock {
 	/**

@@ -2054,6 +2054,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
 		SyncUtil.resumeUntilStopped(1000);
+		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint() 
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -2109,6 +2110,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
 		SyncUtil.resumeUntilStopped(1000);
+		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -2165,6 +2167,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
 		SyncUtil.resumeUntilStopped(1000);
+		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()		
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -3192,6 +3195,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.resumeUntilStopped(1000);
+		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -3262,6 +3266,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.resumeUntilStopped();
+		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()		
 		clearEventCounters();
 
 		// Create a write watchpoint
@@ -3333,6 +3338,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		}
 		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
 		SyncUtil.resumeUntilStopped();
+		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()
 		clearEventCounters();
 
 		// Create a write watchpoint

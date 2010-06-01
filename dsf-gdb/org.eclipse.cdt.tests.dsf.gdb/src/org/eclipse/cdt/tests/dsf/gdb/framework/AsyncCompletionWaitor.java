@@ -78,7 +78,7 @@ public class AsyncCompletionWaitor {
 		}
 	}
 	
-	/*
+	/**
 	 *  Resets the state so we allow ourselves to be reused instead
 	 *  of having to create a new wait object each time.
 	 */

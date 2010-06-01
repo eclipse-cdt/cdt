@@ -79,8 +79,6 @@ import org.junit.runner.RunWith;
  * 
  * Refer to the JUnit4 documentation for an explanation of the annotations.
  * 
- * NOTE: the WhileTargetRunning tests intermittently fail with MinGW gdb 7.0 and
- * fail 100% with cygwin. Bug 304096 will address this.
  */
 
 @RunWith(BackgroundRunner.class)
@@ -731,6 +729,16 @@ public class MICatchpointsTest extends BaseTestCase {
 	 */
 	@Test
 	public void insertCatchpoint_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
+		
 		// Run the program. It will make a two second sleep() call, during which time... 
 		SyncUtil.resume();
 		
@@ -743,8 +751,10 @@ public class MICatchpointsTest extends BaseTestCase {
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		
 		// After the sleep, the test app throws a C++ exception. Wait for the
-		// catchpoint to hit.
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// catchpoint to hit and for the expected number of breakpoint events to
+		// have occurred
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 		
 		// Ensure that right breakpoint events were received. One indicating the
 		// catchpoint was created, another indicating it was hit
@@ -916,6 +926,16 @@ public class MICatchpointsTest extends BaseTestCase {
 	 *            one.
 	 */
 	private void removeCatchpoint_WhileTargetRunning(boolean removeThrow) throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
+		
 		// Set a line breakpoint at the sleep() call. We need to get the program
 		// past the initial loop that throws and catches C++ exceptions.
 		IBreakpointDMContext refLineBkpt = setLineBreakpoint(LINE_NUMBER_SLEEP_CALL);
@@ -937,7 +957,10 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// After the sleep, the test app throws a C++ exception and catches it.
 		// The catchpoint we DIDN'T remove should stop the program
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for catchpoint to hit and for the expected number of breakpoint
+		// events to have occurred
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 		assertTrue("stopped event is of an unexpected type: " + event.getClass().getName(), event instanceof MIBreakpointHitEvent);
 		MIBreakpointHitEvent bkptHitEvent = (MIBreakpointHitEvent)event; 
 		MIBreakpointDMData bkptNotRemoved = (MIBreakpointDMData) getBreakpoint(removeThrow ? refCatch : refThrow);
@@ -1058,6 +1081,16 @@ public class MICatchpointsTest extends BaseTestCase {
 	 *            one.
 	 */
 	private void updateCatchpoint_WhileTargetRunning(boolean modifyThrow) throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
+		
 		// Set a line breakpoint at the sleep() call. 
 		IBreakpointDMContext refLineBkpt = setLineBreakpoint(LINE_NUMBER_SLEEP_CALL);
 
@@ -1076,7 +1109,7 @@ public class MICatchpointsTest extends BaseTestCase {
 		assertEquals("Target stopped as expected, but the responsible breakpoint was not the expected one", lineBkpt.getNumber(), fBreakpointRef);
 		clearEventCounters();
 		
-		// Resume the program. It will make a two second sleep() call, during which time...
+		// Resume the program. It will make a one second sleep() call, during which time...
 		SyncUtil.resume();
 		
 		// ...we modify one of the catchpoints's condition
@@ -1084,7 +1117,9 @@ public class MICatchpointsTest extends BaseTestCase {
 
 		// After the sleep, the test app throws a C++ exception and catches it.
 		// So, the catchpoint whose condition we modified should get hit
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 		assertTrue("stopped event is of an unexpected type: " + event.getClass().getName(), event instanceof MIBreakpointHitEvent);
 		MIBreakpointHitEvent bkptHitEvent = (MIBreakpointHitEvent)event; 
 		MIBreakpointDMData bkptUpdated = (MIBreakpointDMData) getBreakpoint(modifyThrow ? refThrow : refCatch);
@@ -1206,75 +1241,6 @@ public class MICatchpointsTest extends BaseTestCase {
 		assertEquals(IEventBreakpointConstants.EVENT_TYPE_SYSCALL, GdbCatchpoints.gdbCatchpointKeywordToEvent("syscall"));
 		assertNull(GdbCatchpoints.gdbCatchpointKeywordToEvent("signa"));
 		assertNull(GdbCatchpoints.gdbCatchpointKeywordToEvent("signals"));
-	}
-
-	/**
-	 * This method allows the while-target-running tests to side-step a bug in
-	 * Windows gdb. To perform a breakpoint operation while the target is
-	 * running, the DSF debugger temporarily suspends the target (gdb) with a
-	 * SIGINT, carries out the operation, and then resumes the target. On
-	 * Windows gdbs, there's a race condition problem with the SIGINT handling
-	 * resulting in the target suspending for a reason other than the SIGINT.
-	 * Resuming the target, though, will result in the target suspending
-	 * again...this time for the SIGINT.
-	 * 
-	 * See http://sourceware.org/ml/gdb-patches/2008-05/msg00264.html
-	 * 
-	 * I've looked at the latest gdb sources and the problem has not yet been
-	 * fixed. Search "FIXME: brobecker/2008-05-20" in windows-nat.c
-	 * 
-	 * @param waitForStop
-	 *            indicates whether we should first wait for the target to stop.
-	 *            Otherwise we just wait until [eventCount] number of breakpoint
-	 *            events have occurred. If this arg is true, we return the
-	 *            MIStoppedEvent.
-	 * @param eventCount
-	 *            the number of breakpoint events to wait for
-	 * @return the stopped event, if [waitForStop] is true; otherwise null
-	 * @throws Throwable
-	 */
-	MIStoppedEvent waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(boolean waitForStop, int eventCount) throws Throwable {
-		MIStoppedEvent event = null;
-		if (waitForStop) {
-			// The target program should be in the middle of a one second
-			// sleep() call. Most tests involve setting a breakpoint at
-			// some line after the sleep call. Allow up to three seconds
-			// for the sleep() call to complete and the breakpoint to be
-			// hit.
-			event = SyncUtil.waitForStop(3000);
-		}
-		
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			// Normally, we would now give a couple of seconds for any
-			// additional expected breakpoint events to occur after the target's
-			// sleep call returns and fail the test if they don't. But the
-			// Windws gdb bug may have gotten in the way. If it has, the target
-			// is in an unexpected suspended state instead of running or stopped
-			// at the test breakpoint. We just don't know. So, we wait two
-			// seconds in case everything is actually behaving normally, since
-			// that's how patient waitForBreakpointEvent() is. If waitForStop is
-			// false, we need to allow enough time for the sleep() to return AND
-			// any subsequent breakpoint events to occur.
-	    	Thread.sleep(TestsPlugin.massageTimeout(waitForStop ? 2000 : 5000));
-	    	int eventsReceived = totalBreakpointEventsCount();
-	    	assertTrue("We should have gotten at least one breakpoint event", eventsReceived >= 1);
-	    	if (eventsReceived < eventCount) {
-				// It's likely we ran into the gdb bug. We can ignore it (since
-				// it's out of our control) and proceed to test whether the
-				// breakpoint operation was properly carried out.
-	    		System.out.println("Performing an additional resume to work around Windows gdb bug");
-	    		SyncUtil.resume();
-	    		if (waitForStop) {
-	    			event = SyncUtil.waitForStop(4000);
-	    		}
-	    	}
-	    }
-	    
-		// OK, at this point, all the expected breakpoint events should have
-		// occurred, or we really have a problem (unrelated to the gdb bug)
-		waitForBreakpointEvent(eventCount);
-		
-		return event;
 	}
 
 	/**

@@ -1205,7 +1205,16 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void insertBreakpoint_WhileTargetRunning() throws Throwable {
-
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
+	    
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
@@ -1219,9 +1228,10 @@ public class MIBreakpointsTest extends BaseTestCase {
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for breakpoint to hit.
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
-		
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
+
     	// Ensure the correct BreakpointEvent was received
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -1248,7 +1258,16 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void insertInvalidBreakpoint_WhileTargetRunning() throws Throwable {
-
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
+		
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
 		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
@@ -1267,8 +1286,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
 		MIBreakpointDMContext ref = (MIBreakpointDMContext) insertBreakpoint(fBreakpointsDmc, breakpoint);
 
-		// Wait for breakpoint to hit.
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 		
     	// Ensure the correct BreakpointEvent was received
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
@@ -1436,6 +1456,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Ignore("Not supported because the frame where we stop does not contain the expression")
 	@Test
 	public void insertWatchpoint_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -1450,8 +1479,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, watchpoint);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for breakpoint to hit
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -1716,6 +1746,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void removeBreakpoint_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
 
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
@@ -1741,8 +1780,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		removeBreakpoint(ref);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for the breakpoint to hit
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 4);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(4);
 
 		// Ensure the correct BreakpointEvent was received
 		assertTrue("BreakpointEvent problem: expected " + 4 + " BREAKPOINT event(s), received "
@@ -1936,6 +1976,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_ModifyCondition_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
 
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
@@ -1966,8 +2015,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for the breakpoint to hit
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -2303,6 +2353,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_ModifyCount_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
 
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
@@ -2334,8 +2393,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for the breakpoint to hit
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -2440,6 +2500,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_Disable_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
 
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
@@ -2476,10 +2545,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Ensure that right BreakpointEvents were received
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
-		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
-				+ fBreakpointEventCount, fBreakpointEventCount == 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_UPDATED event(s), received "
 				+ getBreakpointEventCount(BP_UPDATED), getBreakpointEventCount(BP_UPDATED) == 1);
 		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_HIT event(s), received "
@@ -2609,6 +2677,15 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateBreakpoint_Enable_WhileTargetRunning() throws Throwable {
+		// Interrupting the target on Windows is susceptible to an additional,
+		// unwanted suspension. That means that silently interrupting the target
+		// to set/modify/remove a breakpoint then resuming it can leave the
+		// target in a suspended state. Unfortunately, there is nothing
+		// practical CDT can do to address this issue except wait for the gdb
+		// folks to resolve it. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=304096#c27
+	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
+	    	return;
+	    }
 
 		// Create a line breakpoint
 		Map<String, Object> breakpoint = new HashMap<String, Object>();
@@ -2640,8 +2717,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 		updateBreakpoint(ref, delta);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
-		// Wait for the breakpoint to hit
-		MIStoppedEvent event = waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(true, 2);
+		// Wait for breakpoint to hit and for the expected number of breakpoint events to have occurred 
+		MIStoppedEvent event = SyncUtil.waitForStop(3000);
+		waitForBreakpointEvent(2);
 
 		// Ensure that right BreakpointEvents were received
 		assertTrue("BreakpointEvent problem: expected " + 2 + " BREAKPOINT event(s), received "
@@ -3297,74 +3375,5 @@ public class MIBreakpointsTest extends BaseTestCase {
 		watchpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertTrue("BreakpointEvent problem: expected watchpoint to be deleted after going out of scope",
 				watchpoint1 == null);
-	}
-
-	/**
-	 * This method allows the while-target-running tests to side-step a bug in
-	 * Windows gdb. To perform a breakpoint operation while the target is
-	 * running, the DSF debugger temporarily suspends the target (gdb) with a
-	 * SIGINT, carries out the operation, and then resumes the target. On
-	 * Windows gdbs, there's a race condition problem with the SIGINT handling
-	 * resulting in the target suspending for a reason other than the SIGINT.
-	 * Resuming the target, though, will result in the target suspending
-	 * again...this time for the SIGINT.
-	 * 
-	 * See http://sourceware.org/ml/gdb-patches/2008-05/msg00264.html
-	 * 
-	 * I've looked at the latest gdb sources and the problem has not yet been
-	 * fixed. Search "FIXME: brobecker/2008-05-20" in windows-nat.c
-	 * 
-	 * @param waitForStop
-	 *            indicates whether we should first wait for the target to stop.
-	 *            Otherwise we just wait until [eventCount] number of breakpoint
-	 *            events have occurred. If this arg is true, we return the
-	 *            MIStoppedEvent.
-	 * @param eventCount
-	 *            the number of breakpoint events to wait for
-	 * @return the stopped event, if [waitForStop] is true; otherwise null
-	 * @throws Throwable
-	 */
-	MIStoppedEvent waitForBreakpointEventsAfterBreakpointOperationWhileTargetRunning(boolean waitForStop, int eventCount) throws Throwable {
-		MIStoppedEvent event = null;
-		if (waitForStop) {
-			// The target program should be in the middle of a one second
-			// sleep() call. Most tests involve setting a breakpoint at
-			// some line after the sleep call. Allow up to three seconds
-			// for the sleep() call to complete and the breakpoint to be
-			// hit.
-			event = SyncUtil.waitForStop(3000);
-		}
-		
-	    if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			// Normally, we would now give a couple of seconds for any
-			// additional expected breakpoint events to occur after the target's
-			// sleep call returns and fail the test if they don't. But the
-			// Windws gdb bug may have gotten in the way. If it has, the target
-			// is in an unexpected suspended state instead of running or stopped
-			// at the test breakpoint. We just don't know. So, we wait two
-			// seconds in case everything is actually behaving normally, since
-			// that's how patient waitForBreakpointEvent() is. If waitForStop is
-			// false, we need to allow enough time for the sleep() to return AND
-			// any subsequent breakpoint events to occur.
-	    	Thread.sleep(TestsPlugin.massageTimeout(waitForStop ? 2000 : 5000));
-	    	
-	    	assertTrue("We should have gotten at least one breakpoint event", fBreakpointEventCount >= 1);
-	    	if (fBreakpointEventCount < eventCount) {
-				// It's likely we ran into the gdb bug. We can ignore it (since
-				// it's out of our control) and proceed to test whether the
-				// breakpoint operation was properly carried out.
-	    		System.out.println("Performing an additional resume to work around Windows gdb bug");
-	    		SyncUtil.resume();
-	    		if (waitForStop) {
-	    			event = SyncUtil.waitForStop(4000);
-	    		}
-	    	}
-	    }
-	    
-		// OK, at this point, all the expected breakpoint events should have
-		// occurred, or we really have a problem (unrelated to the gdb bug)
-		waitForBreakpointEvent(eventCount);
-		
-		return event;
 	}
 }

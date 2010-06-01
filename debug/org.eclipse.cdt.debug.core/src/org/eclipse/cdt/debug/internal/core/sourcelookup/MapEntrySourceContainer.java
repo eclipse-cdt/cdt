@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -30,6 +29,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
  * The source container that maps a backend path to the local filesystem path.
@@ -62,11 +63,54 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		fLocalPath = local;
 	}
 
+	/**
+	 * Create an IPath from a string which may be a Win32 path. <p>
+	 * <p>
+	 * ("new Path(...)" won't work in Unix when using a Win32 path: the backslash
+	 * separator and the device notation are completely munged.)
+	 * Copied from org.eclipse.cdt.debug.edc.internal.PathUtils
+	 * @param path
+	 * @return converted string
+	 */
+	public static IPath createPath(String path) {
+		if (path == null) return null;
+		if (path.contains("\\")) {
+			// handle Windows slashes and canonicalize
+			path = path.replaceAll("\\\\", "/");
+		}
+		
+		// also check for device or UNC
+		int idx = path.indexOf(":");
+		if (idx > 0) {
+			String device = path.substring(0, idx + 1);
+			path = path.substring(idx + 1);
+			return new Path(path).setDevice(device);
+		} 
+		else {
+			// Cygwin or UNC path
+			if (path.startsWith("//")) {
+				String network;
+				idx = path.indexOf("/", 2);
+				if (idx > 0) {
+					network = path.substring(0, idx);
+					path = path.substring(idx);
+				} else {
+					network = path;
+					path = "";
+				}
+				return new Path(network, path).makeUNC(true);
+			}
+		}		
+		
+		// fallthrough
+		return new Path(path);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements( String name ) throws CoreException {
-		IPath path = new Path( name );
+		IPath path = createPath(name);
 		if ( getBackendPath().isPrefixOf( path ) ) {
 			path = path.removeFirstSegments( getBackendPath().segmentCount() );
 			path = getLocalPath().append( path );

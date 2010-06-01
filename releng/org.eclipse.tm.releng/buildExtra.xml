@@ -20,16 +20,16 @@
 
 	<target name="getDependencies">
 		<!-- TODO: if your project requires more dependencies, add them here; if it does not require all of these, remove those not required -->
-		<echo message="Download, then unpack CDT and EMF" />
-		<ant target="getUpdateSiteDependency"
-		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
-			<property name="url" value="${tools.cdt.master.url}" />
-			<property name="file" value="${tools.cdt.master.file}" />
-		</ant>
+		<echo message="Download, then unpack EMF and CDT" />
 		<ant target="getDependency"
 		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
 			<property name="url" value="${modeling.emf.runtime.url}" />
 			<property name="file" value="${modeling.emf.runtime.file}" />
+		</ant>
+		<ant target="getUpdateSiteDependency"
+		     antfile="${relengCommonBuilderDir}/tools/scripts/getDependencies.xml">
+			<property name="url" value="${tools.cdt.master.url}" />
+			<property name="file" value="${tools.cdt.master.file}" />
 		</ant>
 	</target>
 
@@ -147,6 +147,7 @@
 		<!-- build terminal.local -->
 		<zip destfile="${buildDirectory}/${buildLabel}/TM-terminal-local-incubation-${buildAlias}.zip" update="true">
 			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+				<include name="*.html" />
 				<include name="**/org.eclipse.tm.terminal_*" />
 				<include name="**/org.eclipse.tm.terminal_*/**" />
 				<include name="**/org.eclipse.tm.terminal_*/**/**" />
@@ -154,7 +155,6 @@
 				<include name="**/org.eclipse.tm.terminal.local*/**" />
 				<include name="**/org.eclipse.tm.terminal.local*/**/**" />
 			</zipfileset>
-			<zipfileset refid="rootfiles" />
 		</zip>
 
 		<!-- build WinCE plugins -->
@@ -176,11 +176,12 @@
 		<!-- build TCF -->
 		<zip destfile="${buildDirectory}/${buildLabel}/TCF-SDK-incubation-${buildAlias}.zip" update="true">
 			<zipfileset src="${buildDirectory}/${buildLabel}/${allZip}" dirmode="775" filemode="664" excludes="**/org.eclipse.*.test*, **/org.eclipse.*.test*/**">
+				<include name="notice.html" />
+				<include name="epl-v10.html" />
 				<include name="**/org.eclipse.tm.tcf*" />
 				<include name="**/org.eclipse.tm.tcf*/**" />
 				<include name="**/org.eclipse.tm.tcf*/**/**" />
 			</zipfileset>
-			<zipfileset refid="rootfiles" />
 		</zip>
 		
 	</target>

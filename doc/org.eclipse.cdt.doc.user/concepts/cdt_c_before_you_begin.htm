@@ -34,8 +34,6 @@ It provides a compatibility layer in a set of DLLs. These DLLs are
 making any code that links to them also subject to the GPL.
 Cygwin, however, does provide the fullest implementation of the GNU toolchain
 by supporting the GNU libc C runtime library. 
-Note: currently Cygwin &gt;= version 3.4.4-999 is not supported since gcc and g++ commands cannot 
-be launched from the windows' native shell.
 <p> <br></p>
 </li>
 <li><p><a href="http://www.mingw.org"><strong>MinGW</strong></a> is a port of the GNU toolchain to the Windows platform.
@@ -46,9 +44,13 @@ writing portable applications more difficult.</p>
 <br>
 <p>However, MinGW provides the best integration support with the CDT
 due to it's direct support for the Windows environment.</p>
-<br>
-<p>The following are instructions and links on how to install the current version
-of MinGW. Note that these links may become inaccurate over time as new versions of
+
+<h4>Manual Installation (Recommended)</h4>
+Follow the instructions under the Manual Installation section in <a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a>.
+
+<h4>Automated Installer (Deprecated)</h4>
+<p>The following are instructions and links on how to install the old version
+of MinGW (GCC 3). Note that these links may become inaccurate over time as new versions of
 MinGW components are introduced. Please check the
 <a href="http://sourceforge.net/project/showfiles.php?group_id=2435">
 MinGW File Release</a> section for the latest versions.</p>
@@ -72,7 +74,10 @@ MinGW File Release</a> section for the latest versions.</p>
   which use CDT's internal build tools to perform the build.</li>
 </ol>
 </ul>
-<br>
+
+<h3>Mac OS X</h3>
+The Apple GNU toolchain is included in Xcode available at <a href="http://developer.apple.com/">Apple's Developer Website</a>.
+
 <h3>Other Platforms</h3>
 <p>The GNU toolchain is supported on all platforms that the CDT supports. For instructions about installing the GNU toolchain
 on your platform, see your platform vendor.</p>

@@ -74,13 +74,13 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	 */
 	public static IPath createPath(String path) {
 		if (path == null) return null;
-		if (path.contains("\\")) {
+		if (path.contains("\\")) { //$NON-NLS-1$
 			// handle Windows slashes and canonicalize
-			path = path.replaceAll("\\\\", "/");
+			path = path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		// also check for device or UNC
-		int idx = path.indexOf(":");
+		int idx = path.indexOf(":"); //$NON-NLS-1$
 		if (idx > 0) {
 			String device = path.substring(0, idx + 1);
 			path = path.substring(idx + 1);
@@ -88,15 +88,15 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 		} 
 		else {
 			// Cygwin or UNC path
-			if (path.startsWith("//")) {
+			if (path.startsWith("//")) { //$NON-NLS-1$
 				String network;
-				idx = path.indexOf("/", 2);
+				idx = path.indexOf("/", 2); //$NON-NLS-1$
 				if (idx > 0) {
 					network = path.substring(0, idx);
 					path = path.substring(idx);
 				} else {
 					network = path;
-					path = "";
+					path = ""; //$NON-NLS-1$
 				}
 				return new Path(network, path).makeUNC(true);
 			}

@@ -151,20 +151,18 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			else if((optCategory.getId() + COMMAND_LINE_SUFFIX).equals(name))
 				return ((Tool)optCategory).getCommandLinePattern();
 			else if(ALL_OPTIONS_ID.equals(name)){
-				try {
-					SupplierBasedCdtVariableSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null, EMPTY_STRING, " ");  //$NON-NLS-1$
-					Tool tool = (Tool)optCategory;
-					String[] flags = tool.getToolCommandFlags(
-							null,
-							null,
-							macroSubstitutor, 
-							obtainMacroProvider());
-					IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
-					IManagedCommandLineInfo cmdLInfo = cmdLGen.generateCommandLineInfo(tool,
-							EMPTY_STRING, flags, EMPTY_STRING, EMPTY_STRING, EMPTY_STRING,
-							null,tool.getCommandLinePattern());
-					return cmdLInfo.getFlags();
-				} catch (BuildException e) {}
+				SupplierBasedCdtVariableSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null, EMPTY_STRING, " ");  //$NON-NLS-1$
+				Tool tool = (Tool)optCategory;
+				String[] flags = tool.getToolCommandFlags(
+						null,
+						null,
+						macroSubstitutor, 
+						obtainMacroProvider());
+				IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
+				IManagedCommandLineInfo cmdLInfo = cmdLGen.generateCommandLineInfo(tool,
+						EMPTY_STRING, flags, EMPTY_STRING, EMPTY_STRING, EMPTY_STRING,
+						null,tool.getCommandLinePattern());
+				return cmdLInfo.getFlags();
 			}
 		} else {
 			Object val = getOptionValue(name);

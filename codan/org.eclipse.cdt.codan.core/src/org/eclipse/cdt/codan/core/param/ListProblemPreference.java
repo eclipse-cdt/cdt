@@ -23,6 +23,10 @@ import java.util.Iterator;
  */
 public class ListProblemPreference extends AbstractProblemPreference implements
 		IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
+	/**
+	 * Constant that represent a key for "shared" child preference (descriptor)
+	 * of all elements
+	 */
 	public static final String COMMON_DESCRIPTOR_KEY = "#"; //$NON-NLS-1$
 	protected ArrayList<Object> list = new ArrayList<Object>();
 	protected IProblemPreference childDescriptor;
@@ -44,10 +48,10 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 
 	/**
 	 * Set child descriptor (all elements have the same). Value and key
-	 * of the it would be ignored and reset.
+	 * of it would be ignored and reset.
 	 * 
 	 * @param desc
-	 * @return
+	 * @return set child descriptor
 	 */
 	public IProblemPreference setChildDescriptor(IProblemPreference desc) {
 		childDescriptor = desc;
@@ -75,9 +79,8 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * Returns descriptor of the child elements
 	 * 
-	 * @return
+	 * @return descriptor of the child elements
 	 */
 	public IProblemPreference getChildDescriptor() {
 		return childDescriptor;
@@ -87,8 +90,8 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	 * Returns cloned descriptor of the i'th child. Modifying return value would
 	 * not affect internal state of the list element.
 	 * 
-	 * @param i
-	 * @return
+	 * @param i - index of the element
+	 * @return child preference
 	 */
 	public IProblemPreference getChildDescriptor(int i) {
 		Object value = list.get(i);
@@ -139,6 +142,10 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		return getChildValue(index);
 	}
 
+	/**
+	 * @param index - index of the element
+	 * @return child value by index
+	 */
 	public Object getChildValue(int index) {
 		return list.get(index);
 	}
@@ -148,6 +155,10 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		setChildValue(i, value);
 	}
 
+	/**
+	 * @param i - index of the element
+	 * @param value - value of the child element
+	 */
 	public void setChildValue(int i, Object value) {
 		if (value != null) {
 			while (i >= list.size()) {
@@ -161,10 +172,18 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		}
 	}
 
+	/**
+	 * Adds value to the list
+	 * 
+	 * @param value
+	 */
 	public void addChildValue(Object value) {
 		list.add(value);
 	}
 
+	/**
+	 * Removes child value by key
+	 */
 	public void removeChildValue(String key) {
 		int index = Integer.parseInt(key);
 		list.remove(index);
@@ -205,9 +224,6 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 		}
 	}
 
-	/**
-	 * @param tokenizer
-	 */
 	@Override
 	public void importValue(StreamTokenizer tokenizer) {
 		clear();
@@ -243,7 +259,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * If info key is '#' resets common descritors to null, otherwise removes
+	 * If info key is '#' resets common descriptor to null, otherwise removes
 	 * value
 	 */
 	public void removeChildDescriptor(IProblemPreference info) {
@@ -268,7 +284,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * Return array of values of children elements.
+	 * @return array of values of children elements.
 	 */
 	@Override
 	public Object getValue() {
@@ -299,7 +315,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements
 	}
 
 	/**
-	 * Return array of values of children elements.
+	 * @return array of values of children elements.
 	 */
 	public Object[] getValues() {
 		return list.toArray(new Object[list.size()]);

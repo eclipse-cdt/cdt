@@ -14,17 +14,39 @@ package org.eclipse.cdt.codan.core.model.cfg;
  * Control Flow Graph Node factory
  */
 public interface INodeFactory {
+	/**
+	 * @return new plain node
+	 */
 	IPlainNode createPlainNode();
 
+	/**
+	 * @return new jump node
+	 */
 	IJumpNode createJumpNode();
 
+	/**
+	 * @return new decision node
+	 */
 	IDecisionNode createDecisionNode();
 
+	/**
+	 * @return new connector node
+	 */
 	IConnectorNode createConnectorNode();
 
+	/**
+	 * @param label
+	 * @return new branch node
+	 */
 	IBranchNode createBranchNode(String label);
 
+	/**
+	 * @return new start node
+	 */
 	IStartNode createStartNode();
 
+	/**
+	 * @return new exit node
+	 */
 	IExitNode createExitNode();
 }

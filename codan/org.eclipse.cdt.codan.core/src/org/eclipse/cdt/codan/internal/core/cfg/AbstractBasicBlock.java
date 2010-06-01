@@ -1,60 +1,42 @@
 package org.eclipse.cdt.codan.internal.core.cfg;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 
+/**
+ * Abstract Basic Block for control flow graph.
+ */
 public abstract class AbstractBasicBlock implements IBasicBlock, ICfgData {
+	/**
+	 * Empty array of basic blocks
+	 */
 	public final static IBasicBlock[] EMPTY_LIST = new IBasicBlock[0];
 	private Object data;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.internal.core.cfg.ICfgData#getData()
-	 */
 	public Object getData() {
 		return data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.internal.core.cfg.ICfgData#setData(java.lang.Object
-	 * )
-	 */
 	public void setData(Object data) {
 		this.data = data;
 	}
 
-	static class OneElementIterator<V> implements Iterator<V> {
-		private V o;
-
-		public OneElementIterator(V o) {
-			this.o = o;
-		}
-
-		public boolean hasNext() {
-			return o != null;
-		}
-
-		public V next() {
-			V x = o;
-			o = null;
-			return x;
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
-
+	/**
+	 * Add a node to list of outgoing nodes of this node
+	 * 
+	 * @param node - node to add
+	 */
 	public abstract void addOutgoing(IBasicBlock node);
 
 	/**
-	 * @return
+	 * Add a node to list of incoming nodes of this node
+	 * 
+	 * @param node - node to add
+	 */
+	public abstract void addIncoming(IBasicBlock node);
+
+	/**
+	 * @return toString for data object
 	 */
 	public String toStringData() {
 		if (getData() == null)
@@ -66,9 +48,4 @@ public abstract class AbstractBasicBlock implements IBasicBlock, ICfgData {
 	public String toString() {
 		return getClass().getSimpleName() + ": " + toStringData(); //$NON-NLS-1$
 	}
-
-	/**
-	 * @param node
-	 */
-	public abstract void addIncoming(IBasicBlock node);
 }

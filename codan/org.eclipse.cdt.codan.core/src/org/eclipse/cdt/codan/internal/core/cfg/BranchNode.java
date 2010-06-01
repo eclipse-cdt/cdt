@@ -13,7 +13,9 @@ package org.eclipse.cdt.codan.internal.core.cfg;
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 
 /**
- * TODO: add description
+ * Branch node is a node with on incoming arc, one outgoing arc and a "string"
+ * label. Can be used to represent branches of if, switch and labelled
+ * statements.
  */
 public class BranchNode extends PlainNode implements IBranchNode {
 	protected String label;
@@ -23,11 +25,6 @@ public class BranchNode extends PlainNode implements IBranchNode {
 		this.label = label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.codan.core.model.cfg.IBranchNode#getLabel()
-	 */
 	public String getLabel() {
 		return label;
 	}

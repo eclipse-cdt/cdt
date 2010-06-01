@@ -16,5 +16,8 @@ package org.eclipse.cdt.codan.core.model.cfg;
  * 
  */
 public interface IExitNode extends IBasicBlock, ISingleIncoming {
+	/**
+	 * @return reference to a start node a graph
+	 */
 	IStartNode getStartNode();
 }

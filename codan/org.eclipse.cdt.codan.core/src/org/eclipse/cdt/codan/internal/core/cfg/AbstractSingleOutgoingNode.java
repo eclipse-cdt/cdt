@@ -4,13 +4,16 @@ import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 
 /**
- * Abstract impl of basic block with single outgoing arc
+ * Abstract implementation of basic block with single outgoing arc (node)
  * 
  */
 public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock
 		implements ISingleOutgoing {
 	private IBasicBlock next;
 
+	/**
+	 * Default constructor
+	 */
 	public AbstractSingleOutgoingNode() {
 		super();
 	}
@@ -27,20 +30,15 @@ public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock
 		return next;
 	}
 
-	public void setOutgoing(IBasicBlock exit) {
-		if (this.next != null)
-			throw new IllegalArgumentException(
-					"Cannot modify already exiting connector"); //$NON-NLS-1$
-		this.next = exit;
+	/**
+	 * Sets outgoing node
+	 * 
+	 * @param node
+	 */
+	public void setOutgoing(IBasicBlock node) {
+		this.next = node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.internal.core.cfg.AbstractBasicBlock#addOutgoing
-	 * (org.eclipse.cdt.codan.core.model.cfg.IBasicBlock)
-	 */
 	@Override
 	public void addOutgoing(IBasicBlock node) {
 		setOutgoing(node);

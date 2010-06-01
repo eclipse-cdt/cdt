@@ -21,7 +21,7 @@ public interface IProblemPreferenceCompositeValue {
 	 * Returns value of the child element of a given key
 	 * 
 	 * @param key
-	 * @return
+	 * @return value of the child preference
 	 */
 	Object getChildValue(String key);
 

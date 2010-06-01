@@ -4,13 +4,16 @@ import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.ISingleIncoming;
 
 /**
- * Abstrat node with one incoming arc
+ * Abstract node with one incoming arc (node)
  * 
  */
 public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock
 		implements ISingleIncoming {
 	private IBasicBlock prev;
 
+	/**
+	 * Default constructor
+	 */
 	public AbstractSingleIncomingNode() {
 		super();
 	}
@@ -27,6 +30,11 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock
 		return prev;
 	}
 
+	/**
+	 * Sets the incoming node
+	 * 
+	 * @param prev
+	 */
 	public void setIncoming(IBasicBlock prev) {
 		this.prev = prev;
 	}

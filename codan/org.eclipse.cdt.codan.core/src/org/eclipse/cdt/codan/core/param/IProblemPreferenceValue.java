@@ -39,7 +39,7 @@ public interface IProblemPreferenceValue extends Cloneable {
 	 * Export value in string representation required for storing in eclipse
 	 * preferences.
 	 * 
-	 * @return
+	 * @return string representation of the value
 	 */
 	String exportValue();
 
@@ -47,8 +47,8 @@ public interface IProblemPreferenceValue extends Cloneable {
 	 * Import value from string into internal object state.
 	 * 
 	 * @param str
-	 *            - string from preferences, previously exported by exportValue
-	 *            method.
+	 *        - string from preferences, previously exported by exportValue
+	 *        method.
 	 */
 	void importValue(String str);
 }

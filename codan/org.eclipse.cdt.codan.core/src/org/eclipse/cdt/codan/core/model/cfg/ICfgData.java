@@ -18,7 +18,15 @@ package org.eclipse.cdt.codan.core.model.cfg;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICfgData {
+	/**
+	 * @return data object
+	 */
 	public abstract Object getData();
 
+	/**
+	 * Sets data object for the node
+	 * 
+	 * @param data
+	 */
 	public abstract void setData(Object data);
 }

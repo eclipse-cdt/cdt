@@ -27,7 +27,7 @@ import org.eclipse.cdt.codan.core.model.cfg.ISingleOutgoing;
 import org.eclipse.cdt.codan.core.model.cfg.IStartNode;
 
 /**
- * TODO: add description
+ * Implementation of control flow graph
  */
 public class ControlFlowGraph implements IControlFlowGraph {
 	private List<IExitNode> exitNodes;

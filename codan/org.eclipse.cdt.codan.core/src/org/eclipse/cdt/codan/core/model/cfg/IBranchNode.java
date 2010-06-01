@@ -15,9 +15,21 @@ package org.eclipse.cdt.codan.core.model.cfg;
  */
 public interface IBranchNode extends IBasicBlock, ISingleIncoming,
 		ISingleOutgoing {
+	/**
+	 * Then branch of "if" statement
+	 */
 	public static String THEN = "then"; //$NON-NLS-1$
+	/**
+	 * Else branch of "if" statement
+	 */
 	public static String ELSE = "else"; //$NON-NLS-1$
+	/**
+	 * Default branch of "switch" statement
+	 */
 	public static String DEFAULT = "default"; //$NON-NLS-1$
 
+	/**
+	 * @return label of a branch
+	 */
 	String getLabel();
 }

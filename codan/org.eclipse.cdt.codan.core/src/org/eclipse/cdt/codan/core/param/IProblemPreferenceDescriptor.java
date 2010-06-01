@@ -30,13 +30,37 @@ import java.util.Map;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProblemPreferenceDescriptor extends Cloneable {
+	/**
+	 * Type of the user preference
+	 */
 	public enum PreferenceType {
+		/**
+		 * String type, represented by string input field by default
+		 */
 		TYPE_STRING("string"), //$NON-NLS-1$
+		/**
+		 * Integer type, represented by integer input field by default
+		 */
 		TYPE_INTEGER("integer"), //$NON-NLS-1$
+		/**
+		 * Boolean type, represented by checkbox (boolean input field)
+		 */
 		TYPE_BOOLEAN("boolean"), //$NON-NLS-1$
+		/**
+		 * File type, represented by file picker input field
+		 */
 		TYPE_FILE("file"), //$NON-NLS-1$
+		/**
+		 * List type, represented by list (table) control
+		 */
 		TYPE_LIST("list"), //$NON-NLS-1$
+		/**
+		 * Map type, represented by composite of children fields
+		 */
 		TYPE_MAP("map"), //$NON-NLS-1$
+		/**
+		 * Custom type, represented by string input field by default
+		 */
 		TYPE_CUSTOM("custom"); //$NON-NLS-1$
 		private String literal;
 
@@ -44,6 +68,11 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 			this.literal = literal;
 		}
 
+		/**
+		 * @param name - name of the type literal (i.e. comes from name() or
+		 *        toString())
+		 * @return type represented by this name
+		 */
 		public static PreferenceType valueOfLiteral(String name) {
 			PreferenceType[] values = values();
 			for (int i = 0; i < values.length; i++) {
@@ -80,6 +109,12 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 		}
 	}
 
+	/**
+	 * Key of the preference. Key must be java-like identified or number. Cannot
+	 * contain dots. Cannot be null.
+	 * 
+	 * @return key
+	 */
 	String getKey();
 
 	/**
@@ -115,14 +150,22 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 	 */
 	String getToolTip();
 
+	/**
+	 * default clone implementation
+	 * 
+	 * @return clone of the object
+	 */
 	Object clone();
 
+	/**
+	 * @return parent preference
+	 */
 	IProblemPreference getParent();
 
 	/**
 	 * Combined key of values from parents plus itself separated by dot
 	 * 
-	 * @return
+	 * @return qualified key
 	 */
 	String getQualifiedKey();
 }

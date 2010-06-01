@@ -34,6 +34,9 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		IProblemPreferenceCompositeValue, IProblemPreferenceCompositeDescriptor {
 	protected LinkedHashMap<String, IProblemPreference> hash = new LinkedHashMap<String, IProblemPreference>();
 
+	/**
+	 * Default constuctor
+	 */
 	public MapProblemPreference() {
 		super();
 	}
@@ -191,10 +194,16 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		hash.remove(info.getKey());
 	}
 
+	/**
+	 * @return size of the map
+	 */
 	public int size() {
 		return hash.size();
 	}
 
+	/**
+	 * Clears the map
+	 */
 	public void clear() {
 		hash.clear();
 	}
@@ -224,7 +233,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 	 * Set values for this object child elements. Elements are not present in
 	 * this map would be removed.
 	 * Preference descriptors for the keys must be set before calling this
-	 * method, unless value if instanceof IProblemPreference.
+	 * method, unless value if instanceof {@link IProblemPreference}.
 	 * 
 	 * @param value - must be Map<String,Object>
 	 */

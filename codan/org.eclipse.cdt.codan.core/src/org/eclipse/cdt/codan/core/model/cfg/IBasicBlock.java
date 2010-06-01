@@ -1,7 +1,7 @@
 package org.eclipse.cdt.codan.core.model.cfg;
 
 /**
- * Control flow graph basic block node - super interface of all nodes.
+ * Control flow graph's basic block node - super interface of all nodes.
  * It has set on incoming nodes and outgoing nodes.
  * <p/>
  */

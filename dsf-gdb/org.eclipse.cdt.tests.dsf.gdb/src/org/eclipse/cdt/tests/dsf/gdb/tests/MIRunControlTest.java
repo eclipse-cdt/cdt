@@ -688,4 +688,67 @@ public class MIRunControlTest extends BaseTestCase {
 
         wait.waitReset();
     }
+    
+    /**
+     * Test that interrupting a running target works 
+     */
+    @Test
+    public void interruptRunningTarget() throws Throwable {
+    	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+        		getGDBLaunch().getSession(),
+        		ISuspendedDMEvent.class);
+
+ 
+        // Resume the target 
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+           		fRunCtrl.resume(fThreadExecDmc, 
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));         
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+         
+		// The program takes five seconds to run. There's five iterations of a
+		// loop that has a one second sleep in it. Wait a second then attempt to
+		// interrupt the target
+        Thread.sleep(1000);	
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+           		fRunCtrl.suspend(fThreadExecDmc, 
+           				new RequestMonitor(fRunCtrl.getExecutor(), null) {
+           			@Override
+           			protected void handleCompleted() {
+           				wait.waitFinished(getStatus());
+           			}
+                });
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(1000));
+        Assert.assertTrue(wait.getMessage(), wait.isOK());
+        wait.waitReset();
+
+        // Wait up to 2 seconds for the target to suspend. Should happen immediately.
+        suspendedEventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
+
+        // Double check that the target is in the suspended state
+        final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+        fRunCtrl.getExecutor().submit(new Runnable() {
+            public void run() {
+            	wait.setReturnInfo(fRunCtrl.isSuspended(containerDmc));
+            	wait.waitFinished();
+            }
+        });
+        wait.waitUntilDone(TestsPlugin.massageTimeout(2000));
+        Assert.assertTrue("Target is running. It should have been suspended", (Boolean)wait.getReturnInfo());
+        wait.waitReset();
+    }
 }

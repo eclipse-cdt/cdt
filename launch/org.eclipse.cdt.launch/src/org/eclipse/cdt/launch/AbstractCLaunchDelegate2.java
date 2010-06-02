@@ -301,6 +301,9 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 				try {
 					// Number of times we'll end up calling IProject.build()
 					final int buildCount = (buildConfigID == null) ? 1 : project.getDescription().getBuildSpec().length;
+					if (buildCount == 0) {	
+						return; // the case for an imported-executable project; see bugzilla 315396
+					}
 					final int subtaskTicks = TOTAL_TICKS / buildCount;
 					
 					if (buildConfigID != null) {

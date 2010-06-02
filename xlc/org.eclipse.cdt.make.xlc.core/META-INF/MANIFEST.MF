@@ -11,7 +11,9 @@ Require-Bundle: org.eclipse.cdt.make.core,
  org.eclipse.core.runtime,
  org.eclipse.cdt.managedbuilder.core
 Export-Package: org.eclipse.cdt.make.xlc.core.activator,
- org.eclipse.cdt.make.xlc.core.scannerconfig
+ org.eclipse.cdt.make.xlc.core.messages,
+ org.eclipse.cdt.make.xlc.core.scannerconfig,
+ org.eclipse.cdt.make.xlc.core.scannerconfig.util
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.make.xlc.core.activator.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

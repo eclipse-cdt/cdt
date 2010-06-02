@@ -1640,7 +1640,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			        	
        	
 			        	Job job = new ScannerConfigUpdateJob(context, pathInfo, context.isDefaultContext(), changedResources);
-			        	ISchedulingRule rule = project;
+			        	ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRoot();
 			        	job.setRule(rule);
 			        	job.schedule();
 

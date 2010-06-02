@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,10 +130,19 @@ public class StubUtility {
 	}
 
 	public static String getFileContent(Template template, IFile file, String lineDelimiter) throws CoreException {
-		FileTemplateContext context= new FileTemplateContext(template.getContextTypeId(), lineDelimiter);
+		ICProject cproject = null;
+		final IProject project = file.getProject();
+		if (CoreModel.hasCNature(project)) {
+			cproject = CoreModel.getDefault().create(project);
+		}
+		FileTemplateContext context;
+		if (cproject != null) {
+			context= new CodeTemplateContext(template.getContextTypeId(), cproject, lineDelimiter);
+		} else {
+			context= new FileTemplateContext(template.getContextTypeId(), lineDelimiter);
+		}
 		String fileComment= getFileComment(file, lineDelimiter);
 		context.setVariable(CodeTemplateContextType.FILE_COMMENT, fileComment != null ? fileComment : ""); //$NON-NLS-1$
-		ICProject cproject = CoreModel.getDefault().create(file.getProject());
 		String includeGuardSymbol= generateIncludeGuardSymbol(file, cproject);
 		context.setVariable(CodeTemplateContextType.INCLUDE_GUARD_SYMBOL, includeGuardSymbol != null ? includeGuardSymbol : ""); //$NON-NLS-1$
 		context.setResourceVariables(file);

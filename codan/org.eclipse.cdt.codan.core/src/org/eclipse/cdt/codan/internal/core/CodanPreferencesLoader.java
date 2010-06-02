@@ -16,7 +16,6 @@ import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
-import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -30,24 +29,31 @@ public class CodanPreferencesLoader {
 	private IProblemProfile baseModel;
 
 	/**
-	 * @param workspaceProfile
+	 * Constructor
+	 * 
+	 * @param profile - problem profile to work with
 	 */
 	public CodanPreferencesLoader(IProblemProfile profile) {
 		setInput(profile);
 	}
 
 	/**
-	 * 
+	 * Default constructor
 	 */
 	public CodanPreferencesLoader() {
 	}
 
-	public void setInput(Object model) {
-		baseModel = (IProblemProfile) model;
+	/**
+	 * Sets the profile for this class
+	 * 
+	 * @param profile
+	 */
+	public void setInput(IProblemProfile profile) {
+		baseModel = profile;
 	}
 
 	/**
-	 * @return
+	 * @return problems array from the profile
 	 */
 	public IProblem[] getProblems() {
 		IProblem[] problems = baseModel.getProblems();
@@ -78,31 +84,26 @@ public class CodanPreferencesLoader {
 		((IProblemWorkingCopy) prob).setSeverity(sev);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getInput().toString();
 	}
 
 	/**
-	 * @return
+	 * @return problem profile set for this class
 	 */
 	public IProblemProfile getInput() {
 		return baseModel;
 	}
 
 	/**
-	 * @param id
-	 * @return
+	 * @param id - property id, which is the same as problem id
+	 * @return get text representation of a "property" value for the given id,
+	 *         which is severity name, with "-" in front of it it problem is
+	 *         disabled.
 	 */
 	public String getProperty(String id) {
 		IProblem prob = baseModel.findProblem(id);
-		if (!(prob instanceof CodanProblem))
-			return null;
 		String enabled = prob.isEnabled() ? "" : "-"; //$NON-NLS-1$ //$NON-NLS-2$
 		String severity = prob.getSeverity().toString();
 		String res = enabled + severity;
@@ -110,6 +111,9 @@ public class CodanPreferencesLoader {
 	}
 
 	/**
+	 * Takes string values from storePreferences and applies them to the problem
+	 * profile
+	 * 
 	 * @param storePreferences
 	 */
 	public void load(Preferences storePreferences) {
@@ -119,16 +123,19 @@ public class CodanPreferencesLoader {
 			String s = storePreferences.get(id, null);
 			if (s != null) {
 				setProperty(id, s);
-				setParameterValues(id, storePreferences);
+				setProblemPreferenceValues(id, storePreferences);
 			}
 		}
 	}
 
 	/**
+	 * Takes string values of the problem preferences from storePreferences
+	 * and applies them to the problem profile
+	 * 
 	 * @param problemId
 	 * @param storePreferences
 	 */
-	private void setParameterValues(String problemId,
+	private void setProblemPreferenceValues(String problemId,
 			Preferences storePreferences) {
 		IProblem prob = baseModel.findProblem(problemId);
 		String prefKey = getPreferencesKey(problemId);
@@ -141,6 +148,12 @@ public class CodanPreferencesLoader {
 		}
 	}
 
+	/**
+	 * Return preference node (osgi preferences) for the project
+	 * 
+	 * @param project
+	 * @return project preferences node
+	 */
 	public static Preferences getProjectNode(IProject project) {
 		if (!project.exists())
 			return null;
@@ -151,6 +164,11 @@ public class CodanPreferencesLoader {
 		return prefNode;
 	}
 
+	/**
+	 * Return preference node (osgi preferences) for the workspace
+	 * 
+	 * @return project preferences node
+	 */
 	public static Preferences getWorkspaceNode() {
 		Preferences prefNode = new InstanceScope()
 				.getNode(CodanCorePlugin.PLUGIN_ID);
@@ -160,8 +178,11 @@ public class CodanPreferencesLoader {
 	}
 
 	/**
-	 * @param id
-	 * @return
+	 * Name of the preference key for the root problem preference in the osgi
+	 * preferences
+	 * 
+	 * @param id - problem id
+	 * @return top level preference id
 	 */
 	public String getPreferencesKey(String id) {
 		IProblem prob = baseModel.findProblem(id);
@@ -172,8 +193,9 @@ public class CodanPreferencesLoader {
 	}
 
 	/**
-	 * @param id
-	 * @return
+	 * @param id - problem id
+	 * @return - export value of root problem preference (to be saved in eclipse
+	 *         preferences)
 	 */
 	public String getPreferencesString(String id) {
 		IProblem prob = baseModel.findProblem(id);

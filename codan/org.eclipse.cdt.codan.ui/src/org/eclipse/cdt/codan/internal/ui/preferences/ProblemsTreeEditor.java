@@ -297,7 +297,8 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	 */
 	@Override
 	protected void doStore() {
-		codanPreferencesLoader.setInput(getViewer().getInput());
+		codanPreferencesLoader.setInput((IProblemProfile) getViewer()
+				.getInput());
 		IProblem[] probs = codanPreferencesLoader.getProblems();
 		for (int i = 0; i < probs.length; i++) {
 			String id = probs[i].getId();

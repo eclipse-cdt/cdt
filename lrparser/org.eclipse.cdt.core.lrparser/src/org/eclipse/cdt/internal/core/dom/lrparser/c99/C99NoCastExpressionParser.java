@@ -1162,6 +1162,12 @@ public C99NoCastExpressionParser(ITokenStream stream, Map<String,String> propert
             }  
   
             //
+            // Rule 282:  initializer ::= initializer_list
+            //
+            case 282: { action.   consumeInitializer();             break;
+            }  
+  
+            //
             // Rule 283:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq comma_opt } end_initializer_list
             //
             case 283: { action.   consumeInitializerList();             break;

@@ -275,28 +275,6 @@ public class XlcExtensionsTest extends XlcTestBase {
 		parse(code, getCPPLanguage(), true); // xlc supports this in C++
 	}
 	
-	public void testStaticAssertions() {
-		String code =
-            " const unsigned int EIGHT= 8; \n"+
-			" __static_assert(sizeof(long) >= EIGHT, \"no 64-bit support\"); \n" +
-			
-			" namespace ns { \n"+
-			"     __static_assert(sizeof(long) >= 4, \"no 32-bit support\"); \n" +
-			" } \n" +
-			
-			" template <typename T> class basic_string { \n" +
-			"    __static_assert(T::value, \"bla\"); \n" +
-			" }; \n" +
-			
-			" void do_something() { \n" +
-			"    struct VMPage { \n" +
-			"    }; \n" +
-			"    __static_assert(sizeof(VMPage) == 1, \"bla\"); \n" +
-			" }";
-		
-		parse(code, getCPPLanguage(), true); // xlc supports this in C++
-	}
-	
 	public void testV11Attributes() {
 		String code =
 			"#define __inline__ __inline__ __attribute__((gnu_inline)) \n" +

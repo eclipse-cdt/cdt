@@ -894,6 +894,8 @@ initializer
     ::= assignment_expression
           /. $Build  consumeInitializer();  $EndBuild ./
       | initializer_list  
+--CDT_70_FIX_FROM_50-#4
+         /. $Build  consumeInitializer();  $EndBuild ./
           
           
 initializer_list

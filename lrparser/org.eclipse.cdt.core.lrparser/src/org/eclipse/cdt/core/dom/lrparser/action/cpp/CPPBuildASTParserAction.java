@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -48,6 +51,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -97,6 +101,7 @@ import org.eclipse.cdt.core.dom.lrparser.action.ParserUtil;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.TokenMap;
 import org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
@@ -104,6 +109,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTAmbiguousTemplateArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -296,9 +302,17 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	public void consumeExpressionSimpleTypeConstructor() {
 		IASTExpression expression = (IASTExpression) astStack.pop();
 		IToken token = (IToken) astStack.pop();
-		
-		int type = asICPPASTSimpleTypeConstructorExpressionType(token);
-		ICPPASTSimpleTypeConstructorExpression typeConstructor = nodeFactory.newSimpleTypeConstructorExpression(type, expression);
+		////CDT_70_FIX_FROM_50-#3
+		//int type = asICPPASTSimpleTypeConstructorExpressionType(token);
+		ICPPASTConstructorInitializer init=null;
+		if(expression!=null){
+			init = new CPPASTConstructorInitializer();
+			init.setExpression(expression);
+    	
+    		((ASTNode)init).setOffsetAndLength(((ASTNode)expression).getOffset(),((ASTNode)expression).getLength());
+    	}
+    	ICPPASTDeclSpecifier declspec = transformIntoSimpleTypeSpecifier(token);
+		ICPPASTSimpleTypeConstructorExpression typeConstructor = nodeFactory.newSimpleTypeConstructorExpression(declspec, init);
 		
 		setOffsetAndLength(typeConstructor);
 		astStack.push(typeConstructor);
@@ -325,6 +339,35 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 				assert false : "type parsed wrong"; //$NON-NLS-1$
 				return ICPPASTSimpleTypeConstructorExpression.t_unspecified;
 		}
+	}
+	
+	private ICPPASTDeclSpecifier transformIntoSimpleTypeSpecifier(IToken token){
+		ICPPASTSimpleDeclSpecifier declspec= nodeFactory.newSimpleDeclSpecifier();
+		switch(baseKind(token)) {
+			case TK_char     : declspec.setType(Kind.eChar); break;
+			case TK_wchar_t  : declspec.setType(Kind.eWChar); break;
+			case TK_bool     : declspec.setType(Kind.eBoolean);break;
+			case TK_short    : declspec.setShort(true); break;
+			case TK_int      : declspec.setType(Kind.eInt); break;
+			case TK_long     : declspec.setLong(true);	break;
+			case TK_signed   : declspec.setSigned(true); break;
+			case TK_unsigned : declspec.setUnsigned(true); break;
+			case TK_float    : declspec.setType(Kind.eFloat); break;
+			case TK_double   : declspec.setType(Kind.eDouble); break;
+			case TK_void     : declspec.setType(Kind.eVoid); break;
+		
+			default:
+				assert false : "type parsed wrong"; //$NON-NLS-1$
+			    declspec.setType(Kind.eUnspecified);
+			    break;
+		}
+		((ASTNode) declspec).setOffset(token.getStartOffset());
+		int ruleLength = token.getEndOffset() - token.getStartOffset();
+		((ASTNode) declspec).setLength(ruleLength < 0 ? 0 : ruleLength);
+		
+		return declspec;
+		
+	
 	}
 	
 	
@@ -362,8 +405,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTExpression expr = (IASTExpression) astStack.pop();
 		IASTDeclarator declarator = (IASTDeclarator) astStack.pop();
 		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
-		
-		IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
+		//CDT_70_FIX_FROM_50-#2
+		//IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
+		IASTEqualsInitializer initializer = nodeFactory.newEqualsInitializer(expr);
 		ParserUtil.setOffsetAndLength(initializer, offset(expr), length(expr));
 		declarator.setInitializer(initializer);
 		
@@ -1029,7 +1073,8 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 				
 				case TK_signed:   n.setSigned(true);   return;
 				case TK_unsigned: n.setUnsigned(true); return;
-				case TK_long:     n.setLong(true);     return;
+				//if it is a longlong, donot set long, CDT_70_FIX_FROM_50-#8
+				case TK_long:     if(!n.isLongLong()) n.setLong(true);     return;
 				case TK_short:    n.setShort(true);    return;
 			}
 		}
@@ -1474,8 +1519,16 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
       *     ::= '(' expression_list ')'
       */
      public void consumeInitializerConstructor() {
-    	 IASTExpression expression = (IASTExpression) astStack.pop();
-    	 ICPPASTConstructorInitializer initializer = nodeFactory.newConstructorInitializer(expression);
+    	 //CDT_70_FIX_FROM_50-#5
+     	 Object o = astStack.pop();
+    	 IASTInitializerClause[] initClauseList =null;
+    	 if(o instanceof IASTExpressionList){
+    		 initClauseList = ((IASTExpressionList) o).getExpressions();
+    	 }else if(o instanceof IASTInitializerClause){
+    		 initClauseList = new IASTInitializerClause[]{(IASTInitializerClause)o};
+    	 }
+    	 
+    	 ICPPASTConstructorInitializer initializer = nodeFactory.newConstructorInitializer(initClauseList);
     	 setOffsetAndLength(initializer);
 		 astStack.push(initializer);
      }
@@ -1566,8 +1619,10 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		List<Object> handlers = isTryBlockDeclarator ? astStack.closeScope() : Collections.emptyList();
  		IASTCompoundStatement body = (IASTCompoundStatement) astStack.pop();
  		List<Object> initializers = astStack.closeScope();
- 		IASTFunctionDeclarator declarator = (IASTFunctionDeclarator) astStack.pop();
- 		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop(); // may be null
+ 		Object o = astStack.pop();
+ 		IASTFunctionDeclarator declarator = (IASTFunctionDeclarator) o;
+ 		Object o2 = astStack.pop();
+ 		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) o2; // may be null
  		
  		if(declSpec == null) { // can happen if implicit int is used
  			declSpec = nodeFactory.newSimpleDeclSpecifier();
@@ -1620,12 +1675,15 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  	 */
  	
     public void consumeMemberDeclaratorWithInitializer() {
-    	IASTInitializerExpression initializer = (IASTInitializerExpression) astStack.pop();
+    	
+    	//CDT_70_FIX_FROM_50-#2
+    	//IASTInitializerExpression initializer = (IASTInitializerExpression) astStack.pop();
+    	IASTEqualsInitializer initializer = (IASTEqualsInitializer) astStack.pop();
     	IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
     	setOffsetAndLength(declarator);
     	
     	if(declarator instanceof ICPPASTFunctionDeclarator) {
-    		IASTExpression expr = initializer.getExpression();
+    		IASTExpression expr = (IASTExpression)initializer.getInitializerClause();
     		if(expr instanceof IASTLiteralExpression && "0".equals(expr.toString())) { //$NON-NLS-1$
     			((ICPPASTFunctionDeclarator)declarator).setPureVirtual(true);
     			return;

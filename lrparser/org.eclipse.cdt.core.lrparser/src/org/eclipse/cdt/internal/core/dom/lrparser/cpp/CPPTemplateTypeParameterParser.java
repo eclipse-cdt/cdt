@@ -1567,6 +1567,12 @@ public CPPTemplateTypeParameterParser(ITokenStream stream, Map<String,String> pr
             }  
   
             //
+            // Rule 383:  initializer_clause ::= initializer_list
+            //
+            case 383: { action.   consumeInitializer();             break;
+            }  
+  
+            //
             // Rule 384:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq , } end_initializer_list
             //
             case 384: { action.   consumeInitializerList();             break;

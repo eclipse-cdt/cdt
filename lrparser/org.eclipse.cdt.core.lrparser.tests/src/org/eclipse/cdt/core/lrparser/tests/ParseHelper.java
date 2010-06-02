@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,9 +24,12 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2BaseTest;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.core.runtime.CoreException;
 
@@ -127,14 +130,15 @@ public class ParseHelper {
 	
 	
 	public static IASTTranslationUnit parse(char[] code, ILanguage lang, Options options) {
-		CodeReader codeReader = new CodeReader(code);
-		return parse(codeReader, lang, new ScannerInfo(), null, options);
+			
+		return parse(FileContent.create(AST2BaseTest.TEST_CODE, code), lang, new ScannerInfo(), null, options);
 	}
 	
 
 	/**
 	 * TODO thats WAY too many parameters, need to use a parameter object, need to refactor the
 	 * DOM parser test suite so that its a lot cleaner.
+	 * @Deprecated
 	 */
 	public static IASTTranslationUnit parse(CodeReader codeReader, ILanguage language, IScannerInfo scanInfo, 
 			                                ICodeReaderFactory fileCreator, Options options) {
@@ -185,13 +189,67 @@ public class ParseHelper {
 		
 		return tu;
 	}
+	
+	/**
+	 * TODO thats WAY too many parameters, need to use a parameter object, need to refactor the
+	 * DOM parser test suite so that its a lot cleaner.
+	 */
+	public static IASTTranslationUnit parse(FileContent fileContent, ILanguage language, IScannerInfo scanInfo, 
+			IncludeFileContentProvider fileContentProvider, Options options) {
+		testsRun++;
+		
+		IASTTranslationUnit tu;
+		try {
+			int languageOptions = 0;
+			if(options.skipTrivialInitializers)
+				languageOptions |= ILanguage.OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS;
+			
+			tu = language.getASTTranslationUnit(fileContent, scanInfo, fileContentProvider, null, languageOptions, ParserUtil.getParserLogService());
+		} catch (CoreException e) {
+			throw new AssertionFailedError(e.toString());
+		}
+
+		// should parse correctly first before we look at the bindings
+        if(options.checkSyntaxProblems) {
+        	
+        	// this should work for C++ also, CVisitor.getProblems() and CPPVisitor.getProblems() are exactly the same code!
+			if (CVisitor.getProblems(tu).length != 0) { 
+				throw new AssertionFailedError(" CVisitor has AST Problems " ); 
+			}
+        }
+        
+        if(options.checkPreprocessorProblems) {
+			if (tu.getPreprocessorProblems().length != 0) {
+				throw new AssertionFailedError(language.getName() + " TranslationUnit has Preprocessor Problems " );
+			}
+        }
+
+        // resolve all bindings
+		if (options.checkBindings) {
+			NameResolver res = new NameResolver();
+	        tu.accept( res );
+			if(res.problemBindings.size() != options.expectedProblemBindings)
+				throw new AssertionFailedError("Expected " + options.expectedProblemBindings + " problem(s), encountered " + res.problemBindings.size());
+			
+			if(options.problems != null) {
+				for(int i = 0; i < options.problems.length; i++) {
+					String expected = options.problems[i];
+					String actual = res.problemBindings.get(i);
+					if(!expected.equals(actual))
+						throw new AssertionFailedError(String.format("Problem binding not equal, expected: %s, got: %s", expected, actual));
+				}
+			}
+		}
+		
+		return tu;
+	}
 
 	
 	public static IASTTranslationUnit commentParse(String code, ILanguage language) {
-		CodeReader codeReader = new CodeReader(code.toCharArray());
+		
 		IASTTranslationUnit tu;
 		try {
-			tu = language.getASTTranslationUnit(codeReader, new ScannerInfo(), null, null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
+			tu = language.getASTTranslationUnit(FileContent.create(AST2BaseTest.TEST_CODE, code.toCharArray()), new ScannerInfo(), null, null, ILanguage.OPTION_ADD_COMMENTS, ParserUtil.getParserLogService());
 		} catch (CoreException e) {
 			throw new AssertionFailedError(e.toString());
 		}
@@ -204,9 +262,9 @@ public class ParseHelper {
 	
 	
 	public static IASTCompletionNode getCompletionNode(String code, ILanguage language, int offset) {
-		CodeReader reader = new CodeReader(code.toCharArray());
+		
 		try {
-			return language.getCompletionNode(reader, new ScannerInfo(), null, null, ParserUtil.getParserLogService(), offset);
+			return language.getCompletionNode(FileContent.create(AST2BaseTest.TEST_CODE, code.toCharArray()), new ScannerInfo(), null, null, ParserUtil.getParserLogService(), offset);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -44,7 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -128,7 +129,7 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	
 	
 	public void initializeTranslationUnit(IScanner scanner, IBuiltinBindingsProvider builtinBindingsProvider, IIndex index) {
-		tu = nodeFactory.newTranslationUnit();
+		tu = nodeFactory.newTranslationUnit(scanner);
 		tu.setIndex(index);
 		
 		// add built-in names to the scope
@@ -1006,13 +1007,17 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 	 * initializer ::= assignment_expression
 	 */
 	public void consumeInitializer() {
-		IASTExpression expr = (IASTExpression) astStack.pop();
-		if(discardInitializer(expr)) { 
-			astStack.push(null);
-			return;
+		//CDT_70_FIX_FROM_50-#4
+		IASTInitializerClause  initClause = (IASTInitializerClause) astStack.pop();
+		if(initClause instanceof IASTExpression){
+			if(discardInitializer((IASTExpression)initClause)) { 
+				astStack.push(null);
+				return;
+			}
 		}
-		
-		IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
+		//CDT_70_FIX_FROM_50-#2
+		//IASTInitializerExpression initializer = nodeFactory.newInitializerExpression(expr);
+		IASTEqualsInitializer initializer = nodeFactory.newEqualsInitializer(initClause);
 		setOffsetAndLength(initializer);
 		astStack.push(initializer);
 	}

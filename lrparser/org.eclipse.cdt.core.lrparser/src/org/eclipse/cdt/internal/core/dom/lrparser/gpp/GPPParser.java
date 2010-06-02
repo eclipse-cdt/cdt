@@ -1548,6 +1548,12 @@ private  GNUBuildASTParserAction  gnuAction;
             }  
   
             //
+            // Rule 382:  initializer_clause ::= initializer_list
+            //
+            case 382: { action.   consumeInitializer();             break;
+            }  
+  
+            //
             // Rule 383:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq , } end_initializer_list
             //
             case 383: { action.   consumeInitializerList();             break;

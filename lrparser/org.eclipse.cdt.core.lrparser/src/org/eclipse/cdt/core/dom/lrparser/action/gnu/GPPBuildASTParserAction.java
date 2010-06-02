@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,8 +68,9 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 		
 		// There's an expression somewhere on the stack, find it		
 		IASTExpression expr = findFirstAndRemove(topScope, IASTExpression.class);
-		IGPPASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifierGPP();
-		declSpec.setTypeofExpression(expr);
+		//CDT_70_FIX_FROM_50-#7
+		ICPPASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
+		declSpec.setDeclTypeExpression(expr);
 		
 		// now apply the rest of the specifiers
 		for(Object token : topScope) {
@@ -102,15 +103,15 @@ public class GPPBuildASTParserAction extends CPPBuildASTParserAction {
 				}
 			}
 		}
-		
-		ICPPASTSimpleDeclSpecifier declSpec;
+		//CDT_70_FIX_FROM_50-#7
+		ICPPASTSimpleDeclSpecifier declSpec = nodeFactory.newSimpleDeclSpecifier();
 		if(isComplex || isImaginary || numLong > 1) {
-			IGPPASTSimpleDeclSpecifier gppDeclSpec = nodeFactory.newSimpleDeclSpecifierGPP();
-			gppDeclSpec.setComplex(isComplex);
-			gppDeclSpec.setImaginary(isImaginary);
-			gppDeclSpec.setLongLong(numLong > 1);
-			gppDeclSpec.setLong(numLong == 1);
-			declSpec = gppDeclSpec; 
+			// IGPPASTSimpleDeclSpecifier gppDeclSpec = nodeFactory.newSimpleDeclSpecifierGPP();
+			declSpec.setComplex(isComplex);
+			declSpec.setImaginary(isImaginary);
+			declSpec.setLongLong(numLong > 1);
+			declSpec.setLong(numLong == 1);
+			//declSpec = gppDeclSpec; 
 		}
 		else {
 			declSpec = nodeFactory.newSimpleDeclSpecifier();

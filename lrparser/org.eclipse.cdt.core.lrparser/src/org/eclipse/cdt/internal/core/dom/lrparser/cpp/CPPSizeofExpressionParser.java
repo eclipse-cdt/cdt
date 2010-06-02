@@ -1553,6 +1553,12 @@ public CPPSizeofExpressionParser(ITokenStream stream, Map<String,String> propert
             }  
   
             //
+            // Rule 381:  initializer_clause ::= initializer_list
+            //
+            case 381: { action.   consumeInitializer();             break;
+            }  
+  
+            //
             // Rule 382:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq , } end_initializer_list
             //
             case 382: { action.   consumeInitializerList();             break;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -172,14 +172,14 @@ public class LRDigraphTrigraphTests extends TestCase {
 		IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration)((IASTDeclarationStatement)statements[0]).getDeclaration();
 		IASTDeclarator declarator1 = decl1.getDeclarators()[0];
 		assertEquals("xy", declarator1.getName().toString());
-		IASTLiteralExpression expr1 = (IASTLiteralExpression)((IASTInitializerExpression)declarator1.getInitializer()).getExpression();
+		IASTLiteralExpression expr1 = (IASTLiteralExpression)((IASTEqualsInitializer)declarator1.getInitializer()).getInitializerClause();
 		assertEquals(IASTLiteralExpression.lk_string_literal, expr1.getKind());
 		assertEquals("\"its all good\"", expr1.toString());
 		
 		IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration)((IASTDeclarationStatement)statements[1]).getDeclaration();
 		IASTDeclarator declarator2 = decl2.getDeclarators()[0];
 		assertEquals("ab", declarator2.getName().toString());
-		IASTLiteralExpression expr2 = (IASTLiteralExpression)((IASTInitializerExpression)declarator2.getInitializer()).getExpression();
+		IASTLiteralExpression expr2 = (IASTLiteralExpression)((IASTEqualsInitializer)declarator2.getInitializer()).getInitializerClause();
 		assertEquals(IASTLiteralExpression.lk_string_literal, expr2.getKind());
 		assertEquals("\"its still good\"", expr2.toString());
 	}

@@ -11,72 +11,43 @@
 
 <p>Depending on how you obtained the CDT, you might have also received
 a toolchain with a built-in CDT integration.
-However, if you downloaded the CDT from an update site, then you will require a toolchain before
+However, if you downloaded the CDT from the Eclipse repository, then you will require a toolchain before
 you can build and debug any projects.</p>
 
-<p>The base CDT supports integration with the GNU toolchain.
+<p>The standard CDT supports integration with the GNU toolchain.
 This includes GNU's make, gcc compiler, and gdb debugger utilities.
 If you require a toolchain to build software for your development host, this
 is the best choice to get started.
 
 <p>Each platform that runs the CDT requires different steps to acquire this toolchain.</p>
 
+<h3>Windows</h3>
+<p>For windows, MinGW and Cygwin are the two main platform choices for acquiring the GNU toolchain.
+It is important to understand the difference between them.
+Cygwin produces executables that use the Cygwin POSIX runtime. Note this runtime is GPL licensed.
+MinGW produces native Windows executables that do not require a separate runtime.</p>
+<ul>
+<li><p>For <strong>MinGW</strong>, the recommended method to get the toolchain is to install it
+from the Wascana project at Eclipse Labs,
+<a href="http://www.eclipselabs.org/p/wascana">http://www.eclipselabs.org/p/wascana</a>.
+Wascana includes the MinGW toolchain as well as a number of open source libraries that can be used
+for Windows development.
+See the Wascana site for installation instructions.</p><br>
+<p>As an alternative, the MinGW site itself, <a href="http://www.mingw.org">http://www.mingw.org</a>
+also has an installer. The CDT will find that install if it is placed in the default C:\MinGW
+directory.</p></li><br>
+<li><p><strong>Cygwin</strong> can be install from the Cygwin site at
+<a href="http://www.cygwin.com">http://www.cygwin.com</a>. You need to manually select
+the gcc, gdb, and make packages to install the toolchain.</p></li>
+</ul>
+
 <h3>Linux</h3>
 <p>All Linux distributions include the GNU toolchain. They may not, however, be installed by default.
 For instructions about installing the GNU toolchain for Linux, see the instructions for your particular distribution.</p>
 
-<h3>Windows</h3>
-<p>For windows, MinGW, and Cygwin are the two main choices for acquiring the GNU toolchain:</p>
-<ul>
-<li><a href="http://www.cygwin.com"><strong>Cygwin</strong></a> is a port of the Linux environment to Windows.
-It provides a compatibility layer in a set of DLLs. These DLLs are
-<a href="http://www.gnu.org/copyleft/gpl.html">GPL licensed</a>,
-making any code that links to them also subject to the GPL.
-Cygwin, however, does provide the fullest implementation of the GNU toolchain
-by supporting the GNU libc C runtime library. 
-<p> <br></p>
-</li>
-<li><p><a href="http://www.mingw.org"><strong>MinGW</strong></a> is a port of the GNU toolchain to the Windows platform.
-The biggest difference over Cygwin is that MinGW uses the Windows C runtime libraries (mscvrt) instead
-of GNU's libc. As a result, a compatibility layer is not required, thus avoiding the GPL issues
-with Cygwin. There are differences, though, between the Windows and GNU C runtime libraries that will make
-writing portable applications more difficult.</p>
-<br>
-<p>However, MinGW provides the best integration support with the CDT
-due to it's direct support for the Windows environment.</p>
-
-<h4>Manual Installation (Recommended)</h4>
-Follow the instructions under the Manual Installation section in <a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a>.
-
-<h4>Automated Installer (Deprecated)</h4>
-<p>The following are instructions and links on how to install the old version
-of MinGW (GCC 3). Note that these links may become inaccurate over time as new versions of
-MinGW components are introduced. Please check the
-<a href="http://sourceforge.net/project/showfiles.php?group_id=2435">
-MinGW File Release</a> section for the latest versions.</p>
-<br>
-<ol>
-  <li>Download and run the MinGW setup program,
-  <a href="http://downloads.sourceforge.net/mingw/MinGW-5.1.3.exe">MinGW-5.1.3.exe</a>.
-  <li>Select download and install the MinGW base tools and the g++ compiler.
-  You may select the Current or Candidate version of these tools.
-  You may also install any of the other available compilers as well.
-  <p><strong>Do not install the MinGW Make feature</strong> as the MSYS version of make from step 5
-  is a more complete implementation of make.</p></li>
-  <li>The MinGW setup program currently does not install the gdb debugger.
-  To install the debugger, download the file from the following location: 
-  <a href="http://downloads.sourceforge.net/mingw/gdb-6.6.tar.bz2">gdb-6.6.tar.bz2</a>
-  <li>Extract the contents of the file gdb-6.6.tar.bz2 to the same location where you installed MinGW.</li>
-  <li>If you want to use Makefile projects, download and run the setup program from the following location: 
-  <a href="http://downloads.sourceforge.net/mingw/MSYS-1.0.10.exe">MSYS-1.0.10.exe</a>.
-  MSYS provides an implementation of make and related command line tools.
-  This is not required for other types of projects with the MinGW toolchain,
-  which use CDT's internal build tools to perform the build.</li>
-</ol>
-</ul>
-
 <h3>Mac OS X</h3>
-The Apple GNU toolchain is included in Xcode available at <a href="http://developer.apple.com/">Apple's Developer Website</a>.
+The CDT supports the Apple GNU toolchain is included in with the Xcode IDE. It can be downloaded
+from the Apple's Developer Website, <a href="http://developer.apple.com/">http://developer.apple.com</a>
 
 <h3>Other Platforms</h3>
 <p>The GNU toolchain is supported on all platforms that the CDT supports. For instructions about installing the GNU toolchain

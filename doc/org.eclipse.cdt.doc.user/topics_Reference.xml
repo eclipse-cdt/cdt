@@ -55,16 +55,16 @@
 	<!-- PREFERENCE TOPICS -->
 	<topic label="C/C++ preferences" href="reference/cdt_u_c_pref.htm">
 		<topic label="Appearance" href="reference/cdt_u_appearance_pref.htm"/>
-	    <topic href="reference/cdt_u_pref_build.htm" label="Build preferences">
-        <topic href="reference/cdt_u_pref_build_vars.htm" label="Build Variables">
-        </topic>
+		<topic href="reference/cdt_u_pref_build.htm" label="Build preferences">
+			<topic label="Error Parsers Options" href="reference/cdt_u_pref_build_error_parsers.htm"/>
+			<topic label="Build Variables" href="reference/cdt_u_pref_build_vars.htm"/>
 			<topic label="Console" href="reference/cdt_u_console_pref.htm"/>
 			<topic label="Environment" href="reference/cdt_u_environment_pref.htm"/>
 			<topic label="Make Targets" href="reference/cdt_u_make_pref.htm" />
-			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm" >
-				<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>			
+			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm">
+				<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>
 			</topic>
-	    </topic>
+		</topic>
 		
 		<topic label="Code Style preferences" href="reference/cdt_u_c_code_style_pref.htm">
 			<topic label="Code Templates" href="reference/cdt_u_c_code_templates_pref.htm"/>

@@ -6,59 +6,80 @@
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Filtering errors</title>
+<title>Tuning Error Parsers</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 
 <body>
 
-<h1>Filtering errors</h1>
+<h1>Tuning Error Parsers</h1>
 
-<p>The Error Parsers page of the Properties window lists a set of filters that detect error patterns in 
-the build output log.</p>
+<p>Error Parsers scan build output line by line looking for errors and warnings
+  (also for certain informational messages). They generate <strong>Problem Markers</strong>
+  which visually indicate those problems to a user. The problems are highlighted on the Console,
+  populate the Problems view and shown in the editor. Problem markers are organized
+  into Error <img src="../images/icon_error.gif" alt="Error">,
+  Warning <img src="../images/icon_warning.gif" alt="Warning">
+  and Info<img src="../images/icon_info.gif" alt="Info">categories.
+</p>
 
-<p>If an error or warning is detected, an icon appears on the file in the Tasks 
-view. If the file is not found, the icon appears on the project.</p>
+<p>There are several predefined Error Parsers where each one can handle output of a specific tool.
+Normally a toolchain defines a set of Error Parsers to deal with output of each tool. It is possible
+to redefine that set on a per-project basis in project properties:
+</p>
+<p>
+  <ol>
+    <li>In the C/C++ Projects view, right-click the project, and select <strong>Properties</strong>.</li>
+    <li>Expand <strong>C/C++ Build</strong>.</li>
+    <li>Select <strong>Settings</strong>.</li>
+    <li>Click the <strong>Error Parsers</strong> tab.</li>
+    <li>In the <strong>Error parsers</strong> list, select error parsers.</li>
+    <li>Click <strong>OK</strong>.</li>
+  </ol>
+</p>
+<p>Note that the order of error parsers is significant. Normally an error parser will <i>consume</i>
+the line where it spotted an error/warning and the others down the line won't get a chance to parse it.
+</p>
 
-<p>You can define the properties on a per project basis in the New CDT Project 
-wizard, in the C/C++ Projects view, or in the Navigator view. You can also define 
-project properties in the Preferences window for future make projects.</p>
+<p>CDT provides one special kind of error parser, <strong>CDT pushd/popd CWD Locator</strong>.
+This parser does not create problem markers but it is looking for output of <strong>pushd</strong>
+and <strong>popd</strong> commands which are commonly used in makefiles to print the Current Working Directory (CWD).
+CDT can use this information to associate the file names appearing in the output relative to the CWD.
+Note that that kind of parser needs to be the first to be able to provide the CWD to the other parsers.
+</p>
 
-<p>To select error parsers:</p>
+<p>Most of the error parsers are configurable via regular expression patterns and a user can:
+</p>
+<p>
+<ul>
+  <li>Adjust a pattern to detect a problem more accurately,</li>
+  <li>Disable useless or proliferating problems (Note that it can have positive effect on performance of the console),</li>
+  <li>Create own error parser for a custom tool.</li>
+</ul>
+</p>
 
-<ol>
-  <li>Do one of the following:</li>
-  <ul>
- 	</ol>
-  	  <li>To set properties for makefile projects, do the following:
-		<ol>
-		<li>Select <strong>Window &gt; Preferences </strong>. 
-		<li>Expand <strong>C/C++</strong>.
-		<li>Expand <strong>New CDT project wizard</strong>.
-		<li>Click <strong>Makefile Project</strong>.</li>
-		</ol>
-	  <li>For a typical make project, do the following:
-		<ol>
-			<li>In the C/C++ Projects view, right-click the project, and select <strong>Properties</strong>.  
-			<li>Expand <strong>C/C++ Build</strong>.</li>
-	  <li>Select <strong>Settings</strong>.  
-	</ol>
-</li>
-  </ul>
-  <li>Click the <strong>Error Parsers</strong> tab.</li>
-  <li>In the <strong>Error parsers</strong> list, select error parsers.</li>
-  <li>Click <strong>OK</strong>.</li>
-</ol>
-  <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
-<br>
-  <a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>
-  <a href="../concepts/cdt_c_proj_file_views.htm">Project file views</a></p>
+<p>To customize Error parsers do following:
+</p>
+<p>
+  <ol>
+    <li>Select <strong>Window &gt; Preferences </strong>. </li>
+    <li>Expand <strong>C/C++</strong>.</li>
+    <li>Select <strong>Error Parsers</strong> tab.</li>
+    <li>Select error parser or <strong>Add</strong> a new one.</li>
+    <li>Follow <a href="../reference/cdt_u_pref_build.htm">Build preferences</a> to define your custom patterns</li>
+  </ol>
+</p>
+
+<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br><a href="../concepts/cdt_c_projects.htm">CDT Projects</a>
+<br><a href="../concepts/cdt_c_proj_file_views.htm">Project file views</a>
+</p>
 
 
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
-<br>
-<a href="../reference/cdt_u_newproj_parser_error.htm">Error Parsers, C/C++ Properties window</a></p>
-
+<br><a href="../reference/cdt_u_newproj_parser_error.htm">Error Parsers, C/C++ Properties window</a>
+<br><a href="../reference/cdt_u_pref_build.htm">Build preferences</a>
+</p>
 
 <img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" >
 

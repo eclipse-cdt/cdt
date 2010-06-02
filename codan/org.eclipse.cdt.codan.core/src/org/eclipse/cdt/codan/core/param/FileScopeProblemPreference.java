@@ -30,15 +30,28 @@ import org.eclipse.core.runtime.Path;
  * Custom preference for resource scope
  * 
  * @noextend This class is not intended to be extended by clients.
+ * @since 1.0
  */
 public class FileScopeProblemPreference extends AbstractProblemPreference {
+	/**
+	 * Key for the scope preference
+	 */
 	public static final String KEY = "fileScope"; //$NON-NLS-1$
+	/**
+	 * Exclusion attribute
+	 */
 	public static final String EXCLUSION = "exclusion"; //$NON-NLS-1$
+	/**
+	 * Inclusion attribute
+	 */
 	public static final String INCLUSION = "inclusion"; //$NON-NLS-1$
 	private IResource resource;
 	private IPath[] inclusion = new IPath[0];
 	private IPath[] exclusion = new IPath[0];
 
+	/**
+	 * Default constructor
+	 */
 	public FileScopeProblemPreference() {
 		setKey(KEY);
 		setLabel(Messages.FileScopeProblemPreference_Label);
@@ -233,18 +246,15 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		return true;
 	}
 
+	/**
+	 * Checks that given path matches on the paths provided as second argument
+	 * 
+	 * @param resourcePath - resource path
+	 * @param paths - array of path patterns, for pattern see
+	 *        {@link CharOperation#pathMatch}
+	 * @return true if matches with at least one pattern in the array
+	 */
 	public boolean matchesFilter(IPath resourcePath, IPath[] paths) {
-		char[] path = resourcePath.toString().toCharArray();
-		for (int i = 0, length = paths.length; i < length; i++) {
-			char[] pattern = paths[i].toString().toCharArray();
-			if (CharOperation.pathMatch(pattern, path, true, '/')) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static boolean isExcludedPath(IPath resourcePath, IPath[] paths) {
 		char[] path = resourcePath.toString().toCharArray();
 		for (int i = 0, length = paths.length; i < length; i++) {
 			char[] pattern = paths[i].toString().toCharArray();

@@ -43,7 +43,7 @@
    <topic href="tasks/cdt_t_proj_referenced_configs.htm" label="Creating Project References">
    </topic>
 			<topic label="Customizing the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>
-			<topic label="Dealing with compilation and other build errors" href="tasks/cdt_o_builderrors.htm">
+			<topic label="Tracking down compilation errors" href="tasks/cdt_o_builderrors.htm">
 				<topic label="Jumping to errors" href="tasks/cdt_t_jumperror.htm"/>
 				<topic label="Filtering the Problems view" href="tasks/cdt_t_filtererror.htm"/>
 			</topic>

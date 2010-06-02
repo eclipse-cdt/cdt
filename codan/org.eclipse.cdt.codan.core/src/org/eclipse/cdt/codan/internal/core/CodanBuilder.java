@@ -30,11 +30,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+/**
+ * Implementation of {@link ICodanBuilder}
+ */
 public class CodanBuilder extends IncrementalProjectBuilder implements
 		ICodanBuilder {
+	/**
+	 * codan builder id
+	 */
 	public static final String BUILDER_ID = "org.eclipse.cdt.codan.core.codanBuilder"; //$NON-NLS-1$
 
-	public class CodanDeltaVisitor implements IResourceDeltaVisitor {
+	private class CodanDeltaVisitor implements IResourceDeltaVisitor {
 		private IProgressMonitor monitor;
 
 		/**
@@ -47,17 +53,17 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
-			case IResourceDelta.ADDED:
-				// handle added resource
-				processResource(resource, monitor);
-				break;
-			case IResourceDelta.REMOVED:
-				// handle removed resource
-				break;
-			case IResourceDelta.CHANGED:
-				// handle changed resource
-				processResource(resource, monitor);
-				break;
+				case IResourceDelta.ADDED:
+					// handle added resource
+					processResource(resource, monitor);
+					break;
+				case IResourceDelta.REMOVED:
+					// handle removed resource
+					break;
+				case IResourceDelta.CHANGED:
+					// handle changed resource
+					processResource(resource, monitor);
+					break;
 			}
 			// return true to continue visiting children.
 			return true;
@@ -106,8 +112,8 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		}
 		int tick = 1000;
 		// System.err.println("processing " + resource);
-		monitor.beginTask(Messages.CodanBuilder_Code_Analysis_On + resource, checkers + memsize
-				* tick);
+		monitor.beginTask(Messages.CodanBuilder_Code_Analysis_On + resource,
+				checkers + memsize * tick);
 		try {
 			IProblemReporter problemReporter = CodanRuntime.getInstance()
 					.getProblemReporter();
@@ -172,6 +178,13 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		delta.accept(new CodanDeltaVisitor(monitor));
 	}
 
+	/**
+	 * Run all checkers that support "check as you type" mode
+	 * 
+	 * @param model - model of given resource such as ast
+	 * @param resource - resource to process
+	 * @param monitor - progress monitor
+	 */
 	public void runInEditor(Object model, IResource resource,
 			IProgressMonitor monitor) {
 		if (model == null)

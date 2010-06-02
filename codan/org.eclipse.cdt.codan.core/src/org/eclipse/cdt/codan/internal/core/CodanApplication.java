@@ -16,7 +16,6 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * 
  * Application to support headless build
  * 
  * @noextend This class is not intended to be extended by clients.

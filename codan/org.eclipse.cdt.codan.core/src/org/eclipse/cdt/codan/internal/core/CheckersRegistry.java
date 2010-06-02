@@ -37,6 +37,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.service.prefs.Preferences;
 
+/**
+ * Implementation of checker registry interface
+ */
 public class CheckersRegistry implements Iterable<IChecker>, ICheckersRegistry {
 	private static final String NAME_ATTR = "name"; //$NON-NLS-1$
 	private static final String ID_ATTR = "id"; //$NON-NLS-1$

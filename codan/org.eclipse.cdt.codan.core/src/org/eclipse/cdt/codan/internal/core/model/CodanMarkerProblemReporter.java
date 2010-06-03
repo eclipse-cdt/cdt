@@ -60,12 +60,17 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 				loc.getStartingChar(), loc.getEndingChar(), message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.IProblemReporter#reportProblem(java.
-	 * lang.String, org.eclipse.core.resources.IFile, int, java.lang.String)
+	/**
+	 * @param id - problem id
+	 * @param markerType - marker id
+	 * @param severity - marker severity
+	 * @param file - resource
+	 * @param lineNumber - line number for error
+	 * @param startChar - start char (offset in charts from the begging of the
+	 *        document)
+	 * @param endChar - end char (offset in charts from the begging of the
+	 *        document, exclusive)
+	 * @param message - marker message
 	 */
 	public void reportProblem(String id, String markerType, int severity,
 			IResource file, int lineNumber, int startChar, int endChar,

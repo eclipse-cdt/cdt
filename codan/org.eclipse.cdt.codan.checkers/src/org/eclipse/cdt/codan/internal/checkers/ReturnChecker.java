@@ -21,6 +21,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -48,10 +49,13 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 
 		ReturnStmpVisitor(IASTFunctionDefinition func) {
 			shouldVisitStatements = true;
+			shouldVisitDeclarations = true;
 			this.func = func;
 			this.hasret = false;
 		}
-
+		public int visit(IASTDeclaration element) {
+			return PROCESS_SKIP; // skip inner functions
+		}
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;

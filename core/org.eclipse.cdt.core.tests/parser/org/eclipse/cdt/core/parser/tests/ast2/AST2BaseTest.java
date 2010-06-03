@@ -94,7 +94,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
  * @author aniefer
  */
 public class AST2BaseTest extends BaseTestCase {
-	protected final static String TEST_CODE = "<testcode>";
+	public final static String TEST_CODE = "<testcode>";
     protected static final IParserLogService NULL_LOG = new NullLogService();
 	protected static boolean sValidateCopy;
 

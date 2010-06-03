@@ -142,7 +142,7 @@ fi
 #CDTLOC=releases/ganymede/dist/${CDTNAME}
 CDTREL=7.0.0
 CDTFEAT=7.0.0
-CDTVER=201005280809
+CDTVER=201005311212
 CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
 CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then

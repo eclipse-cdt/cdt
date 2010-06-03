@@ -13,12 +13,18 @@
 
 <h1>Error Parser Options</h1>
 
-<p>Use the <strong>Error Parsers</strong> tab on <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.make.ui.preferences.BuildSettings)")'>
-  Build</a> preference panel to define global error parsing options.</p>
+<p>Use the <strong>Error Parsers Tab</strong> on <img src="../images/command_link.png" border="0" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.make.ui.preferences.BuildSettings)")'>
+  Build</a> preference panel to define global error parsing options.
+</p>
+<p><strong>Error Parsers</strong> scan build output looking for potential error or warning messages.
+  They create <strong>Problem Markers</strong> which help to visualize problems for users.
+  Most of Error Parsers scan build output line by line and check if the line match a certain pattern.
+  This preference page lets define those patterns.
+</p>
 <p><img src="../images/pref_panel_build.png" alt="Build Preferences Panel"></p>
 
 <table width="700px" cellpadding="5" cellspacing="0" border="1" >
-	<caption><strong>Error Parser Options</strong></caption>
+	<caption><strong>Error Parsers</strong></caption>
 	<colgroup>
 		<col width="30%" valign="top" >
 		<col width="70%" valign="top" >
@@ -53,6 +59,67 @@
 	</tbody>
 </table>
 
+<br>
+<table width="700px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Error Parser Patterns</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr align="center">
+			<td><strong>Field</strong></td>
+			<td><strong>Description</strong></td>
+		</tr>
+		<tr valign="top">
+			<td><strong>Severity</strong></td>
+			<td>Defines severity of problem marker to be generated. The choice is one of following:
+			<ul>
+				<br> <img src="../images/icon_error.gif" alt="Error"> <strong>Error</strong>
+				<br> <img src="../images/icon_warning.gif" alt="Warning"> <strong>Warning</strong>
+				<br><img src="../images/icon_info.gif" alt="Info"><strong>Info</strong>
+				<br> <img src="../images/icon_remove.png" alt="Ignore"> <strong>Ignore</strong> - use this option
+				  to suppress generating a marker.
+			</ul></td>
+		</tr>
+		<tr valign="top">
+			<td><strong>Pattern</strong></td>
+			<td>Java regular expression pattern. This pattern should define groups in parentheses for using
+			  in <strong>File</strong>, <strong>Line</strong>, and <strong>Description</strong> fields.
+			  <br>The pattern is assumed to start from the beginning of line and end at the end,
+			  so it is unnecessary to specify starting &quot;^&quot; or ending &quot;$&quot; in the pattern.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td><strong>File</strong></td>
+			<td>Define a file which will be associated with the problem marker.
+			  <br>This is a replacement pattern. Use <strong>$</strong> notation
+			  to refer to one of the the groups defined in <strong>Pattern</strong>,
+			  i.e. <strong>$1</strong>, <strong>$2</strong>,<strong>$3</strong> etc.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td><strong>Line</strong></td>
+			<td>Define a line in the file which will be associated with the problem marker.
+			  <br>This is a replacement pattern like for <strong>File</strong> field.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td><strong>Description</strong></td>
+			<td>Define a description which will be assigned to the problem marker.
+			  <br>This is a replacement pattern like for <strong>File</strong> field.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td><strong>Consume</strong></td>
+			<td>This field defines if the pattern stops processing of output line (consumes it).
+			  By default it does (field is empty).
+			  Use <strong>No</strong> if the same line needs to be processed by several patterns.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br><a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
 </p>
@@ -64,7 +131,7 @@
 </p>
 
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
-<br><a href="../reference/cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+<br><a href="../reference/cdt_u_prop_build_settings_errparser.htm">Project properties, Error Parsers tab</a>
 <br><a href="../reference/cdt_u_console_view.htm">Console View</a>
 <br><a href="../reference/cdt_u_problems_view.htm">Problems View</a>
 </p>

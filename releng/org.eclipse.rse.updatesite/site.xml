@@ -675,7 +675,10 @@
    <feature url="features/org.eclipse.tm.terminal.sdk_3.1.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.0.qualifier">
       <category name="TM and RSE 3.2"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.local_0.1.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.1.0.qualifier" os="aix,hpux,linux,macosx,solaris">
+   <feature url="features/org.eclipse.tm.terminal.local_0.1.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.1.0.qualifier" os="linux,macosx,solaris">
+      <category name="TM and RSE 3.2"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.local.sdk_0.1.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.1.0.qualifier" os="linux,macosx,solaris">
       <category name="TM and RSE 3.2"/>
    </feature>
    <category-def name="TM and RSE 3.2" label="TM and RSE 3.2">

@@ -22,13 +22,6 @@ public class XlcLRCPPSpecTest extends LRCPPSpecTest {
 		return suite(XlcLRCPPSpecTest.class);
 	}
 	
-	//TODO ??? overwrite some failed test cases
-	public void test7_1_3s5b() throws Exception {}
-	public void test8_2s7a() throws Exception {}
-	public void test8_2s7b() throws Exception {}
-	
-	
-	
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}

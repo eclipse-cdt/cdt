@@ -22,14 +22,6 @@ public class XlcLRCompletionBasicTest extends LRCompletionBasicTest {
 		return suite(XlcLRCompletionBasicTest.class);
 	}
 	
-	
-	//TODO ??? overwrite some failed test cases 
-	public void testBug279931() throws Exception {}
-	public void testBug279931a() throws Exception {}
-	public void testQualifiedMemberAccess_Bug300139() throws Exception {}
-	public void testCastExpression_Bug301933() throws Exception {}
-	public void testConditionalOperator_Bug308611() throws Exception {}
-	
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}

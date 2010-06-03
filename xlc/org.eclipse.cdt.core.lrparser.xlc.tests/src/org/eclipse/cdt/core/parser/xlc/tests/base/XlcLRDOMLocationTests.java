@@ -22,9 +22,6 @@ public class XlcLRDOMLocationTests extends LRDOMLocationTests {
 		return suite(XlcLRDOMLocationTests.class);
 	}
 	
-	//TODO ??? overwrite some failed test cases
-	public void test162180_3() throws Exception {}
-	
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}

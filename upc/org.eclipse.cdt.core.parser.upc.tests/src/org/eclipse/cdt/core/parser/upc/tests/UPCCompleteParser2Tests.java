@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,6 +16,17 @@ import org.eclipse.cdt.core.model.ILanguage;
 
 public class UPCCompleteParser2Tests extends LRCompleteParser2Tests {
 
+	
+	@Override
+	public void testGNUASMExtension() throws Exception{}
+	@Override
+	public void testBug39551B() throws Exception{}
+	@Override
+	public void testBug39676_tough() throws Exception{}
+	@Override
+	public void testBug102376() throws Exception {}
+	
+	
 	@Override
 	protected ILanguage getCLanguage() {
 		return UPCLanguage.getDefault();

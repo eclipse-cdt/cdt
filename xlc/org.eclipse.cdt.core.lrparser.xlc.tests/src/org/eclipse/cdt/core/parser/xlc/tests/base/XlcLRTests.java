@@ -24,26 +24,6 @@ public class XlcLRTests extends LRTests {
 		// TODO Auto-generated constructor stub
 	}
 	
-	//TODO ??? overwrite some failed test cases
-	public void testFnReturningPtrToFn() throws Exception {}
-	public void testBug270275_int_is_equivalent_to_signed_int() throws Exception {}
-	public void testFunctionDefTypes() throws Exception {}
-	public void testBug80171() throws Exception {}
-	public void testBug192165() throws Exception {}
-	public void testTypenameInExpression() throws Exception {}
-	public void testParamWithFunctionType_Bug84242() throws Exception {}
-	public void testParamWithFunctionTypeCpp_Bug84242() throws Exception {}
-	public void testFunctionReturningPtrToArray_Bug216609() throws Exception {}
-	public void testNestedFunctionDeclarators() throws Exception {}
-	public void testConstantExpressionBinding() throws Exception {}
-	public void testAmbiguousDeclaration_Bug259373() throws Exception {}
-	public void testSizeofFunctionType_252243() throws Exception {}
-	public void testSkipAggregateInitializer_297550() throws Exception {}
-	public void testDeepElseif_298455() throws Exception {}
-	public void testAttributeSyntax_298841() throws Exception {}
-	public void testEmptyTrailingMacro_303152() throws Exception {}
-	
-	
 	public static TestSuite suite() {
 		return suite(XlcLRTests.class);
 	}

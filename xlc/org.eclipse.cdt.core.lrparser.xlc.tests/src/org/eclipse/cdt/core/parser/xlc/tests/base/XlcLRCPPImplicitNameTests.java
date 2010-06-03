@@ -22,9 +22,6 @@ public class XlcLRCPPImplicitNameTests extends LRCPPImplicitNameTests {
 		return suite(XlcLRCPPImplicitNameTests.class);
 	}
 	
-	//TODO ??? overwrite some failed test cases
-	public void testNew() throws Exception {}
-	
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}

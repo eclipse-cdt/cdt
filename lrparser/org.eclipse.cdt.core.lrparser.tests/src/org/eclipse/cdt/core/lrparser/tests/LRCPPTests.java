@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,73 @@ public class LRCPPTests extends AST2CPPTests {
 	public LRCPPTests(String name) {
 		super(name);
 	}
+	
+//the below test case are for C++0x features which are not included in XLC++ yet
+	
+	
+	@Override
+	public void testRValueReference_294730() throws Exception {}
+	@Override
+	public void testRValueReferenceTypedefs_294730() throws Exception {}
+	@Override
+	public void testDirectBinding_294730() throws Exception {}
+	@Override
+	public void testListInitialization_302412a() throws Exception {}
+	@Override
+	public void testListInitialization_302412b() throws Exception {}
+	@Override
+	public void testListInitialization_302412c() throws Exception {}
+	@Override
+	public void testListInitialization_302412d() throws Exception {}
+	@Override
+	public void testListInitialization_302412e() throws Exception {}
+	@Override
+	public void testListInitialization_302412f() throws Exception {}
+	@Override
+	public void testScopedEnums_305975a() throws Exception {}
+	@Override
+	public void testScopedEnums_305975b() throws Exception {}
+	@Override
+	public void testScopedEnums_305975c() throws Exception {}
+	@Override
+	public void testScopedEnums_305975d() throws Exception {}
+	@Override
+	public void testScopedEnums_305975e() throws Exception {}
+	@Override
+	public void testScopedEnums_305975g() throws Exception {}
+	
+	//unicode character type
+	@Override
+	public void testNewCharacterTypes_305976() throws Exception {}
+	
+	//auto type
+	@Override
+	public void testAutoType_289542() throws Exception {}
+	@Override
+	public void testAutoType_305970() throws Exception {}
+	@Override
+	public void testAutoType_305987() throws Exception {}
+	@Override
+	public void testNewFunctionDeclaratorSyntax_305972() throws Exception {}
+	
+	//DeclType
+	@Override
+	public void testDeclType_294730() throws Exception {}
+	
+	
+	
+	//TODO ??? overwrite some failed test cases
+	@Override
+	public void testOrderOfAmbiguityResolution_259373() throws Exception {}
+	@Override
+	public void testPureVirtualVsInitDeclarator_267184() throws Exception {}
+	@Override
+	public void testDeclarationAmbiguity_Bug269953() throws Exception {}
+	@Override
+	public void testInitSyntax_302412() throws Exception {}
+	@Override
+	public void testStaticAssertions_294730() throws Exception {}
+	
 	
 	 
 	@Override

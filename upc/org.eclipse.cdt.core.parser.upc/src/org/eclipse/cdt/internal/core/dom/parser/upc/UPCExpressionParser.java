@@ -1176,6 +1176,12 @@ public UPCExpressionParser(ITokenStream stream, Map<String,String> properties) {
             }  
   
             //
+            // Rule 283:  initializer ::= initializer_list
+            //
+            case 283: { action.   consumeInitializer();             break;
+            }  
+  
+            //
             // Rule 284:  initializer_list ::= start_initializer_list { <openscope-ast> initializer_seq comma_opt } end_initializer_list
             //
             case 284: { action.   consumeInitializerList();             break;

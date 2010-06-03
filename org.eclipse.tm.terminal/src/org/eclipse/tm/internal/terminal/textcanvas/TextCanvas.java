@@ -11,6 +11,7 @@
  * Uwe Stieber (Wind River) - [281328] The very first few characters might be missing in the terminal control if opened and connected programmatically
  * Martin Oberhuber (Wind River) - [294327] After logging in, the remote prompt is hidden
  * Anton Leherbauer (Wind River) - [294468] Fix scroller and text line rendering
+ * Uwe Stieber (Wind River) - [205486] Fix ScrollLock always moving to line 1
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -93,8 +94,10 @@ public class TextCanvas extends GridCanvas {
 					return;
 				scrollToEnd();
 				// make sure the scroll area is correct:
-				scrollY(getVerticalBar());
-				scrollX(getHorizontalBar());
+				if (!fScrollLock) {
+					scrollY(getVerticalBar());
+					scrollX(getHorizontalBar());
+				}
 			}
 		});
 		// let the cursor blink if the text canvas gets the focus...
@@ -250,8 +253,10 @@ public class TextCanvas extends GridCanvas {
 			// scroll to end
 			scrollToEnd();
 			// make sure the scroll area is correct:
-			scrollY(getVerticalBar());
-			scrollX(getHorizontalBar());
+			if (!fScrollLock) {
+				scrollY(getVerticalBar());
+				scrollX(getHorizontalBar());
+			}
 	
 			getParent().layout();
 		} finally {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@
  * Michael Scharf (Wind River) - [196454] Initial connection settings dialog should not be blank
  * Michael Scharf (Wind River) - [241096] Secondary terminals in same view do not observe the "invert colors" Preference 
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
+ * Martin Oberhuber (Wind River) - [205486] Enable ScrollLock
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -54,6 +55,7 @@ import org.eclipse.tm.internal.terminal.actions.TerminalActionConnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionDisconnect;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionNewTerminal;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionRemove;
+import org.eclipse.tm.internal.terminal.actions.TerminalActionScrollLock;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSelectionDropDown;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionSettings;
 import org.eclipse.tm.internal.terminal.actions.TerminalActionToggleCommandInputField;
@@ -104,7 +106,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 
 	protected TerminalAction fActionTerminalConnect;
 
-//	private TerminalAction fActionTerminalScrollLock;
+	private TerminalAction fActionTerminalScrollLock;
 
 	protected TerminalAction fActionTerminalDisconnect;
 
@@ -297,6 +299,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		updateTerminalDisconnect();
 		updateTerminalSettings();
 		fActionToggleCommandInputField.setChecked(hasCommandInputField());
+		fActionTerminalScrollLock.setChecked(isScrollLock());
 		updateSummary();
 	}
 
@@ -558,7 +561,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		fActionTerminalDropDown = new TerminalActionSelectionDropDown(fMultiConnectionManager);
 		fActionTerminalRemove=new TerminalActionRemove(fMultiConnectionManager);
 		fActionTerminalNewTerminal = new TerminalActionNewTerminal(this);
-//		fActionTerminalScrollLock = new TerminalActionScrollLock(this);
+		fActionTerminalScrollLock = new TerminalActionScrollLock(this);
 		fActionTerminalConnect = new TerminalActionConnect(this);
 		fActionTerminalDisconnect = new TerminalActionDisconnect(this);
 		fActionTerminalSettings = new TerminalActionSettings(this);
@@ -572,11 +575,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 	protected void setupLocalToolBars() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 
-//		toolBarMgr.add(fActionTerminalScrollLock);
 		toolBarMgr.add(fActionTerminalConnect);
 		toolBarMgr.add(fActionTerminalDisconnect);
 		toolBarMgr.add(fActionTerminalSettings);
 		toolBarMgr.add(fActionToggleCommandInputField);
+		toolBarMgr.add(fActionTerminalScrollLock);
 		toolBarMgr.add(new Separator("fixedGroup")); //$NON-NLS-1$
 		toolBarMgr.add(fActionTerminalDropDown);
 		toolBarMgr.add(fActionTerminalNewTerminal);
@@ -606,7 +609,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		menuMgr.add(fActionEditSelectAll);
 		menuMgr.add(new Separator());
 		menuMgr.add(fActionToggleCommandInputField);
-//		menuMgr.add(fActionTerminalScrollLock);
+		menuMgr.add(fActionTerminalScrollLock);
 
 
 		// Other plug-ins can contribute there actions here

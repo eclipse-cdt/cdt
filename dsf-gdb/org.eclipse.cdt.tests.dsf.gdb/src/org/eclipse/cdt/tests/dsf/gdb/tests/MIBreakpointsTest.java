@@ -485,6 +485,42 @@ public class MIBreakpointsTest extends BaseTestCase {
         return drm.getData();
     }
 
+	/**
+	 * Utility method for setting a line breakpoint in the test's source file and
+	 * then running to it.
+	 * 
+	 * @param lineNumber the line to set the breakpoint on
+	 * @return the breakpoint DM context
+	 * @throws Throwable
+	 */
+    private IBreakpointDMContext insertAndRunToLineBreakpoint(int lineNumber) throws Throwable {
+    	clearEventCounters();
+    	
+		// Create a line breakpoint
+		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		breakpoint.put(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG);
+		breakpoint.put(FILE_NAME_TAG, SOURCE_FILE);
+		breakpoint.put(LINE_NUMBER_TAG, lineNumber);
+
+		// Install the breakpoint
+		IBreakpointDMContext ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
+		assertTrue(fWait.getMessage(), fWait.isOK());
+
+		// Ensure that right BreakpointEvents were received
+		waitForBreakpointEvent(1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT event(s), received "
+				+ fBreakpointEventCount, fBreakpointEventCount == 1);
+		assertTrue("BreakpointEvent problem: expected " + 1 + " BREAKPOINT_ADDED event(s), received "
+				+ getBreakpointEventCount(BP_ADDED), getBreakpointEventCount(BP_ADDED) == 1);
+
+		clearEventCounters();
+		SyncUtil.resumeUntilStopped(2000);
+		waitForBreakpointEvent(1);	// breakpoint hit 
+		clearEventCounters();
+		
+		return ref;
+    }
+    
     /* ------------------------------------------------------------------------
      * insertBreakpoint
      * ------------------------------------------------------------------------
@@ -2046,16 +2082,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateWatchpoint_AddCondition() throws Throwable {
-
 		// Run to the point where the variable is initialized
-		String fileName = SOURCE_FILE;
-		if (fileName.contains(" ")) { //$NON-NLS-1$
-			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.resumeUntilStopped(1000);
-		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint() 
-		clearEventCounters();
+		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -2102,17 +2130,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateWatchpoint_RemoveCondition() throws Throwable {
-
 		// Run to the point where the variable is initialized
-		String fileName = SOURCE_FILE;
-		if (fileName.contains(" ")) { //$NON-NLS-1$
-			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.resumeUntilStopped(1000);
-		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()
-		clearEventCounters();
-
+		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
+		
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
@@ -2159,16 +2179,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void updateWatchpoint_ModifyCondition() throws Throwable {
-
 		// Run to the point where the variable is initialized
-		String fileName = SOURCE_FILE;
-		if (fileName.contains(" ")) { //$NON-NLS-1$
-			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_1, true);
-		SyncUtil.resumeUntilStopped(1000);
-		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()		
-		clearEventCounters();
+		insertAndRunToLineBreakpoint(LINE_NUMBER_1);
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
@@ -3187,17 +3199,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void breakpointHit_watchpointUpdateCount() throws Throwable {
-
 		// Run to the point where the variable is initialized
-		String fileName = SOURCE_FILE;
-		if (fileName.contains(" ")) { //$NON-NLS-1$
-			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
-		SyncUtil.resumeUntilStopped(1000);
-		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()
-		clearEventCounters();
-
+		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
+		
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
@@ -3258,17 +3262,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 	// ------------------------------------------------------------------------
 	@Test
 	public void breakpointHit_watchpointUpdateCondition() throws Throwable {
-
 		// Run to the point where the variable is initialized
-		String fileName = SOURCE_FILE;
-		if (fileName.contains(" ")) { //$NON-NLS-1$
-			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
-		SyncUtil.resumeUntilStopped();
-		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()		
-		clearEventCounters();
-
+		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
+		
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();
 		watchpoint.put(BREAKPOINT_TYPE_TAG, WATCHPOINT_TAG);
@@ -3330,16 +3326,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 	@Ignore("All GDBs seem to have a bug in this situation")
 	@Test
 	public void breakpointHit_WatchpointOutOfScope() throws Throwable {
-
 		// Run to the point where the variable is initialized
-		String fileName = SOURCE_FILE;
-		if (fileName.contains(" ")) { //$NON-NLS-1$
-			fileName = "\"" + fileName + "\"";  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		SyncUtil.addBreakpoint(fileName + ":" + LINE_NUMBER_4, true);
-		SyncUtil.resumeUntilStopped();
-		waitForBreakpointEvent(1);	// bkpt-hit only; no bkpt-add event when using SyncUtil.addBreakpoint()
-		clearEventCounters();
+		insertAndRunToLineBreakpoint(LINE_NUMBER_4);
 
 		// Create a write watchpoint
 		Map<String, Object> watchpoint = new HashMap<String, Object>();

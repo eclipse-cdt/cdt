@@ -7,6 +7,7 @@
 	<property name="cdt-mbs-ui-loc" value="${eclipse-home}/cdt_mbs_ui_folder"/>
 	<property name="cdt-lr-parser-loc" value="${eclipse-home}/cdt_lr_parser_folder"/>
 	<property name="cdt-upc-parser-loc" value="${eclipse-home}/cdt_upc_parser_folder"/>
+	<property name="cdt-lr-parser-xlc-loc" value="${eclipse-home}/cdt_lr_parser_xlc_folder"/>
 	
 	<property name="cdt-common-vmargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 	
@@ -93,6 +94,16 @@
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
+	
+	<target name="cdt-lr-parser-xlc" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-lr-parser-xlc-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.core.lrparser.xlc.tests"/>
+			<property name="classname" value="org.eclipse.cdt.core.lrparser.xlc.tests.suite.XlcTestSuite"/>
+			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
 
 	<target name="cdt-codan" depends="init">
 		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
@@ -111,10 +122,9 @@
 		<antcall target="cdt-mbs-core"/>
 		<antcall target="cdt-mbs-ui"/>
 		<antcall target="cdt-codan"/>
-		<!--
 		<antcall target="cdt-lr-parser"/>
 		<antcall target="cdt-upc-parser"/>
-		-->
+		<antcall target="cdt-lr-parser-xlc"/>
 	</target>
 
 </project>

@@ -672,7 +672,7 @@
    <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
       <category name="TM and RSE 3.2"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_3.0.100.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.0.100.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_3.1.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.0.qualifier">
       <category name="TM and RSE 3.2"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.local_0.1.0.qualifier.jar" id="org.eclipse.tm.terminal.local" version="0.1.0.qualifier" os="aix,hpux,linux,macosx,solaris">

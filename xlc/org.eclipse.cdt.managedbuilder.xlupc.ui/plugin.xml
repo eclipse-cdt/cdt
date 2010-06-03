@@ -49,7 +49,7 @@
                </tool>
                <tool
                      id="cdt.managedbuild.tool.linker.xlupc.exe.debug"
-                     superClass="cdt.managedbuild.tool.xlc.c.linker">
+                     superClass="cdt.managedbuild.tool.xlupc.linker.exe">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.assembler.xlupc.exe.debug"
@@ -96,7 +96,7 @@
                </tool>
                <tool
                      id="cdt.managedbuild.tool.linker.xlupc.exe.release"
-                     superClass="cdt.managedbuild.tool.xlc.c.linker">
+                     superClass="cdt.managedbuild.tool.xlupc.linker.exe">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.assembler.xlupc.exe.release"
@@ -148,7 +148,7 @@
                </tool>
                <tool
                      id="cdt.managedbuild.tool.linker.xlupc.so.debug"
-                     superClass="cdt.managedbuild.tool.xlc.c.linker.so">
+                     superClass="cdt.managedbuild.tool.xlupc.linker.so">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.assembler.xlupc.so.debug"
@@ -192,7 +192,7 @@
                </tool>
                <tool
                      id="cdt.managedbuild.tool.linker.xlupc.so.release"
-                     superClass="cdt.managedbuild.tool.xlc.c.linker.so">
+                     superClass="cdt.managedbuild.tool.xlupc.linker.so">
                </tool>
                <tool
                      id="cdt.managedbuild.tool.assembler.xlupc.so.release"
@@ -297,23 +297,30 @@
             </toolChain>
          </configuration>
       </projectType>
+
+    <tool
+          command="${XL_compilerRoot}/xlupc"
+          id="cdt.managedbuild.tool.xlupc.linker.exe"
+          isAbstract="false"
+          name="%tool.linker.exe.name"
+          natureFilter="cnature"
+          superClass="cdt.managedbuild.tool.xlc.c.linker">
+    </tool>
+    <tool
+          id="cdt.managedbuild.tool.xlupc.linker.so"
+          isAbstract="false"
+          name="%tool.linker.so.name">
+    </tool>
+      
+      
       <tool
             command="${XL_compilerRoot}/xlupc"
-            id="org.eclipse.cdt.managedbuilder.xlupc.ui.compiler"
+            id="org.eclipse.cdt.managedbuilder.xlupc.ui.compiler.abstract"
             isAbstract="true"
-            name="%ToolName.compiler.xlupc"
+            name="%tool.compiler.abstract.name"
             natureFilter="cnature"
             outputFlag="-o"
-            superClass="cdt.managedbuild.tool.xlc.c.compiler">
-         <inputType
-               dependencyContentType="org.eclipse.cdt.core.cHeader"
-               dependencyExtensions="h"
-               id="org.eclipse.cdt.managedbuilder.xlupc.ui.inputType.upc"
-               primaryInput="true"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
-               sourceContentType="org.eclipse.cdt.core.parser.upc.upcSource"
-               sources="upc">
-         </inputType>
+            superClass="cdt.managedbuild.tool.xlc.c.compiler.abstract">
          <optionCategory
                id="org.eclipse.cdt.managedbuilder.xlupc.ui.optionCategory.upc"
                name="%OptionCategory.upc">
@@ -398,6 +405,37 @@
                valueType="string">
          </option>
         
+      </tool>
+      <tool
+            id="org.eclipse.cdt.managedbuilder.xlupc.ui.compiler"
+            isAbstract="false"
+            name="%tool.compiler.name"
+            superClass="org.eclipse.cdt.managedbuilder.xlupc.ui.compiler.abstract">
+            <inputType
+                  dependencyContentType="org.eclipse.cdt.core.cHeader"
+                  dependencyExtensions="h"
+                  id="org.eclipse.cdt.managedbuilder.xlupc.ui.inputType.upc"
+                  name="%inputType.upc.name"
+                  primaryInput="true"
+                  scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                  sourceContentType="org.eclipse.cdt.core.parser.upc.upcSource"
+                  sources="upc">
+         </inputType>
+            <inputType
+                  dependencyContentType="org.eclipse.cdt.core.cHeader"
+                  dependencyExtensions="h"
+                  id="org.eclipse.cdt.managedbuilder.xlupc.ui.inputType.c"
+                  name="%inputType.c.name"
+                  primaryInput="true"
+                  scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                  sourceContentType="org.eclipse.cdt.core.cSource"
+                  sources="c">
+            </inputType>
+            <outputType
+                  buildVariable="OBJS"
+                  id="org.eclipse.cdt.managedbuilder.xlupc.ui.outputType.objectFile"
+                  outputs="o">
+            </outputType>
       </tool>
    </extension>
    <extension

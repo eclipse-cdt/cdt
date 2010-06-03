@@ -127,26 +127,12 @@
       </tool>
 	<tool
        command="${XL_compilerRoot}/xlc"
-       id="cdt.managedbuild.tool.xlc.c.compiler"
+       id="cdt.managedbuild.tool.xlc.c.compiler.abstract"
        isAbstract="true"
-       name="%ToolName.compiler.xlc.c"
+       name="%tool.compiler.c.abstract"
        natureFilter="cnature"
        outputFlag="-o"
        superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
-       <inputType
-            dependencyContentType="org.eclipse.cdt.core.cHeader"
-            dependencyExtensions="h"
-            id="cdt.managedbuild.tool.xlc.c.compiler.input"
-            primaryInput="true"
-            scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
-            sourceContentType="org.eclipse.cdt.core.cSource"
-            sources="c">
-       </inputType>
-       <outputType
-			outputs="o"
-            buildVariable="OBJS"
-            id="cdt.managedbuild.tool.xlc.c.compiler.output">
-       </outputType>
 		<option
 			name="%Option.Cstdinc"
 			category="xlc.c.compiler.category.Input"
@@ -247,26 +233,12 @@
 	  </tool>
 	  <tool
          command="${XL_compilerRoot}/xlC"
-         id="cdt.managedbuild.tool.xlc.cpp.compiler"
+         id="cdt.managedbuild.tool.xlc.cpp.compiler.abstract"
          isAbstract="true"
-         name="%ToolName.compiler.xlc.cpp"
+         name="%tool.compiler.cpp.abstract"
          natureFilter="ccnature"
          outputFlag="-o"
          superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
-           <inputType
-               dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-               dependencyExtensions="h,H,hpp"
-               id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
-               primaryInput="true"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
-               sourceContentType="org.eclipse.cdt.core.cxxSource"
-               sources="c,C,cc,cxx,cpp">
-          </inputType>
-         <outputType
-               buildVariable="OBJS"
-               id="org.eclipse.cdt.managedbuilder.xlc.cpp.compiler.output"
-               outputs="o">
-         </outputType>
            <option
                  category="xlc.c.compiler.category.Input"
                  command="-+"
@@ -550,7 +522,7 @@
          targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug">
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
-				 	  name="%PlatformName.Dbg"           					  
+				 	  name="%PlatformName.Dbg"            					  
 					  osList="all"					  
 					  archList="all">
 				  </targetPlatform>
@@ -615,7 +587,7 @@
            targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
-		              name="%PlatformName.Rel"		      
+		              name="%PlatformName.Rel"		             
 		              osList="all"
 		              archList="all">		              
 		          </targetPlatform>
@@ -930,7 +902,7 @@
             errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler"
             isAbstract="true"
-            name="%tool.name">
+            name="%tool.compiler.abstract">
          <envVarBuildPath 
 			pathType="buildpathInclude"
 			variableList="CPATH,C_INCLUDE_PATH">
@@ -3050,7 +3022,7 @@
             errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker"
             isAbstract="true"
-            name="%tool.name.0"
+            name="%tool.linker.exe.abstract.name"
             outputFlag="-o">
                   <envVarBuildPath 
          	pathType="buildpathLibrary"
@@ -3246,7 +3218,7 @@
             errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
             id="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker"
             isAbstract="true"
-            name="%tool.name.1"
+            name="%tool.linker.so.abstract.name"
             superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractLinker">
             <option
             	name="%Option.Linking.mkshrobj"
@@ -3285,6 +3257,58 @@
 			    id="cdt.managedbuild.tool.xlc.c.linker.so.debug.output">
 			</outputType>
     </tool>
+     <tool
+           id="cdt.managedbuild.tool.xlc.c.compiler"
+           isAbstract="false"
+           name="%tool.c.compiler.name"
+           superClass="cdt.managedbuild.tool.xlc.c.compiler.abstract">
+           <inputType
+                 dependencyContentType="org.eclipse.cdt.core.cHeader"
+                 dependencyExtensions="h"
+                 id="cdt.managedbuild.tool.xlc.c.compiler.input"
+                 name="%inputType.c.name"
+                 primaryInput="true"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                 sourceContentType="org.eclipse.cdt.core.cSource"
+                 sources="c">
+       		</inputType>
+       		<outputType
+               buildVariable="OBJS"
+               id="cdt.managedbuild.tool.xlc.c.compiler.output"
+               outputs="o">
+            </outputType>
+     </tool>
+     <tool
+           id="cdt.managedbuild.tool.xlc.cpp.compiler"
+           isAbstract="false"
+           name="%tool.cpp.compiler.name"
+           superClass="cdt.managedbuild.tool.xlc.cpp.compiler.abstract">
+           <inputType
+                 dependencyContentType="org.eclipse.cdt.core.cHeader"
+                 dependencyExtensions="h"
+                 id="cdt.managedbuild.tool.xlc.cpp.c.compiler.input"
+                 name="%inputType.c.name.2"
+                 primaryInput="true"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                 sourceContentType="org.eclipse.cdt.core.cSource"
+                 sources="c">
+           </inputType>
+           <inputType
+                 dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+                 dependencyExtensions="h,H,hpp"
+                 id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
+                 name="%inputType.cpp.name"
+                 primaryInput="true"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+                 sourceContentType="org.eclipse.cdt.core.cxxSource"
+                 sources="c,C,cc,cxx,cpp">
+          </inputType>
+          <outputType
+               buildVariable="OBJS"
+               id="org.eclipse.cdt.managedbuilder.xlc.cpp.compiler.output"
+               outputs="o">
+         </outputType>
+     </tool>
     
 	</extension>
    <extension

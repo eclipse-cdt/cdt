@@ -201,12 +201,15 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
 	@Deprecated
     public void setInitializerValue(IASTExpression expression) {
         assertNotFrozen();
+        //CDT_70_FIX_FROM_50-#6
+        CPPASTConstructorInitializer ctorInit= new CPPASTConstructorInitializer();
         if (expression == null) {
-        	setInitializer(null);
+        	//add an empty initializer, fix test testBug89539 for xlc parser
+        	setInitializer(ctorInit);
         } else if (expression instanceof IASTInitializer) {
         	setInitializer((IASTInitializer) expression);
         } else {
-        	CPPASTConstructorInitializer ctorInit= new CPPASTConstructorInitializer();
+        	
         	ctorInit.setExpression(expression);
         	ctorInit.setOffsetAndLength((ASTNode) expression);
         	setInitializer(ctorInit);

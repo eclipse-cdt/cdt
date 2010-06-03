@@ -2129,7 +2129,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	}
 
 	// class Other {
-	//    void m();
+	//    void m(); };
 	// class A {                       
 	//    friend void set();           
 	//    friend void Other::m();             
@@ -5593,7 +5593,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	void foo/*_d*/(unsigned short x) {}
 	//	void foo/*_e*/(long x) {}
 	//	void foo/*_f*/(unsigned long x) {}
-	//	void foo/*_g*/(long long x) {}
+	//	void foo/*_g*/(long long g) {}
 	//	void foo/*_h*/(unsigned long long x) {}
 	//	void foo/*_i*/(float x) {}
 	//	void foo/*_j*/(double x) {}

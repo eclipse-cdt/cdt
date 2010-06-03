@@ -24,18 +24,16 @@ import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Problem reported that created eclipse markers
+ */
 public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.IProblemReporter#reportProblem(java.
-	 * lang.String, org.eclipse.cdt.codan.core.model.IProblemLocation,
-	 * java.lang.Object[])
-	 */
 	public void reportProblem(String id, IProblemLocation loc, Object... args) {
 		IResource file = loc.getFile();
 		int lineNumber = loc.getLineNumber();
@@ -132,24 +130,28 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 	 * (org.eclipse.core.resources.IResource,
 	 * org.eclipse.cdt.codan.core.model.IChecker)
 	 */
-	public void deleteProblems(IResource file, IChecker checker) {
+	public void deleteProblems(final IResource file, final IChecker checker) {
 		try {
-			IMarker[] markers = file.findMarkers(
-					GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
-					IResource.DEPTH_INFINITE);
-			ICheckersRegistry reg = CodanRuntime.getInstance()
-					.getChechersRegistry();
-			for (int i = 0; i < markers.length; i++) {
-				IMarker m = markers[i];
-				String id = m.getAttribute(IMarker.PROBLEM, ""); //$NON-NLS-1$
-				Collection<IProblem> problems = reg.getRefProblems(checker);
-				for (Iterator<IProblem> iterator = problems.iterator(); iterator
-						.hasNext();) {
-					IProblem iProblem = iterator.next();
-					if (iProblem.getId().equals(id))
-						m.delete();
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IMarker[] markers = file.findMarkers(
+							GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
+							IResource.DEPTH_INFINITE);
+					ICheckersRegistry reg = CodanRuntime.getInstance()
+							.getChechersRegistry();
+					for (int i = 0; i < markers.length; i++) {
+						IMarker m = markers[i];
+						String id = m.getAttribute(IMarker.PROBLEM, ""); //$NON-NLS-1$
+						Collection<IProblem> problems = reg.getRefProblems(checker);
+						for (Iterator<IProblem> iterator = problems.iterator(); iterator
+								.hasNext();) {
+							IProblem iProblem = iterator.next();
+							if (iProblem.getId().equals(id))
+								m.delete();
+						}
+					}
 				}
-			}
+			}, null, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {
 			CodanCorePlugin.log(e);
 		}

@@ -85,6 +85,7 @@ plugin@org.eclipse.cdt.managedbuilder.xlc.ui=@cdtTag@,/cvsroot/tools,,org.eclips
 feature@org.eclipse.cdt.xlc.feature=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature
 feature@org.eclipse.cdt.xlc.sdk=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.sdk-feature
 plugin@org.eclipse.cdt.core.lrparser.xlc=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc
+plugin@org.eclipse.cdt.core.lrparser.xlc.tests=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.core.lrparser.xlc.tests
 plugin@org.eclipse.cdt.managedbuilder.xlupc.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlupc.ui
 
 ! LR parser

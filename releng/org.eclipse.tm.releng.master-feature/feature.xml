@@ -42,7 +42,7 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.tm.terminal.local"
+         id="org.eclipse.tm.terminal.local.sdk"
          version="0.0.0"/>
 
    <includes

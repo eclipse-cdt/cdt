@@ -49,7 +49,7 @@
 		</ant>
 		<ant antfile="${genericTargets}" target="${target}">
 			<property name="type" value="feature" />
-			<property name="id" value="org.eclipse.tm.terminal.local" />
+			<property name="id" value="org.eclipse.tm.terminal.local.sdk" />
 		</ant>
 	</target>
 
@@ -111,7 +111,7 @@
 		<antcall target="unpackUpdateJarsForPackaging" />
 	</target>
 
-	<target name="assemble.org.eclipse.tm.terminal.local">
+	<target name="assemble.org.eclipse.tm.terminal.local.sdk">
 		<property name="archiveName" value="TM-terminal-local-incubation-${buildId}.zip"/>
 		<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
 		<antcall target="unpackUpdateJarsForPackaging" />

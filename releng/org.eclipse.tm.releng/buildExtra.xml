@@ -154,6 +154,9 @@
 				<include name="**/org.eclipse.tm.terminal.local*" />
 				<include name="**/org.eclipse.tm.terminal.local*/**" />
 				<include name="**/org.eclipse.tm.terminal.local*/**/**" />
+				<include name="**/org.eclipse.tm.terminal.view_*" />
+				<include name="**/org.eclipse.tm.terminal.view_*/**" />
+				<include name="**/org.eclipse.tm.terminal.view_*/**/**" />
 			</zipfileset>
 		</zip>
 

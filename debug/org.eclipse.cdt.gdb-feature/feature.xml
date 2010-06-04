@@ -3,7 +3,8 @@
       id="org.eclipse.cdt.gdb"
       label="%featureName"
       version="7.0.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      plugin="org.eclipse.cdt.gdb">
 
    <description>
       %description

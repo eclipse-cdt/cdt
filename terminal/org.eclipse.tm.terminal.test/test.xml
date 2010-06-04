@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-     Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+     Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -17,13 +17,17 @@ Needs to be updated and tested for org.eclipse.tm.terminal
 -->
 
 <project name="testsuite" default="run" basedir=".">
+  <property name="classname" value="org.eclipse.tm.terminal.test.AutomatedPluginTests" />
+
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
-  <property name="eclipse-home" value="${basedir}/../../"/>
+  <property name="eclipse-home" value="${basedir}\..\.." />
+<!--  <property name="eclipse-home" value="${basedir}/../../"/> -->
 
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="plugin-name" value="org.eclipse.tm.terminal.test"/>
-  <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
+  <property name="library-file" value="${eclipse-home}/dropins/eclipse/plugins/org.eclipse.test/library.xml" />
+<!--  <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/> -->
 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
@@ -39,6 +43,12 @@ Needs to be updated and tested for org.eclipse.tm.terminal
   <target name="suite">
     <property name="location" value="${eclipse-home}/terminal_test_workspace"/>
     <delete dir="${location}" quiet="true"/>
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${location}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" value="${classname}"/>
+	  <property name="extraVMargs" value="-ea"/>
+    </ant>
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location}"/>
       <property name="plugin-name" value="${plugin-name}"/>
@@ -83,6 +93,8 @@ Needs to be updated and tested for org.eclipse.tm.terminal
   <!-- This target holds code to cleanup the testing environment after the tests -->
   <!-- have been run. You can use this to delete temporary files that are created. -->
   <target name="cleanup">
+		<mkdir dir="${results}/consolelogs" />
+		<copy failonerror="false" file="${eclipse-home}/results/${classname}.txt" tofile="${results}/consolelogs/${classname}_${platform}.metadata.log.txt" />
   </target>
 
   <!-- This target runs the test suite. Any actions that need to happen after all -->

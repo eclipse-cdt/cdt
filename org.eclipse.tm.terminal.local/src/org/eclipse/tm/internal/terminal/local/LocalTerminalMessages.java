@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
  * messages used by the Local Terminal Connector.
  *
  * @author Mirko Raner
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LocalTerminalMessages extends NLS {
 
@@ -88,6 +88,9 @@ public class LocalTerminalMessages extends NLS {
 
 	/** The question title for confirming deletion of a launch configuration. */
 	public static String questionTitleDeleteLaunchConfiguration;
+
+	/** The error message for platforms that don't support <code>pty</code>s. */
+	public static String errorNoPTYSupport;
 
 	/** The error message for attempting to directly launch a Terminal launch configuration. */
 	public static String errorDirectLaunch;

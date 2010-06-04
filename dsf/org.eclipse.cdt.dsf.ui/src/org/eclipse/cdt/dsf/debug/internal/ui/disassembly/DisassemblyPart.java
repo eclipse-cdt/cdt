@@ -1386,7 +1386,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 				if (previousPos instanceof LabelPosition) {
 					revealOffset = previousPos.offset;
 					onTop = true;
-				} else if (!previousPos.fValid) {
+				} else if (previousPos == null || !previousPos.fValid) {
 					onTop = true;
 				}
 			} catch (BadLocationException e) {

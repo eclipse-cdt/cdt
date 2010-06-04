@@ -1,12 +1,12 @@
 !*** tcf - commented out for now.
-plugin@org.eclipse.tm.tcf=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf
-!plugin@org.eclipse.tm.tcf.agent=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,agent
-plugin@org.eclipse.tm.tcf.core=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.core
-plugin@org.eclipse.tm.tcf.cdt.ui=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.cdt.ui
-plugin@org.eclipse.tm.tcf.debug=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.debug
-plugin@org.eclipse.tm.tcf.debug.ui=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.debug.ui
-!plugin@org.eclipse.tm.tcf.docs=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,docs
-!plugin@org.eclipse.tm.tcf.examples.daytime=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,examples/org.eclipse.tm.tcf.examples.daytime
-!plugin@org.eclipse.tm.tcf.examples.daytime.agent=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,examples/org.eclipse.tm.tcf.examples.daytime.agent
-plugin@org.eclipse.tm.tcf.rse=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.rse
-feature@org.eclipse.tm.tcf.feature=SVN,trunk,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,features/org.eclipse.tm.tcf.feature
+plugin@org.eclipse.tm.tcf=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf
+!plugin@org.eclipse.tm.tcf.agent=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,agent
+plugin@org.eclipse.tm.tcf.core=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.core
+plugin@org.eclipse.tm.tcf.cdt.ui=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.cdt.ui
+plugin@org.eclipse.tm.tcf.debug=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.debug
+plugin@org.eclipse.tm.tcf.debug.ui=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.debug.ui
+!plugin@org.eclipse.tm.tcf.docs=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,docs
+!plugin@org.eclipse.tm.tcf.examples.daytime=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,examples/org.eclipse.tm.tcf.examples.daytime
+!plugin@org.eclipse.tm.tcf.examples.daytime.agent=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,examples/org.eclipse.tm.tcf.examples.daytime.agent
+plugin@org.eclipse.tm.tcf.rse=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.rse
+feature@org.eclipse.tm.tcf.feature=SVN,tags/0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,features/org.eclipse.tm.tcf.feature

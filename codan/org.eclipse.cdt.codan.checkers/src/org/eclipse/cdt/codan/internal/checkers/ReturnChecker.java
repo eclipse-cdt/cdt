@@ -20,6 +20,7 @@ import org.eclipse.cdt.codan.core.model.cfg.ICfgData;
 import org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph;
 import org.eclipse.cdt.codan.core.model.cfg.IExitNode;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -27,6 +28,8 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 
 /**
@@ -54,10 +57,13 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 			this.hasret = false;
 		}
 		public int visit(IASTDeclaration element) {
-			return PROCESS_SKIP; // skip inner functions
+			if (element!=func)
+			   return PROCESS_SKIP; // skip inner functions
+			return PROCESS_CONTINUE;
 		}
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
+				hasret = true;
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
 				if (!isVoid(func)) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID)
@@ -66,14 +72,19 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
 				} else {
-					if (ret.getReturnValue() != null)
+					if (ret.getReturnValue() != null) {
+						IType type = ret.getReturnValue().getExpressionType();
+						if (isVoid(type)) 
+							return PROCESS_SKIP;
 						reportProblem(RET_ERR_VALUE_ID, ret.getReturnValue());
+					}
 				}
-				hasret = true;
+
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
 		}
+
 	}
 
 	/*
@@ -148,7 +159,24 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		}
 		return false;
 	}
-
+	/**
+	 * check if type if void
+	 * (uses deprecated API for compatibility with 6.0)
+	 * @param type
+	 * @throws DOMException
+	 */
+	@SuppressWarnings("deprecation")
+	public boolean isVoid(IType type) {
+		if (type instanceof IBasicType) {
+			try {
+				if (((IBasicType) type).getType()==IBasicType.t_void)
+					return true;
+			} catch (DOMException e) {
+				return false;
+			}
+		}
+		return false;
+	}
 	/**
 	 * @param func
 	 * @return

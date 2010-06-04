@@ -549,7 +549,7 @@ public class SyncUtil {
                        if (isSuccess()) {
                     	   IDMContext[] contexts = getData();
                     	   Assert.assertNotNull("invalid return value from service", contexts);
-                    	   Assert.assertEquals("unexpected number of processes", contexts.length, 1);
+                    	   Assert.assertEquals("unexpected number of processes", 1, contexts.length);
                     	   IDMContext context = contexts[0];    
                            Assert.assertNotNull("unexpected process context type ", context);
                     	   waitor.setReturnInfo(context);

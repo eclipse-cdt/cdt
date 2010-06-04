@@ -164,6 +164,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 
 	/* checker must implement @link ICheckerWithPreferences */
 	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
 		if (problem.getId().equals(RET_NO_VALUE_ID)
 				|| problem.getId().equals(RET_NORET_ID)) {
 			addPreference(problem, PARAM_IMPLICIT,

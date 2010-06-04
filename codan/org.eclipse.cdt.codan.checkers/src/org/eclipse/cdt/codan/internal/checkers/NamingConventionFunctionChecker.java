@@ -67,6 +67,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
 	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
 		addPreference(
 				problem,
 				PARAM_KEY,

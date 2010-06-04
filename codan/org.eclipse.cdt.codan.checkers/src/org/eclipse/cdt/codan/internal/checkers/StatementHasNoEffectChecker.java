@@ -127,6 +127,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	}
 
 	public void initPreferences(IProblemWorkingCopy problem) {
+		super.initPreferences(problem);
 		addPreference(problem, PARAM_MACRO_ID,
 				CheckersMessages.StatementHasNoEffectChecker_ParameterMacro,
 				Boolean.TRUE);

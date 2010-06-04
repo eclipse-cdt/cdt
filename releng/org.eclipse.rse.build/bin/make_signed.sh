@@ -58,7 +58,7 @@ export PATH=/shared/dsdp/tm/ibm-java2-ppc64-50/jre/bin:/shared/dsdp/tm/ibm-java2
 
 if [ ! -d ${tmpdir} ]; then
   mkdir -p ${tmpdir}
-  if [ ! -d {tmpdir} ]; then
+  if [ ! -d ${tmpdir} ]; then
     echo "ERROR: could not create tmpdir in ${tmpdir}"
     exit 1
   fi

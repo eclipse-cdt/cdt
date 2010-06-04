@@ -92,12 +92,8 @@ public class TextCanvas extends GridCanvas {
 			public void terminalDataChanged() {
 				if(isDisposed())
 					return;
+				// scroll to end (unless scroll lock is active)
 				scrollToEnd();
-				// make sure the scroll area is correct:
-				if (!fScrollLock) {
-					scrollY(getVerticalBar());
-					scrollX(getHorizontalBar());
-				}
 			}
 		});
 		// let the cursor blink if the text canvas gets the focus...
@@ -250,14 +246,8 @@ public class TextCanvas extends GridCanvas {
 		setVirtualExtend(getCols()*getCellWidth(),getRows()*getCellHeight());
 		setRedraw(false);
 		try {
-			// scroll to end
+			// scroll to end (unless scroll lock is active)
 			scrollToEnd();
-			// make sure the scroll area is correct:
-			if (!fScrollLock) {
-				scrollY(getVerticalBar());
-				scrollX(getHorizontalBar());
-			}
-	
 			getParent().layout();
 		} finally {
 			setRedraw(true);
@@ -273,6 +263,9 @@ public class TextCanvas extends GridCanvas {
 			if(v.y!=-y) {
 				setVirtualOrigin(v.x,y);
 			}
+			// make sure the scroll area is correct:
+			scrollY(getVerticalBar());
+			scrollX(getHorizontalBar());
 		}
 	}
 	/**

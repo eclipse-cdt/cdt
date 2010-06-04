@@ -814,7 +814,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Ensure that the breakpoint was correctly installed
 		MIBreakpointDMData breakpoint1 = (MIBreakpointDMData) getBreakpoint(ref);
 		assertEquals("BreakpointService problem: breakpoint mismatch (wrong address)",
-				breakpoint1.getAddresses()[0].getValue(), ADDRESS);
+				ADDRESS, breakpoint1.getAddresses()[0].getValue());
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong condition)",
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",

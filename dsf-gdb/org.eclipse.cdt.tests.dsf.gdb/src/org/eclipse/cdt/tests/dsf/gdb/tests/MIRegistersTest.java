@@ -190,7 +190,7 @@ public class MIRegistersTest extends BaseTestCase {
             
         fWait.waitReset();
 
-        assertEquals("Wrong number of registers", regContexts.length, X86_REGS.size()); 
+        assertEquals("Wrong number of registers", X86_REGS.size(), regContexts.length); 
 
         return(regContexts);
     }
@@ -225,7 +225,7 @@ public class MIRegistersTest extends BaseTestCase {
     	MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
         IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
-    	assertEquals("Wrong number of registers", regDMCs.length, X86_REGS.size());
+    	assertEquals("Wrong number of registers", X86_REGS.size(), regDMCs.length);
     }
     
     @Test
@@ -314,10 +314,10 @@ public class MIRegistersTest extends BaseTestCase {
     	assertTrue("Register Value is not in HEX_FORMAT " ,val.startsWith("0x"));
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.BINARY_FORMAT, 0);
-    	Assert.assertEquals("Register Value is not in BINARY_FORMAT ", val, Integer.toBinaryString(Integer.parseInt(REGISTER_VALUE)));
+    	Assert.assertEquals("Register Value is not in BINARY_FORMAT ", Integer.toBinaryString(Integer.parseInt(REGISTER_VALUE)), val);
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.DECIMAL_FORMAT , 0);
-    	Assert.assertEquals("Register Value is not in DECIMAL_FORMAT", Integer.parseInt(val), Integer.parseInt(REGISTER_VALUE));
+    	Assert.assertEquals("Register Value is not in DECIMAL_FORMAT", Integer.parseInt(REGISTER_VALUE), Integer.parseInt(val));
 
     	val = getModelDataForRegisterDataValue(frameDmc, IFormattedValues.OCTAL_FORMAT, 0);
     	assertTrue("Register Value is not in OCTAL_FORMAT " ,val.startsWith("0"));

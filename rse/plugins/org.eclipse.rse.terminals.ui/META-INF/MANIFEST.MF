@@ -21,5 +21,6 @@ Export-Package: org.eclipse.rse.internal.terminals.ui;x-internal:=true,
  org.eclipse.rse.internal.terminals.ui.actions;x-internal:=true,
  org.eclipse.rse.internal.terminals.ui.configuration.adapter;x-internal:=true,
  org.eclipse.rse.internal.terminals.ui.handlers;x-internal:=true,
+ org.eclipse.rse.internal.terminals.ui.propertypages;x-internal:=true,
  org.eclipse.rse.internal.terminals.ui.views;x-internal:=true
 Bundle-Localization: plugin

@@ -25,6 +25,7 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.shells.ui;x-internal:=true,
  org.eclipse.rse.internal.shells.ui.actions;x-internal:=true,
+ org.eclipse.rse.internal.shells.ui.handlers;x-internal:=true,
  org.eclipse.rse.internal.shells.ui.propertypages;x-internal:=true,
  org.eclipse.rse.internal.shells.ui.view;x-internal:=true,
  org.eclipse.rse.shells.ui,

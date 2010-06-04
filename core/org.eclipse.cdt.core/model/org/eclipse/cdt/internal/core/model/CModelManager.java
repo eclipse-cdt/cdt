@@ -1374,7 +1374,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 			perFactoryWorkingCopies = new HashMap<ITranslationUnit, WorkingCopy>();
 			sharedWorkingCopies.put(factory, perFactoryWorkingCopies);
 		}
-		WorkingCopy workingCopy = perFactoryWorkingCopies.get(this);
+		WorkingCopy workingCopy = perFactoryWorkingCopies.get(tu);
 		if (workingCopy != null) {
 			workingCopy.useCount++;
 			return workingCopy;

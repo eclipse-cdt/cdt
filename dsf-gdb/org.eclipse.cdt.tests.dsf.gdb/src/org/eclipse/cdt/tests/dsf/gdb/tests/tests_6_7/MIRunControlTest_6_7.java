@@ -12,6 +12,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_7;
 
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIRunControlTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -20,6 +21,6 @@ import org.junit.runner.RunWith;
 public class MIRunControlTest_6_7 extends MIRunControlTest {
 	@BeforeClass
     public static void beforeClassMethod_6_7() {
-		setGdbProgramNamesLaunchAttributes("6.7");		
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_7);		
 	}
 }

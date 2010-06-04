@@ -8,19 +8,18 @@
  * Contributors:
  *     Ericsson - Initial Implementation
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_2;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
-import org.eclipse.cdt.tests.dsf.gdb.tests.MICatchpointsTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.MIBreakpointsTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MICatchpointsTest_6_8 extends MICatchpointsTest {
-	
+public class MIBreakpointsTest_7_2 extends MIBreakpointsTest {
 	@BeforeClass
-    public static void beforeClassMethod_6_8() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);
+	public static void beforeClassMethod_7_2() {
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_2);		
 	}
 }

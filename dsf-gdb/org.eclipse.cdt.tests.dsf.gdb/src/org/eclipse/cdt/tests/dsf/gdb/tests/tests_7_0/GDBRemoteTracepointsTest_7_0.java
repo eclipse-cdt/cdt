@@ -38,6 +38,7 @@ import org.eclipse.cdt.tests.dsf.gdb.framework.AsyncCompletionWaitor;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -48,7 +49,7 @@ import org.junit.runner.RunWith;
 public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	@BeforeClass
 	public static void beforeClassMethod_7_0() {
-		setGdbProgramNamesLaunchAttributes("7.0");
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_0);
 		
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, "data/launch/bin/TracepointTestApp.exe");
 		

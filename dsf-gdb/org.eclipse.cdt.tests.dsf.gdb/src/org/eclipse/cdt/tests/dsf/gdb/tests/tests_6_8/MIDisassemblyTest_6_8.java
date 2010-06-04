@@ -12,6 +12,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIDisassemblyTest;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -21,6 +22,6 @@ import org.junit.runner.RunWith;
 public class MIDisassemblyTest_6_8 extends MIDisassemblyTest {
 	@BeforeClass
     public static void beforeClassMethod_6_8() {
-		setGdbProgramNamesLaunchAttributes("6.8");		
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);		
 	}
 }

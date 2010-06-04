@@ -11,6 +11,7 @@
 package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_6;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
+import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.tests.dsf.gdb.tests.MIExpressionsTest;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -21,7 +22,7 @@ import org.junit.runner.RunWith;
 public class MIExpressionsTest_6_6 extends MIExpressionsTest {
 	@BeforeClass
     public static void beforeClassMethod_6_6() {
-		setGdbProgramNamesLaunchAttributes("6.6");		
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_6);		
 	}
 	
     @Override

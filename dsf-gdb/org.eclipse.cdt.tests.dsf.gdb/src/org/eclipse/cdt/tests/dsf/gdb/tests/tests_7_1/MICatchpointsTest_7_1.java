@@ -8,7 +8,7 @@
  * Contributors:
  *     Ericsson - Initial Implementation
  *******************************************************************************/
-package org.eclipse.cdt.tests.dsf.gdb.tests.tests_6_8;
+package org.eclipse.cdt.tests.dsf.gdb.tests.tests_7_1;
 
 import org.eclipse.cdt.tests.dsf.gdb.framework.BackgroundRunner;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
@@ -17,10 +17,9 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(BackgroundRunner.class)
-public class MICatchpointsTest_6_8 extends MICatchpointsTest {
-	
+public class MICatchpointsTest_7_1 extends MICatchpointsTest {
 	@BeforeClass
-    public static void beforeClassMethod_6_8() {
-		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_6_8);
+	public static void beforeClassMethod_7_1() {
+		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_1);		
 	}
 }

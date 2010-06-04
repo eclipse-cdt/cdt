@@ -35,6 +35,7 @@
    </url>
 
    <requires>
+      <import feature="org.eclipse.cdt.platform" version="7.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.cdt.core" version="5.2.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.debug.core"/>

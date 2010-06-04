@@ -38,9 +38,9 @@
 </ul>
 </li>
 -->
-<li>At least 25 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-06-02;chfield=resolution;query_format=advanced;chfieldfrom=2010-05-03;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[67];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20RC1;target_milestone=3.2%20RC2;target_milestone=3.2%20RC3;product=Target%20Management">
+<li>At least 35 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-06-09;chfield=resolution;query_format=advanced;chfieldfrom=2010-05-03;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[67];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20RC1;target_milestone=3.2%20RC2;target_milestone=3.2%20RC3;target_milestone=3.2%20RC4;target_milestone=3.2;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/">
   TM 3.2M7</a>

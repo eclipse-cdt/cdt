@@ -8,13 +8,14 @@
  * Contributors:
  * Mirko Raner - [196337] initial implementation; some methods adapted from
  *               org.eclipse.tm.terminal.ssh/SshConnector
+ * Mirko Raner - [314977] Dynamically disable when no PTY is available
  **************************************************************************************************/
 
 package org.eclipse.tm.internal.terminal.local;
 
 import java.io.OutputStream;
-import java.text.Format;
-import java.text.MessageFormat;
+
+import org.eclipse.cdt.utils.Platform;
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +32,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.local.launch.LocalTerminalLaunchUtilities;
@@ -50,7 +52,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnect
  * <code>vi</code> editor).
  *
  * @author Mirko Raner
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class LocalTerminalConnector extends TerminalConnectorImpl
 implements IDebugEventSetListener {
@@ -78,6 +80,25 @@ implements IDebugEventSetListener {
 	public LocalTerminalConnector() {
 
 		settings = new LocalTerminalSettings();
+	}
+
+	/**
+	 * Initializes the connector. This method checks whether a <code>pty</code> driver is available
+	 * and will fail if that is not the case.
+	 *
+	 * @throws Exception if the connector could not be initialized
+	 */
+	public void initialize() throws Exception {
+
+		super.initialize();
+		if (!PTY.isSupported()) {
+
+			final String OS = Platform.getOS();
+			final String ARCH = Platform.getOSArch();
+			String message = NLS.bind(LocalTerminalMessages.errorNoPTYSupport, OS, ARCH);
+			IStatus status = new Status(IStatus.WARNING, LocalTerminalActivator.PLUGIN_ID, message);
+			throw new CoreException(status);
+		}
 	}
 
 	/**
@@ -191,9 +212,8 @@ implements IDebugEventSetListener {
 
 			Shell shell = Display.getDefault().getActiveShell();
 			String title = LocalTerminalMessages.errorTitleCouldNotConnectToTerminal;
-			Format text;
-			text = new MessageFormat(LocalTerminalMessages.errorLaunchConfigurationNoLongerExists);
-			String message = text.format(new Object[] {configurationName});
+			String text = LocalTerminalMessages.errorLaunchConfigurationNoLongerExists;
+			String message = NLS.bind(text, configurationName);
 			IStatus status = new Status(IStatus.ERROR, LocalTerminalActivator.PLUGIN_ID, message);
 			ErrorDialog.openError(shell, title, null, status);
 			control.setState(TerminalState.CLOSED);

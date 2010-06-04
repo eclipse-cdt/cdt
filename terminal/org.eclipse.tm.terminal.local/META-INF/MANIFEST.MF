@@ -17,5 +17,4 @@ Require-Bundle: org.eclipse.tm.terminal;bundle-version="[3.0.0,3.1.0)",
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
-Eclipse-PlatformFilter: (!(osgi.os=win32))
 Import-Package: org.eclipse.core.variables

@@ -283,6 +283,12 @@
             icon="icons/view16/class_hi.gif"
             id="org.eclipse.cdt.ui.typeHierarchy"
             name="%typeHierarchy.name"/>
+      <view
+            name="%templatesViewName"
+            icon="$nl$/icons/view16/templates.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.texteditor.templates.TemplatesView"
+            id="org.eclipse.ui.texteditor.TemplatesView" />
    </extension>
 <!-- The wizards -->
    <extension

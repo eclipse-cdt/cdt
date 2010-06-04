@@ -83,7 +83,7 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+<!--
    <plugin
          id="org.eclipse.tm.tcf.agent"
          version="0.3.0"
@@ -93,5 +93,5 @@
          id="org.eclipse.tm.tcf.docs"
          version="0.3.0"
          unpack="true"/>
-
+-->
 </feature>

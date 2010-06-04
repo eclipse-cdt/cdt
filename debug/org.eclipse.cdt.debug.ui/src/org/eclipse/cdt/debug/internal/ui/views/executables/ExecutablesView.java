@@ -279,34 +279,15 @@ public class ExecutablesView extends ViewPart {
 					{
 						// update the remove action
 						removeAction.setEnabled(!newSelection.isEmpty());
-						
-						final Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
-						
-						Job setectExeJob = new Job(Messages.ExecutablesView_Select_Executable) {
 
-							@Override
-							protected IStatus run(IProgressMonitor monitor) {
-								if (firstElement instanceof Executable) {
-									Executable executable = (Executable)firstElement;
-									this.setName(Messages.ExecutablesView_Finding_Sources_Job_Name + executable.getName());
-									executable.getSourceFiles(monitor);
-								}
-								// selection could be empty, so do this no matter what to update the source
-								// files viewer
-								UIJob selectExeUIJob = new UIJob(Messages.ExecutablesView_Select_Executable){
-									@Override
-									public IStatus runInUIThread(IProgressMonitor monitor) {
-										sourceFilesViewer.setInput(firstElement);
-										sourceFilesViewer.packColumns();
-										return Status.OK_STATUS;
-									}};
-								selectExeUIJob.schedule();								
-								return Status.OK_STATUS;
-							}};
-						setectExeJob.schedule();
+						// just immediately do this work: the source files content provider
+						// will do the work in the background
+						final Object firstElement = ((IStructuredSelection) newSelection).getFirstElement();
+
+						sourceFilesViewer.setInput(firstElement);
+						
 						oldSelection = (IStructuredSelection) newSelection;
 					}
-					
 				}
 			}
 		});

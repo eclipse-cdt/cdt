@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
+import java.io.File;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -17,13 +19,12 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
@@ -38,18 +39,36 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * Displays the list of source files for the executable selected in the
  * ExecutablesViewer.
  */
 public class SourceFilesViewer extends BaseViewer implements ISourceLookupParticipant, ILaunchConfigurationListener {
+
+	/** Information from an ITranslationUnit for the various displayed columns */
+	static class TranslationUnitInfo {
+		/** when do we next check these attributes?  time in ms */
+		long nextCheckTimestamp;
+		/** the source file location */
+		IPath location;
+		/** does the file exist? */
+		boolean exists;
+		/** length of actual file in bytes */
+		long fileLength;
+		/** {@link File#lastModified()} time for source file */
+		long lastModified;
+		/** the original source file location, e.g. from debug info */
+		IPath originalLocation;
+		/** does the original file exist? */
+		boolean originalExists;
+	}
 
 	private static final String P_COLUMN_ORDER_KEY_SF = "columnOrderKeySF"; //$NON-NLS-1$
 	private static final String P_SORTED_COLUMN_INDEX_KEY_SF = "sortedColumnIndexKeySF"; //$NON-NLS-1$
@@ -59,6 +78,10 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 
 	TreeColumn originalLocationColumn;
 	private Tree sourceFilesTree;
+	/** Tradeoff expensiveness of checking filesystem against likelihood 
+	 * that files will be added/removed/changed in the given time period */
+	static final long FILE_CHECK_DELTA = 30 * 1000;
+	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<Object, TranslationUnitInfo>(1024);
 
 	public SourceFilesViewer(ExecutablesView view, Composite parent, int style) {
 		super(view, parent, style);
@@ -90,6 +113,8 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 		sourceFilesTree.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
+				DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(SourceFilesViewer.this);
+				
 				CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().removeParticipants(
 						new ISourceLookupParticipant[] { SourceFilesViewer.this });
 			}
@@ -213,19 +238,19 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 	}
 
 	private void refreshContent() {
-		UIJob refreshJob = new UIJob(Messages.SourceFilesViewer_RefreshSourceFiles) {
-
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
 				Object input = getInput();
 				if (input != null && input instanceof Executable) {
 					((Executable)input).setRemapSourceFiles(true);
+					
+					// TODO: be more selective; we don't know what TUs go with which executables yet
+					flushTranslationUnitCache();
+			
 					refresh(true);
 				}
-				return Status.OK_STATUS;
 			}
-		};
-		refreshJob.schedule();
+		});
 	}
 
 	@Override
@@ -280,5 +305,58 @@ public class SourceFilesViewer extends BaseViewer implements ISourceLookupPartic
 			refreshContent();
 		}
 	}
-	
+
+
+	static TranslationUnitInfo fetchTranslationUnitInfo(Executable executable, Object element) {
+		if (!(element instanceof ITranslationUnit)) {
+			return null;
+		}
+		
+		ITranslationUnit tu = (ITranslationUnit) element;
+		long now = System.currentTimeMillis();
+		TranslationUnitInfo info;
+		
+		synchronized (translationUnitInfoCache) {
+			info = (TranslationUnitInfo) translationUnitInfoCache.get(element);
+		}
+		if (info == null || info.nextCheckTimestamp <= now) {
+			if (info == null)
+				info = new TranslationUnitInfo();
+			
+			info.location = tu.getLocation();
+			if (info.location != null) {
+				File file = info.location.toFile();
+				info.exists = file.exists();
+				info.fileLength = file.length();
+				info.lastModified = file.lastModified();
+				
+				info.originalLocation = new Path(executable.getOriginalLocation(tu));
+				info.originalExists = info.originalLocation.toFile().exists();
+			} else {
+				info.exists = false;
+				info.fileLength = 0;
+				info.lastModified = 0;
+				info.originalExists = false;
+				info.originalLocation = null;
+			}
+			
+			info.nextCheckTimestamp = System.currentTimeMillis() + FILE_CHECK_DELTA;
+			
+			synchronized (translationUnitInfoCache) {
+				translationUnitInfoCache.put(element, info);
+			}
+		}
+		return info;
+	}
+
+	/**
+	 * 
+	 */
+	static void flushTranslationUnitCache() {
+		synchronized (translationUnitInfoCache) {
+			translationUnitInfoCache.flush();
+		}
+		
+	}
+
 }

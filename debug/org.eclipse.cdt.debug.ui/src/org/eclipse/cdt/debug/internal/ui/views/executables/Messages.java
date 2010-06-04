@@ -52,6 +52,8 @@ public class Messages extends NLS {
 	public static String ExecutablesViewer_Size;
 	public static String ExecutablesViewer_Type;
 	public static String SourceFilesContentProvider_NoFilesFound;
+	public static String SourceFilesContentProvider_ReadingDebugSymbolInformationLabel;
+	public static String SourceFilesContentProvider_Refreshing;
 	public static String SourceFilesViewer_RefreshSourceFiles;
 	public static String SourceFilesViewer_Location;
 	public static String SourceFilesViewer_Modified;

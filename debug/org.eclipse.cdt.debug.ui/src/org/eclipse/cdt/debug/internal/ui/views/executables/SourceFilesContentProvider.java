@@ -124,15 +124,15 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			final QuickParseJob theJob = job;
 			job.addJobChangeListener(new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
+					synchronized (pathToJobMap) {
+						pathToJobMap.values().remove(theJob);
+					}
 					if (event.getResult().isOK()) {
+						synchronized (fetchedExecutables) {
+							fetchedExecutables.put(exePath, theJob.tus);
+						}
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								synchronized (pathToJobMap) {
-									pathToJobMap.values().remove(theJob);
-								}
-								synchronized (fetchedExecutables) {
-									fetchedExecutables.put(exePath, theJob.tus);
-								}
 								// update the viewer
 								if (!viewer.getControl().isDisposed()) {
 									viewer.getTree().setLayoutDeferred(true);

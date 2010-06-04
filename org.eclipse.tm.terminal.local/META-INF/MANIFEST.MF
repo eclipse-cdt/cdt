@@ -18,3 +18,8 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Import-Package: org.eclipse.core.variables
+Export-Package: org.eclipse.tm.internal.terminal.local;x-internal:=true,
+ org.eclipse.tm.internal.terminal.local.launch;x-internal:=true,
+ org.eclipse.tm.internal.terminal.local.launch.ui;x-internal:=true,
+ org.eclipse.tm.internal.terminal.local.process;x-internal:=true,
+ org.eclipse.tm.internal.terminal.local.ui;x-internal:=true

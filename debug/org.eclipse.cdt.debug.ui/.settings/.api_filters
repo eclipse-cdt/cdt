@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.debug.ui" version="2">
+    <resource path="src/org/eclipse/cdt/debug/internal/ui/views/executables/SourceFilesContentProvider.java" type="org.eclipse.cdt.debug.internal.ui.views.executables.SourceFilesContentProvider$QuickParseJob">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="Executable"/>
+                <message_argument value="QuickParseJob"/>
+                <message_argument value="getSourceFiles(IProgressMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

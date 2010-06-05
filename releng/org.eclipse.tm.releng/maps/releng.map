@@ -1,1 +1,2 @@
 feature@org.eclipse.tm.releng.master=HEAD,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/releng/org.eclipse.tm.releng.master-feature
+feature@org.eclipse.tm.releng.test=HEAD,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/releng/org.eclipse.tm.releng.test-feature

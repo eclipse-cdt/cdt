@@ -53,6 +53,7 @@
          id="org.eclipse.rse.examples"
          version="0.0.0"/>
 
+<!--
    <includes
          id="org.eclipse.rse.tests"
          version="0.0.0"/>
@@ -60,6 +61,11 @@
    <includes
          id="org.eclipse.tm.terminal.test"
          version="0.0.0"/>
+-->
+   <includes
+         id="org.eclipse.tm.releng.test"
+         version="0.0.0"/>
+
 <!--
    <includes
          id="org.eclipse.rse.wince"

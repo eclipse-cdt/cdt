@@ -49,13 +49,14 @@ Needs to be updated and tested for org.eclipse.tm.terminal
       <property name="classname" value="${classname}"/>
 	  <property name="extraVMargs" value="-ea"/>
     </ant>
+  	<!-- Plain Junit tests: Commented out until CBI / Athena works
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${location}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.tm.terminal.test.AutomatedTests"/>
 	  <property name="extraVMargs" value="-ea"/>
     </ant>
-    
+    -->
     <!-- UI Tests: Commented out until access to default visible methods works
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${session-folder}"/>
@@ -101,7 +102,7 @@ Needs to be updated and tested for org.eclipse.tm.terminal
   <!-- the tests have been run should go here. -->
   <target name="run" depends="init,suite,cleanup">
     <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="includes" value="org.eclipse.rse.*.xml"/>
+      <property name="includes" value="org.eclipse.tm.*.xml"/>
       <property name="output-file" value="${plugin-name}.xml"/>
     </ant>
   </target>

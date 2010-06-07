@@ -21,15 +21,16 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.service.DsfServices;
@@ -492,10 +493,21 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	            			@Override
 	            			protected void handleSuccess() {
 	            				// Store the result
-	            				FormattedValueDMData data = getData();
-            					String value = data.getFormattedValue().substring(2);	// Strip the "0x"
-            					drm.setData(new BigInteger(value, 16));
+	            				try {
+                					String value = getData().getFormattedValue().substring(2);	// Strip the "0x"
+                					drm.setData(new BigInteger(value, 16));
+	            				} catch (IndexOutOfBoundsException e) {
+	            				    setFormatError(e);
+	            				} catch (NumberFormatException e) {
+	            				    setFormatError(e);
+	            				}
 	            				drm.done();
+	            			}
+	            			
+	            			private void setFormatError(Exception e) {
+	            			    drm.setStatus(new Status(
+	            			        IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR, 
+	            			        "The result of expression evaluation \"" + getData().getFormattedValue() + "\" is not formatted correctly.", e)); //$NON-NLS-1$ //$NON-NLS-2$
 	            			}
 	                	}
 	                );

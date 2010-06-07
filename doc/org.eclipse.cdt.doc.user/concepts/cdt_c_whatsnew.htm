@@ -15,12 +15,10 @@ tr {vertical-align: top;}
 </head>
 <body>
 
-<h1 id="top">CDT 6.0 - New and Noteworthy</h1>
-<p>Note: "New and Noteworthy" for <a href="#5.0">previous versions</a> is at the bottom of this file.</p>
-<p>See <a href="http://wiki.eclipse.org/CDT/User/NewIn60">What's new in CDT 6.0</a> on the CDT wiki;
-may contain other information.
+<h1 id="top">CDT 7.0 - New and Noteworthy</h1>
+<p>See <a href="http://wiki.eclipse.org/CDT/User/NewIn70">What's new in CDT 7.0</a> on the CDT wiki
+which may contain more recent information.
 </p>
-
 <table cellpadding="10" cellspacing="0" width="600">
 	<colgroup>
 		<col width="20%">
@@ -30,430 +28,312 @@ may contain other information.
 		<p><!-- ******************** Editor ********************** -->
 		<tr>
 			<td colspan="2"><a name="Editor"></a>
-			<div style="font-size: 20px; font-weight: bold;">Editor</div>
+				<div style="font-size: 20px; font-weight: bold;">Editor</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Rename in File</span></p>
+				<p align="right"><span class="bold">Sort Lines</span></p>
 			</td>
-			<td>To make rename refactoring  work interactively in the editor,
-			position the cursor on an identifier in the editor and hit Ctrl-1
-			(the hotfix key).  Choose "Rename in file."
-			Changing an identifier simultaneously changes all other references to that identifier.
-			<p><img src="../images/60/RenameInFile.png" alt="Rename in File">
+				<td>The new <strong>Sort Lines</strong> command that sorts selected lines alphabetically.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Surround with</span></p>
+			</td>
+			<td>
+				<p><img src="../images/70/CDT70_Surroundwith.png" alt="Surround with"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Templates View support</span></p>
+			</td>
+			<td>Added Templates View support.
+				<p><img src="../images/70/CDT70_Templates.png" alt="Templates View"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Outline View Groupings</span></p>
+			</td>
+			<td>Option to group macro definitions in the Outline view.
+				<p><img src="../images/70/CDT70_Outlinegroupmacros.png" alt="Outline View Groupings"></img></p>
+				<p>&nbsp;</p>
 			</td>
 		</tr>
 
+		<!-- ******************** Codan ********************** -->
 		<tr>
-			<td>
-			<p align="right"><span class="bold">Refactoring</span></p>
-			</td>
-			<td>"Extract local variable" is added via editor context menu.  
-			Select an expression in the editor and select Refactor > Extract local variable
-			from the context menu.  
-			<p><img src="../images/60/refactor_before.png" alt="refactor"></p>
-			 <p><img src="../images/60/refactorExtractLocalVar.png" alt="refactoring context menu highlighting 'extract local variable'">   
-			<p>Give the new local variable a name</p>
-			<p><p><img src="../images/60/refactor_varname.png" alt="refactor"></p></p>
-			A local variable is created from the expression and its
-			use is inserted in the original expression.
-			<p><img src="../images/60/refactor_after.png" alt="refactor"></p>
+			<td colspan="2"><a name="Editor"></a>
+				<div style="font-size: 20px; font-weight: bold;">Codan</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Add Include </span></p>
+				<p align="right"><span class="bold">Code Analysis</span></p>
 			</td>
-			<td>Add Include significantly improved.
-			<ul>
-				<li>CDT can infer the header file of a function or class from its use and automatically insert the appropriate
-				#include directive. For example create a file with a main method and a call to printf. Right click on the call to
-				printf and select Source &gt; Add Include. CDT will infer that printf is defined in the cstdio header and
-				automatically insert the #include directive for that header.
-				<ul>
-					<li>This feature works much better in CDT 6.0.</li>
-				</ul>
-				</li>
-			</ul>
-
-			<!-- <p><img src="../images/60/image.png" alt="alternate text for image for accessibility">   -->
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold">Outline View</span></p>
-			</td>
-			<td>
-			<ul>
-				<li>Inactive code is shown in Outline View. The CDT parser can now detect top-level declarations within
-				inactive code blocks and display them in the outline view. Inactive declarations appear slightly greyed out and the
-				icon has a slash through it.
-				<p><img src="../images/60/CDT6.0_inactive_code_outline.png" alt="Inactive code in Outline View">
+			<td>New code analysis framework is introduced, called Codan. See this
+			  <a href="http://wiki.eclipse.org/CDT/designs/StaticAnalysis">wiki</a> for details.
+				<p><img src="../images/70/CDT70_Codan.png" alt="Codan"></img></p>
 				<p>&nbsp;</p>
-				</li>
-				<li>Grouping of method definitions in the Outline view.
-				<p></p>
-				The outline view is now capable of displaying class members defined outside the class in the same way it displays
-				members defined inside the class.
-				<p></p>
-				This feature can be turned on/off in the preferences.
-				<p><img src="../images/60/CDT6.0_outline_group_methods2.png" alt="Grouping of method definitions in the Outline view">
-				<p>&nbsp;</p>
-				<p><img src="../images/60/CDT6.0_group_methods_prefernce2.png" alt="Method definitions grouping preference">
-				<p>&nbsp;</p>
-				</li>
-			</ul>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold"> Macro Exploration </span></p>
-			</td>
-			<td>Improved Macro Exploration control.
-			<ul>
-				<li>The Macro Expansion hover now has a toolbar at the bottom of the control with back, forward and open
-				declaration buttons.</li>
-				<li>The title bar of the Macro Expansion hover is now draggable.</li>
-				<p><img src="../images/60/CDT6.0_macro_hover.png" alt="Macro Expansion hover toolbar"></p>
-			</ul>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold">Block selection mode </span></p>
-			</td>
-			<td>Block selection mode now works in the CDT editor.
-			<p><img src="../images/60/CDT6.0_block_mode.png" alt="Block selection mode in editor">
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold">C style block commenting</span></p>
-			</td>
-			<td>C style block commenting (Ctrl-Shift-/) improved
-			<!--  <p><img src="../images/60/image.png" alt="alternate text for image for accessibility">     -->
 			</td>
 		</tr>
 
-		<!-- ******************** Indexing ********************** -->
+		<!-- ******************** Refactoring ********************** -->
 		<tr>
-			<td colspan="2"><a name="Indexing"></a>
-			<div style="font-size: 20px; font-weight: bold;">Indexing</div>
+			<td colspan="2"><a name="Refactoring"></a>
+				<div style="font-size: 20px; font-weight: bold;">Refactoring</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Implicit references and overloaded operators</span></p>
+				<p align="right"><span class="bold">Getters and setters</span></p>
 			</td>
-			<td>
-			<p></p>
-			Index support for implicit references and overloaded operators:
-			<ul>
-				<li>The indexer now picks up references for uses of overloaded operators.</li>
-				<li>The editor now has full support for overloaded operators including semantic highlighting, mark occurrences
-				and open declaration.
-				<p><img src="../images/60/CDT6.0_OO_editor.png" alt="Overloaded operators support in editor">
-				<p>&nbsp;</p>
-				</li>
-				<li>A category has been added to the syntax highlighting options for overloaded operators.
-				<p><img src="../images/60/CDT6.0_OO_syntax_preferences.png" alt="Overloaded operators syntax color option in preference">
-				<p>&nbsp;</p>
-				</li>
-				<li>It is now possible to search for references to overloaded operators.
-				<p><img src="../images/60/CDT6.0_OO_search.png" alt="Overloaded operators in search results">
-				<p>&nbsp;</p>
-				</li>
-				<li>Uses of overloaded operators now show up in the call hierarchy view.
-				<p><img src="../images/60/CDT6.0_OO_callh2.png" alt="Overloaded operators in call hierarchy view">
-				<p>&nbsp;</p>
-				</li>
-				<li>The indexer is picking up more information to support this feature, therefore indexing time may be longer
-				and the size of the index file will be larger. For this reason the indexer options page provides the option to turn
-				off the collection of implicit references.
-				<p><img src="../images/60/CDT6.0_OO_indexer_preferences.png" alt="Skip implicit references option in indexer preference">
-				<p>&nbsp;</p>
-				</li>
-			</ul>
-			</td>
-		</tr>
-		<tr>
-		<td>
-			<p align="right"><span class="bold">System Includes</span></p>
-			</td>
-			 
-		 
-			<td>
-			<ul>
-				<li>Heuristics to pick up otherwise unresolved include files from the project
-				<p>In older versions of CDT the user was forced to manually set up all include paths that were not discovered by
-				the build system. Now CDT is capable of automatically finding any header file that is located within the project
-				without manual setup.
-				<p>(See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=213562">Bug 213562</a>)</p>
-				<p>&nbsp;</p>
-				</li>
-				</ul>
-				</td>
-				</tr>
-		
-		<td>
-			<p align="right"><span class="bold">Indexer Accuracy</span></p>
-			</td>
-			<td>
-			<ul>
-			<li>Rework of template instantiation
-				<p>
-				There have been significant improvements to the CDT editor for supporting C++ templates. Content assist now works
-				much better within code that makes heavy use of templates.</p>
-				<p>&nbsp;</p>
-				 <li>
-				There have been numerous improvements to the performance and accuracy of the CDT parser and indexer.</li>
-			</ul>
-			</td>
-		</tr>
-		<!-- ******************** Navigation and Search ********************** -->
-		<tr>
-			<td colspan="2"><a name="navAndSearch"></a>
-			<div style="font-size: 20px; font-weight: bold;">Navigation and Search</div>
+			<td>Choice where to place getters and setters during refactoring.
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Open Declaration</span></p>
+				<p align="right"><span class="bold">Refactoring History</span></p>
 			</td>
-			<td>Open Declaration (F3) improved, particularly for unresolved symbols.
-			<p>Open Declaration is capable of detecting potential matches.</p>
-			<p><img src="../images/60/CDT6.0_open_declaration.png" alt="Improved open declaration for unresolved symbols">
-			<p>It is now possible to navigate from a delete statement to the destructor method that is implicitly called.</p>
-			<p><img src="../images/60/CDT_6.0_delete.png" alt="Delete statement navigation">
+			<td>Introduced <strong>Refactoring History</strong> for the CDT Refactorings
+				<p><img src="../images/70/CDT70_Refactoringhistory.png" alt="Getters and setters"></img></p>
+				<p>&nbsp;</p>
 			</td>
 		</tr>
 
-		<!-- ******************** Project and Build ********************** -->
+		<!-- ******************** Build ********************** -->
 		<tr>
-			<td colspan="2"><a name="projAndBuild"></a>
-			<div style="font-size: 20px; font-weight: bold;">Project and Build</div>
+			<td colspan="2"><a name="Build"></a>
+				<div style="font-size: 20px; font-weight: bold;">Build</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Converters</span></p>
+				<p align="right"><span class="bold">Edit While Building</span></p>
 			</td>
+			<td>Allow saving files while external Makefile builds are in progress
+			</td>
+		</tr>
+		<tr>
 			<td>
-			<ul>
-				<li>Added a converter to convert a general project to a Managed make project</li>
-				<li>Fixes to Makefile converter</li>
-			</ul>
+				<p align="right"><span class="bold">Console Error Highlighting</span></p>
+			</td>
+			<td>Compiler errors and warnings are now highlighted in the build console.
+			  Navigation from errors in build console to location in editor is possible
+			  with double-click on the highlighted line.
+				<p><img src="../images/70/CDT70_ConsoleProblemHighlighting.png" alt="Console Error Highlighting"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Regex Error Parser</span></p>
+			</td>
+			<td>Regular Expression Error Parser introduced. The parser is user-configurable and can be used
+			  to parse errors from non-standard compilers
+				<p><img src="../images/70/CDT70_RegexErrorParser.png" alt="Regex Error Parser"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Save Log</span></p>
+			</td>
+			<td>Added ability to save build log to a file
+				<p><img src="../images/70/CDT70_SaveLog.png" alt="Save Log"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Run Last Target</span></p>
+			</td>
+			<td>New keyboard bindings "Run Last Make Target" F9/Shift-F9
+				<p><img src="../images/70/CDT70_LastMakeTarget.png" alt="Run Last Target"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Project Context Menu</span></p>
+			</td>
+			<td>Organized project context menu related to build.
+				<p><img src="../images/70/CDT70_ProjectContextMenu.png" alt="Project Context Menu"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Build Selected Configurations</span></p>
+			</td>
+			<td>Reworked "Build Selected Configurations" dialog.
+				<p><img src="../images/70/CDT70_BuildSelected.png" alt="Build Selected Configurations"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Build Preferences</span></p>
+			</td>
+			<td>Organized build preferences under <strong>Build</strong> page.
+				<p><img src="../images/70/CDT70_BuildPreferences.png" alt="Build Preferences"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">New Icons</span></p>
+			</td>
+			<td>New icons and decorations.
+				<p><img src="../images/70/CDT70_NewIcons70.png" alt="New Icons"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Import Includes</span></p>
+			</td>
+			<td>Import/Export in Includes and Symbols tabs on the Paths and Symbols project properties.
+				<p><img src="../images/70/CDT70_ImportIncludes.png" alt="Import Includes"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">MinGW and Cygwin</span></p>
+			</td>
+			<td>Better algorithms to recognize MinGW and Cygwin toolchains, see 
+			  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=303900">bug 303900 (Cygwin 1.7)</a> and
+			  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195572">bug 195572 (MINGW)</a> for details.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Hello World</span></p>
+			</td>
+			<td>When a Hello World project is created, open generated file automatically.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Headless Builder</span></p>
+			</td>
+			<td>Headless Builder has been improved: supports configuration selection,
+			  returns error code if built projects have error markers.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">GCC options</span></p>
+			</td>
+			<td>ManagedBuild GCC toolchain supports pre included header files, i.e. <strong>-include</strong> switch to gcc
 			</td>
 		</tr>
 
-		<tr>
+
+		<!-- ******************** Project/Configuration References ********************** -->
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Working Sets</span></p>
+				<p align="right"><span class="bold">References</span></p>
 			</td>
 			<td>
-			<ul>
-				<li>Complete overhaul of the user interface for Working Set Configurations:</li>
-				<ul>
-					<li>Updated Manage Working Set Configurations dialog for simpler workflows</li>
-					<li>Quick access to configurations via a property page for Working Sets
-					<br></br><img src="../images/60/New_cdtwsconfig_wsProperties.png" alt="New working set configuration dialog">
-					<p>&nbsp;</p>
-					
-					</li>
-					<li>Context menu actions on Working Sets in the Project Explorer for activating and building configurations
-					<p><img src="../images/60/New_cdtwsconfig_wsContextMenu.png" alt="Activating and building working set configurations through context menu"></p>
-					
-					</li>
-					<li>For more details, see the <a href="http://wiki.eclipse.org/CDT/designs/workingSets">working sets
-					design document</a></li>
-				</ul>
-			</ul>
+				<li>CDT Project References can be ordered. Referenced paths and symbols automatically track this order.</li>
+				<li>References to library projects are automatically linked in.</li>
+				<li>A configuration can reference another configuration in the same project.</li>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Make Targets View</span></p>
+				<p align="right"><span class="bold">UPC</span></p>
 			</td>
 			<td>
-			<ul>
-				<li>Icons, menu and dialogs have been enhanced. Build action uses hammer icon for consistency with project
-				build icon in editor toolbar.
-				<p><img src="../images/60/MTV.png" alt="Make Targets View">
+				<li>New UPC project wizard supports the Berkeley UPC toolchain.</li>
 				<p>&nbsp;</p>
-				</p>
+			</td>
+		</tr>
+
+		<!-- ******************** Debug ********************** -->
+		<tr>
+			<td colspan="2"><a name="Debug"></a>
+				<div style="font-size: 20px; font-weight: bold;">Debug</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Non-Stop</span></p>
+			</td>
+			<td>Support for <strong>Non-Stop Debugging</strong> (stopping one or more threads while the others continue to execute).
+			  Requires GDB 7.0 or newer.
+				<p><img src="../images/70/CDT70_NonStopDebugging.png" alt="Non-Stop debugging"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p align="right"><span class="bold">Features</span></p>
+			</td>
+			<td>
+				<li><strong>DSF-GDB</strong>. The default debugger for the CDT is now using a different debugging framework and is called DSF-GDB.
+				  It provides better support for newer GDB versions, such as 6.7, 6.8 and 7.x, for older versions you would
+				  have to edit preferences to use the old framework (CDI) by default.  See full list of DSF-GDB features
+				  <a href="http://www.eclipse.org/dsdp/dd/development/relnotes/dd_news-1.1.html">here</a>.
 				</li>
-				<li>Drag and Drop of Make Targets in Make Targets View. It is possible to copy/paste, drag files from Project
-				Explorer to the view, or Make Targets to external editor, various options available.
-				<p><img src="../images/60/MTV-DND.png" alt="Drag and Drop enabled in Make Targets View">
+				<li><strong>GDB Tracepoints</strong> are now supported. See the
+				  <a href="http://wiki.eclipse.org/CDT/designs/Tracepoints">wiki page</a>. Available in DSF-GDB only.
+				</li>
+				<li><strong>Reverse Debugging</strong> which allows to undo execution.
+				  Requires GDB 7.0 or newer and only available on Linux. Available in DSF-GDB only. 
+				  A webinar on the topic is available <a href="http://live.eclipse.org/node/723">here</a>.
+				</li>
+				<li><strong>Run To Line</strong> feature now allows to run to any line in the program, instead of only lines within the same method.
+				</li>
+				<li><strong>Pretty Printing</strong> feature of GDB is supported. Requires GDB 7.0 or newer as well as python, and GDB's python pretty-printers.
+				  Some information available <a href="http://sourceware.org/gdb/wiki/STLSupport">here</a>.
+				</li>
+				<li><strong>Interrupts on Windows</strong> platform while debugging application got improved support.
+				</li>
 				<p>&nbsp;</p>
-				</p>
-				</li>
-			</ul>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold">Error and Problem management</span></p>
-			</td>
-			<td>ErrorParserManager has been significantly simplified and improved. See <a
-				href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=264715">bug 264715 </a>and its subtasks.
-			<ul>
-				<li>Uses a much more accurate algorithm for associating errors/warnings from build output with files in the
-				workspace.</li>
-				<li>Other C/C++ projects from the workspace are considered when looking for files.</li>
-				<li>RSE EFS projects and EFS resources are supported.</li>
-				<li>Improved performance.</li>
-			</ul>
-			<p><img src="../images/60/EPM-multi.png" alt="More accurate algorithm for associating errors/warnings from build output with files in the workspace">
-			<p>In the <strong>Problems View</strong>, external file locations (outside of the workspace) have been moved to the Location
-			column and associated with "Open External Location" menu.
-			<p><img src="../images/60/PV-extloc.png" alt="Open External Location from context menu in Problems View">
-			<ul>
-				<li>Remote Project Support
-				<ul>
-					<li>New <strong>ICommandLauncher interface</strong> supports overriding how build commands are launched.</li>
-					<li><strong>EFS resources</strong> now supported with Managed Build.</li>
-				</ul>
-				</li>
-				<li>XL C/C++ Compiler Support
-				<ul>
-					<li>The <strong>XL C/C++ Error Parser</strong> has been modernized. It can handle compiler errors/warnings better and
-					now also xlC linker warnings.</li>
-					<li><strong>XL C/C++ v10.1 option support</strong> in Managed Build</li>
-					<li><strong>XL UPC compiler</strong> support added.</li>
-				</ul>
-				</li>
-				<li><strong>Headless Build</strong> You can now Import and Build CDT Projects without starting the IDE.</li>
-			</ul>
-
 			</td>
 		</tr>
 
-		<!-- ******************** Debug and Launch ********************** -->
+		<!-- ******************** Bugs fixed ********************** -->
 		<tr>
-			<td colspan="2"><a name="debugAndLaunch"></a>
-			<div style="font-size: 20px; font-weight: bold;">Debug and Launch</div>
+			<td colspan="2"><a name="bugs70"></a>
+			<div style="font-size: 20px; font-weight: bold;">Bugs Fixed</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">DSF Integration</span></p>
+				<p align="right"><span class="bold">Fixed</span></p>
 			</td>
-			<td>DSF (Eclipse Debugger Services Framework) integrated. See <a
-				href="http://www.eclipse.org/dsdp/dd/development/relnotes/dd_news-1.1.html">DSF features</a> for more information.</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold">Launch Group</span></p>
-			</td>
-			<td>
-			<p>New "Launch Group" launch configuration. Allows to launch several processes at once.</p>
-			<p><img src="../images/60/Run_debug_launch_group.png" alt="Debug launch group">
+			<td>All Bugsilla tasks closed in this release: 
+				<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;resolution=FIXED;target_milestone=6.1;target_milestone=7.0;product=CDT;classification=Tools">
+				  CDT 7.0 bug fixes
+				</a>
+				<p>&nbsp;</p>
 			</td>
 		</tr>
-				<!-- ******************** Bugs fixed ********************** -->
+
+		<!-- ******************** Known Limitations ********************** -->
 		<tr>
-			<td colspan="2"><a name="bugs60"></a>
-			<div style="font-size: 20px; font-weight: bold;">Bugs fixed</div>
+			<td colspan="2"><a name="bugs70"></a>
+			<div style="font-size: 20px; font-weight: bold;">Known Limitations</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-			<p align="right"><span class="bold">Bugs fixed</span></p>
+				<p align="right"><span class="bold">Limitations</span></p>
 			</td>
-			<td>Bugs fixed in this release: 
-			<a href="http://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Tools&product=CDT&target_milestone=6.0&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&emailtype1=exact&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
-			CDT 6.0 bug fixes</a>
-		
+			<td>Cannot run or debug class in a project with GB18030 characters in workspace/project name.
+			  Most class libraries do not properly support the creation of a system process (via java.lang.Runtime.exec(...))
+			  when the specified command line contains GB18030 characters. This limitation means the scanner
+			  discovery mechanism and debugger cannot launch applications when the command line it generates
+			  contains GB18030 characters. Details in <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=308803">Bug 308803</a>
 			</td>
 		</tr>
 		
-		<!-- ******************** NewTopic ********************** -->
-		<!-- 
-		<tr>
-			<td colspan="2"><a name="NewTopic"></a>
-			<div style="font-size: 20px; font-weight: bold;">Newtopic</div>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			<p align="right"><span class="bold">texthere</span></p>
-			</td>
-			<td>text here.
-			<p><img src="../images/image.png" alt="alternate text for image for accessibility">
-			</td>
-		</tr>
-		 -->
 	</tbody>
 </table>
-<p><a href="#top">Back to Top</a> <!-- ******************** CDT 5.0 info ********************** -->
-<h1 id="5.0">CDT 5.0 - New and Noteworthy</h1>
-<p>CDT 5.0 includes new features in Editor, Call Hierarchy, 
-Refactoring, Indexer, Projects &amp; Build, and Debug.
-<p>
-See <a href="http://wiki.eclipse.org/CDT/User/NewIn50">What's New in CDT 5.0</a> on the CDT Wiki for more information including screen shots.
 
-<p>Highlights include:
+<p>See also <a href="cdt_c_whatsnew_60.htm">CDT 6.0 - New and Noteworthy</a> to learn what's new in previous CDT versions.</p>
 
-<h3>Editor</h3>
-<ul>
-<li>Code and File Templates - user-definable templates can be used in New Class and New Source/Header File wizards.
-<li>New preference page for Code Templates
-<li>Outline view for assembly files
-<li>Code formatter improvements including new whitespace and line wrapping options, Improved GNU coding style compliance
-<li>Content assist improvements 
-<li>Doxygen editor support - auto-generation of tags and a pluggable framework for other documentation tools is now available.
-<li>Mark Occurrences - highlights where the selected identifier occurs elsewhere in the editor
-<li>Folding of compound statements
-<li>Macro Expansion hover and exploration tool
-<li>Spell checking available and enabled by default
-<li>Scalability mode for working with very large files.
-<li>Visual Studio key bindings
-
-</ul>
-<h3>Navigation and Search</h3>
-<ul>
-<li>Open Declaration for operators, empty macros, element in outline view, etc
-<li>Open Element support for static functions/variables, other improvements
-<li>Search - for Static functions/variables, macros, references of local variables, Search view usability improvements
-</ul>
-<h3>Call Hierarchy</h3>
-<ul>
-<li>Read/write decorators indicate read/write status for variables
-<li>Polymorphic method calls (virtual methods) support
-</ul>
-<h3>Refactoring</h3>
-<ul>
-<li>Refactoring infrastructure much improved, models transformation on the AST
-<li>Generate Getters and Setters
-<li>Hide Method
-<li>Implement Method
-<li>Extract Constant
-<li>Extract Function
-</ul>
-<h3>Indexer</h3>
-<ul>
-<li>Improved accuracy and performance
-<li>Entirely new preprocessor
-<li>Improved infrastructure
-<li>Visual indication of indexer status
-</ul>
-<h3>Projects and Build</h3>
-<ul>
-<li>Project Properties improved usability
-<li>Make target locations - make targets at the project level are built in the project build directory
-</ul>
-<h3>Debug</h3>
-<ul>
-<li>Executables view
-<li>Event breakpoints - added gdb catchpoints support
-</ul>
 <p><a href="#top">Back to Top</a>
+
 <p>&nbsp;</p>
 
- 
 </body>
 </html>
 

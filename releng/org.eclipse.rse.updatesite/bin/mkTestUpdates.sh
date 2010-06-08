@@ -496,7 +496,8 @@ else
   #  -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
   #  -p2.statsURI http://download.eclipse.org/stats/tm \
   #  -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.tm.terminal,org.eclipse.tm.terminal.local \
-  CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+  #CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+  CMD="java -jar ${tgtlauncher} \
     -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
     -source ${SITE} \
     -metadataRepository file:${SITE} \

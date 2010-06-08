@@ -492,14 +492,15 @@ if [ x${DO_STATS} = x0 ]; then
     -vmargs -Xmx256M
 else
   echo "Creating P2 metadata with download stats..."
+  #  -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
+  #  -p2.statsURI http://download.eclipse.org/stats/tm \
+  #  -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.tm.terminal,org.eclipse.tm.terminal.local \
+  #  -compress \
   CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
-    -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
-    -source file:${SITE}/ \
-    -metadataRepository file:${SITE}/ \
-    -artifactRepository file:${SITE}/ \
-    -compress \
-    -p2.statsURI http://download.eclipse.org/stats/tm \
-    -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.tm.terminal,org.eclipse.tm.terminal.local \
+    -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
+    -source file:${SITE} \
+    -metadataRepository file:${SITE} \
+    -artifactRepository file:${SITE} \
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

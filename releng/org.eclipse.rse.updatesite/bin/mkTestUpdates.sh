@@ -495,12 +495,12 @@ else
   #  -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
   #  -p2.statsURI http://download.eclipse.org/stats/tm \
   #  -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.tm.terminal,org.eclipse.tm.terminal.local \
-  #  -compress \
   CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
     -source ${SITE} \
     -metadataRepository file:${SITE} \
     -artifactRepository file:${SITE} \
+    -compress \
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

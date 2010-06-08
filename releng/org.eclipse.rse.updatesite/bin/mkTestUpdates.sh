@@ -498,7 +498,7 @@ else
   #  -compress \
   CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
-    -source file:${SITE} \
+    -source ${SITE} \
     -metadataRepository file:${SITE} \
     -artifactRepository file:${SITE} \
     -vmargs -Xmx256M"

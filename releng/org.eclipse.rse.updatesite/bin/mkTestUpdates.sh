@@ -383,12 +383,23 @@ else
     cvs -q update -dPR
     sed -e '/<!-- BEGIN_2_0_5 -->/,/<!-- END_2_0_5 -->/d' \
         site.xml > site.xml.new1
-    sed -e '/<!-- BEGIN_3_0_2 -->/,/<!-- END_3_0_2 -->/d' \
+    sed -e '/<!-- BEGIN_3_0_3 -->/,/<!-- END_3_0_3 -->/d' \
         site.xml.new1 > site.xml.new2
     sed -e '/<!-- BEGIN_3_1 -->/,/<!-- END_3_1 -->/d' \
         site.xml.new2 > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1 site.xml.new2
+    if [ `basename $SITE` = 3.2 ]; then
+      # no legacy versions on the 3.2 site
+      sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_2 -->/d' \
+        site.xml > site.xml.new
+      mv -f site.xml.new site.xml
+      sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	web/site.xsl > web/site.xsl.new
+      mv -f web/site.xsl.new web/site.xsl
+    fi
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do

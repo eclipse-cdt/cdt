@@ -42,6 +42,7 @@ fi
 # get newest plugins and features: to be done manually on real update site
 TPVERSION="Target Management"
 VERSION=3.2
+DO_STATS=0
 TYPE=none
 SITEDIR=`basename ${SITE}`
 case ${SITEDIR} in
@@ -52,7 +53,7 @@ case ${SITEDIR} in
   *)              TYPE=unknown ;;
 esac
 case ${SITEDIR} in
-  3.2*)  VERSION=3.2 ;;
+  3.2*)  VERSION=3.2 ; DO_STATS=1 ;;
 esac
 if [ ${TYPE} = test ]; then
     echo "Working on test update site"
@@ -374,6 +375,31 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+elif [ `basename $SITE` = 3.2 ]; then
+    echo "Working on 3.2 update site"
+    TPTYPE="3.2"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
+    TYPE=official
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '\,</h1>,a\
+This site contains Target Management 3.2 Releases and Updates (R- builds) which are \
+being contributed to the Helios coordinated release train (Eclipse 3.6).' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    ## dont keep 2.0.x features in site.xml
+    sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_2 -->/d' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
     TYPE=official
@@ -385,21 +411,10 @@ else
         site.xml > site.xml.new1
     sed -e '/<!-- BEGIN_3_0_3 -->/,/<!-- END_3_0_3 -->/d' \
         site.xml.new1 > site.xml.new2
-    sed -e '/<!-- BEGIN_3_1 -->/,/<!-- END_3_1 -->/d' \
+    sed -e '/<!-- BEGIN_3_1 -->/,/<!-- END_3_2 -->/d' \
         site.xml.new2 > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1 site.xml.new2
-    if [ `basename $SITE` = 3.2 ]; then
-      # no legacy versions on the 3.2 site
-      sed -e "s,/dsdp/tm/updates/2.0,/dsdp/tm/updates/${SITEDIR},g" \
-        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
-    	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_2 -->/d' \
-        site.xml > site.xml.new
-      mv -f site.xml.new site.xml
-      sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
-    	web/site.xsl > web/site.xsl.new
-      mv -f web/site.xsl.new web/site.xsl
-    fi
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do
@@ -461,7 +476,9 @@ cd ${SITE}
 for x in content.xml content.jar content.jar.pack.gz artifacts.xml artifacts.jar artifacts.jar.pack.gz ; do
   if [ -f $x ]; then rm -f $x; fi
 done
-java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+if [ x${DO_STATS} = x0 ]; then
+  echo "Creating P2 metadata (no download stats)..."
+  java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
     -updateSite ${SITE}/ \
     -site file:${SITE}/site.xml \
@@ -473,6 +490,20 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -reusePack200Files \
     -noDefaultIUs \
     -vmargs -Xmx256M
+else
+  echo "Creating P2 metadata with download stats..."
+  java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+    -application org.sonatype.tycho.p2.updatesite.UpdateSitePublisherWithJRE \
+    -source file:${SITE}/ \
+    -metadataRepository file:${SITE}/ \
+    -artifactRepository file:${SITE}/ \
+    -compress \
+    -p2.statsURI http://download.eclipse.org/stats/tm \
+    -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.tm.terminal,org.eclipse.tm.terminal.local \
+    -vmargs -Xmx256M
+    #-reusePack200Files \
+    #-noDefaultIUs \
+fi
 ##fi
 
 cd $SITE

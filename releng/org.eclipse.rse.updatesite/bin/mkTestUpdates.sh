@@ -480,19 +480,6 @@ for x in content.xml content.jar content.jar.pack.gz artifacts.xml artifacts.jar
   if [ -f $x ]; then rm -f $x; fi
 done
 
-echo "Creating P2 metadata (no download stats)..."
-java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
-    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
-    -updateSite ${SITE}/ \
-    -site file:${SITE}/site.xml \
-    -metadataRepository file:${SITE}/ \
-    -metadataRepositoryName "${TPVERSION} Update Site" \
-    -artifactRepository file:${SITE}/ \
-    -artifactRepositoryName "${TPVERSION} Artifacts" \
-    -compress \
-    -reusePack200Files \
-    -noDefaultIUs \
-    -vmargs -Xmx256M
 if [ x${DO_STATS} = x1 ]; then
   echo "Creating P2 metadata with download stats..."
   #  -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
@@ -513,7 +500,19 @@ if [ x${DO_STATS} = x1 ]; then
     #-reusePack200Files \
     #-noDefaultIUs \
 fi
-##fi
+echo "Creating P2 metadata (no download stats)..."
+java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
+    -updateSite ${SITE}/ \
+    -site file:${SITE}/site.xml \
+    -metadataRepository file:${SITE}/ \
+    -metadataRepositoryName "${TPVERSION} Update Site" \
+    -artifactRepository file:${SITE}/ \
+    -artifactRepositoryName "${TPVERSION} Artifacts" \
+    -compress \
+    -reusePack200Files \
+    -noDefaultIUs \
+    -vmargs -Xmx256M
 
 cd $SITE
 chgrp -R dsdp-tmadmin .

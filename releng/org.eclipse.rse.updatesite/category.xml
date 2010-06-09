@@ -10,16 +10,16 @@
       <category name="TM and RSE Main Features"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
-      <category name="TM and RSE Add-Ons"/>
+      <category name="TM and RSE Optional Add-Ons"/>
    </feature>
    <feature url="features/org.eclipse.rse.wince_0.2.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.2.100.qualifier">
-      <category name="TM and RSE Add-Ons"/>
+      <category name="TM and RSE Optional Add-Ons"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_3.2.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.2.0.qualifier">
-      <category name="TM and RSE Add-Ons"/>
+      <category name="TM and RSE Optional Add-Ons"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_3.1.100.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.100.qualifier">
-      <category name="TM and RSE Add-Ons"/>
+      <category name="TM and RSE Optional Add-Ons"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_3.1.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.0.qualifier">
       <category name="TM and RSE Main Features"/>
@@ -32,7 +32,7 @@
          Remote System Explorer (RSE)
       </description>
    </category-def>
-   <category-def name="TM and RSE Add-Ons" label="TM and RSE Add-Ons">
+   <category-def name="TM and RSE Optional Add-Ons" label="TM and RSE Optional Add-Ons">
       <description>
          Examples, Tests and Incubation Plug-ins.
       </description>

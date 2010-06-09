@@ -43,6 +43,7 @@ fi
 TPVERSION="Target Management"
 VERSION=3.2
 DO_STATS=0
+DO_CATEGORIES=0
 TYPE=none
 SITEDIR=`basename ${SITE}`
 case ${SITEDIR} in
@@ -53,7 +54,7 @@ case ${SITEDIR} in
   *)              TYPE=unknown ;;
 esac
 case ${SITEDIR} in
-  3.2*)  VERSION=3.2 ;;
+  3.2*)  VERSION=3.2 ; DO_CATEGORIES=1 ;;
 esac
 case ${SITEDIR} in
   3.2) DO_STATS=1 ;;
@@ -499,8 +500,6 @@ if [ x${DO_STATS} = x1 ]; then
   $CMD
   result=$?
   echo "result: ${result}"
-    #-reusePack200Files \
-    #-noDefaultIUs \
 fi
 echo "Creating P2 metadata (no download stats)..."
 java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
@@ -515,6 +514,19 @@ java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -reusePack200Files \
     -noDefaultIUs \
     -vmargs -Xmx256M
+
+if [ x${DO_CATEGORIES} = x1 ]; then
+  echo "Adding Categories..."
+  CMD="java -jar ${tgtlauncher} \
+    -application -application org.eclipse.equinox.p2.publisher.CategoryPublisher \
+    -metadataRepository file:${SITE} \
+    -categoryDefinition file:/${SITE}/category.xml \
+    -compress"
+  echo $CMD
+  $CMD
+  result=$?
+  echo "result: ${result}"
+fi
 
 cd $SITE
 chgrp -R dsdp-tmadmin .

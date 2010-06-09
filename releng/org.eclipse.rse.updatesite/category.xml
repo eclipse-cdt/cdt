@@ -16,23 +16,35 @@
       <category name="Terminal"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
-      <category name="Incubation and Test"/>
+      <category name="Test and Incubation"/>
    </feature>
    <feature url="features/org.eclipse.rse.wince_0.2.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.2.100.qualifier">
-      <category name="Incubation and Test"/>
+      <category name="Test and Incubation"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_3.2.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.2.0.qualifier">
-      <category name="Incubation and Test"/>
+      <category name="Test and Incubation"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_3.1.100.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.100.qualifier">
-      <category name="Examples"/>
+      <category name="RSE Examples"/>
    </feature>
    <category-def name="RSE" label="RSE">
       <description>
          Remote System Explorer (RSE)
       </description>
    </category-def>
-   <category-def name="Terminal" label="Terminal"/>
-   <category-def name="Incubation and Test" label="Incubation and Test"/>
-   <category-def name="Examples" label="Examples"/>
+   <category-def name="Terminal" label="Terminal">
+      <description>
+         Stand-alone Terminal View
+      </description>
+   </category-def>
+   <category-def name="Test and Incubation" label="Test and Incubation">
+      <description>
+         Test and Incubation Plug-ins.
+      </description>
+   </category-def>
+   <category-def name="RSE Examples" label="RSE Examples">
+      <description>
+         Example code for programming against the RSE API.
+      </description>
+   </category-def>
 </site>

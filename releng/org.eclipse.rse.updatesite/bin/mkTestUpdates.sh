@@ -501,19 +501,6 @@ if [ x${DO_STATS} = x1 ]; then
   result=$?
   echo "result: ${result}"
 fi
-echo "Creating P2 metadata (no download stats)..."
-java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
-    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
-    -updateSite ${SITE}/ \
-    -site file:${SITE}/site.xml \
-    -metadataRepository file:${SITE}/ \
-    -metadataRepositoryName "${TPVERSION} Update Site" \
-    -artifactRepository file:${SITE}/ \
-    -artifactRepositoryName "${TPVERSION} Artifacts" \
-    -compress \
-    -reusePack200Files \
-    -noDefaultIUs \
-    -vmargs -Xmx256M
 
 if [ x${DO_CATEGORIES} = x1 ]; then
   echo "Adding Categories..."
@@ -527,6 +514,20 @@ if [ x${DO_CATEGORIES} = x1 ]; then
   result=$?
   echo "result: ${result}"
 fi
+
+echo "Creating P2 metadata (no download stats)..."
+java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+    -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
+    -updateSite ${SITE}/ \
+    -site file:${SITE}/site.xml \
+    -metadataRepository file:${SITE}/ \
+    -metadataRepositoryName "${TPVERSION} Update Site" \
+    -artifactRepository file:${SITE}/ \
+    -artifactRepositoryName "${TPVERSION} Artifacts" \
+    -compress \
+    -reusePack200Files \
+    -noDefaultIUs \
+    -vmargs -Xmx256M
 
 cd $SITE
 chgrp -R dsdp-tmadmin .

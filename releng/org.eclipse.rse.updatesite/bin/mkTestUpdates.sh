@@ -492,7 +492,8 @@ if [ x${DO_STATS} = x1 ]; then
     -artifactRepository file:${SITE} \
     -compress \
     -p2.statsURI http://download.eclipse.org/stats/dsdp/tm \
-    -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.discovery,org.eclipse.tm.terminal,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
+    -p2.statsTrackedFeatures org.eclipse.rse.sdk,org.eclipse.rse.dstore,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.rse.examples,org.eclipse.rse.tests,org.eclipse.rse.wince,org.eclipse.tm.discovery,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
+    -p2.statsTrackedBundles org.eclipse.rse.core.source,org.eclipse.tm.terminal \
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

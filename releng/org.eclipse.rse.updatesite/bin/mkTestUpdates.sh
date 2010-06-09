@@ -53,7 +53,10 @@ case ${SITEDIR} in
   *)              TYPE=unknown ;;
 esac
 case ${SITEDIR} in
-  3.2*)  VERSION=3.2 ; DO_STATS=1 ;;
+  3.2*)  VERSION=3.2 ;;
+esac
+case ${SITEDIR} in
+  3.2) DO_STATS=1 ;;
 esac
 if [ ${TYPE} = test ]; then
     echo "Working on test update site"
@@ -476,9 +479,9 @@ cd ${SITE}
 for x in content.xml content.jar content.jar.pack.gz artifacts.xml artifacts.jar artifacts.jar.pack.gz ; do
   if [ -f $x ]; then rm -f $x; fi
 done
-if [ x${DO_STATS} = x0 ]; then
-  echo "Creating P2 metadata (no download stats)..."
-  java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+
+echo "Creating P2 metadata (no download stats)..."
+java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.equinox.p2.metadata.generator.EclipseGenerator \
     -updateSite ${SITE}/ \
     -site file:${SITE}/site.xml \
@@ -490,7 +493,7 @@ if [ x${DO_STATS} = x0 ]; then
     -reusePack200Files \
     -noDefaultIUs \
     -vmargs -Xmx256M
-else
+if [ x${DO_STATS} = x1 ]; then
   echo "Creating P2 metadata with download stats..."
   #  -application org.eclipse.equinox.p2.publisher.UpdateSitePublisher \
   #CMD="java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
@@ -501,7 +504,7 @@ else
     -artifactRepository file:${SITE} \
     -compress \
     -p2.statsURI http://download.eclipse.org/stats/tm \
-    -p2.statsTrackedBundles org.eclipse.rse.core,org.eclipse.tm.terminal,org.eclipse.tm.terminal.local \
+    -p2.statsTrackedBundles org.eclipse.rse.sdk,org.eclipse.dstore.core,org.eclipse.rse.core,org.eclipse.rse.useractions,org.eclipse.tm.rapi,org.eclipse.tm.discovery,org.eclipse.tm.terminal,org.eclipse.tm.terminal.view,org.eclipse.tm.terminal.local \
     -vmargs -Xmx256M"
   echo $CMD
   $CMD

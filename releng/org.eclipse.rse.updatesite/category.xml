@@ -10,19 +10,19 @@
       <category name="RSE"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.sdk_3.1.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="3.1.0.qualifier">
-      <category name="Terminal"/>
+      <category name="TM Terminal"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.local.sdk_0.1.0.qualifier.jar" id="org.eclipse.tm.terminal.local.sdk" version="0.1.0.qualifier">
-      <category name="Terminal"/>
+      <category name="TM Terminal"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_3.0.200.qualifier.jar" id="org.eclipse.tm.discovery" version="3.0.200.qualifier">
-      <category name="Test and Incubation"/>
+      <category name="TM Test and Incubation"/>
    </feature>
    <feature url="features/org.eclipse.rse.wince_0.2.100.qualifier.jar" id="org.eclipse.rse.wince" version="0.2.100.qualifier">
-      <category name="Test and Incubation"/>
+      <category name="TM Test and Incubation"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_3.2.0.qualifier.jar" id="org.eclipse.rse.tests" version="3.2.0.qualifier">
-      <category name="Test and Incubation"/>
+      <category name="TM Test and Incubation"/>
    </feature>
    <feature url="features/org.eclipse.rse.examples_3.1.100.qualifier.jar" id="org.eclipse.rse.examples" version="3.1.100.qualifier">
       <category name="RSE Examples"/>
@@ -32,12 +32,12 @@
          Remote System Explorer (RSE)
       </description>
    </category-def>
-   <category-def name="Terminal" label="Terminal">
+   <category-def name="TM Terminal" label="TM Terminal">
       <description>
          Stand-alone Terminal View
       </description>
    </category-def>
-   <category-def name="Test and Incubation" label="Test and Incubation">
+   <category-def name="TM Test and Incubation" label="TM Test and Incubation">
       <description>
          Test and Incubation Plug-ins.
       </description>

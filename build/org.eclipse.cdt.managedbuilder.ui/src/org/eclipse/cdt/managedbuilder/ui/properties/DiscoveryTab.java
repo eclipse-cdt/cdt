@@ -31,7 +31,12 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -42,6 +47,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -52,6 +58,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -63,6 +70,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -219,6 +227,31 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 				String s = visibleProfilesList.get(x);
 				buildInfo.setSelectedProfileId(s);
 				handleDiscoveryProfileChanged();
+			}
+		});
+		
+		// "Clear" label
+		@SuppressWarnings("unused")
+		Label clearLabel = ControlFactory.createLabel(autoDiscoveryGroup, Messages.getString("DiscoveryTab.ClearDisoveredEntries")); //$NON-NLS-1$
+
+		// "Clear" button
+		Button clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.getString("DiscoveryTab.Clear")); //$NON-NLS-1$
+		GridData gd = (GridData) clearButton.getLayoutData();
+		gd.grabExcessHorizontalSpace = false;
+		gd.widthHint = 80;
+		gd.horizontalAlignment = SWT.RIGHT;
+		
+		final Shell shell = parent.getShell();
+		clearButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				String title = Messages.getString("DiscoveryTab.ClearEntries"); //$NON-NLS-1$
+				try {
+					clearDiscoveredEntries();
+					MessageDialog.openInformation(shell, title, Messages.getString("DiscoveryTab.DiscoveredEntriesCleared")); //$NON-NLS-1$
+				} catch (CoreException e) {
+					MessageDialog.openError(shell, title, Messages.getString("DiscoveryTab.ErrorClearingEntries") + e.getLocalizedMessage()); //$NON-NLS-1$
+				}
 			}
 		});
 	}
@@ -736,5 +769,48 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	@Override
 	protected void updateButtons() {
 		// Do nothing. No buttons to update.
+	}
+
+	private void clearDiscoveredEntries() throws CoreException {
+		CfgInfoContext cfgInfoContext = getContext();
+		
+		IConfiguration cfg = cfgInfoContext.getConfiguration();
+		if (cfg==null) {
+			cfg = cfgInfoContext.getResourceInfo().getParent();
+		}
+		if (cfg==null) {
+			Status status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(),
+					"Unexpected cfg=null while trying to clear discovery entries"); //$NON-NLS-1$
+			throw new CoreException(status);
+		}
+		
+		IProject project = (IProject) cfg.getOwner();
+		
+		DiscoveredPathInfo pathInfo = new DiscoveredPathInfo(project);
+		InfoContext infoContext = cfgInfoContext.toInfoContext();
+		
+		// 1. Remove scanner info from .metadata/.plugins/org.eclipse.cdt.make.core/Project.sc
+		DiscoveredScannerInfoStore dsiStore = DiscoveredScannerInfoStore.getInstance();
+		dsiStore.saveDiscoveredScannerInfoToState(project, infoContext, pathInfo);
+		
+		// 2. Remove scanner info from CfgDiscoveredPathManager cache and from the Tool
+		CfgDiscoveredPathManager cdpManager = CfgDiscoveredPathManager.getInstance();
+		cdpManager.removeDiscoveredInfo(project, cfgInfoContext);
+
+		// 3. Remove scanner info from SI collector
+		ICfgScannerConfigBuilderInfo2Set info2 = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
+		Map<CfgInfoContext, IScannerConfigBuilderInfo2> infoMap2 = info2.getInfoMap();
+		IScannerConfigBuilderInfo2 buildInfo2 = infoMap2.get(cfgInfoContext);
+		if (buildInfo2!=null) {
+			ScannerConfigProfileManager scpManager = ScannerConfigProfileManager.getInstance();
+			String selectedProfileId = buildInfo2.getSelectedProfileId();
+			SCProfileInstance profileInstance = scpManager.getSCProfileInstance(project, infoContext, selectedProfileId);
+			
+			IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
+			if (collector instanceof IScannerInfoCollectorCleaner) {
+				((IScannerInfoCollectorCleaner) collector).deleteAll(project);
+			}
+			buildInfo2 = null;
+		}
 	}
 }

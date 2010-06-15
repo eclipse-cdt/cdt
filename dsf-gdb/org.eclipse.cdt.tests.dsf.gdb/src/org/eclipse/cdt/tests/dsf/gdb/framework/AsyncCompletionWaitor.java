@@ -124,6 +124,11 @@ public class AsyncCompletionWaitor {
 	}
 	
 	public void increment() {
+		if (fWaitFinished) {
+			((MultiStatus)fStatus).merge(
+					new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+					"Can't increment an already finished waitor object. Waitor must be reset first.", null));			
+		}
 		fNumWaiting++;
 	}
 }

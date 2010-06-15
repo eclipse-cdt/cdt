@@ -1447,13 +1447,22 @@ public class MIMemoryTest extends BaseTestCase {
 		int count = 1;
 		fBaseAddress = evaluateExpression(frameDmc, "&charBlock");
 
+		// Interesting issue. Believe it or not, requests can get serviced 
+		// faster than we can queue them. E.g., we queue up five, and before we
+		// queue the sixth, the five are serviced. Before, when that happened
+		// the waitor went into the 'complete' state before we were done queuing
+		// all the requests. To avoid that, we need to add our own tick and then
+		// clear it once we're done queuing all the requests.
+		
 		// Verify asynchronously that all bytes are '0'
 		fWait.waitReset();
+		fWait.increment();	// see "Interesting issue" comment above  
 		MemoryByte[] buffer = new MemoryByte[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
 			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		}
+		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
@@ -1463,12 +1472,14 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Write asynchronously
 		fWait.waitReset();
+		fWait.increment(); 	// see "Interesting issue" comment above		
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
 			byte[] block = new byte[count];
 			block[0] = (byte) offset;
 			writeMemory(fMemoryDmc, fBaseAddress, offset, word_size, count, block);
 		}
+		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 
@@ -1480,10 +1491,12 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Verify asynchronously that all bytes are set
 		fWait.waitReset();
+		fWait.increment();	// see "Interesting issue" comment above
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {
 			fWait.increment();
 			readMemoryByteAtOffset(fMemoryDmc, fBaseAddress, offset, word_size, count, buffer);
 		}
+		fWait.waitFinished();	// see "Interesting issue" comment above
 		fWait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
 		assertTrue(fWait.getMessage(), fWait.isOK());
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {

@@ -696,7 +696,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			//check prerequisite projects for compile errors.
 			for (Iterator i = orderedProjects.iterator(); i.hasNext();) {
 				IProject proj = (IProject)i.next();
-				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in" + proj.getName())); //$NON-NLS-1$
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") + proj.getName()); //$NON-NLS-1$
 				monitor.worked(scale);
 				compileErrorsInProjs = existsErrors(proj);
 				if (compileErrorsInProjs) {
@@ -706,7 +706,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			
 			//check current project, if prerequite projects were ok
 			if (!compileErrorsInProjs) {
-				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in" + project.getName())); //$NON-NLS-1$
+				monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.searching_for_errors_in") + project.getName()); //$NON-NLS-1$
 				monitor.worked(scale);
 				compileErrorsInProjs = existsErrors(project);
 			}

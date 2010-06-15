@@ -306,9 +306,6 @@ public class ErrorParserManager extends OutputStream {
 	 * Parses the input and tries to generate error or warning markers
 	 */
 	private void processLine(String line) {
-		if (fErrorParsers.size() == 0)
-			return;
-
 		String lineTrimmed = line.trim();
 		lineCounter++;
 

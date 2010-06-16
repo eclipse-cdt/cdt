@@ -372,7 +372,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		final boolean equivalentPrefix= isEquivalentPrefix(currentPrefix, newPrefix);
 		boolean emptyQuery= newPrefix.length == 0 && !fAllowEmptyPrefix || filterText.length() == 0 && !fAllowEmptyString;
 		final int jobState = fUpdateJob.getState();
-		boolean needQuery= !equivalentPrefix || (currentPrefix.length > newPrefix.length && currentPrefix.length < 5 && jobState == Job.RUNNING);
+		boolean needQuery= !equivalentPrefix || (currentPrefix.length < newPrefix.length && currentPrefix.length < 5 && jobState == Job.RUNNING);
 		if (emptyQuery) {
 			newPrefix= null;
 			needQuery= needQuery || currentPrefix != null;

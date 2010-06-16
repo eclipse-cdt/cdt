@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -104,9 +104,9 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
+import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
-import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.CPPASTAllVisitor;
@@ -660,7 +660,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator createdFunctionDeclarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(qname, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames(), unit.getParserLanguage());
+						.getAllUsedNames(), unit.getASTNodeFactory());
 		func.setDeclarator(createdFunctionDeclarator);
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
@@ -863,7 +863,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames(), unit.getParserLanguage());
+						.getAllUsedNames(), unit.getASTNodeFactory());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}
@@ -875,10 +875,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 			((ICPPASTDeclSpecifier)declSpec).setVirtual(true);
 		}
 		simpleDecl.setParent(unit);
-		ICPPASTFunctionDeclarator declarator = extractedFunctionConstructionHelper
+		IASTStandardFunctionDeclarator declarator = extractedFunctionConstructionHelper
 				.createFunctionDeclarator(name, info.getDeclarator(), info
 						.getReturnVariable(), container.getNodesToWrite(), info
-						.getAllUsedNames(), unit.getParserLanguage());
+						.getAllUsedNames(), unit.getASTNodeFactory());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}

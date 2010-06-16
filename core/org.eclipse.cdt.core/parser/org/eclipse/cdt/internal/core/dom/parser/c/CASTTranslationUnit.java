@@ -87,6 +87,7 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 		return CVisitor.getReferences(this, binding);
 	}
 
+	@Deprecated
     public ParserLanguage getParserLanguage() {
     	return ParserLanguage.C;
     }

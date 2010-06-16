@@ -24,14 +24,12 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
 
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 
@@ -59,12 +57,13 @@ public abstract class ExtractedFunctionConstructionHelper {
 		return false;
 	}
 
-	ICPPASTFunctionDeclarator createFunctionDeclarator(IASTName name, ICPPASTFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, ParserLanguage lang) {
-		ICPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
-		declarator.setName(name);
+	IASTStandardFunctionDeclarator createFunctionDeclarator(IASTName name, IASTStandardFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
+		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
 	
-		if(functionDeclarator != null && functionDeclarator.isConst()) {
-			declarator.setConst(true);
+		if (functionDeclarator instanceof ICPPASTFunctionDeclarator && declarator instanceof ICPPASTFunctionDeclarator) {
+			if (((ICPPASTFunctionDeclarator) functionDeclarator).isConst()) {
+				((ICPPASTFunctionDeclarator) declarator).setConst(true);
+			}
 		}
 		
 		if(returnVariable != null) {
@@ -75,22 +74,22 @@ public abstract class ExtractedFunctionConstructionHelper {
 			}
 		}
 	
-		for (ICPPASTParameterDeclaration param : getParameterDeclarations(allUsedNames, lang)) {
+		for (IASTParameterDeclaration param : getParameterDeclarations(allUsedNames, nodeFactory)) {
 			declarator.addParameterDeclaration(param);
 		}
 		
 		if(isReturnTypeAPointer(nodesToWrite.get(0))) {
-			declarator.addPointerOperator(new CPPASTPointer());
+			declarator.addPointerOperator(nodeFactory.newPointer());
 		}
 		
 		return declarator;
 	}
 	
-	public Collection<ICPPASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> allUsedNames, ParserLanguage lang) {
-		Collection<ICPPASTParameterDeclaration> result = new ArrayList<ICPPASTParameterDeclaration>();		
+	public Collection<IASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
+		Collection<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>();		
 		for (NameInformation name : allUsedNames) {
 			if(!name.isDeclarationInScope()){
-				result.add(name.getICPPASTParameterDeclaration(name.isUserSetIsReference(), lang));
+				result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
 			}
 		}
 		return result;

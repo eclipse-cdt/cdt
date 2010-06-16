@@ -230,8 +230,12 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
 	 * @param offset
 	 */
 	public String getContainingFilename(int offset);
-    
-    public ParserLanguage getParserLanguage();
+
+	/**
+	 * @deprecated don't use it.
+	 */
+    @Deprecated
+	public ParserLanguage getParserLanguage();
     
     /**
      * Returns the Index associated with this translation unit.

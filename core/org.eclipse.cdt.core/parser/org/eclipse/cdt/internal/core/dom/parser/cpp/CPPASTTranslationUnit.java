@@ -14,11 +14,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -131,6 +131,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
         return fBinding;
     }
 	
+    @Deprecated
     public ParserLanguage getParserLanguage() {
         return ParserLanguage.CPP;
     }

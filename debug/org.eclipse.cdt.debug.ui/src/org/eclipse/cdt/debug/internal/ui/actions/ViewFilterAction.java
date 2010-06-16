@@ -38,8 +38,6 @@ import org.eclipse.ui.IViewPart;
  */
 public abstract class ViewFilterAction extends ViewerFilter implements IViewActionDelegate, IActionDelegate2 {
 	
-	protected final static String IS_SET_SUFFIX = ".isSet"; //$NON-NLS-1$
-	
 	private IViewPart fView;
 	private IAction fAction;
 
@@ -95,11 +93,6 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 		viewer.refresh();
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-		// We must first set a special key, to be able to tell that our preference is really set
-		// This is because when we set a boolean preference to false, the key is automatically
-		// removed, because the default value is 'false'
-		String isSetKey = key + IS_SET_SUFFIX;
-		store.setValue(isSetKey, true);
 		store.setValue(key, action.isChecked());
 		CDebugUIPlugin.getDefault().savePluginPreferences();
 	}
@@ -168,18 +161,8 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 * @return boolean
 	 */
 	protected boolean getPreferenceValue(IViewPart part) {
-		String baseKey = getPreferenceKey();
-		String viewKey = part.getSite().getId();
-		String compositeKey = viewKey + "." + baseKey; //$NON-NLS-1$
-		String isSetCompositeKey = compositeKey + IS_SET_SUFFIX;
-		IPreferenceStore store = getPreferenceStore();
-		boolean value = false;
-		if (store.contains(isSetCompositeKey)) {
-			value = store.getBoolean(compositeKey);
-		} else {
-			value = store.getBoolean(baseKey);
-		}
-		return value;		
+		String key = part.getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
+		return getPreferenceStore().getBoolean(key);
 	}
 	
 	/**

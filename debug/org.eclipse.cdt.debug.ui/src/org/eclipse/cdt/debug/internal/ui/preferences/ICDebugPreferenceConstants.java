@@ -22,11 +22,6 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 public interface ICDebugPreferenceConstants {
 
 	/**
-	 * Boolean preference controlling whether the debugger shows full paths. When <code>true</code> the debugger will show full paths in newly opened views.
-	 */
-	public static final String PREF_SHOW_FULL_PATHS = ICDebugUIConstants.PLUGIN_ID + ".cDebug.show_full_paths"; //$NON-NLS-1$
-
-	/**
 	 * Boolean preference controlling whether primitive types display hexadecimal values.
 	 */
 	public static final String PREF_SHOW_HEX_VALUES = ICDebugUIConstants.PLUGIN_ID + ".cDebug.showHexValues"; //$NON-NLS-1$

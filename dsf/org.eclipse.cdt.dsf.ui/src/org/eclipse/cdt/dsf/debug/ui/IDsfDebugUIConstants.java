@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui;
 
-import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
+import org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -94,6 +94,5 @@ public interface IDsfDebugUIConstants {
 	 * The value of this id must match what is being used as a full key in ShowFullPathsAction.run()
 	 * 
 	 * @since 2.1 */
-	public  static final String DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY = IDebugUIConstants.ID_DEBUG_VIEW + "." + ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS; //$NON-NLS-1$
-
+	public  static final String DEBUG_VIEW_SHOW_FULL_PATH_PROPERTY = IDebugUIConstants.ID_DEBUG_VIEW + "." + ShowFullPathsAction.PREF_KEY; //$NON-NLS-1$
 }

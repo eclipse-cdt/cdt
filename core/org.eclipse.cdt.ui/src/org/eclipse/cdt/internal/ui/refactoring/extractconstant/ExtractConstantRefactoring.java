@@ -44,10 +44,12 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICProject;
 
@@ -56,7 +58,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
@@ -407,9 +408,9 @@ public class ExtractConstantRefactoring extends CRefactoring {
 	private IASTDeclaration getConstNodesGlobal(String newName){
 		IASTSimpleDeclaration simple = getConstNodes(newName);
 
-		if(unit.getParserLanguage().isCPP()){
-			ICPPASTNamespaceDefinition namespace = new CPPASTNamespaceDefinition();
-			namespace.setName(new CPPASTName());
+		INodeFactory factory= unit.getASTNodeFactory();
+		if (factory instanceof ICPPNodeFactory) {
+			ICPPASTNamespaceDefinition namespace = ((ICPPNodeFactory) factory).newNamespaceDefinition(new CPPASTName());
 			namespace.addDeclaration(simple);
 			return namespace;
 		}

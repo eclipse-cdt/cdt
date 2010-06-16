@@ -33,22 +33,17 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTParameterDeclaration;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReferenceOperator;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 
 public class NodeContainer {
@@ -130,58 +125,48 @@ public class NodeContainer {
 			return getReferencesAfterSelection().size() > 0;
 		}
 
-		public ICPPASTParameterDeclaration getICPPASTParameterDeclaration(
-				boolean isReference, ParserLanguage lang) {
-			ICPPASTParameterDeclaration para = new CPPASTParameterDeclaration();
-			IASTDeclarator sourceDeclarator = (IASTDeclarator) getDeclaration()
-					.getParent();
+		public IASTParameterDeclaration getParameterDeclaration(boolean isReference,
+				INodeFactory nodeFactory) {
+			IASTDeclarator sourceDeclarator = (IASTDeclarator) getDeclaration().getParent();
 
+			IASTDeclSpecifier declSpec= null;
+			IASTDeclarator declarator= null;
+			
 			if (sourceDeclarator.getParent() instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) sourceDeclarator
-						.getParent();	
-				para.setDeclSpecifier(decl.getDeclSpecifier().copy());
+				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) sourceDeclarator.getParent();
+				declSpec= decl.getDeclSpecifier().copy();
 			} else if (sourceDeclarator.getParent() instanceof IASTParameterDeclaration) {
-				IASTParameterDeclaration decl = (IASTParameterDeclaration) sourceDeclarator
-						.getParent();
-				para.setDeclSpecifier(decl.getDeclSpecifier().copy());
+				IASTParameterDeclaration decl = (IASTParameterDeclaration) sourceDeclarator.getParent();
+				declSpec= decl.getDeclSpecifier().copy();
 			}
 
-			IASTDeclarator declarator;
+			IASTName name= nodeFactory.newName(getDeclaration().toCharArray());
 			if (sourceDeclarator instanceof IASTArrayDeclarator) {
 				IASTArrayDeclarator arrDeclarator = (IASTArrayDeclarator) sourceDeclarator;
-				declarator = new CPPASTArrayDeclarator();
-				IASTArrayModifier[] arrayModifiers = arrDeclarator
-						.getArrayModifiers();
+				IASTArrayDeclarator arrayDtor = nodeFactory.newArrayDeclarator(name);
+				IASTArrayModifier[] arrayModifiers = arrDeclarator.getArrayModifiers();
 				for (IASTArrayModifier arrayModifier : arrayModifiers) {
-					((IASTArrayDeclarator) declarator)
-							.addArrayModifier(arrayModifier.copy());
+					arrayDtor.addArrayModifier(arrayModifier.copy());
 				}
-
+				declarator= arrayDtor;
 			} else {
-				declarator = new CPPASTDeclarator();
+				declarator = nodeFactory.newDeclarator(name);
 			}
-			declarator.setName(new CPPASTName(getDeclaration().toCharArray()));
-			for (IASTPointerOperator pointerOp : sourceDeclarator
-					.getPointerOperators()) {
+			for (IASTPointerOperator pointerOp : sourceDeclarator.getPointerOperators()) {
 				declarator.addPointerOperator(pointerOp.copy());
 			}
 
 			if (isReference && !hasReferenceOperartor(declarator)) {
-				switch (lang) {
-				case C:
-					declarator.addPointerOperator(new CASTPointer());
-					break;
-				case CPP:
-					declarator.addPointerOperator(new CPPASTReferenceOperator(false));
-					break;
+				if (nodeFactory instanceof ICPPNodeFactory) {
+					declarator.addPointerOperator(((ICPPNodeFactory) nodeFactory).newReferenceOperator(false));
+				} else {
+					declarator.addPointerOperator(nodeFactory.newPointer());
 				}
 			}
 
-			declarator.setNestedDeclarator(sourceDeclarator
-					.getNestedDeclarator());
-			para.setDeclarator(declarator);
+			declarator.setNestedDeclarator(sourceDeclarator.getNestedDeclarator());
 
-			return para;
+			return nodeFactory.newParameterDeclaration(declSpec, declarator);
 		}
 
 		public boolean hasReferenceOperartor(IASTDeclarator declarator) {

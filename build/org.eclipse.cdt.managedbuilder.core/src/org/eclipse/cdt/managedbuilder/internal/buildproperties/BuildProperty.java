@@ -57,7 +57,7 @@ public class BuildProperty implements IBuildProperty{
 		if(value == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 				ManagedBuilderCorePlugin.getUniqueIdentifier(),
-				BuildPropertiesMessages.getString("BuildProperty.1"))); //$NON-NLS-1$
+				BuildPropertiesMessages.getString("BuildProperty.1")+id)); //$NON-NLS-1$
 
 		setValue(value);
 	}

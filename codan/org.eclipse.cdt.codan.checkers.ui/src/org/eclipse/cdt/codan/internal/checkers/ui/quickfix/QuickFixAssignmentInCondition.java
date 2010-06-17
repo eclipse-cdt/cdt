@@ -12,7 +12,7 @@ package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.cdt.codan.internal.checkers.ui.Messages;
-import org.eclipse.cdt.codan.ui.AbstarctCodanCMarkerResolution;
+import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IDocument;
  * quick fix for assignment in condition
  */
 public class QuickFixAssignmentInCondition extends
-		AbstarctCodanCMarkerResolution {
+		AbstractCodanCMarkerResolution {
 	public String getLabel() {
 		return Messages.QuickFixAssignmentInCondition_Message;
 	}

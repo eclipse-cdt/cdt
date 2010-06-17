@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.codan.ui.AbstarctCodanCMarkerResolution;
+import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -61,8 +61,8 @@ public class CodanProblemMarkerResolutionGenerator implements
 					if (!message.matches(res.messagePattern))
 						continue;
 				}
-				if (res.res instanceof AbstarctCodanCMarkerResolution) {
-					if (!((AbstarctCodanCMarkerResolution)res.res).isApplicable(marker))
+				if (res.res instanceof AbstractCodanCMarkerResolution) {
+					if (!((AbstractCodanCMarkerResolution)res.res).isApplicable(marker))
 						continue;
 				}
 				list.add(res.res);

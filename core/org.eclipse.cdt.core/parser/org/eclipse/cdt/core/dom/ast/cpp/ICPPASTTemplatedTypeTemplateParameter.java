@@ -67,8 +67,9 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 
 	/**
 	 * Add a nested template parameter.
+	 * @since 5.3
 	 */
-	public void addTemplateParamter(ICPPASTTemplateParameter parm);
+	public void addTemplateParameter(ICPPASTTemplateParameter parm);
 
 	/**
 	 * Set whether this template template parameter is a parameter pack.
@@ -85,4 +86,10 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 	 * Set default value for the template template parameter.
 	 */
 	public void setDefaultValue(IASTExpression expression);
+
+	/**
+	 * @deprecated Use {@link #addTemplateParameter(ICPPASTTemplateParameter)};
+	 */
+	@Deprecated
+	public void addTemplateParamter(ICPPASTTemplateParameter parm);
 }

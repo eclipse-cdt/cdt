@@ -1736,7 +1736,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
                 for (int i = 0; i < tparList.size(); ++i) {
                     ICPPASTTemplateParameter p = tparList.get(i);
-                    tpar.addTemplateParamter(p);
+                    tpar.addTemplateParameter(p);
                 }
                 returnValue.add(tpar);
             } else if (lt1 == IToken.tCOMMA) {

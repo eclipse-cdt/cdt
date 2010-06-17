@@ -47,7 +47,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		copy.setDefaultValue(fDefaultValue == null ? null : fDefaultValue.copy());
 		copy.fIsParameterPack= fIsParameterPack;
 		for(ICPPASTTemplateParameter param : getTemplateParameters()) 
-			copy.addTemplateParamter(param == null ? null : param.copy());
+			copy.addTemplateParameter(param == null ? null : param.copy());
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -59,13 +59,18 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		return fNestedParameters;
 	}
 
-	public void addTemplateParamter(ICPPASTTemplateParameter parm) {
+	@Deprecated
+	public void addTemplateParamter(ICPPASTTemplateParameter param) {
+		addTemplateParameter(param);
+	}
+
+	public void addTemplateParameter(ICPPASTTemplateParameter param) {
 		assertNotFrozen();
-		if (parm != null) {
+		if (param != null) {
 			fNestedParameters = (ICPPASTTemplateParameter[]) ArrayUtil.append(ICPPASTTemplateParameter.class,
-					fNestedParameters, parm);
-			parm.setParent(this);
-			parm.setPropertyInParent(PARAMETER);
+					fNestedParameters, param);
+			param.setParent(this);
+			param.setPropertyInParent(PARAMETER);
 		}
 	}
 

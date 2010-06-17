@@ -12,12 +12,9 @@ package org.eclipse.cdt.codan.core.cxx.model;
 
 import org.eclipse.cdt.codan.core.model.ICheckerWithPreferences;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 
 /**
  * Abstract class for checkers that do all the work on function definition level
@@ -33,18 +30,11 @@ public abstract class AbstractAstFunctionChecker extends
 
 			public int visit(IASTDeclaration element) {
 				if (element instanceof IASTFunctionDefinition) {
-					processFunction((IASTFunctionDefinition) element);
-					return PROCESS_CONTINUE; // this is to support gcc extension
-												// for enclosed functions
+					processFunction((IASTFunctionDefinition) element);					
 				}
-				if (element instanceof IASTSimpleDeclaration) {
-					IASTDeclSpecifier declSpecifier = ((IASTSimpleDeclaration) element)
-							.getDeclSpecifier();
-					if (declSpecifier instanceof ICPPASTCompositeTypeSpecifier) {
-						return PROCESS_CONTINUE; // c++ methods
-					}
-				}
-				return PROCESS_SKIP;
+				// visit all nodes to support inner functions within class definitions 
+				// and gcc extensions
+				return PROCESS_CONTINUE;
 			}
 		});
 	}

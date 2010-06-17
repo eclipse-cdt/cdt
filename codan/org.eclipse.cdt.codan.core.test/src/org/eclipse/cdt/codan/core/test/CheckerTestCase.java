@@ -128,7 +128,7 @@ public class CheckerTestCase extends CodanTestCase {
 	 * @return
 	 */
 	protected IProblemPreference getPreference(String problemId, String paramId) {
-		IProblem problem = CodanRuntime.getInstance().getChechersRegistry()
+		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry()
 				.getWorkspaceProfile().findProblem(problemId);
 		IProblemPreference pref = ((MapProblemPreference) problem
 				.getPreference()).getChildDescriptor(paramId);

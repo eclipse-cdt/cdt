@@ -143,7 +143,7 @@ public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
 							GENERIC_CODE_ANALYSIS_MARKER_TYPE, true,
 							IResource.DEPTH_INFINITE);
 					ICheckersRegistry reg = CodanRuntime.getInstance()
-							.getChechersRegistry();
+							.getCheckersRegistry();
 					for (int i = 0; i < markers.length; i++) {
 						IMarker m = markers[i];
 						String id = m.getAttribute(IMarker.PROBLEM, ""); //$NON-NLS-1$

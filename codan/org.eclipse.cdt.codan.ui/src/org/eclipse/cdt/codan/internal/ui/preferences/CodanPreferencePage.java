@@ -191,7 +191,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 * @return
 	 */
 	protected ICheckersRegistry getRegistry() {
-		return CodanRuntime.getInstance().getChechersRegistry();
+		return CodanRuntime.getInstance().getCheckersRegistry();
 	}
 
 	/*

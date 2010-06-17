@@ -100,7 +100,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 		String id = getProblemId();
 		if (id == null)
 			return ""; //$NON-NLS-1$
-		IProblem problem = CodanRuntime.getInstance().getChechersRegistry().getDefaultProfile().findProblem(id);
+		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry().getDefaultProfile().findProblem(id);
 		return escapeForLink(problem.getDescription());
 	}
 

@@ -63,7 +63,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends
 	 * @return true if checker should report problems, fails otherwise.
 	 */
 	public boolean shouldProduceProblems(IResource res) {
-		Collection<IProblem> refProblems = getRuntime().getChechersRegistry()
+		Collection<IProblem> refProblems = getRuntime().getCheckersRegistry()
 				.getRefProblems(this);
 		for (Iterator<IProblem> iterator = refProblems.iterator(); iterator
 				.hasNext();) {

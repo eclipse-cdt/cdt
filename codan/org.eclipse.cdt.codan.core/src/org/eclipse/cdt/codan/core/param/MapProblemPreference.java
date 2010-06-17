@@ -158,19 +158,18 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 		int token;
 		try {
 			token = tokenizer.nextToken();
-			String chara = String.valueOf((char) token);
 			if (token != '{') {
-				throw new IllegalArgumentException(chara);
+				throw new IllegalArgumentException(String.valueOf((char) token));
 			}
 			while (true) {
 				token = tokenizer.nextToken();
 				String key = tokenizer.sval;
 				token = tokenizer.nextToken();
 				if (token != '=')
-					throw new IllegalArgumentException(chara);
+					throw new IllegalArgumentException(String.valueOf((char) token));
 				token = tokenizer.nextToken();
 				if (token != '>')
-					throw new IllegalArgumentException(chara);
+					throw new IllegalArgumentException(String.valueOf((char) token));
 				IProblemPreference desc = getChildDescriptor(key);
 				if (desc != null && desc instanceof AbstractProblemPreference) {
 					((AbstractProblemPreference) desc).importValue(tokenizer);
@@ -180,7 +179,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 				if (token == '}')
 					break;
 				if (token != ',')
-					throw new IllegalArgumentException(chara);
+					throw new IllegalArgumentException(String.valueOf((char) token));
 			}
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);

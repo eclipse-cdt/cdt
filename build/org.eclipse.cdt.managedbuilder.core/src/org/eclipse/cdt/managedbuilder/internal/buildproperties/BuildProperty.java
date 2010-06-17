@@ -70,6 +70,7 @@ public class BuildProperty implements IBuildProperty{
 		return fValue;
 	}
 	
+	@Override
 	public String toString(){
 		return toString(fType.toString(), fValue.toString());
 	}

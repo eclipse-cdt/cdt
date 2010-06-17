@@ -98,7 +98,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 		}
 
 		/**
-		 * If it uses reference or ponter
+		 * If it uses reference or pointer
 		 * 
 		 * @param catchHandler
 		 * @return

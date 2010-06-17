@@ -455,7 +455,7 @@ outer:
 		URI uri;
 		if (!path.isAbsolute()) {
 			URI workingDirectoryURI = getWorkingDirectoryURI();
-			uri = EFSExtensionManager.getDefault().append(getWorkingDirectoryURI(), path.toString());
+			uri = EFSExtensionManager.getDefault().append(workingDirectoryURI, path.toString());
 		}
 		else {
 			uri = toURI(path);

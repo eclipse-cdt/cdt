@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.EFSExtensionProvider;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -64,16 +63,16 @@ public class EFSExtensionManager {
 				EXTENSION_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
-				for (int j = 0; j < configElements.length; j++) {
+			for (IExtension extension2 : extensions) {
+				IConfigurationElement[] configElements = extension2.getConfigurationElements();
+				for (IConfigurationElement configElement : configElements) {
 
-					String scheme = configElements[j].getAttribute("scheme"); //$NON-NLS-1$
-					String utility = configElements[j].getAttribute("class"); //$NON-NLS-1$
+					String scheme = configElement.getAttribute("scheme"); //$NON-NLS-1$
+					String utility = configElement.getAttribute("class"); //$NON-NLS-1$
 
 					if (utility != null) {
 						try {
-							Object execExt = configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
+							Object execExt = configElement.createExecutableExtension("class"); //$NON-NLS-1$
 							if (execExt instanceof EFSExtensionProvider) {
 								fSchemeToExtensionProviderMap.put(scheme,
 										(EFSExtensionProvider) execExt);

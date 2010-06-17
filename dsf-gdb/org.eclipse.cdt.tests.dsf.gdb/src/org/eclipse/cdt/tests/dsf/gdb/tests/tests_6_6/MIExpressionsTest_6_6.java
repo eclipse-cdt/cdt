@@ -30,4 +30,16 @@ public class MIExpressionsTest_6_6 extends MIExpressionsTest {
     @Test
     public void testCanWriteLValue() throws Throwable {
     }
+
+    @Override
+	@Ignore("Only works in versions later than GDB6.6")
+    @Test
+    public void testChildren() throws Throwable {
+    }
+
+    @Override
+	@Ignore("Only works in versions later than GDB6.6")
+    @Test
+    public void testDeleteChildren() throws Throwable {
+    }
 }

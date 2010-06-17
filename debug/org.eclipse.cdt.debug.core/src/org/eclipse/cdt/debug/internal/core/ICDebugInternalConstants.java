@@ -28,4 +28,12 @@ public class ICDebugInternalConstants {
 	 * String preference for the common source containers.
 	 */
 	public static final String PREF_COMMON_SOURCE_CONTAINERS = CDebugCorePlugin.getUniqueIdentifier() + ".cDebug.common_source_containers"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference indicating the on/off state of the Show Full Paths
+	 * toggle action. Actually, as the action appears in multiple views, and the
+	 * state is preserved for each view, the full preference key is the view ID
+	 * plus this key
+	 */
+	public static final String SHOW_FULL_PATHS_PREF_KEY = "org.eclipse.cdt.debug.ui.cDebug.show_full_paths"; //$NON-NLS-1$	
 }

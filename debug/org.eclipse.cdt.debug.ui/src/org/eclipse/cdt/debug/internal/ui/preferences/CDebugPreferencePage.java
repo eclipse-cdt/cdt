@@ -175,7 +175,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	public static void initDefaults( IPreferenceStore store ) {
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
-//		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
 		PreferenceConverter.setDefault( store, IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, IInternalCDebugUIConstants.DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB );
 	}
 

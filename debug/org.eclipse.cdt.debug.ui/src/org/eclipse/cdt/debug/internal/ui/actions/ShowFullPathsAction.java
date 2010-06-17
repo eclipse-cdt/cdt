@@ -12,6 +12,7 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugPlugin;
@@ -34,13 +35,11 @@ import org.eclipse.swt.custom.BusyIndicator;
  */
 public class ShowFullPathsAction extends ViewFilterAction {
 
-	public static final String PREF_KEY = "org.eclipse.cdt.debug.ui.cDebug.show_full_paths"; //$NON-NLS-1$
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
-		return PREF_KEY;
+		return ICDebugInternalConstants.SHOW_FULL_PATHS_PREF_KEY;
 	}
 
 	/* (non-Javadoc)

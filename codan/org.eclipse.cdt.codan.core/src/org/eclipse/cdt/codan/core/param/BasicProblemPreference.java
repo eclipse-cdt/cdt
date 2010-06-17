@@ -128,7 +128,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 			String val = tokenizer.sval;
 			importValue(val);
 		} catch (IOException e) {
-			new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 }

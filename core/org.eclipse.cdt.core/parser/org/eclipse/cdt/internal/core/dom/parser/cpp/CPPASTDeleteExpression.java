@@ -100,7 +100,7 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 	    	
 	    	if (!isGlobal) {
 		    	ICPPFunction deleteOperator = CPPSemantics.findOverloadedOperator(this);
-		    	if (deleteOperator != null) {
+		    	if (deleteOperator != null && !(deleteOperator instanceof CPPImplicitFunction)) {
 		    		CPPASTImplicitName deleteName = new CPPASTImplicitName(deleteOperator.getNameCharArray(), this);
 		    		deleteName.setOperator(true);
 		    		deleteName.setBinding(deleteOperator);

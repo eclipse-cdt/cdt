@@ -2662,7 +2662,6 @@ public class CPPSemantics {
     	if (!fieldReference.isPointerDereference())
     		return type;
     	
-    	char[] operatorName = OverloadableOperator.ARROW.toCharArray();
 		IASTExpression[] args = {owner};
 		
     	// bug 205964: as long as the type is a class type, recurse. 
@@ -2700,7 +2699,7 @@ public class CPPSemantics {
     		IASTFieldReference innerFR= new CPPASTFieldReference(arw, new CPPASTIdExpression(x));
     		innerFR.setParent(fieldReference); // connect to the AST 
 
-    		ICPPFunction op = findOverloadedOperator(innerFR, args, uTemp, operatorName, NonMemberMode.none);
+    		ICPPFunction op = findOverloadedOperator(innerFR, args, uTemp, OverloadableOperator.ARROW, NonMemberMode.none);
     		if (op == null) 
     			break;
 
@@ -2723,15 +2722,13 @@ public class CPPSemantics {
     }
 
     public static ICPPFunction findOverloadedOperator(IASTArraySubscriptExpression exp) {
-    	char[] name = OverloadableOperator.BRACKET.toCharArray();
     	IASTInitializerClause[] args = {exp.getArrayExpression(), exp.getArgument()};
     	IType type = exp.getArrayExpression().getExpressionType();
     	type = SemanticUtil.getUltimateTypeUptoPointers(type);
-    	return findOverloadedOperator(exp, args, type, name, NonMemberMode.none);
+    	return findOverloadedOperator(exp, args, type, OverloadableOperator.BRACKET, NonMemberMode.none);
     }
 
     public static ICPPFunction findOverloadedOperator(IASTFunctionCallExpression exp, ICPPClassType type) {
-    	char[] name = OverloadableOperator.PAREN.toCharArray();
     	IASTInitializerClause[] args = exp.getArguments();
     	ArrayList<IASTInitializerClause> argsToPass = new ArrayList<IASTInitializerClause>(args.length + 1);
     	argsToPass.add(exp.getFunctionNameExpression());
@@ -2740,7 +2737,7 @@ public class CPPSemantics {
     	}
     	args = argsToPass.toArray(new IASTInitializerClause[argsToPass.size()]);
     	
-    	return findOverloadedOperator(exp, args, type, name, NonMemberMode.none);
+    	return findOverloadedOperator(exp, args, type, OverloadableOperator.PAREN, NonMemberMode.none);
     }
     
     public static ICPPFunction findOverloadedOperator(ICPPASTNewExpression exp) {
@@ -2764,14 +2761,14 @@ public class CPPSemantics {
     		} 
     	} 
     	IASTInitializerClause[] argArray = args.toArray(new IASTInitializerClause[args.size()]);
-		return findOverloadedOperator(exp, argArray, type, op.toCharArray(), NonMemberMode.all);
+		return findOverloadedOperator(exp, argArray, type, op, NonMemberMode.all);
     }
 
     public static ICPPFunction findOverloadedOperator(ICPPASTDeleteExpression exp) {
     	OverloadableOperator op = OverloadableOperator.fromDeleteExpression(exp);
     	IASTExpression[] args = { exp.getOperand() };
     	IType classType = getNestedClassType(exp);
-		return findOverloadedOperator(exp, args, classType, op.toCharArray(), NonMemberMode.all);
+		return findOverloadedOperator(exp, args, classType, op, NonMemberMode.all);
     }
     
     private static ICPPClassType getNestedClassType(ICPPASTDeleteExpression exp) {
@@ -2907,7 +2904,7 @@ public class CPPSemantics {
 		if (!isUserDefined(type))
 			return null;
 
-		return findOverloadedOperator(exp, args, type, op.toCharArray(), NonMemberMode.limited);
+		return findOverloadedOperator(exp, args, type, op, NonMemberMode.limited);
     }
 
     public static ICPPFunction findOverloadedOperator(IASTBinaryExpression exp) {
@@ -2928,7 +2925,7 @@ public class CPPSemantics {
 			lookupNonMember= NonMemberMode.limited;
 		}
 		
-		return findOverloadedOperator(exp, args, op1type, op.toCharArray(), lookupNonMember);
+		return findOverloadedOperator(exp, args, op1type, op, lookupNonMember);
     }
 
     /**
@@ -2946,16 +2943,23 @@ public class CPPSemantics {
     	};
     	dummy.setParent(first);
     	
-    	char[] name = OverloadableOperator.COMMA.toCharArray();
     	IASTExpression[] args = new IASTExpression[] { dummy , second };
-    	return findOverloadedOperator(dummy, args, lookupType, name, NonMemberMode.limited);
+    	return findOverloadedOperator(dummy, args, lookupType, OverloadableOperator.COMMA, NonMemberMode.limited);
     }
 
-    enum NonMemberMode {none, limited, all}
+    private static enum NonMemberMode {none, limited, all}
     private static ICPPFunction findOverloadedOperator(IASTExpression parent, IASTInitializerClause[] args, IType methodLookupType, 
-    		char[] operatorName, NonMemberMode mode) {
+    		OverloadableOperator operator, NonMemberMode mode) {
     	ICPPClassType callToObjectOfClassType= null;
-    	
+		IType type2= null;
+		if (args.length >= 2 && args[1] instanceof IASTExpression) {
+			type2= getUltimateTypeUptoPointers(((IASTExpression) args[1]).getExpressionType());
+		}
+		
+		if (methodLookupType instanceof ICPPUnknownType || type2 instanceof ICPPUnknownType) {
+			return new CPPUnknownFunction(null, operator.toCharArray());
+		}
+
     	// Find a method
     	LookupData methodData = null;
     	CPPASTName methodName = null;
@@ -2964,7 +2968,7 @@ public class CPPSemantics {
     	if (methodLookupType instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) methodLookupType;
 
-			methodName = new CPPASTName(operatorName);
+			methodName = new CPPASTName(operator.toCharArray());
         	methodName.setParent(parent);
         	methodName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
     	    methodData = new LookupData(methodName);
@@ -2986,16 +2990,13 @@ public class CPPSemantics {
     	}
     	
 		// Find a function
-    	LookupData funcData = null;
-    	CPPASTName funcName = null;
+    	CPPASTName funcName = new CPPASTName(operator.toCharArray());
+	    funcName.setParent(parent);
+	    funcName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
+    	LookupData funcData = new LookupData(funcName);
+    	funcData.setFunctionArguments(args);
+    	funcData.ignoreMembers = true; // (13.3.1.2.3)
     	if (mode != NonMemberMode.none || callToObjectOfClassType != null) {
-    		funcName = new CPPASTName(operatorName);
-    	    funcName.setParent(parent);
-    	    funcName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
-    	    funcData = new LookupData(funcName);
-        	funcData.setFunctionArguments(args);
-        	funcData.ignoreMembers = true; // (13.3.1.2.3)
-    	    
 			try {
 				if (mode != NonMemberMode.none) {
 					IScope scope = CPPVisitor.getContainingScope(parent);
@@ -3033,10 +3034,6 @@ public class CPPSemantics {
 			// 13.3.1.2.3
 			// However, if no operand type has class type, only those non-member functions ...
 			if (mode == NonMemberMode.limited) {
-				IType type2= null;
-				if (args.length >= 2 && args[1] instanceof IASTExpression) {
-					type2= getUltimateTypeUptoPointers(((IASTExpression) args[1]).getExpressionType());
-				}
 				if (funcData.foundItems != null && !(methodLookupType instanceof ICPPClassType) && !(type2 instanceof ICPPClassType)) {
 					IEnumeration enum1= null;
 					IEnumeration enum2= null;
@@ -3092,14 +3089,19 @@ public class CPPSemantics {
 			}
     	}
 		
+    	if (methodLookupType instanceof ICPPClassType || type2 instanceof ICPPClassType) {
+    		ICPPFunction[] builtins= BuiltinOperators.create(operator, args, parent.getTranslationUnit());
+    		mergeResults(funcData, builtins, false);
+    	}
+    	
     	try {
     		IBinding binding = null;
-    		if (methodData != null && funcData != null) {
+    		if (methodData != null && funcData.hasResults()) {
     			// if there was two lookups then merge the results
     			mergeResults(funcData, methodData.foundItems, false);
     			funcData.firstArgIsImpliedMethodArg = true;
     			binding = resolveAmbiguities(funcData, funcName);
-    		} else if (funcData != null) {
+    		} else if (funcData.hasResults()) {
     			binding = resolveAmbiguities(funcData, funcName);
     		} else if (methodData != null) {
     			binding = resolveAmbiguities(methodData, methodName);

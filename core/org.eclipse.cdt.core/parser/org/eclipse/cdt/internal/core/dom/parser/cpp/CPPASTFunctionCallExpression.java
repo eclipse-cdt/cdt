@@ -109,7 +109,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
     		ICPPFunction overload = getOperator();
-			if (overload == null)
+			if (overload == null || overload instanceof CPPImplicitFunction)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			// create separate implicit names for the two brackets
@@ -246,13 +246,9 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     		if (t instanceof IFunctionType) {
     			return ((IFunctionType) t).getReturnType();
     		} else if (t instanceof ICPPClassType) {
-    			ICPPFunction op = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
-    			if (op != null) {
-    				// overload can be a surrogate function call, which consists of a conversion and a call to
-    				// a dynamically computed function pointer.
-    				if (!(op instanceof CPPImplicitFunction))
-    					overload = op;
-    				return op.getType().getReturnType();
+    			overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+    			if (overload != null) {
+    				return overload.getType().getReturnType();
     			}
     		} else if (t instanceof IPointerType) {
     			t= SemanticUtil.getUltimateTypeUptoPointers(((IPointerType) t).getType());

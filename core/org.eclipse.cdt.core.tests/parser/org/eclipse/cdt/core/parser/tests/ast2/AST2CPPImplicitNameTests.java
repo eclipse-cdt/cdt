@@ -402,10 +402,10 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 	//	  X* xs = new X[5];
 	//	  delete[] x;
 	//	}
-	public void _testImplicitNewAndDelete() throws Exception {
+	public void testImplicitNewAndDelete() throws Exception {
 		BindingAssertionHelper ba = new BindingAssertionHelper(getAboveComment(), true);
 		ba.assertNoImplicitName("new X", 3);
-		ba.assertNoImplicitName("delete[]", 6); // fails because its picking up the implicit global delete[]
+		ba.assertNoImplicitName("delete[]", 6); 
 	}
 	
 	//  typedef long unsigned int size_t

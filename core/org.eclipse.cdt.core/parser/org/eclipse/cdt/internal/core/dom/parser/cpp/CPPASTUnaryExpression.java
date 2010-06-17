@@ -26,12 +26,12 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -100,7 +100,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if (overload == null) {
+			if (overload == null || overload instanceof CPPImplicitFunction) {
 				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			} else {
 				CPPASTImplicitName operatorName = new CPPASTImplicitName(overload.getNameCharArray(), this);

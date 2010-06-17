@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -133,12 +134,16 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 			
 			// create a name to wrap each binding
 			implicitNames = new IASTImplicitName[functionBindings.size()];
-			for(int i = 0, n = functionBindings.size(); i < n; i++) {
-				CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW, this);
-				operatorName.setBinding(functionBindings.get(i));
-				operatorName.computeOperatorOffsets(owner, true);
-				implicitNames[i] = operatorName;
+			int i=-1;
+			for (ICPPFunction op : functionBindings) {
+				if (op != null && !(op instanceof CPPImplicitFunction)) {
+					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW, this);
+					operatorName.setBinding(op);
+					operatorName.computeOperatorOffsets(owner, true);
+					implicitNames[++i] = operatorName;
+				}
 			}
+			implicitNames= ArrayUtil.trimAt(IASTImplicitName.class, implicitNames, i);
 		}
 		
 		return implicitNames;

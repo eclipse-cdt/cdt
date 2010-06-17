@@ -96,7 +96,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
-			if (overload == null)
+			if (overload == null || overload instanceof CPPImplicitFunction)
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
 			// create separate implicit names for the two brackets

@@ -139,7 +139,7 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
     public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
 			ICPPFunction operatorFunction = CPPSemantics.findOverloadedOperator(this);
-			if (operatorFunction == null) {
+			if (operatorFunction == null || operatorFunction instanceof CPPImplicitFunction) {
 				implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			} else {
 				CPPASTImplicitName operatorName = new CPPASTImplicitName(operatorFunction.getNameCharArray(), this);

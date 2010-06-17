@@ -120,7 +120,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 			ICPPFunction[] overloads = getOverloads();
 			for(int i = 0; i < overloads.length; i++) {
 				ICPPFunction overload = overloads[i];
-				if(overload != null) {
+				if(overload != null && !(overload instanceof CPPImplicitFunction)) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.COMMA, this);
 					operatorName.setBinding(overload);
 					operatorName.computeOperatorOffsets(exprs[i], true);

@@ -8562,4 +8562,25 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}		
+	
+	//	struct D {};
+	//	struct C {
+	//	  operator D();
+	//	  operator char();
+	//	};
+	//	long operator+(D d, char a);
+	//	void f(long);
+	//	void f(int);
+	//	void xx() {
+	//	    C c;
+	//	    f(c+1);   // converts c to a char and calls operator+(int, int)
+	//	}
+	public void testBuiltinOperators_294543() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction fint= bh.assertNonProblem("f(int)", 1);
+		IFunction f= bh.assertNonProblem("f(c+1)", 1);
+		assertSame(fint, f);
+	}		
 }

@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.efsextension.tests;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.eclipse.cdt.utils.EFSExtensionManager;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.eclipse.cdt.utils.EFSExtensionManager;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Tests the EFSExtensionManager and EFSExtensionProvider classes, as well as the EFSExtensionProvider extension point.

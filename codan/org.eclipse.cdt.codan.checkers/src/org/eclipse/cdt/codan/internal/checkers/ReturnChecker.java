@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.internal.checkers;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.codan.core.cxx.CxxAstUtils;
 import org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker;
 import org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache;
 import org.eclipse.cdt.codan.core.model.IProblem;
@@ -29,8 +30,10 @@ import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
@@ -186,6 +189,13 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		int type = -1;
 		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			type = ((IASTSimpleDeclSpecifier) declSpecifier).getType();
+		} else if (declSpecifier instanceof ICASTTypedefNameSpecifier) {
+			IBinding binding = ((ICASTTypedefNameSpecifier) declSpecifier)
+					.getName().resolveBinding();
+			IType utype = CxxAstUtils.getInstance().unwindTypedef(
+					(IType) binding);
+			if (isVoid(utype))
+				return IASTSimpleDeclSpecifier.t_void;
 		}
 		return type;
 	}

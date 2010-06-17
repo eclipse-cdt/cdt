@@ -12,8 +12,8 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
-import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -40,7 +39,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
 	protected String getPreferenceKey() {
-		return ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS; 
+		return ICDebugInternalConstants.SHOW_FULL_PATHS_PREF_KEY;
 	}
 
 	/* (non-Javadoc)
@@ -64,14 +63,8 @@ public class ShowFullPathsAction extends ViewFilterAction {
 				BusyIndicator.showWhile( viewer.getControl().getDisplay(), 
 										new Runnable() {
 											public void run() {
-												IPreferenceStore store = getPreferenceStore();
 												String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-												// We must first set a special key, to be able to tell that our preference is really set
-												// This is because when we set a boolean preference to false, the key is automatically
-												// removed, because the default value is 'false'
-												String isSetKey = key + IS_SET_SUFFIX;
-												store.setValue( isSetKey, true );
-												store.setValue( key, getValue() );
+												getPreferenceStore().setValue( key, getValue() );
 												CDebugUIPlugin.getDefault().savePluginPreferences();						
 
 												// Refresh the viewer after we've set the preference because
@@ -100,7 +93,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 			ILaunchManager launchmgr = DebugPlugin.getDefault().getLaunchManager();
 			ILaunch[] launches = launchmgr.getLaunches();
 			for (ILaunch launch : launches) {
-				if (launch.getAttribute(ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS) != null &&
+				if (launch.getAttribute(getPreferenceKey()) != null &&
 						launch.isTerminated() == false) {
 					setEnabled(true);
 					return;

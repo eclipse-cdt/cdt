@@ -56,9 +56,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private IWorkbench fWorkbench;
 
-	// View setting widgets
-	private Button fPathsButton;
-
 	private Combo fVariableFormatCombo;
 
 	private Combo fExpressionFormatCombo;
@@ -67,8 +64,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private Combo fCharsetCombo;
 	
-	private static final int NUMBER_OF_DIGITS = 3;
-
 	// Format constants
 	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL, ICDIFormat.BINARY };
 
@@ -152,7 +147,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private void setValues() {
 		IPreferenceStore store = getPreferenceStore();
-		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
@@ -181,7 +175,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	public static void initDefaults( IPreferenceStore store ) {
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
-		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
 		PreferenceConverter.setDefault( store, IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR, IInternalCDebugUIConstants.DEFAULT_DISASSEMBLY_SOURCE_LINE_RGB );
 	}
 
@@ -198,7 +191,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private void createViewSettingPreferences( Composite parent ) {
 		Composite comp = createGroupComposite( parent, 1, PreferenceMessages.getString( "CDebugPreferencePage.4" ) ); //$NON-NLS-1$
-		fPathsButton = createCheckButton( comp, PreferenceMessages.getString( "CDebugPreferencePage.5" ) ); //$NON-NLS-1$
 		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
 		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
 		fVariableFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.8" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
@@ -308,7 +300,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private void storeValues() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
@@ -328,7 +319,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
-		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );

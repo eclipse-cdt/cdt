@@ -481,6 +481,8 @@ public class MIStack extends AbstractDsfService
 	                                    rm.done();
 	                                }
 	                            });
+                	} else {
+                		super.handleError();
                 	}
                 }
             }); 

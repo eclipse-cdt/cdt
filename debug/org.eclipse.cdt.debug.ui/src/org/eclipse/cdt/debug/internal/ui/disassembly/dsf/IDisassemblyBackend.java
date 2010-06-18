@@ -35,12 +35,6 @@ public interface IDisassemblyBackend {
 		public String sessionId;
 
 		/**
-		 * The frame represented by the context. 0 is the topmost frame (where
-		 * the PC is)
-		 */
-		public int frameLevel;
-
-		/**
 		 * Whether the context changed to another execution context (the parent
 		 * elements of a thread, typically a process)
 		 */

@@ -115,7 +115,8 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			fTargetContext = null;
 			
 			if (context instanceof ICStackFrame) {
-				fTargetFrameContext = null;				
+				fTargetFrameContext = null;		
+				fFrameLevel = 0;
 				fTargetContext = (ICThread)((ICStackFrame)context).getThread();
 				try {
 					// Get the topmost stack frame. Note that the state of the
@@ -128,12 +129,11 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 						// CDI frame levels are ordered opposite of DSF. Frame 0 is the
 						// root frame of the thread where in DSF it's the topmost frame
 						// (where the PC is). Do a little math to flip reverse the value
-						result.frameLevel = ((CStackFrame)topFrame).getLevel() -  fTargetFrameContext.getLevel();
+						fFrameLevel = ((CStackFrame)topFrame).getLevel() -  fTargetFrameContext.getLevel();
 					}
 				} catch (DebugException e) {
 				}
 			}
-			fFrameLevel = result.frameLevel;
 			
 			if (fTargetContext != null) {
 				result.sessionId = fCdiSessionId = cdiSessionId;
@@ -142,6 +142,7 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 		}
 		else if (context instanceof ICStackFrame) {
 			fTargetFrameContext = null;
+			fFrameLevel = 0;
 			ICThread newTargetContext = (ICThread)((ICStackFrame)context).getThread();
 			ICThread oldTargetContext = fTargetContext;
 			fTargetContext = newTargetContext;
@@ -159,13 +160,12 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 					// CDI frame levels are ordered opposite of DSF. Frame 0 is the
 					// root frame of the thread where in DSF it's the topmost frame
 					// (where the PC is). Do a little math to flip reverse the value
-					result.frameLevel = ((CStackFrame)topFrame).getLevel() -  fTargetFrameContext.getLevel();
+					fFrameLevel = ((CStackFrame)topFrame).getLevel() -  fTargetFrameContext.getLevel();
 				}
 			} catch (DebugException e) {
 			}
-			fFrameLevel = result.frameLevel;
 			if (!result.contextChanged) {
-				fCallback.gotoFrame(result.frameLevel);
+				fCallback.gotoFrame(fFrameLevel);
 			}
 		}
 

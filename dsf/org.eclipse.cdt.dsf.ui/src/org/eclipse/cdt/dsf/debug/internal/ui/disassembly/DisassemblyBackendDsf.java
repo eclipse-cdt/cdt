@@ -137,7 +137,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				if (executionContext != null) {
 					fTargetContext= executionContext;
 					fTargetFrameContext= frame;
-					result.frameLevel = frame.getLevel();
 				}
 			}
 			if (fTargetContext != null) {
@@ -192,7 +191,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				if (!result.contextChanged) {
 					fCallback.gotoFrameIfActive(frame.getLevel());
 				}
-				result.frameLevel = getFrameLevel();
 			}
 		}
 		

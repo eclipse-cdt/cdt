@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -56,11 +57,11 @@ class BuiltinOperators {
 	private static final IType BOOL = new CPPBasicType(Kind.eBoolean, 0);
 	private static final IType PTR_DIFF = new CPPBasicType(Kind.eInt, 0);
 
-	public static ICPPFunction[] create(OverloadableOperator operator, IASTInitializerClause[] args, IASTTranslationUnit tu) {
+	public static ICPPFunction[] create(OverloadableOperator operator, IASTInitializerClause[] args, IASTTranslationUnit tu, Object[] globCandidates) {
 		if (operator == null || args == null || args.length == 0)
 			return EMPTY;
 		
-		return new BuiltinOperators(operator, args, tu.getScope()).create();
+		return new BuiltinOperators(operator, args, tu.getScope(), globCandidates).create();
 	}
 
 	private final OverloadableOperator fOperator;
@@ -72,11 +73,13 @@ class BuiltinOperators {
 	private IScope fFileScope;
 	private List<ICPPFunction> fResult;
 	private Set<String> fSignatures;
+	private Object[] fGlobalCandidates;
 
-	BuiltinOperators(OverloadableOperator operator, IASTInitializerClause[] args, IScope fileScope) {
+	BuiltinOperators(OverloadableOperator operator, IASTInitializerClause[] args, IScope fileScope, Object[] globCandidates) {
 		fFileScope= fileScope;
 		fOperator= operator;
 		fUnary= args.length<2;
+		fGlobalCandidates= globCandidates;
 		if (args.length > 0 && args[0] instanceof IASTExpression) {
 			IType type= ((IASTExpression) args[0]).getExpressionType();
 			if (!(type instanceof IProblemBinding)) 
@@ -183,17 +186,17 @@ class BuiltinOperators {
 			break;
 
 		case ASSIGN:
-			arithmeticAssignement(true, true, false);
+			arithmeticAssignement(true, Assignment.WITHOUT_OPERATION);
 			break;
 
 		case MINUSASSIGN:
 		case PLUSASSIGN:
-			arithmeticAssignement(true, false, true);
+			arithmeticAssignement(true, Assignment.WITH_POINTER_OPERATION);
 			break;
 			
 		case DIVASSIGN:
 		case STARASSIGN:
-			arithmeticAssignement(true, false, false);
+			arithmeticAssignement(true, Assignment.WITH_OPERATION);
 			break;
 
 		case AMPERASSIGN:
@@ -202,7 +205,7 @@ class BuiltinOperators {
 		case SHIFTLASSIGN:
 		case SHIFTRASSIGN:
 		case XORASSIGN:
-			arithmeticAssignement(false, false, false);
+			arithmeticAssignement(false, Assignment.WITH_OPERATION);
 			break;
 
 		case AND:
@@ -474,55 +477,47 @@ class BuiltinOperators {
 	}
 	
 	// 13.6-18, 13.6-29, 13.6-20, 13.6-22
-	private void arithmeticAssignement(boolean fltPt, boolean self, boolean ptr) {
-		List<IType> p1= null, p2= null;
-		
-		IType[] types1= getClassConversionTypes(FIRST);
+	private static enum Assignment {WITHOUT_OPERATION, WITH_POINTER_OPERATION, WITH_OPERATION}
+	private void arithmeticAssignement(boolean fltPt, Assignment assign) {
 		IType[] types2= getClassConversionTypes(SECOND);
-		if (types1.length == 0 && types2.length == 0)
+		if (types2.length == 0)
 			return;
 		
-		for (IType t : types1) {
-			p1 = addArithmeticRef(t, fltPt, p1, self, ptr);
-		}
-		p1= addArithmeticRef(fType1, fltPt, p1, false, false);
-		for (IType t : types2) {
-			p2 = addPromotedArithmetic(t, fltPt, p2);
-		}
-		p2= addPromotedArithmetic(fType2, fltPt, p2);
-		if (p1 == null || p2 == null)
-			return;
-
-		for (IType t1 : p1) {
-			for (IType t2 : p2) {
-				addFunction(t1, t1, t2);
+		IType refType= SemanticUtil.getNestedType(fType1, TDEF);
+		if (refType instanceof ICPPReferenceType) {
+			IType t= SemanticUtil.getNestedType(((ICPPReferenceType) refType).getType(), TDEF);
+			if (!SemanticUtil.getCVQualifier(t).isConst()) {
+				switch(assign) {
+				case WITHOUT_OPERATION:
+					if (isEnumeration(t) || isPointerToMember(t) || isPointer(t)) {
+						addFunction(refType, refType, SemanticUtil.getNestedType(t, TDEF|ALLCVQ));
+						return;
+					}
+					break;
+				case WITH_POINTER_OPERATION:
+					if (isPointer(t)) {
+						addFunction(refType, refType, PTR_DIFF);
+						return;
+					}
+					break;
+				default:
+					break;
+				}
 			}
-		}
+			if (fltPt ? isArithmetic(t) : isIntegral(t)) {
+				List<IType> p2= null;
+				for (IType t2 : types2) {
+					p2 = addPromotedArithmetic(t2, fltPt, p2);
+				}
+				if (p2 != null) {
+					for (IType t2 : p2) {
+						addFunction(refType, refType, t2);
+					}
+				}
+			}
+		} 
 	}
 	
-	private List<IType> addArithmeticRef(IType t, boolean fltPt, List<IType> p1, boolean self, boolean ptr) {
-		final IType type= t= SemanticUtil.getNestedType(t, TDEF);
-		if (type instanceof ICPPReferenceType) {
-			t= SemanticUtil.getNestedType(((ICPPReferenceType) t).getType(), TDEF);
-			if (!SemanticUtil.getCVQualifier(t).isConst()) {
-				t = SemanticUtil.getNestedType(t, TDEF|CVTYPE);
-				if (fltPt ? isArithmetic(t) : isIntegral(t)) {
-					if (p1 == null) {
-						p1= new ArrayList<IType>();
-					}
-					p1.add(type);
-				}
-				if (self && (isEnumeration(t) || isPointerToMember(t) || isPointer(t))) {
-					addFunction(type, type, SemanticUtil.getNestedType(t, TDEF|ALLCVQ));
-				} 
-				if (ptr && isPointer(t)) {
-					addFunction(type, type, PTR_DIFF);
-				}
-			}
-		}
-		return p1;
-	}
-
 	private void addFunction(IType returnType, IType p1) {
 		addFunction(returnType, new IType[] {p1});
 	}
@@ -537,6 +532,16 @@ class BuiltinOperators {
 		String sig= ASTTypeUtil.getType(functionType, true);
 		if (fSignatures == null) {
 			fSignatures= new HashSet<String>();
+			if (fGlobalCandidates != null) {
+				for (Object cand : fGlobalCandidates) {
+					if (cand instanceof IFunction && !(cand instanceof ICPPMethod)) {
+						try {
+							fSignatures.add(ASTTypeUtil.getType(((IFunction)cand).getType(), true));
+						} catch (DOMException e) {
+						}
+					}
+				}
+			}
 		}
 		if (fSignatures.add(sig)) {
 			for (int i = 0; i < parameterTypes.length; i++) {

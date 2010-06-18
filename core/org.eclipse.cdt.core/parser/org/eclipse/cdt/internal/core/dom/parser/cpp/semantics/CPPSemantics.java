@@ -3090,7 +3090,7 @@ public class CPPSemantics {
     	}
 		
     	if (methodLookupType instanceof ICPPClassType || type2 instanceof ICPPClassType) {
-    		ICPPFunction[] builtins= BuiltinOperators.create(operator, args, parent.getTranslationUnit());
+    		ICPPFunction[] builtins= BuiltinOperators.create(operator, args, parent.getTranslationUnit(), (Object[]) funcData.foundItems);
     		mergeResults(funcData, builtins, false);
     	}
     	

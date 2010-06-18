@@ -8,6 +8,7 @@
  * Contributors:
  *     Mike Kucera (IBM)
  *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -495,4 +496,21 @@ public class AST2CPPImplicitNameTests extends AST2BaseTest {
 		IASTImplicitName v = ba.assertImplicitName("v(p)", 1, ICPPConstructor.class);
 		assertSame(ctor1, v.resolveBinding());
 	}
+	
+	//	enum A {aa};
+	//	struct B{ operator A();};
+	//	bool operator==(A, A);   // overrides the built-in operator.
+	//
+	//	void test() {
+	//		B b;
+	//		if (aa==b) {
+	//		}
+	//	}
+	public void testBuiltinOperators_294543() throws Exception {
+		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		IASTTranslationUnit tu = ba.getTranslationUnit();
+		ICPPFunction op = ba.assertNonProblem("operator==", 0);
+		IASTImplicitName a = ba.assertImplicitName("==b", 2, ICPPFunction.class);
+		assertSame(op, a.resolveBinding());
+	}		
 }

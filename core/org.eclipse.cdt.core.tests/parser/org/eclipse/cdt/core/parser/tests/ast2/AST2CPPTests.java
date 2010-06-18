@@ -8575,12 +8575,30 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	    C c;
 	//	    f(c+1);   // converts c to a char and calls operator+(int, int)
 	//	}
-	public void testBuiltinOperators_294543() throws Exception {
+	public void testBuiltinOperators_294543a() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		IFunction fint= bh.assertNonProblem("f(int)", 1);
 		IFunction f= bh.assertNonProblem("f(c+1)", 1);
 		assertSame(fint, f);
+	}		
+	
+	//	struct A {
+	//		operator long& ();
+	//	};
+	//	void f(long);
+	//	void f(A);
+	//	void test() {
+	//		A a;
+	//		f(a= 1);   // A cannot be converted to long& here
+	//	}
+	public void testBuiltinOperators_294543b() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction fA= bh.assertNonProblem("f(A)", 1);
+		IFunction f= bh.assertNonProblem("f(a= 1)", 1);
+		assertSame(fA, f);
 	}		
 }

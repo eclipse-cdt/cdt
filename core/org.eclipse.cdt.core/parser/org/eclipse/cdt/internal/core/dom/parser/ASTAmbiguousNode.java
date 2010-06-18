@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,9 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 	protected void beforeResolution() {
 	}
 
+	protected void beforeAlternative(IASTNode alternative) {
+	}
+
 	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
 	}
 
@@ -78,6 +81,8 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		
 		int minIssues = Integer.MAX_VALUE;
 		for (IASTNode alternative : alternatives) {
+			beforeAlternative(alternative);
+			
 			// setup the ast to use the alternative
 			owner.replace(nodeToReplace, alternative);
 			nodeToReplace= alternative;
@@ -134,7 +139,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		return bestAlternative;
 	}
     
-    public boolean isLValue() {
+	public boolean isLValue() {
     	return false;
     }
 }

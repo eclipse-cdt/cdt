@@ -559,34 +559,37 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		// This is potentially a type-id, now check ambiguity with id-expression
 			IASTDeclSpecifier declspec= typeId.getDeclSpecifier();
 			if (declspec instanceof IASTNamedTypeSpecifier) { 
-				IASTName name= ((IASTNamedTypeSpecifier) declspec).getName();
+				final IASTNamedTypeSpecifier namedDeclspec = (IASTNamedTypeSpecifier) declspec;
+				IASTName name= namedDeclspec.getName();
 				if (name.contains(typeId)) {
 					// A template-id cannot be used in an id-expression as a template argument
 					// 5.1-11 A template-id shall be used as an unqualified-id only as specified in
 					// 14.7.2, 14.7, and 14.5.4.
-					name= name.getLastName();
-					if (!(name instanceof ICPPASTTemplateId)) {
+					if (!(name.getLastName() instanceof ICPPASTTemplateId)) {
 			    		IToken typeIdEnd= mark();
-						backup(argStart);
+						IASTIdExpression idExpr= setRange(nodeFactory.newIdExpression(name), name);
 			    		try {
-    						IASTExpression expression = expression(ExprKind.eAssignment, exprCtx);
-    						if (expression instanceof IASTIdExpression) {
-    							if (mark() == typeIdEnd)  {
-    								if (LT(1) == IToken.tELLIPSIS) {
-    									IToken ellipsis= consume();
-    									addPackExpansion(typeId, ellipsis);
-    									expression= addPackExpansion(expression, ellipsis);
-    								}
-    								ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
-    								ambiguity.addTypeId(typeId);
-    								ambiguity.addIdExpression(expression);
-    								return ambiguity;
+    						IASTExpression expression = expression(ExprKind.eAssignment, exprCtx, idExpr);
+    						boolean isAmbiguous= (expression == idExpr);
+    						if (LT(1) == IToken.tELLIPSIS) {
+    							IToken ellipsis= consume();
+    							if (isAmbiguous) {
+    								addPackExpansion(typeId, ellipsis);
     							}
+    							expression= addPackExpansion(expression, ellipsis);
     						}
+    						if (isAmbiguous) {
+    							ICPPASTAmbiguousTemplateArgument ambiguity= createAmbiguousTemplateArgument();
+    							ambiguity.addTypeId(typeId);
+    							ambiguity.addIdExpression(expression);
+    							return ambiguity;
+    						}
+    						return expression;
 			    		} catch (BacktrackException e) {
 			    			// Use the typeId
 			    		}
 			    		backup(typeIdEnd);
+			    		namedDeclspec.setName(name);
 					}
 				}
 			}
@@ -599,7 +602,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		
 		// Not a type-id, parse as expression
 		backup(argStart);
-		IASTExpression expr= expression(ExprKind.eAssignment, exprCtx);
+		IASTExpression expr= expression(ExprKind.eAssignment, exprCtx, null);
 		if (LT(1) == IToken.tELLIPSIS) {
 			expr= addPackExpansion(expr, consume());
 		}
@@ -683,15 +686,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	@Override
 	protected IASTExpression expression() throws BacktrackException, EndOfFileException {
-		return expression(ExprKind.eExpression, BinaryExprCtx.eNoTmplID);
+		return expression(ExprKind.eExpression, BinaryExprCtx.eNoTmplID, null);
 	}
 
 	@Override
 	protected IASTExpression constantExpression() throws BacktrackException, EndOfFileException {
-    	return expression(ExprKind.eConstant, BinaryExprCtx.eNoTmplID);
+    	return expression(ExprKind.eConstant, BinaryExprCtx.eNoTmplID, null);
     }
 
-    private IASTExpression expression(final ExprKind kind, final BinaryExprCtx ctx) throws EndOfFileException, BacktrackException {
+    private IASTExpression expression(final ExprKind kind, final BinaryExprCtx ctx, IASTInitializerClause expr) throws EndOfFileException, BacktrackException {
     	final boolean allowComma= kind==ExprKind.eExpression;
     	boolean allowAssignment= kind !=ExprKind.eConstant;
     	final CastExprCtx castCtx= ctx == BinaryExprCtx.eNoTmplID ? CastExprCtx.eBExpr : CastExprCtx.eBExprInTmplID;
@@ -703,7 +706,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	int lt1;
     	int conditionCount= 0;
     	BinaryOperator lastOperator= null;
-    	IASTInitializerClause expr= castExpression(castCtx);
+    	if (expr == null) {
+    		expr= castExpression(castCtx);
+    	}
 
     	loop: while(true) {
     		// Typically after a binary operator there cannot be a throw expression
@@ -1376,7 +1381,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	}
             t = consume();
             int finalOffset= 0;
-            IASTExpression lhs= expression(ExprKind.eExpression, BinaryExprCtx.eNoTmplID); // instead of expression(), to keep the stack smaller
+            IASTExpression lhs= expression(ExprKind.eExpression, BinaryExprCtx.eNoTmplID, null); // instead of expression(), to keep the stack smaller
             switch (LT(1)) {
             case IToken.tRPAREN:
             case IToken.tEOC:
@@ -2947,7 +2952,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		// assignment expression
 		final BinaryExprCtx ctx = fInTemplateParameterList ? BinaryExprCtx.eTmplID : BinaryExprCtx.eNoTmplID;
-		IASTExpression assignmentExpression = expression(ExprKind.eAssignment, ctx);
+		IASTExpression assignmentExpression = expression(ExprKind.eAssignment, ctx, null);
 		if (allowSkipping && skipTrivialExpressionsInAggregateInitializers) {
 			if (!ASTQueries.canContainName(assignmentExpression))
 				return null;

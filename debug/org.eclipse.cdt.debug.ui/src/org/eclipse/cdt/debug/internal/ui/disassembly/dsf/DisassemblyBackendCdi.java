@@ -115,13 +115,21 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			fTargetContext = null;
 			
 			if (context instanceof ICStackFrame) {
-				fTargetFrameContext = (ICStackFrame)context;
-				fTargetContext = (ICThread)fTargetFrameContext.getThread();
+				fTargetFrameContext = null;				
+				fTargetContext = (ICThread)((ICStackFrame)context).getThread();
 				try {
-					// CDI frame levels are ordered opposite of DSF. Frame 0 is the
-					// root frame of the thread where in DSF it's the topmost frame
-					// (where the PC is). Do a little math to flip reverse the value
-					result.frameLevel = ((CStackFrame)((fTargetContext.getTopStackFrame()))).getLevel() -  fTargetFrameContext.getLevel();
+					// Get the topmost stack frame. Note that the state of the
+					// thread may have changed by now. It may be running, in
+					// which case we'll get null here. See bugzilla 317226
+					IStackFrame topFrame = fTargetContext.getTopStackFrame();
+					if (topFrame != null) {
+						fTargetFrameContext = (ICStackFrame)context;
+						
+						// CDI frame levels are ordered opposite of DSF. Frame 0 is the
+						// root frame of the thread where in DSF it's the topmost frame
+						// (where the PC is). Do a little math to flip reverse the value
+						result.frameLevel = ((CStackFrame)topFrame).getLevel() -  fTargetFrameContext.getLevel();
+					}
 				} catch (DebugException e) {
 				}
 			}
@@ -133,18 +141,26 @@ public class DisassemblyBackendCdi implements IDisassemblyBackend, IDebugEventSe
 			}
 		}
 		else if (context instanceof ICStackFrame) {
-			fTargetFrameContext = (ICStackFrame)context;
-			ICThread newTargetContext = (ICThread)fTargetFrameContext.getThread();
+			fTargetFrameContext = null;
+			ICThread newTargetContext = (ICThread)((ICStackFrame)context).getThread();
 			ICThread oldTargetContext = fTargetContext;
 			fTargetContext = newTargetContext;
 			if (oldTargetContext != null && newTargetContext != null) {
 				result.contextChanged = !oldTargetContext.getDebugTarget().equals(newTargetContext.getDebugTarget());
 			}
 			try {
-				// CDI frame levels are ordered opposite of DSF. Frame 0 is the
-				// root frame of the thread where in DSF it's the topmost frame
-				// (where the PC is). Do a little math to flip reverse the value
-				result.frameLevel = ((CStackFrame)((fTargetContext.getTopStackFrame()))).getLevel() -  fTargetFrameContext.getLevel();
+				// Get the topmost stack frame. Note that the state of the
+				// thread may have changed by now. It may be running, in
+				// which case we'll get null here. See bugzilla 317226
+				IStackFrame topFrame = fTargetContext.getTopStackFrame();
+				if (topFrame != null) {
+					fTargetFrameContext = (ICStackFrame)context;
+					
+					// CDI frame levels are ordered opposite of DSF. Frame 0 is the
+					// root frame of the thread where in DSF it's the topmost frame
+					// (where the PC is). Do a little math to flip reverse the value
+					result.frameLevel = ((CStackFrame)topFrame).getLevel() -  fTargetFrameContext.getLevel();
+				}
 			} catch (DebugException e) {
 			}
 			fFrameLevel = result.frameLevel;

@@ -4994,4 +4994,18 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals(1, names.length);
 		assertEquals("CT<char, char>", names[0].toString());
 	}
+	
+	public void testBug316704() throws Exception {
+		StringBuilder code= new StringBuilder("typedef if_< bool,");
+		for (int i = 0; i < 50; i++) {
+			code.append('\n').append("if_<bool,");
+		}
+		code.append("int_<0>,");
+		for (int i = 0; i < 50; i++) {
+			code.append('\n').append("int_<0> >::type,");
+		}
+		code.append("int_<0> >::type tdef;");
+		IASTTranslationUnit tu= parse(code.toString(), ParserLanguage.CPP, true, true);
+		assertEquals(1, tu.getDeclarations().length);
+	}
 }

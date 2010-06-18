@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
@@ -52,6 +56,33 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 			}
 		}
 	}
+
+	
+	@Override
+	protected void beforeAlternative(IASTNode node) {
+		// The name may be shared between the alternatives make sure it's parent is set correctly
+		if (node instanceof IASTTypeId) {
+			IASTDeclSpecifier declSpec = ((IASTTypeId) node).getDeclSpecifier();
+			if (declSpec instanceof IASTNamedTypeSpecifier) {
+				IASTNamedTypeSpecifier namedTypeSpec= (IASTNamedTypeSpecifier) declSpec;
+				final IASTName name = namedTypeSpec.getName();
+				name.setBinding(null);
+				namedTypeSpec.setName(name);
+			}
+		} else if (node instanceof IASTIdExpression) {
+			IASTIdExpression id= (IASTIdExpression) node;
+			final IASTName name = id.getName();
+			name.setBinding(null);
+			id.setName(name);
+		}
+	}
+
+
+	@Override
+	protected void afterResolution(ASTVisitor resolver, IASTNode best) {
+		beforeAlternative(best);
+	}
+
 
 	public IASTNode copy() {
 		throw new UnsupportedOperationException();

@@ -458,21 +458,37 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		return navigateCElements(elements);
 	}
 
-	private boolean navigateCElements(final List<ICElement> elements) {
+	private boolean navigateCElements(List<ICElement> elements) {
 		if (elements.isEmpty()) {
 			return false;
 		}
 
+		final List<ICElement> uniqueElements;
+		if (elements.size() < 2) {
+			uniqueElements= elements;
+		} else {
+			// Make sure only one element per location is proposed
+			Set<String> sigs= new HashSet<String>();
+			sigs.add(null);
+			
+			uniqueElements= new ArrayList<ICElement>();
+			for (ICElement elem : elements) {
+				if (sigs.add(getLocationSignature((ISourceReference) elem))) {
+					uniqueElements.add(elem);
+				}
+			}
+		}
+		
 		runInUIThread(new Runnable() {
 			public void run() {
 				ISourceReference target= null;
-				if (elements.size() == 1) {
-					target= (ISourceReference) elements.get(0);
+				if (uniqueElements.size() == 1) {
+					target= (ISourceReference) uniqueElements.get(0);
 				} else {
 					if (OpenDeclarationsAction.sIsJUnitTest) {
-						throw new RuntimeException("ambiguous input: " + elements.size()); //$NON-NLS-1$
+						throw new RuntimeException("ambiguous input: " + uniqueElements.size()); //$NON-NLS-1$
 					}
-					ICElement[] elemArray= elements.toArray(new ICElement[elements.size()]);
+					ICElement[] elemArray= uniqueElements.toArray(new ICElement[uniqueElements.size()]);
 					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, fAction.getSite().getShell(),
 							CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
 							CElementBaseLabels.ALL_DEFAULT | CElementBaseLabels.ALL_FULLY_QUALIFIED | CElementBaseLabels.MF_POST_FILE_QUALIFIED, 0);
@@ -492,6 +508,20 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			}
 		});
 		return true;
+	}
+
+	private String getLocationSignature(ISourceReference elem) {
+		ITranslationUnit tu= elem.getTranslationUnit();
+		ISourceRange sourceRange;
+		try {
+			sourceRange = elem.getSourceRange();
+			if (tu != null && sourceRange != null) {
+				return tu.getPath().toString() + IPath.SEPARATOR + sourceRange.getIdStartPos() + IPath.SEPARATOR + sourceRange.getIdLength();
+			}
+		} catch (CoreException e) {
+			CUIPlugin.log(e);
+		}
+		return null;
 	}
 
 	private boolean navigateOneLocation(IName[] names) {
@@ -566,16 +596,14 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 	
 				// Bug 252549, search for names in the AST first.
 				Set<IBinding> primaryBindings= new HashSet<IBinding>();
-				Set<IBinding> ignoreIndexBindings= new HashSet<IBinding>();
 				ASTNameCollector nc= new ASTNameCollector(fSelectedText);
 				ast.accept(nc);
 				IASTName[] candidates= nc.getNames();
 				for (IASTName astName : candidates) {
 					try {
 						IBinding b= astName.resolveBinding();
-						if (b != null && !(b instanceof IProblemBinding) &&
-								!ignoreIndexBindings.contains(b) && primaryBindings.add(b)) {
-							ignoreIndexBindings.add(fIndex.adaptBinding(b));
+						if (b != null && !(b instanceof IProblemBinding)) {
+							primaryBindings.add(b);
 						}
 					} catch (RuntimeException e) {
 						CUIPlugin.log(e);
@@ -586,9 +614,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				final IndexFilter filter = IndexFilter.getDeclaredBindingFilter(ast.getLinkage().getLinkageID(), false);
 				final IIndexBinding[] idxBindings = fIndex.findBindings(name, false, filter, fMonitor);
 				for (IIndexBinding idxBinding : idxBindings) {
-					if (!ignoreIndexBindings.contains(idxBinding)) {
-						primaryBindings.add(idxBinding);
-					}
+					primaryBindings.add(idxBinding);
 				}
 
 				// Search for a macro in the index.

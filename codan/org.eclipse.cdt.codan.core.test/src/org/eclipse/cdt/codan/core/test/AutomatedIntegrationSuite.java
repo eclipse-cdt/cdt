@@ -14,6 +14,7 @@ package org.eclipse.cdt.codan.core.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.codan.core.internal.checkers.AssignmentInConditionCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.CatchByReferenceTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
@@ -41,6 +42,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		suite.addTestSuite(ReturnCheckerTest.class);
 		suite.addTestSuite(CatchByReferenceTest.class);
+		suite.addTestSuite(AssignmentInConditionCheckerTest.class);
 		suite.addTest(CodanFastTestSuite.suite());
 		return suite;
 	}

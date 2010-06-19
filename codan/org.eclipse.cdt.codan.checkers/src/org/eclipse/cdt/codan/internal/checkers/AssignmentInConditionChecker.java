@@ -14,10 +14,14 @@ import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 
 public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"; //$NON-NLS-1$
@@ -51,8 +55,18 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 		private boolean isUsedAsCondition(IASTExpression expression) {
 			ASTNodeProperty prop = expression.getPropertyInParent();
 			if (prop == IASTForStatement.CONDITION
-					|| prop == IASTIfStatement.CONDITION)
+					|| prop == IASTIfStatement.CONDITION
+					|| prop == IASTWhileStatement.CONDITIONEXPRESSION
+					|| prop == IASTDoStatement.CONDITION)
 				return true;
+			if (prop == IASTUnaryExpression.OPERAND) {
+				IASTUnaryExpression expr = (IASTUnaryExpression) expression
+						.getParent();
+				if (expr.getOperator() == IASTUnaryExpression.op_bracketedPrimary && 
+						expr.getPropertyInParent() == IASTConditionalExpression.LOGICAL_CONDITION) {
+					return true;
+				}
+			}
 			return false;
 		}
 	}

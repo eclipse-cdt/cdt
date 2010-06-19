@@ -23,7 +23,7 @@ import org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences;
  * they all differently "named".
  * For example checker for parameter names shadowing would have two boolean
  * options:
- * "check contructors" and
+ * "check constructors" and
  * "check setters". In this case you use this type.
  * {@link AbstractCheckerWithProblemPreferences} class has map as default top
  * level parameter preference.
@@ -35,7 +35,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 	protected LinkedHashMap<String, IProblemPreference> hash = new LinkedHashMap<String, IProblemPreference>();
 
 	/**
-	 * Default constuctor
+	 * Default constructor
 	 */
 	public MapProblemPreference() {
 		super();
@@ -166,10 +166,12 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 				String key = tokenizer.sval;
 				token = tokenizer.nextToken();
 				if (token != '=')
-					throw new IllegalArgumentException(String.valueOf((char) token));
+					throw new IllegalArgumentException(
+							String.valueOf((char) token));
 				token = tokenizer.nextToken();
 				if (token != '>')
-					throw new IllegalArgumentException(String.valueOf((char) token));
+					throw new IllegalArgumentException(
+							String.valueOf((char) token));
 				IProblemPreference desc = getChildDescriptor(key);
 				if (desc != null && desc instanceof AbstractProblemPreference) {
 					((AbstractProblemPreference) desc).importValue(tokenizer);
@@ -179,7 +181,8 @@ public class MapProblemPreference extends AbstractProblemPreference implements
 				if (token == '}')
 					break;
 				if (token != ',')
-					throw new IllegalArgumentException(String.valueOf((char) token));
+					throw new IllegalArgumentException(
+							String.valueOf((char) token));
 			}
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);

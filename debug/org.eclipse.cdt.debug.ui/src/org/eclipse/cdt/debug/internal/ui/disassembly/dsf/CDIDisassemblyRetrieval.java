@@ -14,6 +14,7 @@ package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
@@ -99,7 +100,12 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 		Runnable op= new Runnable() {
 			public void run() {
 				if (stackFrame instanceof ICStackFrame) {
-					addressRequest.setAddress(((ICStackFrame)stackFrame).getAddress().getValue());
+					IAddress address = ((ICStackFrame)stackFrame).getAddress();
+					if (address != null ) {
+						addressRequest.setAddress(address.getValue());
+					} else {
+						addressRequest.setStatus(new Status(IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), "Internal error: Cannot retrieve frame address")); //$NON-NLS-1$
+					}
 				} else {
 					addressRequest.cancel();
 				}

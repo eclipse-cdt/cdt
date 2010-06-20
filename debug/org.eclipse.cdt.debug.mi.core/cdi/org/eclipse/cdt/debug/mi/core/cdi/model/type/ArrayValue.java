@@ -59,7 +59,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 
 		/* GDB is appallingly slow on array fetches. As as slow as 128 entries
 		 * per second on NT gdbs with slow processors. We need to set a timeout
-		 * that's appropraitely scaled by number of children to give the slave
+		 * that's appropriately scaled by number of children to give the slave
 		 * GDB time to respond. In the end perhaps we want a UI for this. As it 
 		 * is, let's just make up a number that's 5 seconds for us plus one 
 		 * second for every 128 entries. */

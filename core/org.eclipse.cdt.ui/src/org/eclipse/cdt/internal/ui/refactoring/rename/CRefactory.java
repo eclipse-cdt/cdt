@@ -74,9 +74,7 @@ public class CRefactory {
     
     // runs the rename refactoring
     public void rename(Shell shell, ICElement arg) {
-        if (!IDE.saveAllEditors(
-                new IResource[] {ResourcesPlugin.getWorkspace().getRoot()},
-                false)) {
+        if (!IDE.saveAllEditors(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, false)) {
             return;
         }
         CRefactoringArgument iarg= new CRefactoringArgument(arg);
@@ -86,10 +84,9 @@ public class CRefactory {
 			try {
 				CRenameRefactoring r= new CRenameRefactoring(processor);
 				RefactoringWizardOpenOperation op= 
-					new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-				op.run(shell, Messages.getString("CRefactory.title.rename"));  //$NON-NLS-1$
-			}
-			finally {
+						new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
+				op.run(shell, Messages.CRefactory_title_rename);
+			} finally {
 				processor.unlockIndex();
 			}
 		} catch (CoreException e) {
@@ -104,9 +101,7 @@ public class CRefactory {
         if (res instanceof IFile == false) {
         	return;
         }
-        if (!IDE.saveAllEditors(
-                new IResource[] {ResourcesPlugin.getWorkspace().getRoot()},
-                false)) {
+        if (!IDE.saveAllEditors(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, false)) {
             return;
         }
         CRefactoringArgument iarg= new CRefactoringArgument((IFile) res, s.getOffset(), s.getLength());
@@ -116,8 +111,8 @@ public class CRefactory {
         	try {
         		CRenameRefactoring r= new CRenameRefactoring(processor);
         		RefactoringWizardOpenOperation op= 
-        			new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-        		op.run(shell, Messages.getString("CRefactory.title.rename"));  //$NON-NLS-1$
+        				new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
+        		op.run(shell, Messages.CRefactory_title_rename);
         	} finally {
         		processor.unlockIndex();
         	}
@@ -146,15 +141,13 @@ public class CRefactory {
                         id.equals(CCorePlugin.CONTENT_TYPE_CSOURCE) ||
                         id.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) ||
                         id.equals(CCorePlugin.CONTENT_TYPE_CXXSOURCE)) {
-                            useit= true;
-                }
-                else {
+                	useit= true;
+                } else {
                     type= type.getBaseType();
                 }
             }
             if (useit) {
-                String exts[] =
-                    type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
+                String exts[] = type.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
                 all.addAll(Arrays.asList(exts));
             }
         }

@@ -50,8 +50,6 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.formatter.scanner.SimpleScanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
 
-
-
 /**
  * Wraps the platform text search and uses a scanner to categorize the text-matches
  * by location (comments, string-literals, etc.).
@@ -121,7 +119,7 @@ public class TextSearchWrapper {
 		}
 
         private String filePatternToRegex(String filePattern) {
-            StringBuffer result = new StringBuffer();
+            StringBuilder result = new StringBuilder();
             for (int i = 0; i < filePattern.length(); i++) {
                 char c = filePattern.charAt(i);
                 switch(c) {
@@ -236,7 +234,7 @@ public class TextSearchWrapper {
             String word, IProgressMonitor monitor, final List<CRefactoringMatch> target) {
         int startPos= target.size();
         TextSearchEngine engine= TextSearchEngine.create();
-        StringBuffer searchPattern= new StringBuffer(word.length()+ 8);
+        StringBuilder searchPattern= new StringBuilder(word.length() + 8);
         searchPattern.append("\\b"); //$NON-NLS-1$
         searchPattern.append("\\Q"); //$NON-NLS-1$
         searchPattern.append(word);
@@ -267,7 +265,7 @@ public class TextSearchWrapper {
     }
     
     public void categorizeMatches(List<CRefactoringMatch> matches, IProgressMonitor monitor) {
-        monitor.beginTask(Messages.getString("TextSearch.monitor.categorizeMatches"), matches.size()); //$NON-NLS-1$
+        monitor.beginTask(Messages.TextSearch_monitor_categorizeMatches, matches.size());
         IFile file= null;
         ArrayList<int[]> locations= null;
         for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
@@ -288,6 +286,7 @@ public class TextSearchWrapper {
             return (o1)[0]-(o2)[0];
         }
     };
+
     private int findLocation(CRefactoringMatch match, ArrayList<int[]> states) {
         int pos= Collections.binarySearch(states, new int[] {match.getOffset()}, COMPARE_FIRST_INTEGER);
         if (pos<0) {
@@ -352,8 +351,7 @@ public class TextSearchWrapper {
                     lastState= state;
                 }
             }
-        }
-        finally {
+        } finally {
             try {
                 reader.close();
             } catch (IOException e1) {

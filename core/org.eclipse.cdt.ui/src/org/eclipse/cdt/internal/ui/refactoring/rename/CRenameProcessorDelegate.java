@@ -30,11 +30,10 @@ import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.ValidateEditChecker;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEditGroup;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
@@ -50,18 +49,18 @@ public abstract class CRenameProcessorDelegate {
     private ArrayList<CRefactoringMatch> fMatches= null;
     protected String fProcessorBaseName;
     private int fAvailableOptions=         
-        CRefactory.OPTION_ASK_SCOPE | 
-        CRefactory.OPTION_IN_CODE |
-        CRefactory.OPTION_IN_COMMENT | 
-        CRefactory.OPTION_IN_MACRO_DEFINITION |
-        CRefactory.OPTION_IN_STRING_LITERAL;
+	        CRefactory.OPTION_ASK_SCOPE | 
+	        CRefactory.OPTION_IN_CODE |
+	        CRefactory.OPTION_IN_COMMENT | 
+	        CRefactory.OPTION_IN_MACRO_DEFINITION |
+	        CRefactory.OPTION_IN_STRING_LITERAL;
 
     private int fOptionsForcingPreview=
-        CRefactory.OPTION_IN_CODE |
-        CRefactory.OPTION_IN_COMMENT | 
-        CRefactory.OPTION_IN_MACRO_DEFINITION |
-        CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
-        CRefactory.OPTION_IN_STRING_LITERAL;
+	        CRefactory.OPTION_IN_CODE |
+	        CRefactory.OPTION_IN_COMMENT | 
+	        CRefactory.OPTION_IN_MACRO_DEFINITION |
+	        CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
+	        CRefactory.OPTION_IN_STRING_LITERAL;
     
     private int fOptionsEnablingScope= fOptionsForcingPreview;        
 
@@ -74,33 +73,39 @@ public abstract class CRenameProcessorDelegate {
     final public CRefactoringArgument getArgument() {
         return fTopProcessor.getArgument();
     }
+
     final public String getReplacementText() {
         return fTopProcessor.getReplacementText();
     }
+
     final public int getSelectedScope() {
         return fTopProcessor.getScope();
     }
+
     final public int getSelectedOptions() {
         return fTopProcessor.getSelectedOptions();
     }
+
     final public String getSelectedWorkingSet() {
         return fTopProcessor.getWorkingSet();
     }
+
     final public CRefactory getManager() {
         return fTopProcessor.getManager();
     }
+
     final public ASTManager getAstManager() {
         return fTopProcessor.getAstManager();
     }
+
     final public IIndex getIndex() {
     	return fTopProcessor.getIndex();
     }
+
     final public String getProcessorName() {
         String identifier= getArgument().getName();
         if (identifier != null) {
-            return MessageFormat.format(
-                    Messages.getString("CRenameProcessorDelegate.wizard.title"),  //$NON-NLS-1$
-                    new Object[] {fProcessorBaseName, identifier});
+            return NLS.bind(Messages.CRenameProcessorDelegate_wizard_title, fProcessorBaseName, identifier);
         }
         return null;
     }
@@ -111,6 +116,7 @@ public abstract class CRenameProcessorDelegate {
     public void setAvailableOptions(int options) {
         fAvailableOptions= options;
     }
+
     final int getAvailableOptions() {
         return fAvailableOptions;
     }
@@ -148,7 +154,7 @@ public abstract class CRenameProcessorDelegate {
 
     public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, CheckConditionsContext context) throws CoreException, OperationCanceledException {
         RefactoringStatus result= new RefactoringStatus();
-        monitor.beginTask(Messages.getString("CRenameProcessorDelegate.task.checkFinalCondition"), 2); //$NON-NLS-1$
+        monitor.beginTask(Messages.CRenameProcessorDelegate_task_checkFinalCondition, 2);
         IFile file= getArgument().getSourceFile();
         //assert file!=null;
     
@@ -173,15 +179,14 @@ public abstract class CRenameProcessorDelegate {
         
         HashSet<IFile> fileset= new HashSet<IFile>();
         int potentialMatchCount= 0;
-        int commentCount=0;
+        int commentCount= 0;
         for (Iterator<CRefactoringMatch> iter = fMatches.iterator(); iter.hasNext();) {
             CRefactoringMatch tm = iter.next();
             if (tm.isInComment()) {
                 commentCount++;
                 fileset.add(tm.getFile());
-            }
-            else {
-                switch(tm.getAstInformation()) {
+            } else {
+                switch (tm.getAstInformation()) {
                 case CRefactoringMatch.AST_REFERENCE_OTHER:
                     iter.remove();
                     break;
@@ -191,38 +196,32 @@ public abstract class CRenameProcessorDelegate {
                     break;
                 default:
                     fileset.add(tm.getFile());
-                break;
+                    break;
                 }
             }
         }
         if (potentialMatchCount != 0) {
             String msg= null;
             if (potentialMatchCount == 1) {
-                msg= Messages.getString("CRenameProcessorDelegate.warning.potentialMatch.singular"); //$NON-NLS-1$
-            }
-            else {
-                msg= MessageFormat.format(
-                    Messages.getString("CRenameProcessorDelegate.warning.potentialMatch.plural"), //$NON-NLS-1$
-                    new Object[]{new Integer(potentialMatchCount)});
+                msg= Messages.CRenameProcessorDelegate_warning_potentialMatch_singular;
+            } else {
+                msg= NLS.bind(Messages.CRenameProcessorDelegate_warning_potentialMatch_plural, potentialMatchCount);
             }
             result.addWarning(msg);
         }
         if (commentCount != 0) {
             String msg= null;
             if (commentCount == 1) {
-                msg= Messages.getString("CRenameProcessorDelegate.warning.commentMatch.singular"); //$NON-NLS-1$
-            }
-            else {
-                msg= MessageFormat.format(
-                    Messages.getString("CRenameProcessorDelegate.warning.commentMatch.plural"), //$NON-NLS-1$
-                    new Object[]{new Integer(commentCount)});
+                msg= Messages.CRenameProcessorDelegate_warning_commentMatch_singular;
+            } else {
+                msg= NLS.bind(Messages.CRenameProcessorDelegate_warning_commentMatch_plural, commentCount);
             }
             result.addWarning(msg);
         }
         IFile[] files= fileset.toArray(new IFile[fileset.size()]);
         if (context != null) {
-            ValidateEditChecker editChecker= 
-                (ValidateEditChecker) context.getChecker(ValidateEditChecker.class);
+            ValidateEditChecker editChecker=
+            		(ValidateEditChecker) context.getChecker(ValidateEditChecker.class);
             editChecker.addFiles(files);
         }
         monitor.done();
@@ -246,7 +245,7 @@ public abstract class CRenameProcessorDelegate {
         for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
             CRefactoringMatch match = iter.next();
             int location= match.getLocation();
-            if (location != 0 && ((location & acceptTextLocation) == 0)) {
+            if (location != 0 && (location & acceptTextLocation) == 0) {
                 iter.remove();
             }
         }
@@ -272,7 +271,7 @@ public abstract class CRenameProcessorDelegate {
                 
                 return m1.getOffset() - m2.getOffset();
             }});
-        pm.beginTask(Messages.getString("CRenameProcessorDelegate.task.createChange"), fMatches.size()); //$NON-NLS-1$
+        pm.beginTask(Messages.CRenameProcessorDelegate_task_createChange, fMatches.size());
         final String identifier= getArgument().getName();
         final String replacement= getReplacementText();
         CompositeChange overallChange= new CompositeChange(getProcessorName()); 
@@ -280,7 +279,7 @@ public abstract class CRenameProcessorDelegate {
         TextFileChange fileChange= null;
         MultiTextEdit fileEdit= null;
         for (CRefactoringMatch match : fMatches) {
-            switch(match.getAstInformation()) {
+            switch (match.getAstInformation()) {
             case CRefactoringMatch.AST_REFERENCE_OTHER:
                 continue;
             case CRefactoringMatch.IN_COMMENT:
@@ -299,8 +298,7 @@ public abstract class CRenameProcessorDelegate {
                     overallChange.add(fileChange);
                 }
                 
-                ReplaceEdit replaceEdit= new ReplaceEdit(match.getOffset(), 
-                        identifier.length(), replacement);
+                ReplaceEdit replaceEdit= new ReplaceEdit(match.getOffset(), identifier.length(), replacement);
                 fileEdit.addChild(replaceEdit);
                 TextEditGroup editGroup= new TextEditGroup(match.getLabel(), replaceEdit);
                 TextEditChangeGroup changeGroup= new TextEditChangeGroup(fileChange, editGroup);

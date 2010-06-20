@@ -29,12 +29,6 @@ public final class CEditorMessages extends NLS {
 		return fgBundleForConstructedKeys;
 	}
 
-	private static final String BUNDLE_NAME = CEditorMessages.class.getName();
-
-	private CEditorMessages() {
-		// Do not instantiate
-	}
-
 	public static String AddIncludeOnSelection_label;
 	public static String AddIncludeOnSelection_description;
 	public static String AddIncludeOnSelection_error_title;
@@ -98,6 +92,10 @@ public final class CEditorMessages extends NLS {
 	public static String CEditor_markOccurrences_job_name;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, CEditorMessages.class);
+		NLS.initializeMessages(CEditorMessages.class.getName(), CEditorMessages.class);
+	}
+
+	// Do not instantiate
+	private CEditorMessages() {
 	}
 }

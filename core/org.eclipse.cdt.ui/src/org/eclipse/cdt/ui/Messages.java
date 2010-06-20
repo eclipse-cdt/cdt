@@ -15,7 +15,6 @@ package org.eclipse.cdt.ui;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.ui.messages"; //$NON-NLS-1$
 	public static String CElementGrouping_includeGroupingLabel;
 	
 	/**
@@ -24,9 +23,10 @@ public class Messages extends NLS {
 	public static String CElementGrouping_macroGroupingLabel;
 	
 	public static String CUIPlugin_jobStartMakeUI;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

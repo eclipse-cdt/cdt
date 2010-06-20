@@ -16,12 +16,6 @@ import org.eclipse.osgi.util.NLS;
 
 public final class CHoverMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.text.c.hover.CHoverMessages";//$NON-NLS-1$
-
-	private CHoverMessages() {
-		// Do not instantiate
-	}
-
 	public static String AbstractAnnotationHover_action_configureAnnotationPreferences;
 	public static String AbstractAnnotationHover_message_singleQuickFix;
 	public static String AbstractAnnotationHover_message_multipleQuickFix;
@@ -40,6 +34,10 @@ public final class CHoverMessages extends NLS {
 	public static String CSourceHover_jobTitle;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, CHoverMessages.class);
+		NLS.initializeMessages(CHoverMessages.class.getName(), CHoverMessages.class);
+	}
+
+	// Do not instantiate
+	private CHoverMessages() {
 	}
 }

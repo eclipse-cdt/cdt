@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 import org.eclipse.osgi.util.NLS;
 
 public class CHMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.callhierarchy.CHMessages"; //$NON-NLS-1$
 	public static String CallHierarchyUI_label;
 	public static String CallHierarchyUI_openFailureMessage;
 	public static String CallHierarchyUI_selectMessage;
@@ -59,7 +58,7 @@ public class CHMessages extends NLS {
 
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, CHMessages.class);
+		NLS.initializeMessages(CHMessages.class.getName(), CHMessages.class);
 	}
 
 	private CHMessages() {

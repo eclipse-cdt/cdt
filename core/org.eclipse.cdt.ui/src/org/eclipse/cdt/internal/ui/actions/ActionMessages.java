@@ -17,8 +17,6 @@ import org.eclipse.osgi.util.NLS;
  * Class that gives access to the action messages resource bundle.
  */
 public class ActionMessages extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.cdt.internal.ui.actions.ActionMessages"; //$NON-NLS-1$
-
 	public static String SourceMenu_label;
 	public static String SelectionConverter_codeResolve_failed;
 	public static String OpenAction_label;
@@ -81,7 +79,7 @@ public class ActionMessages extends NLS {
 
 	static {
 		// Initialize resource bundle.
-		NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);
+		NLS.initializeMessages(ActionMessages.class.getName(), ActionMessages.class);
 	}
 
 	private ActionMessages() {

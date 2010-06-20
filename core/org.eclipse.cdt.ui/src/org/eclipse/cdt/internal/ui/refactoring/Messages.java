@@ -15,12 +15,6 @@ import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.refactoring.messages";//$NON-NLS-1$
-
-	private Messages() {
-		// Do not instantiate
-	}
-
 	public static String DeleteFileChange_0;
 	public static String DeleteFileChange_1;
 	public static String Refactoring_name;
@@ -43,6 +37,10 @@ public final class Messages extends NLS {
 	public static String NO_FILE;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
+	}
+
+	// Do not instantiate
+	private Messages() {
 	}
 }

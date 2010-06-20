@@ -29,8 +29,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -84,24 +83,21 @@ public class CRenameProcessor extends RenameProcessor {
         if (result == null) {
             String identifier= getArgument().getName();
             if (identifier != null && identifier.length() > 0) {
-                result= MessageFormat.format(Messages.getString("CRenameTopProcessor.wizard.title"),  //$NON-NLS-1$
-                    new Object[] {identifier});
+                result= NLS.bind(Messages.CRenameTopProcessor_wizard_title, identifier);
             }
         }
         if (result == null) {
-            result= Messages.getString("CRenameTopProcessor.wizard.backup.title"); //$NON-NLS-1$
+            result= Messages.CRenameTopProcessor_wizard_backup_title;
         }
 
         return result;
     }
 
-    // overrider
     @Override
 	public boolean isApplicable() throws CoreException {
         return true;
     }
 
-    // overrider
     @Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
             throws CoreException, OperationCanceledException {
@@ -112,7 +108,7 @@ public class CRenameProcessor extends RenameProcessor {
             identifier= fArgument.getName();
         }
         if (identifier == null || identifier.length() < 1) {
-            status.addFatalError(Messages.getString("CRenameTopProcessor.error.invalidTextSelection")); //$NON-NLS-1$
+            status.addFatalError(Messages.CRenameTopProcessor_error_invalidTextSelection);
             return status;
         }
         IFile file= fArgument.getSourceFile();
@@ -121,12 +117,12 @@ public class CRenameProcessor extends RenameProcessor {
             path= file.getLocation();
         }
         if (path == null) {
-            return RefactoringStatus.createFatalErrorStatus(Messages.getString("CRenameTopProcessor.error.renameWithoutSourceFile")); //$NON-NLS-1$
+            return RefactoringStatus.createFatalErrorStatus(Messages.CRenameTopProcessor_error_renameWithoutSourceFile);
         }
         
         fDelegate= createDelegate();
         if (fDelegate == null) {
-            status.addFatalError(Messages.getString("CRenameTopProcessor.error.invalidName")); //$NON-NLS-1$
+            status.addFatalError(Messages.CRenameTopProcessor_error_invalidName);
             return status;
         }            
         RefactoringStatus s1= fDelegate.checkInitialConditions(new NullProgressMonitor());
@@ -138,48 +134,47 @@ public class CRenameProcessor extends RenameProcessor {
         switch (fArgument.getArgumentKind()) {
         	case CRefactory.ARGUMENT_LOCAL_VAR: 
                 return new CRenameLocalProcessor(this, 
-                        Messages.getString("CRenameTopProcessor.localVar"), //$NON-NLS-1$
+                        Messages.CRenameTopProcessor_localVar,
                         fArgument.getScope());
         	case CRefactory.ARGUMENT_PARAMETER:
                 return new CRenameLocalProcessor(this, 
-                        Messages.getString("CRenameTopProcessor.parameter"), //$NON-NLS-1$
+                        Messages.CRenameTopProcessor_parameter,
                         fArgument.getScope());
         	case CRefactory.ARGUMENT_FILE_LOCAL_VAR:
                 return new CRenameLocalProcessor(this, 
-                        Messages.getString("CRenameTopProcessor.filelocalVar"), //$NON-NLS-1$
+                        Messages.CRenameTopProcessor_filelocalVar,
                         null);
         	case CRefactory.ARGUMENT_GLOBAL_VAR:
-                return new CRenameGlobalProcessor(this, Messages.getString("CRenameTopProcessor.globalVar")); //$NON-NLS-1$
+                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_globalVar);
             case CRefactory.ARGUMENT_ENUMERATOR:
-                return new CRenameGlobalProcessor(this, Messages.getString("CRenameTopProcessor.enumerator")); //$NON-NLS-1$
+                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_enumerator);
         	case CRefactory.ARGUMENT_FIELD:
-                return new CRenameGlobalProcessor(this, Messages.getString("CRenameTopProcessor.field")); //$NON-NLS-1$
+                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_field);
         	case CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION:
                 return new CRenameLocalProcessor(this, 
-                        Messages.getString("CRenameTopProcessor.filelocalFunction"), //$NON-NLS-1$
+                        Messages.CRenameTopProcessor_filelocalFunction,
                         null);
         	case CRefactory.ARGUMENT_GLOBAL_FUNCTION:
-                return new CRenameGlobalProcessor(this, Messages.getString("CRenameTopProcessor.globalFunction")); //$NON-NLS-1$
+                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_globalFunction);
         	case CRefactory.ARGUMENT_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, Messages.getString("CRenameTopProcessor.virtualMethod"), true); //$NON-NLS-1$
+                return new CRenameMethodProcessor(this, Messages.CRenameTopProcessor_virtualMethod, true);
         	case CRefactory.ARGUMENT_NON_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, Messages.getString("CRenameTopProcessor.method"), false); //$NON-NLS-1$
+                return new CRenameMethodProcessor(this, Messages.CRenameTopProcessor_method, false);
             case CRefactory.ARGUMENT_CLASS_TYPE:                
-                return new CRenameClassProcessor(this, Messages.getString("CRenameTopProcessor.type")); //$NON-NLS-1$
+                return new CRenameClassProcessor(this, Messages.CRenameTopProcessor_type);
             case CRefactory.ARGUMENT_NAMESPACE:
-                return new CRenameTypeProcessor(this, Messages.getString("CRenameTopProcessor.namespace")); //$NON-NLS-1$
+                return new CRenameTypeProcessor(this, Messages.CRenameTopProcessor_namespace);
         	case CRefactory.ARGUMENT_TYPE:
-                return new CRenameTypeProcessor(this, Messages.getString("CRenameTopProcessor.type")); //$NON-NLS-1$
+                return new CRenameTypeProcessor(this, Messages.CRenameTopProcessor_type);
         	case CRefactory.ARGUMENT_MACRO:
-                return new CRenameMacroProcessor(this, Messages.getString("CRenameTopProcessor.macro")); //$NON-NLS-1$
+                return new CRenameMacroProcessor(this, Messages.CRenameTopProcessor_macro);
         	case CRefactory.ARGUMENT_INCLUDE_DIRECTIVE:
-                return new CRenameIncludeProcessor(this, Messages.getString("CRenameIncludeProcessor.includeDirective")); //$NON-NLS-1$
+                return new CRenameIncludeProcessor(this, Messages.CRenameIncludeProcessor_includeDirective);
         	default:
                 return null;
         }
     }
 
-    // overrider
     @Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
             CheckConditionsContext context) throws CoreException,
@@ -187,14 +182,12 @@ public class CRenameProcessor extends RenameProcessor {
         return fDelegate.checkFinalConditions(pm, context);
     }
 
-    // overrider
     @Override
 	public Change createChange(IProgressMonitor pm) throws CoreException,
             OperationCanceledException {
         return fDelegate.createChange(pm);
     }
 
-    // overrider
     @Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status,
             SharableParticipants sharedParticipants) throws CoreException {
@@ -234,7 +227,6 @@ public class CRenameProcessor extends RenameProcessor {
         return fDelegate.getOptionsEnablingScope();
     }
 
-    // overrider
     @Override
 	public String getIdentifier() {
         return IDENTIFIER;
@@ -243,30 +235,38 @@ public class CRenameProcessor extends RenameProcessor {
     public int getScope() {
         return fScope;
     }
+
     public void setScope(int scope) {
         fScope = scope;
     }
+
     public int getSelectedOptions() {
         return fSelectedOptions;
     }
+
     public void setSelectedOptions(int selectedOptions) {
         fSelectedOptions = selectedOptions;
     }
+
     public String getWorkingSet() {
         return fWorkingSet;
     }
+
     public void setWorkingSet(String workingSet) {
         fWorkingSet = workingSet;
     }
     public String getReplacementText() {
         return fReplacementText;
     }
+
     public void setReplacementText(String replacementText) {
         fReplacementText = replacementText;
     }
+
     public CRefactory getManager() {
         return fManager;
     }
+
     public ASTManager getAstManager() {
         return fAstManager;
     }

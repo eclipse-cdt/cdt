@@ -52,7 +52,6 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
     @Override
 	protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, 
             RefactoringStatus status) {
-    	
     	super.analyzeTextMatches(matches, monitor, status);
         if (fScope != null) {
             CRefactoringArgument argument = getArgument();

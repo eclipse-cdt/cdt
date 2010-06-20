@@ -24,7 +24,6 @@ public class CRenameIncludeProcessor extends CRenameProcessorDelegate {
         setOptionsEnablingScope(-1);
     }
 
-
     @Override
 	protected int getAcceptedLocations(int selectedOptions) {
         return selectedOptions | CRefactory.OPTION_IN_INCLUDE_DIRECTIVE;

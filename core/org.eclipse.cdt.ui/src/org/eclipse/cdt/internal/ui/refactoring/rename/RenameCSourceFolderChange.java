@@ -11,7 +11,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +25,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
@@ -37,16 +37,12 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class RenameCSourceFolderChange extends Change {
-	
 	private IPath oldName;
 	private IPath newName;
 	private IProject project;
 	private IFolder folder;
-	
-	
 
 	public RenameCSourceFolderChange(IPath oldFolderPath, IPath newFolderPath, IProject project, IFolder oldFolder) {
 		super();
@@ -54,7 +50,6 @@ public class RenameCSourceFolderChange extends Change {
 		this.newName = newFolderPath;
 		this.project = project;
 		folder = oldFolder;
-		
 	}
 
 	@Override
@@ -64,7 +59,7 @@ public class RenameCSourceFolderChange extends Change {
 
 	@Override
 	public String getName() {
-		return MessageFormat.format(Messages.getString("RenameCSourceFolderChange.Name0"), oldName.lastSegment(), newName.lastSegment()); //$NON-NLS-1$
+		return NLS.bind(Messages.RenameCSourceFolderChange_Name0, oldName.lastSegment(), newName.lastSegment());
 	}
 
 	@Override
@@ -73,18 +68,16 @@ public class RenameCSourceFolderChange extends Change {
 
 	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(folder.exists()) {
+		if (folder.exists()) {
 			return RefactoringStatus.create(Status.OK_STATUS); 
-		}else {
-			return RefactoringStatus.create(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, MessageFormat.format(Messages.getString("RenameCSourceFolderChange.ErroMsg"), folder.getName()))); //$NON-NLS-1$
-
+		} else {
+			return RefactoringStatus.create(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
+					NLS.bind(Messages.RenameCSourceFolderChange_ErroMsg, folder.getName())));
 		}
-		
 	}
 
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		
 		changeEntryInAllCfgs(CCorePlugin.getDefault().getProjectDescription(project, true));
 		IFolder folder2 = project.getFolder(newName.lastSegment());
 		return new RenameCSourceFolderChange(newName, oldName, project, folder2);
@@ -92,7 +85,7 @@ public class RenameCSourceFolderChange extends Change {
 	
 	private void changeEntryInAllCfgs(ICProjectDescription des) throws WriteAccessException, CoreException{
 		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		for(ICConfigurationDescription cfg : cfgs){
+		for (ICConfigurationDescription cfg : cfgs){
 			ICSourceEntry[] entries = cfg.getSourceEntries();
 			entries = renameEntry(entries);
 			cfg.setSourceEntries(entries);
@@ -102,18 +95,18 @@ public class RenameCSourceFolderChange extends Change {
 	
 	private ICSourceEntry[] renameEntry(ICSourceEntry[] entries){
 		Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
-		for(ICSourceEntry se : entries){
+		for (ICSourceEntry se : entries){
 			String seLocation = se.getName();
 			if(seLocation.equals(oldName.toPortableString())) {
 				ICSourceEntry newSE = new CSourceEntry(newName, se.getExclusionPatterns(), se.getFlags());
 				set.add(newSE);
-			}else {
+			} else {
 				Set<IPath> exPatters = new HashSet<IPath>();
 				for (IPath filter : se.getExclusionPatterns()) {
 					IPath oldSegments = oldName.removeFirstSegments(oldName.segmentCount() -1);
-					if(filter.equals(oldSegments)) {
+					if (filter.equals(oldSegments)) {
 						exPatters.add(newName.removeFirstSegments(newName.segmentCount() -1));
-					}else {
+					} else {
 						exPatters.add(filter);
 					}
 				}
@@ -123,5 +116,4 @@ public class RenameCSourceFolderChange extends Change {
 		}
 		return set.toArray(new ICSourceEntry[set.size()]);
 	}
-
 }

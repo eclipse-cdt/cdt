@@ -25,23 +25,18 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class RenameSourceFolder extends RenameParticipant {
 
 	private IFolder oldFolder;
 	private String newName;
 
-	/**
-	 * 
-	 */
 	public RenameSourceFolder() {
 	}
 
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context)
 			throws OperationCanceledException {
-		
 		RenameArguments arg = getArguments();
 		newName = arg.getNewName();		
 		return RefactoringStatus.create(Status.OK_STATUS);
@@ -50,14 +45,13 @@ public class RenameSourceFolder extends RenameParticipant {
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		IPath oldFolderPath = oldFolder.getFullPath();
-		IPath newFolderPath = oldFolder.getFullPath().uptoSegment(oldFolder.getFullPath().segmentCount()-1).append(newName);
-
+		IPath newFolderPath = oldFolder.getFullPath().uptoSegment(oldFolder.getFullPath().segmentCount() - 1).append(newName);
 		return new RenameCSourceFolderChange(oldFolderPath, newFolderPath, oldFolder.getProject(), oldFolder);
 	}
 
 	@Override
 	public String getName() {
-		return Messages.getString("RenameSourceFolder.0"); //$NON-NLS-1$
+		return Messages.RenameSourceFolder_0;
 	}
 
 	@Override
@@ -65,9 +59,7 @@ public class RenameSourceFolder extends RenameParticipant {
 		if (element instanceof IFolder) {
 			oldFolder = (IFolder) element;
 			return true;
-			
 		}
 		return false;
 	}
-
 }

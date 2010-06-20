@@ -25,11 +25,11 @@ public class CRefactoringMatch {
     public static final int IN_COMMENT = 4;
     
     private static String[] LABELS= {
-        Messages.getString("CRefactoringMatch.label.potentialOccurrence"),  //$NON-NLS-1$
-        Messages.getString("CRefactoringMatch.label.occurrence"), //$NON-NLS-1$
+        Messages.CRefactoringMatch_label_potentialOccurrence,
+        Messages.CRefactoringMatch_label_occurrence,
         "", //$NON-NLS-1$
-        Messages.getString("CRefactoringMatch.label.potentialOccurrence"),  //$NON-NLS-1$
-        Messages.getString("CRefactoringMatch.label.comment")}; //$NON-NLS-1$
+        Messages.CRefactoringMatch_label_potentialOccurrence,
+        Messages.CRefactoringMatch_label_comment };
     
     private IFile fFile;
     private int fOffset;

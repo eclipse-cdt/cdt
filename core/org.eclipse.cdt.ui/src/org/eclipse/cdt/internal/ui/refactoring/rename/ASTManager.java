@@ -29,8 +29,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -126,14 +125,14 @@ public class ASTManager {
     private HashSet<IBinding> fConflictingBinding;
 
     public static String nth_of_m(int n, int m) {
-        StringBuffer nofm= new StringBuffer();
+        StringBuilder nofm= new StringBuilder();
         append_nth_of_m(n, m, nofm);
         return nofm.toString();
     }
 
-    static void append_nth_of_m(int n, int m, StringBuffer buf) {
+    static void append_nth_of_m(int n, int m, StringBuilder buf) {
         buf.append(n);
-        switch(n) {
+        switch (n) {
             case 1:
                 buf.append("st"); //$NON-NLS-1$
                 break;
@@ -170,7 +169,7 @@ public class ASTManager {
      * @throws DOMException 
      */
     public static int isSameBinding(IBinding b1, IBinding b2) throws DOMException {
-        if (b1==null || b2==null) {
+        if (b1 == null || b2 == null) {
             return UNKNOWN;
         }
         if (b1.equals(b2)) {
@@ -178,7 +177,7 @@ public class ASTManager {
         }
         String n1= b1.getName();
         String n2= b2.getName();
-        if (n1==null || n2==null) {
+        if (n1 == null || n2 == null) {
             return UNKNOWN;
         }
         if (!n1.equals(n2)) {
@@ -212,8 +211,7 @@ public class ASTManager {
                 if (!(b2 instanceof ICPPMethod)) {
                     return FALSE;
                 }
-            }
-            else {
+            } else {
                 if (b2 instanceof ICPPMethod) {
                     return FALSE;
                 }
@@ -232,7 +230,7 @@ public class ASTManager {
             if (r2 == FALSE) {
                 return FALSE;
             }
-            if (r1!=r2) {
+            if (r1 != r2) {
                 return UNKNOWN;
             }
             return r1;
@@ -250,13 +248,11 @@ public class ASTManager {
                 if (!(b2 instanceof IField)) {
                     return FALSE;
                 }
-            }
-            else if (b1 instanceof IParameter) {
+            } else if (b1 instanceof IParameter) {
                 if (!(b2 instanceof IParameter)) {
                     return FALSE;
                 }
-            }
-            else {
+            } else {
                 if (b2 instanceof IField || b2 instanceof IParameter) {
                     return FALSE;
                 }
@@ -304,20 +300,20 @@ public class ASTManager {
     }
     
     public static int isSameScope(IScope s1, IScope s2, boolean fileStatic) throws DOMException {
-        if (s1==s2) {
+        if (s1 == s2) {
             return TRUE;
         }
         IASTNode node1= ASTInternal.getPhysicalNodeOfScope(s1);
         IASTNode node2= ASTInternal.getPhysicalNodeOfScope(s2);
 
         // forward declarations do not have parent scopes.
-        if (s1==null) {
+        if (s1 == null) {
             if (!fileStatic && node2 instanceof IASTTranslationUnit) {
                 return TRUE;
             }
             return UNKNOWN;
         }
-        if (s2==null) {
+        if (s2 == null) {
             if (!fileStatic && node1 instanceof IASTTranslationUnit) {
                 return TRUE;
             }
@@ -430,7 +426,7 @@ public class ASTManager {
 
     private static int isSameParameterList(IType[] p1, 
             IType[] p2) throws DOMException {
-        if (p1==p2) {
+        if (p1 == p2) {
             return TRUE;
         }
         if (p1 == null || p2 == null) {
@@ -455,7 +451,7 @@ public class ASTManager {
 
     private static int isSameParameterList(IParameter[] p1, 
             IParameter[] p2) throws DOMException {
-        if (p1==p2) {
+        if (p1 == p2) {
             return TRUE;
         }
         if (p1 == null || p2 == null) {
@@ -485,7 +481,7 @@ public class ASTManager {
         }
         t1= getRealType(t1);
         t2= getRealType(t2);
-        if (t1==t2) {
+        if (t1 == t2) {
             return TRUE;
         }
         if (t1 == null || t2 == null || t1 instanceof IProblemBinding ||
@@ -601,7 +597,7 @@ public class ASTManager {
         if (a2.isUnsigned()) {
             return false;
         }
-        switch(a2.getKind()) {
+        switch (a2.getKind()) {
         case eInt:
         case eUnspecified:
             return true;
@@ -648,7 +644,7 @@ public class ASTManager {
         
         IASTFileLocation l1= node1.getNodeLocations()[0].asFileLocation();
         IASTFileLocation l2= node2.getNodeLocations()[0].asFileLocation();
-        if (l1==null || l2==null) {
+        if (l1 == null || l2 == null) {
             return UNKNOWN;
         }
         if (!l1.getFileName().equals(l2.getFileName())) {
@@ -676,17 +672,17 @@ public class ASTManager {
         
     public static int isVirtualMethod(ICPPMethod method) throws DOMException {
         IASTDeclaration decl= null;
-		if( method instanceof CPPMethod )
-			decl = ((CPPMethod)method).getPrimaryDeclaration();
-		else if( method instanceof CPPImplicitMethod )
-			decl = ((CPPImplicitMethod)method).getPrimaryDeclaration();
+		if (method instanceof CPPMethod) {
+			decl = ((CPPMethod) method).getPrimaryDeclaration();
+		} else if (method instanceof CPPImplicitMethod) {
+			decl = ((CPPImplicitMethod) method).getPrimaryDeclaration();
+		}
 			
         IASTDeclSpecifier spec= null;
         if (decl instanceof IASTFunctionDefinition) {
             IASTFunctionDefinition def = (IASTFunctionDefinition) decl;
             spec= def.getDeclSpecifier();
-        }
-        else if (decl instanceof IASTSimpleDeclaration) {
+        } else if (decl instanceof IASTSimpleDeclaration) {
             IASTSimpleDeclaration sdecl = (IASTSimpleDeclaration) decl;
             spec= sdecl.getDeclSpecifier();
         }
@@ -703,7 +699,7 @@ public class ASTManager {
             ICPPClassType classType= classScope.getClassType();
             ICPPBase[] bases= classType.getBases();
             for (ICPPBase base : bases) {
-                if( !(base.getBaseClass() instanceof ICPPClassType) )
+                if (!(base.getBaseClass() instanceof ICPPClassType))
                 	continue;
                 ICPPClassType baseType= (ICPPClassType) base.getBaseClass();
                 if (baseType != null) {
@@ -713,8 +709,8 @@ public class ASTManager {
                         for (IBinding binding : alternates) {
                             if (binding instanceof CPPMethod) {
                                 CPPMethod alternateMethod = (CPPMethod) binding;
-                                if (hasSameSignature(method, alternateMethod)!=FALSE) {
-                                    if (isVirtualMethod(alternateMethod)==TRUE) {
+                                if (hasSameSignature(method, alternateMethod) != FALSE) {
+                                    if (isVirtualMethod(alternateMethod) == TRUE) {
                                         return TRUE;
                                     }
                                 }
@@ -758,7 +754,7 @@ public class ASTManager {
             boolean removeGlobalsWhenClassScope) throws DOMException {
         IBinding[] result= null;
         result = scope.find(name);
-        if (result == null || result.length==0) {
+        if (result == null || result.length == 0) {
             return result;
         }
         
@@ -772,8 +768,7 @@ public class ASTManager {
                 IScope bscope= binding.getScope();
                 if (! (bscope instanceof ICPPClassScope || bscope instanceof ICCompositeTypeScope)) {
                     result[i]= null;
-                }
-                else {
+                } else {
                     count++;
                 }
             }
@@ -823,10 +818,10 @@ public class ASTManager {
             return;
         }
         
-        if( fArgument.getSourceFile() == null )
+        if (fArgument.getSourceFile() == null)
             return;
-        
-        pm.beginTask(Messages.getString("ASTManager.task.analyze"), 2); //$NON-NLS-1$
+
+        pm.beginTask(Messages.ASTManager_task_analyze, 2);
         IASTTranslationUnit tu= getTranslationUnit(index, fArgument.getSourceFile(), true, status);
         pm.worked(1);
         if (tu != null) {
@@ -935,7 +930,7 @@ public class ASTManager {
         }
         
         int count= store.getFileCount();
-        String taskName= Messages.getString("ASTManager.task.generateAst"); //$NON-NLS-1$
+        String taskName= Messages.ASTManager_task_generateAst;
         monitor.beginTask(taskName, 2*count);
         monitor.setTaskName(taskName);
 
@@ -946,12 +941,11 @@ public class ASTManager {
         for (IFile file : files) {
             cc++;
             if (store.contains(file)) {
-                if ((now=System.currentTimeMillis()) > update) {
+                if ((now = System.currentTimeMillis()) > update) {
                     String nofm= nth_of_m(cc, count);
-                    String taskname= MessageFormat.format(Messages.getString("ASTManager.subtask.analyzing"),   //$NON-NLS-1$
-                            new Object[] {nofm});
+                    String taskname= NLS.bind(Messages.ASTManager_subtask_analyzing, nofm);
                     monitor.subTask(taskname); 
-                    update= now+1000;
+                    update= now + 1000;
                 }
                 boolean doParse= false;
                 Collection<CRefactoringMatch> fm= store.getMatchesForFile(file);
@@ -975,15 +969,13 @@ public class ASTManager {
                         return;
                     }
                     monitor.worked(1);
-                }
-                else {
+                } else {
                     monitor.worked(2);
                 }
                 if (monitor.isCanceled()) {
                     throw new OperationCanceledException();
                 }
-            }
-            else {
+            } else {
                 monitor.worked(2);
             }
         }
@@ -1041,12 +1033,9 @@ public class ASTManager {
             IASTName macroName= mdef.getName();
             String macroNameStr= macroName.toString();
             if (fRenameTo.equals(macroNameStr)) {
-                status.addFatalError(MessageFormat.format(
-                        Messages.getString("ASTManager.error.macro.name.conflict"),  //$NON-NLS-1$
-                        new Object[] {fRenameTo}));
+                status.addFatalError(NLS.bind(Messages.ASTManager_error_macro_name_conflict, fRenameTo));
                 return;
-            }
-            else if (lookfor.equals(macroNameStr)) {
+            } else if (lookfor.equals(macroNameStr)) {
                 IPath path= analyzeAstMatch(macroName, store, false, status);
                 pathsVisited.add(path);
                 IBinding macroBinding= macroName.resolveBinding();
@@ -1130,7 +1119,7 @@ public class ASTManager {
     protected IPath addConflictingBindingForName(final RefactoringStatus status, IASTName name) {
         IASTNodeLocation[] locations= name.getNodeLocations();
         IPath path= null;
-        if (locations != null && locations.length==1) {
+        if (locations != null && locations.length == 1) {
             IASTNodeLocation loc= locations[0];
             IASTFileLocation floc= loc.asFileLocation();
             if (floc != null) {
@@ -1139,8 +1128,7 @@ public class ASTManager {
                 if (binding instanceof IProblemBinding) {
                 	handleProblemBinding(name.getTranslationUnit(), 
                 			(IProblemBinding) binding, status);
-                }
-                else if (binding != null) {
+                } else if (binding != null) {
                 	fConflictingBinding.add(binding);
                 }
             }
@@ -1208,8 +1196,7 @@ public class ASTManager {
         				if (cmp0 == TRUE) {
         					break;
         				}
-        			}
-        			catch (DOMException e) {
+        			} catch (DOMException e) {
         				handleDOMException(name.getTranslationUnit(), e, status);
         				cmp= UNKNOWN;
         			}
@@ -1217,7 +1204,7 @@ public class ASTManager {
         	}
             fKnownBindings.put(binding, new Integer(cmp));
         }
-        switch(cmp) {
+        switch (cmp) {
         case TRUE:
             match.setASTInformation(CRefactoringMatch.AST_REFERENCE);
             if (fRenameTo != null) {
@@ -1251,30 +1238,24 @@ public class ASTManager {
             if (fProblemUnits.add(fpath)) {
                 String msg= pb.getMessage();
                 if (msg != null && msg.length() > 0) {
-                    msg= MessageFormat.format(Messages.getString("ASTManager.warning.parsingError.detailed"), new Object[]{msg});  //$NON-NLS-1$
-                }
-                else {
-                    msg= Messages.getString("ASTManager.warning.parsingError");  //$NON-NLS-1$
+                    msg= NLS.bind(Messages.ASTManager_warning_parsingError_detailed, msg);
+                } else {
+                    msg= Messages.ASTManager_warning_parsingError;
                 }
                 int line= pb.getLineNumber();
                 if (line >= 1) {
-                    msg= MessageFormat.format(
-                            Messages.getString("ASTManager.warning.parsingError.withFileAndLine"),   //$NON-NLS-1$
-                            new Object[] {msg, fpath, new Integer(line)});
-                }
-                else {
-                    msg= MessageFormat.format(
-                            Messages.getString("ASTManager.warning.parsingError.withFile"),   //$NON-NLS-1$
-                            new Object[] {msg, fpath});
+                    msg= NLS.bind(Messages.ASTManager_warning_parsingError_withFileAndLine,
+                    		new Object[] { msg, fpath, line });
+                } else {
+                    msg= NLS.bind(Messages.ASTManager_warning_parsingError_withFile, msg, fpath);
                 }
                 status.addWarning(msg);
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-	protected void handleConflictingBindings(IASTTranslationUnit tu, 
-            RefactoringStatus status) {   
+	@SuppressWarnings("unchecked")
+	protected void handleConflictingBindings(IASTTranslationUnit tu, RefactoringStatus status) {   
         if (fConflictingBinding.isEmpty()) {
             return;
         }
@@ -1286,7 +1267,7 @@ public class ASTManager {
         boolean isContainer = false;
         boolean isMacro= false;
 
-        switch(argKind) {
+        switch (argKind) {
         case CRefactory.ARGUMENT_LOCAL_VAR:  
         case CRefactory.ARGUMENT_PARAMETER:
             isLocalVarPar= true;
@@ -1316,21 +1297,21 @@ public class ASTManager {
             break;
         }
         
-        Collection<IBinding>[] cflc= new Collection[] {new HashSet<IBinding>(), new ArrayList<IBinding>(), new ArrayList<IBinding>()};
+        Collection<IBinding>[] cflc=
+        		new Collection[] { new HashSet<IBinding>(), new ArrayList<IBinding>(), new ArrayList<IBinding>() };
         String[] errs= null;
         if (isMacro) {
-            errs= new String[]{
-                    Messages.getString("CRenameLocalProcessor.error.conflict")  //$NON-NLS-1$
-            };
+            errs= new String[] {
+                    Messages.CRenameLocalProcessor_error_conflict };
             cflc[0]= fConflictingBinding;
-        }
-        else {
-            errs= new String[]{
-                    Messages.getString("CRenameLocalProcessor.error.shadow"),  //$NON-NLS-1$
-                    Messages.getString("CRenameLocalProcessor.error.redeclare"),   //$NON-NLS-1$
-                    Messages.getString("CRenameLocalProcessor.error.isShadowed"),   //$NON-NLS-1$
-                    Messages.getString("CRenameLocalProcessor.error.overloads")};   //$NON-NLS-1$
-            classifyConflictingBindings(tu, (Set<IBinding>) cflc[0], (List<IBinding>)cflc[1], (List<IBinding>)cflc[2], status);
+        } else {
+            errs= new String[] {
+                    Messages.CRenameLocalProcessor_error_shadow,
+                    Messages.CRenameLocalProcessor_error_redeclare,
+                    Messages.CRenameLocalProcessor_error_isShadowed,
+                    Messages.CRenameLocalProcessor_error_overloads };
+            classifyConflictingBindings(tu, (Set<IBinding>) cflc[0], (List<IBinding>) cflc[1],
+            			(List<IBinding>) cflc[2], status);
         }
         
         for (int i = 0; i < 3; i++) {
@@ -1342,50 +1323,44 @@ public class ASTManager {
                 String what= null;
                 if (conflict instanceof IEnumerator) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        what= Messages.getString("CRenameLocalProcessor.enumerator");  //$NON-NLS-1$
+                        what= Messages.CRenameLocalProcessor_enumerator;
                     }
-                }
-                else if (conflict instanceof ICPPField) {
+                } else if (conflict instanceof ICPPField) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        what= Messages.getString("CRenameLocalProcessor.field");  //$NON-NLS-1$
+                        what= Messages.CRenameLocalProcessor_field;
                     }
-                }
-                else if (conflict instanceof IParameter) {
+                } else if (conflict instanceof IParameter) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        if (i==1 && argKind ==CRefactory.ARGUMENT_LOCAL_VAR) {
+                        if (i == 1 && argKind == CRefactory.ARGUMENT_LOCAL_VAR) {
                             msg= errs[0];
                         }
-                        what= Messages.getString("CRenameLocalProcessor.parameter");  //$NON-NLS-1$
+                        what= Messages.CRenameLocalProcessor_parameter;
                     }
-                }                    
-                else if (conflict instanceof IVariable) {
+                } else if (conflict instanceof IVariable) {
                     if (isVarParEnumerator || isFunction || isMacro) {
                         IVariable conflictingVar= (IVariable) conflict;
-                        what= Messages.getString("CRenameLocalProcessor.globalVariable");  //$NON-NLS-1$
+                        what= Messages.CRenameLocalProcessor_globalVariable;
                         if (ASTManager.isLocalVariable(conflictingVar)) {
-                            if (i==1 && argKind==CRefactory.ARGUMENT_PARAMETER) {
+                            if (i == 1 && argKind == CRefactory.ARGUMENT_PARAMETER) {
                                 msg= errs[2];
                             }
-                            what= Messages.getString("CRenameLocalProcessor.localVariable");  //$NON-NLS-1$
-                        }
-                        else {
+                            what= Messages.CRenameLocalProcessor_localVariable;
+                        } else {
                             try {
                                 if (conflictingVar.isStatic()) {
-                                    what= Messages.getString("CRenameProcessorDelegate.fileStaticVariable");  //$NON-NLS-1$
+                                    what= Messages.CRenameProcessorDelegate_fileStaticVariable;
                                 }
                             } catch (DOMException e) {
                             }
                         }
                     }
-                }
-                else if (conflict instanceof ICPPConstructor) {
+                } else if (conflict instanceof ICPPConstructor) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        what= Messages.getString("CRenameLocalProcessor.constructor");  //$NON-NLS-1$
+                        what= Messages.CRenameLocalProcessor_constructor;
                     }
-                }
-                else if (conflict instanceof ICPPMethod) {
+                } else if (conflict instanceof ICPPMethod) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        if (i==1) {
+                        if (i == 1) {
                             IBinding r= fArgument.getBinding();
                             if (r instanceof ICPPMethod) {
                                 try {
@@ -1398,22 +1373,21 @@ public class ASTManager {
                                 }
                             }
                         }
-                        what= Messages.getString("CRenameLocalProcessor.method");  //$NON-NLS-1$
+                        what= Messages.CRenameLocalProcessor_method;
                     }
-                }
-                else if (conflict instanceof IFunction) {
+                } else if (conflict instanceof IFunction) {
                     if (isVarParEnumerator || isFunction || isMacro) {
                         boolean ignore= false;
                         if (isLocalVarPar) {
                             IASTName[] refs= 
                                 fArgument.getTranslationUnit().getReferences(conflict);
-                            if (refs==null || refs.length==0) {
+                            if (refs == null || refs.length == 0) {
                                 ignore= true;
                             }
                         }
                         if (!ignore) {
                             IFunction conflictingFunction= (IFunction) conflict;
-                            if (i==1 && conflict instanceof ICPPFunction) {
+                            if (i == 1 && conflict instanceof ICPPFunction) {
                                 IBinding r= fArgument.getBinding();
                                 if (r instanceof ICPPFunction) {
                                     try {
@@ -1433,37 +1407,31 @@ public class ASTManager {
                             } catch (DOMException e) {
                             }
                             if (isStatic) {
-                                what= Messages.getString("CRenameProcessorDelegate.fileStaticFunction");  //$NON-NLS-1$
-                            }
-                            else {
-                                what= Messages.getString("CRenameProcessorDelegate.globalFunction");  //$NON-NLS-1$
+                                what= Messages.CRenameProcessorDelegate_fileStaticFunction;
+                            } else {
+                                what= Messages.CRenameProcessorDelegate_globalFunction;
                             }
                         }
                     }
-                }
-                else if (conflict instanceof ICompositeType ||
+                } else if (conflict instanceof ICompositeType ||
                         conflict instanceof IEnumeration ||
                         conflict instanceof ITypedef) {
                     if (isContainer || isMacro) {
-                        what= Messages.getString("CRenameProcessorDelegate.type");  //$NON-NLS-1$
+                        what= Messages.CRenameProcessorDelegate_type;
                     }
-                }
-                else if (conflict instanceof ICPPNamespace) {
+                } else if (conflict instanceof ICPPNamespace) {
                     if (isContainer || isMacro) {
-                        what= Messages.getString("CRenameProcessorDelegate.namespace");  //$NON-NLS-1$
-                        if (argKind==CRefactory.ARGUMENT_NAMESPACE) {
+                        what= Messages.CRenameProcessorDelegate_namespace;
+                        if (argKind == CRefactory.ARGUMENT_NAMESPACE) {
                             warn= true;
                         }
                     }
                 }
                 if (what != null) {
-                	String message = Messages.getString("CRenameLocalProcessor.error.message"); //$NON-NLS-1$
-                	String message1 = MessageFormat.format(Messages.getString("CRenameLocalProcessor.error.message1"), //$NON-NLS-1$
-                						new Object[]{msg});
-                	String message2 = MessageFormat.format(Messages.getString("CRenameLocalProcessor.error.message2"), //$NON-NLS-1$
-    						new Object[]{conflict.getName()});
-                	String message3 = MessageFormat.format(Messages.getString("CRenameLocalProcessor.error.message3"), //$NON-NLS-1$
-    						new Object[]{what});
+                	String message = Messages.CRenameLocalProcessor_error_message;
+                	String message1 = NLS.bind(Messages.CRenameLocalProcessor_error_message1, msg);
+                	String message2 = NLS.bind(Messages.CRenameLocalProcessor_error_message2, conflict.getName());
+                	String message3 = NLS.bind(Messages.CRenameLocalProcessor_error_message3, what);
                 	String space = "  \n"; //$NON-NLS-1$
                 	String formatted = message + space + message1 + space +  message2 + space +  message3;
                     RefactoringStatusEntry[] entries= status.getEntries();
@@ -1476,8 +1444,7 @@ public class ASTManager {
                     if (formatted != null) {
                         if (warn) {
                             status.addWarning(formatted);
-                        }
-                        else {
+                        } else {
                             status.addError(formatted);
                         }
                     }
@@ -1507,7 +1474,7 @@ public class ASTManager {
                 }
             }            
 
-            if (newBindingsAboverOrEqual!=null && newBindingsAboverOrEqual.length>0) {
+            if (newBindingsAboverOrEqual != null && newBindingsAboverOrEqual.length>0) {
                 break;
             }
         }
@@ -1540,10 +1507,9 @@ public class ASTManager {
             IScope aboveScope;
             try {
                 aboveScope = aboveBinding.getScope();
-                if (isSameScope(aboveScope, oldBindingsScope, false)==TRUE) {
+                if (isSameScope(aboveScope, oldBindingsScope, false) == TRUE) {
                     redecl.add(aboveBinding);
-                }
-                else {
+                } else {
                     shadows.add(aboveBinding);
                 }
             } catch (DOMException e) {
@@ -1559,5 +1525,4 @@ public class ASTManager {
     public void setRenameTo(String renameTo) {
         fRenameTo= renameTo;
     }
-
 }

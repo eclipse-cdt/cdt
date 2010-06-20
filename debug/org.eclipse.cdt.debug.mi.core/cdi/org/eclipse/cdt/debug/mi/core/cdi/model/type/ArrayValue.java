@@ -45,7 +45,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 		super(v);
 		if (hexAddress == null || hexAddress.trim().length()==0) {
 			return;
-		} else if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) {
+		} else if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) { //$NON-NLS-1$ //$NON-NLS-2$
 			this.hexAddress = hexAddress.substring(2);
 		} else {
 			this.hexAddress = hexAddress;

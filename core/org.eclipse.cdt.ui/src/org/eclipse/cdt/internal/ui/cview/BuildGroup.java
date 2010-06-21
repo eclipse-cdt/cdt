@@ -61,17 +61,6 @@ public class BuildGroup extends CViewActionGroup {
 	        super(shell, kind);
 	    }
 	    @Override
-	    protected boolean shouldPerformResourcePruning() {
-	    	// If the selected resources aren't new-style CDT projects, then
-	    	// fall-back to parent behaviour. 
-	    	// For CDT projects, we only want 'build' to be called on the top-level
-	    	// selected project(s)
-	    	for (Object res : getSelectedResources())
-	    		if (!(res instanceof IProject) || !CCorePlugin.getDefault().isNewStyleProject((IProject)res))
-	    			return super.shouldPerformResourcePruning();
-	    	return false;
-	    }
-	    @Override
 	    @SuppressWarnings("unchecked")
 	    public void run() {
 	    	// Ensure we correctly save files in all referenced projects before build

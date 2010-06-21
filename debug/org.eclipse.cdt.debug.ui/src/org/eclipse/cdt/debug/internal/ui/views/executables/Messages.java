@@ -14,7 +14,6 @@ package org.eclipse.cdt.debug.internal.ui.views.executables;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.views.executables.messages"; //$NON-NLS-1$
 	public static String ExecutablesContentProvider_FetchingExecutables;
 	public static String ExecutablesView_Columns;
 	public static String ExecutablesView_ConfigureColumns;
@@ -61,9 +60,10 @@ public class Messages extends NLS {
 	public static String SourceFilesViewer_Size;
 	public static String SourceFilesViewer_SourceFileName;
 	public static String SourceFilesViewer_Type;
+
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

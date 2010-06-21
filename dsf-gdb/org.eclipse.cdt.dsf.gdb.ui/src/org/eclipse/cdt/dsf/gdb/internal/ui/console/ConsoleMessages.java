@@ -16,8 +16,6 @@ import org.eclipse.osgi.util.NLS;
  * @since 2.1
  */
 public class ConsoleMessages extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages"; //$NON-NLS-1$
-	
 	public static String ConsoleMessages_trace_console_name;
 	public static String ConsoleMessages_trace_console_terminated;
 
@@ -29,7 +27,7 @@ public class ConsoleMessages extends NLS {
 	
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, ConsoleMessages.class);
+		NLS.initializeMessages(ConsoleMessages.class.getName(), ConsoleMessages.class);
 	}
 	
 	private ConsoleMessages() {

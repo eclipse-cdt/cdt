@@ -17,16 +17,14 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.gdb.internal.service.command.events.messages"; //$NON-NLS-1$
+    public static String Tracepoint;
+    public static String Record;
 
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+        NLS.initializeMessages(Messages.class.getName(), Messages.class);
     }
 
     private Messages() {
     }
-
-    public static String Tracepoint;
-    public static String Record;
 }

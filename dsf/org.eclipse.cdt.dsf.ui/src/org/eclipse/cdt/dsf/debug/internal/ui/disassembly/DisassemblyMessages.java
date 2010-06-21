@@ -15,7 +15,6 @@ import java.util.ResourceBundle;
 import org.eclipse.osgi.util.NLS;
 
 public final class DisassemblyMessages extends NLS {
-
 	private static final String BUNDLE_FOR_CONSTRUCTED_KEYS = "org.eclipse.cdt.dsf.debug.internal.ui.disassembly.ConstructedDisassemblyMessages";//$NON-NLS-1$
 	private static ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
 
@@ -26,12 +25,6 @@ public final class DisassemblyMessages extends NLS {
 	 */
 	public static ResourceBundle getBundleForConstructedKeys() {
 		return fgBundleForConstructedKeys;
-	}
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyMessages";//$NON-NLS-1$
-
-	private DisassemblyMessages() {
-		// Do not instantiate
 	}
 
 	public static String Disassembly_action_ShowAddresses_label;
@@ -85,6 +78,10 @@ public final class DisassemblyMessages extends NLS {
 	public static String DisassemblyBackendDsf_error_UnableToRetrieveData;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, DisassemblyMessages.class);
+		NLS.initializeMessages(DisassemblyMessages.class.getName(), DisassemblyMessages.class);
+	}
+
+	// Do not instantiate
+	private DisassemblyMessages() {
 	}
 }

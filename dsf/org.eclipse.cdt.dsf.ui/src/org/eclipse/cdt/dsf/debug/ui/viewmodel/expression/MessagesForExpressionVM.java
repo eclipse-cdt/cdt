@@ -16,8 +16,6 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForExpressionVM extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.messages"; //$NON-NLS-1$
-
     public static String ExpressionColumnPresentation_expression;
     public static String ExpressionColumnPresentation_name;
     public static String ExpressionColumnPresentation_type;
@@ -35,7 +33,7 @@ public class MessagesForExpressionVM extends NLS {
 
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForExpressionVM.class);
+        NLS.initializeMessages(MessagesForExpressionVM.class.getName(), MessagesForExpressionVM.class);
     }
 
     private MessagesForExpressionVM() {

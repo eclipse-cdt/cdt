@@ -16,14 +16,14 @@ import org.eclipse.osgi.util.NLS;
  * @since 1.1
  */
 public class LaunchVMUpdateMessages extends NLS {
-
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.LaunchVMUpdateMessages";//$NON-NLS-1$
-
     public static String ThreadsAutomaticUpdatePolicy_name;
     public static String ThreadsManualUpdatePolicy_name;
 	
     static {
         // load message values from bundle file
-        NLS.initializeMessages(BUNDLE_NAME, LaunchVMUpdateMessages.class);
+        NLS.initializeMessages(LaunchVMUpdateMessages.class.getName(), LaunchVMUpdateMessages.class);
+    }
+
+    private LaunchVMUpdateMessages() {
     }
 }

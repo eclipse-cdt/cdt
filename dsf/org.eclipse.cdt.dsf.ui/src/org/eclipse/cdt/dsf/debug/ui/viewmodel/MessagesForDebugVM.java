@@ -17,15 +17,12 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForDebugVM extends NLS {
-	
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.messages"; //$NON-NLS-1$
-
     public static String ErrorLabelText__text_format;
     public static String ErrorLabelText_Error_message__text_page_break_delimiter;
     
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForDebugVM.class);
+        NLS.initializeMessages(MessagesForDebugVM.class.getName(), MessagesForDebugVM.class);
     }
 
     private MessagesForDebugVM() {}

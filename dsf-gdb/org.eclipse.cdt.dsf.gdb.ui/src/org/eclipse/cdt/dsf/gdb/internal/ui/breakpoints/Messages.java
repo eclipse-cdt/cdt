@@ -13,8 +13,6 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.messages"; //$NON-NLS-1$
-
 	public static String ToggleTracepointsTargetFactory_description;
 	public static String ToggleTracepointsTargetFactory_name;
 	public static String TracepointPropertyPage_integer_negative;
@@ -36,7 +34,7 @@ public class Messages extends NLS {
 	
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	private Messages() {

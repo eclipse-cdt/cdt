@@ -15,12 +15,8 @@ package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport;
 import org.eclipse.osgi.util.NLS;
 
 public class MessagesForDetailPane extends NLS {
-	
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.detailsupport.messages"; //$NON-NLS-1$
-
     public static String NumberFormatDetailPane_Name;
     public static String NumberFormatDetailPane_Description;
-    
 	public static String DetailPane_Copy;
 	public static String DetailPane_LabelPattern;
 	public static String DetailPane_Select_All;
@@ -33,8 +29,9 @@ public class MessagesForDetailPane extends NLS {
     
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForDetailPane.class);
+        NLS.initializeMessages(MessagesForDetailPane.class.getName(), MessagesForDetailPane.class);
     }
 
-    private MessagesForDetailPane() {}
+    private MessagesForDetailPane() {
+    }
 }

@@ -17,16 +17,14 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForGdbLaunchVM extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch.messages"; //$NON-NLS-1$
+    public static String ThreadVMNode_No_columns__text_format;
+    public static String ThreadVMNode_No_columns__Error__label;
 
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForGdbLaunchVM.class);
+        NLS.initializeMessages(MessagesForGdbLaunchVM.class.getName(), MessagesForGdbLaunchVM.class);
     }
 
     private MessagesForGdbLaunchVM() {
     }
-
-    public static String ThreadVMNode_No_columns__text_format;
-    public static String ThreadVMNode_No_columns__Error__label;
 }

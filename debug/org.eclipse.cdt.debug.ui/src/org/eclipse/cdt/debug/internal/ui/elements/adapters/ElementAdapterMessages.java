@@ -14,16 +14,13 @@ package org.eclipse.cdt.debug.internal.ui.elements.adapters;
 import org.eclipse.osgi.util.NLS;
 
 public class ElementAdapterMessages extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.internal.ui.elements.adapters.ElementAdapterMessages"; //$NON-NLS-1$
-
     public static String RegistersViewColumnPresentation_0;
-
     public static String RegistersViewColumnPresentation_1;
-
     public static String RegistersViewColumnPresentation_2;
+
     static {
         // initialize resource bundle
-        NLS.initializeMessages( BUNDLE_NAME, ElementAdapterMessages.class );
+        NLS.initializeMessages(ElementAdapterMessages.class.getName(), ElementAdapterMessages.class);
     }
 
     private ElementAdapterMessages() {

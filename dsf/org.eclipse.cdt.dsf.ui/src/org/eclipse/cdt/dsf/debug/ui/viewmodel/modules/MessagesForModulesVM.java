@@ -17,15 +17,13 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForModulesVM extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.messages"; //$NON-NLS-1$
+    public static String ModulesVMNode_No_columns__text_format;
 
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForModulesVM.class);
+        NLS.initializeMessages(MessagesForModulesVM.class.getName(), MessagesForModulesVM.class);
     }
 
     private MessagesForModulesVM() {
     }
-
-    public static String ModulesVMNode_No_columns__text_format;
 }

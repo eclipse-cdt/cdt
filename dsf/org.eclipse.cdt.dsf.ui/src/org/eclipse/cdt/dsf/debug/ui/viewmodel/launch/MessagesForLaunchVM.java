@@ -17,16 +17,6 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForLaunchVM extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.messages"; //$NON-NLS-1$
-
-    static {
-        // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForLaunchVM.class);
-    }
-
-    private MessagesForLaunchVM() {
-    }
-
     public static String StackFramesVMNode_No_columns__Incomplete_stack_marker__text_format;
     public static String StackFramesVMNode_No_columns__text_format;
     public static String StackFramesVMNode_No_columns__No_line__text_format;
@@ -52,4 +42,12 @@ public class MessagesForLaunchVM extends NLS {
     public static String State_change_reason__Error__label;
     public static String State_change_reason__Evaluation__label;
     public static String State_change_reason__EventBreakpoint__label;
+
+    static {
+        // initialize resource bundle
+        NLS.initializeMessages(MessagesForLaunchVM.class.getName(), MessagesForLaunchVM.class);
+    }
+
+    private MessagesForLaunchVM() {
+    }
 }

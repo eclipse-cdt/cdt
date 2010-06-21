@@ -17,9 +17,6 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForNumberFormatDetailPane extends NLS {
-	
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail.messages"; //$NON-NLS-1$
-
     public static String NumberFormatDetailPane_format_separator__label;
     public static String NumberFormatDetailPane_Name_label;
     public static String NumberFormatDetailPane_Spaces_label;   
@@ -28,8 +25,9 @@ public class MessagesForNumberFormatDetailPane extends NLS {
 
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForNumberFormatDetailPane.class);
+        NLS.initializeMessages(MessagesForNumberFormatDetailPane.class.getName(), MessagesForNumberFormatDetailPane.class);
     }
 
-    private MessagesForNumberFormatDetailPane() {}
+    private MessagesForNumberFormatDetailPane() {
+    }
 }

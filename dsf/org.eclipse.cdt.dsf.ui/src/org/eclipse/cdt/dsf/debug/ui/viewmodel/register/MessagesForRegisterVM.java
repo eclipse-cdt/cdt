@@ -16,8 +16,6 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MessagesForRegisterVM extends NLS {
-    private static final String BUNDLE_NAME = "org.eclipse.cdt.dsf.debug.ui.viewmodel.register.messages"; //$NON-NLS-1$
-
     public static String RegisterColumnPresentation_description;
     public static String RegisterColumnPresentation_name;
     public static String RegisterColumnPresentation_type;
@@ -50,7 +48,7 @@ public class MessagesForRegisterVM extends NLS {
     
     static {
         // initialize resource bundle
-        NLS.initializeMessages(BUNDLE_NAME, MessagesForRegisterVM.class);
+        NLS.initializeMessages(MessagesForRegisterVM.class.getName(), MessagesForRegisterVM.class);
     }
 
     private MessagesForRegisterVM() {

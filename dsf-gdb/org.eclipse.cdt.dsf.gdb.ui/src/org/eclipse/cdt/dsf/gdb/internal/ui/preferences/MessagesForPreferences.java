@@ -16,8 +16,6 @@ import org.eclipse.osgi.util.NLS;
  * Preference strings.
  */
 class MessagesForPreferences extends NLS {
-	private static final String BUNDLE_NAME= "org.eclipse.cdt.dsf.gdb.internal.ui.preferences.messages"; //$NON-NLS-1$
-
 	public static String GdbDebugPreferencePage_description;
 	public static String GdbDebugPreferencePage_traces_label;
 	public static String GdbDebugPreferencePage_enableTraces_label;
@@ -28,7 +26,7 @@ class MessagesForPreferences extends NLS {
 
 	static {
 		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, MessagesForPreferences.class);
+		NLS.initializeMessages(MessagesForPreferences.class.getName(), MessagesForPreferences.class);
 	}
 
 	private MessagesForPreferences() {

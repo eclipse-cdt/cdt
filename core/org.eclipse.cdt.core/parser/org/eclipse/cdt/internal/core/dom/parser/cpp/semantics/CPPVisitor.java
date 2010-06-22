@@ -1342,7 +1342,10 @@ public class CPPVisitor extends ASTQueries {
 				kind = KIND_TYPE;
 			} else if (binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else { 
+			} else if (binding instanceof IParameter) {
+				requiredName= null;
+				kind = KIND_OBJ_FN;
+			} else {
 				kind = KIND_OBJ_FN;
 			}
 		}

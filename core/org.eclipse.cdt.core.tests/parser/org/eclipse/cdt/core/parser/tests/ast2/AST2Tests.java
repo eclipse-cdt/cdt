@@ -5905,7 +5905,7 @@ public class AST2Tests extends AST2BaseTest {
 			IASTTranslationUnit tu= parse(code, lang, false, true, true);
 			long diff= memoryUsed()-mem;
 			// allow a copy of the buffer + not even 1 byte per initializer
-			final int expected = code.length()*2 + AMOUNT/2;  
+			final int expected = code.length()*2 + AMOUNT + AMOUNT/2;  
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
 			assertTrue(tu.isFrozen());
 		}
@@ -7245,4 +7245,23 @@ public class AST2Tests extends AST2BaseTest {
         assertInstance(var, IVariable.class);
         assertTrue(var.getScope().getKind() == EScopeKind.eLocal);
 	}
+	
+	//	void foo(int i);
+	//	void foo(int j) { }
+	public void testParameterBindings_316931() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+		for (int k=0; k<2; k++) {
+			BindingAssertionHelper bh= new BindingAssertionHelper(code, k>0);
+			IParameter i= bh.assertNonProblem("i)", 1);
+			IParameter j= bh.assertNonProblem("j)", 1);
+			assertSame(i, j);
+			
+			IASTTranslationUnit tu= bh.getTranslationUnit();
+			IASTName[] decls = tu.getDeclarationsInAST(i);
+			assertEquals(2, decls.length);
+			decls = tu.getDeclarationsInAST(j);
+			assertEquals(2, decls.length);
+		}
+	}		
 }

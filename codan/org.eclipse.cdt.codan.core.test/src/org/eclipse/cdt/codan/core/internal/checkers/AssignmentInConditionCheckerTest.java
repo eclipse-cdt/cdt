@@ -11,6 +11,8 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
+import org.eclipse.core.resources.IMarker;
 
 /**
  * Test for {@see SuggestedParenthesisChecker} class
@@ -81,5 +83,16 @@ public class AssignmentInConditionCheckerTest extends CheckerTestCase {
 	public void test_tri() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3);
+	}
+
+	//	 main() {
+	//	   int a=1,b=3;
+	//	   if (a=b) b=4; // error here on line 3
+	//	 }	
+	public void test_basic_params() {
+		loadCodeAndRun(getAboveComment());
+		IMarker marker = checkErrorLine(3);
+		String arg = CodanProblemMarker.getProblemArgument(marker, 0);
+		assertEquals("a=b", arg); //$NON-NLS-1$
 	}
 }

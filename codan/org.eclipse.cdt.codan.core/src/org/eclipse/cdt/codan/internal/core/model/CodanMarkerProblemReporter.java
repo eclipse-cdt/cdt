@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.model;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.AbstractProblemReporter;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.core.model.IProblem;
-import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
-import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -33,76 +32,44 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Problem reported that created eclipse markers
  */
-public class CodanMarkerProblemReporter implements IProblemReporterPersistent {
-	public void reportProblem(String id, IProblemLocation loc, Object... args) {
-		IResource file = loc.getFile();
-		int lineNumber = loc.getLineNumber();
-		if (file == null)
-			throw new NullPointerException("file"); //$NON-NLS-1$
-		if (id == null)
-			throw new NullPointerException("id"); //$NON-NLS-1$
-		IProblem problem = CheckersRegistry.getInstance()
-				.getResourceProfile(file).findProblem(id);
-		if (problem == null)
-			throw new IllegalArgumentException("Id is not registered:" + id); //$NON-NLS-1$
-		if (problem.isEnabled() == false)
-			return; // skip
-		int severity = problem.getSeverity().intValue();
-		String messagePattern = problem.getMessagePattern();
-		String message = id;
-		if (messagePattern == null) {
-			if (args != null && args.length > 0 && args[0] instanceof String)
-				message = (String) args[0];
-		} else {
-			message = MessageFormat.format(messagePattern, args);
-		}
-		reportProblem(id, problem.getMarkerType(), severity, file, lineNumber,
-				loc.getStartingChar(), loc.getEndingChar(), message);
+public class CodanMarkerProblemReporter extends AbstractProblemReporter
+		implements IProblemReporterPersistent {
+	@Override
+	protected void reportProblem(ICodanProblemMarker codanProblemMarker) {
+		createProblem(codanProblemMarker);
 	}
 
 	/**
-	 * @param id - problem id
-	 * @param markerType - marker id
-	 * @param severity - marker severity
-	 * @param file - resource
-	 * @param lineNumber - line number for error
-	 * @param startChar - start char (offset in charts from the begging of the
-	 *        document)
-	 * @param endChar - end char (offset in charts from the begging of the
-	 *        document, exclusive)
-	 * @param message - marker message
+	 * @param codanProblemMarker
 	 */
-	public void reportProblem(String id, String markerType, int severity,
-			IResource file, int lineNumber, int startChar, int endChar,
-			String message) {
+	protected IMarker createProblem(ICodanProblemMarker codanProblemMarker) {
 		try {
 			// Do not put in duplicates
-			IMarker[] cur = file.findMarkers(markerType, false,
+			IMarker[] cur = codanProblemMarker.getResource().findMarkers(
+					codanProblemMarker.getProblem().getMarkerType(), false,
 					IResource.DEPTH_ZERO);
 			if (cur != null) {
+				String message = codanProblemMarker.createMessage();
 				for (IMarker element : cur) {
 					int line = ((Integer) element
 							.getAttribute(IMarker.LINE_NUMBER)).intValue();
-					if (line == lineNumber) {
+					if (line == codanProblemMarker.getLocation()
+							.getLineNumber()) {
 						String mesg = (String) element
 								.getAttribute(IMarker.MESSAGE);
 						int sev = ((Integer) element
 								.getAttribute(IMarker.SEVERITY)).intValue();
-						if (sev == severity && mesg.equals(message))
-							return;
+						if (sev == codanProblemMarker.getProblem()
+								.getSeverity().intValue()
+								&& mesg.equals(message))
+							return element;
 					}
 				}
 			}
-			IMarker marker = file.createMarker(markerType);
-			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-			marker.setAttribute(IMarker.PROBLEM, id);
-			marker.setAttribute(IMarker.CHAR_END, endChar);
-			marker.setAttribute(IMarker.CHAR_START, startChar);
-			marker.setAttribute("org.eclipse.cdt.core.problem", 42); //$NON-NLS-1$
+			return codanProblemMarker.createMarker();
 		} catch (CoreException e) {
-			e.printStackTrace();
+			CodanCorePlugin.log(e);
+			return null;
 		}
 	}
 

@@ -11,7 +11,9 @@
 package org.eclipse.cdt.codan.core.model;
 
 /**
- * IProblemReporter - interface to report problems
+ * IProblemReporter - interface to report problems.
+ * 
+ * It is recommented to extend {@link AbstractProblemReporter} instead
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -33,7 +35,7 @@ public interface IProblemReporter {
 	 * @param loc - location object, can be created using
 	 *        getRuntime().getProblemLocationFactory().createProblemLocation
 	 *        methods
-	 * @param args - custom arguments, can be null, in this case default message
+	 * @param args - custom arguments, can be none, in this case default message
 	 *        is reported
 	 */
 	public void reportProblem(String problemId, IProblemLocation loc,

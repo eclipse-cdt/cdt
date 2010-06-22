@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.ui;
 
+import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
@@ -52,6 +53,10 @@ public abstract class AbstractCodanCMarkerResolution implements
 			}
 		}
 		return position;
+	}
+
+	public String getProblemArgument(IMarker marker, int index) {
+		return CodanProblemMarker.getProblemArgument(marker, index);
 	}
 
 	/**

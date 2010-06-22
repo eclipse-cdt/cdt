@@ -47,6 +47,9 @@
       <persistent
             value="true">
       </persistent>
+      <attribute
+            name="args">
+      </attribute>
    </extension>
    
    <extension

@@ -15,7 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.Messages;
-import org.eclipse.cdt.codan.internal.core.model.CodanMarkerProblemReporter;
+import org.eclipse.cdt.codan.core.model.AbstractProblemReporter;
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,13 +47,13 @@ public class CodanApplication implements IApplication {
 		extractArguments(args);
 		CodanBuilder codanBuilder = new CodanBuilder();
 		CodanRuntime runtime = CodanRuntime.getInstance();
-		runtime.setProblemReporter(new CodanMarkerProblemReporter() {
+		runtime.setProblemReporter(new AbstractProblemReporter() {
 			@Override
-			public void reportProblem(String id, String markerType,
-					int severity, IResource file, int lineNumber,
-					int startChar, int endChar, String message) {
-				System.out.println(file.getLocation() + ":" + lineNumber + ": " //$NON-NLS-1$ //$NON-NLS-2$
-						+ message);
+			protected void reportProblem(ICodanProblemMarker pm) {
+				IResource file = pm.getResource();
+				System.out.println(file.getLocation()
+						+ ":" + pm.getLocation().getLineNumber() + ": " //$NON-NLS-1$ //$NON-NLS-2$
+						+ pm.createMessage());
 			}
 		});
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

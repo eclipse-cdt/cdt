@@ -12,13 +12,17 @@ package org.eclipse.cdt.codan.ui;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.core.resources.IMarker;
 
 /**
  * Abstract class that provides stubs for problems details.
- * This class intended to be extended by the users of codanProblemDetails extension point.
- * One instance of this class would exists at runtime. To query for results, framework 
- * would synchronize on this class object, set setMarker then call other getStyled* methods
+ * This class intended to be extended by the users of codanProblemDetails
+ * extension point.
+ * One instance of this class would exists at runtime. To query for results,
+ * framework
+ * would synchronize on this class object, set setMarker then call other
+ * getStyled* methods
  * to obtain data.
  */
 public abstract class AbstractCodanProblemDetailsProvider {
@@ -36,6 +40,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 
 	/**
 	 * Get marker associated with this provider
+	 * 
 	 * @return
 	 */
 	public IMarker getMarker() {
@@ -44,6 +49,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 
 	/**
 	 * Convenience method to return marker message
+	 * 
 	 * @return
 	 */
 	protected String getProblemMessage() {
@@ -53,6 +59,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 
 	/**
 	 * Convenience method to return codan problem id
+	 * 
 	 * @return
 	 */
 	protected String getProblemId() {
@@ -61,36 +68,65 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	}
 
 	/**
-	 * return true if provider can provide details for given marker (previously set by setMarker)
+	 * return true if provider can provide details for given marker (previously
+	 * set by setMarker)
+	 * 
 	 * @param id - id of the problem
 	 * @return true if details are available for given marker
 	 */
 	public abstract boolean isApplicable(String id);
 
 	/**
+	 * Returns problem arguments by index (set by checker when reporting
+	 * problem)
+	 * 
+	 * @since 1.1
+	 */
+	public String getProblemArgument(int index) {
+		return CodanProblemMarker.getProblemArgument(marker, index);
+	}
+
+	/**
+	 * Return the arguments of a problem that checker passed to "reportProblem"
+	 * method
+	 * 
+	 * @param marker - problem marker
+	 * @return problem arguments, can not be null. Can be 0 sized array.
+	 * @since 1.1
+	 */
+	public String[] getProblemArguments() {
+		return CodanProblemMarker.getProblemArguments(marker);
+	}
+
+	/**
 	 * Return styled problem message. This text would be used in Link widget.
 	 * String can include <a> tags to which would be
 	 * visible as hyperlinks and newline characters (\n). Default message if
 	 * marker message plus location. Ampersand (&) should be escape because
-	 * it is interpreted as mnemonic for control navigation (can use espaceForLink method). <br>
+	 * it is interpreted as mnemonic for control navigation (can use
+	 * espaceForLink method). <br>
 	 * This method intended to be overriden by the client.
 	 */
 	public String getStyledProblemMessage() {
 		String message = escapeForLink(getProblemMessage());
 		String href = getLocationHRef();
 		String link = href.replaceFirst("^file:", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		link = link.replaceFirst("#(\\d+)$", ":$1");  //$NON-NLS-1$//$NON-NLS-2$
+		link = link.replaceFirst("#(\\d+)$", ":$1"); //$NON-NLS-1$//$NON-NLS-2$
 		return "<a href=\"" + href + "\">" + link + "</a> \n" + message; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
+
 	protected String getLocationHRef() {
 		return CodanEditorUtility.getLocationHRef(marker);
 	}
+
 	/**
-	 * Return styled problem description. This text would be used in Link widget.
+	 * Return styled problem description. This text would be used in Link
+	 * widget.
 	 * String can include <a> tags to which would be
 	 * visible as hyperlinks and newline characters (\n).
 	 * Ampersand (&) should be escape because
-	 * it is interpreted as mnemonic for control navigation (can use espaceForLink method).
+	 * it is interpreted as mnemonic for control navigation (can use
+	 * espaceForLink method).
 	 * 
 	 * Default implementation return desciption of codan problem. <br>
 	 * This method intended to be overriden by the client.
@@ -100,7 +136,8 @@ public abstract class AbstractCodanProblemDetailsProvider {
 		String id = getProblemId();
 		if (id == null)
 			return ""; //$NON-NLS-1$
-		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry().getDefaultProfile().findProblem(id);
+		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry()
+				.getDefaultProfile().findProblem(id);
 		return escapeForLink(problem.getDescription());
 	}
 

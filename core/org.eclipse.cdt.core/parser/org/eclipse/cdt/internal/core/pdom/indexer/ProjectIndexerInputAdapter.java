@@ -35,6 +35,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
@@ -42,7 +43,9 @@ import org.eclipse.core.runtime.content.IContentType;
  * @since 5.0
  */
 public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
+	private static final boolean CASE_INSENSITIVE_FILE_SYSTEM = new File("a").equals(new File("A")); //$NON-NLS-1$//$NON-NLS-2$
 	private static final AbstractLanguage[] NO_LANGUAGE = new AbstractLanguage[0];
+
 	private final ICProject fCProject;
 	private final HashMap<String, IIndexFileLocation> fIflCache;
 	private final FileExistsCache fExistsCache;
@@ -59,7 +62,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		fProjectPrefix= cproject.getProject().getFullPath().toString() + IPath.SEPARATOR;
 		if (useCache) {
 			fIflCache= new HashMap<String, IIndexFileLocation>();
-			fExistsCache= new FileExistsCache();
+			fExistsCache= new FileExistsCache(isCaseInsensitiveFileSystem());
 		} else {
 			fIflCache= null;
 			fExistsCache= null;
@@ -72,6 +75,12 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		if (l instanceof AbstractLanguage) {
 			fLangCpp= (AbstractLanguage) l;
 		}
+	}
+
+	private boolean isCaseInsensitiveFileSystem() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS()))
+			return true;
+		return CASE_INSENSITIVE_FILE_SYSTEM; 
 	}
 
 	@Override

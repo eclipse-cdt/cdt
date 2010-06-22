@@ -38,8 +38,14 @@ public final class FileExistsCache {
 		public BitSet fIsFile;
 	}
 	private Reference<Map<String,Content>> fCache= null;
-		
+	private final boolean fCaseInSensitive;
+
 	public FileExistsCache() {
+		this(CASE_INSENSITIVE);
+	}
+
+	public FileExistsCache(boolean caseInsensitive) {
+		fCaseInSensitive= caseInsensitive;
 		fCache= new SoftReference<Map<String,Content>>(new HashMap<String, Content>());	// before running out of memory the entire map will be thrown away.
 	}
 	
@@ -54,7 +60,7 @@ public final class FileExistsCache {
 			return false;
 		
 		String name= file.getName();
-		if (CASE_INSENSITIVE)
+		if (fCaseInSensitive)
 			name= name.toUpperCase();
 		
 		Content avail= getExistsCache().get(parent); 
@@ -64,7 +70,7 @@ public final class FileExistsCache {
 				avail= EMPTY_STRING_ARRAY;
 			}
 			else {
-				if (CASE_INSENSITIVE) {
+				if (fCaseInSensitive) {
 					for (int i = 0; i < files.length; i++) {
 						files[i]= files[i].toUpperCase();
 					}

@@ -11,8 +11,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.ui;
 
+import java.util.HashSet;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -23,6 +30,10 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.debug.gdbjtag.ui";
+
+	private static final String HARDWARE_LAUNCH_TYPE = "org.eclipse.cdt.debug.gdbjtag.launchConfigurationType"; //$NON-NLS-1$
+
+	private static final String PREFERRED_DEBUG_HARDWARE_LAUNCH_DELEGATE = "org.eclipse.cdt.debug.gdbjtag.core.dsfLaunchDelegate"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;
@@ -40,6 +51,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		setDefaultLaunchDelegates();
 	}
 
 	/*
@@ -87,5 +99,26 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
+	}
+	
+	private void setDefaultLaunchDelegates() {
+		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
+		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
+
+		HashSet<String> debugSet = new HashSet<String>();
+		debugSet.add(ILaunchManager.DEBUG_MODE);
+
+		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(HARDWARE_LAUNCH_TYPE);
+		try {
+			if (remoteCfg.getPreferredDelegate(debugSet) == null) {
+				ILaunchDelegate[] delegates = remoteCfg.getDelegates(debugSet);
+				for (ILaunchDelegate delegate : delegates) {
+					if (PREFERRED_DEBUG_HARDWARE_LAUNCH_DELEGATE.equals(delegate.getId())) {
+						remoteCfg.setPreferredDelegate(debugSet, delegate);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {}
 	}
 }

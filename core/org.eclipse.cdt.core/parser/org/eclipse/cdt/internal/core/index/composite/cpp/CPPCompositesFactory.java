@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -196,7 +197,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			}
 			return at;
 		} 
-		if (rtype instanceof IBasicType || rtype == null) {
+		if (rtype instanceof IBasicType || rtype == null || rtype instanceof IProblemBinding) {
 			return rtype;
 		} 
 		

@@ -5905,7 +5905,7 @@ public class AST2Tests extends AST2BaseTest {
 			IASTTranslationUnit tu= parse(code, lang, false, true, true);
 			long diff= memoryUsed()-mem;
 			// allow a copy of the buffer + not even 1 byte per initializer
-			final int expected = code.length()*2 + AMOUNT/2;  
+			final int expected = code.length()*2 + AMOUNT + AMOUNT/2;  
 			assertTrue(String.valueOf(diff) + " expected < " + expected, diff < expected);
 			assertTrue(tu.isFrozen());
 		}

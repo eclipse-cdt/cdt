@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -53,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -67,8 +69,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -638,28 +638,31 @@ public class CVisitor extends ASTQueries {
 		IScope scope = getContainingScope(expr);
 		try {
 			IBinding[] bs = scope.find(PTRDIFF_T);
-			if (bs.length > 0) {
-				for (IBinding b : bs) {
-					if (b instanceof IType) {
-						if (b instanceof ICInternalBinding == false || 
-								CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
-							return (IType) b;
-						}
+			for (IBinding b : bs) {
+				if (b instanceof IType) {
+					if (b instanceof ICInternalBinding == false || 
+							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
+						return (IType) b;
 					}
 				}
 			}
 		} catch (DOMException e) {
 		}
 
-		return new CBasicType(Kind.eInt, IBasicType.IS_UNSIGNED | IBasicType.IS_LONG, expr);
+		return new CBasicType(Kind.eInt, 0, expr);
 	}
     
 	static IType getSize_T(IASTExpression expr) {
 		IScope scope = getContainingScope(expr);
 		try {
 			IBinding[] bs = scope.find(SIZE_T);
-			if (bs.length > 0 && bs[0] instanceof IType) {
-				return (IType) bs[0];
+			for (IBinding b : bs) {
+				if (b instanceof IType) {
+					if (b instanceof ICInternalBinding == false || 
+							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
+						return (IType) b;
+					}
+				}
 			}
 		} catch (DOMException e) {
 		}

@@ -2089,7 +2089,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		basicType= new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
+		basicType= new CPPBasicType(Kind.eInt, 0);
 		basicType.setFromExpression(binary);
 		return basicType;
 	}

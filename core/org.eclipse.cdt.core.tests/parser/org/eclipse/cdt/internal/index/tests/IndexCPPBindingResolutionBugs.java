@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
@@ -1195,5 +1197,16 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public void testElaboratedTypeSpecifier_Bug303739() throws Exception {
     	getBindingFromASTName("member=0", -2, ICPPField.class);
 	}
-
+	
+	//	typedef int xxx::* MBR_PTR;
+	
+	//	void test() {	
+	//		MBR_PTR x;
+	//	}
+	public void testProblemInIndexBinding_Bug317146() throws Exception {
+    	ITypedef td= getBindingFromASTName("MBR_PTR", 0, ITypedef.class);
+    	ICPPPointerToMemberType ptrMbr= (ICPPPointerToMemberType) td.getType();
+    	IType t= ptrMbr.getMemberOfClass();
+    	assertInstance(t, IProblemBinding.class);
+	}
 }

@@ -160,7 +160,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
@@ -2788,21 +2787,25 @@ public class CPPSemantics {
     /**
      * Returns constructor called by a declarator, or <code>null</code> if no constructor is called.
      */
-    public static ICPPConstructor findImplicitlyCalledConstructor(CPPASTDeclarator declarator) {
-		if (declarator.getInitializer() == null) {
-			IASTNode parent = declarator.getParent();
-			if (parent instanceof IASTSimpleDeclaration) {
-				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-				parent = parent.getParent();
-				if (parent instanceof IASTCompositeTypeSpecifier ||
-						declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
-					// No initialization is performed for class members and extern declarations
-					// without an initializer.
-					return null;
-				}
+    public static ICPPConstructor findImplicitlyCalledConstructor(final ICPPASTDeclarator declarator) {
+    	if (declarator.getNestedDeclarator() != null)
+    		return null;
+    	IASTDeclarator dtor= ASTQueries.findOutermostDeclarator(declarator);
+    	IASTNode parent = dtor.getParent();
+    	if (parent instanceof IASTSimpleDeclaration) {
+    		if (dtor.getInitializer() == null) {
+    			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+    			parent = parent.getParent();
+    			if (parent instanceof IASTCompositeTypeSpecifier ||
+    					declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
+    				// No initialization is performed for class members and extern declarations
+    				// without an initializer.
+    				return null;
+    			}
 			}
+	    	return findImplicitlyCalledConstructor(declarator.getName(), dtor.getInitializer());
 		}
-    	return findImplicitlyCalledConstructor(declarator.getName(), declarator.getInitializer());
+    	return null;
     }
 
     /**

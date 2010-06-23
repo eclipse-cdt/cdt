@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -102,7 +103,25 @@ public class FaultToleranceTests extends AST2BaseTest {
     		sdecl= getDeclaration(tu, 3);
     	}
     }
-    
+
+	// void f() {
+    //   int a= 1
+	// 	 f()
+    // }
+    public void testExpressionWithoutSemi_314593() throws Exception {
+    	final String comment= getAboveComment();
+    	for (ParserLanguage lang : ParserLanguage.values()) {
+    		IASTTranslationUnit tu= parse(comment, lang, false, false);
+    		IASTFunctionDefinition fdef= getDeclaration(tu, 0);
+    		IASTStatement stmt= getStatement(fdef, 0);
+    		assertEquals("int a= 1", stmt.getRawSignature());
+    		IASTProblemStatement pstmt= getStatement(fdef, 1);
+    		stmt= getStatement(fdef, 2);
+    		assertEquals("f()", stmt.getRawSignature());
+    		pstmt= getStatement(fdef, 3);
+    	}
+    }
+
     // struct X {
     //   int a;
     public void testIncompleteCompositeType() throws Exception {

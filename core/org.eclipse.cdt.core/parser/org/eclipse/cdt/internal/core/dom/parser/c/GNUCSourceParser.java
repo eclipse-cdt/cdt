@@ -357,8 +357,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         	return functionDefinition(firstOffset, declSpec, declarators);
 
         default:
-        	if (declOption != DeclarationOptions.LOCAL) {
-        		insertSemi= true;
+    		insertSemi= true;
+        	if (declOption == DeclarationOptions.LOCAL) {
+            	endOffset= figureEndOffset(declSpec, declarators);
+        		if (firstOffset != endOffset) {
+        			break;
+        		}
+        	} else {
         		if (markBeforDtor != null) {
         			endOffset= calculateEndOffset(declSpec);
         			if (firstOffset != endOffset && !isOnSameLine(endOffset, markBeforDtor.getOffset())) {
@@ -1830,7 +1835,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 return parseLabelStatement();
             }
 
-            return parseDeclarationOrExpressionStatement(DeclarationOptions.LOCAL);
+            return parseDeclarationOrExpressionStatement();
         }
 
     }
@@ -2075,7 +2080,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         int startOffset;
         startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
-        IASTStatement init = forInitStatement(DeclarationOptions.LOCAL);
+        IASTStatement init = forInitStatement();
         IASTExpression for_condition = null;
         switch (LT(1)) {
         case IToken.tSEMI:

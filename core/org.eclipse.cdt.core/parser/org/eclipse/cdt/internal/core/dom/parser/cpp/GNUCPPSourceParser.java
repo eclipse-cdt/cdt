@@ -1972,8 +1972,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	return functionDefinition(firstOffset, declSpec, dtor);
         
         default:	
-        	if (declOption != DeclarationOptions.LOCAL) {
-        		insertSemi= true;
+    		insertSemi= true;
+        	if (declOption == DeclarationOptions.LOCAL) {
+            	endOffset= figureEndOffset(declSpec, declarators);
+        		break;
+        	} else {
         		if (isLegalWithoutDtor(declSpec) && markBeforDtor != null && !isOnSameLine(calculateEndOffset(declSpec), markBeforDtor.getOffset())) {
         			backup(markBeforDtor);
         			declarators= IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
@@ -3851,7 +3854,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 return parseLabelStatement();
             }
 
-            return parseDeclarationOrExpressionStatement(DeclarationOptions.LOCAL);
+            return parseDeclarationOrExpressionStatement();
         }
     }
 
@@ -4104,7 +4107,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         int startOffset;
         startOffset = consume().getOffset();
         consume(IToken.tLPAREN);
-        IASTStatement init = forInitStatement(DeclarationOptions.LOCAL);
+        IASTStatement init = forInitStatement();
         IASTNode for_condition = null;
         switch (LT(1)) {
         case IToken.tSEMI:

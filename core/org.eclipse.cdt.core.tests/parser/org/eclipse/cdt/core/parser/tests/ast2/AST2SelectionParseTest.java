@@ -101,15 +101,6 @@ public class AST2SelectionParseTest extends AST2SelectionParseBaseTest {
 		assertEquals(((IFunction)name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
 	}
 	
-	public void testBaseCase_Error() throws Exception
-	{
-		String code = "int x() { y( ) }"; //$NON-NLS-1$
-		int offset1 = code.indexOf( "y( " ); //$NON-NLS-1$
-		int length = "y".length(); //$NON-NLS-1$
-		assertNull( parse( code, ParserLanguage.C, offset1, length, false ));
-		assertNull( parse( code, ParserLanguage.CPP, offset1, length, false ));
-	}
-	
 	public void testBaseCase_FunctionDeclaration() throws Exception
 	{
 		String code = "int x(); x( );"; //$NON-NLS-1$

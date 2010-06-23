@@ -852,9 +852,17 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         		result.addStatement(stmt);
         		endOffset= calculateEndOffset(stmt);
             } catch (BacktrackException bt) {
-            	IASTStatement stmt= skipProblemStatement(stmtOffset);
-        		result.addStatement(stmt);
-        		endOffset= calculateEndOffset(stmt);
+            	final IASTNode beforeProblem = bt.getNodeBeforeProblem();
+        		final IASTProblem problem = bt.getProblem();
+				if (problem != null && beforeProblem instanceof IASTStatement) {
+            		result.addStatement((IASTStatement) beforeProblem);
+					result.addStatement(buildProblemStatement(problem));
+					endOffset= calculateEndOffset(beforeProblem);
+				} else {
+					IASTStatement stmt= skipProblemStatement(stmtOffset);
+					result.addStatement(stmt);
+					endOffset= calculateEndOffset(stmt);
+				}
             } catch (EndOfFileException e) {
             	IASTStatement stmt= skipProblemStatement(stmtOffset);
         		result.addStatement(stmt);
@@ -1809,21 +1817,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * This method will attempt to parse a statement as both an expression and a declaration,
      * if both parses succeed then an ambiguity node is returned.
      */
-    protected IASTStatement parseDeclarationOrExpressionStatement(DeclarationOptions option) throws EndOfFileException, BacktrackException {
+    protected IASTStatement parseDeclarationOrExpressionStatement() throws EndOfFileException, BacktrackException {
         // First attempt to parse an expressionStatement
         // Note: the function style cast ambiguity is handled in expression
         // Since it only happens when we are in a statement
         IToken mark = mark();
         IASTExpressionStatement expressionStatement = null;
-        IToken lastTokenOfExpression = null;
+        IToken afterExpression = null;
+        boolean foundSemicolon= false;
         try {
             IASTExpression expression = expression();
-            if (LT(1) == IToken.tEOC)
-                lastTokenOfExpression = consume();
-            else
-                lastTokenOfExpression = consume(IToken.tSEMI);
             expressionStatement = nodeFactory.newExpressionStatement(expression);
-            ((ASTNode) expressionStatement).setOffsetAndLength(mark.getOffset(), lastTokenOfExpression.getEndOffset() - mark.getOffset());
+            setRange(expressionStatement, expression);
+            afterExpression= LA();
+            
+            IToken semi= consumeOrEOC(IToken.tSEMI);
+            foundSemicolon= true;
+            adjustEndOffset(expressionStatement, semi.getEndOffset());
+            afterExpression= LA();
         } catch (BacktrackException b) {
         }
 
@@ -1832,22 +1843,31 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         // Now attempt to parse a declarationStatement
         IASTDeclarationStatement ds = null;
         try {
-            IASTDeclaration d = declaration(option);
+            IASTDeclaration d = declaration(DeclarationOptions.LOCAL);
             ds = nodeFactory.newDeclarationStatement(d);
-            ((ASTNode) ds).setOffsetAndLength(((ASTNode) d).getOffset(), ((ASTNode) d).getLength());
+            setRange(ds, d);
         } catch (BacktrackException b) {
             if (expressionStatement == null) {
-            	backup(mark);
+            	IASTNode node = b.getNodeBeforeProblem();
+            	if (node instanceof IASTDeclaration) {
+            		ds= nodeFactory.newDeclarationStatement((IASTDeclaration) node);
+            		b.initialize(b.getProblem(), setRange(ds, node));
+            	}
             	throw b;
             }
         }
 
-        if (expressionStatement == null) {
-        	return ds;
-        }
         if (ds == null) {
-        	backup(lastTokenOfExpression); consume();
-            return expressionStatement;
+        	backup(afterExpression); 
+        	if (foundSemicolon)
+        		return expressionStatement;
+        	
+        	throwBacktrack(createProblem(IProblem.SYNTAX_ERROR, calculateEndOffset(expressionStatement), 0), expressionStatement);
+        	return null; // Hint for java-compiler
+        }
+
+        if (expressionStatement == null || !foundSemicolon) {
+        	return ds;
         }
         
         // At this point we know we have an ambiguity.
@@ -1879,7 +1899,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	            // x; 
 	            // can be parsed as a named declaration specifier without a declarator
 	        	if (declarators.length == 0) {
-					backup(lastTokenOfExpression); consume();
+					backup(afterExpression);
 					return expressionStatement;
 	        	}
 	        }
@@ -1889,8 +1909,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         IASTAmbiguousStatement statement = createAmbiguousStatement();
         statement.addStatement(expressionStatement);
         statement.addStatement(ds);
-        ((ASTNode) statement).setOffsetAndLength((ASTNode) ds);
-        return statement;
+        return setRange(statement, ds);
     }
     
     
@@ -2259,10 +2278,19 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTAmbiguousExpression createAmbiguousBinaryVsCastExpression(IASTBinaryExpression binary, IASTCastExpression castExpr);
     protected abstract IASTAmbiguousExpression createAmbiguousCastVsFunctionCallExpression(IASTCastExpression castExpr, IASTFunctionCallExpression funcCall);
 
-    protected IASTStatement forInitStatement(DeclarationOptions option) throws BacktrackException, EndOfFileException {
+    protected IASTStatement forInitStatement() throws BacktrackException, EndOfFileException {
         if( LT(1) == IToken.tSEMI )
             return parseNullStatement();
-        return parseDeclarationOrExpressionStatement(option);
+        try {
+        	return parseDeclarationOrExpressionStatement();
+        } catch (BacktrackException e) {
+        	// Missing semicolon within for loop does not make a complete for-statement
+        	IASTNode before = e.getNodeBeforeProblem();
+        	if (before != null) {
+        		e.initialize(e.getProblem());
+        	}
+        	throw e;
+        }
     }
 
     /**

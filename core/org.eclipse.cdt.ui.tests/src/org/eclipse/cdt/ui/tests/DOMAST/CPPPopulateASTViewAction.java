@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -29,11 +30,10 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -87,7 +87,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
         if (node == null) return new DOMASTNodeLeafContinue(null);
         
         // only do length check for ASTNode (getNodeLocations on PreprocessorStatements is very expensive)
-        if (node instanceof ASTNode && ((ASTNode)node).getLength() <= 0)
+        if (node instanceof ASTNode && ((ASTNode)node).getLength() <= 0 && !(node instanceof IASTProblemHolder))
             return new DOMASTNodeLeafContinue(null);
         
         DOMASTNodeParent parent = null;
@@ -153,8 +153,8 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		DOMASTNodeLeaf temp =  addRoot(declarator);
 		
 		IASTPointerOperator[] ops = declarator.getPointerOperators();
-		for(int i=0; i<ops.length; i++)
-			addRoot(ops[i]);
+		for (IASTPointerOperator op : ops)
+			addRoot(op);
 				
 		if (temp == null)
 			return PROCESS_ABORT;
@@ -347,11 +347,11 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	}
 	
 	public void mergePreprocessorProblems(IASTProblem[] problems) {
-		for(int i=0; i<problems.length; i++) {
+		for (IASTProblem problem : problems) {
 			if (monitor != null && monitor.isCanceled()) return;
 			
-			if (problems[i] instanceof ASTNode)
-			   mergeNode((ASTNode)problems[i]);
+			if (problem instanceof ASTNode)
+			   mergeNode((ASTNode)problem);
 		}
 	}
 	
@@ -368,9 +368,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 
 			final String path= ((IASTPreprocessorIncludeStatement) nodeLeaf.getNode()).getPath();
 			final DOMASTNodeLeaf[] children = root.getChildren(false);
-			for(int j=0; j < children.length; j++) {
-//				if (monitor != null && monitor.isCanceled()) return; // this causes a deadlock when checked here
-				final DOMASTNodeLeaf child = children[j];
+			for (final DOMASTNodeLeaf child : children) {
 				if (child != null && child != nodeLeaf && 
 						child.getNode().getContainingFilename().equals(path)) {
 					root.removeChild(child);

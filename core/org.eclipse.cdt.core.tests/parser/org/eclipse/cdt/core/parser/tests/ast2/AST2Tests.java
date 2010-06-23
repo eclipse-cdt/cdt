@@ -7271,4 +7271,25 @@ public class AST2Tests extends AST2BaseTest {
 			assertEquals(2, decls.length);
 		}
 	}		
+	
+	// typedef __typeof__((int*)0-(int*)0) ptrdiff_t;
+	// typedef __typeof__(sizeof(int)) size_t;
+	public void testPtrDiffRecursion_317004() throws Exception {
+        final String comment = getAboveComment();
+        String code= comment;
+		parseAndCheckBindings(code, ParserLanguage.C, true);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+		ITypedef td= bh.assertNonProblem("ptrdiff_t", 0);
+		assertEquals("int", ASTTypeUtil.getType(td.getType()));
+		td= bh.assertNonProblem("size_t", 0);
+		assertEquals("unsigned long int", ASTTypeUtil.getType(td.getType()));
+
+		code= "namespace std {" + comment + "}";
+		parseAndCheckBindings(code, ParserLanguage.CPP, true);
+		bh= new BindingAssertionHelper(code, true);
+		td= bh.assertNonProblem("ptrdiff_t", 0);
+		assertEquals("int", ASTTypeUtil.getType(td.getType()));
+		td= bh.assertNonProblem("size_t", 0);
+		assertEquals("unsigned long int", ASTTypeUtil.getType(td.getType()));
+	}
 }

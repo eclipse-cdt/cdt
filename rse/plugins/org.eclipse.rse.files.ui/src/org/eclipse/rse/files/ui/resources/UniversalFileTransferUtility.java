@@ -60,6 +60,7 @@
  * David McKnight     (IBM)      - [234258] [dnd] Drag&Drop a folder silently ignores elements without permissions
  * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
  * David McKnight     (IBM)      - [298440] jar files in a directory can't be pasted to another system properly
+ * David McKnight     (IBM)      - [311218] Content conflict dialog pops up when it should not
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -229,11 +230,16 @@ public class UniversalFileTransferUtility {
 				// changed encodings matter too
 				String remoteEncoding = remoteFile.getEncoding();
 				String lastEncoding = properties.getEncoding();
+				
+						
+				boolean usedReadOnly = properties.getReadOnly();
+				boolean isReadOnly = !remoteFile.canWrite();
+				
 				if (storedModifiedStamp == remoteModifiedStamp &&
-						(usedBin == shouldUseBin) &&
-						(remoteEncoding.equals(lastEncoding))
-				)
-				{
+						usedBin == shouldUseBin &&
+						remoteEncoding.equals(lastEncoding) &&						
+						usedReadOnly == isReadOnly
+						){					
 					return true;
 				}
 			}
@@ -316,7 +322,7 @@ public class UniversalFileTransferUtility {
 			listener.addIgnoreFile(tempFile);
 			String remoteEncoding = srcFileOrFolder.getEncoding();
 			srcFS.download(srcFileOrFolder, tempFile.getLocation().makeAbsolute().toOSString(), remoteEncoding, monitor);
-			listener.removeIgnoreFile(tempFile);
+			
 			if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
 			{
 				// eclipse doesn't like this if the resource appears to be from another project
@@ -332,10 +338,18 @@ public class UniversalFileTransferUtility {
 			}
 			if (tempFile.exists())
 			{
+				SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+				
 				// set the appropriate readonly flag
 				boolean readOnly = !srcFileOrFolder.canWrite();
 				setReadOnly(tempFile, readOnly);
-
+		
+				// set file properties
+				properties.setRemoteFileTimeStamp(srcFileOrFolder.getLastModified());
+				properties.setDownloadFileTimeStamp(tempFile.getLocation().toFile().lastModified());
+				properties.setReadOnly(readOnly);
+				properties.setDirty(false);
+	
 				if (remoteEncoding != null)
 				{
 					if (srcFileOrFolder.isBinary())
@@ -351,8 +365,7 @@ public class UniversalFileTransferUtility {
 					}
 					else
 					{
-						// using text mode so the char set needs to be local
-						SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+						// using text mode so the char set needs to be local						
 						if (properties.getLocalEncoding() != null){
 							String localEncoding = properties.getLocalEncoding();
 							tempFile.setCharset(localEncoding, null);
@@ -361,6 +374,7 @@ public class UniversalFileTransferUtility {
 					}
 				}
 			}
+			listener.removeIgnoreFile(tempFile);
 		}
 		catch (SystemOperationCancelledException soce) {
 			return null;

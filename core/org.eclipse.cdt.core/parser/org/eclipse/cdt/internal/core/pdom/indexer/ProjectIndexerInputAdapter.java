@@ -172,11 +172,20 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		return 0;
 	}
 
-	
 	@Override
 	public AbstractLanguage[] getLanguages(Object tuo, boolean bothForHeaders) {
-		if (tuo instanceof PotentialTranslationUnit)
+		if (tuo instanceof PotentialTranslationUnit) {
+			if (fLangC != null) {
+				if (fLangCpp != null) {
+					return new AbstractLanguage[] {fLangC, fLangCpp};
+				}
+				return new AbstractLanguage[] {fLangC};
+			}
+			if (fLangCpp != null) {
+				return new AbstractLanguage[] {fLangCpp};
+			}
 			return NO_LANGUAGE;
+		}
 		
 		ITranslationUnit tu= (ITranslationUnit) tuo;
 		try {

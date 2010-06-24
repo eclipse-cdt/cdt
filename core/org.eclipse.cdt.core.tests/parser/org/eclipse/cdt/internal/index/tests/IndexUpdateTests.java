@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.resources.IFile;
@@ -908,6 +909,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//    globalVar= 1;
 	// }
 	public void testChangingSourceBeforeHeader_Bug171834() throws Exception {
+		CModelListener.sSuppressUpdateOfLastRecentlyUsed= false;
 		setupHeader(2, true);
 		setupFile(0, true);
 		IBinding binding;

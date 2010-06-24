@@ -40,9 +40,9 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
-import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -73,10 +73,11 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int TIME_STAMP = 24;
 	private static final int CONTENT_HASH= 32;
 	private static final int SCANNER_CONFIG_HASH= 40;
-	private static final int LAST_USING_DIRECTIVE= 44;
-	private static final int FIRST_MACRO_REFERENCE= 48;
+	private static final int ENCODING_HASH= 44;
+	private static final int LAST_USING_DIRECTIVE= 48;
+	private static final int FIRST_MACRO_REFERENCE= 52;
 
-	private static final int RECORD_SIZE= 52;
+	private static final int RECORD_SIZE= 56;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -224,6 +225,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 
 		setTimestamp(sourceFile.getTimestamp());
+		setEncodingHashcode(sourceFile.getEncodingHashcode());
 		setContentsHash(sourceFile.getContentsHash());
 		setScannerConfigurationHashcode(sourceFile.getScannerConfigurationHashcode());
 
@@ -291,6 +293,16 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void setScannerConfigurationHashcode(int hashcode) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putInt(record + SCANNER_CONFIG_HASH, hashcode);
+	}
+
+	public int getEncodingHashcode() throws CoreException {
+		Database db = fLinkage.getDB();
+		return db.getInt(record + ENCODING_HASH);
+	}
+
+	public void setEncodingHashcode(int hashcode) throws CoreException {
+		Database db= fLinkage.getDB();
+		db.putInt(record + ENCODING_HASH, hashcode);
 	}
 
 	private PDOMName getFirstName() throws CoreException {

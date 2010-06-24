@@ -41,6 +41,12 @@ public interface IIndexFragmentFile extends IIndexFile {
 	void setScannerConfigurationHashcode(int hashcode) throws CoreException;
 
 	/**
+	 * Sets the hash-code of the file encoding.
+	 * @param hashcode a hash-code or <code>0</code> if it is unknown.
+	 */
+	void setEncodingHashcode(int hashcode) throws CoreException;
+
+	/**
 	 * Returns whether this file contains content in its
 	 * associated fragment. Files without content are inserted to track includes.
 	 */

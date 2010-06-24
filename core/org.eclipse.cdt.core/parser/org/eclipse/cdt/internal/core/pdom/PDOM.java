@@ -193,11 +193,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  95.0 - parameter packs, bug 294730.
 	 *  96.0 - storing pack expansions in the template parameter map, bug 294730.
 	 *  97.0 - storing file contents hash in PDOMFile, bug 302083.
-	 *  98.0 - strongly typed enums, bug 305975.
+	 *  #98.0# - strongly typed enums, bug 305975.  <<CDT 7.0.0>>
+	 *  
+	 *  CDT 8.0 development (versions not supported on the 7.0.x branch)
+	 *  110.0 - update index on encoding change, bug 317435.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(98, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(98, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(98, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(110, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(110, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(110, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

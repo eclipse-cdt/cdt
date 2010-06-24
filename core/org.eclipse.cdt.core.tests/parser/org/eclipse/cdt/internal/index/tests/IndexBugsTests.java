@@ -2278,4 +2278,42 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 	}
+
+	public void testUpdateForContentTypeChange_283080() throws Exception {
+		IIndexBinding[] r;
+		
+		final IProject prj = fCProject.getProject();
+		IFile file= TestSourceReader.createFile(prj, "a.cpp", "// \u0110 \n int a;");
+		file.setCharset("US-ASCII", new NullProgressMonitor());
+		waitForIndexer(fCProject);
+		
+		final IIndex index= CCorePlugin.getIndexManager().getIndex(fCProject);
+		int offset1= 0;
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("a".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(1, r.length);
+			IIndexName[] defs = index.findDefinitions(r[0]);
+			assertEquals(1, defs.length);
+			offset1= defs[0].getNodeOffset();
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		file.setCharset("UTF-8", new NullProgressMonitor());
+		waitForIndexer(fCProject);
+		int offset2= 0;
+		index.acquireReadLock();
+		try {
+			r = index.findBindings("a".toCharArray(), IndexFilter.ALL_DECLARED, null);
+			assertEquals(1, r.length);
+			IIndexName[] defs = index.findDefinitions(r[0]);
+			assertEquals(1, defs.length);
+			offset1= defs[0].getNodeOffset();
+		} finally {
+			index.releaseReadLock();
+		}
+		
+		assertTrue(offset1 != offset2);
+	}
 }

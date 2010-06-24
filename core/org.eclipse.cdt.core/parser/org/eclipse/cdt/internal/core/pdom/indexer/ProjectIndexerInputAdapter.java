@@ -28,8 +28,10 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -170,6 +172,21 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 			return location.toFile().lastModified();
 		}
 		return 0;
+	}
+
+	@Override
+	public String getEncoding(IIndexFileLocation ifl) {
+		String fullPath= ifl.getFullPath();
+		if (fullPath != null) {
+			IResource res= ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(fullPath));
+			if (res instanceof IFile) {
+				try {
+					return ((IFile) res).getCharset();
+				} catch (CoreException e) {
+				}
+			}
+		}
+		return InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
 	}
 
 	@Override

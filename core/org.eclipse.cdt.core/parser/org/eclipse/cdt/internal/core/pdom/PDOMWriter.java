@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
@@ -45,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -461,7 +461,6 @@ abstract public class PDOMWriter {
 			YieldableIndexLock lock) throws CoreException, InterruptedException {
 		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
 		IIndexFragmentFile file;
-		long timestamp = fResolver.getLastModified(location);
 		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace contents
 		// of the old file from the temporary one, then delete the temporary file. The write lock on
 		// the index can be yielded between adding names to the temporary file, if another thread
@@ -503,7 +502,8 @@ abstract public class PDOMWriter {
 				}
 				index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver, lock);
 			}
-			file.setTimestamp(timestamp);
+			file.setTimestamp(fResolver.getLastModified(location));
+			file.setEncodingHashcode(fResolver.getEncoding(location).hashCode());
 			file.setContentsHash(fileContentsHash);
 			file = index.commitUncommittedFile();
 		} finally {

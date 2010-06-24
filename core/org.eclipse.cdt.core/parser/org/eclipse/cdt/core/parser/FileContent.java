@@ -83,11 +83,16 @@ public abstract class FileContent {
 		return InternalParserUtil.createWorkspaceFileContent(file);
 	}
 
+	public static FileContent createForExternalFileLocation(String fileLocation) {
+		return createForExternalFileLocation(fileLocation, InternalParserUtil.SYSTEM_DEFAULT_ENCODING);
+	}
+
 	/**
 	 * Creates a file content object for a file location that is not part of the workspace
+	 * @since 5.3
 	 */
-	public static FileContent createForExternalFileLocation(String fileLocation) {
-		return InternalParserUtil.createExternalFileContent(fileLocation);
+	public static FileContent createForExternalFileLocation(String fileLocation, String encoding) {
+		return InternalParserUtil.createExternalFileContent(fileLocation, encoding);
 	}
 
 	/**

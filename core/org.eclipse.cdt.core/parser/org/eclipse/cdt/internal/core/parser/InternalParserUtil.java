@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Path;
  * Utility for creating code readers
  */
 public class InternalParserUtil extends ParserFactory {
-	private static final String SYSTEM_DEFAULT_ENCODING = System.getProperty("file.encoding"); //$NON-NLS-1$
+	public static final String SYSTEM_DEFAULT_ENCODING = System.getProperty("file.encoding"); //$NON-NLS-1$
 
 	/**
 	 * Normalizes the path by using the location of the file, if possible.
@@ -133,7 +133,7 @@ public class InternalParserUtil extends ParserFactory {
 			if (res instanceof IFile)
 				return createWorkspaceFileContent((IFile) res);
 		}
-		return createExternalFileContent(ifl.getURI().getPath());
+		return createExternalFileContent(ifl.getURI().getPath(), SYSTEM_DEFAULT_ENCODING);
 	}
 	
 	public static InternalFileContent createWorkspaceFileContent(IFile file) {
@@ -170,7 +170,7 @@ public class InternalParserUtil extends ParserFactory {
 	 * Creates a code reader for an external location, normalizing path to 
 	 * canonical path. 
 	 */
-	public static InternalFileContent createExternalFileContent(String externalLocation) {
+	public static InternalFileContent createExternalFileContent(String externalLocation, String encoding) {
 		File includeFile = new File(externalLocation);
 		if (includeFile.isFile()) {
 		    // Use the canonical path so that in case of non-case-sensitive OSs
@@ -185,7 +185,7 @@ public class InternalParserUtil extends ParserFactory {
 				return null;
 			}
 			try {
-				return createFileContent(path, SYSTEM_DEFAULT_ENCODING, in);
+				return createFileContent(path, encoding, in);
 			} finally {
 				try {
 					in.close();

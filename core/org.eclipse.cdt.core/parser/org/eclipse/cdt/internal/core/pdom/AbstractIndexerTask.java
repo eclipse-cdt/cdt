@@ -445,13 +445,16 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 
 	private boolean isModified(boolean checkTimestamps, boolean checkFileContentsHash, IIndexFileLocation ifl,
 			Object tu, IIndexFragmentFile file)	throws CoreException {
-		boolean timestampDifferent = checkTimestamps && fResolver.getLastModified(ifl) != file.getTimestamp();
-		if (timestampDifferent) {
-			if (checkFileContentsHash && computeFileContentsHash(tu) == file.getContentsHash()) {
-				return false;
+		if (checkTimestamps) {
+			if (fResolver.getLastModified(ifl) != file.getTimestamp() || 
+					fResolver.getEncoding(ifl).hashCode() != file.getEncodingHashcode()) {
+				if (checkFileContentsHash && computeFileContentsHash(tu) == file.getContentsHash()) {
+					return false;
+				}
+				return true;
 			}
 		}
-		return timestampDifferent;
+		return false;
 	}
 
 	private void requestUpdate(int linkageID, IIndexFileLocation ifl, IIndexFragmentFile ifile) {

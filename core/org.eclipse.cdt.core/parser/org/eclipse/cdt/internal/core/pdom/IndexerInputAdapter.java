@@ -70,4 +70,8 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	 */
 	public abstract FileContent getCodeReader(Object tu);
 
+	/**
+	 * Returns the encoding for the file.
+	 */
+	public abstract String getEncoding(IIndexFileLocation ifl);
 }

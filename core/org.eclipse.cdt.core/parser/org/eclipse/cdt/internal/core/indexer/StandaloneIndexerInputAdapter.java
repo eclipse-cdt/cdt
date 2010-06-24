@@ -17,10 +17,10 @@ import java.util.HashMap;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
+import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.pdom.indexer.FileExistsCache;
 import org.eclipse.core.filesystem.URIUtil;
@@ -49,6 +49,16 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public long getLastModified(IIndexFileLocation location) {
 		return new File(URIUtil.toPath(location.getURI()).toOSString()).lastModified();
+	}
+
+	
+	@Override
+	public String getEncoding(IIndexFileLocation ifl) {
+		String encoding= getFileEncoding(getASTPath(ifl));
+		if (encoding == null)
+			return InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
+
+		return encoding;
 	}
 
 	@Override
@@ -130,24 +140,23 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public FileContent getCodeReader(Object tu) {
-		try {
-			String stu = (String) tu;
-			String fileEncoding = null;
-            // query file's encoding, if we find it and use it to create CodeReader
-			FileEncodingRegistry fileEncodingRegistry = fIndexer.getFileEncodingRegistry();
-			if(fileEncodingRegistry != null){
-				fileEncoding = fileEncodingRegistry.getFileEncoding(stu);
-			}
+		String stu = (String) tu;
+		String fileEncoding = getFileEncoding(stu);
 
-			if (fileEncoding != null) {
-				// TODO this is bad
-				return FileContent.adapt(new CodeReader(stu, fileEncoding));
-			} else {
-				return FileContent.createForExternalFileLocation((String) tu);
-			}
-		} catch (IOException e) {
+		return FileContent.createForExternalFileLocation(stu, fileEncoding);
+	}
+
+	public String getFileEncoding(String stu) {
+		String fileEncoding = null;
+		// query file's encoding, if we find it and use it to create CodeReader
+		FileEncodingRegistry fileEncodingRegistry = fIndexer.getFileEncodingRegistry();
+		if(fileEncodingRegistry != null){
+			fileEncoding = fileEncodingRegistry.getFileEncoding(stu);
 		}
-		return null;
+		if (fileEncoding == null)
+			return InternalParserUtil.SYSTEM_DEFAULT_ENCODING;
+		
+		return fileEncoding;
 	}
 
 	@Override

@@ -204,7 +204,8 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 
 						// Bug 311189 -- if the resource still exists now, don't treat as a remove!
 						if (to == null) {
-							from.refreshLocal(IResource.DEPTH_ZERO, null);
+							if (from.getWorkspace().validateFiltered(from).isOK())
+								from.refreshLocal(IResource.DEPTH_ZERO, null);
 							if (from.exists())
 								continue;
 						}

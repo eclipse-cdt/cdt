@@ -597,5 +597,13 @@
          </run>
       </application>
    </extension>
+   <extension
+         id="headlessSettings"
+         name="HeadlessBuilder Additional Settings"
+         point="org.eclipse.cdt.core.externalSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.core.HeadlessBuilderExternalSettingsProvider">
+      </provider>
+   </extension>
 
 </plugin>

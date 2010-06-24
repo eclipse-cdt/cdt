@@ -24,6 +24,8 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_Directory;
 	public static String HeadlessBuilder_Error;
 	public static String HeadlessBuilder_importAll;
+	public static String HeadlessBuilder_IncludeFile;
+	public static String HeadlessBuilder_InlucdePath;
 	public static String HeadlessBuilder_invalid_argument;
 	public static String HeadlessBuilder_is_not_accessible;
 	public static String HeadlessBuilder_is_not_valid_in_workspace;
@@ -43,6 +45,7 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_usage_build;
 	public static String HeadlessBuilder_usage_clean_build;
 	public static String HeadlessBuilder_invalid_uri;
+	public static String HeadlessBuilder_PreprocessorDefine;
 	public static String HeadlessBuilder_usage_import;
 	public static String HeadlessBuilder_Workspace;
 	public static String HeadlessBuilder_WorkspaceInUse;

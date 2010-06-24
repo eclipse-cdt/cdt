@@ -30,6 +30,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
+import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
+import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -70,6 +73,9 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Import all projects in the tree :       -importAll  {[uri:/]/path/to/projectTreeURI}
  *   - Build projects / the workspace :        -build      {project_name_reg_ex/config_name_reg_ex | all}
  *   - Clean build projects / the workspace :  -cleanBuild {project_name_reg_ex/config_name_reg_ex | all}
+ *   - Add Include path to build :             -I          {include_path}
+ *   - Add Include file to build :             -include    {include_file}
+ *   - Add preprocessor define to build :      -D          {prepoc_define}
  *
  * Build output is automatically sent to stdout.
  * @since 6.0
@@ -363,6 +369,9 @@ public class HeadlessBuilder implements IApplication {
 					return status;
 			}
 
+			// Hook in our external settings to the build
+			HeadlessBuilderExternalSettingsProvider.hookExternalSettingsProvider();
+
 			IProject[] allProjects = root.getProjects();
 			// Map from Project -> Configurations to build. We also Build all projects which are clean'd
 			Map<IProject, Set<ICConfigurationDescription>> configsToBuild = new HashMap<IProject, Set<ICConfigurationDescription>>();
@@ -411,6 +420,8 @@ public class HeadlessBuilder implements IApplication {
 			} finally {
 				// Reset the build_all_configs preference value to its previous state
 				ACBuilder.setAllConfigBuild(buildAllConfigs);
+				// Unhook the external settings provider
+				HeadlessBuilderExternalSettingsProvider.unhookExternalSettingsProvider();
 			}
 		} finally {
 			// Wait for any outstanding jobs to finish
@@ -466,6 +477,9 @@ public class HeadlessBuilder implements IApplication {
 	 *   -importAll  {[uri:/]/path/to/projectTreeURI} Import all projects in the tree
 	 *   -build      {project_name_reg_ex/config_name_reg_ex | all}
 	 *   -cleanBuild {project_name_reg_ex/config_name_reg_ex | all}
+	 *   -I          {include_path} additional include_path to add to tools
+	 *   -include    {include_file} additional include_file to pass to tools
+	 *   -D          {prepoc_define} addition preprocessor defines to pass to the tools
 	 *
 	 * Each argument may be specified more than once
 	 * @param args String[] of arguments to parse
@@ -484,6 +498,18 @@ public class HeadlessBuilder implements IApplication {
 					projectRegExToBuild.add(args[++i]);
 				} else if ("-cleanBuild".equals(args[i])) { //$NON-NLS-1$
 					projectRegExToClean.add(args[++i]);
+				} else if ("-D".equals(args[i])) { //$NON-NLS-1$
+					String macro = args[++i];
+					String macroVal = ""; //$NON-NLS-1$
+					if (macro.indexOf('=') != -1) {
+						macroVal = macro.substring(macro.indexOf('=') + 1);
+						macro = macro.substring(0, macro.indexOf('='));
+					}
+					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CMacroEntry(macro, macroVal, 0));
+				} else if ("-I".equals(args[i])) { //$NON-NLS-1$
+					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CIncludePathEntry(args[++i], 0));
+				} else if ("-include".equals(args[i])) { //$NON-NLS-1$
+					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CIncludeFileEntry(args[++i], 0));
 				} else {
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_unknown_argument + args[i]);
 				}
@@ -497,6 +523,9 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_importAll);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_build);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_usage_clean_build);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_InlucdePath);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_IncludeFile);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_PreprocessorDefine);
 			return false;
 		}
 

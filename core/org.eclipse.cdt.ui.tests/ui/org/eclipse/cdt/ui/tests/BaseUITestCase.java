@@ -342,6 +342,9 @@ public class BaseUITestCase extends BaseTestCase {
 		for (int millis=0; millis < 5000; millis= millis==0 ? 1 : millis*2) {
 			runEventQueue(millis);
 			TreeItem root= tree.getItem(i0);
+			if (!root.getExpanded()) {
+				expandTreeItem(root);
+			}
 			ex= null;
 			try {
 				TreeItem firstItem= root.getItem(0);

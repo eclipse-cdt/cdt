@@ -43,7 +43,8 @@ public class DeltaAnalyzer {
 	private void processDelta(ICElementDelta delta, Set<IResource> handled) throws CoreException {
 		final int flags = delta.getFlags();
 
-		if ((flags & ICElementDelta.F_CHILDREN) != 0) {
+		final boolean hasChildren = (flags & ICElementDelta.F_CHILDREN) != 0;
+		if (hasChildren) {
 			for (ICElementDelta child : delta.getAffectedChildren()) {
 				processDelta(child, handled);
 			}
@@ -78,8 +79,18 @@ public class DeltaAnalyzer {
 			break;
 		}
 		
-		final IResourceDelta[] rDeltas= delta.getResourceDeltas();
-		if (rDeltas != null && !sSuppressPotentialTUs) {
+		if (!sSuppressPotentialTUs) {
+			// If the cmodel delta does not have children, also look at the children of the
+			// resource delta.
+			final boolean checkChildren = !hasChildren;
+			final IResourceDelta[] rDeltas= delta.getResourceDeltas();
+			processResourceDelta(rDeltas, element, handled, checkChildren);
+		}
+	}
+
+	public void processResourceDelta(final IResourceDelta[] rDeltas, final ICElement element,
+			Set<IResource> handled, boolean checkChildren) {
+		if (rDeltas != null) {
 			for (IResourceDelta rd: rDeltas) {
 				final int rdkind = rd.getKind();
 				if (rdkind != IResourceDelta.ADDED) {
@@ -96,6 +107,9 @@ public class DeltaAnalyzer {
 							break;
 						}
 					}
+				}
+				if (rdkind == IResourceDelta.CHANGED && checkChildren) {
+					processResourceDelta(rd.getAffectedChildren(), element, handled, checkChildren);
 				}
 			}
 		}

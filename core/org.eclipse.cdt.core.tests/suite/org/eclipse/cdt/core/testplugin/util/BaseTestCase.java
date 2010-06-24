@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
@@ -64,6 +65,7 @@ public class BaseTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		CPPASTNameBase.sAllowRecursionBindings= false;
 		CPPASTNameBase.sAllowNameComputation= false;
+		CModelListener.sSuppressUpdateOfLastRecentlyUsed= true;
 	}
 	
 	@Override

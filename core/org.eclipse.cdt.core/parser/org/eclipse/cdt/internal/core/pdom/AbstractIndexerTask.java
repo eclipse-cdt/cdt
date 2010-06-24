@@ -53,6 +53,7 @@ import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
+import org.eclipse.cdt.internal.core.pdom.indexer.PotentialTranslationUnit;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -71,7 +72,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	protected static enum UnusedHeaderStrategy {
 		skip, useDefaultLanguage, useAlternateLanguage, useBoth
 	}
-
 	private static final int MAX_ERRORS = 500;
 	
 	private static class FileKey {
@@ -384,31 +384,33 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (ifl == null)
 				continue;
 			
-			final boolean isSourceUnit= fResolver.isSourceUnit(tu);
-			final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 			final IIndexFragmentFile[] indexFiles= fIndex.getWritableFiles(ifl);
-			
-			if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip) {
-				// headers or sources required with a specific linkage
-				AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
-				for (AbstractLanguage lang : langs) {
-					int linkageID = lang.getLinkageID();
-					IIndexFragmentFile ifile= getFile(linkageID, indexFiles);
-					if (ifile == null || !ifile.hasContent()) {
-						store(tu, linkageID, isSourceUnit, files);
-						requestUpdate(linkageID, ifl, null);
-						count++;
-					} else {
-						takeFile(ifile, indexFiles);
-						boolean update= false;
-						if (checkConfig) {
-							update= isSourceUnit ? isSourceUnitConfigChange(tu, ifile) : isHeaderConfigChange(tu, ifile);
-						}
-						update= update || force || isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
-						if (update) {
-							requestUpdate(linkageID, ifl, ifile);
+			if (!(tu instanceof PotentialTranslationUnit)) {
+				final boolean isSourceUnit= fResolver.isSourceUnit(tu);
+				final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
+
+				if ((isSourceUnit && !isExcludedSource) || fIndexHeadersWithoutContext != UnusedHeaderStrategy.skip) {
+					// headers or sources required with a specific linkage
+					AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
+					for (AbstractLanguage lang : langs) {
+						int linkageID = lang.getLinkageID();
+						IIndexFragmentFile ifile= getFile(linkageID, indexFiles);
+						if (ifile == null || !ifile.hasContent()) {
 							store(tu, linkageID, isSourceUnit, files);
+							requestUpdate(linkageID, ifl, null);
 							count++;
+						} else {
+							takeFile(ifile, indexFiles);
+							boolean update= false;
+							if (checkConfig) {
+								update= isSourceUnit ? isSourceUnitConfigChange(tu, ifile) : isHeaderConfigChange(tu, ifile);
+							}
+							update= update || force || isModified(checkTimestamps, checkFileContentsHash, ifl, tu, ifile);
+							if (update) {
+								requestUpdate(linkageID, ifl, ifile);
+								store(tu, linkageID, isSourceUnit, files);
+								count++;
+							}
 						}
 					}
 				}
@@ -729,7 +731,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private void parseFile(Object tu, int linkageID, IIndexFileLocation ifl, IScannerInfo scanInfo,
 			boolean inContext, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= getPathForLabel(ifl);
-		AbstractLanguage[] langs= fResolver.getLanguages(tu, fIndexHeadersWithoutContext == UnusedHeaderStrategy.useBoth);
+		AbstractLanguage[] langs= fResolver.getLanguages(tu, true);
 		AbstractLanguage lang= null;
 		for (AbstractLanguage lang2 : langs) {
 			if (lang2.getLinkageID() == linkageID) {

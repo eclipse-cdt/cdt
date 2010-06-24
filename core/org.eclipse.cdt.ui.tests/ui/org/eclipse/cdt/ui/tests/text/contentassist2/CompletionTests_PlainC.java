@@ -310,8 +310,8 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	public void testExternC_bug191315() throws Exception {
 		StringBuffer[] content= getContentsForTest(3);
 		createFile(fProject, "header191315.h", content[0].toString());
-		createFile(fProject, "source191315.c", content[0].toString());
-		createFile(fProject, "source191315.cpp", content[0].toString());
+		createFile(fProject, "source191315.c", content[1].toString());
+		createFile(fProject, "source191315.cpp", content[1].toString());
 		IFile dfile= createFile(fProject, "header191315.h", content[0].toString());
 		TestSourceReader.waitUntilFileIsIndexed(CCorePlugin.getIndexManager().getIndex(fCProject), dfile, 8000);
 		final String[] expected= {

@@ -35,6 +35,9 @@ import org.eclipse.core.runtime.CoreException;
 public class CModelListener implements IElementChangedListener, IResourceChangeListener {
 	private static final int UPDATE_LR_CHANGED_FILES_COUNT = 5;
 
+	// For testing purposes, only.
+	public static boolean sSuppressUpdateOfLastRecentlyUsed = false;
+
 	private PDOMManager fManager;
 	private LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs= new LinkedHashMap<ITranslationUnit, ITranslationUnit>(UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
 		@Override
@@ -57,7 +60,9 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		processDelta(event.getDelta(), changeMap);
 
 		// bug 171834 update last recently changed sources
-		addLastRecentlyUsed(changeMap);
+		if (!sSuppressUpdateOfLastRecentlyUsed) {
+			addLastRecentlyUsed(changeMap);
+		}
 
 		for (Map.Entry<ICProject, DeltaAnalyzer> entry : changeMap.entrySet()) {
 			ICProject cproject = entry.getKey();

@@ -81,6 +81,7 @@ import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -624,6 +625,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// // header.h	
 	// enum E {A,B,C};
 	public void test171834() throws Exception {
+		CModelListener.sSuppressUpdateOfLastRecentlyUsed= false;
 		waitForIndexer();
 
 		ICProject cproject = CProjectHelper.createCCProject("seq1", "bin", IPDOMManager.ID_FAST_INDEXER);

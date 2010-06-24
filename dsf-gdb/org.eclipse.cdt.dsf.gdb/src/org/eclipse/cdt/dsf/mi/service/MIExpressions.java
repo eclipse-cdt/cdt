@@ -26,11 +26,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
+import org.eclipse.cdt.dsf.debug.service.IExpressions3;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
-import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
@@ -67,7 +68,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @since 2.0
  */
-public class MIExpressions extends AbstractDsfService implements IExpressions2, ICachingService {
+public class MIExpressions extends AbstractDsfService implements IExpressions3, ICachingService {
 
     /**
      * A format that gives more details about an expression and supports pretty-printing
@@ -318,7 +319,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions2, 
 	 * such as its type and number of children; it does not contain the value or format
 	 * of the expression.
 	 */
-	protected static class ExpressionDMData implements IExpressionDMData {
+	protected static class ExpressionDMData implements IExpressionDMDataExtension {
 		// This is the relative expression, such as the name of a field within a structure,
 		// in contrast to the fully-qualified expression contained in the ExpressionDMC,
 		// which refers to the full name, including parent structure.
@@ -387,7 +388,14 @@ public class MIExpressions extends AbstractDsfService implements IExpressions2, 
 		public boolean isEditable() {
 			return editable;
 		}
-		
+
+		/**
+         * @since 3.1
+         */
+		public boolean hasChildren() {
+		    return getNumChildren() > 0;
+		}
+
 		@Override
 		public boolean equals(Object other) {
 			if (other instanceof ExpressionDMData) {
@@ -1132,4 +1140,17 @@ public class MIExpressions extends AbstractDsfService implements IExpressions2, 
 		}
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.dsf.debug.service.IExpressions3#getExpressionDataExtension(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+     */
+    /** @since 3.1 */
+    public void getExpressionDataExtension(IExpressionDMContext dmc, final DataRequestMonitor<IExpressionDMDataExtension> rm) {
+        getExpressionData(dmc, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
+            @Override
+            protected void handleSuccess() {
+                rm.setData((IExpressionDMDataExtension)getData());
+                super.handleSuccess();
+            }
+        }); 
+    }
 }

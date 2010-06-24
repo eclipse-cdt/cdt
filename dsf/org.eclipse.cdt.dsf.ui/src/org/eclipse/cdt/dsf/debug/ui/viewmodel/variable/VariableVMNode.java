@@ -38,6 +38,8 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMLocation;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
+import org.eclipse.cdt.dsf.debug.service.IExpressions3;
+import org.eclipse.cdt.dsf.debug.service.IExpressions3.IExpressionDMDataExtension;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
@@ -893,7 +895,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         
         final IExpressionDMContext expressionDMC = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressionDMContext.class);
         
-        if ( expressionDMC != null ) {
+        if (expressionDMC != null) {
             final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
             
             if (expressionService == null) {
@@ -901,19 +903,37 @@ public class VariableVMNode extends AbstractExpressionVMNode
                 return;
             }
 
-            expressionService.getSubExpressionCount(
-                expressionDMC, 
-                new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
-                    @Override
-                    public void handleCompleted() {
-                        if (!isSuccess()) {
-                            handleFailedUpdate(update);
-                            return;
-                        }
-                        update.setHasChilren(getData() > 0);
-                        update.done();
-                    }
-                });
+            if (expressionService instanceof IExpressions3) {
+                ((IExpressions3)expressionService).getExpressionDataExtension(
+                        expressionDMC, 
+                        new ViewerDataRequestMonitor<IExpressionDMDataExtension>(getExecutor(), update) {
+                            @Override
+                            protected void handleCompleted() {
+                                if (!isSuccess()) {
+                                    handleFailedUpdate(update);
+                                    return;
+                                }
+                                IExpressionDMDataExtension data = getData();
+                                update.setHasChilren(data.hasChildren());
+                                update.done();
+                            }
+                        });
+            }
+            else {
+                expressionService.getSubExpressionCount(
+                        expressionDMC, 
+                        new ViewerDataRequestMonitor<Integer>(getExecutor(), update) {
+                            @Override
+                            public void handleCompleted() {
+                                if (!isSuccess()) {
+                                    handleFailedUpdate(update);
+                                    return;
+                                }
+                                update.setHasChilren(getData() > 0);
+                                update.done();
+                            }
+                        });
+            }
         }
         else {
             super.updateHasElementsInSessionThread(update);

@@ -1652,36 +1652,15 @@ public class MIVariableManager implements ICommandControl {
             		new DataRequestMonitor<MIVariableObject>(fSession.getExecutor(), drm) {
             			@Override
             			protected void handleSuccess() {
-            				final MIVariableObject varObj = getData();
-            				if (varObj.isNumChildrenHintTrustworthy()) {
-               					drm.setData(
-            							new ExprMetaGetVarInfo(
-            									exprCtx.getRelativeExpression(),
-            									getData().getNumChildrenHint(), 
-            									getData().getType(),
-            									getData().getGDBType(),
-            									!getData().isComplex()));
-            					drm.done();
-            					processCommandDone(token, drm.getData());
-            				} else {
-            					// We have to ask for the children count because the hint could be wrong
-            					varObj.getChildrenCount(
-            							exprCtx, 
-            							new DataRequestMonitor<Integer>(fSession.getExecutor(), drm) {
-            								@Override
-            								protected void handleSuccess() {
-            									drm.setData(
-            											new ExprMetaGetVarInfo(
-            													exprCtx.getRelativeExpression(),
-            													getData(), 
-            													varObj.getType(),
-            													varObj.getGDBType(),
-            													!varObj.isComplex()));
-            									drm.done();
-            									processCommandDone(token, drm.getData());
-            								}
-            							});
-            				}
+           					drm.setData(
+        							new ExprMetaGetVarInfo(
+        									exprCtx.getRelativeExpression(),
+        									getData().getNumChildrenHint(), 
+        									getData().getType(),
+        									getData().getGDBType(),
+        									!getData().isComplex()));
+        					drm.done();
+        					processCommandDone(token, drm.getData());
             			}
             		});
         } else if (command instanceof ExprMetaGetAttributes) {

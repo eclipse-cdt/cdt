@@ -1157,7 +1157,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
              e instanceof IMemoryChangedEvent ||
              e instanceof IExpressionChangedDMEvent ||
              (e instanceof PropertyChangeEvent &&
-              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) 
+                 (((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE || 
+                 ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             return IModelDelta.CONTENT;
         } 
@@ -1173,7 +1174,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
              e instanceof IMemoryChangedEvent ||
              e instanceof IExpressionChangedDMEvent ||
              (e instanceof PropertyChangeEvent &&
-              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) 
+                 (((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE || 
+                 ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         } 
@@ -1184,8 +1186,9 @@ public class VariableVMNode extends AbstractExpressionVMNode
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if ( event instanceof IExpressionChangedDMEvent ||
              event instanceof IMemoryChangedEvent ||
-             (event instanceof PropertyChangeEvent && 
-              ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) )
+             (event instanceof PropertyChangeEvent &&
+                 (((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE || 
+                 ((PropertyChangeEvent)event).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             return IModelDelta.CONTENT;
         } 

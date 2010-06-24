@@ -643,7 +643,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
              e instanceof IMemoryChangedEvent ||
              e instanceof IRegistersChangedDMEvent ||
              (e instanceof PropertyChangeEvent &&
-              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) 
+                 (((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE || 
+                 ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             return IModelDelta.CONTENT;
         } 
@@ -666,7 +667,8 @@ public class RegisterVMNode extends AbstractExpressionVMNode
              e instanceof IMemoryChangedEvent ||
              e instanceof IRegistersChangedDMEvent ||
              (e instanceof PropertyChangeEvent &&
-              ((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) ) 
+                 (((PropertyChangeEvent)e).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE || 
+                 ((PropertyChangeEvent)e).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             // Create a delta that the whole register group has changed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
@@ -797,8 +799,9 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if ( event instanceof IRegisterChangedDMEvent ||
              event instanceof IMemoryChangedEvent ||
-             (event instanceof PropertyChangeEvent && 
-               ((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE) )
+             (event instanceof PropertyChangeEvent &&
+                 (((PropertyChangeEvent)event).getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE || 
+                 ((PropertyChangeEvent)event).getProperty() == IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES)) ) 
         {
             return IModelDelta.STATE;
         }

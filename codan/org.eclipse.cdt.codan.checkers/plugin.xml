@@ -119,8 +119,19 @@
                       name="%problem.name.NoReturn">
                 </problem>
              </checker>
-       
-
-             
+             <checker
+                   class="org.eclipse.cdt.codan.internal.checkers.NameResolutionChecker"
+                   id="org.eclipse.cdt.codan.checkers.NameResolutionChecker"
+                   name="Name Resolution Checker">
+                <problem
+                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      defaultEnabled="true"
+                      defaultSeverity="Error"
+                      description="Name resolution problem found by the indexer"
+                      id="org.eclipse.cdt.codan.internal.checkers.NameResolutionChecker"
+                      messagePattern="Symbol &apos;&apos;{0}&apos;&apos; could not be resolved"
+                      name="Name Resolution Problem">
+                </problem>
+             </checker>
    </extension>
 </plugin>

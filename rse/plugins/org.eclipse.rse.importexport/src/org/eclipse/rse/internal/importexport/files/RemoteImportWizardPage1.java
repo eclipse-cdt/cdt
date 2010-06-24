@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  * David McKnight   (IBM)        - [276535] File Conflict when Importing Remote Folder with Case-Differentiated-Only Filenames into Project
+ * David McKnight   (IBM)        - [191558] [importexport][efs] Import to Project doesn't work with remote EFS projects
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -152,14 +153,15 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 		public IStatus run(IProgressMonitor monitor){
 			_isActive = true;
+			Display.getDefault().asyncExec(new Runnable(){
+				public void run(){
+					updateWidgetEnablements();
+					selectionGroup.setAllSelections(true);
+				}
+			});
 			query(_fileSystemObject, _element, monitor);
 			_isActive = false;
-				Display.getDefault().asyncExec(new Runnable(){
-					public void run(){
-						updateWidgetEnablements();
-						selectionGroup.setAllSelections(true);
-					}
-				});
+			
 			return Status.OK_STATUS;
 		}
 
@@ -1454,8 +1456,15 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		IContainer container = getSpecifiedContainer();
 		if (container == null)
 			return false;
-		else
-			return getSpecifiedContainer().getLocation().isPrefixOf(sourcePath);
+		else {
+			if (container.getLocation() == null){
+				// this is an EFS project
+				return false;
+			}	
+			else {
+				return container.getLocation().isPrefixOf(sourcePath);
+			}
+		}
 	}
 
 	/* (non-Javadoc)

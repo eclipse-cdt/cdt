@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * David McKnight     (IBM)      - [229610] [api] File transfers should use workspace text file encoding
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  * David McKnight   (IBM)        - [276535] File Conflict when Importing Remote Folder with Case-Differentiated-Only Filenames into Project
+ * David McKnight   (IBM)        - [191558] [importexport][efs] Import to Project doesn't work with remote EFS projects
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -20,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -506,8 +508,22 @@ public class RemoteFileImportOperation extends WorkspaceModifyOperation {
 				return;			
 			}
 			
-			
-			rfss.download(((UniFilePlus) fileObject).remoteFile, targetResource.getLocation().makeAbsolute().toOSString(), encoding, null);
+			if (targetResource.getLocation() == null){
+				// an EFS file destination				
+				String remoteFileName = ((UniFilePlus) fileObject).remoteFile.getName();
+				String remoteParentPath = ((UniFilePlus) fileObject).remoteFile.getParentPath();
+				
+				InputStream instream = rfss.getInputStream(remoteParentPath, remoteFileName, true, monitor);
+				if (!targetResource.exists()){
+					targetResource.create(instream, IResource.FORCE, monitor);
+				}
+				else {
+					targetResource.setContents(instream, IResource.FORCE, monitor);								
+				}
+			}
+			else {
+				rfss.download(((UniFilePlus) fileObject).remoteFile, targetResource.getLocation().makeAbsolute().toOSString(), encoding, null);
+			}
 			try {
 				// refresh workspace with just added resource
 				targetResource.refreshLocal(IResource.DEPTH_ZERO, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));

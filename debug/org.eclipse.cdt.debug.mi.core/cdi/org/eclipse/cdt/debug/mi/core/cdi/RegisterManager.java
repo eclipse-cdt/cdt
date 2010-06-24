@@ -421,7 +421,8 @@ public class RegisterManager extends Manager {
 			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 			mi.fireEvents(events);
 		} catch (MIException e) {
-			throw new MI2CDIException(e);
+			if (!target.isTerminated())
+				throw new MI2CDIException(e);
 		}
 	}
 

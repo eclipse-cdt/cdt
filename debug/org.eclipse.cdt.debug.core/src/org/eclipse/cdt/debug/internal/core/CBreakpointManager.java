@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009, 2008 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Ling Wang (Nokia) - bug 176081
  * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  * QNX Software Systems - catchpoints - bug 226689
+ * James Blackburn (Broadcom) - bug 314865
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -480,8 +481,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			doHandleEventBreakpointCreatedEvent( (ICDIEventBreakpoint)cdiBreakpoint );
 		else if ( cdiBreakpoint instanceof ICDILocationBreakpoint )
 			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
-		if ( !isTemporary(cdiBreakpoint) && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
-			changeBreakpointPropertiesOnTarget(cdiBreakpoint, new Boolean(false), null);
+		try {
+			if ( !isTemporary(cdiBreakpoint) && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() && cdiBreakpoint.isEnabled() ) {
+				changeBreakpointPropertiesOnTarget(cdiBreakpoint, false, null);
+			}
+		} catch (CDIException e){
 		}
 	}
 
@@ -858,6 +862,8 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				ICDIBreakpoint b = null;
 				int breakpointType = ICBreakpointType.REGULAR;
 				ICBreakpoint icbreakpoint = breakpoints[i];
+				// Bug 314865: CDI breakpoint is only created enabled if the global breakpoint disable toggle isn't set
+				boolean enabled = icbreakpoint.isEnabled() && DebugPlugin.getDefault().getBreakpointManager().isEnabled();
 				if (icbreakpoint instanceof ICBreakpointType) {
 					breakpointType = ((ICBreakpointType) icbreakpoint).getType();
 				}
@@ -877,7 +883,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					if (marker != null)
 						fBreakpointProblems.add(marker);
 					if (bpManager2 != null)
-						b = bpManager2.setFunctionBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
+						b = bpManager2.setFunctionBreakpoint( breakpointType, location, condition, true, enabled );
 					else
 						b = cdiTarget.setFunctionBreakpoint( breakpointType, location, condition, true );								
 				} else if ( icbreakpoint instanceof ICAddressBreakpoint ) {
@@ -886,7 +892,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					ICDIAddressLocation location = cdiTarget.createAddressLocation( new BigInteger ( ( address.startsWith( "0x" ) ) ? address.substring( 2 ) : address, 16 ) ); //$NON-NLS-1$
 					ICDICondition condition = createCondition( breakpoint );
 					if (bpManager2 != null)
-						b = bpManager2.setAddressBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
+						b = bpManager2.setAddressBreakpoint( breakpointType, location, condition, true, enabled );
 					else
 						b = cdiTarget.setAddressBreakpoint( breakpointType, location, condition, true );					
 				} else if ( icbreakpoint instanceof ICLineBreakpoint ) {
@@ -899,7 +905,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					if (marker != null)
 						fBreakpointProblems.add(marker);
 					if (bpManager2 != null)
-						b = bpManager2.setLineBreakpoint( breakpointType, location, condition, true, icbreakpoint.isEnabled() );
+						b = bpManager2.setLineBreakpoint( breakpointType, location, condition, true, enabled );
 					else
 						b = cdiTarget.setLineBreakpoint( breakpointType, location, condition, true );
 				} else if ( icbreakpoint instanceof ICWatchpoint ) {
@@ -913,9 +919,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 						if ( icbreakpoint instanceof ICWatchpoint2 ) {
 							ICWatchpoint2 wp2 = (ICWatchpoint2)watchpoint;
 							b = bpManager2.setWatchpoint( breakpointType, accessType, expression, wp2.getMemorySpace(), 
-									wp2.getRange(), condition, icbreakpoint.isEnabled() );
+									wp2.getRange(), condition, enabled );
 						} else {
-							b = bpManager2.setWatchpoint( breakpointType, accessType, expression, condition, icbreakpoint.isEnabled() );
+							b = bpManager2.setWatchpoint( breakpointType, accessType, expression, condition, enabled );
 						}
 					} else {
 						b = cdiTarget.setWatchpoint(breakpointType, accessType, expression, condition );
@@ -926,7 +932,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					if (cdiTarget instanceof ICDIBreakpointManagement3) {
 						ICDIBreakpointManagement3 bpManager3 = (ICDIBreakpointManagement3) cdiTarget;
 						b = bpManager3.setEventBreakpoint(eventbkpt.getEventType(), eventbkpt
-								.getEventArgument(), breakpointType, condition, true, icbreakpoint.isEnabled());
+								.getEventArgument(), breakpointType, condition, true, enabled);
 					} else {
 						throw new UnsupportedOperationException("BreakpointManager does not support this type of breapoints");
 					}
@@ -939,8 +945,8 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					}
 				}
 				// Hack: see bug 105196: [CDI]: Add "enabled" flag to the "set...Breakpoint" methods
-				if (bpManager2 == null && b != null && b.isEnabled() != icbreakpoint.isEnabled() ) {
-					b.setEnabled( icbreakpoint.isEnabled() );
+				if (bpManager2 == null && b != null && b.isEnabled() != enabled ) {
+					b.setEnabled( enabled );
 				}
 			}
 			catch( CoreException e ) {
@@ -1156,7 +1162,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			return;
 		ICDITarget cdiTarget = getCDITarget();
 		try {
-			boolean enabled = breakpoint.isEnabled();
+			boolean enabled = breakpoint.isEnabled() && DebugPlugin.getDefault().getBreakpointManager().isEnabled();
 			boolean oldEnabled = ( delta != null ) ? delta.getAttribute( IBreakpoint.ENABLED, true ) : enabled;
 			int ignoreCount = breakpoint.getIgnoreCount();
 			int oldIgnoreCount = ( delta != null ) ? delta.getAttribute( ICBreakpoint.IGNORE_COUNT, 0 ) : ignoreCount;
@@ -1200,8 +1206,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	private void changeBreakpointProperties( ICBreakpoint breakpoint, ICDIBreakpoint cdiBreakpoint ) {
 		Boolean enabled = null;
 		try {
-			if ( cdiBreakpoint.isEnabled() != breakpoint.isEnabled() )
-				enabled = Boolean.valueOf( breakpoint.isEnabled() );
+			boolean shouldBeEnabled = breakpoint.isEnabled() && DebugPlugin.getDefault().getBreakpointManager().isEnabled();
+			if ( cdiBreakpoint.isEnabled() != shouldBeEnabled )
+				enabled = shouldBeEnabled;
 		}
 		catch( CDIException e ) {
 		}

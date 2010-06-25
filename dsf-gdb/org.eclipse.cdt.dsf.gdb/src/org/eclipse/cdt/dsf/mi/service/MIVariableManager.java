@@ -1655,6 +1655,9 @@ public class MIVariableManager implements ICommandControl {
            					drm.setData(
         							new ExprMetaGetVarInfo(
         									exprCtx.getRelativeExpression(),
+        									// We only provide the hint here.  It will be used for hasChildren()
+        									// To obtain the correct number of children, the user should use 
+        									// IExpressions#getSubExpressionCount()
         									getData().getNumChildrenHint(), 
         									getData().getType(),
         									getData().getGDBType(),

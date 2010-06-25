@@ -325,7 +325,17 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 		// which refers to the full name, including parent structure.
 		private final String relativeExpression;
 		private final String exprType;
-		private final int numChildren;
+		
+		/**
+		 * A hint at the number of children.
+		 * In the case of C++ complex structures, this number will not be the
+		 * actual number of children.  This is because GDB considers
+		 * 'private/protected/public' as an actual level of children, but
+		 * we do not.  This number is meant to be used to know if the expression
+		 * has children at all.
+		 */
+		private final int numChildrenHint;
+		
 		private final boolean editable;
 		private final BasicType fBasicType;
 
@@ -343,7 +353,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
         public ExpressionDMData(String expr, String type, int num, boolean edit, BasicType basicType) {
             relativeExpression = expr;
             exprType = type;
-            numChildren = num;
+            numChildrenHint = num;
             editable = edit;
             fBasicType = basicType;
         }
@@ -381,8 +391,25 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 			return exprType;
 		}
 
+		/**
+		 * This method only returns a 'hint' to the number of children.
+		 * In the case of C++ complex structures, this number will not be the
+		 * actual number of children.  This is because GDB considers
+		 * 'private/protected/public' as an actual level of children, but
+		 * we do not.
+		 * 
+		 * This method can be used reliably to know if the expression
+		 * does have children or not.  However, for this particular use,
+		 * the new {@link IExpressionDMDataExtension#hasChildren()} method should be used instead.
+		 * 
+		 * To get the correct number of children of an expression, a call
+		 * to {@link IExpressions#getSubExpressionCount} should be used.
+		 * 
+		 * @deprecated
+		 */
+		@Deprecated
 		public int getNumChildren() {
-			return numChildren;	
+			return numChildrenHint;	
 		}
 		
 		public boolean isEditable() {
@@ -393,14 +420,14 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
          * @since 3.1
          */
 		public boolean hasChildren() {
-		    return getNumChildren() > 0;
+		    return numChildrenHint > 0;
 		}
 
 		@Override
 		public boolean equals(Object other) {
 			if (other instanceof ExpressionDMData) {
 				ExpressionDMData otherData = (ExpressionDMData) other;
-				return (getNumChildren() == otherData.getNumChildren()) && 
+				return (numChildrenHint == otherData.numChildrenHint) && 
     				(getTypeName() == null ? otherData.getTypeName() == null : getTypeName().equals(otherData.getTypeName())) &&
     				(getName() == null ? otherData.getName() == null : getName().equals(otherData.getName()));
 			}
@@ -410,12 +437,12 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 		@Override
 		public int hashCode() {
 			return relativeExpression == null ? 0 : relativeExpression.hashCode() + 
-					exprType == null ? 0 : exprType.hashCode() + numChildren;
+					exprType == null ? 0 : exprType.hashCode() + numChildrenHint;
 		}
 
 		@Override
 		public String toString() {
-			return "relExpr=" + relativeExpression + ", type=" + exprType + ", numchildren=" + numChildren; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			return "relExpr=" + relativeExpression + ", type=" + exprType + ", numchildren=" + numChildrenHint; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		}
 	}
 

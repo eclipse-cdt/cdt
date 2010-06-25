@@ -22,18 +22,18 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
+import org.eclipse.cdt.dsf.debug.service.IExpressions3.IExpressionDMDataExtension;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StepType;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
-import org.eclipse.cdt.dsf.mi.service.MIExpressions;
-import org.eclipse.cdt.dsf.mi.service.ClassAccessor.ExpressionDMDataAccessor;
 import org.eclipse.cdt.dsf.mi.service.ClassAccessor.MIExpressionDMCAccessor;
+import org.eclipse.cdt.dsf.mi.service.MIExpressions;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -341,13 +341,11 @@ public class MIExpressionsTest extends BaseTestCase {
     }
 
     /**
-     * This test makes sure we get the right number of children.
+     * This test makes sure we get can tell if an expression has children
+     * based on the expression data.
      */
     @Test
-    public void testChildrenCountInExpressionData() throws Throwable {
-        // Next we test that we can retrieve children count while reading the
-        // value and vice-versa
-
+    public void testHasChildrenInExpressionData() throws Throwable {
         SyncUtil.runToLocation("testChildren");
         MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
 
@@ -368,11 +366,18 @@ public class MIExpressionsTest extends BaseTestCase {
                 				if (!isSuccess()) {
                 					wait.waitFinished(getStatus());
                 				} else {
-                					ExpressionDMDataAccessor data = new ExpressionDMDataAccessor(getData());
-                					int count = data.getNumChildren();
-                					if (count != 5) {
+                					if ((getData() instanceof IExpressionDMDataExtension) == false) {
                 						wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-                								"Failed getting count for children.  Got " + count + " instead of 5", null));
+                								"Did not a receive an IExpressionDMDataExtension", null));
+                						return;
+                					}
+                					
+                					IExpressionDMDataExtension data = (IExpressionDMDataExtension)getData();
+                					
+                					boolean hasChildren = data.hasChildren();
+                					if (!hasChildren) {
+                						wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
+                								"No children were found, when we expected to find some", null));
                 					} else {
                 						wait.waitFinished();
                 					}

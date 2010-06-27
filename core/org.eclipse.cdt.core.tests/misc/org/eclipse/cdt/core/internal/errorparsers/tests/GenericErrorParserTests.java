@@ -139,6 +139,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 		if (expectedFileNames != null) {
 			assertEquals(expectedFileNames.length, markerGenerator.uniqFiles.size());
 			for (int i = 0; i < expectedFileNames.length; i++) {
+				// Keep in mind that uniqFiles get alphabetically sorted
 				IPath path = ((IFile)markerGenerator.uniqFiles.get(i)).getLocation();
 				assertEquals(expectedFileNames[i], path.lastSegment());
 			}

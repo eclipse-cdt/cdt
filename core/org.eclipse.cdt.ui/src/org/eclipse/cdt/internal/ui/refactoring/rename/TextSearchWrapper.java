@@ -216,7 +216,7 @@ public class TextSearchWrapper {
     }
 
     private TextSearchScope defineSearchScope(IResource resource, String[] patterns) {
-    	SearchScope result= SearchScope.newSearchScope(new IResource[]{resource}, false); 
+    	SearchScope result= SearchScope.newSearchScope(new IResource[] { resource }, false); 
         applyFilePatterns(result, patterns);
         return result;
     }
@@ -283,7 +283,7 @@ public class TextSearchWrapper {
 
     final static Comparator<int[]> COMPARE_FIRST_INTEGER= new Comparator<int[]>() {
         public int compare(int[] o1, int[] o2) {
-            return (o1)[0]-(o2)[0];
+            return (o1)[0] - (o2)[0];
         }
     };
 

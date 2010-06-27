@@ -122,7 +122,7 @@ public class TextSearchWrapper {
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < filePattern.length(); i++) {
                 char c = filePattern.charAt(i);
-                switch(c) {
+                switch (c) {
                 case '\\':
                 case '(':
                 case ')':
@@ -146,7 +146,7 @@ public class TextSearchWrapper {
                     break;
                 default:
                     result.append(c);
-                break;
+                    break;
                 }
             }
             return result.toString();
@@ -288,16 +288,16 @@ public class TextSearchWrapper {
     };
 
     private int findLocation(CRefactoringMatch match, ArrayList<int[]> states) {
-        int pos= Collections.binarySearch(states, new int[] {match.getOffset()}, COMPARE_FIRST_INTEGER);
-        if (pos<0) {
-            pos= -pos-2;
+        int pos = Collections.binarySearch(states, new int[] {match.getOffset()}, COMPARE_FIRST_INTEGER);
+        if (pos < 0) {
+            pos= -pos - 2;
             if (pos < 0) {
-                pos=0;
+                pos = 0;
             }
         }
         int endOffset= match.getOffset() + match.getLength();
         int location= 0;
-        while (pos<states.size()) {
+        while (pos < states.size()) {
             int[] info= states.get(pos);
             if (info[0] >= endOffset) {
                 break;
@@ -312,8 +312,7 @@ public class TextSearchWrapper {
         Reader reader;
         SimpleScanner scanner= new SimpleScanner();
         try {
-            reader = new BufferedReader(
-                    new InputStreamReader(file.getContents(), file.getCharset()));
+            reader = new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
         } catch (CoreException e) {
             return;
         } catch (UnsupportedEncodingException e) {
@@ -324,9 +323,9 @@ public class TextSearchWrapper {
             scanner.setReuseToken(true);
             Token token;
             int lastState= 0;
-            while((token= scanner.nextToken()) != null) {
+            while ((token= scanner.nextToken()) != null) {
                 int state= CRefactory.OPTION_IN_CODE;
-                switch(token.getType()) {
+                switch (token.getType()) {
                 	case Token.tLINECOMMENT:
                     case Token.tBLOCKCOMMENT:
                         state= CRefactory.OPTION_IN_COMMENT;
@@ -354,7 +353,7 @@ public class TextSearchWrapper {
         } finally {
             try {
                 reader.close();
-            } catch (IOException e1) {
+            } catch (IOException e) {
             }
         }
     }

@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- *  -list-thread-groups [--available | GROUP]
+ *  -list-thread-groups [--available | GROUP] [ --recurse 1 ]
  *      
  *  When used without GROUP parameter, this will list top-level 
  *  thread groups that are being debugged.  When used with the GROUP 
@@ -37,9 +37,31 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *  
  *  where each thread group is like this:
  *  
- *  {id="xxx",type="process",pid="yyy",num_children="1"}
+ *  {id="xxx",type="process",pid="yyy",num_children="1",cores=[1,2]}
  *  
  *  The id of a thread group should be considered an opaque string.
+ *  
+ *  As of GDB 7.1, the --recurse option has been added.  If this option is 
+ *  present, then every reported thread group will also include its children, 
+ *  either as `group' or `threads' field.
+ *  
+ *  In general, any combination of option and parameters is permitted, with 
+ *  the following caveats:
+ *    - When a single thread group is passed, the output will typically be the 
+ *      `threads' result. Because threads may not contain anything, the 
+ *      `recurse' option will be ignored.
+ *    - When the `--available' option is passed, limited information may be 
+ *      available. In particular, the list of threads of a process might be 
+ *      inaccessible. Further, specifying specific thread groups might not give 
+ *      any performance advantage over listing all thread groups. The frontend 
+ *      should assume that `-list-thread-groups --available' is always an 
+ *      expensive operation and cache the results.
+ *       
+ *  As of GDB 7.1, the 'core' output field has been added.
+ *   - cores This field is a list of integers, each identifying a core that one
+ *     thread of the group is running on. This field may be absent if such 
+ *     information is not available.
+ *      
  * @since 1.1
  *
  */

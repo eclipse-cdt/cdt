@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,13 @@ public class MIThread {
 	final private String       fTargetId;
 	final private String       fOsId;
 	final private String       fParentId;
-	final private MIFrame fTopFrame;
+	final private MIFrame      fTopFrame;
 	final private String       fDetails;
 	final private String       fState;
+	final private String       fCore;
 	
 	private MIThread(String threadId, String targetId, String osId, String parentId,
-			          MIFrame topFrame, String details, String state) {
+			          MIFrame topFrame, String details, String state, String core) {
 		fThreadId  = threadId;
 		fTargetId  = targetId;
 		fOsId      = osId;
@@ -41,6 +42,7 @@ public class MIThread {
 		fTopFrame  = topFrame;
 		fDetails   = details;
 		fState     = state;
+		fCore      = core;
 	}
 
 	public String getThreadId()       { return fThreadId; }
@@ -50,6 +52,11 @@ public class MIThread {
 	public MIFrame getTopFrame()      { return fTopFrame; } 
 	public String getDetails()        { return fDetails;  }
 	public String getState()          { return fState;    }
+	/**
+	 * Available since GDB 7.1
+	 * @since 3.1
+	 */
+	public String getCore()          { return fCore;    }
 	
 	public static MIThread parse(MITuple tuple) {
         MIResult[] results = tuple.getMIResults();
@@ -61,6 +68,7 @@ public class MIThread {
         MIFrame topFrame = null;
         String state = null;
         String details = null;
+        String core = null;
 
         for (int j = 0; j < results.length; j++) {
             MIResult result = results[j];
@@ -95,9 +103,15 @@ public class MIThread {
                     details = ((MIConst) val).getCString().trim();
                 }
             }
+            else if (var.equals("core")) { //$NON-NLS-1$
+                MIValue val = results[j].getMIValue();
+                if (val instanceof MIConst) {
+                    core = ((MIConst) val).getCString().trim();
+                }
+            }
         }
         
-        return new MIThread(threadId, targetId, osId, parentId, topFrame, details, state);
+        return new MIThread(threadId, targetId, osId, parentId, topFrame, details, state, core);
 	}
 	
     private static Pattern fgOsIdPattern1 = Pattern.compile("(Thread\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\(LWP\\s*)(\\d*)", 0); //$NON-NLS-1$

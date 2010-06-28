@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,14 +30,126 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
  *                {id="166",type="process",description="name: JUnitProcess_PT, type 1094605, locked: N, system: N, state: Idle"}]
  *
  *          	  {id="3602",type="process",description="/usr/sbin/dhcdbd --system",user="root"}
+ *          
  *  -list-thread-groups: 
  *  ^done,groups=[{id="162",type="process",pid="162"}]
  *
- *  list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
+ *  -list-thread-groups GROUPID, in the case of a running thread or a stopped thread:
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 1030373359 44441",frame={level="0",addr="0x00000000",func="??",args=[]},state="stopped"}]
  *  ^done,threads=[{id="1",target-id="Thread 162.32942",details="JUnitProcess_PT Idle 981333916 42692",state="running"}]
+ *  
+ *  As of GDB 7.1, a new 'core' output field has been added.  This field is a list 
+ *  of integers, each identifying a core that one thread of the group is running on. 
+ *  This field may be absent if such information is not available.
+ *  
+ *  -list-thread-groups
+ *  ^done,groups=[{id="12779",type="process",pid="12779",cores=["3"]}]
+ *    
+ *  -list-thread-groups 12779
+ *   ^done,threads=[{id="10",
+ *                   target-id="Thread 0xb3d58ba0 (LWP 12876)",
+ *                   frame={level="0",addr="0xb7e21b88",func="clone",args=[],from="/lib/libc.so.6"},
+ *                   state="stopped",
+ *                   core="3"},
+ *                  {id="3",
+ *                   target-id="Thread 0xb755fba0 (LWP 12811)",
+ *                   frame={level="0",addr="0xffffe410",func="__kernel_vsyscall",args=[]},
+ *                   state="stopped",
+ *                   core="3"},
+ *                  {id="2",
+ *                   target-id="Thread 0xb7d60ba0 (LWP 12810)",
+ *                   frame={level="0",addr="0xffffe410",func="__kernel_vsyscall",args=[]},
+ *                   state="stopped",
+ *                   core="3"},
+ *                  {id="1",
+ *                   target-id="Thread 0xb7d616b0 (LWP 12779)",
+ *                   frame={level="0",addr="0x08048609",func="main",args=[],file="../src/NonStop.cpp",fullname="/local/runtime-TestDSF/NonStop/src/NonStop.cpp",line="44"},
+ *                   state="stopped",
+ *                   core="3"}]
+ *                   
+ *  As of GDB 7.1, the --recurse option has been added and causes a different output
+ *  
+ *  -list-thread-groups --recurse 1
+ *  ^done,groups=[{id="12779",
+ *                 type="process",
+ *                 pid="12779",
+ *                 cores=["3"],
+ *                 threads=[{id="10",
+ *                           target-id="Thread 0xb3d58ba0 (LWP 12876)",
+ *                           frame={level="0",addr="0xb7e21b88",func="clone",args=[],from="/lib/libc.so.6"},
+ *                           state="stopped",
+ *                           core="3"},
+ *                          {id="3",
+ *                           target-id="Thread 0xb755fba0 (LWP 12811)",
+ *                           frame={level="0",addr="0xffffe410",func="__kernel_vsyscall",args=[]},
+ *                           state="stopped",
+ *                           core="3"},
+ *                          {id="2",
+ *                           target-id="Thread 0xb7d60ba0 (LWP 12810)",
+ *                           frame={level="0",addr="0xffffe410",func="__kernel_vsyscall",args=[]},
+ *                           state="stopped",
+ *                           core="3"},
+ *                          {id="1",
+ *                           target-id="Thread 0xb7d616b0 (LWP 12779)",
+ *                           frame={level="0",addr="0x08048609",func="main",args=[],file="../src/NonStop.cpp",fullname="/local/runtime-TestDSF/NonStop/src/NonStop.cpp",line="44"},
+ *                           state="stopped",
+ *                           core="3"}
+ *                         ]
+ *                }]
+ *  
+ * Example of outputs by version on Linux
+ * 
+ * GDB 7.0
+ *  
+ *  (when no inferior is running)
+ * -list-thread-groups
+ * ^done,groups=[]
+ *
+ * (with an inferior running)
+ * -list-thread-groups
+ * ^done,groups=[{id="19386",type="process",pid="19386"}]
+ * 
+ * -list-thread-groups 19386
+ * ^done,threads=[{id="1",target-id="process 19386",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped"}]
+ * 
+ * -list-thread-groups --available 
+ * ^done,groups=[{id="19371",type="process",description="gdb.7.0 -i mi testing/a.out",user="lmckhou"},{id="19386",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19413",type="process",description="sleep 5",user="lmckhou"}]
+ * 
+ * GDB 7.1
+ * 
+ * (when no inferior is running)
+ * -list-thread-groups
+ * ^done,groups=[{id="0",type="process",pid="0"}]
+ * 
+ * (with an inferior running)
+ * -list-thread-groups
+ * ^done,groups=[{id="19424",type="process",pid="19424",cores=["3"]}]
+ * 
+ * -list-thread-groups 19424
+ * ^done,threads=[{id="1",target-id="process 19424",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped",core="3"}]
+ * 
+ * -list-thread-groups --available
+ * ^done,groups=[{id="19418",type="process",description="gdb.7.1 -i mi testing/a.out",user="lmckhou"},{id="19424",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19438",type="process",description="sleep 5",user="lmckhou"}]
+ * 
+ * GDB 7.2
+ * 
+ * (when no inferior is running)
+ * -list-thread-groups
+ * ^done,groups=[{id="i1",type="process",executable="/local/lmckhou/testing/a.out"}]
+ * 
+ * (with an inferior running)
+ * -list-thread-groups
+ * ^done,groups=[{id="i1",type="process",pid="19451",executable="/local/lmckhou/testing/a.out",cores=["2"]}]
+ * 
+ * -list-thread-groups i1
+ * ^done,threads=[{id="1",target-id="process 19451",frame={level="0",addr="0x08048618",func="main",args=[],file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},state="stopped",core="2"}]
+ * 
+ * -list-thread-groups --available
+ * ^done,groups=[{id="19445",type="process",description="gdb.7.2 -i mi testing/a.out",user="lmckhou"},{id="19451",type="process",description="/local/lmckhou/testing/a.out",user="lmckhou"},{id="19462",type="process",description="sleep 5",user="lmckhou"}]
+ *
  * @since 1.1
  */
+
 public class MIListThreadGroupsInfo extends MIInfo {
 	
 	public interface IThreadGroupInfo {
@@ -50,11 +164,23 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		final String fGroupId;
 		final String fDescription;
 		final String fName;
+		final String fType;
+		final String fUser;
+		final String fPid;
+		final String[] fCores;
+		final String fExecutable;
 		
-		public ThreadGroupInfo(String id, String description) {
+		public ThreadGroupInfo(String id, String description, String type, String pid, 
+				               String user, String[] cores, String exec) {
 			fGroupId = id;
 			fDescription = description;
-
+			fType = type;
+			fUser = user;
+			fPid = pid;
+			fCores = cores;				
+			
+			fExecutable = exec;
+			
 			fName = parseName(fDescription);
 		}
 		
@@ -77,11 +203,22 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		}
 		
 		public String getGroupId() { return fGroupId; }
-		public String getPid() { return fGroupId; }
+		public String getPid() { return fPid; }
 
 		public String getName() { return fName;	}
 
 		public String getDesciption() { return fDescription; }
+
+		// The following are not used yet, but it's good to keep
+		// them as a way to document what is available from GDB.
+		@SuppressWarnings("unused")
+		public String getType() { return fType;	}
+		@SuppressWarnings("unused")
+		public String getUser() { return fUser;	}
+		@SuppressWarnings("unused")
+		public String[] getCores() { return fCores; }
+		@SuppressWarnings("unused")
+		public String getExecutable() { return fExecutable; }
 	}
 	
 	
@@ -129,7 +266,10 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		fGroupList = new IThreadGroupInfo[values.length];
 		for (int i = 0; i < values.length; i++) {
 			MIResult[] results = ((MITuple)values[i]).getMIResults();
-			String id = "", desc = "";//$NON-NLS-1$//$NON-NLS-2$
+			String id, desc, type, pid, exec, user;
+			id = desc = type = pid = exec = user = "";//$NON-NLS-1$
+			
+			String[] cores = null;
 			
 			for (MIResult result : results) {
 				String var = result.getVariable();
@@ -144,11 +284,57 @@ public class MIListThreadGroupsInfo extends MIInfo {
 					if (value instanceof MIConst) {
 						String str = ((MIConst)value).getCString();
 						desc = str.trim();
-
+					}
+				} else if (var.equals("type")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						type = str.trim();
+					}
+				} else if (var.equals("pid")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						pid = str.trim();
+					}
+				}  else if (var.equals("user")) { //$NON-NLS-1$
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						user = str.trim();
+					}
+				} else if (var.equals("cores")) { //$NON-NLS-1$
+					// Staring with GDB 7.1
+					MIValue value = result.getMIValue();
+					if (value instanceof MIList) {
+						cores = parseCores((MIList)value);
+					}
+				} else if (var.equals("executable")) { //$NON-NLS-1$
+					// Staring with GDB 7.2
+					MIValue value = result.getMIValue();
+					if (value instanceof MIConst) {
+						String str = ((MIConst)value).getCString();
+						exec = str.trim();
 					}
 				}
 			}
-			fGroupList[i] = new ThreadGroupInfo(id, desc);
+			// In the case of -list-thread-groups --available, we can use the id as the pid
+			if (pid.equals("")) { //$NON-NLS-1$
+				pid = id;
+			}
+			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec);
 		}
+	}
+	
+	private String[] parseCores(MIList list) {
+		List<String> cores = new ArrayList<String>();
+		
+		MIValue[] values = list.getMIValues();
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] instanceof MIConst) {
+				cores.add(((MIConst)values[i]).getCString());
+			}
+		}
+		return cores.toArray(new String[cores.size()]);
 	}
 }

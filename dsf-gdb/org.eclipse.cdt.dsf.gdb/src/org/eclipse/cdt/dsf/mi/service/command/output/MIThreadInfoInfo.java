@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,19 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  *            file="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",
  *            fullname="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",line="279"},
  *        state="stopped"}]
+ *        
+ * With GDB 7.1, a new 'core' field is present to indicate which core the thread is on.
+ * The parsing of this new field is handled by {@link MIThread}
+ * 
+ * -thread-info
+ * ^done,threads=[
+ *  {id="1",target-id="process 1307",
+ *   frame={level="0",addr="0x08048618",func="main",args=[],
+ *          file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},
+ *   state="stopped",
+ *   core="2"}],
+ *  current-thread-id="1"
+ *  
  * @since 1.1
  */
 public class MIThreadInfoInfo extends MIInfo {

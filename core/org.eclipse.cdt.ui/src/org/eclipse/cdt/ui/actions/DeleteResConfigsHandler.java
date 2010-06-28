@@ -7,31 +7,37 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Nokia - converted from action to handler
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -45,69 +51,103 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 
+
 /**
- * Action which deletes resource description. (If resource description is missing
+ * Handler for command that deletes resource description. (If resource description is missing
  * one from parent is normally used)
- * @deprecated as of CDT 8.0 now using {@link DeleteResConfigsHandler} 
+ * @since 5.3
  */
-@Deprecated
-public class DeleteResConfigsAction 
-implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
+public class DeleteResConfigsHandler extends AbstractHandler {
 
-	protected ArrayList<IResource> objects = null;
-	private   ArrayList<ResCfgData> outData = null;		
+	protected ArrayList<IResource> objects;
+	private   ArrayList<ResCfgData> outData;		
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	@Override
+	public void setEnabled(Object context) {
+		ISelection selection = getSelection(context);
+		setEnabledFromSelection(selection);
+	}
+	
+	protected ISelection getSelection(Object context) {
+		Object s = HandlerUtil.getVariable(context, ISources.ACTIVE_MENU_SELECTION_NAME);
+        if (s instanceof ISelection) {
+        	return (ISelection) s;
+        }
+	    return null;
+	}
+
+	public void setEnabledFromSelection(ISelection selection) {
 		objects = null;
-		outData = null;
 		
 		if (!selection.isEmpty()) {
 			// case for context menu
+			Object[] obs = null;
 			if (selection instanceof IStructuredSelection) {
-				Object[] obs = ((IStructuredSelection)selection).toArray();
-				if (obs.length > 0) {
-					for (int i=0; i<obs.length; i++) {
-						IResource res = null;
-						// only folders and files may be affected by this action
-						if (obs[i] instanceof ICContainer || obs[i] instanceof ITranslationUnit)
-							res = ((ICElement)obs[i]).getResource();
-						// project's configuration cannot be deleted
-						else if (obs[i] instanceof IResource && !(obs[i] instanceof IProject))
-							res = (IResource)obs[i];
-						if (res != null) {
-							IProject p = res.getProject();
-							if (!p.isOpen()) continue;
-							
-							if (!CoreModel.getDefault().isNewStyleProject(p))
-								continue;
-
-							IPath path = res.getProjectRelativePath();
-							// getting description in read-only mode
-							ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
-							if (prjd == null) continue;
-							ICConfigurationDescription[] cfgds = prjd.getConfigurations();
-							if (cfgds == null || cfgds.length == 0) continue;
-							for (ICConfigurationDescription cfgd : cfgds) {
-								ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-								if (rd != null) {
-									if (objects == null) objects = new ArrayList<IResource>();
-									objects.add(res);
-									break; // stop configurations scanning
-								}
+				obs = ((IStructuredSelection)selection).toArray();
+			}
+			else if (selection instanceof ITextSelection) {
+				IFile file = getFileFromActiveEditor();
+				if (file != null)
+					obs = Collections.singletonList(file).toArray();
+			}
+			if (obs != null && obs.length > 0) {
+				for (int i=0; i<obs.length; i++) {
+					IResource res = null;
+					// only folders and files may be affected by this action
+					if (obs[i] instanceof ICContainer || obs[i] instanceof ITranslationUnit)
+						res = ((ICElement)obs[i]).getResource();
+					// project's configuration cannot be deleted
+					else if (obs[i] instanceof IResource && !(obs[i] instanceof IProject))
+						res = (IResource)obs[i];
+					if (res != null) {
+						IProject p = res.getProject();
+						if (!p.isOpen()) continue;
+						
+						if (!CoreModel.getDefault().isNewStyleProject(p))
+							continue;
+	
+						IPath path = res.getProjectRelativePath();
+						// getting description in read-only mode
+						ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
+						if (prjd == null) continue;
+						ICConfigurationDescription[] cfgds = prjd.getConfigurations();
+						if (cfgds == null || cfgds.length == 0) continue;
+						for (ICConfigurationDescription cfgd : cfgds) {
+							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
+							if (rd != null) {
+								if (objects == null) objects = new ArrayList<IResource>();
+								objects.add(res);
+								break; // stop configurations scanning
 							}
 						}
 					}
 				}
 			}
 		} 
-		action.setEnabled(objects != null);
+		setBaseEnabled(objects != null);
 	}
-	
-	public void run(IAction action) {
+
+	private IFile getFileFromActiveEditor() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IEditorPart editor = page.getActiveEditor();
+				if (editor != null) {
+					IEditorInput input = editor.getEditorInput();
+					if (input != null)
+						return (IFile) input.getAdapter(IFile.class);
+				}
+			}
+		}
+		return null;
+	}
+
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		openDialog();
+		return null;
 	}
-	
-	
+
 	private void openDialog() {
 		if (objects == null || objects.size() == 0) return; 
 		// create list of configurations to delete
@@ -156,6 +196,8 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 	
 	
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
+		outData = null;
+		
 		return new IStructuredContentProvider() {
 
 			public Object[] getElements(Object inputElement) {
@@ -191,13 +233,5 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};
 	}
-	
-	public void dispose() { objects = null; }
-	
-	// doing nothing
-	public void init(IWorkbenchWindow window) { }
-	public Menu getMenu(Menu parent) { return null; }
-	public Menu getMenu(Control parent) { return null; }
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
 	
 }

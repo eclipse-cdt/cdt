@@ -625,7 +625,11 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		for (Option option : getOptionCollection())
 			if (option.needsRebuild()) 
 				return true;
-		
+
+		// Bug 318331 If the parent needs a rebuild, then we do too as we may inherit options from our superClass...
+		if (superClass != null && superClass.needsRebuild())
+			return true;
+
 		return rebuildState;
 	}
 

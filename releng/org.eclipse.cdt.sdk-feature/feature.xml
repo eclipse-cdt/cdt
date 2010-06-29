@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.sdk"
       label="%featureName"
-      version="7.0.0.qualifier"
+      version="7.0.1.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -36,7 +36,7 @@
    <includes
          id="org.eclipse.cdt.gnu.dsf.source"
          version="0.0.0"/>
-         
+
    <includes
          id="org.eclipse.cdt.gdb.source"
          version="0.0.0"/>

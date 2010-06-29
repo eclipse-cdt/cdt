@@ -83,7 +83,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 		cfgNames = null;
 		boolean cfgsOK = true;
 		
-		if (!selection.isEmpty()) {
+		if ((selection != null) && !selection.isEmpty()) {
 			// case for context menu
 			Object[] obs = null;
 			if (selection instanceof IStructuredSelection) {
@@ -142,7 +142,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 				}
 			}
 		} 
-		setBaseEnabled(cfgsOK && objects != null );
+		setBaseEnabled(cfgsOK && (objects != null));
 	}
 
 	private IFile getFileFromActiveEditor() {

@@ -79,7 +79,7 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 	public void setEnabledFromSelection(ISelection selection) {
 		objects = null;
 		
-		if (!selection.isEmpty()) {
+		if ((selection != null) && !selection.isEmpty()) {
 			// case for context menu
 			Object[] obs = null;
 			if (selection instanceof IStructuredSelection) {

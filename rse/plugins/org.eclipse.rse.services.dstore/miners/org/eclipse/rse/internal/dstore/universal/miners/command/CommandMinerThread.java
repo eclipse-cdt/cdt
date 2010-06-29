@@ -30,6 +30,7 @@
  *  David McKnight   (IBM)     [302996] [dstore] null checks and performance issue with shell output
  *  David McKnight     (IBM)   [308246] [dstore] fix for Bug 287305 breaks on z/OS due to "su" usage
  *  David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
+ *  David McKnight   (IBM)     [318372] [dstore][shells] "export" shell command invalid for certain shells
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -539,8 +540,13 @@ public class CommandMinerThread extends MinerThread
 			// initialization
 			if (didLogin || _isTTY)
 			{
+				// unsupported prompting
+				boolean unsupportedPrompt = theShell.endsWith("csh") || theShell.endsWith("bsh") ||   //$NON-NLS-1$//$NON-NLS-2$
+											theShell.endsWith("tsh") || theShell.endsWith("rksh");  //$NON-NLS-1$//$NON-NLS-2$
+				
+				
 				String initCmd = ""; //$NON-NLS-1$
-				if (_isTTY){
+				if (_isTTY && !unsupportedPrompt){
 					initCmd = "export PS1='$PWD>';" ; //$NON-NLS-1$ 
 				}
 				 if (didLogin && !userHome.equals(_cwdStr)){

@@ -797,13 +797,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		}
 		// END OF WORKAROUND to be removed when GDB 7.2 is available
 		
-		IMIContainerDMContext[] containerDmcs = new IMIContainerDMContext[groups.length];
-		for (int i = 0; i < groups.length; i++) {
-			String groupId = groups[i].getGroupId();
+		// With GDB 7.1, we can receive a bogus process when we are not debugging anything
+        // -list-thread-groups
+        // ^done,groups=[{id="0",type="process",pid="0"}]
+		// As for GDB 7.2, the pid field is missing altogether in this case
+		// -list-thread-groups
+		// ^done,groups=[{id="i1",type="process"}]
+		// Just ignore that entry
+		List<IMIContainerDMContext> containerDmcs = new ArrayList<IMIContainerDMContext>(groups.length);
+		for (IThreadGroupInfo group : groups) {
+			if (group.getPid() == null || 
+					group.getPid().equals("") || group.getPid().equals("0")) { //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
+			String groupId = group.getGroupId();
 			IProcessDMContext procDmc = createProcessContext(controlDmc, groupId); 
-			containerDmcs[i] = createContainerContext(procDmc, groupId);
+			containerDmcs.add(createContainerContext(procDmc, groupId));
 		}
-		return containerDmcs;
+		return containerDmcs.toArray(new IMIContainerDMContext[containerDmcs.size()]);
 	}
 
 	public void getRunningProcesses(final IDMContext dmc, final DataRequestMonitor<IProcessDMContext[]> rm) {

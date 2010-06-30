@@ -15,9 +15,11 @@ import java.io.IOException;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
+import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -129,7 +131,8 @@ public class CheckerTestCase extends CodanTestCase {
 	 */
 	protected IProblemPreference getPreference(String problemId, String paramId) {
 		IProblem problem = CodanRuntime.getInstance().getCheckersRegistry()
-				.getWorkspaceProfile().findProblem(problemId);
+				.getResourceProfile(cproject.getResource())
+				.findProblem(problemId);
 		IProblemPreference pref = ((MapProblemPreference) problem
 				.getPreference()).getChildDescriptor(paramId);
 		return pref;
@@ -156,5 +159,25 @@ public class CheckerTestCase extends CodanTestCase {
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
+	}
+
+	protected void enableProblems(String... ids) {
+		IProblemProfile profile = CodanRuntime.getInstance()
+				.getCheckersRegistry().getWorkspaceProfile();
+		IProblem[] problems = profile.getProblems();
+		for (int i = 0; i < problems.length; i++) {
+			IProblem p = problems[i];
+			for (int j = 0; j < ids.length; j++) {
+				String pid = ids[j];
+				if (p.getId().equals(pid)) {
+					((CodanProblem) p).setEnabled(true);
+				} else {
+					((CodanProblem) p).setEnabled(false);
+				}
+			}
+		}
+		CodanRuntime.getInstance().getCheckersRegistry()
+				.updateProfile(cproject.getProject(), profile);
+		return;
 	}
 }

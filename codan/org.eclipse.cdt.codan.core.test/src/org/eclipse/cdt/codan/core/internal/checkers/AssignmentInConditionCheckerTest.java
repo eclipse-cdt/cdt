@@ -19,6 +19,17 @@ import org.eclipse.core.resources.IMarker;
  * 
  */
 public class AssignmentInConditionCheckerTest extends CheckerTestCase {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
+	 */
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		enableProblems("org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem");
+	}
+
 	//	 main() {
 	//	   int a=1,b=3;
 	//	   if (a=b) b=4; // error here on line 3

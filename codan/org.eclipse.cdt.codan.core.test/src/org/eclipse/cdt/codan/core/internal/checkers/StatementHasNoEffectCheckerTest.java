@@ -23,6 +23,12 @@ import org.eclipse.core.resources.IMarker;
  * 
  */
 public class StatementHasNoEffectCheckerTest extends CheckerTestCase {
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		enableProblems(StatementHasNoEffectChecker.ER_ID);
+	}
+
 	// main() {
 	// int a;
 	// +a; // error here on line 3

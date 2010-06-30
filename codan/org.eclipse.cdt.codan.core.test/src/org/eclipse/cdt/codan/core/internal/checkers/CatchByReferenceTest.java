@@ -23,6 +23,12 @@ public class CatchByReferenceTest extends CheckerTestCase {
 		return true;
 	}
 
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		enableProblems(CatchByReference.ER_ID);
+	}
+
 	//	void main() {
 	//		try {
 	//			foo();

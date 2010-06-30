@@ -318,8 +318,12 @@ public class MIListThreadGroupsInfo extends MIInfo {
 					}
 				}
 			}
-			// In the case of -list-thread-groups --available, we can use the id as the pid
-			if (pid.equals("")) { //$NON-NLS-1$
+			// In the case of -list-thread-groups --available, the pid field is not present, but the
+			// pid is used as the main id.  To know we are in this case, we check that we have
+			// a description, that only happens for -list-thread-groups --available
+			// We must check this because with GDB 7.2, there will be no pid field as a result
+			// of -list-thread-groups, if no process is actually running yet.
+			if (pid.equals("") && !desc.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 				pid = id;
 			}
 			fGroupList[i] = new ThreadGroupInfo(id, desc, type, pid, user, cores, exec);

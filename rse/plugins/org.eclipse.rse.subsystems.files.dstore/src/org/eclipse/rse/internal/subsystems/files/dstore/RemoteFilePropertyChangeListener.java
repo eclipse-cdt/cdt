@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [190805] [performance][dstore] Right-click > Disconnect on a dstore connection is slow and spawns many Jobs
+ * David McKnight   (IBM)        - [318501] [dstore] decorator causing main thread queries
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -95,7 +96,7 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 			        path.append(_fileSubSystem.getSeparatorChar());
 			    	path.append(file.getName());
 			    
-			    	children[i] = _fileSubSystem.getRemoteFileObject(path.toString(), monitor);
+			    	children[i] = _fileSubSystem.getCachedRemoteFile(path.toString());
 	            }
 	              
 				_registry.fireEvent(new

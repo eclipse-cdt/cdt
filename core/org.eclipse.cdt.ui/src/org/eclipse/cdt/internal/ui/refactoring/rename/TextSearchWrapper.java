@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -32,6 +33,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -46,6 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.utils.PathUtil;
 
 import org.eclipse.cdt.internal.formatter.scanner.SimpleScanner;
 import org.eclipse.cdt.internal.formatter.scanner.Token;
@@ -62,7 +65,7 @@ public class TextSearchWrapper {
     public final static int SCOPE_WORKING_SET = 5;
 
     private static class SearchScope extends TextSearchScope {
-        public static SearchScope newSearchScope(IWorkingSet ws) {
+        public static SearchScope newSearchScope(IWorkingSet ws, IResource[] filter) {
             IAdaptable[] adaptables= ws.getElements();
             ArrayList<IResource> resources = new ArrayList<IResource>();
             for (int i = 0; i < adaptables.length; i++) {
@@ -72,18 +75,40 @@ public class TextSearchWrapper {
                     resources.add(r);
                 }
             }
-            return newSearchScope(resources.toArray(new IResource[resources.size()]), false);
+            return newSearchScope(resources.toArray(new IResource[resources.size()]), filter);
 		}
         
-		public static SearchScope newSearchScope(IResource[] resources, boolean copy) {
-			return new SearchScope(resources, copy);
+		public static SearchScope newSearchScope(IResource[] roots, IResource[] filter) {
+			if (filter != null) {
+				ArrayList<IResource> files = new ArrayList<IResource>(filter.length);
+				for (IResource file : filter) {
+					if (isInForest(file, roots)) {
+						files.add(file);
+					}
+				}
+				roots = files.toArray(new IResource[files.size()]);
+			}
+			return new SearchScope(roots);
 		}
 
-        private IResource[] fRootResources;
+		/**
+		 * Checks is a file belongs to one of the given containers.
+		 */
+        private static boolean isInForest(IResource file, IResource[] roots) {
+        	IPath filePath = file.getFullPath();
+        	for (IResource root : roots) {
+        		if (PathUtil.isPrefix(root.getFullPath(), filePath)) {
+        			return true;
+        		}
+        	}
+			return false;
+		}
+
+		private IResource[] fRootResources;
         private ArrayList<Matcher> fFileMatcher= new ArrayList<Matcher>();
 
-        private SearchScope(IResource[] resources, boolean copy) {
-            fRootResources= copy ? (IResource[]) resources.clone() : resources;
+        private SearchScope(IResource[] roots) {
+            fRootResources= roots;
         }
 
 		@Override
@@ -153,29 +178,30 @@ public class TextSearchWrapper {
         }
     }
 
-    public TextSearchWrapper() {}
+    public TextSearchWrapper() {
+    }
     
-    private TextSearchScope createSearchScope(IFile file, int scope, 
-            String workingSetName, String[] patterns) {
+    private TextSearchScope createSearchScope(IFile file, int scope, String workingSetName,
+    		IResource[] filter, String[] patterns) {
         switch (scope) {
         	case SCOPE_WORKSPACE:
-        	    return defineSearchScope(file.getWorkspace().getRoot(), patterns);
+        	    return defineSearchScope(file.getWorkspace().getRoot(), filter, patterns);
         	case SCOPE_SINGLE_PROJECT:
-        	    return defineSearchScope(file.getProject(), patterns);
+        	    return defineSearchScope(file.getProject(), filter, patterns);
         	case SCOPE_FILE:
-        	    return defineSearchScope(file, patterns);
+        	    return defineSearchScope(file, filter, patterns);
         	case SCOPE_WORKING_SET: {
-        	    TextSearchScope result= defineWorkingSetAsSearchScope(workingSetName, patterns);
+        	    TextSearchScope result= defineWorkingSetAsSearchScope(workingSetName, filter, patterns);
         	    if (result == null) {
-        	        result= defineSearchScope(file.getWorkspace().getRoot(), patterns);
+        	        result= defineSearchScope(file.getWorkspace().getRoot(), filter, patterns);
         	    }
         		return result;
         	}
         }
-	    return defineRelatedProjectsAsSearchScope(file.getProject(), patterns);
+	    return defineRelatedProjectsAsSearchScope(file.getProject(), filter, patterns);
     }
     
-    private TextSearchScope defineRelatedProjectsAsSearchScope(IProject project, String[] patterns) {
+    private TextSearchScope defineRelatedProjectsAsSearchScope(IProject project, IResource[] filter, String[] patterns) {
         HashSet<IProject> projects= new HashSet<IProject>();
         LinkedList<IProject> workThrough= new LinkedList<IProject>();
         workThrough.add(project);
@@ -190,20 +216,20 @@ public class TextSearchWrapper {
                 }
             }
         }
-        IResource[] resources= projects.toArray(new IResource[projects.size()]);
-        return defineSearchScope(resources, patterns);
+        IResource[] roots= projects.toArray(new IResource[projects.size()]);
+        return defineSearchScope(roots, filter, patterns);
     }
 
-    private TextSearchScope defineWorkingSetAsSearchScope(String wsName, String[] patterns) {
-        if (wsName == null) {
+    private TextSearchScope defineWorkingSetAsSearchScope(String workingSetName, IResource[] filter, String[] patterns) {
+        if (workingSetName == null) {
             return null;
         }
 		IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSet ws= wsManager.getWorkingSet(wsName);
+		IWorkingSet ws= wsManager.getWorkingSet(workingSetName);
 		if (ws == null) {
 		    return null;
 		}
-		SearchScope result= SearchScope.newSearchScope(ws); 
+		SearchScope result= SearchScope.newSearchScope(ws, filter); 
 		applyFilePatterns(result, patterns);
 		return result;
     }
@@ -215,22 +241,32 @@ public class TextSearchWrapper {
         }
     }
 
-    private TextSearchScope defineSearchScope(IResource resource, String[] patterns) {
-    	SearchScope result= SearchScope.newSearchScope(new IResource[] { resource }, false); 
+    private TextSearchScope defineSearchScope(IResource root, IResource[] filter, String[] patterns) {
+    	SearchScope result= SearchScope.newSearchScope(new IResource[] { root }, filter); 
         applyFilePatterns(result, patterns);
         return result;
     }
     
-    private TextSearchScope defineSearchScope(IResource[] resources, String[] patterns) {
-    	SearchScope result= SearchScope.newSearchScope(resources, true);           
+    private TextSearchScope defineSearchScope(IResource[] roots, IResource[] filter, String[] patterns) {
+    	SearchScope result= SearchScope.newSearchScope(roots, filter);           
         applyFilePatterns(result, patterns);
         return result;
     }
     
     /**
-     * @param monitor
+     * Searches for a given word.
+     * 
+     * @param scope One of SCOPE_FILE, SCOPE_WORKSPACE, SCOPE_RELATED_PROJECTS, SCOPE_SINGLE_PROJECT,
+     *     or SCOPE_WORKING_SET.
+     * @param file The file used as an anchor for the scope.
+     * @param workingSet The name of a working set. Ignored is scope is not SCOPE_WORKING_SET.
+     * @param filter If not null, further limits the scope of the search.
+     * @param patterns File name patterns.
+     * @param word The word to search for.
+     * @param monitor A progress monitor.
+     * @param target The list that gets populated with search results.
      */
-    public IStatus searchWord(int scope, IFile resource, String workingSet, String[] patterns,
+    public IStatus searchWord(int scope, IFile file, String workingSet, IResource[] filter, String[] patterns,
             String word, IProgressMonitor monitor, final List<CRefactoringMatch> target) {
         int startPos= target.size();
         TextSearchEngine engine= TextSearchEngine.create();
@@ -243,7 +279,7 @@ public class TextSearchWrapper {
 
         Pattern pattern= Pattern.compile(searchPattern.toString());
         
-        TextSearchScope searchscope= createSearchScope(resource, scope, workingSet, patterns);
+        TextSearchScope searchscope= createSearchScope(file, scope, workingSet, filter, patterns);
         TextSearchRequestor requestor= new TextSearchRequestor() {
             @Override
 			public boolean acceptPatternMatch(TextSearchMatchAccess access) {

@@ -69,10 +69,11 @@ public class Messages extends NLS {
 	public static String CRenameRefactoringInputPage_button_includes;
 	public static String CRenameRefactoringInputPage_button_macroDefinitions;
 	public static String CRenameRefactoringInputPage_button_preprocessor;
+	public static String CRenameRefactoringInputPage_button_strings;
+	public static String CRenameRefactoringInputPage_button_exhaustiveFileSearch;
 	public static String CRenameRefactoringInputPage_button_singleProject;
 	public static String CRenameRefactoringInputPage_button_relatedProjects;
 	public static String CRenameRefactoringInputPage_button_workspace;
-	public static String CRenameRefactoringInputPage_button_strings;
 	public static String CRenameRefactoringInputPage_button_workingSet;
 	public static String CRenameRefactoringInputPage_errorInvalidIdentifier;
 	public static String CRenameRefactoringInputPage_label_newName;

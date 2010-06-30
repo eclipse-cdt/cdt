@@ -44,6 +44,7 @@ public class CRefactory {
     public static final int OPTION_IN_INACTIVE_CODE 			= 0x40;
     public static final int OPTION_IN_CODE 						= 0x80;
     public static final int OPTION_DO_VIRTUAL					= 0x100;
+    public static final int OPTION_EXHAUSTIVE_FILE_SEARCH		= 0x200;
 
     public static final int ARGUMENT_UNKNOWN				=  0;
     public static final int ARGUMENT_LOCAL_VAR				=  1;
@@ -72,9 +73,9 @@ public class CRefactory {
     private CRefactory() {
     }
     
-    // runs the rename refactoring
+    // Runs the rename refactoring.
     public void rename(Shell shell, ICElement arg) {
-        if (!IDE.saveAllEditors(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, false)) {
+        if (!IDE.saveAllEditors(new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, false)) {
             return;
         }
         CRefactoringArgument iarg= new CRefactoringArgument(arg);
@@ -101,7 +102,7 @@ public class CRefactory {
         if (res instanceof IFile == false) {
         	return;
         }
-        if (!IDE.saveAllEditors(new IResource[] {ResourcesPlugin.getWorkspace().getRoot()}, false)) {
+        if (!IDE.saveAllEditors(new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, false)) {
             return;
         }
         CRefactoringArgument iarg= new CRefactoringArgument((IFile) res, s.getOffset(), s.getLength());

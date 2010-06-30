@@ -8,6 +8,7 @@
  * Contributors: 
  *    Markus Schorn - initial API and implementation 
  *    Emanuel Graf (Institute for Software, HSR Hochschule fuer Technik)
+ *    Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -54,6 +55,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
     private static final String KEY_INCLUDE = "include"; //$NON-NLS-1$
     private static final String KEY_MACRO_DEFINITION = "macroDefinition"; //$NON-NLS-1$
     private static final String KEY_PREPROCESSOR = "preprocessor"; //$NON-NLS-1$
+    private static final String KEY_EXHAUSTIVE_FILE_SEARCH = "exhausiveFileSearch"; //$NON-NLS-1$
 
     private IDialogSettings fDialogSettings;
     private String fSearchString;
@@ -76,6 +78,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
     private Button fWorkingSetButton;
     private Button fInMacro;
     private Button fInPreprocessor;
+    private Button fExhausiveFileSearch;
 
     public CRenameRefactoringInputPage() {
         super(PAGE_NAME);
@@ -110,15 +113,15 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         GridData gd;
         GridLayout gl;
 
-        Label label= new Label(group, SWT.NONE);
+        Label label= new Label(top, SWT.NONE);
         label.setText(Messages.CRenameRefactoringInputPage_label_newName);
-        fNewName= new Text(group, SWT.BORDER);
+        fNewName= new Text(top, SWT.BORDER);
         fNewName.setText(fSearchString);
         fNewName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));        
         fNewName.selectAll();
         
         if (hasOption(CRefactory.OPTION_DO_VIRTUAL)) {
-        	fDoVirtual= new Button(group, SWT.CHECK);
+        	fDoVirtual= new Button(top, SWT.CHECK);
         	fDoVirtual.setText(Messages.CRenameRefactoringInputPage_renameBaseAndDerivedMethods);
         	fDoVirtual.setLayoutData(gd= new GridData());
         	gd.horizontalSpan= 2;
@@ -204,6 +207,16 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             fInPreprocessor= new Button(group, SWT.CHECK);
             fInPreprocessor.setText(Messages.CRenameRefactoringInputPage_button_preprocessor);
         }
+
+        if (hasOption(CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH)) {
+    		skipLine(top);
+            fExhausiveFileSearch= new Button(top, SWT.CHECK);
+            fExhausiveFileSearch.setText(Messages.CRenameRefactoringInputPage_button_exhaustiveFileSearch);
+            fExhausiveFileSearch.setLayoutData(gd= new GridData());
+    		gd.horizontalIndent= 5;
+        	gd.horizontalSpan= 2;
+    	}
+
         Dialog.applyDialogFont(top);
         hookSelectionListeners();
         readPreferences();
@@ -270,6 +283,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         registerOptionListener(fInMacro, listenOption);
         registerOptionListener(fInString, listenOption);
         registerOptionListener(fInPreprocessor, listenOption);
+        registerOptionListener(fExhausiveFileSearch, listenOption);
     }
 
     private void registerScopeListener(Button button, final int scope) {
@@ -296,7 +310,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 
     private void onSelectOption() {
         int selectedOptions= computeSelectedOptions();
-        boolean forcePreview= fForcePreviewOptions==-1 ||
+        boolean forcePreview= fForcePreviewOptions == -1 ||
        			(selectedOptions & fForcePreviewOptions) != 0;
         getRenameProcessor().setSelectedOptions(selectedOptions);
         getRefactoringWizard().setForcePreviewReview(forcePreview);
@@ -322,12 +336,11 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             int choice;
             try {
                 choice= fDialogSettings.getInt(KEY_SCOPE);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 choice= TextSearchWrapper.SCOPE_RELATED_PROJECTS;
             }
             
-            switch(choice) {
+            switch (choice) {
             case TextSearchWrapper.SCOPE_WORKSPACE:
                 fWorkspace.setSelection(true);
                 break;
@@ -363,6 +376,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         initOption(fInMacro, KEY_MACRO_DEFINITION);
         initOption(fInPreprocessor, KEY_PREPROCESSOR);
         initOption(fInInactiveCode, KEY_INACTIVE);
+        initOption(fExhausiveFileSearch, KEY_EXHAUSTIVE_FILE_SEARCH);
     }
 
     private int computeSelectedOptions() {
@@ -375,6 +389,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         options |= computeOption(fInPreprocessor, CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE);
         options |= computeOption(fInMacro, CRefactory.OPTION_IN_MACRO_DEFINITION);
         options |= computeOption(fInInactiveCode, CRefactory.OPTION_IN_INACTIVE_CODE);
+        options |= computeOption(fExhausiveFileSearch, CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
         return options;
     }
 
@@ -440,6 +455,9 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         if (fInInactiveCode != null) {
             fDialogSettings.put(KEY_INACTIVE, fInInactiveCode.getSelection());
         }
+        if (fExhausiveFileSearch != null) {
+            fDialogSettings.put(KEY_EXHAUSTIVE_FILE_SEARCH, fExhausiveFileSearch.getSelection());
+        }
     }
 
     protected void onSelectWorkingSet() {
@@ -488,7 +506,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
     }
 
     protected void updateEnablement() {
-        boolean enable= fEnableScopeOptions==-1 ||
+        boolean enable= fEnableScopeOptions == -1 ||
         		(computeSelectedOptions() & fEnableScopeOptions) != 0;
         
         if (fWorkspace != null) {

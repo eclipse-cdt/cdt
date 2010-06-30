@@ -18,6 +18,7 @@ public class CRenameIncludeProcessor extends CRenameProcessorDelegate {
     public CRenameIncludeProcessor(CRenameProcessor input, String kind) {
         super(input, kind);
         setAvailableOptions(CRefactory.OPTION_ASK_SCOPE | 
+        		CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH |
                 CRefactory.OPTION_IN_COMMENT | 
                 CRefactory.OPTION_IN_MACRO_DEFINITION);
         setOptionsForcingPreview(-1);

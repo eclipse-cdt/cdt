@@ -8,6 +8,7 @@
  * Contributors: 
  *    Markus Schorn - initial API and implementation 
  *    IBM Corporation - Bug 112366
+ *    Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -16,8 +17,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -37,12 +42,13 @@ import org.eclipse.text.edits.TextEditGroup;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
 
 /**
- * Abstract base for all different rename processors used by the top 
- * processor.
+ * Abstract base for all different rename processors used by the top processor.
  */
 public abstract class CRenameProcessorDelegate {
     private CRenameProcessor fTopProcessor;
@@ -50,13 +56,14 @@ public abstract class CRenameProcessorDelegate {
     protected String fProcessorBaseName;
     private int fAvailableOptions=         
 	        CRefactory.OPTION_ASK_SCOPE | 
+	        CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH | 
 	        CRefactory.OPTION_IN_CODE |
 	        CRefactory.OPTION_IN_COMMENT | 
 	        CRefactory.OPTION_IN_MACRO_DEFINITION |
 	        CRefactory.OPTION_IN_STRING_LITERAL;
 
     private int fOptionsForcingPreview=
-	        CRefactory.OPTION_IN_CODE |
+	        CRefactory.OPTION_IN_INACTIVE_CODE |
 	        CRefactory.OPTION_IN_COMMENT | 
 	        CRefactory.OPTION_IN_MACRO_DEFINITION |
 	        CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
@@ -148,6 +155,54 @@ public abstract class CRenameProcessorDelegate {
         return getSelectedScope();
     }
 
+    /**
+     * Builds an index-based file filter for the name search.
+     * @return A set of files containing references to the name, or <code>null</code> if
+     * exhaustive file search is requested.
+     */
+    private IResource[] getFileFilter() {
+    	if ((getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0) {
+    		return null;
+    	}
+    	IIndex index = getIndex();
+    	if (index == null) {
+    		return null;
+    	}
+    	IBinding binding = getArgument().getBinding();
+    	if (binding == null) {
+    		return null;
+    	}
+		Set<IIndexFileLocation> locations = new HashSet<IIndexFileLocation>();
+    	try {
+    		index.acquireReadLock();
+			IIndexName[] names = index.findNames(binding,
+					IIndex.FIND_ALL_OCCURRENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+			for (IIndexName name : names) {
+				locations.add(name.getFile().getLocation());
+			}
+		} catch (InterruptedException e) {
+			return null;
+		} catch (CoreException e) {
+			return null;
+		} finally {
+    		index.releaseReadLock();
+    	}
+
+		ArrayList<IResource> files = new ArrayList<IResource>(locations.size());
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		for (IIndexFileLocation location : locations) {
+			String fullPath= location.getFullPath();
+			if (fullPath != null) {
+				IResource file= workspaceRoot.findMember(fullPath);
+				if (file != null) {
+					files.add(file);
+				}
+			}
+		}
+
+		return files.toArray(new IResource[files.size()]);
+	}
+
     public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
         return new RefactoringStatus();
     }
@@ -162,7 +217,7 @@ public abstract class CRenameProcessorDelegate {
         fMatches= new ArrayList<CRefactoringMatch>();
         TextSearchWrapper txtSearch= getManager().getTextSearch();
         IStatus stat= txtSearch.searchWord(getSearchScope(), file, getSelectedWorkingSet(), 
-                getManager().getCCppPatterns(), getArgument().getName(), 
+                getFileFilter(), getManager().getCCppPatterns(), getArgument().getName(), 
                 new SubProgressMonitor(monitor, 1), fMatches);
         if (monitor.isCanceled()) {
             throw new OperationCanceledException();
@@ -228,7 +283,7 @@ public abstract class CRenameProcessorDelegate {
         return result;
     }
 
-    protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, RefactoringStatus status) {
+	protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, RefactoringStatus status) {
         CRefactoringArgument argument= getArgument();
         IBinding[] renameBindings= getBindingsToBeRenamed(status);
         if (renameBindings != null && renameBindings.length > 0 && 

@@ -18,7 +18,8 @@ public class CRenameGlobalProcessor extends CRenameProcessorDelegate {
 
     public CRenameGlobalProcessor(CRenameProcessor processor, String name) {
         super(processor, name);
-        setAvailableOptions(CRefactory.OPTION_ASK_SCOPE | 
+        setAvailableOptions(CRefactory.OPTION_ASK_SCOPE |
+        		CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH |
                 CRefactory.OPTION_IN_CODE |
                 CRefactory.OPTION_IN_COMMENT | 
                 CRefactory.OPTION_IN_MACRO_DEFINITION);

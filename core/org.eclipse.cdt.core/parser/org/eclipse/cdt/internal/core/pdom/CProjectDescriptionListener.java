@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,8 +84,10 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 	}
 
 	protected boolean isProjectCreationComplete(IProject project) {
-		ICProjectDescription desc= CProjectDescriptionManager.getInstance().getProjectDescription(project.getProject(), false);
-		return !(desc == null || desc.isCdtProjectCreating());
+		// Check for a project that has been created by the new project wizard just
+		// just for the purpose of editing preferences (Advanced button)
+		ICProjectDescription desc= CProjectDescriptionManager.getInstance().getProjectDescription(project.getProject(), false, false);
+		return desc==null || !desc.isCdtProjectCreating();
 	}
 
 	private boolean completedProjectCreation(ICProjectDescription old, ICProjectDescription act) {

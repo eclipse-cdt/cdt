@@ -162,3 +162,11 @@ wchar_t wc;
 //%CPP
 mutable int n;
 
+//!C++0x auto keyword Bug 318588
+//%CPP
+auto var = 42;
+
+//!C++0x long long keyword Bug 318588
+//%CPP
+long long int i;
+

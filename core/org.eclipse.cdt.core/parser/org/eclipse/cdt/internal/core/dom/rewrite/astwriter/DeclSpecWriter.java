@@ -121,6 +121,10 @@ public class DeclSpecWriter extends NodeWriter {
 			if (isCpp)
 				return Keywords.CHAR32_T;
 			break;
+		case IASTSimpleDeclSpecifier.t_auto:
+			if (isCpp)
+				return Keywords.AUTO;
+			break;
 		}
 
 		System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
@@ -383,12 +387,11 @@ public class DeclSpecWriter extends NodeWriter {
 			scribe.printStringSpace(SHORT);
 		}else if(simpDeclSpec.isLong()) {
 			scribe.printStringSpace(LONG);
+		}else if(simpDeclSpec.isLongLong()) {			
+			scribe.print(LONG_LONG);
 		}
 		if (simpDeclSpec instanceof ICASTSimpleDeclSpecifier) {
 			ICASTSimpleDeclSpecifier cSimpDeclSpec = (ICASTSimpleDeclSpecifier) simpDeclSpec;
-			if (cSimpDeclSpec.isLongLong()) {
-				scribe.print(LONG_LONG);
-			}
 			if (cSimpDeclSpec.isComplex()) {
 				scribe.print(_COMPLEX);
 			}

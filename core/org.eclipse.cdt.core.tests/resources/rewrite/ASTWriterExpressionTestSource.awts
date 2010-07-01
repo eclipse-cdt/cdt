@@ -159,6 +159,20 @@ void f()
 
 type_info c = typeid (a);
 
+//!CPPUnaryExpression without operand Bug 318552
+//%CPP
+void rethrow()
+{
+    try {
+        int i = 1;
+        throw i;
+    }
+    catch(int j){
+        throw ;
+    }
+}
+
+
 //!TypeIdExpression
 //%CPP
 int d = sizeof (int);

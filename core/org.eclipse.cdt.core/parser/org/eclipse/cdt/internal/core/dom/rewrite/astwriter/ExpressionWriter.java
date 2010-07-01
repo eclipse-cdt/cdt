@@ -383,7 +383,7 @@ public class ExpressionWriter extends NodeWriter{
 		if(isPrefixExpression(unExp )) {
 			scribe.print(getPrefixOperator(unExp));
 		}
-		unExp.getOperand().accept(visitor);
+		visitNodeIfNotNull(unExp.getOperand());
 		if(isPostfixExpression(unExp)) {
 			scribe.print(getPostfixOperator(unExp));
 		}

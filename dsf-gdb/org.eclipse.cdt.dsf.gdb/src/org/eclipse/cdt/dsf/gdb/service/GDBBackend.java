@@ -72,7 +72,7 @@ import org.osgi.framework.BundleContext;
  */
 public class GDBBackend extends AbstractDsfService implements IGDBBackend {
 	
-	private ILaunchConfiguration fLaunchConfiguration;
+	private final ILaunchConfiguration fLaunchConfiguration;
 	
 	/*
 	 * Parameters for launching GDB.
@@ -168,7 +168,10 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     }        
 
     
-    private IPath getGDBPath() {
+    /**
+	 * @since 3.1
+	 */
+    protected IPath getGDBPath() {
         return LaunchUtils.getGDBPath(fLaunchConfiguration);
     }
 

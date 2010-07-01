@@ -180,8 +180,8 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTCompoundStatement();
 	}
 
-	public IASTConditionalExpression newConditionalExpession(IASTExpression expr1, IASTExpression expr2, IASTExpression expr3) {
-		return new CPPASTConditionalExpression(expr1, expr2, expr3);
+	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative) {
+		return new CPPASTConditionalExpression(condition, positive, negative);
 	}
 
 	@Deprecated

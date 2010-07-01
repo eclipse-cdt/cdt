@@ -146,8 +146,8 @@ public class CNodeFactory extends NodeFactory implements ICNodeFactory {
 		return new CASTCompoundStatement();
 	}
 	
-	public IASTConditionalExpression newConditionalExpession(IASTExpression expr1, IASTExpression expr2, IASTExpression expr3) {
-		return new CASTConditionalExpression(expr1, expr2, expr3);
+	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative) {
+		return new CASTConditionalExpression(condition, positive, negative);
 	}
 	
 	public IASTContinueStatement newContinueStatement() {

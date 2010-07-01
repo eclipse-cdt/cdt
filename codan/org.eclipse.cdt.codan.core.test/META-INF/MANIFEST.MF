@@ -11,7 +11,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core.tests,
  org.eclipse.cdt.codan.core;bundle-version="1.0.0",
  org.eclipse.cdt.codan.core.cxx;bundle-version="1.0.0",
- org.junit
+ org.eclipse.cdt.ui,
+ org.eclipse.jface;bundle-version="3.6.0",
+ org.eclipse.jface.text;bundle-version="3.6.0",
+ org.junit,
+ org.eclipse.cdt.codan.checkers.ui;bundle-version="1.0.0",
+ org.eclipse.cdt.codan.ui;bundle-version="1.1.0",
+ org.eclipse.ui.ide;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %Bundle-Vendor

@@ -38,6 +38,17 @@ public class TestUtils {
 		return testFile;
 	}
 
+	public static String loadFile(InputStream st) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(st));
+		String buffer;
+		StringBuffer result = new StringBuffer();
+		while ((buffer = br.readLine()) != null) {
+			result.append(buffer);
+		}
+		st.close();
+		return result.toString();
+	}
+
 	/**
 	 * @param clazz
 	 * @return

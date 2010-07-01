@@ -19,6 +19,7 @@ import org.eclipse.cdt.codan.core.internal.checkers.CatchByReferenceTest;
 import org.eclipse.cdt.codan.core.internal.checkers.ReturnCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.StatementHasNoEffectCheckerTest;
 import org.eclipse.cdt.codan.core.internal.checkers.SuggestedParenthesisCheckerTest;
+import org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFixTest;
 
 public class AutomatedIntegrationSuite extends TestSuite {
 	public AutomatedIntegrationSuite() {
@@ -38,12 +39,16 @@ public class AutomatedIntegrationSuite extends TestSuite {
 
 	public static Test suite() {
 		final AutomatedIntegrationSuite suite = new AutomatedIntegrationSuite();
+		// checkers
 		suite.addTestSuite(StatementHasNoEffectCheckerTest.class);
 		suite.addTestSuite(SuggestedParenthesisCheckerTest.class);
 		suite.addTestSuite(ReturnCheckerTest.class);
 		suite.addTestSuite(CatchByReferenceTest.class);
 		suite.addTestSuite(AssignmentInConditionCheckerTest.class);
+		// framework
 		suite.addTest(CodanFastTestSuite.suite());
+		// quick fixes
+		suite.addTestSuite(SuggestedParenthesisQuickFixTest.class);
 		return suite;
 	}
 }

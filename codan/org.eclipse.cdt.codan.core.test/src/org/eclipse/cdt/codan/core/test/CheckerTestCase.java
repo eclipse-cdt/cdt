@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * 
  */
 public class CheckerTestCase extends CodanTestCase {
-	private IMarker[] markers;
+	protected IMarker[] markers;
 
 	public IMarker checkErrorLine(int i) {
 		return checkErrorLine(currentFile, i);

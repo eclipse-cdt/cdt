@@ -18,10 +18,13 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -30,6 +33,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * TODO: add description
@@ -39,6 +43,8 @@ public class CodanTestCase extends BaseTestCase {
 	protected File tmpDir;
 	protected ICProject cproject;
 	protected File currentFile;
+	protected ICElement currentCElem;
+	protected IFile currentIFile;
 
 	/**
 	 * 
@@ -183,6 +189,18 @@ public class CodanTestCase extends BaseTestCase {
 	}
 
 	public File loadcode(String code, boolean cpp) {
+		String fileKey = "@file:"; //$NON-NLS-1$
+		int indf = code.indexOf(fileKey);
+		if (indf >= 0) {
+			int sep = code.indexOf('\n');
+			if (sep != -1) {
+				String line = code.substring(0, sep);
+				code = code.substring(sep + 1);
+				String fileName = line.substring(indf + fileKey.length())
+						.trim();
+				return loadcode(code, new File(tmpDir, fileName));
+			}
+		}
 		String ext = cpp ? ".cpp" : ".c"; //$NON-NLS-1$ //$NON-NLS-2$
 		File testFile = null;
 		try {
@@ -211,9 +229,15 @@ public class CodanTestCase extends BaseTestCase {
 				// hmm
 				fail(e.getMessage());
 			}
+			currentCElem = cproject
+					.findElement(new Path(currentFile.toString()));
+			currentIFile = (IFile) currentCElem.getResource();
 			return testFile;
 		} catch (IOException e) {
 			fail("Cannot save test: " + testFile + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+			return null;
+		} catch (CModelException e) {
+			fail("Cannot find file: " + testFile + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 	}

@@ -1055,42 +1055,6 @@
            <groupMarker name="build"/>
         </menu>
      </objectContribution>
-     <objectContribution
-           adaptable="true"
-           id="org.eclipse.cdt.ui.buildConfigContributionM"
-           objectClass="org.eclipse.core.resources.IResource">
-        <visibility>
-           <and>
-              <objectState
-                 name="projectNature"
-                 value="org.eclipse.cdt.core.cnature"/>
-              <or>
-                 <objectClass name="org.eclipse.core.resources.IFolder"/>
-                 <objectClass name="org.eclipse.core.resources.IFile"/>
-              </or>
-           </and>
-        </visibility>
-        <action
-              class="org.eclipse.cdt.ui.actions.DeleteResConfigsAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.deleteConfigsAction0"
-              label="%DeleteRcConfigAction.label"
-              menubarPath="org.eclipse.cdt.ui.rescfgmenu/gm1"
-              />
-        <action
-              class="org.eclipse.cdt.ui.actions.ExcludeFromBuildAction"
-              enablesFor="+"
-              id="org.eclipse.cdt.ui.excludeAction0"
-              label="%ExcludeAction.label"
-              menubarPath="org.eclipse.cdt.ui.rescfgmenu/gm1"
-              />
-        <menu
-              id="org.eclipse.cdt.ui.rescfgmenu"
-              label="%ResourceConfigurations.menu"
-              path="buildGroup">
-           <groupMarker name="gm1"/>
-        </menu>
-     </objectContribution>
    </extension>
    
    <extension
@@ -3548,4 +3512,89 @@
 			</enablement>
 		</decorator>
 	</extension>
+ <extension
+       point="org.eclipse.ui.commands">
+    <command
+          id="org.eclipse.cdt.ui.deleteConfigsCommand"
+          name="%deleteConfigsCommand.name">
+    </command>
+    <command
+          id="org.eclipse.cdt.ui.excludeCommand"
+          name="%excludeCommand.name">
+    </command>
+ </extension>
+ <extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="org.eclipse.cdt.internal.ui.actions.DeleteResConfigsHandler"
+          commandId="org.eclipse.cdt.ui.deleteConfigsCommand">
+    </handler>
+    <handler
+          class="org.eclipse.cdt.internal.ui.actions.ExcludeFromBuildHandler"
+          commandId="org.eclipse.cdt.ui.excludeCommand">
+    </handler>
+ </extension>
+ <extension
+       point="org.eclipse.ui.menus">
+    <menuContribution
+          locationURI="popup:org.eclipse.ui.popup.any?endof=buildGroup">
+       <menu
+             id="org.eclipse.cdt.ui.buildConfigContributionM"
+             label="%ResourceConfigurations.menu">
+            <visibleWhen
+                  checkEnabled="false">
+              <with variable="activeMenuSelection">
+		         <iterate ifEmpty="false">
+		         	<or>
+			            <adapt type="org.eclipse.core.resources.IFile">
+				            <test
+				                  property="org.eclipse.core.resources.projectNature"
+				                  value="org.eclipse.cdt.core.cnature"/>
+			            </adapt>
+			            <adapt type="org.eclipse.core.resources.IFolder">
+				            <test
+				                  property="org.eclipse.core.resources.projectNature"
+				                  value="org.eclipse.cdt.core.cnature"/>
+			            </adapt>
+			        </or> 
+		         </iterate>
+              </with>
+            </visibleWhen>
+       </menu>
+    </menuContribution>
+    <menuContribution
+          locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+       <menu
+             id="org.eclipse.cdt.ui.buildConfigContributionM"
+             label="%ResourceConfigurations.menu">
+            <visibleWhen
+                  checkEnabled="false">
+	   		  <with variable="activeMenuEditorInput">
+ 				<iterate ifEmpty="false">
+		            <adapt type="org.eclipse.core.resources.IFile">
+			            <test
+			                  property="org.eclipse.core.resources.projectNature"
+			                  value="org.eclipse.cdt.core.cnature"/>
+		            </adapt>
+		   		</iterate>
+	   		  </with>
+            </visibleWhen>
+       </menu>
+    </menuContribution>
+    <menuContribution
+          locationURI="popup:org.eclipse.cdt.ui.buildConfigContributionM">
+       <command
+             commandId="org.eclipse.cdt.ui.excludeCommand"
+             id="org.eclipse.cdt.ui.excludeCommand.menu"
+             label="%ExcludeAction.label"
+             style="push">
+       </command>
+       <command
+             commandId="org.eclipse.cdt.ui.deleteConfigsCommand"
+             id="org.eclipse.cdt.ui.deleteConfigsCommand.menu"
+             label="%DeleteRcConfigAction.label"
+             style="push">
+       </command>
+    </menuContribution>
+ </extension>
 </plugin>

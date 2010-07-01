@@ -59,7 +59,7 @@ public interface INodeFactory {
 	
 	public IASTCompoundStatement newCompoundStatement();
 	
-	public IASTConditionalExpression newConditionalExpession(IASTExpression expr1, IASTExpression expr2, IASTExpression expr3);
+	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative);
 
 	public IASTContinueStatement newContinueStatement();
 

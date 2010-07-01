@@ -9,7 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     Nokia - converted from action to handler
  *******************************************************************************/
-package org.eclipse.cdt.ui.actions;
+package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,11 +53,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 
 /**
  * Handler for command that excludes resources from build.
- * @since 5.3
  */
 public class ExcludeFromBuildHandler extends AbstractHandler {
 

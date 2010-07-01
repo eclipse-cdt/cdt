@@ -44,6 +44,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.DeleteResConfigsHandler;
 
 /**
  * Action which deletes resource description. (If resource description is missing

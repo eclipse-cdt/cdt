@@ -47,6 +47,7 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.ExcludeFromBuildHandler;
 
 /**
  * Action which excludes resources from build.

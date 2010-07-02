@@ -218,7 +218,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			boolean released = false;
 			try {
 				// If the description is already loaded and has been modified externally, reload it
-				load |= checkExternalModification();
+				checkExternalModification();
 
 				// Acquire the (de)serializing lock
 				serializingLock.acquire();

@@ -3888,10 +3888,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return fullPath;
 	}
 
+	/**
+	 * Returns a string representing the workspace relative path with ${workspace_loc: stripped
+	 * or null if the String path doesn't contain workspace_log
+	 * @param path String path to have workspace_loc removed
+	 * @return workspace path or null
+	 */
 	public static String locationToFullPath(String path){
+		path = path.trim();
 		if(!path.startsWith("${"))  //$NON-NLS-1$
 			return null;
-		int index = path.lastIndexOf('}');
+		final int index = path.lastIndexOf('}');
 		if(index == -1)
 			return null;
 
@@ -3907,6 +3914,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				result = "/"; //$NON-NLS-1$
 			}
+			// If the user has a path like ${workspace_loc:/thing}/other/thing
+			// ensure we return /thing/other/thing
+			if (index < path.length() - 1)
+				result += path.substring(index + 1);
 		}
 
 		return result;

@@ -20,58 +20,50 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 /**
  * @author jcamelon
  */
-public class CPPASTProblemTypeId extends CPPASTTypeId implements IASTProblemTypeId {
-	private IASTProblem problem;
-    
+public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProblemTypeId {
     public CPPASTProblemTypeId() {
 	}
 
 	public CPPASTProblemTypeId(IASTProblem problem) {
-		setProblem(problem);
+		super(problem);
 	}
 
-	@Override
 	public CPPASTProblemTypeId copy() {
-		IASTProblem problem = getProblem();
-		IASTDeclSpecifier declSpec = getDeclSpecifier();
-		IASTDeclarator absDecl = getAbstractDeclarator();
-		
 		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
-		copy.setProblem(problem == null ? null : problem.copy());
-		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy());
-		copy.setAbstractDeclarator(absDecl == null ? null : absDecl.copy());
-		
-		copy.setOffsetAndLength(this);
+		copyBaseProblem(copy);
 		return copy;
 	}
 	
-	public IASTProblem getProblem() {
-        return problem;
-    }
-    
-    public void setProblem(IASTProblem p) {
-        assertNotFrozen();
-        problem = p;
-        if (p != null) {
-			p.setParent(this);
-			p.setPropertyInParent(PROBLEM);
-		}
-    }
-
     @Override
 	public final boolean accept (ASTVisitor action) {
-        if (action.shouldVisitProblems) {
-		    switch (action.visit(getProblem())) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
-		    switch (action.leave(getProblem())) {
-	            case ASTVisitor.PROCESS_ABORT: return false;
-	            case ASTVisitor.PROCESS_SKIP: return true;
-	            default: break;
-	        }
-		}
+    	if (action.shouldVisitTypeIds) {
+		    switch (action.visit(this)) {
+            case ASTVisitor.PROCESS_ABORT: return false;
+            case ASTVisitor.PROCESS_SKIP: return true;
+            default: break;
+        }
+		    
+		// Visits the problem
+		if (!super.accept(action))
+			return false;
+    	
+        if (action.shouldVisitTypeIds && action.leave(this) == ASTVisitor.PROCESS_ABORT) 
+        	return false;
+    	}
         return true;
     }
+
+	public IASTDeclSpecifier getDeclSpecifier() {
+		return null;
+	}
+
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+	}
+
+	public IASTDeclarator getAbstractDeclarator() {
+		return null;
+	}
+
+	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
+	}
 }

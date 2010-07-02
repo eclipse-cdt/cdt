@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -3532,24 +3533,38 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
-	// struct B {
-	// virtual ~B() { }
-	// };
-	// struct D : B {
-	// ~D() { }
-	// };
-	// D D_object;
-	// typedef B B_alias;
-	// B* B_ptr = &D_object;
-	// void f() {
-	// D_object.B::~B(); // calls B's destructor
-	// B_ptr->~B(); //calls D's destructor
-	// B_ptr->~B_alias(); // calls D's destructor
-	// B_ptr->B_alias::~B(); // calls B's destructor
-	// B_ptr->B_alias::~B_alias(); // error, no B_alias in class B
-	// }
+	//	struct B {
+	//		virtual ~B() { }
+	//	};
+	//	struct D : B {
+	//		~D() { }
+	//	};
+	//	D D_object;
+	//	typedef B B_alias;
+	//	B* B_ptr = &D_object;
+	//	void f() {
+	//		D_object.B::~B(); //1            // calls B's destructor
+	//		B_ptr->~B(); //2                 // calls D's destructor
+	//		B_ptr->~B_alias(); //3           // calls D's destructor
+	//		B_ptr->B_alias::~B(); //4        // calls B's destructor
+	//		B_ptr->B_alias::~B_alias(); //5  // error, no B_alias in class B
+	//	}
 	public void test12_4s12() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
+		final String code = getAboveComment();
+		parse(code, ParserLanguage.CPP, false, 0);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPFunction dtor= bh.assertNonProblem("~B() {", 2);
+		
+		ICPPFunction d= bh.assertNonProblem("~B(); //1", 2);
+		assertSame(dtor, d);
+		d= bh.assertNonProblem("~B(); //2", 2);
+		assertSame(dtor, d);
+		d= bh.assertNonProblem("~B_alias(); //3", 8);
+		assertSame(dtor, d);
+		d= bh.assertNonProblem("~B(); //4", 2);
+		assertSame(dtor, d);
+		
+		bh.assertProblem("~B_alias(); //5", 8);
 	}
 
 	// void* operator new(size_t, void* p) { return p; }

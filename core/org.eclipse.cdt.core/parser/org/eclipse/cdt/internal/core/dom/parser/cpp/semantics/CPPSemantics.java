@@ -165,6 +165,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
@@ -228,7 +229,7 @@ public class CPPSemantics {
 		if (name instanceof CPPASTNameBase) {
 			((CPPASTNameBase) name).incResolutionDepth();
 		}
-
+		
 		// 1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData(name, true);
 		
@@ -818,6 +819,10 @@ public class CPPSemantics {
 		if (data.astName == null) 
 			return;
 
+		if (start == null && lookupDestructor(data, start)) {
+			return;
+		}
+		
 		ICPPScope nextScope= null;
 		ICPPTemplateScope nextTmplScope= null;
 		if (start instanceof ICPPScope) {
@@ -930,6 +935,81 @@ public class CPPSemantics {
 				nextScope= getParentScope(scope, data.tu);
 			}
 		}
+	}
+
+	private static boolean lookupDestructor(LookupData data, IScope start) throws DOMException {
+		IASTName typeDtorName= data.astName;
+		final char[] typeDtorChars= typeDtorName.getSimpleID();
+		if (typeDtorChars.length == 0 || typeDtorChars[0] != '~') 
+			return false;
+		
+		// Assume class C; typedef C T;
+		// When looking up ~T the strategy is to lookup T::~C in two steps:
+		// * First resolve 'T', then compute '~C' and resolve it.
+		CPPASTQualifiedName syntheticName= new CPPASTQualifiedName();
+		IASTNode parent= typeDtorName.getParent();
+		if (parent instanceof ICPPASTQualifiedName) {
+			ICPPASTQualifiedName dqname= (ICPPASTQualifiedName) parent;
+			if (dqname.getLastName() != data)
+				return false;
+
+			syntheticName.setFullyQualified(dqname.isFullyQualified());
+			IASTName[] children = dqname.getNames();
+			for (IASTName child : children) {
+				if (child != data) {
+					final IASTName childCopy = child.copy();
+					childCopy.setBinding(child.resolveBinding());
+					syntheticName.addName(childCopy);
+				}
+			}
+			syntheticName.setOffsetAndLength((ASTNode) parent);
+			syntheticName.setParent(parent.getParent());
+			syntheticName.setPropertyInParent(parent.getPropertyInParent());
+		} else {
+			syntheticName.setOffsetAndLength((ASTNode) typeDtorName);
+			syntheticName.setParent(parent);
+			syntheticName.setPropertyInParent(typeDtorName.getPropertyInParent());
+		}
+		char[] tchars= new char[typeDtorChars.length-1];
+		System.arraycopy(typeDtorChars, 1, tchars, 0, tchars.length);
+
+		final CPPASTName typeName = new CPPASTName(tchars);
+		typeName.setOffsetAndLength((ASTNode) typeDtorName);
+		syntheticName.addName(typeName);
+
+		final CPPASTName classDtorName = new CPPASTName(typeDtorChars);
+		classDtorName.setOffsetAndLength((ASTNode) typeDtorName);
+		syntheticName.addName(classDtorName);
+		
+		IBinding type= resolveBinding(typeName);
+		if (!(type instanceof ITypedef)) 
+			return false;
+		
+		IType t= SemanticUtil.getNestedType((ITypedef) type, TDEF);
+		if (t instanceof ICPPUnknownBinding || t instanceof IProblemBinding ||
+				!(t instanceof ICPPClassType)) {
+			return false;
+		}
+		
+		ICPPClassType classType= (ICPPClassType) t;
+		final IScope scope = ((ICPPClassType) t).getCompositeScope();
+		if (scope == null) {
+			return false;
+		}
+		
+		char[] classChars= classType.getNameCharArray();
+		char[] classDtorChars= new char[classChars.length+1];
+		classDtorChars[0]= '~';
+		System.arraycopy(classChars, 0, classDtorChars, 1, classChars.length);
+		classDtorName.setName(classDtorChars);
+		
+		data.astName = classDtorName;
+		try {
+			lookup(data, scope);
+		} finally {
+			data.astName= typeDtorName;
+		}
+		return true;
 	}
 
 	/**

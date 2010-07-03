@@ -128,11 +128,14 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, true));
+		GridData gd = (GridData) usercomp.getLayoutData();
+		// Discourage settings entry table from trying to show all its items at once, see bug 264330
+		gd.heightHint =1;
 		
 		// Create the sash form
 		sashForm = new SashForm(usercomp, SWT.NONE);
 		sashForm.setOrientation(SWT.HORIZONTAL);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		sashForm.setLayoutData(gd);
 		

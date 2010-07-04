@@ -35,18 +35,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.cdt.internal.ui.newui.Messages;
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectContentsArea {
-	private static final String ERROR_INVALID_PATH = UIMessages.getString("ProjectContentsArea.3"); //$NON-NLS-1$
-	private static final String ERROR_PATH_EMPTY = UIMessages.getString("ProjectContentsArea.4"); //$NON-NLS-1$
-	private static final String ERROR_NOT_ABSOLUTE = UIMessages.getString("ProjectContentsArea.6"); //$NON-NLS-1$
-	private static final String ERROR_NOT_VALID = UIMessages.getString("ProjectContentsArea.7");  //$NON-NLS-1$
-	private static final String ERROR_CANNOT_CREATE = UIMessages.getString("ProjectContentsArea.8");  //$NON-NLS-1$
-	private static final String ERROR_FILE_EXISTS = UIMessages.getString("ProjectContentsArea.9"); //$NON-NLS-1$
+	private static final String ERROR_INVALID_PATH = Messages.ProjectContentsArea_3; 
+	private static final String ERROR_PATH_EMPTY = Messages.ProjectContentsArea_4; 
+	private static final String ERROR_NOT_ABSOLUTE = Messages.ProjectContentsArea_6; 
+	private static final String ERROR_NOT_VALID = Messages.ProjectContentsArea_7;  
+	private static final String ERROR_CANNOT_CREATE = Messages.ProjectContentsArea_8;  
+	private static final String ERROR_FILE_EXISTS = Messages.ProjectContentsArea_9; 
 	
-	private static final String BROWSE_LABEL = UIMessages.getString("ProjectContentsArea.0"); //$NON-NLS-1$
+	private static final String BROWSE_LABEL = Messages.ProjectContentsArea_0; 
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	private static final String FILE_SCHEME = "file"; //$NON-NLS-1$
 	private Label locationLabel;
@@ -83,7 +85,7 @@ public class ProjectContentsArea {
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(UIMessages.getString("ProjectContentsArea.1")); //$NON-NLS-1$
+		useDefaultsButton.setText(Messages.ProjectContentsArea_1); 
 		useDefaultsButton.setSelection(defaultEnabled);
 		GridData buttonData = new GridData();
 		buttonData.horizontalSpan = 4;
@@ -128,7 +130,7 @@ public class ProjectContentsArea {
 	private void createUserEntryArea(Composite composite, boolean defaultEnabled) {
 		// location label
 		locationLabel = new Label(composite, SWT.NONE);
-		locationLabel.setText(UIMessages.getString("ProjectContentsArea.2")); //$NON-NLS-1$
+		locationLabel.setText(Messages.ProjectContentsArea_2); 
 
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
@@ -222,7 +224,7 @@ public class ProjectContentsArea {
 		}
 
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
-		dialog.setMessage(UIMessages.getString("ProjectContentsArea.5")); //$NON-NLS-1$
+		dialog.setMessage(Messages.ProjectContentsArea_5); 
 		dialog.setFilterPath(dirName);
 		selectedDirectory = dialog.open();
 

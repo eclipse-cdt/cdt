@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -81,7 +83,7 @@ public class EnvDialog extends Dialog {
 		GridData gd;
 		
 		Label l1 = new Label(c, SWT.NONE);
-		l1.setText(UIMessages.getString("EnvDialog.0")); //$NON-NLS-1$
+		l1.setText(Messages.EnvDialog_0); 
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		text1 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -93,7 +95,7 @@ public class EnvDialog extends Dialog {
 			public void modifyText(ModifyEvent e) { setButtons(); }});
 		
 		Label l2 = new Label(c, SWT.NONE);
-		l2.setText(UIMessages.getString("EnvDialog.1")); //$NON-NLS-1$
+		l2.setText(Messages.EnvDialog_1); 
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		text2 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -104,7 +106,7 @@ public class EnvDialog extends Dialog {
 			public void modifyText(ModifyEvent e) { setButtons(); }});
 
 		final Button b = new Button(c, SWT.PUSH);
-		b.setText(UIMessages.getString("EnvDialog.2")); //$NON-NLS-1$
+		b.setText(Messages.EnvDialog_2); 
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -119,7 +121,7 @@ public class EnvDialog extends Dialog {
 		b.setLayoutData(gd);
 		
 		b_add2all = new Button(c, SWT.CHECK);
-		b_add2all.setText(UIMessages.getString("EnvDialog.3")); //$NON-NLS-1$
+		b_add2all.setText(Messages.EnvDialog_3); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		if (cfgd == null)
 			b_add2all.setVisible(false);

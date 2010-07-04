@@ -24,6 +24,8 @@ import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -31,18 +33,18 @@ public class SymbolTab extends AbstractLangsListTab {
     @Override
 	public void additionalTableSet() {
     	TableColumn tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(UIMessages.getString("SymbolTab.0")); //$NON-NLS-1$
+    	tc.setText(Messages.SymbolTab_0); 
     	tc.setWidth(80);
-    	tc.setToolTipText(UIMessages.getString("SymbolTab.0")); //$NON-NLS-1$
+    	tc.setToolTipText(Messages.SymbolTab_0); 
     	tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(UIMessages.getString("SymbolTab.1")); //$NON-NLS-1$
+    	tc.setText(Messages.SymbolTab_1); 
     	tc.setWidth(130);
-    	tc.setToolTipText(UIMessages.getString("SymbolTab.1")); //$NON-NLS-1$
+    	tc.setToolTipText(Messages.SymbolTab_1); 
     	table.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {                       
                     @Override
 					public void getName(AccessibleEvent e) {
-                            e.result = UIMessages.getString("SymbolTab.0"); //$NON-NLS-1$
+                            e.result = Messages.SymbolTab_0; 
                     }
                 }
 		  );
@@ -52,7 +54,7 @@ public class SymbolTab extends AbstractLangsListTab {
 	public ICLanguageSettingEntry doAdd() {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), true,
-				UIMessages.getString("SymbolTab.2"), EMPTY_STR, EMPTY_STR, getResDesc()); //$NON-NLS-1$
+				Messages.SymbolTab_2, EMPTY_STR, EMPTY_STR, getResDesc()); 
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
@@ -65,7 +67,7 @@ public class SymbolTab extends AbstractLangsListTab {
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), false,
-				UIMessages.getString("SymbolTab.3"), ent.getName(),  //$NON-NLS-1$
+				Messages.SymbolTab_3, ent.getName(),  
 				ent.getValue(), getResDesc());
 		if (dlg.open())
 			return new CMacroEntry(dlg.text1, dlg.text2, 0);

@@ -22,6 +22,8 @@ import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * This class provides UI for the {@link ICSettingEntry#INCLUDE_FILE}
  * option type.
@@ -38,21 +40,20 @@ public class IncludeFileTab extends AbstractLangsListTab {
 	@Override
 	public void additionalTableSet() {
 		columnToFit = new TableColumn(table, SWT.NONE);
-		columnToFit.setText(UIMessages.getString("IncludeFileTab.0")); //$NON-NLS-1$
-		columnToFit.setToolTipText(UIMessages.getString("IncludeFileTab.0")); //$NON-NLS-1$
+		columnToFit.setText(Messages.IncludeFileTab_0); 
+		columnToFit.setToolTipText(Messages.IncludeFileTab_0); 
 		showBIButton.setSelection(true);
 		table.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = UIMessages.getString("IncludeFileTab.0"); //$NON-NLS-1$
+				e.result = Messages.IncludeFileTab_0; 
 			}
 		});
 	}
 
 	@Override
 	public ICLanguageSettingEntry doAdd() {
-		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.NEW_FILE, UIMessages
-				.getString("IncludeFileTab.1"), //$NON-NLS-1$
+		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.NEW_FILE, Messages.IncludeFileTab_1,
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0) {
 			toAllCfgs = dlg.check1;
@@ -69,7 +70,7 @@ public class IncludeFileTab extends AbstractLangsListTab {
 	@Override
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(usercomp.getShell(), IncludeDialog.OLD_FILE,
-				UIMessages.getString("IncludeFileTab.2"), //$NON-NLS-1$
+				Messages.IncludeFileTab_2, 
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open()) {

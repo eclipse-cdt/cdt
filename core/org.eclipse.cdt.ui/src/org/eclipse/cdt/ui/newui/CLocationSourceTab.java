@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -29,7 +31,7 @@ public class CLocationSourceTab extends CLocationTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		label.setText(UIMessages.getString("CLocationSourceTab.0"));  //$NON-NLS-1$
+		label.setText(Messages.CLocationSourceTab_0);  
 	}
 	
 	@Override

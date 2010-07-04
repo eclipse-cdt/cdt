@@ -23,6 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationManager;
 
 /**
@@ -122,13 +123,13 @@ public class CDTPrefUtil {
 			setInt(KEY_DMODE, DMODE_CONJUNCTION);
 			// fallthrough
 		case DMODE_CONJUNCTION:
-			s = UIMessages.getString("EnvironmentTab.17");  //$NON-NLS-1$
+			s = Messages.EnvironmentTab_17;  
 			break;
 		case DMODE_DISJUNCTION:
-			s = UIMessages.getString("EnvironmentTab.18");  //$NON-NLS-1$
+			s = Messages.EnvironmentTab_18;  
 			break;
 		}
-		return UIMessages.getString("EnvironmentTab.19") + s;  //$NON-NLS-1$
+		return Messages.EnvironmentTab_19 + s;  
 	}
 	
 	@SuppressWarnings("fallthrough")
@@ -139,13 +140,13 @@ public class CDTPrefUtil {
 			setInt(KEY_WMODE, WMODE_MODIFY);
 			// fallthrough
 		case WMODE_MODIFY:
-			s = UIMessages.getString("EnvironmentTab.24");  //$NON-NLS-1$
+			s = Messages.EnvironmentTab_24;  
 			break;
 		case WMODE_REPLACE:
-			s = UIMessages.getString("EnvironmentTab.21");  //$NON-NLS-1$
+			s = Messages.EnvironmentTab_21;  
 			break;
 		}
-		return UIMessages.getString("EnvironmentTab.22") + s;  //$NON-NLS-1$
+		return Messages.EnvironmentTab_22 + s;  
 	}
 	
 	public static void spinDMode() {

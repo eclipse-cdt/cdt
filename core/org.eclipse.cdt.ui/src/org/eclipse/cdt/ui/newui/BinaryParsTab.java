@@ -49,6 +49,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -133,7 +134,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 
 		Composite c1 = new Composite(sashForm, SWT.NONE);
 		c1.setLayout(new GridLayout(2, false));
-		setupLabel(c1, UIMessages.getString("BinaryParsTab.0"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		setupLabel(c1, Messages.BinaryParsTab_0, 2, GridData.FILL_HORIZONTAL); 
 		table = new Table(c1, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.addSelectionListener(new SelectionAdapter() {

@@ -25,11 +25,13 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ManageConfigRunner implements IConfigManager {
-	private static final String MANAGE_TITLE = UIMessages.getString("ManageConfigDialog.0");  //$NON-NLS-1$
+	private static final String MANAGE_TITLE = Messages.ManageConfigDialog_0;  
 
 	protected static ManageConfigRunner instance = null;
 	

@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * This class is intended to handle  
  * 
@@ -140,7 +142,7 @@ public class CDTPropertyManager {
 		try {
 			CoreModel.getDefault().setProjectDescription(project, prjd);
 		} catch (CoreException e) {
-			CUIPlugin.getDefault().logErrorMessage(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
+			CUIPlugin.getDefault().logErrorMessage(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
 		}
 		
 		if (pages.size() == 0) {

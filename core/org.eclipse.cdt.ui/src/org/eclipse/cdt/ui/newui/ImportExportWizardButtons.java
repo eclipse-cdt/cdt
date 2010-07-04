@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsExportWizard;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImportWizard;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsWizard;
@@ -49,7 +50,7 @@ public class ImportExportWizardButtons {
 		comp.setLayoutData(data);
 		
 		Button importButton = new Button(comp, SWT.NONE);
-		importButton.setText(UIMessages.getString("IncludeTab.import")); //$NON-NLS-1$
+		importButton.setText(Messages.IncludeTab_import); 
 		importButton.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_IMPORT_SETTINGS));
 		importButton.addSelectionListener(new SelectionAdapter() {
 			@Override public void widgetSelected(SelectionEvent e) {
@@ -62,7 +63,7 @@ public class ImportExportWizardButtons {
 		});
 		
 		Button exportButton = new Button(comp, SWT.NONE);
-		exportButton.setText(UIMessages.getString("IncludeTab.export")); //$NON-NLS-1$
+		exportButton.setText(Messages.IncludeTab_export); 
 		exportButton.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_EXPORT_SETTINGS));
 		exportButton.addSelectionListener(new SelectionAdapter() {
 			@Override public void widgetSelected(SelectionEvent e) {

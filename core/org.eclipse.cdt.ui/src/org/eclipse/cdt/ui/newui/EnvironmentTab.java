@@ -59,6 +59,8 @@ import org.eclipse.cdt.internal.core.envvar.EnvVarDescriptor;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -113,7 +115,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				return td.var.getName();
 			case 1:
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					return UIMessages.getString("EnvironmentTab.20"); //$NON-NLS-1$
+					return Messages.EnvironmentTab_20; 
 				return td.var.getValue();
 			case 2:
 				return ce.getOrigin(td.var);
@@ -155,7 +157,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(3, true));
 		Label l1 = new Label(usercomp, SWT.LEFT);
-		l1.setText(UIMessages.getString("EnvironmentTab.0")); //$NON-NLS-1$
+		l1.setText(Messages.EnvironmentTab_0); 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		l1.setLayoutData(gd);
@@ -188,14 +190,14 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		tv.setLabelProvider(new EnvironmentLabelProvider(true));
 		// add headers
 		TableColumn tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(UIMessages.getString("EnvironmentTab.1")); //$NON-NLS-1$
+		tc.setText(Messages.EnvironmentTab_1); 
 		tc.setWidth(150);
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText(UIMessages.getString("EnvironmentTab.2")); //$NON-NLS-1$
+		tc.setText(Messages.EnvironmentTab_2); 
 		tc.setWidth(150);
 		if (this.getResDesc() != null) {
 			tc = new TableColumn(table, SWT.LEFT);
-			tc.setText(UIMessages.getString("EnvironmentTab.16"));  //$NON-NLS-1$
+			tc.setText(Messages.EnvironmentTab_16);  
 			tc.setWidth(100);
 		}
 		                    
@@ -204,8 +206,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    table.setLayoutData(gd);
 	    
 	    b1 = new Button(usercomp, SWT.RADIO);
-	    b1.setText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
-	    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
+	    b1.setText(Messages.EnvironmentTab_3); 
+	    b1.setToolTipText(Messages.EnvironmentTab_3); 
 	    gd = new GridData(GridData.FILL_HORIZONTAL);
 	    gd.horizontalSpan = 3; 
 	    b1.setLayoutData(gd);
@@ -220,8 +222,8 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			}});
 
 	    b2 = new Button(usercomp, SWT.RADIO);
-	    b2.setText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
-	    b2.setToolTipText(UIMessages.getString("EnvironmentTab.4")); //$NON-NLS-1$
+	    b2.setText(Messages.EnvironmentTab_4); 
+	    b2.setToolTipText(Messages.EnvironmentTab_4); 
 	    gd = new GridData(GridData.FILL_HORIZONTAL);
 	    gd.horizontalSpan = 3; 
 	    b2.setLayoutData(gd);
@@ -241,7 +243,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    	
 	    	lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
 	    	lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    	lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
+	    	lb1.setToolTipText(Messages.EnvironmentTab_15); 
 	    	lb1.addMouseListener(new MouseAdapter() {
 	    		@Override
 	    		public void mouseDoubleClick(MouseEvent e) {
@@ -251,7 +253,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 	    	lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
 	    	lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    	lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
+	    	lb2.setToolTipText(Messages.EnvironmentTab_23); 
 	    	lb2.addMouseListener(new MouseAdapter() {
 	    		@Override
 	    		public void mouseDoubleClick(MouseEvent e) {
@@ -259,7 +261,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    			updateLbs(null, lb2);
 	    		}});
 	    }
-	    initButtons(new String[] {UIMessages.getString("EnvironmentTab.5"),UIMessages.getString("EnvironmentTab.6"),UIMessages.getString("EnvironmentTab.7"),UIMessages.getString("EnvironmentTab.8"),UIMessages.getString("EnvironmentTab.9")}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	    initButtons(new String[] {Messages.EnvironmentTab_5,Messages.EnvironmentTab_6,Messages.EnvironmentTab_7,Messages.EnvironmentTab_8,Messages.EnvironmentTab_9}); 
 	}
 	
 	@Override
@@ -367,13 +369,13 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private class MyListSelectionDialog extends ListSelectionDialog {
 		public boolean toAll = false;
 	    public MyListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider) {
-	        super(parentShell, input, contentProvider, new LabelProvider() {}, UIMessages.getString("EnvironmentTab.12")); //$NON-NLS-1$
+	        super(parentShell, input, contentProvider, new LabelProvider() {}, Messages.EnvironmentTab_12); 
 	    }
 	    @Override
 		protected Control createDialogArea(Composite parent) {
 	    	Composite composite = (Composite) super.createDialogArea(parent);
 	    	Button b = new Button(composite, SWT.CHECK);
-	    	b.setText(UIMessages.getString("EnvironmentTab.13")); //$NON-NLS-1$
+	    	b.setText(Messages.EnvironmentTab_13); 
 	    	b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    	if (cfgd == null)
 	    		b.setVisible(false);
@@ -393,7 +395,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		IEnvironmentVariable var = ((TabData)tv.getElementAt(n)).var;
 		EnvDialog dlg = new EnvDialog(usercomp.getShell(), 
 				var, 
-				UIMessages.getString("EnvironmentTab.11"),  //$NON-NLS-1$ 
+				Messages.EnvironmentTab_11,  
 				false,
 				page.isMultiCfg(),
 				cfgd);
@@ -456,7 +458,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		IEnvironmentVariable var = null;
 		EnvDialog dlg = new EnvDialog(usercomp.getShell(), 
 				var, 
-				UIMessages.getString("EnvironmentTab.10"), //$NON-NLS-1$ 
+				Messages.EnvironmentTab_10, 
 				true,
 				page.isMultiCfg(),
 				cfgd);
@@ -500,7 +502,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		Map<?,?> v = EnvironmentReader.getEnvVars();
 		MyListSelectionDialog dialog = new MyListSelectionDialog(usercomp.getShell(), v, createSelectionDialogContentProvider());
 		
-		dialog.setTitle(UIMessages.getString("EnvironmentTab.14")); //$NON-NLS-1$
+		dialog.setTitle(Messages.EnvironmentTab_14); 
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			ICConfigurationDescription[] cfgs;

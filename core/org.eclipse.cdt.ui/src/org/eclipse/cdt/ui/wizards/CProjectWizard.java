@@ -18,7 +18,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.ui.newui.UIMessages;
+
+import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * The wizard to create new MBS C Project.
@@ -26,8 +27,7 @@ import org.eclipse.cdt.ui.newui.UIMessages;
 public class CProjectWizard extends CDTCommonProjectWizard {
 
 	public CProjectWizard() {
-		super(UIMessages.getString("NewModelProjectWizard.4"),  //$NON-NLS-1$
-			  UIMessages.getString("NewModelProjectWizard.5")); //$NON-NLS-1$
+		super(Messages.NewModelProjectWizard_4, Messages.NewModelProjectWizard_5);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class CProjectWizard extends CDTCommonProjectWizard {
 		}
 		
 		try {
-			continueCreationMonitor.beginTask(UIMessages.getString("CProjectWizard.0"), 1); //$NON-NLS-1$
+			continueCreationMonitor.beginTask(Messages.CProjectWizard_0, 1);
 			CProjectNature.addCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
 		} catch (CoreException e) {}
 		finally {continueCreationMonitor.done();}

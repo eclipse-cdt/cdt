@@ -7,8 +7,8 @@ pre				{ font-family: Courier, monospace}
 /* end font face declarations */
 
 /* following font size declarations should be OK for DBCS */
-body, h1, h2, h3, h4, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-size: 10pt; }
-pre				{ font-size: 10pt}
+body, h1, h2, h3, h4, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-size: 12pt; }
+pre				{ font-size: 12pt}
 
 /* end font size declarations */
 
@@ -18,7 +18,7 @@ h2           { font-size: 14pt; margin-top: 25; margin-bottom: 3 }
 h3           { font-size: 11pt; margin-top: 20; margin-bottom: 3 }
 h4           { font-size: 10pt; margin-top: 20; margin-bottom: 3; font-style: italic }
 h5           { font size: 13.5pt; }
-p 	     { font-size: 10pt; }
+p 	     { font-size: 12pt; }
 pre	     { margin-left: 6; font-size: 9pt }
 
 a:link { color: #006699 }

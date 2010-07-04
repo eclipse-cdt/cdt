@@ -15,57 +15,97 @@
 <p>The debugger lets you control the execution of your program by setting 
 breakpoints, suspending executed programs, stepping through your code, and 
 examining the contents of variables.</p>
-<p>To debug a project:</p>
+<h2>To debug a project:</h2>
 <ol>
-  <li>Click <strong>Run  &gt; Debug Configurations...</strong>.<p>The Debug Configurations dialog opens.</li>
-  <li>Double-click <strong>C/C++  Application</strong>.</li>
-  <li>In the <strong>Name</strong> field, type <strong>Hello World</strong>.</li>
-  <p>You can now select this debug launch configuration by name the next time 
-  that you debug this project.</p>
-  <li>In the <strong>Project</strong> box, type or choose your project, e.g. <strong>HelloWorld</strong>.   
-  <br> 
-  Your executable should be selected under "C/C++ Application."
-  <br>If not, the <strong>Search Project</strong> button should find the executable in the project.
-  <p>&nbsp;</p>
+  <li>Click the <strong>Run  &gt; Debug Configurations...</strong> menu option.<br>
+      <br>
+      <p>The <strong>Debug</strong> <strong>Configurations</strong> dialog opens.<br>
+              <br>
+                <img src="../images/cdt_w_debug_configurations_01.png" width="873" height="662"><br>
+      <br>
   </li>
-  <ul>
-  <li>If you see the error "[Debugger]: No debugger available", select the Debugger tab
-  and choose a valid debugger for your platform (e.g. gdb/mi).
-  </li>
-  </ul>
+  <li>Double-click <strong>C/C++  Application</strong> to create a new launch configuration.<br>
+          <br>
+            <img src="../images/cdt_w_debug_configurations_02.png" width="763" height="601"><br>
+      <br>
+      <p>If a project is selected in the <a href="../reference/cdt_u_project_explorer_view.htm">Project Explorer</a> view the following data is automatically entered, take a moment to verify its accuracy or change as needed.      <br>
+          <br>
+      </p>
+      <ol type="a">
+          <li>In the <strong>Name</strong> edit box, type the project name, like <strong>Hello World</strong>.<br>
+              <br>
+              You can now select this debug launch configuration by name the next time 
+              that you debug this project.<br>
+              <br>
+          </li>
+          <li>In the <strong>C/C++ Application</strong> edit box, type the name of the executable if its not already entered. <br>
+              <br>
+              If not, click the <strong>Search Project</strong> button to locate the executable in the project.<br>
+              <br>
+          </li>
+          <li>
+                <p>In the <strong>Project</strong> edit box, type or choose your project, e.g. <strong>HelloWorld</strong>.<br>
+                </p>
+              <p>&nbsp;</p>
+              <p><strong>NOTE</strong> If you see the error "<span class="typewriter">[Debugger]: No debugger available</span>", select the <strong>Debugger</strong> tab
+                      and choose a valid debugger for your platform (e.g. <span class="typewriter">gdb/mi</span>). <br>
+                    <br>
+                </p>
+          </li>
+      </ol>
+    </li>
   <li>Click <strong>Debug</strong>.</li>
-  <p>You will be prompted to switch to the Debug Perspective.  Click <strong>Yes</strong></p>
-  <p>You will now see the debug perspective with the hello.exe application window open. 
+  <p>You may be prompted to switch to the <strong>Debug</strong> perspective.  Click <strong>Yes</strong></p>
+  <p>The <strong>Debug</strong> perspective appears with the <span class="typewriter">helloworld.exe</span> application window open. 
   The C/C++ editor repositions in the perspective.</p>
-    <ul>
-  <li>If you see an error in the editor "Can't find source file" you can use the buttons provided
-  to point to your source file, e.g. "Locate File."
-  </li>
-  </ul>
-  <li>In the left margin of the main.cpp window, double-click to set a 
-  breakpoint on:<br>
-  &nbsp;cout &lt;&lt; &quot;You just entered&quot;
-  <br>You'll see an icon there indicating the breakpoint is set.</br>
-  </li>
-  <li>Click <strong>Run  &gt; Resume</strong>.
-  <br>Or, you can use the <strong>Resume</strong> button (green arrow) on the toolbar <em>of the Debug View</em>
-  </li>
-  <li>When prompted, in the Console view, type a value other than 'm', and hit Enter/Return.<br>
-  The breakpoint will be hit.</li>
-  <li>In the <strong>Variables</strong> view, verify that the variable is not 'm'.</li>
-  <li>Click <strong>Run  &gt; Resume</strong>.</li>
-  <li>When prompted, again type a value other than 'm' in the Console view, and press Enter/Return.</li>
-  <p>The breakpoint will be hit.</p>
-  <li>In the <strong>Variables</strong> view, verify that the variable is not 'm'.</li>
-  <li>In the <strong>Variables</strong> view, right-click the input variable, and select <strong>Change Value...</strong> 
-  and type <strong>'m'</strong> <em>between the single quotes</em> and hit <strong>OK</strong>.</li>
-  <li>Click <strong>Run  &gt; Resume</strong>.</li>
-  <p>The output in the hello.exe application window is:<br>
-&nbsp;&quot;You just entered m, you need to enter m to exit.&quot;
-<li>The application terminates and the debug session ends. The debug 
-  perspective remains open.</li>
 </ol>
-
+<blockquote>
+    <p><strong>NOTE</strong> If you see the error "<span class="typewriter">Can't find source file</span>"  in the editor view, use the <strong>Locate File</strong> button
+        to locate your source file.<br>
+      </p>
+</blockquote>
+<ol>
+    <li>In the left margin of the <span class="typewriter">main.cpp</span> window, double-click to set a 
+        breakpoint on:<br>
+        <br>
+        &nbsp;<span class="typewriter">cout &lt;&lt; &quot;You just entered&quot;
+        </span><br>
+        <br>
+        You'll see a blue circle (<img src="../images/icon_breakpoint_obj.gif" alt="Breakpoint" width="16" height="16" align="absmiddle">) there indicating the breakpoint is set.</br>
+        <br>
+        <br>
+    </li>
+    <li>Click <strong>Run  &gt; Resume</strong>.
+        <br>
+        <br>
+        Or, you can use the <strong>Resume</strong> button (<img src="../images/icon_db_resume.png" alt="Resume" width="19" height="14" align="absmiddle">) on the toolbar of the <strong>Debug</strong> view
+        .<br>
+        <br>
+    </li>
+    <li>When prompted, in the <strong>Console</strong> view, type a value other than 'm', and press Enter.<br>
+        <br>
+        The breakpoint will be hit.<br>
+        <br>
+    </li>
+    <li>In the <strong>Variables</strong> view, verify that the variable is not 'm'.<br>
+        <br>
+    </li>
+    <li>Click <strong>Run  &gt; Resume</strong>.<br>
+        <br>
+    </li>
+    <li>When prompted, again type a value other than 'm' in the <a href="../reference/cdt_u_console_view.htm">Console</a> view, and press Enter.</li>
+    <p>The breakpoint will be hit.</p>
+    <li>In the <strong>Variables</strong> view, verify that the variable is not 'm'.<br>
+        <br>
+    </li>
+    <li>In the <strong>Variables</strong> view, right-click the input variable, and select <strong>Change Value...</strong> 
+        and type <strong>'m'</strong> <em>between the single quotes</em> and hit <strong>OK</strong>.<br>
+        <br>
+    </li>
+    <li>Click <strong>Run  &gt; Resume</strong>.</li>
+    <p>The output in the <span class="typewriter">helloworld.exe</span> application window is: &nbsp;&quot;<span class="typewriter">You just entered m, you need to enter m to exit.</span>&quot;
+    <li>The application terminates and the debug session ends. The <strong>Debug</strong>  perspective remains open.</li>
+</ol>
 <p>To learn more about   debugging, see   the related debug conceptual topics.</p>
 
 <p align="left"> <a href="cdt_w_build.htm">

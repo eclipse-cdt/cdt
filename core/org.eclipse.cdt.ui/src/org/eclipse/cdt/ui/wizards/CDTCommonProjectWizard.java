@@ -50,8 +50,8 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.UIMessages;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 
 public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard 
@@ -76,7 +76,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 	private CWizardHandler savedHandler = null;
 
 	public CDTCommonProjectWizard() {
-		this(UIMessages.getString("NewModelProjectWizard.0"),UIMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		this(Messages.NewModelProjectWizard_0,Messages.NewModelProjectWizard_1); 
 	}
 
 	public CDTCommonProjectWizard(String title, String desc) {
@@ -137,11 +137,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		  		IFileInfo f = fs.fetchInfo();
 		  		if (f.exists() && f.isDirectory()) {
 		  			if (fs.getChild(".project").fetchInfo().exists()) { //$NON-NLS-1$
-	                	if (!
-	                		MessageDialog.openConfirm(getShell(), 
-	        				UIMessages.getString("CDTCommonProjectWizard.0"),  //$NON-NLS-1$
-							UIMessages.getString("CDTCommonProjectWizard.1")) //$NON-NLS-1$
-							)
+						if (!MessageDialog.openConfirm(getShell(), Messages.CDTCommonProjectWizard_0, Messages.CDTCommonProjectWizard_1))
 	                		return null;
 	                }
 	                existingPath = true;
@@ -300,7 +296,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 	 */	
 	public IProject createIProject(final String name, final URI location, IProgressMonitor monitor) throws CoreException{
 		
-		monitor.beginTask(UIMessages.getString("CDTCommonProjectWizard.creatingProject"), 100); //$NON-NLS-1$
+		monitor.beginTask(Messages.CDTCommonProjectWizard_creatingProject, 100); 
 		
 		if (newProject != null)	return newProject;
 		

@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -59,7 +61,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		GridData gd;
 		
 		Label l1 = new Label(c, SWT.NONE);
-		l1.setText(UIMessages.getString("SymbolDialog.0")); //$NON-NLS-1$
+		l1.setText(Messages.SymbolDialog_0); 
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt1 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -73,7 +75,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 			}}); 
 		
 		Label l2 = new Label(c, SWT.NONE);
-		l2.setText(UIMessages.getString("SymbolDialog.1")); //$NON-NLS-1$
+		l2.setText(Messages.SymbolDialog_1); 
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt2 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -89,7 +91,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
 			
 		b_add2conf = new Button(c, SWT.CHECK);
-		b_add2conf.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
+		b_add2conf.setText(Messages.IncludeDialog_2); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		b_add2conf.setLayoutData(gd);
@@ -99,7 +101,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		}
 
 		b_add2lang = new Button(c, SWT.CHECK);
-		b_add2lang.setText(UIMessages.getString("IncludeDialog.3")); //$NON-NLS-1$
+		b_add2lang.setText(Messages.IncludeDialog_3); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		b_add2lang.setLayoutData(gd);

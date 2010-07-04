@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,6 +62,7 @@ import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 
 
 /**
@@ -150,7 +152,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 							return name;
 						}
 					}
-					return UIMessages.getFormattedString("ErrorParsTab.error.NonAccessibleID", id); //$NON-NLS-1$
+					return NLS.bind(Messages.ErrorParsTab_error_NonAccessibleID, id); 
 				}
 				return OOPS;
 			}
@@ -306,22 +308,22 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			public IStatus isValid(String newText) {
 				StatusInfo status = new StatusInfo();
 				if (newText.trim().length() == 0) {
-					status.setError(UIMessages.getString("ErrorParsTab.error.NonEmptyName")); //$NON-NLS-1$
+					status.setError(Messages.ErrorParsTab_error_NonEmptyName); 
 				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER)>=0) {
-					String message = MessageFormat.format( UIMessages.getString("ErrorParsTab.error.IllegalCharacter"), //$NON-NLS-1$
+					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter, 
 							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
 					status.setError(message);
 				} else if (fAvailableErrorParsers.containsKey(makeId(newText))) {
-					status.setError(UIMessages.getString("ErrorParsTab.error.NonUniqueID")); //$NON-NLS-1$
+					status.setError(Messages.ErrorParsTab_error_NonUniqueID); 
 				}
 				return status;
 			}
 
 		};
 		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(),
-				UIMessages.getString("ErrorParsTab.title.Add"), //$NON-NLS-1$
-				UIMessages.getString("ErrorParsTab.label.EnterName"), //$NON-NLS-1$
-				UIMessages.getString("ErrorParsTab.label.DefaultRegexErrorParserName"), //$NON-NLS-1$
+				Messages.ErrorParsTab_title_Add, 
+				Messages.ErrorParsTab_label_EnterName, 
+				Messages.ErrorParsTab_label_DefaultRegexErrorParserName, 
 				inputValidator);
 		addDialog.setHelpAvailable(false);
 
@@ -352,9 +354,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			public IStatus isValid(String newText) {
 				StatusInfo status = new StatusInfo();
 				if (newText.trim().length() == 0) {
-					status.setError(UIMessages.getString("ErrorParsTab.error.NonEmptyName")); //$NON-NLS-1$
+					status.setError(Messages.ErrorParsTab_error_NonEmptyName); 
 				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER)>=0) {
-					String message = MessageFormat.format( UIMessages.getString("ErrorParsTab.error.IllegalCharacter"), //$NON-NLS-1$
+					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter, 
 							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
 					status.setError(message);
 				}
@@ -363,8 +365,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 		};
 		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(),
-				UIMessages.getString("ErrorParsTab.title.Edit"), //$NON-NLS-1$
-				UIMessages.getString("ErrorParsTab.label.EnterName"), //$NON-NLS-1$
+				Messages.ErrorParsTab_title_Edit, 
+				Messages.ErrorParsTab_label_EnterName, 
 				errorParser.getName(),
 				inputValidator);
 		addDialog.setHelpAvailable(false);
@@ -486,9 +488,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					ErrorParserManager.setUserDefinedErrorParsers(errorParsers);
 					ErrorParserManager.setDefaultErrorParserIds(checkedErrorParserIds);
 				} catch (BackingStoreException e) {
-					CUIPlugin.log(UIMessages.getString("ErrorParsTab.error.OnApplyingSettings"), e); //$NON-NLS-1$
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e); 
 				} catch (CoreException e) {
-					CUIPlugin.log(UIMessages.getString("ErrorParsTab.error.OnApplyingSettings"), e); //$NON-NLS-1$
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e); 
 				}
 			}
 			initMapParsers();
@@ -534,16 +536,16 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		if (isErrorParsersEditable()) {
 			// Must be Build Settings Preference Page
 			if (MessageDialog.openQuestion(usercomp.getShell(),
-					UIMessages.getString("ErrorParsTab.title.ConfirmReset"), //$NON-NLS-1$
-					UIMessages.getString("ErrorParsTab.message.ConfirmReset"))) { //$NON-NLS-1$
+					Messages.ErrorParsTab_title_ConfirmReset, 
+					Messages.ErrorParsTab_message_ConfirmReset)) { 
 
 				try {
 					ErrorParserManager.setUserDefinedErrorParsers(null);
 					ErrorParserManager.setDefaultErrorParserIds(null);
 				} catch (BackingStoreException e) {
-					CUIPlugin.log(UIMessages.getString("ErrorParsTab.error.OnRestoring"), e); //$NON-NLS-1$
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnRestoring, e); 
 				} catch (CoreException e) {
-					CUIPlugin.log(UIMessages.getString("ErrorParsTab.error.OnRestoring"), e); //$NON-NLS-1$
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnRestoring, e); 
 				}
 			}
 		} else {
@@ -566,7 +568,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					else
 						dynamicPage.performDefaults();
 				} catch (CoreException e) {
-					CUIPlugin.log(UIMessages.getString("ErrorParsTab.error.OnApplyingSettings"), e); //$NON-NLS-1$
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e); 
 				}
 			}
 		}

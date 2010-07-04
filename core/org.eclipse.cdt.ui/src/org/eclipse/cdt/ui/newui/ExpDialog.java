@@ -31,14 +31,16 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ExpDialog extends AbstractPropertyDialog {
 	
-	protected static final String TO_ALL = UIMessages.getString("ExpDialog.5"); //$NON-NLS-1$
-	protected static final String EMPTY_NAME = UIMessages.getString("ExpDialog.8"); //$NON-NLS-1$
-	protected static final String EMPTY_VALUE = UIMessages.getString("ExpDialog.10"); //$NON-NLS-1$
+	protected static final String TO_ALL = Messages.ExpDialog_5; 
+	protected static final String EMPTY_NAME = Messages.ExpDialog_8; 
+	protected static final String EMPTY_VALUE = Messages.ExpDialog_10; 
 	
 	public String[] sel_types = null;
 	public String[] sel_langs = null; 
@@ -94,7 +96,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		c.setLayout(new GridLayout(4, true));
 		
 		Label l1 = new Label(c, SWT.NONE);
-		l1.setText(UIMessages.getString("ExpDialog.6"));  //$NON-NLS-1$
+		l1.setText(Messages.ExpDialog_6);  
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt1 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -108,7 +110,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 			}});
 				
 		Label l2 = new Label(c, SWT.NONE);
-		l2.setText(UIMessages.getString("ExpDialog.7"));  //$NON-NLS-1$
+		l2.setText(Messages.ExpDialog_7);  
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		txt2 = new Text(c, SWT.SINGLE | SWT.BORDER);
@@ -134,7 +136,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
 
 		c_all = new Button(c, SWT.CHECK);
-		c_all.setText(UIMessages.getString("ExpDialog.0")); //$NON-NLS-1$
+		c_all.setText(Messages.ExpDialog_0); 
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		c_all.setLayoutData(gd);
@@ -144,7 +146,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 		b_file = setupButton(c, AbstractCPropertyTab.FILESYSTEMBUTTON_NAME);
 
 		c_wsp = new Button(c, SWT.CHECK);
-		c_wsp.setText(UIMessages.getString("ExpDialog.4")); //$NON-NLS-1$
+		c_wsp.setText(Messages.ExpDialog_4); 
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 3;
 		c_wsp.setLayoutData(gd);
@@ -164,18 +166,18 @@ public class ExpDialog extends AbstractPropertyDialog {
 		}
 		
 		Group dest = new Group(c, SWT.NONE);
-		dest.setText(UIMessages.getString("ExpDialog.1")); //$NON-NLS-1$
+		dest.setText(Messages.ExpDialog_1); 
 		dest.setLayout(new GridLayout(2, true));
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 4;
 		dest.setLayoutData(gd);
 		
 		Label l = new Label(dest, SWT.NONE);
-		l.setText(UIMessages.getString("ExpDialog.2")); //$NON-NLS-1$
+		l.setText(Messages.ExpDialog_2); 
 		l.setLayoutData(new GridData(GridData.BEGINNING));
 
 		l = new Label(dest, SWT.NONE);
-		l.setText(UIMessages.getString("ExpDialog.3")); //$NON-NLS-1$
+		l.setText(Messages.ExpDialog_3); 
 		l.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		c_langs = new Button(dest, SWT.CHECK);
@@ -242,7 +244,7 @@ public class ExpDialog extends AbstractPropertyDialog {
 			}
 		}
 		if (enabled && existing != null && existing.contains(name)) {
-			message.setText(UIMessages.getString("ExpDialog.9")); //$NON-NLS-1$
+			message.setText(Messages.ExpDialog_9); 
 			enabled = false;
 		}
 		b_ok.setEnabled(enabled);

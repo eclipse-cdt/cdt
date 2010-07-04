@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.settings.model.MultiLanguageSetting;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected Table table;
@@ -102,7 +103,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ADD_STR,
 			EDIT_STR,
 			DEL_STR, 
-			UIMessages.getString("AbstractLangsListTab.2"), //$NON-NLS-1$
+			Messages.AbstractLangsListTab_2, 
 			null,
 			MOVEUP_STR,
 			MOVEDOWN_STR
@@ -111,7 +112,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			ADD_STR,
 			EDIT_STR,
 			DEL_STR, 
-			UIMessages.getString("AbstractLangsListTab.2") //$NON-NLS-1$
+			Messages.AbstractLangsListTab_2 
 		};
 
 	private static final Comparator<Object> comp = CDTListComparator.getInstance();
@@ -212,7 +213,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 		lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
 		lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
+		lb1.setToolTipText(Messages.EnvironmentTab_15); 
 		lb1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -222,7 +223,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		});
 
 		showBIButton = setupCheck(usercomp,
-				UIMessages.getString("AbstractLangsListTab.0"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+				Messages.AbstractLangsListTab_0, 1, GridData.FILL_HORIZONTAL); 
 		showBIButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -232,7 +233,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 		lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
 		lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
+		lb2.setToolTipText(Messages.EnvironmentTab_23); 
 		lb2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -264,11 +265,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (ent.isReadOnly()) canEdit = false;
 			if (ent.isReadOnly()) canDelete = false;
 			if (exported.contains(resolve(ent)))
-				buttonSetText(BUTTON_EXPORT_UNEXPORT, UIMessages.getString("AbstractLangsListTab.4")); //$NON-NLS-1$
+				buttonSetText(BUTTON_EXPORT_UNEXPORT, Messages.AbstractLangsListTab_4); 
 			else
-				buttonSetText(BUTTON_EXPORT_UNEXPORT, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
+				buttonSetText(BUTTON_EXPORT_UNEXPORT, Messages.AbstractLangsListTab_2); 
 		} else {
-			buttonSetText(BUTTON_EXPORT_UNEXPORT, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
+			buttonSetText(BUTTON_EXPORT_UNEXPORT, Messages.AbstractLangsListTab_2); 
 		}
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
@@ -315,14 +316,14 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		});
 
 		langCol = new TreeColumn(langTree, SWT.NONE);
-		langCol.setText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
+		langCol.setText(Messages.AbstractLangsListTab_1); 
 		langCol.setWidth(200);
 		langCol.setResizable(false);
-		langCol.setToolTipText(UIMessages.getString("AbstractLangsListTab.1")); //$NON-NLS-1$
+		langCol.setToolTipText(Messages.AbstractLangsListTab_1); 
 //		langTree.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 //			@Override
 //			public void getName(AccessibleEvent e) {
-//				e.result = UIMessages.getString("AbstractLangsListTab.1"); //$NON-NLS-1$
+//				e.result = UIMessages.AbstractLangsListTab_1; //$NON-NLS-1$
 //			}
 //		});
 		return langTree;
@@ -738,7 +739,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (columnIndex == 0) {
 				String s = le.getName();
 				if (exported.contains(resolve(le)))
-					s = s + UIMessages.getString("AbstractLangsListTab.3"); //$NON-NLS-1$
+					s = s + Messages.AbstractLangsListTab_3; 
 				return s;
 			}
 			if (le.getKind() == ICSettingEntry.MACRO) {

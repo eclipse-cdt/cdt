@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,21 +36,12 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
-	// String constants
-	private static final String PREFIX = "NewConfiguration";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String ERROR = PREFIX + ".error";	//$NON-NLS-1$	
-	private static final String NAME = LABEL + ".name";	//$NON-NLS-1$
-	private static final String GROUP = LABEL + ".group";	//$NON-NLS-1$
-	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
-	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
-	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
-	private static final String DESCRIPTION = LABEL + ".description";	//$NON-NLS-1$
-	
 	// Widgets
 	private Text configName;
 	private Text configDescription;
@@ -165,7 +157,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		// as a directory name in the filesystem.
 		Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
 		warningLabel.setFont(parent.getFont());
-		warningLabel.setText(UIMessages.getString("NewConfiguration.label.warning")); //$NON-NLS-1$
+		warningLabel.setText(Messages.NewConfiguration_label_warning); 
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
 		gd.widthHint = 300;
 		warningLabel.setLayoutData(gd);
@@ -173,7 +165,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
-		nameLabel.setText(UIMessages.getString(NAME));
+		nameLabel.setText(Messages.NewConfiguration_label_name);
 				
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
@@ -197,7 +189,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 //		 Add a label and a text widget for Configuration's description
         final Label descriptionLabel = new Label(group1, SWT.LEFT);
         descriptionLabel.setFont(parent.getFont());
-        descriptionLabel.setText(UIMessages.getString(DESCRIPTION));
+        descriptionLabel.setText(Messages.NewConfiguration_label_description);
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
@@ -215,7 +207,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		
 		final Group group = new Group(composite, SWT.NONE);
 		group.setFont(composite.getFont());
-		group.setText(UIMessages.getString(GROUP));
+		group.setText(Messages.NewConfiguration_label_group);
 		GridLayout layout = new GridLayout(1, false);
 		group.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -343,12 +335,12 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 			s = "";	//$NON-NLS-1$
 			// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
-			s = UIMessages.getFormattedString(DUPLICATE, currentName);
+			s = NLS.bind(Messages.NewConfiguration_error_duplicateName, currentName);
 		} else if (isSimilarName(currentName)) {
-			s = UIMessages.getFormattedString(CASE, currentName);
+			s = NLS.bind(Messages.NewConfiguration_error_caseName, currentName);
 		} else if (!validateName(currentName)) {
 			// TODO Create a decent I18N string to describe this problem
-			s = UIMessages.getFormattedString(INVALID, currentName);
+			s = NLS.bind(Messages.NewConfiguration_error_invalidName, currentName);
 		} 
 		if (statusLabel == null) return;
 		Button b = getButton(IDialogConstants.OK_ID);

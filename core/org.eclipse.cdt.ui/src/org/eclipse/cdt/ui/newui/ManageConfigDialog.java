@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,6 +39,8 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -48,17 +51,6 @@ public class ManageConfigDialog extends Dialog {
 	public static final String TITLE_NAME = "title"; //$NON-NLS-1$
 	public static final String ID_NAME = "mbs_id"; //$NON-NLS-1$
 
-	// String constants
-	private static final String CMN_PREFIX = "BuildPropertyCommon";	//$NON-NLS-1$
-	private static final String CMN_LABEL = CMN_PREFIX + ".label";	//$NON-NLS-1$
-	private static final String NEW = CMN_LABEL + ".new";	//$NON-NLS-1$
-	private static final String REMOVE = CMN_LABEL + ".remove";	//$NON-NLS-1$
-	private static final String PREFIX = "ManageConfig";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String RENAME = LABEL + ".rename";	//$NON-NLS-1$
-	private static final String NEW_CONF_DLG = LABEL + ".new.config.dialog";	//$NON-NLS-1$
-	private static final String RENAME_CONF_DLG = LABEL + ".rename.config.dialog";	//$NON-NLS-1$
-	
 	// The list of configurations to delete
 	private ICProjectDescription des;
 	private IProject prj;
@@ -112,17 +104,17 @@ public class ManageConfigDialog extends Dialog {
 			}});
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText(UIMessages.getString("ManageConfigDialog.1")); //$NON-NLS-1$
+		col.setText(Messages.ManageConfigDialog_1); 
 		col.setWidth(100);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(UIMessages.getString("ManageConfigDialog.2")); //$NON-NLS-1$
+		col.setText(Messages.ManageConfigDialog_2); 
 		col.setWidth(120);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(UIMessages.getString("ManageConfigDialog.3")); //$NON-NLS-1$
+		col.setText(Messages.ManageConfigDialog_3); 
 		col.setWidth(80);
 
 		actBtn = new Button(composite, SWT.PUSH);
-		actBtn.setText(UIMessages.getString("ManageConfigDialog.4")); //$NON-NLS-1$
+		actBtn.setText(Messages.ManageConfigDialog_4); 
 		actBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		actBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -136,7 +128,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		newBtn = new Button(composite, SWT.PUSH);
-		newBtn.setText(UIMessages.getString(NEW));
+		newBtn.setText(Messages.BuildPropertyCommon_label_new);
 		newBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		newBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -145,7 +137,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		delBtn = new Button(composite, SWT.PUSH);
-		delBtn.setText(UIMessages.getString(REMOVE));
+		delBtn.setText(Messages.BuildPropertyCommon_label_remove);
 		delBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		delBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -154,7 +146,7 @@ public class ManageConfigDialog extends Dialog {
 			}} ); 
 
 		renBtn = new Button(composite, SWT.PUSH);
-		renBtn.setText(UIMessages.getString(RENAME));
+		renBtn.setText(Messages.ManageConfig_label_rename);
 		renBtn.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		renBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -175,7 +167,7 @@ public class ManageConfigDialog extends Dialog {
 		INewCfgDialog dialog = handleSpecificMBS(mbs_id);
 		if (dialog == null) { // default (core) implementation.
 			dialog = new NewConfigurationDialog(getShell());
-			dialog.setTitle(UIMessages.getString(NEW_CONF_DLG));
+			dialog.setTitle(Messages.ManageConfig_label_new_config_dialog);
 		}
 		dialog.setProject(des); 
 		if (dialog.open() == OK) updateData();
@@ -222,7 +214,7 @@ public class ManageConfigDialog extends Dialog {
 			ICConfigurationDescription cfgd = (ICConfigurationDescription) table.getItem(sel).getData();
 			RenameConfigurationDialog dialog = new RenameConfigurationDialog(
 					getShell(), cfgd, des.getConfigurations(),
-					UIMessages.getString(RENAME_CONF_DLG));
+					Messages.ManageConfig_label_rename_config_dialog);
 			if (dialog.open() == OK) {
 				cfgd.setName(dialog.getNewName());
 				cfgd.setDescription(dialog.getNewDescription());
@@ -243,9 +235,8 @@ public class ManageConfigDialog extends Dialog {
 		// Get the confirmation from user before deleting the configuration
 		Shell shell = CUIPlugin.getActiveWorkbenchShell();
 		boolean shouldDelete = MessageDialog.openQuestion(shell,
-		        UIMessages.getString("ManageConfig.deletedialog.title"), //$NON-NLS-1$
-		        UIMessages.getFormattedString("ManageConfig.deletedialog.message",  //$NON-NLS-1$
-		                names));
+		        Messages.ManageConfig_deletedialog_title,
+		        NLS.bind(Messages.ManageConfig_deletedialog_message, names));
 		if (shouldDelete) {
 			boolean wasActive = false;
 			for (int j=0; j<tis.length; j++) {
@@ -286,7 +277,7 @@ public class ManageConfigDialog extends Dialog {
 			TableItem t = new TableItem(table, 0);
 			t.setText(0, cfgds[i].getName());
 			t.setText(1, cfgds[i].getDescription());
-			t.setText(2, cfgds[i].isActive() ? UIMessages.getString("ManageConfigDialog.5") : ""); //$NON-NLS-1$ //$NON-NLS-2$
+			t.setText(2, cfgds[i].isActive() ? Messages.ManageConfigDialog_5 : ""); //$NON-NLS-1$ 
 			t.setData(cfgds[i]);
 		}
 		if (table.getItemCount() > 0) table.select(0);

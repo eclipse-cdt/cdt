@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -50,7 +52,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	public Composite comp;
 	private Tree tree;
 
-	static private final String ACTIVE = "[" + UIMessages.getString("RefsTab.3") + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	static private final String ACTIVE = "[" + Messages.RefsTab_3 + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
 
 	private static final int EXPAND_ALL_BUTTON = 0;
 	private static final int COLLAPSE_ALL_BUTTON = 1;
@@ -61,8 +63,8 @@ public class RefsTab extends AbstractCPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		initButtons(new String[] {
-				UIMessages.getString("RefsTab.0"), //$NON-NLS-1$
-				UIMessages.getString("RefsTab.2"), //$NON-NLS-1$
+				Messages.RefsTab_0, 
+				Messages.RefsTab_2, 
 				null,
 				MOVEUP_STR,
 				MOVEDOWN_STR}, 120);
@@ -74,7 +76,7 @@ public class RefsTab extends AbstractCPropertyTab {
             new AccessibleAdapter() {                       
                 @Override
 				public void getName(AccessibleEvent e) {
-                	e.result = UIMessages.getString("RefsTab.4"); //$NON-NLS-1$
+                	e.result = Messages.RefsTab_4; 
                 }
             }
         );

@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -28,7 +30,7 @@ public class CLocationOutputTab extends CLocationTab {
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
-		label.setText(UIMessages.getString("CLocationOutputTab.0")); //$NON-NLS-1$
+		label.setText(Messages.CLocationOutputTab_0); 
 	}
 
 	@Override

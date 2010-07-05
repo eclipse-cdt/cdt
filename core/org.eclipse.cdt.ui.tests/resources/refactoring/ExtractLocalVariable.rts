@@ -124,6 +124,69 @@ int A::foo()
     return temp;
 }
 
+//!ExtractLocalVariableRefactoringTest double
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+  A();
+  virtual ~A();
+  double foo();
+};
+
+#endif /*A_H_*/
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+  A();
+  virtual ~A();
+  double foo();
+};
+
+#endif /*A_H_*/
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+double A::foo()
+{
+  return /*$*/42.0/*$$*/;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+double A::foo()
+{
+    double f = 42.0;
+    return f;
+}
+
 //!ExtractLocalVariableRefactoringTest float
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.h
@@ -167,7 +230,7 @@ A::~A()
 
 float A::foo()
 {
-  return /*$*/42.0/*$$*/;
+  return /*$*/42.0f/*$$*/;
 }
 
 //=
@@ -183,7 +246,7 @@ A::~A()
 
 float A::foo()
 {
-    float f = 42.0;
+    float f = 42.0f;
     return f;
 }
 
@@ -326,5 +389,77 @@ void foo(){
 void foo(){
     int i = 5 + 2;
     for(int n = i; n < 10; ++n);
+}
+
+//!ExtractLocalVariableRefactoringTest expression
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+void foo(){
+    int a = 0;
+    float b = 0.1f;
+    double c = /*$*/(a + b)/*$$*/ * 0.2;
+}
+
+//=
+void foo(){
+    int a = 0;
+    float b = 0.1f;
+    float a0 = a + b;
+    double c = a0 * 0.2;
+}
+
+//!ExtractLocalVariableRefactoringTest pointer
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+void foo(){
+    int a[2];
+    int b = */*$*/(a + 1)/*$$*/;
+}
+
+//=
+void foo(){
+    int a[2];
+    int *i = a + 1;
+    int b = *i;
+}
+
+//!ExtractLocalVariableRefactoringTest qualifiers
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+const volatile int *k;
+void foo(){
+    /*$*/k;/*$$*/
+}
+
+//=
+const volatile int *k;
+void foo(){
+    const volatile int *k0 = k;
+    k0;
+}
+
+//!ExtractLocalVariableRefactoringTest overloaded operators
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+class K {
+public:
+    bool operator+(int b) {return true;}
+    float operator+(unsigned u) {return 1.0f;}
+};
+void foo(){
+    K k;
+    /*$*/k+3u/*$$*/;
+}
+
+//=
+class K {
+public:
+    bool operator+(int b) {return true;}
+    float operator+(unsigned u) {return 1.0f;}
+};
+void foo(){
+    K k;
+    float i = k + 3u;
+    i;
 }
 

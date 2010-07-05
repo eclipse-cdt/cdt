@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -51,20 +52,18 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NameNVisibilityInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
-import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractExpression;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
@@ -297,16 +296,18 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	}
 
 	private IASTDeclarationStatement getVariableNodes(String newName) {
-		IASTSimpleDeclaration simple = new CPPASTSimpleDeclaration();
+		
+		INodeFactory factory = this.unit.getASTNodeFactory();
+		
+		IASTSimpleDeclaration simple = factory.newSimpleDeclaration(null);
 
-		IASTDeclSpecifier declSpec = new ExtractExpression()
-				.determineReturnType(deblock(target), null);
+		DeclarationGeneratorImpl generator = new DeclarationGeneratorImpl(factory);
+		
+		IASTDeclSpecifier declSpec = generator.createDeclSpecFromType(target.getExpressionType());
 		declSpec.setStorageClass(IASTDeclSpecifier.sc_unspecified);
 		simple.setDeclSpecifier(declSpec);
 
-		IASTDeclarator decl = new CPPASTDeclarator();
-		IASTName name = new CPPASTName(newName.toCharArray());
-		decl.setName(name);
+		IASTDeclarator decl = generator.createDeclaratorFromType(target.getExpressionType(), newName.toCharArray());
 
 		IASTEqualsInitializer init = new CPPASTEqualsInitializer();
 		init.setInitializerClause(deblock(target.copy()));

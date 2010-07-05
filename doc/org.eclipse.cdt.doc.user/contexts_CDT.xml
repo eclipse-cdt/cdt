@@ -2,6 +2,12 @@
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
 
+<!-- 
+	PLUGINS LINKED TO THESE HELP CONTEXT IDs
+	plugin="org.eclipse.cdt.ui"
+	plugin="org.eclipse.ui"
+-->
+
 <context id ="projects_view">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_cproj_view.htm"
@@ -542,5 +548,13 @@
 </context>
 <context id="content_outline_context" title="Outline">
    <topic href="reference/cdt_u_outline_view.htm" label="Outline view"/>
+</context>
+<!-- USING ECLIPSE HELP CONTEXT IDs -->
+<context id="preference_dialog_context" title="Outline">
+   <topic href="reference/cdt_u_console_pref.htm" label="C/C++ Console preferences"/>
+   <topic href="reference/cdt_u_indexer_preference.html" label="C/C++ Indexer preferences"/>
+   <topic href="reference/cdt_u_language_mapping_pref.htm" label="C/C++ Language Mapping preferences"/>
+   <topic href="reference/cdt_u_make_pref.htm" label="C/C++ Make Targets preferences"/>
+   <topic href="reference/cdt_u_make_settings_pref.htm" label="C/C++ Make Settings preferences"/>
 </context>
 </contexts>

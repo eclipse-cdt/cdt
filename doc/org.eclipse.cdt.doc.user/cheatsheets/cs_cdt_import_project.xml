@@ -52,7 +52,7 @@
    </item>
    <item title="Building projects and inspecting files" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/tasks/cdt_o_build_task.htm">
       <description>
-         Build the program to create a binary and examine it in Outline and C/C++ Project views.
+         Build the program to create a binary and examine it in Outline and Project Explorer views.
       </description>
       <subitem label="Click Project &gt; Build All to create a binary of your source file." skip="true">
 		<!--

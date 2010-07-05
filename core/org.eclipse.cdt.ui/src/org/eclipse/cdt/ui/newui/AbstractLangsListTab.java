@@ -842,7 +842,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 	protected void setColumnToFit() {
 		if (columnToFit != null)
-			columnToFit.setWidth(table.getBounds().width - 4);
+			columnToFit.setWidth(table.getClientArea().width);
 	}
 
 	/**

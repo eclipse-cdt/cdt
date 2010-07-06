@@ -34,6 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.ui.newui.AbstractPage;
@@ -207,7 +208,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 				String contextId = opt.getContextId();
 				
 				if (pageHasToolTipBox && (tipStr==null || tipStr.trim().length()==0)) {
-					tipStr = Messages.getString("BuildOptionSettingsUI.0"); //$NON-NLS-1$
+					tipStr = Messages.BuildOptionSettingsUI_0; 
 				}
 				
 				try {

@@ -33,7 +33,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.INewCfgDialog;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -42,6 +42,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -63,19 +64,10 @@ import org.eclipse.swt.widgets.Text;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class NewCfgDialog implements INewCfgDialog {
-	private static final String PREFIX = "NewConfiguration";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String ERROR = PREFIX + ".error";	//$NON-NLS-1$	
-	private static final String NAME = LABEL + ".name";	//$NON-NLS-1$
-	private static final String GROUP = LABEL + ".group";	//$NON-NLS-1$
-	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
-	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
-	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
-	private static final String DESCRIPTION = LABEL + ".description";	//$NON-NLS-1$
 	private static final String NULL = "[null]"; //$NON-NLS-1$	
 	private static final String SEPARATOR = " > "; //$NON-NLS-1$
 	private static final String ART = MBSWizardHandler.ARTIFACT;
-	private static final String NOT = UIMessages.getString("NewCfgDialog.3"); //$NON-NLS-1$
+	private static final String NOT = Messages.NewCfgDialog_3; 
 	// Widgets
 	private Text configName;
 	private Text configDescription;
@@ -176,7 +168,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			// as a directory name in the filesystem.
 			Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
 			warningLabel.setFont(parent.getFont());
-			warningLabel.setText(UIMessages.getString("NewConfiguration.label.warning")); //$NON-NLS-1$
+			warningLabel.setText(Messages.NewConfiguration_label_warning); 
 			gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
 			gd.widthHint = 300;
 			warningLabel.setLayoutData(gd);
@@ -184,7 +176,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			// Add a label and a text widget for Configuration's name
 			final Label nameLabel = new Label(group1, SWT.LEFT);
 			nameLabel.setFont(parent.getFont());
-			nameLabel.setText(UIMessages.getString(NAME));
+			nameLabel.setText(Messages.NewConfiguration_label_name);
 					
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 1;
@@ -208,7 +200,7 @@ public class NewCfgDialog implements INewCfgDialog {
 //			 Add a label and a text widget for Configuration's description
 	        final Label descriptionLabel = new Label(group1, SWT.LEFT);
 	        descriptionLabel.setFont(parent.getFont());
-	        descriptionLabel.setText(UIMessages.getString(DESCRIPTION));
+	        descriptionLabel.setText(Messages.NewConfiguration_label_description);
 
 	        gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 1;
@@ -226,7 +218,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			
 			final Group group = new Group(composite, SWT.NONE);
 			group.setFont(composite.getFont());
-			group.setText(UIMessages.getString(GROUP));
+			group.setText(Messages.NewConfiguration_label_group);
 			GridLayout layout = new GridLayout(2, false);
 			group.setLayout(layout);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -234,7 +226,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			group.setLayoutData(gd);
 
 			b_clone = new Button(group, SWT.RADIO);
-			b_clone.setText(Messages.getString("NewCfgDialog.0")); //$NON-NLS-1$
+			b_clone.setText(Messages.NewCfgDialog_0); 
 			gd = new GridData(GridData.BEGINNING);
 			b_clone.setLayoutData(gd);
 			b_clone.setSelection(true);
@@ -258,7 +250,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			});	
 			
 			b_real = new Button(group, SWT.RADIO);
-			b_real.setText(Messages.getString("NewCfgDialog.1")); //$NON-NLS-1$
+			b_real.setText(Messages.NewCfgDialog_1); 
 			gd = new GridData(GridData.BEGINNING);
 			b_real.setLayoutData(gd);
 			b_real.addSelectionListener(new SelectionAdapter() {
@@ -287,7 +279,7 @@ public class NewCfgDialog implements INewCfgDialog {
 
 			/* import */
 			b_import = new Button(group, SWT.RADIO);
-			b_import.setText(UIMessages.getString("NewCfgDialog.4")); //$NON-NLS-1$
+			b_import.setText(Messages.NewCfgDialog_4); 
 			gd = new GridData(GridData.BEGINNING);
 			b_import.setLayoutData(gd);
 			b_import.addSelectionListener(new SelectionAdapter() {
@@ -311,7 +303,7 @@ public class NewCfgDialog implements INewCfgDialog {
 
 			/* import predefined */
 			b_importDef = new Button(group, SWT.RADIO);
-			b_importDef.setText(UIMessages.getString("NewCfgDialog.5")); //$NON-NLS-1$
+			b_importDef.setText(Messages.NewCfgDialog_5); 
 			gd = new GridData(GridData.BEGINNING);
 			b_importDef.setLayoutData(gd);
 			b_importDef.addSelectionListener(new SelectionAdapter() {
@@ -363,12 +355,12 @@ public class NewCfgDialog implements INewCfgDialog {
 				s = "";	//$NON-NLS-1$
 				// Make sure the name is not a duplicate
 			} else if (isDuplicateName(currentName)) {
-				s = UIMessages.getFormattedString(DUPLICATE, currentName);
+				s = NLS.bind(Messages.NewConfiguration_error_duplicateName, currentName);
 			} else if (isSimilarName(currentName)) {
-				s = UIMessages.getFormattedString(CASE, currentName);
+				s = NLS.bind(Messages.NewConfiguration_error_caseName, currentName);
 			} else if (!validateName(currentName)) {
 				// TODO Create a decent I18N string to describe this problem
-				s = UIMessages.getFormattedString(INVALID, currentName);
+				s = NLS.bind(Messages.NewConfiguration_error_invalidName, currentName);
 			} 
 			if (statusLabel == null) return;
 			Button b = getButton(IDialogConstants.OK_ID);
@@ -562,7 +554,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			if (config == null || cfgDes == null) {
 				throw new CoreException(new Status(IStatus.ERROR, 
 					"org.eclipse.cdt.managedbuilder.ui", -1, //$NON-NLS-1$
-					UIMessages.getString("NewCfgDialog.2"), null));  //$NON-NLS-1$
+					Messages.NewCfgDialog_2, null));  
 			}
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);

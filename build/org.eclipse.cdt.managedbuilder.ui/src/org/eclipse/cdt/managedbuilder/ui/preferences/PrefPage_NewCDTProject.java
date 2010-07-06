@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -52,6 +52,6 @@ public class PrefPage_NewCDTProject extends AbstractPrefPage {
 
 	@Override
 	protected String getHeader() { 
-		return  UIMessages.getString("AbstractPrefPage.0"); //$NON-NLS-1$
+		return  Messages.AbstractPrefPage_0; 
 	}
 }

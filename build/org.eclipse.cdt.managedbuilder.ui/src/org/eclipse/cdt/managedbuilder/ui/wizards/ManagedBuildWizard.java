@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildListComparator;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
@@ -34,12 +34,12 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ManagedBuildWizard extends AbstractCWizard {
 	private static final Image IMG = CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
-	public static final String OTHERS_LABEL = Messages.getString("CNewWizard.0");  //$NON-NLS-1$
+	public static final String OTHERS_LABEL = Messages.CNewWizard_0;  
 	
 	/**
 	 * @since 5.1
 	 */
-	public static final String EMPTY_PROJECT = Messages.getString("AbstractCWizard.0");  //$NON-NLS-1$
+	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_0;  
 	/**
 	 * Creates and returns an array of items to be displayed 
 	 */

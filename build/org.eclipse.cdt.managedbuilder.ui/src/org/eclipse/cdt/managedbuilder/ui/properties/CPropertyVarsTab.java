@@ -32,7 +32,7 @@ import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PrefPage_Abstract;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.runtime.CoreException;
@@ -82,36 +82,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CPropertyVarsTab extends AbstractCPropertyTab {
-	/*
-	 * String constants
-	 */
-	private static final String PREFIX = "MacrosBlock";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-
-	private static final String HEADER = LABEL + ".header";  //$NON-NLS-1$
-	private static final String HEADER_NAME = HEADER + ".name";  //$NON-NLS-1$
-	private static final String HEADER_TYPE = HEADER + ".type";  //$NON-NLS-1$
-	private static final String HEADER_VALUE = HEADER + ".value";  //$NON-NLS-1$
-
-	private static final String TYPE = LABEL + ".type";	//$NON-NLS-1$
-	private static final String TYPE_TEXT = TYPE + ".text";	//$NON-NLS-1$
-	private static final String TYPE_TEXT_LIST = TYPE + ".text.list";	//$NON-NLS-1$
-	private static final String TYPE_PATH_FILE = TYPE + ".path.file";	//$NON-NLS-1$
-	private static final String TYPE_PATH_FILE_LIST = TYPE + ".path.file.list";	//$NON-NLS-1$
-	private static final String TYPE_PATH_DIR = TYPE + ".path.dir";	//$NON-NLS-1$
-	private static final String TYPE_PATH_DIR_LIST = TYPE + ".path.dir.list";	//$NON-NLS-1$
-	private static final String TYPE_PATH_ANY = TYPE + ".path.any";	//$NON-NLS-1$
-	private static final String TYPE_PATH_ANY_LIST = TYPE + ".path.any.list";	//$NON-NLS-1$
-
-	private static final String DELETE_CONFIRM_TITLE = LABEL + ".delete.confirm.title";	//$NON-NLS-1$
-	private static final String DELETE_CONFIRM_MESSAGE = LABEL + ".delete.confirm.message";	//$NON-NLS-1$
-
-	private static final String DELETE_ALL_CONFIRM_TITLE = LABEL + ".delete.all.confirm.title";	//$NON-NLS-1$
-	private static final String DELETE_ALL_CONFIRM_MESSAGE = LABEL + ".delete.all.confirm.message";	//$NON-NLS-1$
-	
-	private static final String VALUE = LABEL + ".value";	//$NON-NLS-1$
-	private static final String VALUE_ECLIPSE_DYNAMIC = VALUE + ".eclipse.dynamic";	//$NON-NLS-1$
-	
 	private static final String VALUE_DELIMITER = " || ";	//$NON-NLS-1$
 
 	private static final ICdtVariableManager vmgr = CCorePlugin.getDefault().getCdtVariableManager();
@@ -141,9 +111,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	};
 
 	private static final String[] fTableColumnNames = new String[] {
-		UIMessages.getString(HEADER_NAME),
-		UIMessages.getString(HEADER_TYPE),
-		UIMessages.getString(HEADER_VALUE),
+		Messages.MacrosBlock_label_header_name,
+		Messages.MacrosBlock_label_header_type,
+		Messages.MacrosBlock_label_header_value,
 	};
 
 	private static final ColumnLayoutData[] fTableColumnLayouts = {new ColumnPixelData(100), new ColumnPixelData(100), new ColumnPixelData(250)};
@@ -177,21 +147,21 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			case 1:
 				switch(var.getValueType()){
 				case ICdtVariable.VALUE_PATH_FILE:
-					return UIMessages.getString(TYPE_PATH_FILE);
+					return Messages.MacrosBlock_label_type_path_file;
 				case ICdtVariable.VALUE_PATH_FILE_LIST:
-					return UIMessages.getString(TYPE_PATH_FILE_LIST);
+					return Messages.MacrosBlock_label_type_path_file_list;
 				case ICdtVariable.VALUE_PATH_DIR:
-					return UIMessages.getString(TYPE_PATH_DIR);
+					return Messages.MacrosBlock_label_type_path_dir;
 				case ICdtVariable.VALUE_PATH_DIR_LIST:
-					return UIMessages.getString(TYPE_PATH_DIR_LIST);
+					return Messages.MacrosBlock_label_type_path_dir_list;
 				case ICdtVariable.VALUE_PATH_ANY:
-					return UIMessages.getString(TYPE_PATH_ANY);
+					return Messages.MacrosBlock_label_type_path_any;
 				case ICdtVariable.VALUE_PATH_ANY_LIST:
-					return UIMessages.getString(TYPE_PATH_ANY_LIST);
+					return Messages.MacrosBlock_label_type_path_any_list;
 				case ICdtVariable.VALUE_TEXT:
-					return UIMessages.getString(TYPE_TEXT);
+					return Messages.MacrosBlock_label_type_text;
 				case ICdtVariable.VALUE_TEXT_LIST:
-					return UIMessages.getString(TYPE_TEXT_LIST);
+					return Messages.MacrosBlock_label_type_text_list;
 				default:
 					return "? " + var.getValueType();   //$NON-NLS-1$
 				}
@@ -323,8 +293,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		ICdtVariable macros[] = getSelectedUserMacros();
 		if(macros != null && macros.length > 0){
 			if(MessageDialog.openQuestion(usercomp.getShell(),
-					UIMessages.getString(DELETE_CONFIRM_TITLE),
-					UIMessages.getString(DELETE_CONFIRM_MESSAGE))){
+					Messages.MacrosBlock_label_delete_confirm_title,
+					Messages.MacrosBlock_label_delete_confirm_message)){
 				for(int i = 0; i < macros.length; i++){
 					if (cfgd != null) {
 						if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
@@ -360,8 +330,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	@Override
 	protected void performDefaults() {
 		if(MessageDialog.openQuestion(usercomp.getShell(),
-				UIMessages.getString(DELETE_ALL_CONFIRM_TITLE),
-				UIMessages.getString(DELETE_ALL_CONFIRM_MESSAGE))){
+				Messages.MacrosBlock_label_delete_all_confirm_title,
+				Messages.MacrosBlock_label_delete_all_confirm_message)){
 			if (cfgd != null) {
 				if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
 					ICConfigurationDescription[] cfs = (ICConfigurationDescription[])((ICMultiItemsHolder)cfgd).getItems();
@@ -389,7 +359,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		// Create a "show parent levels" button 
 		final Button b = new Button(usercomp, SWT.CHECK);
 		b.setFont(usercomp.getFont());
-		b.setText(Messages.getString("CPropertyVarsTab.0")); //$NON-NLS-1$
+		b.setText(Messages.CPropertyVarsTab_0); 
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.setSelection(fShowSysMacros);
 		b.addSelectionListener(new SelectionAdapter() {
@@ -402,7 +372,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		
 	    lb1 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
 	    lb1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    lb1.setToolTipText(UIMessages.getString("EnvironmentTab.15")); //$NON-NLS-1$
+	    lb1.setToolTipText(Messages.EnvironmentTab_15); 
 	    lb1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -419,7 +389,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 
 	    lb2 = new Label(usercomp, SWT.BORDER | SWT.CENTER);
 	    lb2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    lb2.setToolTipText(UIMessages.getString("EnvironmentTab.23")); //$NON-NLS-1$
+	    lb2.setToolTipText(Messages.EnvironmentTab_23); 
 	    lb2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
@@ -621,7 +591,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	
 	private String getString(ICdtVariable v) {
 		if (fUserSup.isDynamic(v)) 
-			return UIMessages.getString(VALUE_ECLIPSE_DYNAMIC);
+			return Messages.MacrosBlock_label_value_eclipse_dynamic;
 		String value = EMPTY_STR; 
 		try {			
 			if (CdtVariableResolver.isStringListVariable(v.getValueType()))

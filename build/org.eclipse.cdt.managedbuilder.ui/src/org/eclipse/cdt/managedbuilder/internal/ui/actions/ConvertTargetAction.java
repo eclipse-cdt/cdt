@@ -16,12 +16,13 @@ import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -76,28 +77,24 @@ public class ConvertTargetAction
 		// Check whether the converters available for the selected project
 		// If there are no converters display error dialog otherwise display converters list
 		
-		if( ManagedBuildManager.hasTargetConversionElements(getProjectType(getSelectedProject())) == true ) {			
+		if( ManagedBuildManager.hasTargetConversionElements(getProjectType(getSelectedProject())) == true ) {
 			handleConvertTargetAction();
 		} else {
-			MessageDialog.openError(shell,"No converter", //$NON-NLS-1$
-			        UIMessages.getFormattedString("ProjectConvert.noConverterErrordialog.message", new String[] {getSelectedProject().getName()}) );  //$NON-NLS-1$
+			MessageDialog.openError(shell,Messages.ConvertTargetAction_No_Converter,
+					NLS.bind(Messages.ProjectConvert_noConverterErrordialog_message, new String[] {getSelectedProject().getName()}) );
 		}
 	}
 
 	private void handleConvertTargetAction() {
 		Shell shell = ManagedBuilderUIPlugin.getDefault().getShell();
 		
-		String title = UIMessages.getFormattedString(PROJECT_CONVERTER_DIALOG, new String(getSelectedProject().getName())); 
+		String projectName = getSelectedProject().getName();
+		String title = NLS.bind(Messages.ProjectConvert_title, new String(projectName)); 
 		ConvertTargetDialog dialog = new ConvertTargetDialog(shell, getSelectedProject(), title);
 		if ( dialog.open() == ConvertTargetDialog.OK ) {
-			if ( ConvertTargetDialog.isConversionSuccessful() == false) {									
-				MessageDialog.openError(
-								shell,
-								UIMessages
-										.getString("ProjectConvert.conversionErrordialog.title"), //$NON-NLS-1$
-								UIMessages
-										.getFormattedString(
-												"ProjectConvert.conversionErrordialog.message", new String[] { getSelectedProject().getName() })); //$NON-NLS-1$
+			if ( ConvertTargetDialog.isConversionSuccessful() == false) {
+				MessageDialog.openError(shell, Messages.ProjectConvert_conversionErrordialog_title,
+						NLS.bind(Messages.ProjectConvert_conversionErrordialog_message, projectName));
 			}
 		}
 		return;

@@ -14,12 +14,13 @@ import java.net.URL;
 
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
  
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Display;
 public class ToolListLabelProvider extends LabelProvider {
 	private final Image IMG_TOOL = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_TOOL);
 	private final Image IMG_CAT = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CAT);
-	private static final String ERROR_UNKNOWN_ELEMENT = "BuildPropertyPage.error.Unknown_tree_element";	//$NON-NLS-1$
 
 	private ImageDescriptor descriptor = null;
 	private ResourceManager manager = null;
@@ -104,7 +104,7 @@ public class ToolListLabelProvider extends LabelProvider {
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException(UIMessages.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
+		return new RuntimeException(NLS.bind(Messages.BuildPropertyPage_error_Unknown_tree_element, element.getClass().getName()));
 	}
 
     /**

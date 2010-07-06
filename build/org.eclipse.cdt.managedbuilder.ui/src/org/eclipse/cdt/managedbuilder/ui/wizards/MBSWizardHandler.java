@@ -42,7 +42,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 import org.eclipse.cdt.ui.templateengine.Template;
@@ -88,11 +88,11 @@ public class MBSWizardHandler extends CWizardHandler {
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
 	private static final String tooltip = 
-		Messages.getString("CWizardHandler.1")+ //$NON-NLS-1$
-		Messages.getString("CWizardHandler.2") + //$NON-NLS-1$
-		Messages.getString("CWizardHandler.3") + //$NON-NLS-1$
-		Messages.getString("CWizardHandler.4") + //$NON-NLS-1$
-		Messages.getString("CWizardHandler.5"); //$NON-NLS-1$
+		Messages.CWizardHandler_1 + 
+		Messages.CWizardHandler_2 + 
+		Messages.CWizardHandler_3 + 
+		Messages.CWizardHandler_4 + 
+		Messages.CWizardHandler_5; 
 	
 	protected SortedMap<String, IToolChain> full_tcs = new TreeMap<String, IToolChain>();
 	private String propertyId = null;
@@ -307,18 +307,18 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	public MBSWizardHandler(IProjectType _pt, Composite p, IWizard w) {
-		super(p, Messages.getString("CWizardHandler.0"), _pt.getName()); //$NON-NLS-1$
+		super(p, Messages.CWizardHandler_0, _pt.getName()); 
 		pt = _pt;
 		setWizard(w);
 	}
 
 	public MBSWizardHandler(String name, Composite p, IWizard w) {
-		super(p, Messages.getString("CWizardHandler.0"), name); //$NON-NLS-1$
+		super(p, Messages.CWizardHandler_0, name); 
 		setWizard(w);
 	}
 
 	public MBSWizardHandler(IBuildPropertyValue val, Composite p, IWizard w) {
-		super(p, Messages.getString("CWizardHandler.0"), val.getName()); //$NON-NLS-1$
+		super(p, Messages.CWizardHandler_0, val.getName()); 
 		propertyId = val.getId();
 		setWizard(w);
 	}
@@ -560,7 +560,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
 					ManagedBuilderUIPlugin.getUniqueIdentifier(),
-					Messages.getString("CWizardHandler.6"))); //$NON-NLS-1$
+					Messages.CWizardHandler_6)); 
 		}
 		Configuration cf = (Configuration)cfgs[0].getConfiguration();
 		ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
@@ -724,7 +724,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	public String getErrorMessage() { 
 		TableItem[] tis = table.getSelection();
 		if (tis == null || tis.length == 0)
-			return Messages.getString("MBSWizardHandler.0"); //$NON-NLS-1$
+			return Messages.MBSWizardHandler_0; 
 		return null;
 	}
 	

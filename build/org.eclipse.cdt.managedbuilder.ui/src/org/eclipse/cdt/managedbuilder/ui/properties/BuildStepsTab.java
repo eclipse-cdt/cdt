@@ -29,7 +29,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -58,8 +58,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private IFileInfo rcfg;
 	private boolean canModify = true;
 	
-	private static final String label1 = Messages.getString("BuildStepsTab.0"); //$NON-NLS-1$
-	private static final String label2 = Messages.getString("BuildStepsTab.1"); //$NON-NLS-1$
+	private static final String label1 = Messages.BuildStepsTab_0; 
+	private static final String label2 = Messages.BuildStepsTab_1; 
 	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
 	private static final String rcbsToolId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs");	//$NON-NLS-1$
 	private static final String rcbsToolName = new String("Resource Custom Build Step");	//$NON-NLS-1$
@@ -68,14 +68,6 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
 	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
 	
-	private static final String PREFIX = "ResourceCustomBuildStepBlock";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String RCBS_APPLICABILITY = LABEL + ".applicability";	//$NON-NLS-1$
-	private static final String RCBS_BEFORE = LABEL + ".applicability.rule.before";	//$NON-NLS-1$
-	private static final String RCBS_AFTER = LABEL + ".applicability.rule.after";	//$NON-NLS-1$
-	private static final String RCBS_OVERRIDE = LABEL + ".applicability.rule.override";	//$NON-NLS-1$
-	private static final String RCBS_DISABLE = LABEL + ".applicability.rule.disable";	//$NON-NLS-1$
-
 	private enum FIELD {PRECMD, PREANN, PSTCMD, PSTANN}
 	private Set<String> set1 = new TreeSet<String>();
 	private Set<String> set2 = new TreeSet<String>();
@@ -83,10 +75,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private Set<String> set4 = new TreeSet<String>();
 	
 	private static final String[] rcbsApplicabilityRules = {
-		new String(UIMessages.getString(RCBS_OVERRIDE)),
-//		new String(ManagedBuilderUIMessages.getResourceString(RCBS_BEFORE)),
-//		new String(ManagedBuilderUIMessages.getResourceString(RCBS_AFTER)),
-		new String(UIMessages.getString(RCBS_DISABLE)),
+		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override),
+//		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before")),
+//		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after")),
+		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable),
 	};
 	
 	
@@ -105,7 +97,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	 * 
 	 */
 	private void createForProject() {
-		Group g1 = setupGroup (usercomp, Messages.getString("BuildStepsTab.2"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_2, 1, GridData.FILL_HORIZONTAL); 
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
 		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
@@ -124,7 +116,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 					getCfg().setPreannouncebuildStep(preDes.getText());
 			}});
 
-		Group g2 = setupGroup (usercomp, Messages.getString("BuildStepsTab.3"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g2 = setupGroup (usercomp, Messages.BuildStepsTab_3, 1, GridData.FILL_HORIZONTAL); 
 		setupLabel(g2, label1, 1, GridData.BEGINNING);
 		postCmd = setCombo(g2, FIELD.PSTCMD, set3);
 		postCmd.addModifyListener(new ModifyListener() {
@@ -148,8 +140,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	 * 
 	 */
 	private void createForFile() {
-		Group g1 = setupGroup (usercomp, Messages.getString("BuildStepsTab.4"), 1, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		setupLabel(g1, UIMessages.getString(RCBS_APPLICABILITY), 1, GridData.BEGINNING);
+		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_4, 1, GridData.FILL_HORIZONTAL); 
+		setupLabel(g1, Messages.ResourceCustomBuildStepBlock_label_applicability, 1, GridData.BEGINNING);
 		
 		combo = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		combo.setItems(rcbsApplicabilityRules);
@@ -159,7 +151,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				rcfg.setRcbsApplicability(sel2app(combo.getSelectionIndex()));
 			}});
 		
-		setupLabel(g1, Messages.getString("BuildStepsTab.5"), 1, GridData.BEGINNING);		 //$NON-NLS-1$
+		setupLabel(g1, Messages.BuildStepsTab_5, 1, GridData.BEGINNING);		 
 		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -174,7 +166,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				}
 			}});
 
-		setupLabel(g1, Messages.getString("BuildStepsTab.6"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(g1, Messages.BuildStepsTab_6, 1, GridData.BEGINNING); 
 		preDes = setCombo(g1, FIELD.PREANN, set2);
 		preDes.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -359,11 +351,11 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	
 	private int sel2app(int index){
 		String sel = combo.getItem(index);
-		if(UIMessages.getString(RCBS_OVERRIDE).equals(sel)){
+		if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override.equals(sel)){
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE;
-		} else if(UIMessages.getString(RCBS_AFTER).equals(sel)){
+		} else if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_after.equals(sel)){
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER;
-		} else if(UIMessages.getString(RCBS_BEFORE).equals(sel)){
+		} else if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_before.equals(sel)){
 			return IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE;
 		}
 		return IResourceConfiguration.KIND_DISABLE_RCBS_TOOL;
@@ -374,14 +366,14 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private int app2sel(int val){
 		switch(val){
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER:
-			return combo.indexOf(UIMessages.getString(RCBS_AFTER));
+			return combo.indexOf(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_after);
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_BEFORE:
-			return combo.indexOf(UIMessages.getString(RCBS_BEFORE));
+			return combo.indexOf(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_before);
 		case IResourceConfiguration.KIND_DISABLE_RCBS_TOOL:
-			return combo.indexOf(UIMessages.getString(RCBS_DISABLE));
+			return combo.indexOf(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable);
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE:
 		default:
-			return combo.indexOf(UIMessages.getString(RCBS_OVERRIDE));
+			return combo.indexOf(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override);
 		}
 	}
 	

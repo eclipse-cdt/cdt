@@ -16,7 +16,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 
 /**
  * This class is intended for data exchange between 
@@ -41,7 +41,7 @@ public class CfgHolder {
 		cfg = _cfg;
 		if (cfg == null) {
 			if (tc == null || tc.getParent() == null)
-				name = UIMessages.getString("StdProjectTypeHandler.2"); //$NON-NLS-1$
+				name = Messages.StdProjectTypeHandler_2; 
 			else
 				name = tc.getParent().getName();
 		} else		

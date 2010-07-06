@@ -12,7 +12,7 @@
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
 
@@ -26,7 +26,7 @@ public class PrefPage_NewCDTWizard extends AbstractPrefPage {
 
 	@Override
 	protected String getHeader() {
-		return Messages.getString("PrefPage_NewCDTWizard.0"); //$NON-NLS-1$
+		return Messages.PrefPage_NewCDTWizard_0; 
 	}
 
 	/*

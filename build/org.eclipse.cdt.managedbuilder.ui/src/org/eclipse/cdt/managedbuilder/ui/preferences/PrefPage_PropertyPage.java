@@ -14,7 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.preferences;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.newui.AbstractPrefPage;
 import org.eclipse.cdt.ui.newui.ICPropertyTab;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 
 /**
  * @since 5.1
@@ -26,7 +26,7 @@ public class PrefPage_PropertyPage extends AbstractPrefPage {
 
 	@Override
 	protected String getHeader() {
-		return UIMessages.getString("PrefPage_PropertyPage.0"); //$NON-NLS-1$
+		return Messages.PrefPage_PropertyPage_0; 
 	}
 
 	/*

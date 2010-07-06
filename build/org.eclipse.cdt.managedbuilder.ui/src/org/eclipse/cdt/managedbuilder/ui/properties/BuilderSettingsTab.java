@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -68,12 +69,12 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		// Builder group
-		Group g1 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.0"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		setupLabel(g1, Messages.getString("BuilderSettingsTab.1"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		Group g1 = setupGroup(usercomp, Messages.BuilderSettingsTab_0, 3, GridData.FILL_HORIZONTAL); 
+		setupLabel(g1, Messages.BuilderSettingsTab_1, 1, GridData.BEGINNING); 
 		c_builderType = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		setupControl(c_builderType, 2, GridData.FILL_HORIZONTAL);
-		c_builderType.add(Messages.getString("BuilderSettingsTab.2")); //$NON-NLS-1$
-		c_builderType.add(Messages.getString("BuilderSettingsTab.3")); //$NON-NLS-1$
+		c_builderType.add(Messages.BuilderSettingsTab_2); 
+		c_builderType.add(Messages.BuilderSettingsTab_3); 
 		c_builderType.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -81,9 +82,9 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				updateButtons();
 			}});
 		
-		b_useDefault = setupCheck(g1, Messages.getString("BuilderSettingsTab.4"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		b_useDefault = setupCheck(g1, Messages.BuilderSettingsTab_4, 3, GridData.BEGINNING); 
 		
-		setupLabel(g1, Messages.getString("BuilderSettingsTab.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(g1, Messages.BuilderSettingsTab_5, 1, GridData.BEGINNING); 
 		t_buildCmd = setupBlock(g1, b_useDefault);
 		t_buildCmd.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -99,15 +100,15 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		        }
 			}});
 				
-		Group g2 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g2 = setupGroup(usercomp, Messages.BuilderSettingsTab_6, 2, GridData.FILL_HORIZONTAL); 
 		((GridLayout)(g2.getLayout())).makeColumnsEqualWidth = true;
 		
-		b_genMakefileAuto = setupCheck(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		b_expandVars  = setupCheck(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		b_genMakefileAuto = setupCheck(g2, Messages.BuilderSettingsTab_7, 1, GridData.BEGINNING); 
+		b_expandVars  = setupCheck(g2, Messages.BuilderSettingsTab_8, 1, GridData.BEGINNING); 
 
 		// Build location group
-		group_dir = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		setupLabel(group_dir, Messages.getString("BuilderSettingsTab.22"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		group_dir = setupGroup(usercomp, Messages.BuilderSettingsTab_21, 2, GridData.FILL_HORIZONTAL); 
+		setupLabel(group_dir, Messages.BuilderSettingsTab_22, 1, GridData.BEGINNING); 
 		t_dir = setupText(group_dir, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

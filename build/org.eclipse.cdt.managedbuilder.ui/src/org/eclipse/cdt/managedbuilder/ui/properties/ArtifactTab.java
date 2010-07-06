@@ -23,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -65,7 +66,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 
 		Label l1 = new Label(usercomp, SWT.NONE);
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
-		l1.setText(Messages.getString("ArtifactTab.0")); //$NON-NLS-1$
+		l1.setText(Messages.ArtifactTab_0); 
 		c1 = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		c1.addSelectionListener(new SelectionAdapter() {
@@ -77,7 +78,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		
 		Label l2 = new Label(usercomp, SWT.NONE);
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
-		l2.setText(Messages.getString("ArtifactTab.1")); //$NON-NLS-1$
+		l2.setText(Messages.ArtifactTab_1); 
 		t2 = setCombo(FIELD.NAME, set2);
 		t2.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -87,7 +88,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		
 		Label l3 = new Label(usercomp, SWT.NONE);
 		l3.setLayoutData(new GridData(GridData.BEGINNING));
-		l3.setText(Messages.getString("ArtifactTab.2")); //$NON-NLS-1$
+		l3.setText(Messages.ArtifactTab_2); 
 		t3 = setCombo(FIELD.EXT, set3);
 		t3.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -97,7 +98,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		
 		l4 = new Label(usercomp, SWT.NONE);
 		l4.setLayoutData(new GridData(GridData.BEGINNING));
-		l4.setText(Messages.getString("ArtifactTab.3")); //$NON-NLS-1$
+		l4.setText(Messages.ArtifactTab_3); 
 		t4 = setCombo(FIELD.PREF, set4);
 		t4.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

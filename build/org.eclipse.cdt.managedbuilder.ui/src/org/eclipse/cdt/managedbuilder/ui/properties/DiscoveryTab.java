@@ -46,7 +46,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
@@ -129,13 +129,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		usercomp.setLayout(new GridLayout(1, false));
 
 		if (page.isForProject() || page.isForPrefs()) {
-			Group scopeGroup = setupGroup(usercomp, Messages.getString("DiscoveryTab.0"), //$NON-NLS-1$
+			Group scopeGroup = setupGroup(usercomp, Messages.DiscoveryTab_0, 
 					1, GridData.FILL_HORIZONTAL);
 			scopeGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			scopeComboBox = new Combo(scopeGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 			scopeComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			scopeComboBox.add(Messages.getString("DiscoveryTab.1")); //$NON-NLS-1$
-			scopeComboBox.add(Messages.getString("DiscoveryTab.2")); //$NON-NLS-1$
+			scopeComboBox.add(Messages.DiscoveryTab_1); 
+			scopeComboBox.add(Messages.DiscoveryTab_2); 
 			scopeComboBox.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -187,10 +187,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	}
 
 	private void createScannerConfigControls(Composite parent) {
-		autoDiscoveryGroup = setupGroup(parent, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.label"), //$NON-NLS-1$
+		autoDiscoveryGroup = setupGroup(parent, Messages.ScannerConfigOptionsDialog_scGroup_label, 
 				2, GridData.FILL_HORIZONTAL);
 
-		autoDiscoveryCheckBox = setupCheck(autoDiscoveryGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.enabled.button"), //$NON-NLS-1$
+		autoDiscoveryCheckBox = setupCheck(autoDiscoveryGroup, Messages.ScannerConfigOptionsDialog_scGroup_enabled_button, 
 				2, GridData.FILL_HORIZONTAL);
 		autoDiscoveryCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -206,7 +206,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			}
 		});
 		reportProblemsCheckBox = setupCheck(autoDiscoveryGroup,
-				UIMessages.getString("ScannerConfigOptionsDialog.scGroup.problemReporting.enabled.button"), //$NON-NLS-1$
+				Messages.ScannerConfigOptionsDialog_scGroup_problemReporting_enabled_button, 
 				2, GridData.FILL_HORIZONTAL);
 		reportProblemsCheckBox.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -216,7 +216,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		});
 
 		// Add profile combo box
-		setupLabel(autoDiscoveryGroup, UIMessages.getString("ScannerConfigOptionsDialog.scGroup.selectedProfile.combo"), //$NON-NLS-1$
+		setupLabel(autoDiscoveryGroup, Messages.ScannerConfigOptionsDialog_scGroup_selectedProfile_combo, 
 				1, GridData.BEGINNING);
 		profileComboBox = new Combo(autoDiscoveryGroup, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		profileComboBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -232,10 +232,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		
 		// "Clear" label
 		@SuppressWarnings("unused")
-		Label clearLabel = ControlFactory.createLabel(autoDiscoveryGroup, Messages.getString("DiscoveryTab.ClearDisoveredEntries")); //$NON-NLS-1$
+		Label clearLabel = ControlFactory.createLabel(autoDiscoveryGroup, Messages.DiscoveryTab_ClearDisoveredEntries); 
 
 		// "Clear" button
-		Button clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.getString("DiscoveryTab.Clear")); //$NON-NLS-1$
+		Button clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.DiscoveryTab_Clear); 
 		GridData gd = (GridData) clearButton.getLayoutData();
 		gd.grabExcessHorizontalSpace = false;
 		gd.widthHint = 80;
@@ -245,12 +245,12 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		clearButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				String title = Messages.getString("DiscoveryTab.ClearEntries"); //$NON-NLS-1$
+				String title = Messages.DiscoveryTab_ClearEntries; 
 				try {
 					clearDiscoveredEntries();
-					MessageDialog.openInformation(shell, title, Messages.getString("DiscoveryTab.DiscoveredEntriesCleared")); //$NON-NLS-1$
+					MessageDialog.openInformation(shell, title, Messages.DiscoveryTab_DiscoveredEntriesCleared); 
 				} catch (CoreException e) {
-					MessageDialog.openError(shell, title, Messages.getString("DiscoveryTab.ErrorClearingEntries") + e.getLocalizedMessage()); //$NON-NLS-1$
+					MessageDialog.openError(shell, title, Messages.DiscoveryTab_ErrorClearingEntries + e.getLocalizedMessage()); 
 				}
 			}
 		});
@@ -287,10 +287,10 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private void updateData() {
 		int selScope = 0;
-		String lblText = Messages.getString("DiscoveryTab.5"); //$NON-NLS-1$
+		String lblText = Messages.DiscoveryTab_5; 
 		if (!cbi.isPerRcTypeDiscovery()) {
 			selScope = 1;
-			lblText = Messages.getString("DiscoveryTab.8"); //$NON-NLS-1$
+			lblText = Messages.DiscoveryTab_8; 
 		}
 		if (scopeComboBox != null)
 			scopeComboBox.select(selScope);
@@ -316,7 +316,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 						s = tool.getName();
 				}
 				if (s == null)
-					s = Messages.getString("DiscoveryTab.3"); //$NON-NLS-1$
+					s = Messages.DiscoveryTab_3; 
 			}
 			IScannerConfigBuilderInfo2 bi2 = infoMap.get(cfgInfoContext);
 			TableItem ti = new TableItem(resTable, SWT.NONE);
@@ -330,7 +330,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 			resTable.select((pos < len && pos > -1) ? pos : 0);
 			handleToolSelected();
 		} else {
-			setVisibility(Messages.getString("DiscoveryTab.6")); //$NON-NLS-1$
+			setVisibility(Messages.DiscoveryTab_6); 
 		}
 	}
 
@@ -599,7 +599,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 					ManagedBuilderUIPlugin.log(e);
 				}
 			} else {
-				CUIPlugin.getDefault().logErrorMessage(Messages.getString("DiscoveryTab.7")); //$NON-NLS-1$
+				CUIPlugin.getDefault().logErrorMessage(Messages.DiscoveryTab_7); 
 			}
 		}
 

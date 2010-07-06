@@ -17,12 +17,13 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.ui.newui.UIMessages;
+import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -49,19 +50,6 @@ import org.eclipse.swt.widgets.Text;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class NewBuildConfigurationDialog extends Dialog {
-	// String constants
-	private static final String PREFIX = "NewConfiguration";	//$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
-	private static final String ERROR = PREFIX + ".error";	//$NON-NLS-1$	
-	private static final String NAME = LABEL + ".name";	//$NON-NLS-1$
-	private static final String GROUP = LABEL + ".group";	//$NON-NLS-1$
-	private static final String COPY = LABEL + ".copy";	//$NON-NLS-1$
-	private static final String CLONE = LABEL + ".clone";	//$NON-NLS-1$
-	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
-	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
-	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
-	private static final String DESCRIPTION = LABEL + ".description";	//$NON-NLS-1$
-	
 	// Widgets
 	private Button btnClone;
 	private Button btnCopy;
@@ -71,7 +59,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	private Combo cloneConfigSelector;
 	private Label statusLabel;
 
-	// Bookeeping
+	// Bookkeeping
 	private boolean clone;
 	/** Default configurations defined in the toolchain description */
 	private IConfiguration[] defaultCfgds;
@@ -209,7 +197,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
-		nameLabel.setText(UIMessages.getString(NAME));
+		nameLabel.setText(Messages.NewConfiguration_label_name);
 				
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
@@ -233,7 +221,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 //		 Add a label and a text widget for Configuration's description
         final Label descriptionLabel = new Label(group1, SWT.LEFT);
         descriptionLabel.setFont(parent.getFont());
-        descriptionLabel.setText(UIMessages.getString(DESCRIPTION));
+        descriptionLabel.setText(Messages.NewConfiguration_label_description);
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
@@ -253,7 +241,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 
 		final Group group = new Group(composite, SWT.NONE);
 		group.setFont(composite.getFont());
-		group.setText(UIMessages.getString(GROUP));
+		group.setText(Messages.NewConfiguration_label_group);
 		GridLayout layout = new GridLayout(3, false);
 		group.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -269,7 +257,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		// Add a radio button and combo box to copy from default config
 		btnCopy = new Button(group, SWT.RADIO);
 		btnCopy.setFont(group.getFont());
-		btnCopy.setText(UIMessages.getString(COPY));
+		btnCopy.setText(Messages.NewConfiguration_label_copy);
 		setButtonLayoutData(btnCopy);
 		btnCopy.addSelectionListener(radioListener);
 		
@@ -291,7 +279,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		// Create a radio button and combo for clonable configs
 		btnClone = new Button(group, SWT.RADIO);
 		btnClone.setFont(group.getFont());
-		btnClone.setText(UIMessages.getString(CLONE));
+		btnClone.setText(Messages.NewConfiguration_label_clone);
 		setButtonLayoutData(btnClone);
 		btnClone.addSelectionListener(radioListener);
 		btnClone.setSelection(true);
@@ -465,12 +453,12 @@ public class NewBuildConfigurationDialog extends Dialog {
 			s = "";	//$NON-NLS-1$
 			// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
-			s = UIMessages.getFormattedString(DUPLICATE, currentName);
+			s = NLS.bind(Messages.NewConfiguration_error_duplicateName, currentName);
 		} else if (isSimilarName(currentName)) {
-			s = UIMessages.getFormattedString(CASE, currentName);
+			s = NLS.bind(Messages.NewConfiguration_error_caseName, currentName);
 		} else if (!validateName(currentName)) {
 			// TODO Create a decent I18N string to describe this problem
-			s = UIMessages.getFormattedString(INVALID, currentName);
+			s = NLS.bind(Messages.NewConfiguration_error_invalidName, currentName);
 		} 
 		if (statusLabel == null) return;
 		Button b = getButton(IDialogConstants.OK_ID);
@@ -511,8 +499,8 @@ public class NewBuildConfigurationDialog extends Dialog {
 		try {
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		} catch (CoreException e) {
-			System.out.println(Messages.getString("NewBuildConfigurationDialog.0")); //$NON-NLS-1$
-			System.out.println(Messages.getString("NewBuildConfigurationDialog.1") + e.getLocalizedMessage()); //$NON-NLS-1$
+			System.out.println(Messages.NewBuildConfigurationDialog_0); 
+			System.out.println(Messages.NewBuildConfigurationDialog_1 + e.getLocalizedMessage()); 
 		}
 		return null;
 	}

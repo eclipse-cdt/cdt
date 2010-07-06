@@ -25,6 +25,8 @@ public final class Messages extends NLS {
 	public static String ParameterNamesInputPage_CompleteMissingMails;
 	public static String PreviewGenerationNotPossible;
 	public static String ImplementMethodInputPage_PageTitle;
+	public static String ImplementMethodInputPage_SelectAll;
+	public static String ImplementMethodInputPage_DeselectAll;
 	public static String ImplementMethodRefactoringPage_GeneratingPreview;
 	public static String ImplementMethodRefactoring_NoMethodSelected;
 	public static String ImplementMethodRefactoring_MethodHasImpl;

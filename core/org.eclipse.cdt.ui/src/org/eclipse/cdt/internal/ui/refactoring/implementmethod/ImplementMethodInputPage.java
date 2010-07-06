@@ -16,7 +16,12 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
@@ -55,11 +60,55 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 		setMessage(Messages.ImplementMethodInputPage_Header);
 		
 		Composite comp = new Composite(parent, SWT.NONE );
-		comp.setLayout(new FillLayout());
+		comp.setLayout(new GridLayout(2, false));
 		createTree(comp);
+		createFieldManagementButtonsComposite(comp);
 		
 		setControl(comp);
 		checkPage();
+	}
+	
+	private Composite createFieldManagementButtonsComposite(Composite comp) {
+		Composite btComp = new Composite(comp, SWT.NONE);
+		FillLayout layout = new FillLayout(SWT.VERTICAL);
+		layout.spacing = 4;
+		btComp.setLayout(layout);
+		
+		GridData gd = new GridData();
+		gd.verticalAlignment = SWT.TOP;
+		btComp.setLayoutData(gd);
+		
+		final Button selectAll = new Button(btComp, SWT.PUSH);
+		selectAll.setText(Messages.ImplementMethodInputPage_SelectAll);
+		selectAll.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Object[] items = data.getElements(null);
+				for (Object treeItem : items) {
+					MethodToImplementConfig method = (MethodToImplementConfig)treeItem;
+					method.setChecked(true);
+					tree.setChecked(treeItem, true);
+				}
+				checkPage();
+			}
+		});
+		
+		final Button deselectAll = new Button(btComp, SWT.PUSH);
+		deselectAll.setText(Messages.ImplementMethodInputPage_DeselectAll);
+		deselectAll.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Object[] items = data.getElements(null);
+				for (Object treeItem : items) {
+					MethodToImplementConfig method = (MethodToImplementConfig)treeItem;
+					method.setChecked(false);
+					tree.setChecked(treeItem, false);
+				}
+				checkPage();
+			}
+		});
+		
+		return btComp;
 	}
 
 	private void createTree(Composite comp) {
@@ -67,6 +116,7 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 		tree.setContentProvider(data);
 		tree.setAutoExpandLevel(2);
 		tree.setInput(""); //$NON-NLS-1$
+		tree.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		tree.addCheckStateListener(new ICheckStateListener() {
 

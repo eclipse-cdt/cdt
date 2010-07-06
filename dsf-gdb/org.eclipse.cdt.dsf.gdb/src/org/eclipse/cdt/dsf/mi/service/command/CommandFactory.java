@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     ENEA Software AB - CLI command extension - fix for bug 190277
  *     Ericsson - Implementation for DSF-GDB
+ *     Anna Dushistova (Mentor Graphics) - [318322] Add set solib-absolute-prefix
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -85,6 +86,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetTargetAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
@@ -549,6 +551,10 @@ public class CommandFactory {
 		return new MIGDBSetPagination(ctx, isSet);
 	}
 
+	public ICommand<MIInfo> createMIGDBSetSolibAbsolutePrefix(ICommandControlDMContext ctx, String prefix) {
+		return new MIGDBSetSolibAbsolutePrefix(ctx, prefix);
+	}
+	
 	public ICommand<MIInfo> createMIGDBSetSolibSearchPath(ICommandControlDMContext ctx, String[] paths) {
 		return new MIGDBSetSolibSearchPath(ctx, paths);
 	}

@@ -114,7 +114,12 @@ public class NameHelper {
 					}
 					lookAhead++;
 				}
-			} else if (start + 1 <= end && Character.isUpperCase(letters[start + 1])) {
+				
+			}
+			// Sometimes, a one letter lower case prefix is used to add some info
+			// Example: mMyMember, sMyStatic
+			// Trim the first letter
+			else if (!Character.isUpperCase(letters[start]) && start + 1 <= end && Character.isUpperCase(letters[start + 1])) {
 				start++;
 			}
 			

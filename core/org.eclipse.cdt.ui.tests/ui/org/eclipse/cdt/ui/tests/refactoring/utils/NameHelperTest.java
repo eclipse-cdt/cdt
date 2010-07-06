@@ -38,6 +38,8 @@ public class NameHelperTest extends TestCase {
 		assertEquals("O__b", NameHelper.trimFieldName("fO__b"));
 		assertEquals("Oo", NameHelper.trimFieldName("fOo"));
 		assertEquals("O", NameHelper.trimFieldName("fO"));
+		assertEquals("MyStatic", NameHelper.trimFieldName("sMyStatic"));
+		assertEquals("MyMember", NameHelper.trimFieldName("mMyMember"));
 		
 		assertEquals("8", NameHelper.trimFieldName("_8"));
 		
@@ -45,6 +47,12 @@ public class NameHelperTest extends TestCase {
 		assertEquals("8bar_8", NameHelper.trimFieldName("_8bar_8"));
 		assertEquals("8bAr", NameHelper.trimFieldName("_8bAr"));
 		assertEquals("b8Ar", NameHelper.trimFieldName("_b8Ar"));
+		
+		assertEquals("Id", NameHelper.trimFieldName("Id"));
+		assertEquals("ID", NameHelper.trimFieldName("ID"));
+		assertEquals("IDS", NameHelper.trimFieldName("IDS"));
+		assertEquals("ID", NameHelper.trimFieldName("bID"));
+		assertEquals("IdA", NameHelper.trimFieldName("IdA"));
 	}
 
 }

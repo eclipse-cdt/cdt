@@ -75,10 +75,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * This class implements the IProcesses interface for GDB 7.0
- * Actually, I'm not sure what the next version of GDB will be, so technically,
- * it is the one after GDB 6.8, as long as it contains multi-process support,
- * which really mean it supports the new -list-thread-groups command.
- * 
+ * which supports the new -list-thread-groups command.
  */
 public class GDBProcesses_7_0 extends AbstractDsfService 
     implements IGDBProcesses, ICachingService, IEventListener {
@@ -216,9 +213,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
 	/**
 	 * Context representing a thread. 
+	 * @since 3.1
 	 */
     @Immutable
-    private static class MIThreadDMC extends AbstractDMContext
+    protected static class MIThreadDMC extends AbstractDMContext
     implements IThreadDMContext
     {
     	/**

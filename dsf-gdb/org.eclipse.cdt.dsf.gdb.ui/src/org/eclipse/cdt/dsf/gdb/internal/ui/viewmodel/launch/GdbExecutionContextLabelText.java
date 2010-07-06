@@ -28,6 +28,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
     protected Object getPropertyValue(String propertyName, IStatus status, Map<String, Object> properties) {
         if (IGdbLaunchVMConstants.PROP_OS_ID_KNOWN.equals(propertyName)) {
             return properties.get(IGdbLaunchVMConstants.PROP_OS_ID) != null ? 1 : 0;
+        }
+        if (IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN.equals(propertyName)) {
+            return properties.get(IGdbLaunchVMConstants.PROP_CORES_ID) != null ? 1 : 0;
         } 
         return super.getPropertyValue(propertyName, status, properties);
     }
@@ -35,7 +38,9 @@ public class GdbExecutionContextLabelText extends ExecutionContextLabelText {
     @Override
     protected boolean checkProperty(String propertyName, IStatus status, Map<String, Object> properties) {
         if (IGdbLaunchVMConstants.PROP_OS_ID_KNOWN.equals(propertyName) ||
-            IGdbLaunchVMConstants.PROP_OS_ID.equals(propertyName)) 
+            IGdbLaunchVMConstants.PROP_OS_ID.equals(propertyName) ||
+            IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN.equals(propertyName) ||
+            IGdbLaunchVMConstants.PROP_CORES_ID.equals(propertyName)) 
         {
             return true;
         } 

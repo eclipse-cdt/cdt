@@ -158,9 +158,16 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		String getName();
 		String getDesciption();
 	}
+
+	/**
+	 * @since 3.1
+	 */
+	public interface IThreadGroupInfoExtension extends IThreadGroupInfo {
+		String[] getCores();
+	}
 	
 	@Immutable
-	private static class ThreadGroupInfo implements IThreadGroupInfo {
+	private static class ThreadGroupInfo implements IThreadGroupInfoExtension {
 		final String fGroupId;
 		final String fDescription;
 		final String fName;
@@ -208,6 +215,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		public String getName() { return fName;	}
 
 		public String getDesciption() { return fDescription; }
+		public String[] getCores() { return fCores; }
 
 		// The following are not used yet, but it's good to keep
 		// them as a way to document what is available from GDB.
@@ -215,8 +223,6 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		public String getType() { return fType;	}
 		@SuppressWarnings("unused")
 		public String getUser() { return fUser;	}
-		@SuppressWarnings("unused")
-		public String[] getCores() { return fCores; }
 		@SuppressWarnings("unused")
 		public String getExecutable() { return fExecutable; }
 	}

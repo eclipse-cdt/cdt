@@ -56,7 +56,7 @@ public class MIThread {
 	 * Available since GDB 7.1
 	 * @since 3.1
 	 */
-	public String getCore()          { return fCore;    }
+	public String getCore()           { return fCore; }
 	
 	public static MIThread parse(MITuple tuple) {
         MIResult[] results = tuple.getMIResults();

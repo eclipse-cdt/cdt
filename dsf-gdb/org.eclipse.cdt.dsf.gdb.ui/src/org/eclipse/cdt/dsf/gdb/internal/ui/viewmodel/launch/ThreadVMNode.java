@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses.IThreadDMData;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractThreadVMNode;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -74,7 +75,9 @@ public class ThreadVMNode extends AbstractThreadVMNode
                         ILaunchVMConstants.PROP_ID, 
                         IGdbLaunchVMConstants.PROP_OS_ID_KNOWN, 
                         IGdbLaunchVMConstants.PROP_OS_ID, 
-                        ILaunchVMConstants.PROP_IS_SUSPENDED, 
+                        IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN, 
+                        IGdbLaunchVMConstants.PROP_CORES_ID,
+                        ILaunchVMConstants.PROP_IS_SUSPENDED,
                         ExecutionContextLabelText.PROP_STATE_CHANGE_REASON_KNOWN, 
                         ILaunchVMConstants.PROP_STATE_CHANGE_REASON,
                         ExecutionContextLabelText.PROP_STATE_CHANGE_DETAILS_KNOWN,
@@ -117,14 +120,14 @@ public class ThreadVMNode extends AbstractThreadVMNode
                 update.setProperty(ILaunchVMConstants.PROP_ID, Integer.toString(execDmc.getThreadId()));
             }
 
-            IProcesses processService = getServicesTracker().getService(IProcesses.class);
-            final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
-            
             if (update.getProperties().contains(PROP_NAME) || 
-                update.getProperties().contains(IGdbLaunchVMConstants.PROP_OS_ID)) 
+                update.getProperties().contains(IGdbLaunchVMConstants.PROP_OS_ID) ||
+                update.getProperties().contains(IGdbLaunchVMConstants.PROP_CORES_ID)) 
             {
-                // 
-                if (processService == null || threadDmc == null) {
+            	IProcesses processService = getServicesTracker().getService(IProcesses.class);
+            	final IThreadDMContext threadDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IThreadDMContext.class);
+
+            	if (processService == null || threadDmc == null) {
                     update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE, "Service or handle invalid", null)); //$NON-NLS-1$
                 } else {
                     processService.getExecutionData(
@@ -153,6 +156,20 @@ public class ThreadVMNode extends AbstractThreadVMNode
     		update.setProperty(PROP_NAME, data.getName());
     	}
         update.setProperty(IGdbLaunchVMConstants.PROP_OS_ID, data.getId());
+        
+        if (data instanceof IGdbThreadDMData) {
+        	String[] cores = ((IGdbThreadDMData)data).getCores();
+        	if (cores != null) {
+        		StringBuffer str = new StringBuffer();
+        		for (String core : cores) {
+        			str.append(core + ","); //$NON-NLS-1$
+        		}
+        		if (str.length() > 0) {
+        			String coresStr = str.substring(0, str.length() - 1);
+        			update.setProperty(IGdbLaunchVMConstants.PROP_CORES_ID, coresStr);        	
+        		}
+        	}
+        }
     }
 
 	private String produceThreadElementName(String viewName, IMIExecutionDMContext execCtx) {

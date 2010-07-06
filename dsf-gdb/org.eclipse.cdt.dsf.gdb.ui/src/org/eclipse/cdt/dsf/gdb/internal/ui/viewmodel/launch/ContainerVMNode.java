@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Ericsson and others.
+ * Copyright (c) 2006, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,9 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.AbstractContainerVMNode;
+import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ExecutionContextLabelText;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.ILaunchVMConstants;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.concurrent.ViewerCountingRequestMonitor;
@@ -36,18 +38,27 @@ import org.eclipse.cdt.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.IPropertiesUpdate;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelAttribute;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelColumnInfo;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelText;
+import org.eclipse.cdt.dsf.ui.viewmodel.properties.PropertiesBasedLabelProvider;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.VMDelegatingPropertiesUpdate;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 
 @SuppressWarnings("restriction")
 public class ContainerVMNode extends AbstractContainerVMNode
-    implements IElementMementoProvider
+    implements IElementLabelProvider, IElementMementoProvider 
 {
 	public ContainerVMNode(AbstractDMVMProvider provider, DsfSession session) {
         super(provider, session);
@@ -58,6 +69,37 @@ public class ContainerVMNode extends AbstractContainerVMNode
 	    return "ContainerVMNode(" + getSession().getId() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
+    protected IElementLabelProvider createLabelProvider() {
+        PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
+        
+        provider.setColumnInfo(
+            PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS, 
+            new LabelColumnInfo(new LabelAttribute[] { 
+                new GdbExecutionContextLabelText(
+                MessagesForGdbLaunchVM.ContainerVMNode_No_columns__text_format,
+                    new String[] { 
+                        ExecutionContextLabelText.PROP_NAME_KNOWN, 
+                        PROP_NAME,  
+                        ExecutionContextLabelText.PROP_ID_KNOWN, 
+                        ILaunchVMConstants.PROP_ID, 
+                        IGdbLaunchVMConstants.PROP_CORES_ID_KNOWN, 
+                        IGdbLaunchVMConstants.PROP_CORES_ID }), 
+                new LabelText(MessagesForGdbLaunchVM.ContainerVMNode_No_columns__Error__label, new String[0]),
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_SUSPENDED)) {
+                    { setPropertyNames(new String[] { ILaunchVMConstants.PROP_IS_SUSPENDED }); }
+                    
+                    @Override
+                    public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+                        return Boolean.TRUE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
+                    };
+                },
+                new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET)),
+            }));
+        
+        return provider;
+    }
+    
 	@Override
 	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
 		IProcesses processService = getServicesTracker().getService(IProcesses.class);
@@ -98,6 +140,11 @@ public class ContainerVMNode extends AbstractContainerVMNode
             parentUpdates[i] = new VMDelegatingPropertiesUpdate(updates[i], countringRm);
             count++;
             
+            if (update.getProperties().contains(PROP_NAME) || 
+                update.getProperties().contains(ILaunchVMConstants.PROP_ID) ||
+                update.getProperties().contains(IGdbLaunchVMConstants.PROP_CORES_ID)) 
+            {
+            	
             IProcesses processService = getServicesTracker().getService(IProcesses.class);
             final IProcessDMContext procDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IProcessDMContext.class);
             
@@ -119,6 +166,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
                     });
                 count++;
             }
+            }
             
             countringRm.setDoneCount(count);
         }
@@ -129,6 +177,21 @@ public class ContainerVMNode extends AbstractContainerVMNode
     protected void fillThreadDataProperties(IPropertiesUpdate update, IThreadDMData data) {
         update.setProperty(PROP_NAME, data.getName());
         update.setProperty(ILaunchVMConstants.PROP_ID, data.getId());
+        
+		String coresStr = null;
+        if (data instanceof IGdbThreadDMData) {
+        	String[] cores = ((IGdbThreadDMData)data).getCores();
+        	if (cores != null) {
+        		StringBuffer str = new StringBuffer();
+        		for (String core : cores) {
+        			str.append(core + ","); //$NON-NLS-1$
+        		}
+        		if (str.length() > 0) {
+        			coresStr = str.substring(0, str.length() - 1);
+        		}
+        	}
+        }
+        update.setProperty(IGdbLaunchVMConstants.PROP_CORES_ID, coresStr);        	
     }
 
     

@@ -551,6 +551,7 @@ public class CommandFactory {
 		return new MIGDBSetPagination(ctx, isSet);
 	}
 
+	/** @since 3.1 */
 	public ICommand<MIInfo> createMIGDBSetSolibAbsolutePrefix(ICommandControlDMContext ctx, String prefix) {
 		return new MIGDBSetSolibAbsolutePrefix(ctx, prefix);
 	}

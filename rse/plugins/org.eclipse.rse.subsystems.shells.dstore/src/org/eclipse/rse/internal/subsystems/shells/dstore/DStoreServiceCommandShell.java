@@ -15,6 +15,7 @@
  * David McKnight (IBM) - [202822] cleanup output datalements after use
  * Martin Oberhuber (Wind River) - [225510][api] Fix OutputRefreshJob API leakage
  * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences
+ * David McKnight (IBM) - [319164][dstore][shells] shell cleanup threads stay around indefinitely when spirit is off
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.dstore;
@@ -46,9 +47,10 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 		private DataElement _status;
 		private DataStore _ds;
 		private boolean _done = false;
+		private int _timesWaited = 0;
 
 		public CleanUpSpirited(DataElement status, String name)
-		{
+		{			
 			_status = status;
 			_ds = status.getDataStore();
 			_ds.getDomainNotifier().addDomainListener(this);
@@ -61,11 +63,12 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 
 		public void run()
 		{
-			while (!_done)
+			while (!_done && _timesWaited < 3) // limit the attempts to 3, since it's possible that, on the server, spirit is off
 			{
 				try
 				{
 					Thread.sleep(10000);
+					_timesWaited++;
 				}
 				catch (Exception e)
 				{
@@ -89,7 +92,7 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 
 					_ds.getDomainNotifier().removeDomainListener(this);
 					_done = true;
-				}
+				}				
 				}
 			}
 		}

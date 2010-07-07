@@ -57,6 +57,11 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	}
 	
 	@Override
+	public boolean isIndexedOnlyIfIncluded(Object tu) {
+		return false;
+	}
+
+	@Override
 	public boolean isSource(String filename) {
 		return isValidSourceUnitName(filename);
 	}

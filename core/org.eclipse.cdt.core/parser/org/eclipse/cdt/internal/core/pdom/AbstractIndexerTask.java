@@ -53,7 +53,6 @@ import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
-import org.eclipse.cdt.internal.core.pdom.indexer.PotentialTranslationUnit;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -385,7 +384,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				continue;
 			
 			final IIndexFragmentFile[] indexFiles= fIndex.getWritableFiles(ifl);
-			if (!(tu instanceof PotentialTranslationUnit)) {
+			if (!fResolver.isIndexedOnlyIfIncluded(tu)) {
 				final boolean isSourceUnit= fResolver.isSourceUnit(tu);
 				final boolean isExcludedSource= isSourceUnit && !fIndexFilesWithoutConfiguration && !fResolver.isFileBuildConfigured(tu);
 

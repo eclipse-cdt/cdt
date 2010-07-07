@@ -209,6 +209,11 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
+	public boolean isIndexedOnlyIfIncluded(Object tu) {
+		return tu instanceof PotentialTranslationUnit;
+	}
+
+	@Override
 	public boolean isSourceUnit(Object tuo) {
 		ITranslationUnit tu= (ITranslationUnit) tuo;
 		return tu.isSourceUnit();

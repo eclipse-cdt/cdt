@@ -1,29 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2006 PalmSource, Inc. and others
+Copyright (c) 2006, 2010 PalmSource, Inc. and others
 All rights reserved. This program and the accompanying materials 
 are made available under the terms of the Eclipse Public License v1.0 
 which accompanies this distribution, and is available at 
 http://www.eclipse.org/legal/epl-v10.html 
 
 Contributors: 
-Ewa Matejska (PalmSource) - initial API and implementation 
-Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format 
+Ewa Matejska     (PalmSource)      - initial API and implementation 
+Martin Oberhuber (Wind River)      - fix 158529: Migrate docs to HTML / TOC format 
+Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
 -->
 <?eclipse version="3.0"?>
 <plugin>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            delegate="org.eclipse.cdt.launch.remote.RemoteRunLaunchDelegate"
             public="true"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
-            name="C/C++ Remote Application"
+            name="%launchConfigurationType.name"
             id="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
-            modes="debug,run">
+       >
       </launchConfigurationType>
    </extension>
+       <extension point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            id="org.eclipse.rse.remotecdt.launch"
+            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            modes="run,debug"
+            delegate="org.eclipse.cdt.launch.remote.RemoteRunLaunchDelegate"
+            name="%cdiLaunchDelegate.name"
+            delegateDescription="%cdiLaunchDelegate.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.rse.remotecdt.dsf.debug"
+            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            modes="debug"
+            delegate="org.eclipse.cdt.launch.remote.RemoteGdbLaunchDelegate"
+            name="%dsfLaunchDelegate.name"
+            delegateDescription="%dsfLaunchDelegate.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+   </extension>
+   
+   
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
@@ -39,8 +61,126 @@ Martin Oberhuber (Wind River) - fix 158529: Migrate docs to HTML / TOC format
             helpContextId="org.eclipse.rse.remotecdt.launchgroup"
             id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
+         <launchMode
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.launch.remote.RemoteLaunchConfigurationTabGroup"
+            helpContextId="org.eclipse.rse.remotecdt.launchgroup"
+            id="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
+         <launchMode
+               mode="debug">
+         </launchMode>
       </launchConfigurationTabGroup>
    </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+     <tab
+            id="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"
+            group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            name="Main"
+            class="org.eclipse.cdt.launch.remote.RemoteCMainTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+     </tab>         
+     <tab
+            id="org.eclipse.rse.remotecdt.debug.RemoteCMainTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Main"
+            class="org.eclipse.cdt.launch.remote.RemoteCMainTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+     </tab>         
+     <tab
+            id="org.eclipse.rse.remotecdt.dsf.gdb.mainTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Main"
+            class="org.eclipse.cdt.launch.remote.RemoteCDSFMainTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+     </tab>         
+     <tab
+            id="org.eclipse.rse.remotecdt.launch.CAgrumentsTab"
+            group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            name="Arguments"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"/>                        
+      </tab>         
+      <tab
+            id="org.eclipse.rse.remotecdt.debug.CArgumentsTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Arguments"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"/>                
+      </tab> 
+      <tab id="org.eclipse.rse.remotecdt.dsf.debug.CArgumentsTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Arguments"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.cdt.launch.remote.dsf.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.rse.remotecdt.launch.RemoteCDebuggerTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Debugger"
+            class="org.eclipse.cdt.launch.remote.RemoteCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
+      </tab>
+      <tab id="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Debugger"
+            class="org.eclipse.cdt.launch.remote.RemoteCDSFDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.rse.remotecdt.launch.SourceLookupTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Source"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.rse.remotecdt.launch.RemoteCDebuggerTab"/>        
+      </tab>         
+      <tab
+            id="org.eclipse.rse.remotecdt.debug.dsf.SourceLookupTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Source"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"/>        
+      </tab>         
+      <tab
+            id="org.eclipse.rse.remotecdt.launch.CommonTab"
+            group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            name="Common"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
+      </tab>         
+      <tab
+            id="org.eclipse.rse.remotecdt.debug.CommonTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Common"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
+      </tab>         
+      <tab
+            id="org.eclipse.rse.remotecdt.debug.dsf.CommonTab"
+            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            name="Common"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>                
+      </tab>         
+      
+   </extension>
+   
+   
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger

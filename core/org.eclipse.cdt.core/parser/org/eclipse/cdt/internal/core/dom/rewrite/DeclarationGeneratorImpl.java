@@ -11,37 +11,38 @@
 
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayDeclarator;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -56,10 +57,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class DeclarationGeneratorImpl{
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.rewrite.IDeclarationGenerator#createDeclSpecFromType(org.eclipse.cdt.core.dom.ast.IType)
-	 */
-	
 	private INodeFactory factory;
 	
 	/**
@@ -125,23 +122,85 @@ public class DeclarationGeneratorImpl{
 	
 		try {
 	
-			if (type instanceof IPointerType || type instanceof IArrayType || type instanceof ICPPReferenceType) {
-				
-				IASTDeclarator declarator = createPointerOrArrayDeclarator(type, name);
-				returnedDeclarator = declarator;
-						
-			} else if (typeIrrelevantForDeclarator(type)) {
-				IASTDeclarator declarator = factory.newDeclarator(null);
-				IASTName astName = factory.newName(name);
-				declarator.setName(astName);
-				
-				returnedDeclarator = declarator;
-				
-			} else if (type instanceof IFunctionType) {
-				// TODO function pointers
-				
-				
+			// Addition of pointer operators has to be in reverse order, so it's deferred until the end
+			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
+
+			IASTName newName = (name != null) ? factory.newName(name) : factory.newName();
+
+			// If the type is an array of something, create a declaration of a pointer to something instead
+			// (to allow assignment, etc)
+
+			boolean replaceInitialArrayWithPointer = true;
+
+			// If the type is a function, create a declaration of a pointer to this function
+			// (shorthand notation for function address)
+
+			boolean changeInitialFunctionToFuncPtr = true;
+
+			while (typeNeedsNontrivialDeclarator(type)) {
+				if (replaceInitialArrayWithPointer && type instanceof IArrayType) {
+					returnedDeclarator = factory.newDeclarator(newName);
+					returnedDeclarator.addPointerOperator(factory.newPointer());
+					type = ((IArrayType) type).getType();
+				} else if (changeInitialFunctionToFuncPtr && type instanceof IFunctionType) {
+					returnedDeclarator = factory.newDeclarator(newName);
+					returnedDeclarator.addPointerOperator(factory.newPointer());
+					// leave type as it is, next iteration will handle the function
+				} else if (type instanceof IArrayType) {
+					IArrayType arrayType = (IArrayType) type;
+					IASTArrayDeclarator arrayDeclarator = factory.newArrayDeclarator(null);
+					if (returnedDeclarator == null) {
+						arrayDeclarator.setName(newName);
+					} else {
+						arrayDeclarator.setNestedDeclarator(returnedDeclarator);
+						arrayDeclarator.setName(factory.newName());
+					}
+					// consume all immediately following array expressions
+					while (type instanceof IArrayType) {
+						arrayType = (IArrayType) type;
+						IASTExpression arraySizeExpression = arrayType.getArraySizeExpression();
+						arrayDeclarator.addArrayModifier(factory.newArrayModifier(arraySizeExpression == null
+								? null : arraySizeExpression.copy()));
+						type = arrayType.getType();
+					}
+					returnedDeclarator = arrayDeclarator;
+				} else if (isPtrOrRefType(type)) {
+					if (returnedDeclarator == null) {
+						returnedDeclarator = factory.newDeclarator(newName);
+					}
+					IASTPointerOperator ptrOp = createPointerOperator(type);
+					addPointerOperatorDeferred(pointerOperatorMap, returnedDeclarator, ptrOp);
+					type = getPtrOrRefSubtype(type);
+				} else if (type instanceof IFunctionType) {
+					IFunctionType funcType = (IFunctionType) type;
+					IASTStandardFunctionDeclarator func = factory.newFunctionDeclarator(null);
+					for (IType paramType : funcType.getParameterTypes()) {
+						IASTDeclSpecifier declspec = createDeclSpecFromType(paramType);
+						IASTDeclarator declarator = null;
+						if (typeNeedsNontrivialDeclarator(paramType)) {
+							declarator = createDeclaratorFromType(paramType, null);
+						} else {
+							declarator = factory.newDeclarator(factory.newName());
+						}
+						IASTParameterDeclaration parameterDeclaration = factory.newParameterDeclaration(
+								declspec, declarator);
+						func.addParameterDeclaration(parameterDeclaration);
+					}
+					if (returnedDeclarator == null) {
+						func.setName(newName);
+					} else {
+						func.setNestedDeclarator(returnedDeclarator);
+						func.setName(factory.newName());
+					}
+					returnedDeclarator = func;
+					type = funcType.getReturnType();
+				}
+				replaceInitialArrayWithPointer = false;
+				changeInitialFunctionToFuncPtr = false;
 			}
+			
+			finalizePointerOperators(pointerOperatorMap);
+
 		} catch (DOMException e) {
 			e.printStackTrace();
 		}
@@ -154,85 +213,66 @@ public class DeclarationGeneratorImpl{
 		return returnedDeclarator;
 	}
 
-	/**
-	 * Checks if a given type isn't described by the {@link IASTDeclarator} (only by the {@link IASTDeclSpecifier}).
-	 * @param type the type to check
-	 * @return true if irrelevant
-	 */
-	private boolean typeIrrelevantForDeclarator(IType type) {
-		return type instanceof IBasicType || type instanceof ICompositeType || type instanceof IQualifierType || type instanceof ITypedef;
+	private void finalizePointerOperators(
+			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap) {
+		for (IASTDeclarator declarator : pointerOperatorMap.keySet()) {
+			LinkedList<IASTPointerOperator> list = pointerOperatorMap.get(declarator);
+			for (IASTPointerOperator op : list) {
+				declarator.addPointerOperator(op);
+			}
+		}
 	}
 
-	/**
-	 * Handles the creation of declarators of pointers, references, arrays and arrays of pointers/references.
-	 * @param type the topmost type, expected {@link IPointerType}, {@link ICPPReferenceType} or {@link IArrayType}
-	 * @param name the declarator name
-	 * @return Either a {@link CPPASTDeclarator} or a {@link CPPASTArrayDeclarator}, depending on what's needed
-	 * @throws DOMException
-	 */
-	private IASTDeclarator createPointerOrArrayDeclarator(IType type, char[] name) throws DOMException {
-		List<IASTPointerOperator> ptrs = new ArrayList<IASTPointerOperator>();
-		List<IASTExpression> arrs = new ArrayList<IASTExpression>();
-		while (type instanceof IPointerType || type instanceof ICPPReferenceType) {
-			IASTPointerOperator astPtr;
-			if (type instanceof IPointerType) {
-				IASTPointer cppastPointer = factory.newPointer();
-				IPointerType ptrType = (IPointerType) type;
-				cppastPointer.setConst(ptrType.isConst());
-				cppastPointer.setVolatile(ptrType.isVolatile());
-				astPtr = cppastPointer;
-				type = ptrType.getType();
-			} else {
-				ICPPASTReferenceOperator cppastReferenceOperator = ((ICPPNodeFactory)factory).newReferenceOperator(false);
-				ICPPReferenceType refType = (ICPPReferenceType) type;
-				astPtr = cppastReferenceOperator;
-				type = refType.getType();
-	
-			}
-			ptrs.add(astPtr);
-		}
-		while (type instanceof IArrayType) {
-			IArrayType arrType = (IArrayType) type;
-			IASTExpression arraySizeExpression = arrType.getArraySizeExpression();
-			arrs.add(arraySizeExpression);
-			type = arrType.getType();
-		}
-	
-		IASTDeclarator decl;
-		if (!arrs.isEmpty()) {
-			IASTArrayDeclarator arrayDeclarator = factory.newArrayDeclarator(null);
-			for (IASTExpression exp : arrs) {
-				IASTArrayModifier arrayModifier = factory.newArrayModifier((exp == null) ? exp : exp.copy());
-				arrayDeclarator.addArrayModifier(arrayModifier);
-			}
-			decl = arrayDeclarator;
+	private void addPointerOperatorDeferred(
+			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap,
+			IASTDeclarator returnedDeclarator, IASTPointerOperator ptrOp) {
+		LinkedList<IASTPointerOperator> list;
+		if (!pointerOperatorMap.containsKey(returnedDeclarator)) {
+			list = new LinkedList<IASTPointerOperator>();
+			pointerOperatorMap.put(returnedDeclarator, list);
 		} else {
-			decl = factory.newDeclarator(null);
+			list = pointerOperatorMap.get(returnedDeclarator);
 		}
-		for (IASTPointerOperator ptr : ptrs) {
-			decl.addPointerOperator(ptr);
-		}
-	
-		createDeclaratorContent(decl, type, name);
-		
-		return decl;
+		list.addFirst(ptrOp);
 	}
 
-	/**
-	 * Fills a given declarator with either an ASTName or a proper nested declarator
-	 * @param decl The declarator to fill
-	 * @param type the content type of declarator
-	 * @param name the desired name of declarator tree
-	 * @throws DOMException 
-	 */
-	private void createDeclaratorContent(IASTDeclarator decl, IType type, char[] name) throws DOMException {
-		if (type instanceof IPointerType || type instanceof IArrayType || type instanceof ICPPReferenceType) {
-			IASTDeclarator nested = createPointerOrArrayDeclarator(type, name);
-			decl.setNestedDeclarator(nested);
-		} else if (typeIrrelevantForDeclarator(type)) {
-			IASTName astName = factory.newName(name);
-			decl.setName(astName);
+	private IType getPtrOrRefSubtype(IType type) {
+		if (type instanceof IPointerType) {
+			return ((IPointerType) type).getType();
+		} else {
+			return ((ICPPReferenceType) type).getType();
 		}
+	}
+
+	private IASTPointerOperator createPointerOperator(IType type) {
+		if (type instanceof ICPPPointerToMemberType) {
+			String classStr = ASTTypeUtil.getType(((ICPPPointerToMemberType) type).getMemberOfClass());
+			IASTName newName = factory.newName((classStr + "::").toCharArray()); //$NON-NLS-1$
+			// any better way of getting class name from ICPPPointerToMemberType?
+
+			ICPPASTPointerToMember member = ((ICPPNodeFactory) factory).newPointerToMember(newName);
+			member.setConst(((ICPPPointerToMemberType) type).isConst());
+			member.setVolatile(((ICPPPointerToMemberType) type).isVolatile());
+			return member;
+		} else if (type instanceof IPointerType) {
+			IASTPointer pointer = factory.newPointer();
+			pointer.setConst(((IPointerType) type).isConst());
+			pointer.setVolatile(((IPointerType) type).isVolatile());
+			return pointer;
+		} else {
+			ICPPReferenceType refType = (ICPPReferenceType) type;
+			ICPPASTReferenceOperator op = ((ICPPNodeFactory) factory).newReferenceOperator(refType
+					.isRValueReference());
+			return op;
+		}
+	}
+
+	private boolean isPtrOrRefType(IType type) {
+		return type instanceof IPointerType || type instanceof ICPPReferenceType;
+	}
+
+	private boolean typeNeedsNontrivialDeclarator(IType type) {
+		return isPtrOrRefType(type) || type instanceof IArrayType || type instanceof IFunctionType;
 	}
 
 	private IASTNamedTypeSpecifier getDeclSpecForBinding(IBinding binding) {

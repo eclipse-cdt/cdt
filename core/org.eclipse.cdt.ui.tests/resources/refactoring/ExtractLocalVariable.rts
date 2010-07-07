@@ -463,3 +463,20 @@ void foo(){
     i;
 }
 
+//!Bug 318784 DeclarationGenerator fails for some cases
+//#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
+//@A.cpp
+
+void func() {
+    int *(*a)[2];
+    /*$*/a/*$$*/;
+}
+
+//=
+
+void func() {
+    int *(*a)[2];
+    int *(*a0)[2] = a;
+    a0;
+}
+

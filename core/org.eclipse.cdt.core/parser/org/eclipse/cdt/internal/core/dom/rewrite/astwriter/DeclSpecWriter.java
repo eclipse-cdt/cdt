@@ -125,10 +125,18 @@ public class DeclSpecWriter extends NodeWriter {
 			if (isCpp)
 				return Keywords.AUTO;
 			break;
+		case IASTSimpleDeclSpecifier.t_typeof:
+			if (isCpp)
+				return Keywords.TYPEOF;
+			break;
+		case IASTSimpleDeclSpecifier.t_decltype:
+			if (isCpp)
+				return Keywords.DECLTYPE;
+			break;
 		}
 
-		System.err.println("Unknow Specifiertype: " + type); //$NON-NLS-1$
-		throw new IllegalArgumentException("Unknow Specifiertype: " + type);	 //$NON-NLS-1$
+		System.err.println("Unknown specifier type: " + type); //$NON-NLS-1$
+		throw new IllegalArgumentException("Unknown specifier type: " + type); //$NON-NLS-1$
 	}
 
 	private void writeCDeclSpec(ICASTDeclSpecifier cDeclSpec) {
@@ -280,15 +288,15 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 
 		if(hasFreestandingComments(compDeclSpec)) {
-				writeFreeStandingComments(compDeclSpec);			
-			}
-			scribe.decrementIndentationLevel();
-			scribe.print('}');
+			writeFreeStandingComments(compDeclSpec);			
+		}
+		scribe.decrementIndentationLevel();
+		scribe.print('}');
 
 		if(hasTrailingComments(compDeclSpec)) {
-				writeTrailingComments(compDeclSpec);			
-			}
+			writeTrailingComments(compDeclSpec);			
 		}
+	}
 
 	protected IASTDeclaration[] getMembers(IASTCompositeTypeSpecifier compDeclSpec) {
 		return compDeclSpec.getMembers();
@@ -374,6 +382,14 @@ public class DeclSpecWriter extends NodeWriter {
 	private void writeCPPSimpleDeclSpec(ICPPASTSimpleDeclSpecifier simpDeclSpec) {
 		printQualifiers(simpDeclSpec);
 		scribe.print(getCPPSimpleDecSpecifier(simpDeclSpec));
+		if (simpDeclSpec.getType() == IASTSimpleDeclSpecifier.t_typeof) {
+			scribe.printSpace();
+			visitNodeIfNotNull(simpDeclSpec.getDeclTypeExpression());
+		} else if (simpDeclSpec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
+			scribe.print('(');
+			visitNodeIfNotNull(simpDeclSpec.getDeclTypeExpression());
+			scribe.print(')');
+		}
 	}
 	
 	private void printQualifiers(IASTSimpleDeclSpecifier simpDeclSpec) {

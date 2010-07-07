@@ -170,3 +170,13 @@ auto var = 42;
 //%CPP
 long long int i;
 
+//!C++0x decltype
+//%CPP
+int i;
+decltype(i) j = 3;
+
+//!C++0x typeof
+//%CPP
+int i;
+typeof i j = 3;
+

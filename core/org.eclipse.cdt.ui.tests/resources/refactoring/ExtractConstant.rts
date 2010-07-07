@@ -187,7 +187,7 @@ public:
 	virtual ~A();
 	float foo();
 	void bar();
-    static const float theAnswer = 42.0;
+    static const float theAnswer = 42.0f;
 };
 
 #endif /*A_H_*/
@@ -206,13 +206,13 @@ A::~A()
 
 float A::foo()
 {
-	return /*$*/42.0/*$$*/;
+	return /*$*/42.0f/*$$*/;
 }
 
 void A::bar()
 {
-	float a = 42.0;
-	float b = 42.0;
+	float a = 42.0f;
+	float b = 42.0f;
 }
 
 //=
@@ -235,6 +235,85 @@ void A::bar()
 {
 	float a = theAnswer;
 	float b = theAnswer;
+}
+
+//!ExtractConstantDouble
+//#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	double foo();
+	void bar();
+};
+
+#endif /*A_H_*/
+
+
+//=
+#ifndef A_H_
+#define A_H_
+
+class A
+{
+public:
+	A();
+	virtual ~A();
+	double foo();
+	void bar();
+    static const double theAnswer = 42.0;
+};
+
+#endif /*A_H_*/
+
+
+//@A.cpp
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+double A::foo()
+{
+	return /*$*/42.0/*$$*/;
+}
+
+void A::bar()
+{
+	double a = 42.0;
+	double b = 42.0;
+}
+
+//=
+#include "A.h"
+
+A::A()
+{
+}
+
+A::~A()
+{
+}
+
+double A::foo()
+{
+	return theAnswer;
+}
+
+void A::bar()
+{
+	double a = theAnswer;
+	double b = theAnswer;
 }
 
 //!ExtractConstantStaticInt
@@ -468,5 +547,73 @@ class X {
 
 public:
     static const int theAnswer = 42;
+};
+
+//!ExtractConstantString
+//#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
+//@.config
+visibility=private
+filename=A.h
+//@A.h
+class X {
+    void method()
+    {
+        char *a = /*$*/"sometext"/*$$*/;
+    }
+    
+    void method2()
+    {
+        const char *b = "sometext";
+    }
+};
+
+//=
+class X {
+    void method()
+    {
+        char *a = theAnswer;
+    }
+
+    void method2()
+    {
+        const char *b = theAnswer;
+    }
+
+    static const char *theAnswer = "sometext";
+};
+
+//!ExtractConstantWideString
+//#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
+//@.config
+visibility=private
+filename=A.h
+//@A.h
+class X {
+    void method()
+    {
+        wchar_t *a = /*$*/L"sometext"/*$$*/;
+    }
+    
+    void method2()
+    {
+        const wchar_t *b = L"sometext";
+        const char *c = "sometext";
+    }
+};
+
+//=
+class X {
+    void method()
+    {
+        wchar_t *a = theAnswer;
+    }
+
+    void method2()
+    {
+        const wchar_t *b = theAnswer;
+        const char *c = "sometext";
+    }
+
+    static const wchar_t *theAnswer = L"sometext";
 };
 

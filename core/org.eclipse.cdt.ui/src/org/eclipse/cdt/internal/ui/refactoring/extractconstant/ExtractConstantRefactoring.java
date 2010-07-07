@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeFactoryFactory;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -38,27 +39,24 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 
@@ -360,37 +358,20 @@ public class ExtractConstantRefactoring extends CRefactoring {
 
 	private IASTSimpleDeclaration getConstNodes(String newName){
 		
-		ICPPASTSimpleDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();	
+		ICPPNodeFactory factory = ASTNodeFactoryFactory.getDefaultCPPNodeFactory();
+		DeclarationGenerator generator = DeclarationGenerator.create(factory);
+		
+		
+		IType type = target.getExpressionType();
+		
+		IASTDeclSpecifier declSpec = generator.createDeclSpecFromType(type);
 		declSpec.setConst(true);
 		
-		switch(target.getKind()){
-		case IASTLiteralExpression.lk_char_constant:
-			declSpec.setType(IASTSimpleDeclSpecifier.t_char);
-			break;
-		case IASTLiteralExpression.lk_float_constant:
-			declSpec.setType(IASTSimpleDeclSpecifier.t_float);
-			break;
-		case IASTLiteralExpression.lk_integer_constant:
-			declSpec.setType(IASTSimpleDeclSpecifier.t_int);
-			break;
-		case IASTLiteralExpression.lk_string_literal:
-			declSpec.setType(IASTSimpleDeclSpecifier.t_wchar_t);
-			break;
-		case IASTLiteralExpression.lk_false: 
-			//Like lk_true a boolean type
-		case IASTLiteralExpression.lk_true:
-			declSpec.setType(IASTSimpleDeclSpecifier.t_bool);
-			break;
-		case IASTLiteralExpression.lk_this:
-			break;
-		}
+		IASTDeclarator declarator = generator.createDeclaratorFromType(type, newName.toCharArray());
 
 		IASTSimpleDeclaration simple = new CPPASTSimpleDeclaration();
 		simple.setDeclSpecifier(declSpec);
 		
-		IASTDeclarator decl = new CPPASTDeclarator();
-		IASTName name = new CPPASTName(newName.toCharArray());
-		decl.setName(name);
 		IASTEqualsInitializer init = new CPPASTEqualsInitializer(); 
 		if (target.getParent() instanceof IASTUnaryExpression) {
 			IASTUnaryExpression unary = (IASTUnaryExpression) target.getParent();
@@ -399,8 +380,8 @@ public class ExtractConstantRefactoring extends CRefactoring {
 			CPPASTLiteralExpression expression = new CPPASTLiteralExpression(target.getKind(), target.getValue());
 			init.setInitializerClause(expression);
 		}
-		decl.setInitializer(init);
-		simple.addDeclarator(decl);
+		declarator.setInitializer(init);
+		simple.addDeclarator(declarator);
 		
 		return simple;
 	}

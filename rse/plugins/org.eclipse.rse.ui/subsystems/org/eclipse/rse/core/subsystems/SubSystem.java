@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 20010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -48,6 +48,7 @@
  * David McKnight   (IBM)        - [262930] Remote System Details view not restoring filter memento input
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight   (IBM)        - [284018] concurrent SubSystem.connect() calls can result in double login-prompt
+ * David McKnight   (IBM)        - [318836] Period in filter name causes wrong message on drag and drop
  *  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -922,7 +923,7 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 	protected Object getFilterReferenceWithAbsoluteName(String key)
 	{
 		//		figure out if there is a filter
-		String filterID = key;
+ 		String filterID = key;
 		try
 		{
 			ISystemFilterPoolReferenceManager filterMgr = getFilterPoolReferenceManager();
@@ -939,40 +940,55 @@ implements IAdaptable, ISubSystem, ISystemFilterPoolReferenceManagerProvider
 				ISystemFilterPoolManager mgr = parentSubSystemConfiguration.getSystemFilterPoolManager(mgrName);
 
 				if (mgr != null && segments.length > 1){
-					// name of the filter is the last segment
-					String filterName = segments[segments.length - 1];
 					
-					// filter pool name is the 3rd and 2nd to last segment
-					//String filterPoolName = 
-				//		segments[segments.length - 3] + '.' +
-					//	segments[segments.length - 2];
-					
+					int segNo = 0; 	
 					
 					ISystemFilterPool filterPool = null;
 					ISystemFilterPool[] filterPools = mgr.getSystemFilterPools();
 					for (int p = 0; p < filterPools.length && filterPool == null; p++){
+						segNo = 2; // initial segment number for filter pool is 2nd to last	
+						
 						ISystemFilterPool pool = filterPools[p];
 						String realPoolName = pool.getName();
 						
-						// check for match
-						String filterPoolName = segments[segments.length - 2];
-						for (int s = 3; s < segments.length && filterPool == null; s++){
-							if (filterPoolName.equals(realPoolName)){
-								filterPool = pool;
+						// check for match 
+
+						while (filterPool == null && segNo < segments.length){
+							String filterPoolName = segments[segments.length - segNo];
+							
+							for (int s = segNo + 1; s < segments.length && filterPool == null; s++){
+								if (filterPoolName.equals(realPoolName)){
+									filterPool = pool;
+								}
+								else if (realPoolName.endsWith(filterPoolName)){
+									filterPoolName = segments[segments.length - s] + '.' + filterPoolName;
+								}
+								else {
+									// no match
+									break;								
+								}
+							}					
+							if (filterPool == null){
+								segNo++; // move further up the string
 							}
-							else if (realPoolName.endsWith(filterPoolName)){
-								filterPoolName = segments[segments.length - s] + '.' + filterPoolName;
-							}
-							else {
-								// no match
-								break;								
-							}
-						}						
+						}
 					}
 
 
 					if (filterPool != null)
 					{
+						// name of the filter is the last segment
+						//String filterName = segments[segments.length - 1];
+						StringBuffer filterBuf = new StringBuffer();
+						for (int i = segNo - 1; i > 0; i--){ // dealing with filtername that potentially had a dot in it
+							String filterPartName = segments[segments.length - i];
+							filterBuf.append(filterPartName);		
+							if (i > 1){
+								filterBuf.append('.');
+							}
+						}
+						String filterName = filterBuf.toString();
+						
 						ISystemFilter filter = filterPool.getSystemFilter(filterName);
 						ISystemFilterReference ref = filterMgr.getSystemFilterReference(this, filter);
 						if (ref != null)

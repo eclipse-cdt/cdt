@@ -40,8 +40,6 @@ import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 
-import org.eclipse.cdt.core.CCorePlugin;
-
 /**
  * This is the action group for workspace actions such as Build
  */
@@ -95,16 +93,14 @@ public class BuildGroup extends CViewActionGroup {
 	    		return;
 	    	}
 	    	IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-	    	for (int i = 0; i < windows.length; i++) {
-	    		IWorkbenchPage[] pages = windows[i].getPages();
-	    		for (int j = 0; j < pages.length; j++) {
-	    			IWorkbenchPage page = pages[j];
+	    	for (IWorkbenchWindow window : windows) {
+	    		IWorkbenchPage[] pages = window.getPages();
+	    		for (IWorkbenchPage page : pages) {
 	    			if (projects == null) {
 	    				page.saveAllEditors(false);
 	    			} else {
 	    				IEditorPart[] editors = page.getDirtyEditors();
-	    				for (int k = 0; k < editors.length; k++) {
-	    					IEditorPart editor = editors[k];
+	    				for (IEditorPart editor : editors) {
 	    					IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
 	    					if (inputFile != null) {
 	    						if (projects.contains(inputFile.getProject())) {

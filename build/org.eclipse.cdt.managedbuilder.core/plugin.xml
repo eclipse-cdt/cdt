@@ -197,7 +197,7 @@
 <!-- =================================================================================== -->
 <!-- Define C/C++ "object" files ContentTypes                                            -->
 <!-- =================================================================================== -->
-  <extension point="org.eclipse.core.runtime.contentTypes">
+  <extension point="org.eclipse.core.contenttype.contentTypes">
 	  <!-- declares a content type for object files -->
 	  <content-type
          base-type="org.eclipse.cdt.core.binaryFile"
@@ -224,25 +224,25 @@
             priority="high"/>
   </extension>
 
-  <extension point="org.eclipse.core.runtime.contentTypes"> 
+  <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
        file-extensions="obj,o"/>
    </extension> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.executableFile"
        file-extensions="exe,elf,out"/>
    </extension> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.staticLibrary"
        file-extensions="lib,a"/>
    </extension> 
 
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.managedbuilder.core.sharedLibrary"
        file-extensions="dll,so,dylib"/>

@@ -172,6 +172,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private int fContentAssistLimit= -1;
 	private boolean fHandledCompletion= false;
 	private boolean fSplitShiftRightOperator= false;
+	private int fTokenCount= 0;
 
     // state information
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
@@ -462,6 +463,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	if (t != null) {
     		fPrefetchedTokens= (Token) t.getNext();
     		t.setNext(null);
+    		if (++fTokenCount > 1000) {
+    			throw new OffsetLimitReachedException(0, t);
+    		}
     		return t;
     	}
     	

@@ -66,6 +66,7 @@
  * David McKnight   (IBM)        - [280466] File download keeps running in case sensitive case
  * David McKnight   (IBM)        - [309813] RSE permits opening of file after access removed
  * David McKnight   (IBM)        - [308221] Bidi3.6: Improper display of date in Properties and Table Views
+ * David McKnight   (IBM)        - [317541] Show blank as the last modified for a file with no last modified
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1291,6 +1292,12 @@ public class SystemViewRemoteFileAdapter
 			Date date = file.getLastModifiedDate();
 			if (date != null)
 			{
+				long t = date.getTime();
+				if (t == 0){
+					// no time available, we should leave this blank
+					return "";
+				}
+				
 				if (formatted)
 				{
 					ULocale locale = ULocale.getDefault();					

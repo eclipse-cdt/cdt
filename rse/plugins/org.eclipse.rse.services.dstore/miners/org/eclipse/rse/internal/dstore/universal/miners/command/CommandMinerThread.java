@@ -113,6 +113,8 @@ public class CommandMinerThread extends MinerThread
 	private OutputHandler _stdOutputHandler; 
 	private OutputHandler _stdErrorHandler;
 	private boolean _isShell;
+	private boolean _isCsh = false;
+	
 	private boolean _isDone;
 	private boolean _isWindows;
 	private boolean _isTTY;
@@ -260,6 +262,9 @@ public class CommandMinerThread extends MinerThread
 						else if (theShell.endsWith("sh") && isZ)//$NON-NLS-1$
 						{
 							isSHonZ = true;
+						}
+						else if (theShell.endsWith("/csh") || theShell.endsWith("/bsh")){  //$NON-NLS-1$//$NON-NLS-2$
+							_isCsh = true;			
 						}
 					}
 					// In a single-process server, both user.home and HOME don't represent
@@ -666,7 +671,9 @@ public class CommandMinerThread extends MinerThread
 				input = convertSpecialCharacters(input);
 			}
 			input.getBytes();
-
+			if (_isCsh && origInput.startsWith("export ")){ //$NON-NLS-1$
+				input = origInput.replaceAll("export ", "set ");  //$NON-NLS-1$//$NON-NLS-2$
+			}
 			try
 			{
 				BufferedWriter writer = _stdOutput;

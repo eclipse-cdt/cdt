@@ -94,7 +94,7 @@ public abstract class ToolListModification implements
 
 		public CompatibilityStatus getCompatibilityStatus() {
 			return fIsProject ? CompatibilityStatus.OK_COMPATIBILITY_STATUS 
-					: new CompatibilityStatus(IStatus.ERROR, Messages.getString("ToolListModification.0"), null); //$NON-NLS-1$
+					: new CompatibilityStatus(IStatus.ERROR, Messages.getString("ToolListModification.ToolIsIncompatible"), null); //$NON-NLS-1$
 		}
 
 		public IModificationOperation[] getSupportedOperations() {
@@ -300,7 +300,7 @@ public abstract class ToolListModification implements
 				String message;
 				if(!isCompatible()){
 					severity = IStatus.ERROR;
-					message = Messages.getString("ToolListModification.2"); //$NON-NLS-1$
+					message = Messages.getString("ToolListModification.ToolIsIncompatible"); //$NON-NLS-1$
 				} else {
 					severity = IStatus.OK;
 					message = ""; //$NON-NLS-1$
@@ -463,7 +463,7 @@ public abstract class ToolListModification implements
 				ConflictSet conflicts;
 				if(!isCompatible()){
 					severity = IStatus.ERROR;
-					message = Messages.getString("ToolListModification.4");; //$NON-NLS-1$
+					message = Messages.getString("ToolListModification.ToolIsIncompatible"); //$NON-NLS-1$
 					conflicts = new ConflictSet(fRealTool, fErrComflictMatchList, fStatusInfo.getConflictingTools());
 				} else {
 					severity = IStatus.OK;

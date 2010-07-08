@@ -153,6 +153,15 @@ plugin@org.eclipse.cdt.scripting=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/or
 feature@org.eclipse.cdt.debug.edc=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/org.eclipse.cdt.debug.edc-feature
 
 ! TCF Requirements for EDC
+plugin@org.eclipse.tm.tcf=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf
+plugin@org.eclipse.tm.tcf.cdt.ui=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.cdt.ui
+plugin@org.eclipse.tm.tcf.core=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.core
+plugin@org.eclipse.tm.tcf.debug=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.debug
+plugin@org.eclipse.tm.tcf.debug.ui=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.debug.ui
+plugin@org.eclipse.tm.tcf.rse=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=plugins/org.eclipse.tm.tcf.rse
+feature@org.eclipse.tm.tcf.feature=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=trunk,path=features/org.eclipse.tm.tcf.feature
+
+! 0.3.0 tag
 !plugin@org.eclipse.tm.tcf=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=tags,path=0.3.0/plugins/org.eclipse.tm.tcf
 !plugin@org.eclipse.tm.tcf.cdt.ui=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=tags,path=0.3.0/plugins/org.eclipse.tm.tcf.cdt.ui
 !plugin@org.eclipse.tm.tcf.core=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=tags,path=0.3.0/plugins/org.eclipse.tm.tcf.core
@@ -160,16 +169,6 @@ feature@org.eclipse.cdt.debug.edc=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/edc/o
 !plugin@org.eclipse.tm.tcf.debug.ui=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=tags,path=0.3.0/plugins/org.eclipse.tm.tcf.debug.ui
 !plugin@org.eclipse.tm.tcf.rse=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=tags,path=0.3.0/plugins/org.eclipse.tm.tcf.rse
 !feature@org.eclipse.tm.tcf.feature=SVN,url=svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,tag=tags,path=0.3.0/features/org.eclipse.tm.tcf.feature
-
-! Copied from org.eclipse.tm.rse/releng/org.eclipse.tm.releng/maps/tcf.map
-plugin@org.eclipse.tm.tcf=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf
-plugin@org.eclipse.tm.tcf.core=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.core
-plugin@org.eclipse.tm.tcf.cdt.ui=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.cdt.ui
-plugin@org.eclipse.tm.tcf.debug=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.debug
-plugin@org.eclipse.tm.tcf.debug.ui=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.debug.ui
-plugin@org.eclipse.tm.tcf.rse=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,plugins/org.eclipse.tm.tcf.rse
-feature@org.eclipse.tm.tcf.feature=SVN,0.3.0,svn://dev.eclipse.org/svnroot/dsdp/org.eclipse.tm.tcf,,features/org.eclipse.tm.tcf.feature
-
 
 ! Berkeley UPC
 plugin@org.eclipse.cdt.managedbuilder.bupc.ui=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/upc/org.eclipse.cdt.managedbuilder.bupc.ui

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -411,4 +411,64 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		IBinding b = getBindingFromASTName("value =", 5);
 		assertTrue(b instanceof IField);
 	}
+	
+	//	void f255(
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int);
+	//	void f256(
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int);
+	
+	//	void test() {	
+	//     f255(
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	//     f256(
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	//	}
+	public void testFunctionsWithManyParameters_Bug319186() throws Exception {
+		getBindingFromASTName("f255", 0);
+		getBindingFromASTName("f256", 0);
+	}		
 }

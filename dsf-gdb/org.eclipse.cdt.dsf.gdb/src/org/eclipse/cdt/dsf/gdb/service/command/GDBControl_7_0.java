@@ -341,34 +341,11 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
    		// When it is not an attach session, it gets a little more complicated
    		// so let's use a sequence.
    		getExecutor().execute(new Sequence(getExecutor(), requestMonitor) {
-        	IContainerDMContext fContainerDmc;
-        	ICommand<MIInfo> fExecCommand;
-        	String fUserStopSymbol = null;
-        	
+        	IContainerDMContext fContainerDmc;        	
         	MIBreakpoint fUserBreakpoint = null;
         	boolean fUserBreakpointIsOnMain = false;
         	
     	    Step[] fSteps = new Step[] {
-    	    	/*
-    	    	 * Figure out if we should use 'exec-continue' or '-exec-run'.
-    	    	 */
-          	    new Step() { 
-               	@Override
-              	public void execute(RequestMonitor rm) {
-               		IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
-               	    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
-               	    fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
-
-       	    		if (fMIBackend.getSessionType() == SessionType.REMOTE) {
-       	    			// Restart does not apply to remote sessions
-       	    			//
-       	    			// When doing remote debugging, we use -exec-continue instead of -exec-run 
-       	    			fExecCommand = getCommandFactory().createMIExecContinue(fContainerDmc);
-       	    		} else {
-       	    			fExecCommand = getCommandFactory().createMIExecRun(fContainerDmc);	
-       	    		}
-       	    		rm.done();
-      	    	}},
     	    	/*
     	    	 * If the user requested a 'stopOnMain', let's set the temporary breakpoint
     	    	 * where the user specified.
@@ -388,8 +365,9 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     	        	}
     	        	
     	           	if (userRequestedStop) {
+    	            	String userStopSymbol = null;
     	        		try {
-    	        			fUserStopSymbol = launch.getLaunchConfiguration().getAttribute(
+    	        			userStopSymbol = launch.getLaunchConfiguration().getAttribute(
     	        								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL, 
     	        								ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
     	        		} catch (CoreException e) {
@@ -398,7 +376,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     	        			return;
     	        		}
     	        		
-    	        		queueCommand(getCommandFactory().createMIBreakInsert(fControlDmc, true, false, null, 0, fUserStopSymbol, 0),
+    	        		queueCommand(getCommandFactory().createMIBreakInsert(fControlDmc, true, false, null, 0, userStopSymbol, 0),
    	        				         new DataRequestMonitor<MIBreakInsertInfo>(getExecutor(), rm) {
     	        			@Override
     	        			public void handleSuccess() {
@@ -444,12 +422,26 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 					}
        	    	}},
        	    	/*
-       	    	 * Now, run the program.
+       	    	 * Now, run the program.  Use either -exec-run or -exec-continue depending
+       	    	 * on whether we have remote session or not.
        	    	 */
       	    	new Step() { 
        	    	@Override
       	    	public void execute(RequestMonitor rm) {
-   	    			queueCommand(fExecCommand, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
+               		IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
+               	    IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, MIProcesses.UNIQUE_GROUP_ID);
+               	    fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
+               	    ICommand<MIInfo> command;
+
+       	    		if (fMIBackend.getSessionType() == SessionType.REMOTE) {
+       	    			// Restart does not apply to remote sessions
+       	    			//
+       	    			// When doing remote debugging, we use -exec-continue instead of -exec-run 
+       	    			command = getCommandFactory().createMIExecContinue(fContainerDmc);
+       	    		} else {
+       	    			command = getCommandFactory().createMIExecRun(fContainerDmc);	
+       	    		}
+   	    			queueCommand(command, new DataRequestMonitor<MIInfo>(getExecutor(), rm));
        	    	}},
        	    	/*
        	    	 * In case of a restart, reverse debugging should be marked as off here because

@@ -1209,4 +1209,64 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     	IType t= ptrMbr.getMemberOfClass();
     	assertInstance(t, IProblemBinding.class);
 	}
+
+	//	void f255(
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int);
+	//	void f256(
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+	//     int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int);
+	
+	//	void test() {	
+	//     f255(
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	//     f256(
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	//	}
+	public void testFunctionsWithManyParameters_Bug319186() throws Exception {
+		getBindingFromASTName("f255", 0);
+		getBindingFromASTName("f256", 0);
+	}		
 }

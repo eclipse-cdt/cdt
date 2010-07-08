@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,10 +105,10 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		fBuffer[fPos++]= b;
 	}
 
-	public byte getByte() throws CoreException {
+	public int getByte() throws CoreException {
 		if (fPos+1 > fBuffer.length)
 			throw unmarshallingError();
-		return fBuffer[fPos++];
+		return 0xff & fBuffer[fPos++];
 	}
 
 	public CoreException unmarshallingError() {
@@ -124,10 +124,12 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 		fBuffer[fPos++]= (byte)(value);
 	}
 
-	public short getShort() throws CoreException {
+	public int getShort() throws CoreException {
 		if (fPos+2 > fBuffer.length)
 			throw unmarshallingError();
-		return (short) (((fBuffer[fPos++] << 8) | (fBuffer[fPos++] & 0xff)));
+		final int byte1 = 0xff & fBuffer[fPos++];
+		final int byte2 = 0xff & fBuffer[fPos++];
+		return (((byte1 << 8) | (byte2 & 0xff)));
 	}
 
 	private void putRecordPointer(long record) {
@@ -147,8 +149,8 @@ public class TypeMarshalBuffer implements ITypeMarshalBuffer {
 	}
 
 	public IValue getValue() throws CoreException {
-		short replen= getShort();
-		short unknwonLen= getShort();
+		int replen= getShort();
+		int unknwonLen= getShort();
 		
 		char[] rep= new char[replen];
 		for (int i = 0; i < replen; i++) {

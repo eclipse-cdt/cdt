@@ -985,7 +985,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	
 	@Override
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= buffer.getByte() & 0xff;
+		int firstByte= buffer.getByte();
 		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.ARRAY:
 			return CPPArrayType.unmarshal(firstByte, buffer);

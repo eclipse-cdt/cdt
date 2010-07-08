@@ -338,7 +338,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	
 	@Override
 	public IType unmarshalType(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= buffer.getByte() & 0xff;
+		int firstByte= buffer.getByte();
 		switch((firstByte & ITypeMarshalBuffer.KIND_MASK)) {
 		case ITypeMarshalBuffer.ARRAY:
 			return CArrayType.unmarshal(firstByte, buffer);

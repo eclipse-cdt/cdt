@@ -122,7 +122,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.URIUtil;
@@ -132,7 +132,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -194,7 +193,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	private static final String ALL = "all";  //$NON-NLS-1$
 
 	// This is the version of the manifest and project files
-	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(4, 0, 0);
+	private static final Version buildInfoVersion = new Version(4, 0, 0);
 	private static final Version version = new Version(4, 0, 0);
 	private static Map depCalculatorsMap;
 	private static boolean projectTypesLoaded = false;
@@ -1950,7 +1949,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	private static boolean isVersionCompatible(IExtension extension) {
 		// We can ignore the qualifier
-		PluginVersionIdentifier version = null;
+		Version version = null;
 
 		// Get the version of the manifest
 		IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -1958,7 +1957,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		// Find the version string in the manifest
 		for (IConfigurationElement element : elements) {
 			if (element.getName().equals(REVISION_ELEMENT_NAME)) {
-				version = new PluginVersionIdentifier(element.getAttribute(VERSION_ELEMENT_NAME));
+				version = new Version(element.getAttribute(VERSION_ELEMENT_NAME));
 				break;
 			}
 		}
@@ -1967,7 +1966,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			// This is a 1.2 manifest and we are compatible for now
 			return true;
 		}
-		return(buildInfoVersion.isGreaterOrEqualTo(version));
+		return(buildInfoVersion.compareTo(version)>=0);
 	}
 
 	/**
@@ -2011,8 +2010,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Make sure that the version is compatible with the manager
 				fileVersion = rootElement.getNodeValue();
-				PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
-				if (buildInfoVersion.isGreaterThan(version)) {
+				Version version = new Version(fileVersion);
+				//if buildInfoVersion is greater than fileVersion
+				if (buildInfoVersion.compareTo(version)>0) {
 					// This is >= 2.0 project, but earlier than the current MBS version - it may need to be updated
 				} else {
 					// This is a
@@ -2020,7 +2020,22 @@ public class ManagedBuildManager extends AbstractCExtension {
 					//   o  The major versions are not equal
 					//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
 					//      greater than the MBS version #
-					if (!buildInfoVersion.isCompatibleWith(version)) {
+					boolean compatible=false;
+					if (version == null)
+						compatible=false;
+					if (buildInfoVersion.getMajor() != version.getMajor())
+						compatible=false;
+					if (buildInfoVersion.getMinor() > version.getMinor())
+						compatible=true;
+					if (buildInfoVersion.getMinor() < version.getMinor())
+						compatible=false;
+					if (buildInfoVersion.getMicro() > version.getMicro())
+						compatible=true;
+					if (buildInfoVersion.getMicro() < version.getMicro())
+						compatible=false;
+					if (buildInfoVersion.getQualifier().compareTo(version.getQualifier()) >= 0)
+						compatible=true;
+					if (!compatible) {
 						throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_VERSION_ERROR, project.getName()));
 					}
 				}
@@ -2035,10 +2050,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 				buildInfo = new ManagedBuildInfo(project, XmlStorageUtil.createCStorageTree((Element)node), true, fileVersion);
 				if (fileVersion != null) {
 	//				buildInfo.setVersion(fileVersion);
-					PluginVersionIdentifier version = new PluginVersionIdentifier(fileVersion);
-					PluginVersionIdentifier version21 = new PluginVersionIdentifier("2.1");		//$NON-NLS-1$
+					Version version = new Version(fileVersion);
+					Version version21 = new Version("2.1");		//$NON-NLS-1$
 					//  CDT 2.1 is the first version using the new MBS model
-					if (version.isGreaterOrEqualTo(version21)) {
+					if (version.compareTo(version21)>=0) {
 						//  Check to see if all elements could be loaded correctly - for example,
 						//  if references in the project file could not be resolved to extension
 						//  elements
@@ -3007,8 +3022,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Answers the current version of the managed builder plugin.
 	 *
 	 * @return the current version of the managed builder plugin
+	 * @since 8.0
 	 */
-	public static PluginVersionIdentifier getBuildInfoVersion() {
+	public static Version getBuildInfoVersion() {
 		return buildInfoVersion;
 	}
 
@@ -3179,7 +3195,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if ( index != -1) {
 			// Get the version number from tool id.
 			String version = idAndVersion.substring(index+1);
-			IStatus status = PluginVersionIdentifier.validateVersion(version);
+			IStatus status = (IStatus) Version.parseVersion(version);
 
 			// If there is a valid version then return 'version'
 			if ( status.isOK())

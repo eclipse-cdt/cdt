@@ -43,7 +43,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.osgi.framework.Bundle;
 
 /**
@@ -575,7 +575,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getToolChain().getVersion().toString());
 		}
 		else if("BuilderVersion".equals(macroName)){	//$NON-NLS-1$
-			PluginVersionIdentifier version = cfg.getToolChain().getBuilder().getVersion(); 
+			Version version = cfg.getToolChain().getBuilder().getVersion(); 
 			if(version != null)
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version.toString());
 		}

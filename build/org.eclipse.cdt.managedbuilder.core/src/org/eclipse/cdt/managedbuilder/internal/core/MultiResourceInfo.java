@@ -23,7 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * This class holds a number of IResourceInfo objects
@@ -352,14 +352,14 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		return fRis[curr].getVersion();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
 	 */
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		for (int i=0; i<fRis.length; i++)
 			fRis[i].setVersion(version);
 	}

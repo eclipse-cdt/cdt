@@ -39,7 +39,7 @@ import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildLanguageData;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
@@ -829,7 +829,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/**
 	 * @return Returns the version.
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
 				return getParent().getVersion();
@@ -838,7 +838,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return version;
 	}
 	
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 

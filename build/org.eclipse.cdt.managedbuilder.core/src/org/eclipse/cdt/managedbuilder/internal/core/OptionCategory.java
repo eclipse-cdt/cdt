@@ -28,7 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * 
@@ -469,7 +469,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/**
 	 * @return Returns the version.
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( getOptionHolder() != null) {
 				return getOptionHolder().getVersion();
@@ -478,7 +478,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		return version;
 	}
 	
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 

@@ -24,7 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.internal.core.HoldsOptions;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class TestToolchain extends HoldsOptions implements IToolChain {
 
@@ -38,12 +38,12 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 		return null;
 	}
 
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// TODO Auto-generated method stub
 		
 	}

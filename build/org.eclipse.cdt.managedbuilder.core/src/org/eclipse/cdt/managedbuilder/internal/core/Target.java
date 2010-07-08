@@ -34,7 +34,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEntryContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1164,7 +1164,7 @@ public class Target extends BuildObject implements ITarget {
 	/**
 	 * @return Returns the version.
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
 				return getParent().getVersion();
@@ -1173,7 +1173,7 @@ public class Target extends BuildObject implements ITarget {
 		return version;
 	}
 	
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 

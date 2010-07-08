@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * This class implements the IManagedIsToolChainSupported for the Gnu Cygwin tool-chain
@@ -44,8 +44,10 @@ public class IsGnuCygwinToolChainSupported implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported#isSupported(org.eclipse.cdt.managedbuilder.core.IToolChain, org.eclipse.core.runtime.PluginVersionIdentifier, java.lang.String)
 	 */
-	public boolean isSupported(IToolChain toolChain,
-			PluginVersionIdentifier version, String instance) {
+	/**
+	 * @since 8.0
+	 */
+	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
 		
 		if (suppChecked) return toolchainIsSupported;
 

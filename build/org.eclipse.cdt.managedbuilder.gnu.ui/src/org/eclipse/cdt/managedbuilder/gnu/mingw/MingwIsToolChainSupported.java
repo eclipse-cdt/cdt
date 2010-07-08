@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedIsToolChainSupported;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * @author Doug Schaefer
@@ -29,8 +29,7 @@ public class MingwIsToolChainSupported implements IManagedIsToolChainSupported {
 		supported = MingwEnvironmentVariableSupplier.getBinDir() != null;
 	}
 	
-	public boolean isSupported(IToolChain toolChain,
-			PluginVersionIdentifier version, String instance) {
+	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
 		return supported;
 	}
 

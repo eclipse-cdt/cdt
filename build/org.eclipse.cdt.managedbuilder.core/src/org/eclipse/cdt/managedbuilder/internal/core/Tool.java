@@ -79,7 +79,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
@@ -3206,11 +3205,11 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 							// If it matches
 							String mbsVersion = element
 									.getAttribute("mbsVersion"); //$NON-NLS-1$
-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
+							Version currentMbsVersion = ManagedBuildManager
 									.getBuildInfoVersion();
 
 							// set the converter element based on the MbsVersion
-							if (currentMbsVersion.isGreaterThan(new PluginVersionIdentifier(mbsVersion))) {
+							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
 								previousMbsVersionConversionElement = element;
 							} else {
 								currentMbsVersionConversionElement = element;

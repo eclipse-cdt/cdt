@@ -34,7 +34,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * 
@@ -206,9 +206,7 @@ public class TestMacro implements
 	/**
 	 * 
 	 */
-	public boolean isSupported(IToolChain toolChain, 
-			PluginVersionIdentifier version, 
-			String instance) {
+	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
 		if ("One".equals(toolChain.getParent().getName()))   return supported[0]; //$NON-NLS-1$
 		if ("Two".equals(toolChain.getParent().getName()))   return supported[1]; //$NON-NLS-1$
 		if ("Three".equals(toolChain.getParent().getName())) return supported[2]; //$NON-NLS-1$

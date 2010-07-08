@@ -24,7 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildTargetPlatformData;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
@@ -606,7 +606,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/**
 	 * @return Returns the version.
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
 				return getParent().getVersion();
@@ -615,7 +615,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		return version;
 	}
 	
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 

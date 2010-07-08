@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -111,21 +111,24 @@ public class UpdateManagedProjectManager {
 		return map;
 	}
 	
-	static protected PluginVersionIdentifier getManagedBuildInfoVersion(String version){
+	/**
+	 * @since 8.0
+	 */
+	static protected Version getManagedBuildInfoVersion(String version){
 		if(version == null)
 			version = "1.2"; //$NON-NLS-1$
-		return new PluginVersionIdentifier(version);
+		return new Version(version);
 	}
 
 	static public boolean isCompatibleProject(IManagedBuildInfo info) {
 		if(info == null)
 			return false;
 
-		PluginVersionIdentifier projVersion = getManagedBuildInfoVersion(info.getVersion());
+		Version projVersion = getManagedBuildInfoVersion(info.getVersion());
 
-		PluginVersionIdentifier compVersion = ManagedBuildManager.getBuildInfoVersion();
+		Version compVersion = ManagedBuildManager.getBuildInfoVersion();
 
-		if(compVersion.isEquivalentTo(projVersion))
+		if(compVersion.equals(projVersion))
 			return true;
 		return false;
 	}
@@ -308,7 +311,7 @@ public class UpdateManagedProjectManager {
 					}	
 				});
 	
-			PluginVersionIdentifier version = getManagedBuildInfoVersion(info.getVersion());
+			Version version = getManagedBuildInfoVersion(info.getVersion());
 
 			boolean shouldUpdate;
 			if(fUpdateProjectQuery != null)
@@ -327,23 +330,23 @@ public class UpdateManagedProjectManager {
 			if(projectFile.exists())
 				backupFile(projectFile, "_initial", monitor, fProject); //$NON-NLS-1$
 
-			if(version.isEquivalentTo(new PluginVersionIdentifier(1,2,0))){
+			if(version.equals(new Version(1,2,0))){
 				UpdateManagedProject12.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
 			}
-			if(version.isEquivalentTo(new PluginVersionIdentifier(2,0,0))){
+			if(version.equals(new Version(2,0,0))){
 				UpdateManagedProject20.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
 			}
-			if(version.isEquivalentTo(new PluginVersionIdentifier(2,1,0))){
+			if(version.equals(new Version(2,1,0))){
 				UpdateManagedProject21.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
 			}
-			if(version.isEquivalentTo(new PluginVersionIdentifier(3,0,0))){
+			if(version.equals(new Version(3,0,0))){
 				UpdateManagedProject30.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
 			} 
-			if (new PluginVersionIdentifier(4,0,0).isGreaterThan(version)){
+			if (new Version(4,0,0).compareTo(version)>0){
 				UpdateManagedProject31.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
 			}

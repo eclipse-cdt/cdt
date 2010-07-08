@@ -17,7 +17,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class TestProjectType implements IProjectType {
 	private IConfiguration[] cfgs = new IConfiguration[1];
@@ -49,8 +49,8 @@ public class TestProjectType implements IProjectType {
 	public String getId() { return null; }
 	public String getManagedBuildRevision() { return null; }
 	public String getName() { return null; }
-	public PluginVersionIdentifier getVersion() { return null; }
-	public void setVersion(PluginVersionIdentifier version) {}
+	public Version getVersion() { return null; }
+	public void setVersion(Version version) {}
 	public IBuildObjectProperties getBuildProperties() { return null; }
 
 	public IBuildPropertyValue getBuildArtefactType() {

@@ -26,7 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -863,11 +863,11 @@ public class OptionReference implements IOption {
 	public void setContextId(String contextId) {
 	}
 	
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		return option.getVersion();
 	}
 
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		option.setVersion(version);
 	}
 

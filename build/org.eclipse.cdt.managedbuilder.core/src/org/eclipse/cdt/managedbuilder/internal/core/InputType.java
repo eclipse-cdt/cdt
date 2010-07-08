@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
@@ -1593,7 +1593,7 @@ public class InputType extends BuildObject implements IInputType {
 	 * @return Returns the version.
 	 */
 	@Override
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
 				return getParent().getVersion();
@@ -1603,7 +1603,7 @@ public class InputType extends BuildObject implements IInputType {
 	}
 
 	@Override
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 

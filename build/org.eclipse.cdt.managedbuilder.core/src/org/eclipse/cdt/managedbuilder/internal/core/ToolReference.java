@@ -39,7 +39,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1239,11 +1239,11 @@ public class ToolReference implements IToolReference {
 		return null;
 	}
 
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		return null;
 	}
 
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// TODO Auto-generated method stub
 	}
 

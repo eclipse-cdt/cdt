@@ -14,14 +14,14 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class BuildObject implements IBuildObject {
 
 	protected String id;
 	protected String name;
 	
-	protected PluginVersionIdentifier version = null;
+	protected Version version = null;
 	protected String managedBuildRevision = null;
 		
 	/* (non-Javadoc)
@@ -69,14 +69,14 @@ public class BuildObject implements IBuildObject {
 	/**
 	 * @return Returns the version.
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 			return version;
 	}
 
 	/**
 	 * @param version The version to set.
 	 */
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		this.version = version;
 	}
 
@@ -88,7 +88,7 @@ public class BuildObject implements IBuildObject {
 	}
 
 	
-	public PluginVersionIdentifier getVersionFromId() {
+	public Version getVersionFromId() {
 		String versionNumber;
 		IStatus status = null;
 	
@@ -100,12 +100,12 @@ public class BuildObject implements IBuildObject {
 			// So get the default version based on 'managedBuildRevision' attribute.
 								
 			if ( getManagedBuildRevision() != null) {
-				PluginVersionIdentifier tmpManagedBuildRevision = new PluginVersionIdentifier( getManagedBuildRevision() );
-				if (tmpManagedBuildRevision.isEquivalentTo(new PluginVersionIdentifier("1.2.0")) )	//$NON-NLS-1$
+				Version tmpManagedBuildRevision = new Version( getManagedBuildRevision() );
+				if (tmpManagedBuildRevision.equals(new Version("1.2.0")) )	//$NON-NLS-1$
 					versionNumber = "0.0.1";	//$NON-NLS-1$
-				else if (tmpManagedBuildRevision.isEquivalentTo(new PluginVersionIdentifier("2.0.0")) )	//$NON-NLS-1$
+				else if (tmpManagedBuildRevision.equals(new Version("2.0.0")) )	//$NON-NLS-1$
 					versionNumber = "0.0.2";	//$NON-NLS-1$
-				else if (tmpManagedBuildRevision.isEquivalentTo(new PluginVersionIdentifier("2.1.0")) )	//$NON-NLS-1$
+				else if (tmpManagedBuildRevision.equals(new Version("2.1.0")) )	//$NON-NLS-1$
 					versionNumber = "0.0.3";	//$NON-NLS-1$
 				else
 					versionNumber = "0.0.4";	//$NON-NLS-1$
@@ -113,7 +113,7 @@ public class BuildObject implements IBuildObject {
 				versionNumber = "0.0.0";	//$NON-NLS-1$
 			}
 		}
-		return new PluginVersionIdentifier(versionNumber);
+		return new Version(versionNumber);
 	}
 
 	public void setManagedBuildRevision(String managedBuildRevision) {

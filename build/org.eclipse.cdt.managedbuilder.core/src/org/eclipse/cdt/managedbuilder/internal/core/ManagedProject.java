@@ -35,7 +35,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class ManagedProject extends BuildObject implements IManagedProject, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
 	
@@ -494,7 +494,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * @return Returns the version.
 	 */
 	@Override
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 			if (version == null) {
 				if ( getProjectType() != null) {
 					return getProjectType().getVersion();
@@ -504,7 +504,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	}
 	
 	@Override
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 

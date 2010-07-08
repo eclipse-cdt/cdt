@@ -66,9 +66,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.osgi.framework.Version;
 
 public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider, IRealBuildObjectAssociation  {
 
@@ -1513,8 +1513,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 						String[] tmpVersions = versionsSupported.split(","); //$NON-NLS-1$
 
 						for (int j = 0; j < tmpVersions.length; j++) {
-							if (new PluginVersionIdentifier(version)
-									.equals(new PluginVersionIdentifier(
+							if (new Version(version).equals(new Version(
 											tmpVersions[j]))) {
 								// version is supported.
 								// Do the automatic conversion without
@@ -1604,13 +1603,11 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 							// If it matches
 							String mbsVersion = element
 									.getAttribute("mbsVersion"); //$NON-NLS-1$
-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
+							Version currentMbsVersion = ManagedBuildManager
 									.getBuildInfoVersion();
 
 							// set the converter element based on the MbsVersion
-							if (currentMbsVersion
-									.isGreaterThan(new PluginVersionIdentifier(
-											mbsVersion))) {
+							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
 								previousMbsVersionConversionElement = element;
 							} else {
 								currentMbsVersionConversionElement = element;

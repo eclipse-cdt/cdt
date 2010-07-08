@@ -23,7 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class TestFolderInfo implements IFolderInfo {
 
@@ -222,12 +222,12 @@ public class TestFolderInfo implements IFolderInfo {
 		return null;
 	}
 
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// TODO Auto-generated method stub
 
 	}

@@ -89,7 +89,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 import org.osgi.service.prefs.Preferences;
 
 public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
@@ -1847,7 +1847,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/**
 	 * @return Returns the version.
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( rootFolderInfo.getToolChain() != null) {
 				return rootFolderInfo.getToolChain().getVersion();
@@ -1856,7 +1856,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return version;
 	}
 	
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 	

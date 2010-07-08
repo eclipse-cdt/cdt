@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 
 public class ProjectType extends BuildObject implements IProjectType, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
@@ -648,13 +648,11 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 							// If it matches
 							String mbsVersion = element
 									.getAttribute("mbsVersion"); //$NON-NLS-1$
-							PluginVersionIdentifier currentMbsVersion = ManagedBuildManager
+							Version currentMbsVersion = ManagedBuildManager
 									.getBuildInfoVersion();
 
 							// set the converter element based on the MbsVersion
-							if (currentMbsVersion
-									.isGreaterThan(new PluginVersionIdentifier(
-											mbsVersion))) {
+							if (currentMbsVersion.compareTo(new Version(mbsVersion))>0) {
 								previousMbsVersionConversionElement = element;
 							} else {
 								currentMbsVersionConversionElement = element;

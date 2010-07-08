@@ -46,7 +46,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * This class represents a set of configurations 
@@ -1071,7 +1071,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
 	 */
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if (DEBUG)
 			System.out.println("Strange multi access: MultiConfiguration.getVersion()"); //$NON-NLS-1$
 		return curr().getVersion();
@@ -1080,7 +1080,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
 	 */
-	public void setVersion(PluginVersionIdentifier version) {} // do nothing
+	public void setVersion(Version version) {} // do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObjectPropertiesContainer#getBuildProperties()

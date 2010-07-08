@@ -40,7 +40,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class Option extends BuildObject implements IOption, IBuildPropertiesRestriction {
 	// Static default return values
@@ -2272,7 +2272,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * @return Returns the version.
 	 */
 	@Override
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
 				return getParent().getVersion();
@@ -2282,7 +2282,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 	
 	@Override
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// Do nothing
 	}
 	

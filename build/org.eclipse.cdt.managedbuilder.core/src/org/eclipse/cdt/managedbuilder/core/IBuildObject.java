@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -24,7 +24,9 @@ public interface IBuildObject {
 	public String getId();
 	public String getName();
 	public String getBaseId();
-	public PluginVersionIdentifier getVersion();
-	public void setVersion(PluginVersionIdentifier version);
+	/** @since 8.0 */
+	public Version getVersion();
+	/** @since 8.0 */
+	public void setVersion(Version version);
 	public String getManagedBuildRevision();
 }

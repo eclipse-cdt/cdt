@@ -34,7 +34,7 @@ import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.osgi.framework.Version;
 
 public class TestConfiguration implements IConfiguration {
 
@@ -518,12 +518,12 @@ public class TestConfiguration implements IConfiguration {
 		return null;
 	}
 
-	public PluginVersionIdentifier getVersion() {
+	public Version getVersion() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void setVersion(PluginVersionIdentifier version) {
+	public void setVersion(Version version) {
 		// TODO Auto-generated method stub
 
 	}

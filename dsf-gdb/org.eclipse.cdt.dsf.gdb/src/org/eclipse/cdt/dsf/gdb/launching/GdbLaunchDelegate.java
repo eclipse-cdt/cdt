@@ -25,7 +25,6 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupDirector;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactoryNS;
@@ -57,7 +56,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
     public final static String GDB_DEBUG_MODEL_ID = "org.eclipse.cdt.dsf.gdb"; //$NON-NLS-1$
 
     private final static String NON_STOP_FIRST_VERSION = "6.8.50"; //$NON-NLS-1$
-	private boolean isNonStopSession = false;
+	private boolean fIsNonStopSession = false;
 	
     private final static String TRACING_FIRST_VERSION = "7.1.50"; //$NON-NLS-1$
 	private boolean fIsPostMortemTracingSession;
@@ -129,11 +128,11 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         String gdbVersion = getGDBVersion(config);
         
         // First make sure non-stop is supported, if the user want to use this mode
-        if (isNonStopSession && !isNonStopSupported(gdbVersion)) {
+        if (fIsNonStopSession && !isNonStopSupportedInGdbVersion(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Non-stop mode is only supported starting with GDB " + NON_STOP_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
-        if (fIsPostMortemTracingSession && !isPostMortemTracingSupported(gdbVersion)) {
+        if (fIsPostMortemTracingSession && !isPostMortemTracingSupportedInGdbVersion(gdbVersion)) {
             throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED, "Post-mortem tracing is only supported starting with GDB " + TRACING_FIRST_VERSION, null)); //$NON-NLS-1$        	
         }
 
@@ -250,30 +249,6 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	protected Sequence getFinalLaunchSequence(DsfExecutor executor, GdbLaunch launch, SessionType type, boolean attach, IProgressMonitor pm) {
 		return new FinalLaunchSequence(executor, launch, type, attach, pm);
 	}
-	
-
-	private boolean isNonStopSession(ILaunchConfiguration config) {
-		try {
-			boolean nonStopMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
-                    IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
-    		return nonStopMode;
-    	} catch (CoreException e) {    		
-    	}
-    	return false;
-    }
-
-	private boolean isPostMortemTracingSession(ILaunchConfiguration config) {
-		SessionType sessionType = LaunchUtils.getSessionType(config);
-		if (sessionType == SessionType.CORE) {
-			try {
-				String coreType = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
-						                              IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
-				return coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
-			} catch (CoreException e) {    		
-			}
-		}
-    	return false;
-    }
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
@@ -290,8 +265,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         // the adapters will be created for the whole session, including 
         // the source lookup adapter.
         
-		isNonStopSession = isNonStopSession(configuration);
-		fIsPostMortemTracingSession = isPostMortemTracingSession(configuration);
+		fIsNonStopSession = LaunchUtils.getIsNonStopMode(configuration);
+		fIsPostMortemTracingSession = LaunchUtils.getIsPostMortemTracing(configuration);
 
         GdbLaunch launch = new GdbLaunch(configuration, mode, null);
         launch.initialize();
@@ -310,7 +285,12 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
         return locator;
     }
 	
-	private boolean isNonStopSupported(String version) {
+	/**
+	 * Returns true if the specified version of GDB supports
+	 * non-stop mode.
+	 * @since 3.1
+	 */
+	protected boolean isNonStopSupportedInGdbVersion(String version) {
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
 			// Mac OS's GDB does not support Non-Stop
 			return false;
@@ -322,7 +302,12 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		return false;
 	}
 
-	private boolean isPostMortemTracingSupported(String version) {
+	/**
+	 * Returns true if the specified version of GDB supports
+	 * post-mortem tracing.
+	 * @since 3.1
+	 */
+	protected boolean isPostMortemTracingSupportedInGdbVersion(String version) {
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
 			// Mac OS's GDB does not support post-mortem tracing
 			return false;
@@ -331,7 +316,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		if (TRACING_FIRST_VERSION.compareTo(version) <= 0
 			// This feature will be available for GDB 7.2. But until that GDB is itself available
 			// there is a pre-release that has a version of 6.8.50.20090414
-			|| "6.8.50.20090414".equals(version)) {
+			|| "6.8.50.20090414".equals(version)) { //$NON-NLS-1$
 			return true;
 		}
 		return false;
@@ -340,7 +325,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	// A subclass can override this method and provide its own ServiceFactory.
 	protected IDsfDebugServicesFactory newServiceFactory(String version) {
 
-		if (isNonStopSession && isNonStopSupported(version)) {
+		if (fIsNonStopSession && isNonStopSupportedInGdbVersion(version)) {
 			return new GdbDebugServicesFactoryNS(version);
 		}
 		

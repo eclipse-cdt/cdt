@@ -274,6 +274,11 @@ public class LaunchUtils {
         return version;
 	}
 	
+	/**
+	 * This method actually launches 'gdb --vesion' to determine the version
+	 * of the GDB that is being used.  This method should ideally be called
+	 * only once and the resulting version string stored for future uses.
+	 */
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {        
         Process process = null;
         String cmd = getGDBPath(configuration).toOSString() + " --version"; //$NON-NLS-1$ 
@@ -399,5 +404,39 @@ public class LaunchUtils {
 		return strings.toArray(new String[strings.size()]);
 	}
 	
+	/**
+	 * This methods return true if the launch is meant to be in Non-Stop mode.
+	 * Returns false otherwise.
+	 * 
+	 * @since 3.1
+	 */
+	public static boolean getIsNonStopMode(ILaunchConfiguration config) {
+		try {
+			boolean nonStopMode = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_NON_STOP,
+                    IGDBLaunchConfigurationConstants.DEBUGGER_NON_STOP_DEFAULT);
+    		return nonStopMode;
+    	} catch (CoreException e) {    		
+    	}
+    	return false;
+    }
+	
+	/**
+	 * This methods return true if the launch is meant to be for post-mortem
+	 * tracing.  Returns false otherwise.
+	 * 
+	 * @since 3.1
+	 */
+	public static boolean getIsPostMortemTracing(ILaunchConfiguration config) {
+		SessionType sessionType = LaunchUtils.getSessionType(config);
+		if (sessionType == SessionType.CORE) {
+			try {
+				String coreType = config.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_POST_MORTEM_TYPE,
+						                              IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TYPE_DEFAULT);
+				return coreType.equals(IGDBLaunchConfigurationConstants.DEBUGGER_POST_MORTEM_TRACE_FILE);
+			} catch (CoreException e) {    		
+			}
+		}
+    	return false;
+    }
 }
 

@@ -17,7 +17,7 @@ public class Messages extends NLS {
 	
     static {
         // initialize resource bundle
-        NLS.initializeMessages(Messages.class.getName(), Messages.class);
+        NLS.initializeMessages(/*Messages.class.getName()*/"org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.Message", Messages.class); //$NON-NLS-1$
     }
 
     private Messages() {}

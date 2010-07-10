@@ -3182,8 +3182,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * @return the version, if 'id' contains a valid version
-	 * Returns null if 'id' does not contain a valid version
-	 * Returns null if 'id' does not contain a version
+	 *   or {@code null} otherwise.
 	 */
 
 	public static String getVersionFromIdAndVersion(String idAndVersion) {
@@ -3195,11 +3194,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if ( index != -1) {
 			// Get the version number from tool id.
 			String version = idAndVersion.substring(index+1);
-			IStatus status = (IStatus) Version.parseVersion(version);
 
-			// If there is a valid version then return 'version'
-			if ( status.isOK())
+			try {
+				// If there is a valid version then return 'version'
+				Version.parseVersion(version);
 				return version;
+			} catch (IllegalArgumentException e) {
+				// ignore exception and return null
+			}
 		}
 		// If there is no version information or not a valid version, return null
 		return null;

@@ -146,17 +146,17 @@
       </scannerInfoProvider>
    </extension>
 
-  <extension point="org.eclipse.core.runtime.contentTypes">
-	  <!-- declares a content type for Makefile files -->
-	  <content-type id="makefile" name="%makefile" 
-		  base-type="org.eclipse.core.runtime.text"
-		  priority="high"/>
-  </extension>
-   <extension point="org.eclipse.core.runtime.contentTypes"> 
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <!-- declares a content type for Makefile files -->
+      <content-type id="makefile" name="%makefile" 
+          base-type="org.eclipse.core.runtime.text"
+          priority="high"/>
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
       <file-association 
-       content-type="org.eclipse.cdt.make.core.makefile"
-       file-names="Makefile,makefile,GNUMakefile"
-       file-extensions="mk"/>
+          content-type="org.eclipse.cdt.make.core.makefile"
+          file-names="Makefile,makefile,GNUMakefile"
+          file-extensions="mk"/>
    </extension> 
 
    <extension

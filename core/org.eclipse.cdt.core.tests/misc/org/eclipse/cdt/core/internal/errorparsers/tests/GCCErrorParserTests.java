@@ -180,7 +180,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 	public void testGccErrorMessages_InstantiatedFromHere() throws IOException {
 		runParserTest(
 				new String[] {
-						"/usr/include/c++/4.1.3/ext/hashtable.h:600:   instantiated from ‘size_t __gnu_cxx::hashtable<_Val, _Key, _HashFcn, _ExtractKey, _EqualKey, _Alloc>::_M_bkt_num(const _Val&, size_t) const [with _Val = std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int>, _Key = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, _HashFcn = __gnu_cxx::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _ExtractKey = std::_Select1st<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int> >, _EqualKey = std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _Alloc = std::allocator<int>]’",
+						"/usr/include/c++/4.1.3/ext/hashtable.h:600:   instantiated from 'size_t __gnu_cxx::hashtable<_Val, _Key, _HashFcn, _ExtractKey, _EqualKey, _Alloc>::_M_bkt_num(const _Val&, size_t) const [with _Val = std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int>, _Key = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, _HashFcn = __gnu_cxx::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _ExtractKey = std::_Select1st<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int> >, _EqualKey = std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _Alloc = std::allocator<int>]'",
 						"C:/QNX630/workspace/System/src/NewCommonScriptClasses.cpp:609:   instantiated from here",
 				},
 				0, // errors
@@ -191,7 +191,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 						"NewCommonScriptClasses.cpp",
 					},
 				new String[] {
-						"instantiated from ‘size_t __gnu_cxx::hashtable<_Val, _Key, _HashFcn, _ExtractKey, _EqualKey, _Alloc>::_M_bkt_num(const _Val&, size_t) const [with _Val = std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int>, _Key = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, _HashFcn = __gnu_cxx::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _ExtractKey = std::_Select1st<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int> >, _EqualKey = std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _Alloc = std::allocator<int>]’",
+						"instantiated from 'size_t __gnu_cxx::hashtable<_Val, _Key, _HashFcn, _ExtractKey, _EqualKey, _Alloc>::_M_bkt_num(const _Val&, size_t) const [with _Val = std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int>, _Key = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, _HashFcn = __gnu_cxx::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _ExtractKey = std::_Select1st<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int> >, _EqualKey = std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _Alloc = std::allocator<int>]'",
 						"instantiated from here",
 					},
 				new String[] {GCC_ERROR_PARSER_ID}

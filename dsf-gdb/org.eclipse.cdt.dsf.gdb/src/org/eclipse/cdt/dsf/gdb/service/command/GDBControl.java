@@ -65,6 +65,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
@@ -319,8 +320,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
    		final IContainerDMContext containerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
 
     	final ICommand<MIInfo> execCommand;
-    	if (fMIBackend.getSessionType() == SessionType.REMOTE) {
-    		// When doing remote debugging, we use -exec-continue instead of -exec-run 
+    	if (useContinueCommand(launch, restart)) {
     		execCommand = getCommandFactory().createMIExecContinue(containerDmc);
     	} else {
     		execCommand = getCommandFactory().createMIExecRun(containerDmc);	
@@ -374,6 +374,19 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
     	}
     }
 
+    /**
+     * This method indicates if we should use the -exec-continue method
+     * instead of the -exec-run method.
+     * This can be overridden to allow for customization.
+     * 
+     * @since 3.1
+     */
+    protected boolean useContinueCommand(ILaunch launch, boolean restart) {
+    	// When doing remote debugging, we use -exec-continue instead of -exec-run
+    	// Restart does not apply to remote sessions
+    	return fMIBackend.getSessionType() == SessionType.REMOTE;
+    }
+    
     /*
      * This method creates a new inferior process object based on the current Pty or output stream.
      */

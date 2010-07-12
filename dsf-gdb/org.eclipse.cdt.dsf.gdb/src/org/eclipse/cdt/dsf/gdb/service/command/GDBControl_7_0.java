@@ -15,8 +15,8 @@ package org.eclipse.cdt.dsf.gdb.service.command;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -38,26 +38,26 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerExitedDMEvent;
+import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
-import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerExitedDMEvent;
-import org.eclipse.cdt.dsf.gdb.service.GDBProcesses_7_0.ContainerStartedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
+import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.mi.service.MIProcesses;
-import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractCLIProcess;
 import org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl;
 import org.eclipse.cdt.dsf.mi.service.command.CLIEventProcessor_7_0;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess;
-import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor_7_0;
 import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess.State;
+import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor_7_0;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -69,6 +69,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.osgi.framework.BundleContext;
 
@@ -312,7 +313,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
      * attachSession => enable reverse
      * else => set temp bp on main, run, enable reverse, continue if bp on main was not requested by user 
      */
-    protected void startOrRestart(final GdbLaunch launch, boolean restart, RequestMonitor requestMonitor) {
+    protected void startOrRestart(final GdbLaunch launch, final boolean restart, RequestMonitor requestMonitor) {
 		boolean tmpReverseEnabled = IGDBLaunchConfigurationConstants.DEBUGGER_REVERSE_DEFAULT;
     	try {
     		tmpReverseEnabled = launch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REVERSE,
@@ -433,10 +434,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
                	    fContainerDmc = procService.createContainerContext(procDmc, MIProcesses.UNIQUE_GROUP_ID);
                	    ICommand<MIInfo> command;
 
-       	    		if (fMIBackend.getSessionType() == SessionType.REMOTE) {
-       	    			// Restart does not apply to remote sessions
-       	    			//
-       	    			// When doing remote debugging, we use -exec-continue instead of -exec-run 
+       	    		if (useContinueCommand(launch, restart)) {
        	    			command = getCommandFactory().createMIExecContinue(fContainerDmc);
        	    		} else {
        	    			command = getCommandFactory().createMIExecRun(fContainerDmc);	
@@ -495,6 +493,19 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 				return fSteps;
 			}
     	});
+    }
+
+    /**
+     * This method indicates if we should use the -exec-continue method
+     * instead of the -exec-run method.
+     * This can be overridden to allow for customization.
+     * 
+     * @since 3.1
+     */
+    protected boolean useContinueCommand(ILaunch launch, boolean restart) {
+    	// When doing remote debugging, we use -exec-continue instead of -exec-run
+    	// Restart does not apply to remote sessions
+    	return fMIBackend.getSessionType() == SessionType.REMOTE;
     }
 
     /**

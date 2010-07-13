@@ -20,7 +20,12 @@ import org.eclipse.debug.core.model.IExpression;
  * object is used when generating a model delta.
  */
 public class ExpressionsChangedEvent {
-    enum Type {ADDED, CHANGED, REMOVED, MOVED, INSERTED}
+
+    /**
+     * Enumeration for the type of change in expressions. 
+     * @since 2.2
+     */
+    public enum Type {ADDED, CHANGED, REMOVED, MOVED, INSERTED}
 
     private final Set<Object> fExpressionManagerElements;
     private final ExpressionsChangedEvent.Type fType;
@@ -36,9 +41,24 @@ public class ExpressionsChangedEvent {
         fIndex = index;
     }
     
+    /**
+     * The set of root elements of the expressions view model.
+     */
     public Set<Object> getExpressionManagerElements() { return fExpressionManagerElements; }
+    
+    /**
+     * Returns the type of change.
+     */
     public ExpressionsChangedEvent.Type getType() { return fType; }
+    
+    /**
+     * Returns expressions affected by the change.
+     */
     public IExpression[] getExpressions() { return fExpressions; }
+    
+    /**
+     * Returns index of the affected expression.
+     */
     public int getIndex() { return fIndex; }
     
     @Override

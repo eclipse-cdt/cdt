@@ -9,14 +9,14 @@
  * Ewa Matejska (PalmSource)
  * 
  * Referenced GDBDebuggerPage code to write this.
- * Anna Dushistova  (Mentor Graphics) - adapted from RemoteGDBDebuggerPage
+ * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  *******************************************************************************/
-package org.eclipse.cdt.launch.remote;
 
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbDebuggerPage;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.SerialPortSettingsBlock;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.TCPSettingsBlock;
+package org.eclipse.cdt.launch.remote.tabs;
+
+import org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage;
 import org.eclipse.cdt.internal.launch.remote.Messages;
+import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -31,19 +31,17 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
+/**
+ * The dynamic debugger tab for remote launches using gdb server.
+ * The gdbserver settings are used to start a gdbserver session on the
+ * remote and then to connect to it from the host. The DSDP-TM project is
+ * used to accomplish this.
+ */
+public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 
 	protected Text fGDBServerCommandText;
 
 	protected Text fGDBServerPortNumberText;
-	
-	private boolean fIsInitializing = false;
-
-	
-	public RemoteDSFGDBDebuggerPage() {
-		super();
-	}
-
 	
 	public String getName() {
 		return Messages.Remote_GDB_Debugger_Options;
@@ -58,9 +56,7 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 	}
 	
 	public void initializeFrom( ILaunchConfiguration configuration ) {
-		setInitializing(true);
 		super.initializeFrom(configuration);
-
 		String gdbserverCommand = null;
 		String gdbserverPortNumber = null;
 		try {
@@ -77,7 +73,6 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 		}
 		fGDBServerCommandText.setText( gdbserverCommand );
 		fGDBServerPortNumberText.setText( gdbserverPortNumber );
-		setInitializing(false);
 	}
 	
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
@@ -145,14 +140,5 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 		super.createTabs( tabFolder );
 		createGdbserverSettingsTab( tabFolder );
 	}
-
-	@Override
-	protected boolean isInitializing() {
-		return fIsInitializing;
-	}
-
-	private void setInitializing(boolean isInitializing) {
-		fIsInitializing = isInitializing;
-	}
-
 }
+

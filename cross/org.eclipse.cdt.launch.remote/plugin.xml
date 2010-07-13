@@ -10,6 +10,7 @@ Contributors:
 Ewa Matejska     (PalmSource)      - initial API and implementation 
 Martin Oberhuber (Wind River)      - fix 158529: Migrate docs to HTML / TOC format 
 Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
+Anna Dushistova  (Mentor Graphics) - code restructuring
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -27,7 +28,7 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
             id="org.eclipse.rse.remotecdt.launch"
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
             modes="run,debug"
-            delegate="org.eclipse.cdt.launch.remote.RemoteRunLaunchDelegate"
+            delegate="org.eclipse.cdt.launch.remote.launching.RemoteRunLaunchDelegate"
             name="%cdiLaunchDelegate.name"
             delegateDescription="%cdiLaunchDelegate.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
@@ -37,7 +38,7 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
             id="org.eclipse.rse.remotecdt.dsf.debug"
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
             modes="debug"
-            delegate="org.eclipse.cdt.launch.remote.RemoteGdbLaunchDelegate"
+            delegate="org.eclipse.cdt.launch.remote.launching.RemoteGdbLaunchDelegate"
             name="%dsfLaunchDelegate.name"
             delegateDescription="%dsfLaunchDelegate.description"
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
@@ -57,7 +58,7 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.remote.RemoteLaunchConfigurationTabGroup"
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteLaunchConfigurationTabGroup"
             helpContextId="org.eclipse.rse.remotecdt.launchgroup"
             id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
@@ -66,7 +67,7 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
          </launchMode>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.remote.RemoteLaunchConfigurationTabGroup"
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteLaunchConfigurationTabGroup"
             helpContextId="org.eclipse.rse.remotecdt.launchgroup"
             id="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
             type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
@@ -82,21 +83,21 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
             id="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"
             group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
             name="Main"
-            class="org.eclipse.cdt.launch.remote.RemoteCMainTab">
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteCMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
      </tab>         
      <tab
             id="org.eclipse.rse.remotecdt.debug.RemoteCMainTab"
             group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
             name="Main"
-            class="org.eclipse.cdt.launch.remote.RemoteCMainTab">
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteCMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
      </tab>         
      <tab
             id="org.eclipse.rse.remotecdt.dsf.gdb.mainTab"
             group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
             name="Main"
-            class="org.eclipse.cdt.launch.remote.RemoteCDSFMainTab">
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
      </tab>         
      <tab
@@ -126,14 +127,14 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
             id="org.eclipse.rse.remotecdt.launch.RemoteCDebuggerTab"
             group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
             name="Debugger"
-            class="org.eclipse.cdt.launch.remote.RemoteCDebuggerTab">
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDebuggerTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
       </tab>
       <tab id="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"
             group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
             name="Debugger"
-            class="org.eclipse.cdt.launch.remote.RemoteCDSFDebuggerTab">
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFDebuggerTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
         <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
       </tab>
@@ -195,7 +196,7 @@ Anna Dushistova  (Mentor Graphics) - [314659] added launch delegate for dsf
    <extension
          point="org.eclipse.cdt.debug.ui.CDebuggerPage">
       <debuggerPage
-            class="org.eclipse.cdt.launch.remote.RemoteGDBDebuggerPage"
+            class="org.eclipse.cdt.launch.remote.tabs.RemoteGDBDebuggerPage"
             debuggerID="org.eclipse.rse.remotecdt.RemoteGDBDebugger"
             id="org.eclipse.rse.remotecdt.RemoteGDBDebuggerPage">
       </debuggerPage>

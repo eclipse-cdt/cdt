@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2010 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,12 +9,16 @@
  * Ewa Matejska (PalmSource)
  * 
  * Referenced GDBDebuggerPage code to write this.
+ * Anna Dushistova (Mentor Graphics) - adapted from RemoteGDBDebuggerPage
+ * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  *******************************************************************************/
+package org.eclipse.cdt.launch.remote.tabs;
 
-package org.eclipse.cdt.launch.remote;
-
-import org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbDebuggerPage;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.SerialPortSettingsBlock;
+import org.eclipse.cdt.dsf.gdb.internal.ui.launching.TCPSettingsBlock;
 import org.eclipse.cdt.internal.launch.remote.Messages;
+import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -29,17 +33,19 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * The dynamic debugger tab for remote launches using gdb server.
- * The gdbserver settings are used to start a gdbserver session on the
- * remote and then to connect to it from the host. The DSDP-TM project is
- * used to accomplish this.
- */
-public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
+public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage{
 
 	protected Text fGDBServerCommandText;
 
 	protected Text fGDBServerPortNumberText;
+	
+	private boolean fIsInitializing = false;
+
+	
+	public RemoteDSFGDBDebuggerPage() {
+		super();
+	}
+
 	
 	public String getName() {
 		return Messages.Remote_GDB_Debugger_Options;
@@ -54,7 +60,9 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 	}
 	
 	public void initializeFrom( ILaunchConfiguration configuration ) {
+		setInitializing(true);
 		super.initializeFrom(configuration);
+
 		String gdbserverCommand = null;
 		String gdbserverPortNumber = null;
 		try {
@@ -71,6 +79,7 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		}
 		fGDBServerCommandText.setText( gdbserverCommand );
 		fGDBServerPortNumberText.setText( gdbserverPortNumber );
+		setInitializing(false);
 	}
 	
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
@@ -138,5 +147,14 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		super.createTabs( tabFolder );
 		createGdbserverSettingsTab( tabFolder );
 	}
-}
 
+	@Override
+	protected boolean isInitializing() {
+		return fIsInitializing;
+	}
+
+	private void setInitializing(boolean isInitializing) {
+		fIsInitializing = isInitializing;
+	}
+
+}

@@ -31,4 +31,6 @@ Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.cdt.internal.launch.remote;x-internal:=true,
- org.eclipse.cdt.launch.remote;x-internal:=true
+ org.eclipse.cdt.launch.remote;x-internal:=true,
+ org.eclipse.cdt.launch.remote.launching;x-internal:=true,
+ org.eclipse.cdt.launch.remote.tabs;x-internal:=true

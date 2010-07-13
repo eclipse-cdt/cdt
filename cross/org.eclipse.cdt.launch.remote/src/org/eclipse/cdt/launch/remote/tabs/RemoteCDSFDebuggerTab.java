@@ -7,9 +7,10 @@
  * 
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
+ * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  *******************************************************************************/
 
-package org.eclipse.cdt.launch.remote;
+package org.eclipse.cdt.launch.remote.tabs;
 
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CDebuggerTab;

@@ -16,12 +16,17 @@
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Anna Dushistova       (MontaVista) - [223728] [remotecdt] connection combo is not populated until RSE is activated
  * Anna Dushistova       (MontaVista) - [267951] [remotecdt] Support systemTypes without files subsystem
- * Anna Dushistova  (Mentor Graphics) - adapted from RemoteCMainTab 
+ * Anna Dushistova  (Mentor Graphics) - [314659] move remote launch/debug to DSF 
+ * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  *******************************************************************************/
-package org.eclipse.cdt.launch.remote;
 
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab;
+package org.eclipse.cdt.launch.remote.tabs;
+
 import org.eclipse.cdt.internal.launch.remote.Messages;
+import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
+import org.eclipse.cdt.launch.remote.IRemoteConnectionHostConstants;
+import org.eclipse.cdt.launch.remote.RSEHelper;
+import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -54,7 +59,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-public class RemoteCDSFMainTab extends CMainTab {
+public class RemoteCMainTab extends CMainTab {
 
 	/* Labels and Error Messages */
 	private static final String REMOTE_PROG_LABEL_TEXT = Messages.RemoteCMainTab_Program;
@@ -81,18 +86,35 @@ public class RemoteCDSFMainTab extends CMainTab {
 	private Text preRunText;
 	private Label preRunLabel;
 
-	public RemoteCDSFMainTab() {
-		super(CMainTab.INCLUDE_BUILD_SETTINGS);
+	public RemoteCMainTab() {
+		this(true);
+	}
+	
+	public RemoteCMainTab(boolean terminalOption) {
+		super(terminalOption);
 	}
 
-	@Override
+	/*
+	 * createControl
+	 * 
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl
+	 */
 	public void createControl(Composite parent) {
-		// TODO Auto-generated method stub
-		super.createControl(parent);
-		Composite comp = (Composite) getControl();
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout topLayout = new GridLayout();
+		setControl(comp);
+		comp.setLayout(topLayout);
+
 		/* The RSE Connection dropdown with New button. */
 		createVerticalSpacer(comp, 1);
 		createRemoteConnectionGroup(comp, 4);
+
+		/* The Project and local binary location */
+		createVerticalSpacer(comp, 1);
+		createProjectGroup(comp, 1);
+		createBuildConfigCombo(comp, 1);
+		createExeFileGroup(comp, 1);
+
 		/* The remote binary location and skip download option */
 		createVerticalSpacer(comp, 1);
 		createTargetExePathGroup(comp);
@@ -106,12 +128,12 @@ public class RemoteCDSFMainTab extends CMainTab {
 			}
 		});
 
-		PlatformUI
-				.getWorkbench()
-				.getHelpSystem()
-				.setHelp(getControl(),
-						"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
+				"org.eclipse.rse.internal.remotecdt.launchgroup"); //$NON-NLS-1$
 
+		// //No more needed according to
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=178832
+		// LaunchUIPlugin.setDialogShell(parent.getShell());
 	}
 
 	/*
@@ -280,6 +302,66 @@ public class RemoteCDSFMainTab extends CMainTab {
 		skipDownloadButton.setEnabled(true);
 	}
 
+	/*
+	 * performApply
+	 * 
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
+
+		int currentSelection = connectionCombo.getSelectionIndex();
+		config.setAttribute(
+				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
+				currentSelection >= 0 ? connectionCombo
+						.getItem(currentSelection) : null);
+		config.setAttribute(
+				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
+				remoteProgText.getText());
+		config
+				.setAttribute(
+						IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
+						skipDownloadButton.getSelection());
+		config.setAttribute(
+				IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
+				preRunText.getText());
+		super.performApply(config);
+	}
+
+	/*
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom
+	 */
+	public void initializeFrom(ILaunchConfiguration config) {
+		String remoteConnection = null;
+		try {
+			remoteConnection = config
+					.getAttribute(
+							IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
+							""); //$NON-NLS-1$
+		} catch (CoreException ce) {
+			// Ignore
+		}
+
+		String[] items = connectionCombo.getItems();
+		int i = 0;
+		for (i = 0; i < items.length; i++)
+			if (items[i].equals(remoteConnection))
+				break;
+		/*
+		 * Select the last used connection in the connecion pulldown if it still
+		 * exists.
+		 */
+		if (i < items.length)
+			connectionCombo.select(i);
+		else if (items.length > 0)
+			connectionCombo.select(0);
+
+		super.initializeFrom(config);
+
+		updateTargetProgFromConfig(config);
+		updateSkipDownloadFromConfig(config);
+		updatePropertiesButton();
+	}
+
 	protected void handleNewRemoteConnectionSelected() {
 		if (action == null) {
 			action = new SystemNewConnectionAction(getControl().getShell(),
@@ -297,8 +379,8 @@ public class RemoteCDSFMainTab extends CMainTab {
 		int currentSelection = connectionCombo.getSelectionIndex();
 		String remoteConnection = currentSelection >= 0 ? connectionCombo
 				.getItem(currentSelection) : null;
-		return RSEHelper.getRemoteConnectionByName(remoteConnection);
-	}
+        return RSEHelper.getRemoteConnectionByName(remoteConnection);
+    }
 
 	protected void handleRemoteBrowseSelected() {
 		IHost currentConnectionSelected = getCurrentConnection();
@@ -530,14 +612,14 @@ public class RemoteCDSFMainTab extends CMainTab {
 		}
 		if ((skipDownloadButton != null) && !skipDownloadButton.isDisposed()) {
 			skipDownloadButton.setSelection(getDefaultSkipDownload());
-			if (RSEHelper.getFileSubsystem(getCurrentConnection()) == null) {
-				skipDownloadButton.setEnabled(false);
-			} else {
-				skipDownloadButton.setEnabled(true);
-			}
+				if(RSEHelper.getFileSubsystem(getCurrentConnection()) == null){
+					skipDownloadButton.setEnabled(false);
+				} else {
+					skipDownloadButton.setEnabled(true);
+				}
 		}
-		if ((remoteBrowseButton != null) && !remoteBrowseButton.isDisposed()) {
-			if (RSEHelper.getFileSubsystem(getCurrentConnection()) == null) {
+		if((remoteBrowseButton!=null) && !remoteBrowseButton.isDisposed()){
+			if(RSEHelper.getFileSubsystem(getCurrentConnection()) == null){
 				remoteBrowseButton.setEnabled(false);
 			} else {
 				remoteBrowseButton.setEnabled(true);
@@ -577,7 +659,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	private boolean getDefaultSkipDownload() {
 		IHost host = getCurrentConnection();
 		if (host != null) {
-			if (RSEHelper.getFileSubsystem(host) == null) {
+			if(RSEHelper.getFileSubsystem(host) == null){
 				return true;
 			}
 			IPropertySet propertySet = host
@@ -594,82 +676,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	}
 
 	@Override
-	public void initializeFrom(ILaunchConfiguration config) {
-		String remoteConnection = null;
-		try {
-			remoteConnection = config
-					.getAttribute(
-							IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-							""); //$NON-NLS-1$
-		} catch (CoreException ce) {
-			// Ignore
-		}
-
-		String[] items = connectionCombo.getItems();
-		int i = 0;
-		for (i = 0; i < items.length; i++)
-			if (items[i].equals(remoteConnection))
-				break;
-		/*
-		 * Select the last used connection in the connecion pulldown if it still
-		 * exists.
-		 */
-		if (i < items.length)
-			connectionCombo.select(i);
-		else if (items.length > 0)
-			connectionCombo.select(0);
-
-		super.initializeFrom(config);
-
-		updateTargetProgFromConfig(config);
-		updateSkipDownloadFromConfig(config);
-		updatePropertiesButton();
-	}
-
-	/*
-	 * performApply
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply
-	 */
-	public void performApply(ILaunchConfigurationWorkingCopy config) {
-
-		int currentSelection = connectionCombo.getSelectionIndex();
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-				currentSelection >= 0 ? connectionCombo
-						.getItem(currentSelection) : null);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-				remoteProgText.getText());
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
-				skipDownloadButton.getSelection());
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-				preRunText.getText());
-		super.performApply(config);
-	}
-
-	@Override
 	public String getId() {
-		return "org.eclipse.cdt.launch.remote.dsf.mainTab"; //$NON-NLS-1$
+		return "org.eclipse.rse.remotecdt.launch.RemoteCMainTab"; //$NON-NLS-1$
 	}
-
-	@Override
-	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		super.setDefaults(config);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_CONNECTION,
-				EMPTY_STRING);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_REMOTE_PATH,
-				REMOTE_PATH_DEFAULT);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
-				SKIP_DOWNLOAD_TO_REMOTE_DEFAULT);
-		config.setAttribute(
-				IRemoteConnectionConfigurationConstants.ATTR_PRERUN_COMMANDS,
-				EMPTY_STRING);
-	}
-
 }

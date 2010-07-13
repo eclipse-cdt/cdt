@@ -8,9 +8,10 @@
  * Contributors: 
  * Ewa Matejska (PalmSource)
  * Anna Dushistova (Mentor Graphics) - [314659] move remote launch/debug to DSF 
+ * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  *******************************************************************************/
 
-package org.eclipse.cdt.launch.remote;
+package org.eclipse.cdt.launch.remote.tabs;
 
 import java.util.ArrayList;
 import java.util.List;

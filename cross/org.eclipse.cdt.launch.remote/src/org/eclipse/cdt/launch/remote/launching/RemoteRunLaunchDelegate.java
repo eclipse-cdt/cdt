@@ -17,9 +17,10 @@
  * Nikita Shulga    (EmbeddedAlley)   - [265236][remotecdt] Wait for RSE to initialize before querying it for host list
  * Anna Dushistova  (MontaVista)      - [267951][remotecdt] Support systemTypes without files subsystem
  * Anna Dushistova  (Mentor Graphics) - [314659]Fixed deprecated methods
+ * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
  *******************************************************************************/
 
-package org.eclipse.cdt.launch.remote;
+package org.eclipse.cdt.launch.remote.launching;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
@@ -35,6 +36,8 @@ import org.eclipse.cdt.debug.mi.core.IGDBServerMILaunchConfigurationConstants;
 import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
+import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
+import org.eclipse.cdt.launch.remote.RSEHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;

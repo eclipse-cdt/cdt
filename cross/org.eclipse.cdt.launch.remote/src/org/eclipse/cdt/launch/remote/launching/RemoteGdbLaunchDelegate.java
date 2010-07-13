@@ -7,8 +7,9 @@
  * 
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
+ * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
  *******************************************************************************/
-package org.eclipse.cdt.launch.remote;
+package org.eclipse.cdt.launch.remote.launching;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -16,6 +17,8 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
 import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
+import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
+import org.eclipse.cdt.launch.remote.RSEHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;

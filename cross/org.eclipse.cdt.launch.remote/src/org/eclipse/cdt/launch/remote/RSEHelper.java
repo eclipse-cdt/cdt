@@ -7,6 +7,7 @@
  * Contributors:
  * Anna Dushistova (MontaVista)      - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - [314659] moved common methods for DSF and CDI launches to this class
+ * Anna Dushistova (Mentor Graphics) - changed spaceEscapify visibility
  ********************************************************************************/
 
 package org.eclipse.cdt.launch.remote;
@@ -211,7 +212,7 @@ public class RSEHelper {
 		}
 	}
 
-	static String spaceEscapify(String inputString) {
+	public static String spaceEscapify(String inputString) {
 		if (inputString == null)
 			return null;
 

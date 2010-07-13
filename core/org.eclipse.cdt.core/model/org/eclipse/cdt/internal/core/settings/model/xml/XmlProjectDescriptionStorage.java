@@ -813,6 +813,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
 			Element newXmlEl = null;
+			synchronized (doc) {
+			synchronized (el.fLock) {
 			if (el.fElement.getParentNode().getNodeType() == Node.DOCUMENT_NODE) {
 				Document baseDoc = el.fElement.getOwnerDocument();
 				NodeList list = baseDoc.getChildNodes();
@@ -828,6 +830,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				newXmlEl = (Element) importAddNode(doc, el.fElement);
 			}
 			return newXmlEl;
+			}}
 		} catch (ParserConfigurationException e) {
 			throw ExceptionFactory.createCoreException(e);
 		} catch (FactoryConfigurationError e) {

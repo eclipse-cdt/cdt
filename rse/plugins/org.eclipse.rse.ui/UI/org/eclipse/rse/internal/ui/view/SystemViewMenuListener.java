@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,13 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
+ * Uwe Stieber      (Wind River) - [319618] [context-menu] Tool tip not shown in status bar for command contributions items
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -25,9 +29,11 @@ import org.eclipse.rse.ui.actions.ISystemViewMenuListener;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.swt.events.ArmEvent;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.menus.CommandContributionItem;
 
 
 /**
@@ -159,6 +165,16 @@ implements ISystemViewMenuListener
 		  	String tip = null; //data.getClass().getName();
 		    if (data instanceof ActionContributionItem)
 		      tip = ((ActionContributionItem)data).getAction().getToolTipText();
+		    else if (data instanceof CommandContributionItem) {
+		    	try {
+		    		Field f = data.getClass().getDeclaredField("widget"); //$NON-NLS-1$
+		    		f.setAccessible(true);
+		    		Widget widget = (Widget)f.get(data);
+					Method m = data.getClass().getDeclaredMethod("getToolTipText", new Class[] { String.class }); //$NON-NLS-1$
+					m.setAccessible(true);
+					tip = (String)m.invoke(data, new Object[] { widget instanceof Item ? ((Item)widget).getText() : (String)null });
+				} catch (Exception e) { /* ignored on purpose */ }
+		    }
 		    else if (data instanceof SystemSubMenuManager)
 		      tip = ((SystemSubMenuManager)data).getToolTipText();
 		    if (tip != null)

@@ -311,7 +311,7 @@ public class PerFileSettingsCalculator {
 		}
 		
 		public String[] getExtensions(){
-			return (String[])fExts.clone();
+			return fExts.clone();
 		}
 
 		@Override

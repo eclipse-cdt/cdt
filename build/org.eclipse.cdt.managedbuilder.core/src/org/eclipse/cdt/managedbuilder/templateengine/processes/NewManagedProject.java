@@ -49,6 +49,7 @@ public class NewManagedProject extends ProcessRunner {
 		pca = new ProjectCreatedActions();
 	}
 	
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String location = args[1].getSimpleValue();

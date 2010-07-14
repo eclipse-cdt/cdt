@@ -66,6 +66,7 @@ public class CollectionMap {
 			return (Collection)fEntry.getValue();
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -79,6 +80,7 @@ public class CollectionMap {
 			return fEntry.equals(((CollectionEntry)obj).fEntry);
 		}
 
+		@Override
 		public int hashCode() {
 			return fEntry.hashCode();
 		}
@@ -111,10 +113,12 @@ public class CollectionMap {
 			fMapEntrySet = fMap.entrySet();
 		}
 
+		@Override
 		public Iterator iterator() {
 			return new Iter();
 		}
 
+		@Override
 		public int size() {
 			return fMapEntrySet.size();
 		}
@@ -263,6 +267,7 @@ public class CollectionMap {
 //		return new ArrayList(1);
 //	}
 
+	@Override
 	public Object clone() {
 		try {
 			CollectionMap clone = (CollectionMap)super.clone();

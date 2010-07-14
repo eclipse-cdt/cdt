@@ -215,6 +215,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
 		 */
+		@Override
 		public String getStringValue(){
 //			loadValue();
 			return fStringValue;
@@ -333,6 +334,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
 	 */
+	@Override
 	public IBuildMacro getMacro(String macroName, int contextType,
 			Object contextData) {
 		IBuildMacro macro = null; 
@@ -679,6 +681,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
 	 */
+	@Override
 	public IBuildMacro[] getMacros(int contextType, Object contextData) {
 		String names[] = getMacroNames(contextType,false);
 		

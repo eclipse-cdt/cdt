@@ -81,6 +81,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 	 */
 	private class CommandSearchLauncher extends CommandLauncher{
 
+		@Override
 		protected String[] constructCommandArray(String command, String[] commandArgs) {
 			String[] args = new String[1 + commandArgs.length];
 			if(!isWindows()){
@@ -97,6 +98,7 @@ public class CommandBuilder implements IBuildModelBuilder {
 		}
 
 		
+		@Override
 		protected void printCommandLine(OutputStream os) {
 			if (os != null) {
 				String cmd = CommandBuilder.this.getCommandLine();
@@ -117,25 +119,30 @@ public class CommandBuilder implements IBuildModelBuilder {
 			fOut = out;
 		}
 		
-	    public void write(int b) throws IOException {
-	    	fOut.write(b);
-	    }
+		@Override
+		public void write(int b) throws IOException {
+			fOut.write(b);
+		}
 
-	    public void write(byte b[]) throws IOException {
-	    	fOut.write(b);
-	    }
+		@Override
+		public void write(byte b[]) throws IOException {
+			fOut.write(b);
+		}
 
-	    public void write(byte b[], int off, int len) throws IOException {
-	    	fOut.write(b, off, len);
-	    }
+		@Override
+		public void write(byte b[], int off, int len) throws IOException {
+			fOut.write(b, off, len);
+		}
 
-	    public void flush() throws IOException {
-	    	fOut.flush();
-	    }
+		@Override
+		public void flush() throws IOException {
+			fOut.flush();
+		}
 
-	    public void close() throws IOException {
-	    }
-	    
+		@Override
+		public void close() throws IOException {
+		}
+
 	}
 
 	public CommandBuilder(IBuildCommand cmd, IResourceRebuildStateContainer cr){

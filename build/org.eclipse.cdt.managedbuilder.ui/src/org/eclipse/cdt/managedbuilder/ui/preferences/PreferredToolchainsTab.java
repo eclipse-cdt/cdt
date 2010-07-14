@@ -56,6 +56,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
     
     private Label preferredTCsLabel;
 
+	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
@@ -76,6 +77,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         tree = new Tree(c, SWT.SINGLE | SWT.BORDER);
         tree.setLayoutData(new GridData(GridData.FILL_BOTH));
         tree.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] tis = tree.getSelection();
 				if (tis == null || tis.length == 0) return;
@@ -98,6 +100,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         pref1.setText(Messages.PreferredToolchainsTab_1); 
         pref1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref1.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) { setPref(true); }} );
 
         new Label(c,0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));        
@@ -105,6 +108,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         pref0.setText(Messages.PreferredToolchainsTab_2); 
         pref0.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref0.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) { setPref(false); }} );
         
         //bug 189220 - provide more information for accessibility
@@ -123,6 +127,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         gd.horizontalSpan = 2;
         show_sup.setLayoutData(gd);
         show_sup.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (h_selected != null)
 					h_selected.setSupportedOnly(show_sup.getSelection());
@@ -195,16 +200,21 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 
 	
 
+	@Override
 	protected void performOK() {
         CDTPrefUtil.savePreferredTCs();
 	}
 	
+	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) { performOK();}
 
+	@Override
 	protected void performDefaults() {
         CDTPrefUtil.cleanPreferredTCs();
 		h_selected.handleSelection();
 	}
+	@Override
 	protected void updateData(ICResourceDescription cfg) {}
+	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 }

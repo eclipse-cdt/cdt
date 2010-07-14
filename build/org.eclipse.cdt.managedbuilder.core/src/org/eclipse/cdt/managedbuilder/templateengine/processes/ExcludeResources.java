@@ -55,6 +55,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class ExcludeResources extends ProcessRunner {
 	
+	@Override
 	public void process(TemplateCore template, final ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String configIdPattern = args[1].getSimpleValue();

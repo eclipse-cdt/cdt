@@ -96,6 +96,7 @@ public class BuildProperties implements IBuildProperties {
 		fPropertiesMap.remove(property.getPropertyType().getId());
 	}
 	
+	@Override
 	public String toString(){
 		String props = toStringExistingProperties();
 		if(fInexistentProperties != null){
@@ -127,6 +128,7 @@ public class BuildProperties implements IBuildProperties {
 		return buf.toString();
 	}
 
+	@Override
 	public Object clone() {
 		try {
 			BuildProperties clone = (BuildProperties)super.clone();

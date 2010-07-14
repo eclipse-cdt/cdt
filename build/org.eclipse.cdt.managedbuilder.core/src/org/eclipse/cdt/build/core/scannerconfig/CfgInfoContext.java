@@ -183,6 +183,7 @@ public final class CfgInfoContext{
 		return null;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if(this == obj)
 			return true;
@@ -206,6 +207,7 @@ public final class CfgInfoContext{
 		return true;
 	}
 
+	@Override
 	public int hashCode() {
 		int code = getCode(fCfg);
 		code += getCode(fRcInfo);

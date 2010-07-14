@@ -1171,6 +1171,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
 	}
@@ -1847,6 +1848,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public Version getVersion() {
 		if ( version == null) {
 			if ( rootFolderInfo.getToolChain() != null) {
@@ -1856,6 +1858,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return version;
 	}
 	
+	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}
@@ -1881,6 +1884,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
 	 */
+	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
 		

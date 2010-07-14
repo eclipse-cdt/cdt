@@ -57,6 +57,7 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 		return !fProjectOnly || rc.getType() == IResource.PROJECT;
 	}
 
+	@Override
 	protected IResourceMoveHandler createResourceMoveHandler(
 			IResourceChangeEvent event) {
 		return new ResourceMoveHandler();

@@ -766,6 +766,7 @@ class UpdateManagedProject12 {
 			//initiate the job in all cases
 //			if (treeLock) {
 				WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 						ManagedBuildManager.saveBuildInfoLegacy(project, false);
 						return Status.OK_STATUS;

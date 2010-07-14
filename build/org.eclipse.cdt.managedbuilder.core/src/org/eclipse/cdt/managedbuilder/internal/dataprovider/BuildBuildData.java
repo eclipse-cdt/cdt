@@ -30,6 +30,7 @@ public class BuildBuildData extends CBuildData {
 		fCfg = (Configuration)fBuilder.getParent().getParent();
 	}
 
+	@Override
 	public IPath getBuilderCWD() {
 		return new Path(fBuilder.getBuildPath());//ManagedBuildManager.getBuildLocation(fCfg, fBuilder);
 	}
@@ -40,34 +41,42 @@ public class BuildBuildData extends CBuildData {
 		return new Path(locationString);
 	}
 
+	@Override
 	public String[] getErrorParserIDs() {
 		return fCfg.getErrorParserList();
 	}
 
+	@Override
 	public ICOutputEntry[] getOutputDirectories() {
 		return fBuilder.getOutputEntries();
 	}
 
+	@Override
 	public void setBuilderCWD(IPath path) {
 		fBuilder.setBuildPath(path.toString());
 	}
 
+	@Override
 	public void setErrorParserIDs(String[] ids) {
 		fCfg.setErrorParserList(ids);
 	}
 
+	@Override
 	public void setOutputDirectories(ICOutputEntry[] entries) {
 		fBuilder.setOutputEntries(entries);
 	}
 
+	@Override
 	public String getId() {
 		return fBuilder.getId();
 	}
 
+	@Override
 	public String getName() {
 		return fBuilder.getName();
 	}
 
+	@Override
 	public boolean isValid() {
 		return fBuilder != null;
 	}
@@ -76,6 +85,7 @@ public class BuildBuildData extends CBuildData {
 		//TODO
 	}
 
+	@Override
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
 //		if(fEnvContibutor == null)
 //			fEnvContibutor = new BuildEnvironmentContributor(this);

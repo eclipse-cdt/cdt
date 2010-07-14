@@ -117,6 +117,7 @@ class UpdateManagedProject20 {
 			//since the java synchronized mechanism is now used for the build info loadding,
 			//initiate the job in all cases
 				WorkspaceJob job = new WorkspaceJob(ConverterMessages.getResourceString("UpdateManagedProject.notice")) { //$NON-NLS-1$
+					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 						ManagedBuildManager.saveBuildInfoLegacy(project, false);
 						return Status.OK_STATUS;

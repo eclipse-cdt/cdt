@@ -43,6 +43,7 @@ public class BuildConfigurationData extends CConfigurationData {
 		return fCfg;
 	}
 
+	@Override
 	public CFileData createFileData(IPath path, CFileData base)
 			throws CoreException {
 		String id = ManagedBuildManager.calculateChildId(fCfg.getId(),null);
@@ -50,6 +51,7 @@ public class BuildConfigurationData extends CConfigurationData {
 		return info.getFileData();
 	}
 	
+	@Override
 	public CFileData createFileData(IPath path, CFolderData base, CLanguageData baseLangData)
 		throws CoreException {
 		String id = ManagedBuildManager.calculateChildId(fCfg.getId(),null);
@@ -65,6 +67,7 @@ public class BuildConfigurationData extends CConfigurationData {
 
 
 	
+	@Override
 	public CFolderData createFolderData(IPath path, CFolderData base)
 			throws CoreException {
 		String id = ManagedBuildManager.calculateChildId(fCfg.getId(),null);
@@ -72,10 +75,12 @@ public class BuildConfigurationData extends CConfigurationData {
 		return folderInfo.getFolderData();
 	}
 
+	@Override
 	public String getDescription() {
 		return fCfg.getDescription();
 	}
 
+	@Override
 	public CResourceData[] getResourceDatas() {
 		IResourceInfo infos[] = fCfg.getResourceInfos();
 		CResourceData datas[] = new CResourceData[infos.length];
@@ -85,50 +90,62 @@ public class BuildConfigurationData extends CConfigurationData {
 		return datas;
 	}
 
+	@Override
 	public CFolderData getRootFolderData() {
 		return fCfg.getRootFolderInfo().getFolderData();
 	}
 
+	@Override
 	public void removeResourceData(CResourceData data) throws CoreException {
 		fCfg.removeResourceInfo(data.getPath());
 	}
 
+	@Override
 	public void setDescription(String description) {
 		fCfg.setDescription(description);
 	}
 
+	@Override
 	public String getId() {
 		return fCfg.getId();
 	}
 
+	@Override
 	public String getName() {
 		return fCfg.getName();
 	}
 
+	@Override
 	public void setName(String name) {
 		fCfg.setName(name);
 	}
 
+	@Override
 	public boolean isValid() {
 		return fCfg != null;
 	}
 
+	@Override
 	public CTargetPlatformData getTargetPlatformData() {
 		return fCfg.getToolChain().getTargetPlatformData();
 	}
 
+	@Override
 	public ICSourceEntry[] getSourceEntries() {
 		return fCfg.getSourceEntries();
 	}
 
+	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) {
 		fCfg.setSourceEntries(entries);
 	}
 
+	@Override
 	public CBuildData getBuildData() {
 		return fCfg.getBuildData();
 	}
 
+	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
 //		if(fCdtVars == null)
 //			fCdtVars = new BuildVariablesContributor(this);
@@ -154,6 +171,7 @@ public class BuildConfigurationData extends CConfigurationData {
 		}
 	}
 
+	@Override
 	public CConfigurationStatus getStatus() {
 		int flags = 0;
 		String msg = null;

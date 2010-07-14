@@ -358,6 +358,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
 	}

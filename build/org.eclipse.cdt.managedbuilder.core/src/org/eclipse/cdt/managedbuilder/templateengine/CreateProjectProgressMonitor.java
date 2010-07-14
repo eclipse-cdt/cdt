@@ -37,6 +37,7 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	 * 
 	 * @see IProgressMonitor#setTaskName(String)
 	 */
+	@Override
 	public void setTaskName(String name) {
 		super.setTaskName(name);
 	}
@@ -47,6 +48,7 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	 * @see IProgressMonitor#isCanceled()
 	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
+	@Override
 	public void setCanceled(boolean cancelled) {
 		super.setCanceled(cancelled);
 	}
@@ -58,6 +60,7 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	 * @see IProgressMonitor#isCanceled()
 	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
+	@Override
 	public boolean isCanceled() {
 		return super.isCanceled();
 	}

@@ -23,6 +23,7 @@ public class TestValueHandler extends ManagedOptionValueHandler implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler#handleValue(IConfiguration,IToolChain,IOption,String,int)
 	 */
+	@Override
 	public boolean handleValue(IBuildObject configuration, 
                    IHoldsOptions holder, 
                    IOption option,

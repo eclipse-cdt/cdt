@@ -29,10 +29,12 @@ public abstract class PropertyBase {
 		return fName;
 	}
 	
+	@Override
 	public String toString(){
 		return getId();
 	}
 	
+	@Override
 	public boolean equals(Object o){
 		if(!o.getClass().equals(getClass()))
 			return false;
@@ -40,6 +42,7 @@ public abstract class PropertyBase {
 		return fId.equals(((PropertyBase)o).getId());
 	}
 	
+	@Override
 	public int hashCode(){
 		return fId.hashCode();
 	}

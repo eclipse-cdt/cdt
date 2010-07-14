@@ -56,6 +56,7 @@ public class ObjectSet implements IObjectSet {
 		return fObjectSet.size();
 	}
 	
+	@Override
 	public String toString(){
 		StringBuffer buf = new StringBuffer();
 		buf.append(MatchObjectElement.TypeToStringAssociation.getAssociation(fObjectType).getString());

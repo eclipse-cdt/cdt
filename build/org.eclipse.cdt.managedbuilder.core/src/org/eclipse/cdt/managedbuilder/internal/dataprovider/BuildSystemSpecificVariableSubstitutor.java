@@ -45,6 +45,7 @@ public class BuildSystemSpecificVariableSubstitutor extends SupplierBasedCdtVari
 		super(contextInfo, inexistentMacroValue, listDelimiter);
 	}
 
+	@Override
 	protected ResolvedMacro resolveMacro(String macroName)
 			throws CdtVariableException {
 		if(fFileVarsSet.contains(macroName)

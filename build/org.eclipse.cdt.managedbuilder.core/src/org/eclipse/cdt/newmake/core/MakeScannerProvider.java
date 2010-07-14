@@ -103,6 +103,7 @@ public class MakeScannerProvider extends ScannerProvider {
 	 * 
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		try {
 			getMakeScannerInfo(resource.getProject(), true);

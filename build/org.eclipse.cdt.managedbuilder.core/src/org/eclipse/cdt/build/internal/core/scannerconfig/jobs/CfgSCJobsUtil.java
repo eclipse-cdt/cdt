@@ -49,6 +49,7 @@ public class CfgSCJobsUtil {
             this.rc = rc;
         }
         
+        @Override
         public String toString() {
             return rc ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
         }

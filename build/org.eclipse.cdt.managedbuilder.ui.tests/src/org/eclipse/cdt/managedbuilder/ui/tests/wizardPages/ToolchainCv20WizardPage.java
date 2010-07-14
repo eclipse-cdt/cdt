@@ -117,6 +117,7 @@ public class ToolchainCv20WizardPage extends MBSCustomPage
 
 	}
 
+	@Override
 	protected boolean isCustomPageComplete()
 	{
 		return true;

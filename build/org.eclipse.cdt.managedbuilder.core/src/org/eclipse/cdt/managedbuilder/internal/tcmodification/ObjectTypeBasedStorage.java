@@ -73,6 +73,7 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 		return oldValue;
 	}
 
+	@Override
 	public Object clone(){
 		try {
 			ObjectTypeBasedStorage clone = (ObjectTypeBasedStorage)super.clone();

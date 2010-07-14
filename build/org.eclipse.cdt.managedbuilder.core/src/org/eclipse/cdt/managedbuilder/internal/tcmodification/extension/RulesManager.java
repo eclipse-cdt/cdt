@@ -55,6 +55,7 @@ public class RulesManager {
 			setSystem(true);
 		}
 
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				loadExtensions();

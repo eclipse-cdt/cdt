@@ -960,6 +960,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
@@ -2409,6 +2410,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			this.builder = builder;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -2418,6 +2420,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			return builder.performMatchComparison(other.builder);
 		}
 
+		@Override
 		public int hashCode() {
 			String name = getName();
 			if(name == null)
@@ -2719,6 +2722,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
 	}
+	@Override
 	public String toString() {
 		return getUniqueRealName();
 	}

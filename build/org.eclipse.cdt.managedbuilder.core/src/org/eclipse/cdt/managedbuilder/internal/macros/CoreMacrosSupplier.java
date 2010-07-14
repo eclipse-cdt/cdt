@@ -24,19 +24,23 @@ public class CoreMacrosSupplier extends BuildCdtVariablesSupplierBase {
 		fMngr = CCorePlugin.getDefault().getCdtVariableManager();
 	}
 
+	@Override
 	public IBuildMacro getMacro(String macroName, int contextType,
 			Object contextData) {
 		return BuildMacroProvider.wrap(getVariable(macroName, null));
 	}
 
+	@Override
 	public IBuildMacro[] getMacros(int contextType, Object contextData) {
 		return BuildMacroProvider.wrap(getVariables(null));
 	}
 
+	@Override
 	public ICdtVariable getVariable(String macroName, IMacroContextInfo context) {
 		return fMngr.getVariable(macroName, fCfgDes);
 	}
 
+	@Override
 	public ICdtVariable[] getVariables(IMacroContextInfo context) {
 		return fMngr.getVariables(fCfgDes);
 	}

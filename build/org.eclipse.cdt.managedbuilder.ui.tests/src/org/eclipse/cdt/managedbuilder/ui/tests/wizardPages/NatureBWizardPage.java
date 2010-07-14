@@ -117,6 +117,7 @@ public class NatureBWizardPage extends MBSCustomPage
 
 	}
 
+	@Override
 	protected boolean isCustomPageComplete()
 	{
 		return true;

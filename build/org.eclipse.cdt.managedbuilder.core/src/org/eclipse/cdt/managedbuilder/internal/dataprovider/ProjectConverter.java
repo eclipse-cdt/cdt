@@ -534,6 +534,7 @@ public class ProjectConverter implements ICProjectConverter {
 						CCorePlugin.getDefault().setProjectDescription(project, newDes);
 						Job job = new Job(DataProviderMessages.getString("ProjectConverter.7")){ //$NON-NLS-1$
 
+							@Override
 							protected IStatus run(IProgressMonitor monitor) {
 								try {
 									ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project);

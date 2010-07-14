@@ -85,6 +85,7 @@ public class WordPartDetector {
 	/**
 	 * @return String
 	 */
+	@Override
 	public String toString() {
 		return wordPart;
 	}

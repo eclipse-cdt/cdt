@@ -59,6 +59,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	/*
 	 * @see SharedPart#createControl(Composite, FormWidgetFactory)
 	 */
+	@Override
 	public void createControl(Composite parent, int style, int span) {
 		createMainLabel(parent, span);
 		createMainControl(parent, style, span - 1);
@@ -98,6 +99,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		return button;
 	}
 
+	@Override
 	protected void updateEnabledState() {
 		for (int i = 0; i < controls.length; i++) {
 			Control c = controls[i];

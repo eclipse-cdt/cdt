@@ -117,6 +117,7 @@ public class ProjectTypeEWizardPage extends MBSCustomPage
 
 	}
 
+	@Override
 	protected boolean isCustomPageComplete()
 	{
 		return true;

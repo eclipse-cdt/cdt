@@ -15,10 +15,12 @@ import java.util.LinkedHashSet;
 
 public class LinkedHashSetMap extends CollectionMap {
 
+	@Override
 	protected Collection cloneCollection(Collection l) {
 		return (Collection)((LinkedHashSet)l).clone();
 	}
 
+	@Override
 	protected Collection newCollection(int size) {
 		return new LinkedHashSet();
 	}

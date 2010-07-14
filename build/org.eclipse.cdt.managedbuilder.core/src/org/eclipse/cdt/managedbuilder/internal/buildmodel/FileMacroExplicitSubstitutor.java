@@ -38,6 +38,7 @@ public class FileMacroExplicitSubstitutor extends SupplierBasedCdtVariableSubsti
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#resolveMacro(org.eclipse.cdt.managedbuilder.macros.IBuildMacro)
 	 */
+	@Override
 	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
 		if(macro instanceof MbsMacroSupplier.FileContextMacro){
 			MbsMacroSupplier.FileContextMacro fileMacro = (MbsMacroSupplier.FileContextMacro)macro;

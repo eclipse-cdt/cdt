@@ -223,6 +223,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		fCurrentCompatibilityInfo = null;
 	}
 	
+	@Override
 	protected boolean canRemove(ITool realTool) {
 		IToolChain extTc = ManagedBuildManager.getExtensionToolChain(fSelectedToolChain);
 		ITool[] tools = extTc.getTools();
@@ -234,10 +235,12 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		return true;
 	}
 
+	@Override
 	protected boolean canAdd(Tool tool) {
 		return !TcModificationUtil.containCommonEntries(getInputExtsSet(), tool.getPrimaryInputExtensions());
 	}
 
+	@Override
 	protected boolean canReplace(Tool fromTool, Tool toTool) {
 		String[] exts = toTool.getPrimaryInputExtensions();
 		Set curInputExts = null;
@@ -255,6 +258,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		return false;
 	}
 
+	@Override
 	protected Set getExtensionConflictToolSet(Tool tool, Tool[] tools) {
 		String exts[] = tool.getPrimaryInputExtensions();
 		Set extsSet = new HashSet(Arrays.asList(exts));
@@ -277,12 +281,14 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		return conflictsSet;
 	}
 
+	@Override
 	protected Set getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
 		if(isProject)
 			return (Set)getToolChainApplicabilityPaths().fToolPathMap.get(realTool);
 		return getToolChainApplicabilityPaths().fFolderInfoPaths;
 	}
 
+	@Override
 	protected Tool[] filterTools(Tool[] tools) {
 		IResourceInfo rcInfo = getResourceInfo();
 		return (Tool[])((FolderInfo)rcInfo).filterTools(tools, rcInfo.getParent().getManagedProject());
@@ -327,6 +333,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		fTcApplicabilityPaths = tcApplicabilityPaths;
 	}
 	
+	@Override
 	protected void clearToolInfo(ITool[] tools){
 		super.clearToolInfo(tools);
 		fTcApplicabilityPaths = null;

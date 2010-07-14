@@ -390,6 +390,7 @@ public class UpdateManagedProjectManager {
 			IWorkspace workspace = project.getWorkspace();
 			ISchedulingRule rule = workspace.getRuleFactory().refreshRule(project);
 			WorkspaceJob job = new WorkspaceJob("Refresh Project") { //$NON-NLS-1$
+				@Override
 				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 					project.refreshLocal(IResource.DEPTH_ONE, null);
 					return Status.OK_STATUS;

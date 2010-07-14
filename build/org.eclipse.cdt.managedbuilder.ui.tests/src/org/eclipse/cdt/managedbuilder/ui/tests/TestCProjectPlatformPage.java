@@ -38,6 +38,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 	private TestPage page;
 	private boolean currentState=false;
 	
+	@Override
 	protected void setUp() throws Exception {
 		MBSCustomPageManager.init();
 		MBSCustomPageManager.loadExtensions();
@@ -46,6 +47,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		wizard.addPages();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		page.dispose();
 		page = null;

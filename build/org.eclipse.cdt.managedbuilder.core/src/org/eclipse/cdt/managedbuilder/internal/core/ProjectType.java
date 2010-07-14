@@ -311,6 +311,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
+	@Override
 	public String getName() {
 		String name = getNameAttribute();
 		if(name.length() == 0){

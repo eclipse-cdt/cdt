@@ -200,6 +200,7 @@ public class BuildFilesAction extends ActionDelegate implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 
 			Iterator<IFile> iterator = files.iterator();
@@ -364,6 +365,7 @@ public class BuildFilesAction extends ActionDelegate implements
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// update state
 		update();

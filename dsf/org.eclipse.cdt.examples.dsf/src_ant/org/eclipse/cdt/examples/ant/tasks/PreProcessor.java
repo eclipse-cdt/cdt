@@ -104,6 +104,7 @@ public class PreProcessor extends Task {
 		}
 	}
 
+	@Override
 	public void execute() throws BuildException {
 		if (fSymbols.size() == 0) {
 			throw new BuildException("No symbols specified for preprocessor");

@@ -43,6 +43,7 @@ public class BuildMacro extends CdtVariable implements IBuildMacro {
 		return getValueType();
 	}
 
+	@Override
 	public String[] getStringListValue() throws BuildMacroException {
 		// TODO Auto-generated method stub
 		try {
@@ -52,6 +53,7 @@ public class BuildMacro extends CdtVariable implements IBuildMacro {
 		}
 	}
 
+	@Override
 	public String getStringValue() throws BuildMacroException {
 		try {
 			return super.getStringValue();

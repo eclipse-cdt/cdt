@@ -86,6 +86,7 @@ public class ParallelBuilder {
 			level = _level;
 		}
 		
+		@Override
 		public int hashCode() {
 			return step.hashCode();
 		}
@@ -115,6 +116,7 @@ public class ParallelBuilder {
 			} else { return false; }
 		}
 		
+		@Override
 		public String toString() {
 			return"[BuildQueueElement] " + DbgUtil.stepName(step) + " @ " + level; //$NON-NLS-1$ //$NON-NLS-2$
 		}

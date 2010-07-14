@@ -82,6 +82,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		}
 	}
 	
+	@Override
 	protected IResourceMoveHandler createResourceMoveHandler(
 			IResourceChangeEvent event) {
 		return new RcMoveHandler();
@@ -166,6 +167,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		return false;
 	}
 	
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		super.resourceChanged(event);
 		
@@ -193,6 +195,7 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase{
 		
 		Job job = new Job(ManagedMakeMessages.getString("ResourceChangeHandler2.0")){ //$NON-NLS-1$
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				for(Iterator iter = projSet.iterator(); iter.hasNext();){
 					IProject project = (IProject)iter.next();

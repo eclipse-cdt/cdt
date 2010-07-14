@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class SetMBSBooleanOptionValue extends ProcessRunner {
 	
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		IProject projectHandle = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);

@@ -14,6 +14,7 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 
 public class PathAndSymbolPage extends AbstractPage {
 
+	@Override
 	protected boolean isSingle() {
 		return false;
 	}

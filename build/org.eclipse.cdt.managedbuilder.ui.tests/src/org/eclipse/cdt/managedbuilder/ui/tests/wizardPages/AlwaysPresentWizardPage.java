@@ -32,6 +32,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 		pageID = "org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage";
 	}
 
+	@Override
 	public boolean canFlipToNextPage()
 	{
 
@@ -125,6 +126,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 
 	}
 
+	@Override
 	protected boolean isCustomPageComplete()
 	{
 		return true;

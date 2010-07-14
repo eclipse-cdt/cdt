@@ -400,6 +400,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
@@ -606,6 +607,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
@@ -615,6 +617,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		return version;
 	}
 	
+	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}

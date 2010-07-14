@@ -15,10 +15,12 @@ import java.util.TreeSet;
 
 public class PathTreeSetMap extends CollectionMap {
 
+	@Override
 	protected Collection cloneCollection(Collection l) {
 		return (Collection)((TreeSet)l).clone();
 	}
 
+	@Override
 	protected Collection newCollection(int size) {
 		return new TreeSet(PathComparator.INSTANCE);
 	}

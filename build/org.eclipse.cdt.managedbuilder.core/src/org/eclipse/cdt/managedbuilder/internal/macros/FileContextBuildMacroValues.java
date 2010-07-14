@@ -113,6 +113,7 @@ public class FileContextBuildMacroValues implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone(){
 		FileContextBuildMacroValues cloned = null;
 		try{

@@ -24,12 +24,14 @@ public class ManagedGCCScannerInfoConsoleParser extends
 		GCCScannerInfoConsoleParser {
 	Boolean fManagedBuildOnState;
 	
+	@Override
 	public boolean processLine(String line) {
 		if(isManagedBuildOn())
 			return false;
 		return super.processLine(line);
 	}
 
+	@Override
 	public void shutdown() {
 		if(!isManagedBuildOn()){
 			super.shutdown();
@@ -37,6 +39,7 @@ public class ManagedGCCScannerInfoConsoleParser extends
 		fManagedBuildOnState = null;
 	}
 
+	@Override
 	public void startup(IProject project, IScannerInfoCollector collector) {
 		if(isManagedBuildOn())
 			return;

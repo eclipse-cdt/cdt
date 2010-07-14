@@ -19,22 +19,27 @@ public class BuildTargetPlatformData extends CTargetPlatformData {
 	public BuildTargetPlatformData(TargetPlatform targetPlatform){
 		fTargetPlatform = targetPlatform;
 	}
+	@Override
 	public String[] getBinaryParserIds() {
 		return fTargetPlatform.getBinaryParserList();
 	}
 
+	@Override
 	public void setBinaryParserIds(String[] ids) {
 		fTargetPlatform.setBinaryParserList(ids);
 	}
 
+	@Override
 	public String getId() {
 		return fTargetPlatform.getId();
 	}
 
+	@Override
 	public String getName() {
 		return fTargetPlatform.getName();
 	}
 
+	@Override
 	public boolean isValid() {
 		//TODO:
 		return true;

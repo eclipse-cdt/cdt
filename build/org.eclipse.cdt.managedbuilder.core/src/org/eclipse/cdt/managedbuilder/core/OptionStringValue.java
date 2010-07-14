@@ -156,6 +156,7 @@ public final class OptionStringValue {
 		return srcPrefixMapping;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if(obj == this)
 			return true;
@@ -183,6 +184,7 @@ public final class OptionStringValue {
 		return true;
 	}
 
+	@Override
 	public int hashCode() {
 		return code(value);
 	}
@@ -191,6 +193,7 @@ public final class OptionStringValue {
 		return str != null ? str.hashCode() : 0;
 	}
 
+	@Override
 	public String toString() {
 		return new StringBuffer().append("ov:").append(value.toString()).toString(); //$NON-NLS-1$
 	}

@@ -176,6 +176,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		/* (non-Javadoc)
 		* @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		*/
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ITargetRule) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_TARGET_RULE);
@@ -198,6 +199,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			String name;
 			if (element instanceof IRule) {
@@ -233,6 +235,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		TreeViewer viewer = getTreeViewer();
@@ -322,6 +325,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
 	 */
+	@Override
 	public void setActionBars(IActionBars actionBars) {
 		super.setActionBars(actionBars);
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();

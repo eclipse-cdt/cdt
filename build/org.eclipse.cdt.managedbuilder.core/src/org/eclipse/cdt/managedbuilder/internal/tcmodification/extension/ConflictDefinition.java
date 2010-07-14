@@ -18,6 +18,7 @@ public class ConflictDefinition extends ObjectSetListBasedDefinition {
 		super(list);
 	}
 
+	@Override
 	public final int getType() {
 		return CONFLICT;
 	}

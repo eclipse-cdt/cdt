@@ -15,10 +15,12 @@ import java.util.HashSet;
 
 public class HashSetMap extends CollectionMap {
 
+	@Override
 	protected Collection cloneCollection(Collection l) {
 		return (Collection)((HashSet)l).clone();
 	}
 
+	@Override
 	protected Collection newCollection(int size) {
 		return new HashSet();
 	}

@@ -45,6 +45,7 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		}
 
 		
+		@Override
 		protected ICdtVariableSupplier[] getSuppliers(int type, Object data) {
 			switch(type){
 			case IBuildMacroProvider.CONTEXT_CONFIGURATION:
@@ -66,6 +67,7 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		}
 
 
+		@Override
 		public IVariableContextInfo getNext() {
 			switch(getContextType()){
 			case IBuildMacroProvider.CONTEXT_CONFIGURATION:{

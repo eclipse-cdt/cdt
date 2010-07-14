@@ -27,6 +27,7 @@ public class TestPathConverter4 extends TestPathConverter1 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.tests.TestPathConverter1#convertToPlatformLocation(java.lang.String)
 	 */
+	@Override
 	public IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool) {
 		String convertedString = toolSpecificPath.substring("file://".length());
 		IPath path = new Path(convertedString);

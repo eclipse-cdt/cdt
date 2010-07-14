@@ -31,6 +31,7 @@ public class PerTypeSetStorage implements Cloneable {
 		return (Set)((LinkedHashSet)set).clone();
 	}
 
+	@Override
 	public Object clone(){
 		try {
 			PerTypeSetStorage clone = (PerTypeSetStorage)super.clone();

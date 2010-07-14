@@ -44,11 +44,13 @@ public class TestProcesses extends TestCase {
 
 	String projectName;
 	
+	@Override
 	protected void setUp() throws Exception {
 		TemplateEngineTestsHelper.turnOffAutoBuild();
 		projectName= "TemplateEngineTestsProject"+System.currentTimeMillis();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());

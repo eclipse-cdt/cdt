@@ -201,6 +201,7 @@ public class StoredBuildPathEnvironmentContainer extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.StorableEnvironmentLoader#getSerializeInfo(java.lang.Object)
 	 */
+	@Override
 	protected ISerializeInfo getSerializeInfo(Object context) {
 		ISerializeInfo serializeInfo = null;
 		if(context instanceof IConfiguration){

@@ -457,6 +457,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/**
 	 * @return Returns the managedBuildRevision.
 	 */
+	@Override
 	public String getManagedBuildRevision() {
 		if ( managedBuildRevision == null) {
 			if ( getOptionHolder() != null) {
@@ -469,6 +470,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public Version getVersion() {
 		if ( version == null) {
 			if ( getOptionHolder() != null) {
@@ -478,6 +480,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		return version;
 	}
 	
+	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}

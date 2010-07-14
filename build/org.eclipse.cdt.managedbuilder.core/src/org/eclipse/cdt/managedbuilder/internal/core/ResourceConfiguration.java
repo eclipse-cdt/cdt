@@ -404,6 +404,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * @param doc
 	 * @param element
 	 */
+	@Override
 	public void serialize(ICStorageElement element) {
 		super.serialize(element);
 		if (toolsToInvoke != null) {
@@ -729,6 +730,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension tool-chain
  		if (isExtensionResourceConfig) return false;
@@ -750,6 +752,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
  		if (isExtensionResourceConfig) return;
  		
@@ -768,6 +771,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
+	@Override
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
@@ -829,6 +833,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
@@ -838,6 +843,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return version;
 	}
 	
+	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}
@@ -845,6 +851,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
 	 */
+	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
 		
@@ -856,6 +863,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		if(super.needsRebuild())
 			return true;
@@ -872,6 +880,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionResourceConfiguration() && rebuild)
 			return;
@@ -941,6 +950,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return baseTc;
 	}
 
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionResourceConfig;
 	}
@@ -955,18 +965,22 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return true;
 	}
 
+	@Override
 	public Set contributeErrorParsers(Set set) {
 		return contributeErrorParsers(getToolsToInvoke(), set);
 	}
 
+	@Override
 	public void resetErrorParsers() {
 		resetErrorParsers(getToolsToInvoke());
 	}
 
+	@Override
 	void removeErrorParsers(Set set) {
 		removeErrorParsers(getToolsToInvoke(), set);
 	}
 
+	@Override
 	void resolveProjectReferences(boolean onLoad){
 		for(Iterator iter = getToolList().iterator(); iter.hasNext();){
 			Tool tool = (Tool)iter.next();
@@ -974,6 +988,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 	}
 
+	@Override
 	public boolean hasCustomSettings() {
 		IResourceInfo parentRc = getParentResourceInfo();
 		if(parentRc instanceof FolderInfo){
@@ -1011,10 +1026,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		info.apply();
 	}
 
+	@Override
 	public boolean isFolderInfo() {
 		return false;
 	}
 
+	@Override
 	void applyToolsInternal(ITool[] resultingTools,
 			ToolListModificationInfo info) {
 		List list = getToolList();

@@ -31,6 +31,7 @@ public class PerTypeMapStorage implements Cloneable {
 		return (Map)((HashMap)map).clone();
 	}
 
+	@Override
 	public Object clone(){
 		try {
 			PerTypeMapStorage clone = (PerTypeMapStorage)super.clone();

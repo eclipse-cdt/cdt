@@ -38,6 +38,7 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 	/*
 	 * @see SharedPartWithButtons#createMainControl(Composite, int, FormWidgetFactory)
 	 */
+	@Override
 	protected void createMainControl(Composite parent, int style, int span) {
 		viewer = createStructuredViewer(parent, style);
 		Control control = viewer.getControl();
@@ -60,6 +61,7 @@ public abstract class StructuredViewerPart extends SharedPartWithButtons {
 		}
 	}
 
+	@Override
 	protected void updateEnabledState() {
 		getControl().setEnabled(isEnabled());
 		super.updateEnabledState();

@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.Platform;
 public class SimpleMakefileGenerator extends ProcessRunner {
 
 	private static final String MAKEFILE = "Makefile"; //$NON-NLS-1$
+	@Override
 	public void process(TemplateCore template, ProcessArgument[] args,
 			String processId, IProgressMonitor monitor)
 			throws ProcessFailureException {

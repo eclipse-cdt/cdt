@@ -50,6 +50,7 @@ public class TestCustomPageManager extends TestCase
 	
 	public static boolean testFlag = false;
 	
+	@Override
 	public void setUp() throws Exception
 	{
 		MBSCustomPageManager.init();

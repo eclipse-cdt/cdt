@@ -22,6 +22,7 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
  */
 public class Page_ExpPathAndSymb extends AbstractPage {
 
+	@Override
 	protected boolean isSingle() {return false;	}
 
 }

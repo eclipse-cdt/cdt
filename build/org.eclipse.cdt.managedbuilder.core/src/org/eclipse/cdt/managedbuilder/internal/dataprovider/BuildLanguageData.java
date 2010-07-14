@@ -96,6 +96,7 @@ public class BuildLanguageData extends CLanguageData {
 		}
 	}
 
+	@Override
 	public void setEntries(int kind, ICLanguageSettingEntry entries[]) {
 		BuildEntryStorage storage = getEntryStorage(kind);
 		if(storage != null)
@@ -145,10 +146,12 @@ public class BuildLanguageData extends CLanguageData {
 		
 	}
 */
+	@Override
 	public String getLanguageId() {
 		return fInputType != null ? fInputType.getLanguageId(fTool) : null;
 	}
 
+	@Override
 	public ICLanguageSettingEntry[] getEntries(int kinds) {
 		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
 		
@@ -185,6 +188,7 @@ public class BuildLanguageData extends CLanguageData {
 		fInputType = type;
 	}
 	
+	@Override
 	public String[] getSourceContentTypeIds() {
 		if(fInputType != null){
 			return fInputType.getSourceContentTypeIds();
@@ -192,6 +196,7 @@ public class BuildLanguageData extends CLanguageData {
 		return null;
 	}
 
+	@Override
 	public String[] getSourceExtensions() {
 		return fInputType != null ? fInputType.getSourceExtensions(fTool) : fTool.getPrimaryInputExtensions();
 	}
@@ -306,6 +311,7 @@ public class BuildLanguageData extends CLanguageData {
 	}
 */	
 
+	@Override
 	public void setLanguageId(String id) {
 		if(CDataUtil.objectsEqual(id, fInputType.getLanguageId(fTool))){
 //			fInputType = fTool.getEdtableInputType(fInputType);
@@ -314,10 +320,12 @@ public class BuildLanguageData extends CLanguageData {
 		}
 	}
 
+	@Override
 	public String getId() {
 		return fId;
 	}
 
+	@Override
 	public String getName() {
 		String name;
 		if(fInputType == null){
@@ -336,6 +344,7 @@ public class BuildLanguageData extends CLanguageData {
 		return name;
 	}
 
+	@Override
 	public boolean isValid() {
 		// TODO Auto-generated method stub
 		return true;
@@ -377,6 +386,7 @@ public class BuildLanguageData extends CLanguageData {
 		return fTool.getParentResourceInfo().getParent();
 	}
 
+	@Override
 	public void setSourceContentTypeIds(String[] ids) {
 		String[] headerIds = fInputType.getHeaderContentTypeIds();
 		
@@ -413,6 +423,7 @@ public class BuildLanguageData extends CLanguageData {
 
 	}
 
+	@Override
 	public void setSourceExtensions(String[] exts) {
 		// TODO Auto-generated method stub
 		
@@ -422,6 +433,7 @@ public class BuildLanguageData extends CLanguageData {
 		fKindToEntryStore.clear(); 
 	}
 
+	@Override
 	public boolean containsDiscoveredScannerInfo() {
 		IResourceInfo rcInfo = fTool.getParentResourceInfo();
 		if(rcInfo instanceof FolderInfo){

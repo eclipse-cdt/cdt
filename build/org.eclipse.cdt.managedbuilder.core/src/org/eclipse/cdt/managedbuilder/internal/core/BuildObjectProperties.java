@@ -105,11 +105,13 @@ public class BuildObjectProperties extends BuildProperties implements
 //		return false;
 	}
 
+	@Override
 	public void clear() {
 		super.clear();
 		fListener.propertiesChanged();
 	}
 
+	@Override
 	public IBuildProperty removeProperty(String id) {
 		IBuildProperty property = super.removeProperty(id);
 		if(property != null)
@@ -121,6 +123,7 @@ public class BuildObjectProperties extends BuildProperties implements
 		return super.setProperty(propertyId, propertyValue);
 	}
 
+	@Override
 	public IBuildProperty setProperty(String propertyId, String propertyValue)
 			throws CoreException {
 //		if(!supportsType(propertyId))

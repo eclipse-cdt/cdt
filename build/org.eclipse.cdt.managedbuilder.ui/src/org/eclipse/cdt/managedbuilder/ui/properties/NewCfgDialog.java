@@ -104,6 +104,7 @@ public class NewCfgDialog implements INewCfgDialog {
 		 * We don't have to worry that the index or name is wrong because we 
 		 * enable the OK button IFF those conditions are met.
 		 */
+		@Override
 		protected void buttonPressed(int buttonId) {
 			if (buttonId == IDialogConstants.OK_ID) {
 				newName = configName.getText().trim();
@@ -129,6 +130,7 @@ public class NewCfgDialog implements INewCfgDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
+		@Override
 		protected void configureShell(Shell shell) {
 			super.configureShell(shell);
 			if (title != null)
@@ -138,6 +140,7 @@ public class NewCfgDialog implements INewCfgDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
 			configName.setFocus();
@@ -147,6 +150,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			setButtons();
 		}
 		
+		@Override
 		protected Control createDialogArea(Composite parent) {
 
 			Composite composite = new Composite(parent, SWT.NULL);
@@ -231,6 +235,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			b_clone.setLayoutData(gd);
 			b_clone.setSelection(true);
 			b_clone.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -244,6 +249,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 			cloneConfigSelector.setLayoutData(gd);
 			cloneConfigSelector.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -254,6 +260,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			gd = new GridData(GridData.BEGINNING);
 			b_real.setLayoutData(gd);
 			b_real.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -269,6 +276,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			realConfigSelector.setLayoutData(gd);
 			realConfigSelector.setEnabled(false);
 			realConfigSelector.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -283,6 +291,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			gd = new GridData(GridData.BEGINNING);
 			b_import.setLayoutData(gd);
 			b_import.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -296,6 +305,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			importSelector.setLayoutData(gd);
 			importSelector.setEnabled(false);
 			importSelector.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -307,6 +317,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			gd = new GridData(GridData.BEGINNING);
 			b_importDef.setLayoutData(gd);
 			b_importDef.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}
@@ -320,6 +331,7 @@ public class NewCfgDialog implements INewCfgDialog {
 			importDefSelector.setLayoutData(gd);
 			importDefSelector.setEnabled(false);
 			importDefSelector.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					setButtons();		
 				}

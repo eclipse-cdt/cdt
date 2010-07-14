@@ -32,6 +32,7 @@ public abstract class AbstractCWizard extends CNewWizard {
 	protected Composite parent;
 	protected IWizardItemsListListener listener;
 	
+	@Override
 	public void setDependentControl(Composite _parent, IWizardItemsListListener _listener) {
 		parent = _parent;
 		listener = _listener;

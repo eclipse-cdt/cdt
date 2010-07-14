@@ -236,6 +236,7 @@ public class PerFileSettingsCalculator {
 			return fMaxMatchInfo;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -259,6 +260,7 @@ public class PerFileSettingsCalculator {
 			return true;
 		}
 
+		@Override
 		public int hashCode() {
 			int hash = fHash;
 			if(hash == 0){
@@ -287,6 +289,7 @@ public class PerFileSettingsCalculator {
 			fExts = exts == null || exts.length == 0 ? EMPTY_STRING_ARRAY : (String[])exts.clone();
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			if(this == obj)
 				return true;
@@ -311,6 +314,7 @@ public class PerFileSettingsCalculator {
 			return (String[])fExts.clone();
 		}
 
+		@Override
 		public int hashCode() {
 			int hash = fHash;
 			if(hash == 0){
@@ -329,6 +333,7 @@ public class PerFileSettingsCalculator {
 			return fExtsSet;
 		}
 
+		@Override
 		public String toString() {
 			if(fExts.length == 0)
 				return "<empty>"; //$NON-NLS-1$

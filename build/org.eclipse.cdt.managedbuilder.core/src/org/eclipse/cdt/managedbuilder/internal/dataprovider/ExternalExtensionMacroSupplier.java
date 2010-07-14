@@ -59,6 +59,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariable(java.lang.String, java.lang.Object, boolean)
 		 */
+		@Override
 		public ICdtVariable getVariable(String macroName,
 				int contextType,
 				Object contextData, 
@@ -72,6 +73,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider#getMacros(int, java.lang.Object, boolean)
 		 */
+		@Override
 		public ICdtVariable[] getVariables(int contextType,Object contextData, boolean includeParent) {
 //			return filterVariables(super.getMacros(contextType, contextData,  includeParent));
 			return filterVariables(fMngr.getVariables(fCfgDes));
@@ -80,6 +82,7 @@ public class ExternalExtensionMacroSupplier implements ICdtVariableSupplier{
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider#getContextInfo(java.lang.Object)
 		 */
+		@Override
 		public IMacroContextInfo getMacroContextInfo(int contextType,Object contextData){
 			IMacroContextInfo startInfo = getStartInfo();
 			if(contextType == fContextType &&

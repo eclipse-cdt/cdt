@@ -882,6 +882,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		String answer = new String();	
 		if (parent != null) {

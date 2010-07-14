@@ -36,6 +36,7 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.PathEntryContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.cdt.core.model.ICProject)
 	 */
+	@Override
 	public void initialize(IPath containerPath, ICProject project) throws CoreException {
 		if (VERBOSE) {
 			System.out.println(TRACE_HEADER + 

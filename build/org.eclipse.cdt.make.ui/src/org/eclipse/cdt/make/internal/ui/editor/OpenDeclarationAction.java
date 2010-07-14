@@ -37,6 +37,7 @@ public class OpenDeclarationAction extends TextEditorAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		ITextEditor editor = getTextEditor();
 		if (editor == null) {

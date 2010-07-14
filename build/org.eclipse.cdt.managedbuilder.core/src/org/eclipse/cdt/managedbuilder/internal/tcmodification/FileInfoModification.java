@@ -36,20 +36,24 @@ public class FileInfoModification extends
 		super(rcInfo, base);
 	}
 
+	@Override
 	protected boolean canRemove(ITool realTool) {
 		return true;
 	}
 
+	@Override
 	protected boolean canAdd(Tool tool) {
 		String ext = getFileExtension();
 		return tool.buildsFileType(ext, getProject());
 	}
 
+	@Override
 	protected boolean canReplace(Tool fromTool, Tool toTool) {
 		String ext = getFileExtension();
 		return toTool.buildsFileType(ext, getProject());
 	}
 	
+	@Override
 	protected Set getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
 		if(fApplPathSet == null){
 			Set s = new HashSet(1);
@@ -59,10 +63,12 @@ public class FileInfoModification extends
 		return fApplPathSet;
 	}
 
+	@Override
 	protected Set getExtensionConflictToolSet(Tool tool, Tool[] toos) {
 		return Collections.EMPTY_SET;
 	}
 
+	@Override
 	protected Tool[] filterTools(Tool[] tools) {
 		return tools;
 	}

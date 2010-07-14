@@ -63,6 +63,7 @@ public class BuildStateManager {
 	
 	private class EventListener extends ResourceChangeHandlerBase implements ICProjectDescriptionListener {
 
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			super.resourceChanged(event);
 			//TODO: may handle resource changes as well
@@ -113,6 +114,7 @@ public class BuildStateManager {
 			}
 		}
 
+		@Override
 		protected IResourceMoveHandler createResourceMoveHandler(
 				IResourceChangeEvent event) {
 			return new ResourceMoveHandler();

@@ -26,6 +26,7 @@ public class BuildFileData extends CFileData {
 		return fFileInfo;
 	}
 
+	@Override
 	public IPath getPath() {
 		return fFileInfo.getPath();
 	}
@@ -38,14 +39,17 @@ public class BuildFileData extends CFileData {
 //		fFileInfo.setExclude(excluded);
 //	}
 
+	@Override
 	public void setPath(IPath path) {
 		fFileInfo.setPath(path);
 	}
 
+	@Override
 	public String getId() {
 		return fFileInfo.getId();
 	}
 
+	@Override
 	public String getName() {
 		return fFileInfo.getName();
 	}
@@ -54,10 +58,12 @@ public class BuildFileData extends CFileData {
 //		fFileInfo.setN
 	}
 
+	@Override
 	public boolean isValid() {
 		return fFileInfo.isValid();
 	}
 
+	@Override
 	public CLanguageData getLanguageData() {
 		CLanguageData datas[] = fFileInfo.getCLanguageDatas();
 		if(datas.length > 0)
@@ -65,6 +71,7 @@ public class BuildFileData extends CFileData {
 		return null;
 	}
 
+	@Override
 	public boolean hasCustomSettings() {
 		return fFileInfo.hasCustomSettings();
 	}

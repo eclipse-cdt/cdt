@@ -52,9 +52,11 @@ public class OptionStringListValueTests extends TestCase {
 		return new TestSuite(OptionStringListValueTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 	}
 	

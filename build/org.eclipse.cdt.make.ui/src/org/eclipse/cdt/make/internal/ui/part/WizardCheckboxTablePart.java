@@ -59,6 +59,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		this.deselectAllIndex = index;
 	}
 
+	@Override
 	protected void buttonSelected(Button button, int index) {
 		if (index == selectAllIndex) {
 			handleSelectAll(true);
@@ -88,16 +89,19 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		updateCounter(0);
 	}
 
+	@Override
 	protected Button createButton(Composite parent, String label, int index) {
 		Button button = super.createButton(parent, label, index);
 		return button;
 	}
 
+	@Override
 	protected StructuredViewer createStructuredViewer(Composite parent, int style) {
 		StructuredViewer viewer = super.createStructuredViewer(parent, style);
 		return viewer;
 	}
 
+	@Override
 	protected void createMainLabel(Composite parent, int span) {
 		if (tableName == null)
 			return;
@@ -144,6 +148,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		}
 		updateCounter(selected);
 	}
+	@Override
 	protected void elementChecked(Object element, boolean checked) {
 		int count = getSelectionCount();
 		updateCounter(checked ? count + 1 : count - 1);

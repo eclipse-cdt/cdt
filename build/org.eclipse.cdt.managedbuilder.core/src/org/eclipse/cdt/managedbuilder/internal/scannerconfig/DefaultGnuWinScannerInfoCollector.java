@@ -30,6 +30,7 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
      */
+    @Override
     public void contributeToScannerConfig(Object resource, Map scannerInfo) {
         // check the resource
 //        if (resource != null && resource instanceof IResource &&
@@ -64,11 +65,13 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
     		super.contributeToScannerConfig(resource, scannerInfo);
         }
 //	}
+	@Override
 	public void setProject(IProject project) {
 		fProject = project;
 		super.setProject(project);
 	}
 
+	@Override
 	public void setInfoContext(InfoContext context) {
 		fProject = context.getProject();
 		super.setInfoContext(context);

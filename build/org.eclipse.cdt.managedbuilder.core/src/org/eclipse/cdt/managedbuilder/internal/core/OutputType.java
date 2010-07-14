@@ -446,6 +446,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOutputType#getName()
 	 */
+	@Override
 	public String getName() {
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
@@ -863,6 +864,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	/**
 	 * @return Returns the managedBuildRevision.
 	 */
+	@Override
 	public String getManagedBuildRevision() {
 		if ( managedBuildRevision == null) {
 			if ( getParent() != null) {
@@ -875,6 +877,7 @@ public class OutputType extends BuildObject implements IOutputType {
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
@@ -884,6 +887,7 @@ public class OutputType extends BuildObject implements IOutputType {
 		return version;
 	}
 	
+	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}

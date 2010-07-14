@@ -76,10 +76,12 @@ public class BackwardCompatiblityTests extends TestCase {
 		return ManagedBuildTestHelper.loadProject(name, TEST_3X_STD_MAKE_PROJECTS);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		for(Iterator iter = projList.iterator(); iter.hasNext();){
 			IProject proj = (IProject)iter.next();

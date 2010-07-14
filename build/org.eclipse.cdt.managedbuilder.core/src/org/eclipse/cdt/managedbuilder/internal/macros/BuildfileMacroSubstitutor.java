@@ -214,6 +214,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#resolveMacro(org.eclipse.cdt.managedbuilder.macros.IBuildMacro)
 	 */
+	@Override
 	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
 		ResolvedMacro resolved = null;
 			
@@ -276,6 +277,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#setMacroContextInfo(org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo)
 	 */
+	@Override
 	public void setMacroContextInfo(IVariableContextInfo info)
 				throws CdtVariableException{
 		super.setMacroContextInfo(info);

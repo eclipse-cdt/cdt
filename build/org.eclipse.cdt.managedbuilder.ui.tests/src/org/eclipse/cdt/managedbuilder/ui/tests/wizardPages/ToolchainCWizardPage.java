@@ -117,6 +117,7 @@ public class ToolchainCWizardPage extends MBSCustomPage
 
 	}
 
+	@Override
 	protected boolean isCustomPageComplete()
 	{
 		return true;

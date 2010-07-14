@@ -302,6 +302,7 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 		final ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 		IMacroContextInfo info = getMacroContextInfo(contextType,contextData);
 		IVariableSubstitutor subst = new SupplierBasedCdtVariableSubstitutor(info,null,""){ //$NON-NLS-1$
+			@Override
 			protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException {
 				IStringVariable var = mngr.toEclipseVariable(macro, null); 
 				if(var instanceof IDynamicVariable)

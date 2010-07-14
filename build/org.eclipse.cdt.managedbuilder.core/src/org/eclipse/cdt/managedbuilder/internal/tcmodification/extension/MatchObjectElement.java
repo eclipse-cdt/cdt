@@ -76,6 +76,7 @@ public class MatchObjectElement {
 			fType = el.getCompleteOredTypeValue();
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -86,6 +87,7 @@ public class MatchObjectElement {
 			return fType == ((PatternTypeKey)obj).fType;
 		}
 
+		@Override
 		public int hashCode() {
 			return fType;
 		}
@@ -157,6 +159,7 @@ public class MatchObjectElement {
 			return (String[])fIds.toArray(new String[fIds.size()]);
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
@@ -171,6 +174,7 @@ public class MatchObjectElement {
 			return other.fIds.containsAll(fIds);
 		}
 
+		@Override
 		public int hashCode() {
 			if(fHash == 0){
 				fHash = fIds.hashCode();
@@ -244,6 +248,7 @@ public class MatchObjectElement {
 		return fObjectType;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if(obj == this)
 			return true;
@@ -258,6 +263,7 @@ public class MatchObjectElement {
 		return Arrays.equals(other.fPatterns, fPatterns);
 	}
 
+	@Override
 	public int hashCode() {
 		if(fHash == 0){
 			int hash = fObjectType;

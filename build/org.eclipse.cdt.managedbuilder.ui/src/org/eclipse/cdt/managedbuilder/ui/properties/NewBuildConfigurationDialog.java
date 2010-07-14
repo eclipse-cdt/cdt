@@ -107,6 +107,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	 * We don't have to worry that the index or name is wrong because we 
 	 * enable the OK button IFF those conditions are met.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			String description = new String();
@@ -159,6 +160,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null)
@@ -168,6 +170,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		configName.setFocus();
@@ -177,6 +180,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		validateState();
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -249,6 +253,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		group.setLayoutData(gd);
 
 		SelectionListener radioListener =  new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {				
 				clone = btnClone.getSelection();
 				updateComboState();
@@ -270,6 +275,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		copyConfigSelector.setLayoutData(gd);
 		copyConfigSelector.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateState();		
 			}
@@ -294,6 +300,7 @@ public class NewBuildConfigurationDialog extends Dialog {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		cloneConfigSelector.setLayoutData(gd);
 		cloneConfigSelector.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateState();		
 			}

@@ -35,6 +35,7 @@ public abstract class StatusWizardPage extends WizardPage {
 	/*
 	 * @see WizardPage#becomesVisible
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		fPageVisible= visible;

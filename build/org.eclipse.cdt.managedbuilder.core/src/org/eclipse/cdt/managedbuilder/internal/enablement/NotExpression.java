@@ -22,6 +22,7 @@ public class NotExpression extends AndExpression {
 		super(element);
 	}
 
+	@Override
 	public boolean evaluate(IResourceInfo rcInfo, 
             IHoldsOptions holder, 
             IOption option) {

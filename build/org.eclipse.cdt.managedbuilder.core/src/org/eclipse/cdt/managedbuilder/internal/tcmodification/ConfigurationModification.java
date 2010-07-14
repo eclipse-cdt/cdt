@@ -193,11 +193,13 @@ public class ConfigurationModification extends FolderInfoModification implements
 		clearToolCompatibilityInfo();
 	}
 	
+	@Override
 	public void setToolChain(IToolChain tc, boolean force) {
 		setBuilder(tc.getBuilder());
 		super.setToolChain(tc, force);
 	}
 
+	@Override
 	public void changeProjectTools(ITool removeTool, ITool addTool) {
 		clearBuilderCompatibilityInfo();
 		super.changeProjectTools(removeTool, addTool);

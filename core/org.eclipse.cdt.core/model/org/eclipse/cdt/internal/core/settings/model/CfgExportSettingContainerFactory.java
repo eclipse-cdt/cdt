@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
@@ -49,6 +50,9 @@ public class CfgExportSettingContainerFactory extends
 	private static final String ACTIVE_CONFIG_ID = ""; //$NON-NLS-1$
 	private static final char DELIMITER = ';';
 
+	/** Cache the external settings exported by project configurations */
+	private static final ConcurrentHashMap<String, CExternalSetting[]> cachedSettings = new ConcurrentHashMap<String, CExternalSetting[]>();
+
 	private static CfgExportSettingContainerFactory fInstance;
 
 	private CfgExportSettingContainerFactory(){
@@ -77,10 +81,12 @@ public class CfgExportSettingContainerFactory extends
 	 * exported by a referenced configuration in another project.
 	 */
 	private static class CfgRefContainer extends CExternalSettingsContainer {
+		final private String fId;
 		final private String fProjName, fCfgId;
 		final private CExternalSetting[] prevSettings;
 		
-		CfgRefContainer(String projName, String cfgId, CExternalSetting[] previousSettings){
+		CfgRefContainer(String containerId, String projName, String cfgId, CExternalSetting[] previousSettings){
+			fId = containerId;
 			fProjName = projName;
 			fCfgId = cfgId;
 			prevSettings = previousSettings;
@@ -96,17 +102,26 @@ public class CfgExportSettingContainerFactory extends
 							des.getConfigurationById(fCfgId) : des.getActiveConfiguration();
 					
 					if(cfg != null){
+						CExternalSetting[] es;
 						ICExternalSetting[] ies = cfg.getExternalSettings();
-						if(ies instanceof CExternalSetting[])
-							return (CExternalSetting[])ies;
-						CExternalSetting[] es = new CExternalSetting[ies.length];
-						System.arraycopy(ies, 0, es, 0, es.length);
+						if (ies instanceof CExternalSetting[])
+							es = (CExternalSetting[])ies;
+						else {
+							es = new CExternalSetting[ies.length];
+							System.arraycopy(ies, 0, es, 0, es.length);
+						}
+						// Update the cache with the real settings this configuration is exporting
+						cachedSettings.put(fId, es);
 						return es;
 					}
 				}
 			}
 			// If project not yet accessible, just return the previous settings
 			// for the moment. We'll update again when the referenced project reappears
+			if (!cachedSettings.containsKey(fId) && prevSettings.length > 0)
+				cachedSettings.putIfAbsent(fId, prevSettings);
+			if (prevSettings.length == 0 && cachedSettings.containsKey(fId))
+				return cachedSettings.get(fId);
 			return prevSettings;
 		}
 	}
@@ -115,7 +130,7 @@ public class CfgExportSettingContainerFactory extends
 	public CExternalSettingsContainer createContainer(String id,
 			IProject project, ICConfigurationDescription cfgDes, CExternalSetting[] previousSettings) throws CoreException {
 		String[] r = parseId(id);
-		return new CfgRefContainer(r[0], r[1], previousSettings);
+		return new CfgRefContainer(id, r[0], r[1], previousSettings);
 	}
 
 	private static void createReference(ICConfigurationDescription cfg, String projName, String cfgId){

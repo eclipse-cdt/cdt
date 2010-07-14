@@ -669,11 +669,13 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 
 		CExternalSetting[] newSettings = null;
 		CExternalSetting[] oldSettings = hCr.getHolder(false).getExternalSettings();
-		if (op != OP_REMOVED) {
-			FactoryDescriptor dr = getFactoryDescriptor(cr.getFactoryId());
-			ContainerDescriptor cdr = new ContainerDescriptor(dr, cr.getContainerId(), proj, cfgDes, oldSettings);
-			newSettings = cdr.getExternalSettings();
-		}
+
+		// ensure that the configuration exported external settings are cached even if this is a REMOVE operation
+		FactoryDescriptor dr = getFactoryDescriptor(cr.getFactoryId());
+		ContainerDescriptor cdr = new ContainerDescriptor(dr, cr.getContainerId(), proj, cfgDes, oldSettings);
+		newSettings = cdr.getExternalSettings();
+		if (op == OP_REMOVED)
+			newSettings = null;
 
 		ExtSettingsDelta[] deltas = CExternalSettinsDeltaCalculator.getInstance().getSettingChange(newSettings, oldSettings);
 		if(deltas != null) {

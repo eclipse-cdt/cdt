@@ -433,7 +433,7 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			}
 		}
-		rcfgs = (IConfiguration[])lst.toArray(new IConfiguration[lst.size()]);
+		rcfgs = lst.toArray(new IConfiguration[lst.size()]);
 	}
 
 	public void setTitle(String _title) {

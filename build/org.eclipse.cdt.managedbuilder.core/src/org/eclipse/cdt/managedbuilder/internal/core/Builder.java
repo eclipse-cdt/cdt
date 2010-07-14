@@ -278,7 +278,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		keepEnvVarInBuildfile = builder.keepEnvVarInBuildfile;
 		supportsManagedBuild = builder.supportsManagedBuild;
 		if(builder.customizedErrorParserIds != null)
-			customizedErrorParserIds = (String[])builder.customizedErrorParserIds.clone();
+			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
 		if(builder.customizedEnvironment != null)
 			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
 		appendEnvironment = builder.appendEnvironment;
@@ -301,7 +301,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			isVariableCaseSensitive = new Boolean(builder.isVariableCaseSensitive.booleanValue());
 
 		if(builder.reservedMacroNames != null)
-			reservedMacroNames = (String[])builder.reservedMacroNames.clone();
+			reservedMacroNames = builder.reservedMacroNames.clone();
 
 		reservedMacroNameSupplierElement = builder.reservedMacroNameSupplierElement;
 		reservedMacroNameSupplier = builder.reservedMacroNameSupplier;
@@ -315,7 +315,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		parallelBuildOn = builder.parallelBuildOn;
 
 		if(builder.outputEntries != null){
-			outputEntries = (ICOutputEntry[])builder.outputEntries.clone();
+			outputEntries = builder.outputEntries.clone();
 		}
 
 		if(copyIds){
@@ -383,7 +383,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		}
 
 		if(builder.customizedErrorParserIds != null)
-			customizedErrorParserIds = (String[])builder.customizedErrorParserIds.clone();
+			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
 		if(builder.customizedEnvironment != null)
 			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
 		appendEnvironment = builder.appendEnvironment;
@@ -1463,7 +1463,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			// If 'superClass' is null, then there is no builder available in
 			// plugin manifest file with the same 'id' & version.
 			// Look for the 'versionsSupported' attribute
-			String high = (String) ManagedBuildManager
+			String high = ManagedBuildManager
 					.getExtensionBuilderMap().lastKey();
 			
 			SortedMap subMap = null;
@@ -1653,7 +1653,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	
 	public String[] getErrorParsers() {
 		if(isCustomBuilder() && customizedErrorParserIds != null)
-			return (String[])customizedErrorParserIds.clone();
+			return customizedErrorParserIds.clone();
 		
 		IToolChain parent = getParent();
 		IConfiguration parentConfig = parent.getParent();
@@ -1662,7 +1662,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	
 	public String[] getCustomizedErrorParserIds(){
 		if(customizedErrorParserIds != null)
-			return (String[])customizedErrorParserIds.clone();
+			return customizedErrorParserIds.clone();
 		return null;
 	}
 	
@@ -2669,12 +2669,12 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			return null;
 				
 		}
-		return (ICOutputEntry[])outputEntries.clone();
+		return outputEntries.clone();
 	}
 
 	public void setOutputEntries(ICOutputEntry[] entries){
 		if(entries != null)
-			outputEntries = (ICOutputEntry[])entries.clone();
+			outputEntries = entries.clone();
 		else
 			outputEntries = null;
 	}

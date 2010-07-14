@@ -29,7 +29,7 @@ public class BuildCommand implements IBuildCommand {
 	public BuildCommand(IPath cmd, String args[], Map env, IPath cwd, BuildStep step){
 		fCmd = cmd;
 		if(args != null)
-			fArgs = (String[])args.clone();
+			fArgs = args.clone();
 		if(env != null)
 			fEnv = new HashMap(env);
 		
@@ -50,7 +50,7 @@ public class BuildCommand implements IBuildCommand {
 	 */
 	public String[] getArgs() {
 		if(fArgs != null)
-			return (String[])fArgs.clone();
+			return fArgs.clone();
 		return null;
 	}
 

@@ -441,7 +441,7 @@ public class ProjectConverter implements ICProjectConverter {
 		if(builder.getCommand() != null && builder.getCommand().length() != 0){
 			String[] errParserIds = builder.getCustomizedErrorParserIds();
 			builder.setCustomizedErrorParserIds(null);
-			((ToolChain)cfg.getToolChain()).setBuilder((Builder)builder);
+			((ToolChain)cfg.getToolChain()).setBuilder(builder);
 			if(errParserIds != null && errParserIds.length != 0){
 				cfg.setErrorParserList(errParserIds);
 			}

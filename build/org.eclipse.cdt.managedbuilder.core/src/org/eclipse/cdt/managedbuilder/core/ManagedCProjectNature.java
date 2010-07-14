@@ -154,7 +154,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	 * Get the correct builderID
 	 */
 	public static String getBuilderID() {
-		Plugin plugin = (Plugin)ManagedBuilderCorePlugin.getDefault();
+		Plugin plugin = ManagedBuilderCorePlugin.getDefault();
 		if (Platform.getExtensionRegistry().getExtension(BUILDER_NAME) != null) {
 			return ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
 		}

@@ -20,11 +20,11 @@ public class ObjectSetList {
 
 	ObjectSetList(IObjectSet[] objects, boolean copy){
 		if(copy)
-			objects = (IObjectSet[])objects.clone();
+			objects = objects.clone();
 		fObjectSets = objects;
 	}
 
 	public IObjectSet[] getObjectSets(){
-		return (IObjectSet[])fObjectSets.clone();
+		return fObjectSets.clone();
 	}
 }

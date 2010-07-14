@@ -117,7 +117,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		for (int i = 0; i < configElements.length; ++i) {
 			ICStorageElement configElement = configElements[i];
 			if (configElement.getName().equals(ITool.TOOL_ELEMENT_NAME)) {
-				Tool tool = new Tool((IBuildObject)this, configElement, getManagedBuildRevision());
+				Tool tool = new Tool(this, configElement, getManagedBuildRevision());
 				addTool(tool);
 			}
 		}
@@ -470,7 +470,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 */
 	public ITool getTool(String id) {
 		Tool tool = (Tool)getToolMap().get(id);
-		return (ITool)tool;
+		return tool;
 	}
 	
 	/* (non-Javadoc)
@@ -789,7 +789,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		Tool tool = new Tool(this, superClass, id, name, isExtensionElement);
 		addTool(tool);
 		setDirty(true);
-		return (ITool)tool;
+		return tool;
 	}
 	
 	public void reset() {

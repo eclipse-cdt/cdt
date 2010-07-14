@@ -457,7 +457,7 @@ public final class MBSCustomPageManager
 		Iterator iterator = pageSet.iterator();
 		while (iterator.hasNext())
 		{
-			if (pageData.equals((MBSCustomPageData)iterator.next())) {
+			if (pageData.equals(iterator.next())) {
 				IWizardPage nextPage = null;
 				while (iterator.hasNext() && nextPage == null)
 				{

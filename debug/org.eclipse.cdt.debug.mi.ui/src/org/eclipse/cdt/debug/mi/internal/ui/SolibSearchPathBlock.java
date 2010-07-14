@@ -479,7 +479,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			dialog.setInitialElementSelections( Arrays.asList( fAutoSolibs ) );
 			if ( dialog.open() == Window.OK ) {
 				Object[] result = dialog.getResult();
-				fAutoSolibs = (File[])Arrays.asList( result ).toArray( new File[result.length] );
+				fAutoSolibs = Arrays.asList( result ).toArray( new File[result.length] );
 				changed = true;
 			}
 		}

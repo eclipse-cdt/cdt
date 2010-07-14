@@ -512,7 +512,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			postannouncebuildStep = baseCfg.postannouncebuildStep;
 			
 			if(baseCfg.sourceEntries != null)
-				sourceEntries = (ICSourceEntry[])baseCfg.sourceEntries.clone();
+				sourceEntries = baseCfg.sourceEntries.clone();
 			
 	//		enableInternalBuilder(baseCfg.isInternalBuilderEnabled());
 	//		setInternalBuilderIgnoreErr(baseCfg.getInternalBuilderIgnoreErr());
@@ -668,7 +668,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			postannouncebuildStep = new String(cloneConfig.postannouncebuildStep);
 		} 
 		if(cloneConfig.sourceEntries != null)
-			sourceEntries = (ICSourceEntry[])cloneConfig.sourceEntries.clone();
+			sourceEntries = cloneConfig.sourceEntries.clone();
 		
 //		enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
 //		setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
@@ -990,14 +990,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getProjectType()
 	 */
 	public IProjectType getProjectType() {
-		return (IProjectType)projectType;
+		return projectType;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getManagedProject()
 	 */
 	public IManagedProject getManagedProject() {
-		return (IManagedProject)managedProject;
+		return managedProject;
 	}
 	
 	/* (non-Javadoc)
@@ -2323,7 +2323,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED)}; //$NON-NLS-1$
 			
 		}
-		return (ICSourceEntry[])sourceEntries.clone();
+		return sourceEntries.clone();
 	}
 
 	public void setSourceEntries(ICSourceEntry[] entries) {
@@ -2389,7 +2389,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			oldSet = new LinkedHashSet<String>();
 		
 		oldSet.removeAll(set);
-		setErrorParserAttribute((String[])oldSet.toArray(new String[oldSet.size()]));
+		setErrorParserAttribute(oldSet.toArray(new String[oldSet.size()]));
 		
 		IResourceInfo rcInfos[] = getResourceInfos();
 		for(int i = 0; i < rcInfos.length; i++){

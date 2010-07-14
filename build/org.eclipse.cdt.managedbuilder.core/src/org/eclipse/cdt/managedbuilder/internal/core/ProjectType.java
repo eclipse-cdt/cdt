@@ -228,7 +228,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	public IConfiguration createConfiguration(IConfiguration parent, String id, String name) {
 		Configuration config = new Configuration(this, parent, id, name);
 //		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
-		return (IConfiguration)config;
+		return config;
 	}
 
 	/* (non-Javadoc)
@@ -247,7 +247,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		int i = 0;
 		while (iter.hasNext()) {
 			Configuration config = (Configuration)iter.next();
-			configs[i++] = (IConfiguration)config; 
+			configs[i++] = config; 
 		}
 		return configs;
 	}

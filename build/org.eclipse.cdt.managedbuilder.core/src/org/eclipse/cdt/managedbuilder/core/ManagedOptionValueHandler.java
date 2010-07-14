@@ -109,7 +109,7 @@ public class ManagedOptionValueHandler implements
 			// Figure out which type the option is and implement default behaviour for it.
 			switch (option.getValueType()) {
 				case IOption.STRING:
-					if (option.getStringValue().equals((String)defaultValue)) {
+					if (option.getStringValue().equals(defaultValue)) {
 						return true;
 					}
 					break;

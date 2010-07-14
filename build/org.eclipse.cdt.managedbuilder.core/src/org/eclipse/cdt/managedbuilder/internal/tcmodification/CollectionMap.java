@@ -157,7 +157,7 @@ public class CollectionMap {
 	}
 	
 	public Collection getValues(){
-		return (Collection)valuesToCollection(null);
+		return valuesToCollection(null);
 	}
 
 	public Object[] getValuesArray(Class clazz){

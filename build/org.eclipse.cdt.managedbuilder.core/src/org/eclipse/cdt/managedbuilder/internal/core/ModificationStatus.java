@@ -77,7 +77,7 @@ public class ModificationStatus extends Status implements IModificationStatus {
 		if(conflicts != null && conflicts.length != 0){
 			fToolConflicts = new ITool[conflicts.length][];
 			for(int i = 0; i < conflicts.length; i++){
-				fToolConflicts[i] = (ITool[])conflicts[i].clone();
+				fToolConflicts[i] = conflicts[i].clone();
 			}
 			flags |= TOOLS_CONFLICT;
 			if(severity == IStatus.OK)
@@ -87,7 +87,7 @@ public class ModificationStatus extends Status implements IModificationStatus {
 		}
 
 		if(nonMbsTools != null && nonMbsTools.length != 0){
-			fNonManagedBuildTools = (ITool[])nonMbsTools.clone();;
+			fNonManagedBuildTools = nonMbsTools.clone();;
 			flags |= TOOLS_DONT_SUPPORT_MANAGED_BUILD;
 			severity = IStatus.ERROR;
 		} else {
@@ -119,12 +119,12 @@ public class ModificationStatus extends Status implements IModificationStatus {
 	public ITool[][] getToolsConflicts(){
 		ITool[][] copy = new ITool[fToolConflicts.length][];
 		for(int i = 0; i < fToolConflicts.length; i++){
-			copy[i] = (ITool[])fToolConflicts[i].clone();
+			copy[i] = fToolConflicts[i].clone();
 		}
 		return copy;
 	}
 	
 	public ITool[] getNonManagedBuildTools(){
-		return (ITool[])fNonManagedBuildTools.clone();
+		return fNonManagedBuildTools.clone();
 	}
 }

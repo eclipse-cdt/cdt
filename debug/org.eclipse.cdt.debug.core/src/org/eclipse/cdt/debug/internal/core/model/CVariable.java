@@ -162,7 +162,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 			createOriginal( cdiVariableObject );
 		}
 		fIsEnabled = !isBookkeepingEnabled();
-		setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), (Object[])new String[]{ errorMessage } ) ); //$NON-NLS-1$
+		setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), new String[]{ errorMessage } ) ); //$NON-NLS-1$
 		getCDISession().getEventManager().addEventListener( fEventListenerWrapper );
 		if ( cdiVariableObject != null ) {
 			setInitialFormat();

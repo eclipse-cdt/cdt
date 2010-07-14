@@ -146,7 +146,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			 for (i = 0; i < expectedOSListTokens.length; ++i) {
 				 expectedOSListarr.add(expectedOSListTokens[i].trim());
 			 }
-		     assertTrue(Arrays.equals(platform.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
+		     assertTrue(Arrays.equals(platform.getOSList(), expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(platform.getArchList(), expectedArchList));
 			 String[] binaryParsers = platform.getBinaryParserList();
 			 assertEquals(binaryParsers.length, 2);
@@ -214,7 +214,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			 for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 			 	expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());
 			 }
-		     assertTrue(Arrays.equals(option.getApplicableValues(), (String[]) expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
+		     assertTrue(Arrays.equals(option.getApplicableValues(), expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
 		     
 		     // Fetch the debug other option and verify 
 		     //
@@ -324,14 +324,14 @@ public class ManagedBuildCoreTests extends TestCase {
 				 expectedOSListarr.add(expectedOSListTokens[i].trim());
 			 }
 		     assertEquals(expectedParserId, configs[iconfig].getErrorParserIds());
-		     assertTrue(Arrays.equals(toolChain.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
+		     assertTrue(Arrays.equals(toolChain.getOSList(), expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(toolChain.getArchList(), expectedArchList));
              assertEquals(expectedScannerConfigDiscoveryProfileId, toolChain.getScannerConfigDiscoveryProfileId());
 		
 			 // Fetch and check platform
 			 //		     		     
 		     ITargetPlatform platform = toolChain.getTargetPlatform();	     		     						 
-		     assertTrue(Arrays.equals(platform.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
+		     assertTrue(Arrays.equals(platform.getOSList(), expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(platform.getArchList(), expectedArchList));		     
 			 String[] binaryParsers = platform.getBinaryParserList();
 			 assertEquals(binaryParsers.length, 1);
@@ -518,14 +518,14 @@ public class ManagedBuildCoreTests extends TestCase {
 				 expectedOSListarr.add(expectedOSListTokens[i].trim());
 			 }
 		     assertEquals(expectedParserId, configs[iconfig].getErrorParserIds());
-		     assertTrue(Arrays.equals(toolChain.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
+		     assertTrue(Arrays.equals(toolChain.getOSList(), expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(toolChain.getArchList(), expectedArchList));
              assertEquals(expectedScannerConfigDiscoveryProfileId, toolChain.getScannerConfigDiscoveryProfileId());
 		
 			 // Fetch and check platform
 			 //		     		     
 		     ITargetPlatform platform = toolChain.getTargetPlatform();	     		     						 
-		     assertTrue(Arrays.equals(platform.getOSList(), (String[]) expectedOSListarr.toArray(new String[expectedSizeOSList])));
+		     assertTrue(Arrays.equals(platform.getOSList(), expectedOSListarr.toArray(new String[expectedSizeOSList])));
 		     assertTrue(Arrays.equals(platform.getArchList(), expectedArchList));		     
 			 String[] binaryParsers = platform.getBinaryParserList();
 			 assertEquals(binaryParsers.length, 1);
@@ -587,7 +587,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			 for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 			 	expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());
 			 }
-		     assertTrue(Arrays.equals(option.getApplicableValues(), (String[]) expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
+		     assertTrue(Arrays.equals(option.getApplicableValues(), expectedEnumList1arr.toArray(new String[expectedSizeEnumList1])));
 		     
 		     // Fetch the other flags option and verify 
 		     //

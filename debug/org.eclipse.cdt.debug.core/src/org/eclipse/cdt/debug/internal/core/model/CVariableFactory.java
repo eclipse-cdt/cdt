@@ -46,7 +46,7 @@ public class CVariableFactory {
 			}
 
 			public String toString() {
-				return MessageFormat.format( "{0}::{1}", (Object[])new String[] { getPath().toOSString(), getName() } ); //$NON-NLS-1$
+				return MessageFormat.format( "{0}::{1}", new String[] { getPath().toOSString(), getName() } ); //$NON-NLS-1$
 			}
 
 		    public boolean equals( Object obj ) {

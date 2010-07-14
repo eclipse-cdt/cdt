@@ -527,7 +527,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 				
 				for (Iterator<?> iter = structuredSelection.iterator(); iter.hasNext();) {
-					Object element = (Object) iter.next();
+					Object element = iter.next();
 					if (element != null) {
 
 						if (element instanceof ICProject) {

@@ -459,12 +459,12 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					config = (IConfiguration) toolParent;
 				else if (toolParent instanceof IToolChain) {
 					// must be a toolchain
-					config = (IConfiguration) ((IToolChain) toolParent)
+					config = ((IToolChain) toolParent)
 							.getParent();
 				}
 
 				else if (toolParent instanceof IResourceConfiguration) {
-					config = (IConfiguration) ((IResourceConfiguration) toolParent)
+					config = ((IResourceConfiguration) toolParent)
 							.getParent();
 				}
 
@@ -519,12 +519,12 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					config = (IConfiguration) toolParent;
 				else if (toolParent instanceof IToolChain) {
 					// must be a toolchain
-					config = (IConfiguration) ((IToolChain) toolParent)
+					config = ((IToolChain) toolParent)
 							.getParent();
 				}
 
 				else if (toolParent instanceof IResourceConfiguration) {
-					config = (IConfiguration) ((IResourceConfiguration) toolParent)
+					config = ((IResourceConfiguration) toolParent)
 							.getParent();
 				}
 

@@ -51,7 +51,7 @@ public class ToolChainModificationHelper {
 		
 		for(Iterator iter = ceSet2.iterator(); iter.hasNext(); ){
 			CollectionEntry entry = (CollectionEntry)iter.next();
-			Collection c1 = (Collection)m2.get(entry.getKey(), false);
+			Collection c1 = m2.get(entry.getKey(), false);
 			if(c1 != null){
 				Collection c2 = entry.getValue();
 				int i = c2.size();

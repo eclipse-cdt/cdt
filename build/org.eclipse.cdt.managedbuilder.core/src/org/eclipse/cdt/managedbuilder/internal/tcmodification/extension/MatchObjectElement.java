@@ -276,6 +276,6 @@ public class MatchObjectElement {
 	}
 	
 	public PatternElement[] getPatterns(){
-		return (PatternElement[])fPatterns.clone();
+		return fPatterns.clone();
 	}
 }

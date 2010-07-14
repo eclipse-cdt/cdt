@@ -242,7 +242,7 @@ public abstract class ToolListModification implements
 					fOperations = (ModificationOperation[])opList.toArray(new ModificationOperation[opList.size()]);
 				}
 			}
-			return (IModificationOperation[])fOperations.clone();
+			return fOperations.clone();
 		}
 
 		public ITool getTool() {
@@ -342,7 +342,7 @@ public abstract class ToolListModification implements
 		}
 			
 		public IModificationOperation[] getSupportedOperations() {
-			return (IModificationOperation[])getSupportedOperationsArray().clone();
+			return getSupportedOperationsArray().clone();
 		}
 
 		public ITool getTool() {
@@ -407,7 +407,7 @@ public abstract class ToolListModification implements
 //		private LinkedHashMap fProjCompInfoMap = new LinkedHashMap();
 //		private HashMap fSysCompInfoMap = new HashMap();
 		if(base.fAllSysTools != null)
-			fAllSysTools = (Tool[])base.fAllSysTools.clone();
+			fAllSysTools = base.fAllSysTools.clone();
 
 		if(base.fFilteredOutSysTools != null)
 			fFilteredOutSysTools = (HashSet)base.fFilteredOutSysTools.clone();

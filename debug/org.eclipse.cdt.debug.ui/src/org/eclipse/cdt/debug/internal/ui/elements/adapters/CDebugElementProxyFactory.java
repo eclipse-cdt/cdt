@@ -47,7 +47,7 @@ public class CDebugElementProxyFactory extends DefaultModelProxyFactory {
         }
         else if ( ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR.equals( context.getId() ) ) {
             if ( element instanceof DisassemblyRetrieval ) {
-                return new DisassemblyElementProxy( (DisassemblyRetrieval)element );
+                return new DisassemblyElementProxy( element );
             }
         }
         return super.createModelProxy( element, context );

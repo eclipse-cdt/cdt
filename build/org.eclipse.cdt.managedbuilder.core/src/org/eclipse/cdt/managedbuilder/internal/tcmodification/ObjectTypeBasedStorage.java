@@ -29,7 +29,7 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 	private Object fStorage[] = new Object[SIZE];
 	
 	public static int[] getSupportedObjectTypes(){
-		return (int[])OBJECT_TYPES.clone();
+		return OBJECT_TYPES.clone();
 	}
 	
 	private int getIndex(int type){
@@ -77,7 +77,7 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 	public Object clone(){
 		try {
 			ObjectTypeBasedStorage clone = (ObjectTypeBasedStorage)super.clone();
-			clone.fStorage = (Object[])fStorage.clone();
+			clone.fStorage = fStorage.clone();
 			return clone;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

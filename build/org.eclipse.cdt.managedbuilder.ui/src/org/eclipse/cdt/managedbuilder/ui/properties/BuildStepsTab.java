@@ -283,7 +283,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		if(list.size() != 0) {
-			return (ITool[])list.toArray(new ITool[list.size()]);
+			return list.toArray(new ITool[list.size()]);
 		}
 		return null;
 	}

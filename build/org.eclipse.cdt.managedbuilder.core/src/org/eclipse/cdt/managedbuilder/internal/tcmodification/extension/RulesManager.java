@@ -275,7 +275,7 @@ public class RulesManager {
 	
 	public ObjectSetListBasedDefinition[] getRules(int ruleType){
 		checkInitialization();
-		return (ConflictDefinition[])fConflictDefinitions.clone();
+		return fConflictDefinitions.clone();
 	}
 	
 	private void checkInitialization(){

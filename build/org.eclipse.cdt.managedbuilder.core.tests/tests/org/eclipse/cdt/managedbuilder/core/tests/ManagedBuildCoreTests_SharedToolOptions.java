@@ -366,7 +366,7 @@ public class ManagedBuildCoreTests_SharedToolOptions extends TestCase {
 			sizeCategoryTop = testCategoryTop.length;
 			for (i=0; i < sizeCategoryTop; i++, categoryNo++)
 			{
-				String ID = ((IOptionCategory)testCategoryTop[i]).getId();
+				String ID = testCategoryTop[i].getId();
 				// Categories are always extension elements, so check
 				// for an identical match
 				assertEquals(ID, topCategoryIDs+categoryNo);

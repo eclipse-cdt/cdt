@@ -25,7 +25,7 @@ public class MatchObjectList {
 	}
 
 	public MatchObjectElement[] getMatchObjects(){
-		return (MatchObjectElement[])fObjects.clone();
+		return fObjects.clone();
 	}
 
 }

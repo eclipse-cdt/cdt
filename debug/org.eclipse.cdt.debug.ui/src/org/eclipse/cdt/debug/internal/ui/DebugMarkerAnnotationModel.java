@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.cdt.debug.internal.ui; 
 
 import java.io.File;
-import org.eclipse.cdt.debug.core.CDIDebugModel;
+
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -24,15 +24,16 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
  
 public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel implements IBreakpointsListener {
 
-	private File fFile;
+	private final File fFile;
 
 	public DebugMarkerAnnotationModel( File file ) {
 		super();
 		fFile = file;
 	}
 
+	@Override
 	protected IMarker[] retrieveMarkers() throws CoreException {
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints( CDIDebugModel.getPluginIdentifier() );
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
 		IMarker[] markers = new IMarker[breakpoints.length];
 		for ( int i = 0; i < markers.length; ++i ) {
 			markers[i] = breakpoints[i].getMarker();
@@ -40,9 +41,11 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 		return markers;
 	}
 
+	@Override
 	protected void deleteMarkers( IMarker[] markers ) throws CoreException {
 	}
 
+	@Override
 	protected void listenToMarkerChanges( boolean listen ) {
 		if ( listen )
 			DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener( this );
@@ -50,10 +53,12 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 	}
 
+	@Override
 	protected boolean isAcceptable( IMarker marker ) {
-		IBreakpoint b = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint( marker );
-		if ( b != null ) {
-			return isAcceptable( b );
+		String handle = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, null);
+		if (handle != null) {
+			File file = new File( handle );
+			return file.equals( getFile() );
 		}
 		return false;
 	}
@@ -64,37 +69,23 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 
 	public void breakpointsAdded( IBreakpoint[] breakpoints ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
-			if ( isAcceptable( breakpoints[i] ) ) {
-				addMarkerAnnotation( breakpoints[i].getMarker() );
-				fireModelChanged();
-			}
+			addMarkerAnnotation( breakpoints[i].getMarker() );
 		}
+		fireModelChanged();
 	}
 
 	public void breakpointsRemoved( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
-			if ( isAcceptable( breakpoints[i] ) ) {
-				removeMarkerAnnotation( breakpoints[i].getMarker() );
-				fireModelChanged();
-			}
+			removeMarkerAnnotation( breakpoints[i].getMarker() );
 		}
+		fireModelChanged();
 	}
 
 	public void breakpointsChanged( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
-			if ( isAcceptable( breakpoints[i] ) ) {
-				modifyMarkerAnnotation( breakpoints[i].getMarker() );
-				fireModelChanged();
-			}
+			modifyMarkerAnnotation( breakpoints[i].getMarker() );
 		}
+		fireModelChanged();
 	}
 
-	private boolean isAcceptable( IBreakpoint b ) {
-		String handle = b.getMarker().getAttribute(ICBreakpoint.SOURCE_HANDLE, null);
-		if (handle != null) {
-			File file = new File( handle );
-			return file.equals( getFile() );
-		}
-		return false;
-	}
 }

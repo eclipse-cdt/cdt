@@ -780,31 +780,36 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		if(defaultRenderingTypeId == null)
 			return;
 	
+        IAdaptable adaptable = null;
+        IMemoryBlockRetrieval retrieval = null;
+        ILaunch launch  = null;
+
 		if(context instanceof IAdaptable)
 		{
-			IAdaptable adaptable = (IAdaptable) context;
-			final IMemoryBlockRetrieval retrieval = ((IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class));
-			ILaunch launch  = ((ILaunch) adaptable.getAdapter(ILaunch.class));
-			
-			if(retrieval != null && launch != null && !launch.isTerminated()) {
-				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-					((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).getMemorySpaces(context, new GetMemorySpacesRequest(){
-						public void done() {
-							updateTab(retrieval, context, isSuccess() ? getMemorySpaces() : new String[0]);
-						}
-					}); 
-				}
-				else {
-					updateTab(retrieval, context, new String[0]);
-				}
+			adaptable = (IAdaptable) context;
+			retrieval = ((IMemoryBlockRetrieval) adaptable.getAdapter(IMemoryBlockRetrieval.class));
+			launch  = ((ILaunch) adaptable.getAdapter(ILaunch.class));
+		}
+		
+		if(retrieval != null && launch != null && !launch.isTerminated()) {
+			if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
+			    final IMemoryBlockRetrieval _retrieval = retrieval;
+				((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).getMemorySpaces(context, new GetMemorySpacesRequest(){
+					public void done() {
+						updateTab(_retrieval, context, isSuccess() ? getMemorySpaces() : new String[0]);
+					}
+				}); 
 			}
 			else {
-				handleUnsupportedSelection();
+				updateTab(retrieval, context, new String[0]);
 			}
-
-			fGotoMemorySpaceControl.pack(true);
-			fStackLayout.topControl.getParent().layout(true);
 		}
+		else {
+			handleUnsupportedSelection();
+		}
+
+		fGotoMemorySpaceControl.pack(true);
+		fStackLayout.topControl.getParent().layout(true);
 	}
 
 	/**

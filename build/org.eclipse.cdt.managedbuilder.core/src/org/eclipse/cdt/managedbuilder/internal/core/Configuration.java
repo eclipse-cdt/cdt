@@ -95,7 +95,6 @@ import org.osgi.service.prefs.Preferences;
 public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
 	
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
-	private static final IPath EMPTY_PATH_ARRAY[] = new IPath[0];
 	private static final String EMPTY_CFG_ID = "org.eclipse.cdt.build.core.emptycfg";	//$NON-NLS-1$
 	
 	//  Parent and children
@@ -549,7 +548,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			
 			ITargetPlatform tpBase = tCh.getTargetPlatform();
 			ITargetPlatform extTp = tpBase;
-			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass());
+			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass()) {}
 			
 			TargetPlatform tp;
 			if(extTp != null){
@@ -2064,7 +2063,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					if(b.isInternalBuilder())
 						continue;
 					
-					for(;b != null && !b.isExtensionElement(); b = b.getSuperClass());
+					for(;b != null && !b.isExtensionElement(); b = b.getSuperClass()) {}
 					
 					if(b != null){
 						if(!checkCompatibility || isBuilderCompatible(b)){
@@ -2105,7 +2104,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	private void savePrevBuilderId(IBuilder builder){
 		IBuilder b = builder;
-		for(;b != null && !b.isExtensionElement(); b = b.getSuperClass());
+		for(;b != null && !b.isExtensionElement(); b = b.getSuperClass()) {}
 		
 		if(b == null)
 			b = builder;
@@ -2874,7 +2873,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			IBuilder newReal = ManagedBuildManager.getRealBuilder(newBuilder);
 			if(newReal != curReal){
 				IBuilder extBuilder = newBuilder;
-				for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass());
+				for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass()) {}
 				if(extBuilder == null)
 					extBuilder = newBuilder;
 				

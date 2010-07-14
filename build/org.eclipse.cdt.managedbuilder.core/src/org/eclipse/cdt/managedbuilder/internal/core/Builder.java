@@ -515,7 +515,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			customizedEnvironment = (HashMap)MapStorageElement.decodeMap(tmp);
 		tmp = element.getAttribute(ATTRIBUTE_APPEND_ENVIRONMENT);
 		if(tmp != null)
-			appendEnvironment = Boolean.valueOf(tmp);;
+			appendEnvironment = Boolean.valueOf(tmp);
 		buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
 		if(tmp != null)

@@ -699,7 +699,7 @@ class UpdateManagedProject12 {
 		// Backup the file
 		monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject12.0", projectName), 1); //$NON-NLS-1$
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-		UpdateManagedProjectManager.backupFile(file, "_12backup", monitor, project); ;	//$NON-NLS-1$
+		UpdateManagedProjectManager.backupFile(file, "_12backup", monitor, project);	//$NON-NLS-1$
 
 		IManagedProject newProject = null;
 		

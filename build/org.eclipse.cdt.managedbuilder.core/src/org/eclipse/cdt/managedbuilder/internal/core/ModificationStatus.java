@@ -87,7 +87,7 @@ public class ModificationStatus extends Status implements IModificationStatus {
 		}
 
 		if(nonMbsTools != null && nonMbsTools.length != 0){
-			fNonManagedBuildTools = nonMbsTools.clone();;
+			fNonManagedBuildTools = nonMbsTools.clone();
 			flags |= TOOLS_DONT_SUPPORT_MANAGED_BUILD;
 			severity = IStatus.ERROR;
 		} else {

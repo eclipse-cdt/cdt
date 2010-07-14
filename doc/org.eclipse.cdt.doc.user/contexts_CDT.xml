@@ -546,9 +546,11 @@
    <description>The Project Explorer displays project information.</description>
    <topic href="reference/cdt_u_project_explorer_view.htm" label="Project Explorer view"/>
 </context>
+<!-- this contributes to platform's outline view context, see bug 317992
 <context id="content_outline_context" title="Outline">
    <topic href="reference/cdt_u_outline_view.htm" label="Outline view"/>
 </context>
+-->
 <!-- USING ECLIPSE HELP CONTEXT IDs -->
 <context id="preference_dialog_context" title="Outline">
    <topic href="reference/cdt_u_console_pref.htm" label="C/C++ Console preferences"/>

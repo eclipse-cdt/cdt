@@ -1562,8 +1562,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		if (buildTargetExt.length() > 0) {
 			completeBuildTargetName = completeBuildTargetName + DOT + buildTargetExt;
 		}
-		if (completeBuildTargetName.contains(" ")) {
-			buffer.append(WHITESPACE + "\"" + completeBuildTargetName + "\"");
+		if (completeBuildTargetName.contains(" ")) { //$NON-NLS-1$
+			buffer.append(WHITESPACE + "\"" + completeBuildTargetName + "\"");  //$NON-NLS-1$	//$NON-NLS-2$
 		} else {
 			buffer.append(WHITESPACE + completeBuildTargetName);
 		}

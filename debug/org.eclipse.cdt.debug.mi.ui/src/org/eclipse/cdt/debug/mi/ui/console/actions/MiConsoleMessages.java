@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.ui.console.actions;
 import org.eclipse.osgi.util.NLS;
 
 public class MiConsoleMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.mi.ui.console.actions.MiConsoleMessages";
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.debug.mi.ui.console.actions.MiConsoleMessages"; //$NON-NLS-1$
 
 	public static String saveActionTooltip;
 	public static String verboseActionTooltip;

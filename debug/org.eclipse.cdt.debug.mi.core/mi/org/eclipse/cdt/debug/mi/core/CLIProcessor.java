@@ -223,7 +223,7 @@ public class CLIProcessor {
 	    	// only function breakpoints can be set using rbreak
 	    	return MIBreakpointChangedEvent.HINT_NEW_FUNCTION_BREAKPOINT;
 	    }
-	    if (op.equals("catch")) {
+	    if (op.equals("catch")) { //$NON-NLS-1$
 	    	return MIBreakpointChangedEvent.HINT_NEW_EVENTBREAKPOINT;
 	    }
 	    if ( !st.hasMoreTokens() ) {

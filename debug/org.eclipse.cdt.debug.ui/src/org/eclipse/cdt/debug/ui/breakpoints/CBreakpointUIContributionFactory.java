@@ -28,8 +28,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 public class CBreakpointUIContributionFactory {
-	private static final String EXTENSION_POINT_NAME = "breakpointContribution";
-	private static final String MAIN_ELEMENT = "breakpointLabels";
+	private static final String EXTENSION_POINT_NAME = "breakpointContribution"; //$NON-NLS-1$
+	private static final String MAIN_ELEMENT = "breakpointLabels"; //$NON-NLS-1$
 
 	private static CBreakpointUIContributionFactory instance;
 	protected ArrayList<ICBreakpointsUIContribution> contributions;
@@ -94,11 +94,11 @@ public class CBreakpointUIContributionFactory {
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement configurationElement = elements[i];
 			if (configurationElement.getName().equals(MAIN_ELEMENT)) {
-				String modelId = configurationElement.getAttribute("debugModelId");
-				String markerType = getRequired(configurationElement, "markerType");
+				String modelId = configurationElement.getAttribute("debugModelId"); //$NON-NLS-1$
+				String markerType = getRequired(configurationElement, "markerType"); //$NON-NLS-1$
 				if (markerType == null)
 					continue;
-				IConfigurationElement[] children = configurationElement.getChildren("attribute");
+				IConfigurationElement[] children = configurationElement.getChildren("attribute"); //$NON-NLS-1$
 				for (IConfigurationElement att : children) {
 
 					DefaultCBreakpointUIContribution adapter = new DefaultCBreakpointUIContribution();
@@ -114,11 +114,11 @@ public class CBreakpointUIContributionFactory {
 	}
 
 	private boolean processAttribute(IConfigurationElement attrElement, DefaultCBreakpointUIContribution adapter) {
-		String attrId = getRequired(attrElement, "name");
-		String attrLabel = getRequired(attrElement, "label");
-		String className = attrElement.getAttribute("fieldEditor");
-		String type = attrElement.getAttribute("type");
-		String svisible = attrElement.getAttribute("visible");
+		String attrId = getRequired(attrElement, "name"); //$NON-NLS-1$
+		String attrLabel = getRequired(attrElement, "label"); //$NON-NLS-1$
+		String className = attrElement.getAttribute("fieldEditor"); //$NON-NLS-1$
+		String type = attrElement.getAttribute("type"); //$NON-NLS-1$
+		String svisible = attrElement.getAttribute("visible"); //$NON-NLS-1$
 
 		if (attrId == null) {
 			return false;
@@ -127,10 +127,10 @@ public class CBreakpointUIContributionFactory {
 			return false;
 		}
 		if (type == null) {
-			type = "string";
+			type = "string"; //$NON-NLS-1$
 		}
 		boolean visible = true;
-		if (svisible != null && svisible.equalsIgnoreCase("false")) {
+		if (svisible != null && svisible.equalsIgnoreCase("false")) { //$NON-NLS-1$
 			visible = false;
 		}
 		adapter.setId(attrId);
@@ -140,7 +140,7 @@ public class CBreakpointUIContributionFactory {
 		adapter.setVisible(visible);
 		addContribution(adapter);
 
-		IConfigurationElement[] children = attrElement.getChildren("value");
+		IConfigurationElement[] children = attrElement.getChildren("value"); //$NON-NLS-1$
 		for (IConfigurationElement value : children) {
 			processValue(value, adapter);
 		}
@@ -148,14 +148,14 @@ public class CBreakpointUIContributionFactory {
 	}
 
 	private void processValue(IConfigurationElement valueElement, DefaultCBreakpointUIContribution adapter) {
-		String valueId = getRequired(valueElement, "value");
-		String valueLabel = getRequired(valueElement, "label");
+		String valueId = getRequired(valueElement, "value"); //$NON-NLS-1$
+		String valueLabel = getRequired(valueElement, "label"); //$NON-NLS-1$
 		if (valueId == null)
 			return;
 		if (valueLabel == null)
 			return;
 		adapter.addValue(valueId, valueLabel);
-		IConfigurationElement[] children = valueElement.getChildren("attribute");
+		IConfigurationElement[] children = valueElement.getChildren("attribute"); //$NON-NLS-1$
 		for (IConfigurationElement att : children) {
 			DefaultCBreakpointUIContribution adapter2 = new DefaultCBreakpointUIContribution();
 			// inherit values

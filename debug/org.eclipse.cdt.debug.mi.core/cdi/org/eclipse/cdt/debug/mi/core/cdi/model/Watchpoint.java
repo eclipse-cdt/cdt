@@ -30,7 +30,7 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 
 	public Watchpoint(Target target, String expression, int type,
 			int watchType, ICDICondition condition, boolean enabled) {
-		this(target, expression, "", BigInteger.ZERO, type, watchType, condition, enabled);
+		this(target, expression, "", BigInteger.ZERO, type, watchType, condition, enabled); //$NON-NLS-1$
 	}
 
 	public Watchpoint(Target target, String expression, String memorySpace,
@@ -44,22 +44,22 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 		
 		// If the range and/or memory space are specified, cast the expression, e.g.,
 		// (@data char[4])(*0x402000)
-		derivedExpression = "";
+		derivedExpression = ""; //$NON-NLS-1$
 		boolean doSpecifyMemorySpace = memorySpace.length() > 0;
 		boolean doSpecifyRange = range.compareTo(BigInteger.ZERO) > 0;
 		boolean doSpecify = doSpecifyMemorySpace || doSpecifyRange;
 		if ( doSpecify ) {
-			derivedExpression += "(";
+			derivedExpression += "("; //$NON-NLS-1$
 			if ( doSpecifyMemorySpace ) {
-				derivedExpression += "@" + memorySpace;
+				derivedExpression += "@" + memorySpace; //$NON-NLS-1$
 				if ( doSpecifyRange ) {
-					derivedExpression += " ";
+					derivedExpression += " "; //$NON-NLS-1$
 				}
 			}
 			if ( doSpecifyRange ) {
-				derivedExpression += "char[" + range.toString() + "]";
+				derivedExpression += "char[" + range.toString() + "]";  //$NON-NLS-1$	//$NON-NLS-2$
 			}
-			derivedExpression += ")(";
+			derivedExpression += ")("; //$NON-NLS-1$
 		}
 		
 		try {
@@ -70,7 +70,7 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 		}
 		derivedExpression += expression;
 		if ( doSpecify ) {
-			derivedExpression += ")";
+			derivedExpression += ")"; //$NON-NLS-1$
 		}
 	}
 

@@ -192,7 +192,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
         }
 
 		// Is this a test project type
-		String isTestStr = element.getAttribute(IS_TEST); //$NON-NLS-1$
+		String isTestStr = element.getAttribute(IS_TEST);
         if (isTestStr != null){
     		isTest = new Boolean("true".equals(isTestStr)); //$NON-NLS-1$
         }

@@ -96,7 +96,7 @@ public class FileInfoModification extends
 		IFolderInfo parentFo = rcInfo.getParentFolderInfo();
 		String ext = rcInfo.getPath().getFileExtension();
 		if(ext == null)
-			ext = "";
+			ext = ""; //$NON-NLS-1$
 
 		ITool tool = parentFo.getToolFromInputExtension(ext);
 		ITool realTool = ManagedBuildManager.getRealTool(tool);

@@ -71,7 +71,7 @@ public class CLIInfoLineInfo extends MIInfo {
 	}
 
 	protected void parseLineInfo(String str, List aList) {
-		if (str.endsWith("."))
+		if (str.endsWith(".")) //$NON-NLS-1$
 			str = str.substring(0, str.length()-1);
 		String[] strbits = str.split("\\s"); //$NON-NLS-1$
 		for (int i = 0; i < strbits.length; i++) {

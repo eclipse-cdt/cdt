@@ -238,8 +238,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	}
 
 	private void createMainLabel(ICBreakpoint breakpoint) {
-		addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), 
-				getBreakpointMainLabel(breakpoint) ) );  //$NON-NLS-1$
+		addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ),  //$NON-NLS-1$
+				getBreakpointMainLabel(breakpoint) ) );
 	}
 
 	/**
@@ -325,13 +325,13 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
 		if (breakpoint instanceof ICFunctionBreakpoint)
-			return PropertyPageMessages.getString("CBreakpointPropertyPage.3");
+			return PropertyPageMessages.getString("CBreakpointPropertyPage.3"); //$NON-NLS-1$
 		if (breakpoint instanceof ICAddressBreakpoint)
-			return PropertyPageMessages.getString("CBreakpointPropertyPage.4");
+			return PropertyPageMessages.getString("CBreakpointPropertyPage.4"); //$NON-NLS-1$
 		if (breakpoint instanceof ICLineBreakpoint)
-			return PropertyPageMessages.getString("CBreakpointPropertyPage.8");
+			return PropertyPageMessages.getString("CBreakpointPropertyPage.8"); //$NON-NLS-1$
 		if (breakpoint instanceof ICEventBreakpoint)
-			return PropertyPageMessages.getString("CBreakpointPropertyPage.21");
+			return PropertyPageMessages.getString("CBreakpointPropertyPage.21"); //$NON-NLS-1$
 		if (breakpoint instanceof ICWatchpoint) {
 			ICWatchpoint watchpoint = (ICWatchpoint) breakpoint;
 			String type = ""; //$NON-NLS-1$
@@ -358,7 +358,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		return type;
 	}
 	protected void createLineNumberEditor( Composite parent ) {
-		 String title = PropertyPageMessages.getString( "CBreakpointPropertyPage.9" );
+		 String title = PropertyPageMessages.getString( "CBreakpointPropertyPage.9" ); //$NON-NLS-1$
 		 BreakpointIntegerFieldEditor labelFieldEditor =new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.LINE ,title, parent);
 		 labelFieldEditor.setValidRange( 1, Integer.MAX_VALUE );
 		 addField( labelFieldEditor );
@@ -479,11 +479,11 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 					.getBreakpointUIContributions(breakpoint);
 			for (ICBreakpointsUIContribution con : cons) {
 
-				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel()+":", parent);
+				FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel()+":", parent); //$NON-NLS-1$
 				if (fieldEditor != null)
 					addField(fieldEditor);
 				Object o = breakpoint.getMarker().getAttribute(con.getId());
-				String value = o==null?"":o.toString();
+				String value = o==null?"":o.toString(); //$NON-NLS-1$
 				getPreferenceStore().setValue(con.getId(), value);
 			}
 		} catch (CoreException ce) {

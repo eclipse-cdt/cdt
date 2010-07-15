@@ -383,20 +383,20 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IC
             IConfigurationElement[] elements = ep.getConfigurationElements();
             for (int i= 0; i < elements.length; i++) {
                 if ( elements[i].getName().equals(CDebugCorePlugin.BREAKPOINT_EXTENSION_ELEMENT) ) {
-                    String elementDebugModelId = elements[i].getAttribute("debugModelId");
-                    String elementMarkerType = elements[i].getAttribute("markerType");
+                    String elementDebugModelId = elements[i].getAttribute("debugModelId"); //$NON-NLS-1$
+                    String elementMarkerType = elements[i].getAttribute("markerType"); //$NON-NLS-1$
                     if (elementDebugModelId == null) {
                         CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$ 
                     } else if (elementMarkerType == null){
                         CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: debugModelId", null)); //$NON-NLS-1$ //$NON-NLS-2$
                     } else if ( debugModelId.equals(elementDebugModelId) && marker.isSubtypeOf(elementMarkerType)) { 
-                        String className = elements[i].getAttribute("class");
+                        String className = elements[i].getAttribute("class"); //$NON-NLS-1$
                         if (className == null){
                             CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: className", null)); //$NON-NLS-1$ //$NON-NLS-2$
                         } else {
                             ICBreakpointExtension extension;
                             try {
-                                extension = (ICBreakpointExtension)elements[i].createExecutableExtension("class");
+                                extension = (ICBreakpointExtension)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
                                 extension.initialize(this);
                                 extensions.add(extension);
                             } catch (CoreException e) {

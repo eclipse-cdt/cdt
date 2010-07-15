@@ -615,7 +615,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public String getFile() {
 		final ICDIStackFrame cdiFrame = getCDIStackFrame();
-		return cdiFrame != null ? cdiFrame.getLocator().getFile() : "";
+		return cdiFrame != null ? cdiFrame.getLocator().getFile() : ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -623,7 +623,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public String getFunction() {
 		final ICDIStackFrame cdiFrame = getCDIStackFrame();
-		return cdiFrame != null ? cdiFrame.getLocator().getFunction() : "";
+		return cdiFrame != null ? cdiFrame.getLocator().getFunction() : ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

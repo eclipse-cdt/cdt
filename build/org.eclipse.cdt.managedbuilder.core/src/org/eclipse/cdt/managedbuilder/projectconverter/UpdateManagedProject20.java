@@ -334,7 +334,7 @@ class UpdateManagedProject20 {
 				continue;
 
 			try{
-				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.')+1)); //$NON-NLS-1$
+				Integer.decode(curToolId.substring(curToolId.lastIndexOf('.')+1));
 			}
 			catch(IndexOutOfBoundsException e){
 				continue;

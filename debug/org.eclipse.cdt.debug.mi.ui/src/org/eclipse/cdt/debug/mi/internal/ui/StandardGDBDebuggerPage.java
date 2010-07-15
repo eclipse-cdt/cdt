@@ -102,7 +102,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		String gdbCommand = null;
 
 		if (Platform.getOS().equals(Platform.OS_LINUX) &&
-				Platform.getOSArch().equals("ppc64")) {
+				Platform.getOSArch().equals("ppc64")) { //$NON-NLS-1$
 			// On SLES 9 and 10 for ppc64 arch, there is a separate
 			// 64-bit capable gdb called gdb64.  It can
 			// also debug 32-bit executables, so let's see if it exists.
@@ -110,7 +110,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 				Process unameProcess;
 				int interruptedRetryCount = 5;
 
-				String cmd[] = {"gdb64", "--version"};
+				String cmd[] = {"gdb64", "--version"}; //$NON-NLS-1$ //$NON-NLS-2$
 
 				gdb64ExistsIsCached = true;
 

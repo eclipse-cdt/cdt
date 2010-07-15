@@ -179,7 +179,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 				new AccessibleAdapter() {
 					@Override
 					public void getName(AccessibleEvent e) {
-						e.result = ActionMessages.getString( "AddWatchpointDialog.5" );
+						e.result = ActionMessages.getString( "AddWatchpointDialog.5" ); //$NON-NLS-1$
 					}
 					
 				});
@@ -210,7 +210,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 		
 		// second character must be x if preceded by a 0, otherwise 0-9 will do
 		if ( text.length() == 1 ) {
-			if ( text.equals( "0" ) ) {
+			if ( text.equals( "0" ) ) { //$NON-NLS-1$
 				return c == 'x';
 			}
 			return Character.isDigit( c );
@@ -218,7 +218,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 		
 		// all subsequent characters must be 0-9 or a-f if started with 0x
 		return Character.isDigit( c )
-				|| text.startsWith( "0x" ) && 'a' <= c && c <= 'f';
+				|| text.startsWith( "0x" ) && 'a' <= c && c <= 'f'; //$NON-NLS-1$
 	}
 	
 	/**
@@ -234,7 +234,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 			return true;
 		}
 		if ( text.length() == 2 ) {
-			return !text.equals("0x");
+			return !text.equals("0x"); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -267,7 +267,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 			new AccessibleAdapter() {
 				@Override
 				public void getName(AccessibleEvent e) {
-					e.result = ActionMessages.getString( "AddWatchpointDialog.6" );
+					e.result = ActionMessages.getString( "AddWatchpointDialog.6" ); //$NON-NLS-1$
 				}
 				
 			});
@@ -310,9 +310,9 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 			addHistory( fExpression );
 		}
 		if ( fHasMemorySpaceControls ) {
-			fMemorySpace = fMemorySpaceEnableButton.getSelection() ? fMemorySpaceInput.getText().trim() : "";
+			fMemorySpace = fMemorySpaceEnableButton.getSelection() ? fMemorySpaceInput.getText().trim() : ""; //$NON-NLS-1$
 		}
-		fRange = fRangeEnableButton.getSelection() ? fRangeField.getText().trim() : "0";
+		fRange = fRangeEnableButton.getSelection() ? fRangeField.getText().trim() : "0"; //$NON-NLS-1$
 		fRead = fChkBtnRead.getSelection();
 		fWrite = fChkBtnWrite.getSelection();
 		super.okPressed();

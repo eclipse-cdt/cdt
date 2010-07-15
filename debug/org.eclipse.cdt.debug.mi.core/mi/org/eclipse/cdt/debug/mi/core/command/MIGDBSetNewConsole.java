@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.command;
 public class MIGDBSetNewConsole extends MIGDBSet {
 
 	public MIGDBSetNewConsole(String miVersion) {
-		this(miVersion, "on");
+		this(miVersion, "on"); //$NON-NLS-1$
 	}
 	
 	public MIGDBSetNewConsole(String miVersion, String param) {

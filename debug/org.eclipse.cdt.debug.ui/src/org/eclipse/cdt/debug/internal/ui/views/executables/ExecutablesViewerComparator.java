@@ -36,7 +36,7 @@ class ExecutablesViewerComparator extends ViewerComparator {
 		return 0;
 	}
 
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
+	@SuppressWarnings("unchecked")
 	public int compare(Viewer viewer, Object e1, Object e2) {
 
 		if (category(e1) == 1 && category(e2) == 1) {

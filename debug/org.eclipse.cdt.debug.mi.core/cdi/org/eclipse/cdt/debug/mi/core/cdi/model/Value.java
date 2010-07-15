@@ -79,7 +79,7 @@ public class Value extends CObject implements ICDIValue {
 			// format is, by example (for a float&):	"@0x22cc98: 3.19616001e-39"
 			// We need to dig out the latter.
 			if (fIsReference) {
-				if (result.startsWith("@0x")) {
+				if (result.startsWith("@0x")) { //$NON-NLS-1$
 					int index = result.indexOf(':');
 					if (index > 0 && ((index + 1) < result.length())) {
 						result = result.substring(index+1).trim();

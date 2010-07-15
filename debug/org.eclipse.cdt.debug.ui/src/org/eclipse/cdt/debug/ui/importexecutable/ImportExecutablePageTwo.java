@@ -75,11 +75,11 @@ public class ImportExecutablePageTwo extends WizardPage {
 	private boolean shouldUpdateButtons = true;
 
 	public ImportExecutablePageTwo(AbstractImportExecutableWizard wizard) {
-		super("ImportExecutablePageTwo");
+		super("ImportExecutablePageTwo"); //$NON-NLS-1$
 		this.wizard = wizard;
 		setTitle(Messages.ImportExecutablePageTwo_ChooseProject);
 		setDescription(Messages.ImportExecutablePageTwo_ChooseExisting);
-		filterPlatform = "*";
+		filterPlatform = "*"; //$NON-NLS-1$
 	}
 
 	private void addLaunchConfigTypes() {
@@ -94,7 +94,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 				if (wizard.supportsConfigurationType(type)) {
 					configTypes.add(configTypeName);
 					
-					if (type.getIdentifier().equals("org.eclipse.cdt.launch.applicationLaunchType")) {
+					if (type.getIdentifier().equals("org.eclipse.cdt.launch.applicationLaunchType")) { //$NON-NLS-1$
 						capp = j;
 					}
 					j++;

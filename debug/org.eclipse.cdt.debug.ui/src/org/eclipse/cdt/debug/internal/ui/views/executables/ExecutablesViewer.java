@@ -155,7 +155,7 @@ public class ExecutablesViewer extends BaseViewer implements IExecutablesChangeL
 	protected ViewerComparator getViewerComparator(int sortType) {
 		if (sortType == ExecutablesView.PROJECT) {
 			return new ExecutablesViewerComparator(sortType, column_sort_order[ExecutablesView.PROJECT]) {
-				@SuppressWarnings("unchecked") //$NON-NLS-1$
+				@SuppressWarnings("unchecked")
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					Executable entry1 = (Executable) e1;
 					Executable entry2 = (Executable) e2;

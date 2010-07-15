@@ -100,7 +100,7 @@ public class ImportExecutablePageOne extends WizardPage {
 	private Combo binaryParserCombo;
 	
 	public ImportExecutablePageOne(AbstractImportExecutableWizard wizard) {
-		super("ImportApplicationPageOne");
+		super("ImportApplicationPageOne"); //$NON-NLS-1$
 		this.wizard = wizard;
 		setPageComplete(false);
 		setTitle(wizard.getPageOneTitle());
@@ -398,7 +398,7 @@ public class ImportExecutablePageOne extends WizardPage {
 			IConfigurationElement[] children = elements[i].getChildren("run"); //$NON-NLS-1$
 			for (int j = 0; j < children.length; j++) {
 				try {
-					parser = (IBinaryParser)children[j].createExecutableExtension("class");
+					parser = (IBinaryParser)children[j].createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
 					CDebugUIPlugin.log(e);
 				}
@@ -434,7 +434,7 @@ public class ImportExecutablePageOne extends WizardPage {
             }
         );
 		// Set the data name field so Abbot based tests can find it.
-		singleExecutablePathField.setData("name", "singleExecutablePathField");
+		singleExecutablePathField.setData("name", "singleExecutablePathField"); //$NON-NLS-1$ //$NON-NLS-2$
 		singleExecutablePathField.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
@@ -455,12 +455,12 @@ public class ImportExecutablePageOne extends WizardPage {
 				wizard.setupFileDialog(dialog);
 				String res = dialog.open();
 				if (res != null) {
-					if (Platform.getOS().equals(Platform.OS_MACOSX) && res.endsWith(".app"))
+					if (Platform.getOS().equals(Platform.OS_MACOSX) && res.endsWith(".app")) //$NON-NLS-1$
 					{
 						// On Mac OS X the file dialog will let you select the 
 						// package but not the executable inside.
 						Path macPath = new Path(res);
-						res = res + "/Contents/MacOS/" + macPath.lastSegment();
+						res = res + "/Contents/MacOS/" + macPath.lastSegment(); //$NON-NLS-1$
 						res = res.substring(0, res.length() - 4);
 					}
 					singleExecutablePathField.setText(res);
@@ -554,7 +554,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		executables = new File[0];
 		executablesViewer.refresh(true);
 		executablesViewer.setAllChecked(false);
-		previouslySearchedDirectory = "";
+		previouslySearchedDirectory = ""; //$NON-NLS-1$
 		setPageComplete(false);
 	}
 

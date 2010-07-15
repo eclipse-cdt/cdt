@@ -33,12 +33,12 @@ public class CygwinMIEnvironmentCD extends WinMIEnvironmentCD {
 		try {
 			launcher.execute( new Path( "cygpath" ), //$NON-NLS-1$
 			new String[]{ "-u", path }, //$NON-NLS-1$
-			new String[0], new Path( "." ),
+			new String[0], new Path( "." ), //$NON-NLS-1$
 			null);
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} //$NON-NLS-1$
+		} 
 		if ( launcher.waitAndRead( out, err ) == ICommandLauncher.OK ) {
 			newPath = out.toString();
 			if ( newPath != null ) {

@@ -378,7 +378,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	public String getName() throws DebugException {
 		final ICDIThread cdiThread = getCDIThread();
-		return cdiThread != null ? cdiThread.toString() : "";
+		return cdiThread != null ? cdiThread.toString() : ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

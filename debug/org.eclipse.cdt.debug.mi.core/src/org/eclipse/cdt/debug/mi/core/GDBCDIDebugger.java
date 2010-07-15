@@ -263,7 +263,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 		}
 		catch( CoreException e ) {
 		}
-		return MessageFormat.format(format, new String[]{label, timestamp}); //$NON-NLS-1$
+		return MessageFormat.format(format, new String[]{label, timestamp});
 	}
 
 	/**

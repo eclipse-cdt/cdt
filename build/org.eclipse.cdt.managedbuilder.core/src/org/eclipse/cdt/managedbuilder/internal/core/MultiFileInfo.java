@@ -88,7 +88,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#removeTool(org.eclipse.cdt.managedbuilder.core.ITool)
 	 */
 	public void removeTool(ITool tool) {
-		System.out.println("MultiFileInfo.removeTool() does not work OK !");
+		System.out.println("MultiFileInfo.removeTool() does not work OK !"); //$NON-NLS-1$
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
 				IFileInfo fi = (IFileInfo)ri;
@@ -125,7 +125,7 @@ public class MultiFileInfo extends MultiResourceInfo implements IFileInfo {
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
 	public void setToolCommand(ITool tool, String command) {
-		System.out.println("MultiFileInfo.setToolCommand() does not work OK !");
+		System.out.println("MultiFileInfo.setToolCommand() does not work OK !"); //$NON-NLS-1$
 		for (IResourceInfo ri : fRis) {
 			if (ri instanceof IFileInfo) {
 				IFileInfo fi = (IFileInfo)ri;

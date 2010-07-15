@@ -212,7 +212,7 @@ public class ExternalToolActionComposite extends Composite {
 					}
 				}
 				if (type != null) {
-					if (!priv && type.supportsMode(ILaunchManager.RUN_MODE) && equalCategories(type.getCategory(), "org.eclipse.ui.externaltools") //$NON-NLS-1$ //$NON-NLS-2$
+					if (!priv && type.supportsMode(ILaunchManager.RUN_MODE) && equalCategories(type.getCategory(), "org.eclipse.ui.externaltools") //$NON-NLS-1$
 							&& !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(type)))
 						onlyExternalTools.add(launchConfigurations[i]);
 				}

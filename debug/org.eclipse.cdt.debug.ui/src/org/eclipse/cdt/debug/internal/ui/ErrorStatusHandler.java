@@ -28,7 +28,7 @@ public class ErrorStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus( final IStatus status, Object source ) throws CoreException {
 		if ( status != null && source != null ) {
-			String title = "";
+			String title = ""; //$NON-NLS-1$
 			if (source instanceof IDebugElement) { 
 				IDebugTarget target = ((IDebugElement)source).getDebugTarget();
 				title = target.getName();
@@ -36,7 +36,7 @@ public class ErrorStatusHandler implements IStatusHandler {
 			else {
 				// Source is sometimes an action delegate instance. Can't gather 
 				// anything useful from it. Use a generic title
-				title = CDebugUIMessages.getString("ErrorStatusHandler.1");
+				title = CDebugUIMessages.getString("ErrorStatusHandler.1"); //$NON-NLS-1$
 			}
 			final String title_f = title;
 			CDebugUIPlugin.getStandardDisplay().asyncExec( new Runnable() {

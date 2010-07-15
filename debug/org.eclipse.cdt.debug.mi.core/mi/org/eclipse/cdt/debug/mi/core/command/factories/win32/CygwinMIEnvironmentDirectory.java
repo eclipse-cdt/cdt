@@ -94,11 +94,11 @@ public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 				new Path("cygpath"), //$NON-NLS-1$
 				new String[] { "-p", "-u", path }, //$NON-NLS-1$ //$NON-NLS-2$
 				new String[0],
-				new Path("."), null);
+				new Path("."), null); //$NON-NLS-1$
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} //$NON-NLS-1$
+		}
 		if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 			result = out.toString().trim();
 		return result;

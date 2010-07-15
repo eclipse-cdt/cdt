@@ -76,7 +76,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
      * The ID, name and description of this pane are stored in constants so that the class
      * does not have to be instantiated to access them.
      */
-    public static final String ID = "ModuleDetailPane";
+    public static final String ID = "ModuleDetailPane"; //$NON-NLS-1$
     public static final String NAME = "Module Viewer";
     public static final String DESCRIPTION = "A detail pane that is based on a source viewer.  Displays as text and has actions for assigning values, content assist and text modifications.";
     
@@ -102,7 +102,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         protected IStatus run(IProgressMonitor monitor) {
             fMonitor = monitor;
             
-            String detail = "";
+            String detail = ""; //$NON-NLS-1$
             if ( fElement instanceof ICModule ) {
                 detail = getModuleDetail( ((ICModule)fElement) );
             }
@@ -293,13 +293,13 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     private void createActions() {
         
         TextViewerAction textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-        textAction.configureAction("Select &All", "", ""); 
+        textAction.configureAction("Select &All", "", "");  //$NON-NLS-2$ //$NON-NLS-3$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, ICDebugHelpContextIds.MODULE_DETAIL_PANE_SELECT_ALL_ACTION);
         setAction(DETAIL_SELECT_ALL_ACTION, textAction);
         
         textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
-        textAction.configureAction("&Copy", "", ""); 
+        textAction.configureAction("&Copy", "", "");  //$NON-NLS-2$ //$NON-NLS-3$
         textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, ICDebugHelpContextIds.MODULE_DETAIL_PANE_COPY_ACTION);
         setAction(DETAIL_COPY_ACTION, textAction);
@@ -455,7 +455,7 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         if (fDetailJob != null) {
             fDetailJob.cancel();
         }
-        fDetailDocument.set("");
+        fDetailDocument.set(""); //$NON-NLS-1$
         fSourceViewer.setEditable(false);
     }
 

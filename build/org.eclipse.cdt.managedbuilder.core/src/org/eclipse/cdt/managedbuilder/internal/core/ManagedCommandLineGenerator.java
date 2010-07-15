@@ -35,7 +35,7 @@ public class ManagedCommandLineGenerator implements
 	public final String EMPTY = ""; //$NON-NLS-1$
 	
 	public final String VAR_FIRST_CHAR = "$"; //$NON-NLS-1$
-	public final char VAR_SECOND_CHAR = '{'; //$NON-NLS-1$
+	public final char VAR_SECOND_CHAR = '{';
 	public final String VAR_FINAL_CHAR = "}"; //$NON-NLS-1$
 	public final String CLASS_PROPERTY_PREFIX = "get"; //$NON-NLS-1$
 	
@@ -115,7 +115,7 @@ public class ManagedCommandLineGenerator implements
 							{
 								// if the input resource isn't a variable then quote it
 								if(inputResources[k].indexOf("$(") != 0) //$NON-NLS-1$
-									tempBuffer.append(DOUBLE_QUOTE + inputResources[k] + DOUBLE_QUOTE + WHITESPACE); //$NON-NLS-1$ //$NON-NLS-2$
+									tempBuffer.append(DOUBLE_QUOTE + inputResources[k] + DOUBLE_QUOTE + WHITESPACE);
 								else
 									tempBuffer.append(inputResources[k] + WHITESPACE);
 							}

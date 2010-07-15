@@ -66,7 +66,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 			setPreferenceStore(new CBreakpointPreferenceStore() {
 				@Override
 				public String getDefaultString(String name) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 			});
 		}
@@ -85,7 +85,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 					if (con.getId().equals(ICBreakpointType.TYPE)) continue;
 					FieldEditor fieldEditor = con.getFieldEditor(con.getId(), con.getLabel(),
 							parent);
-					getPreferenceStore().setValue(con.getId(),"");
+					getPreferenceStore().setValue(con.getId(),""); //$NON-NLS-1$
 					if (fieldEditor != null)
 						addField(fieldEditor);
 				}

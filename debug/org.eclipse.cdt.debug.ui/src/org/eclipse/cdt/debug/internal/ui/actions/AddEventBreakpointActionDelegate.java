@@ -54,8 +54,8 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 	public void run(IAction action) {
 		AddEventBreakpointDialog dlg = new AddEventBreakpointDialog(CDebugUIPlugin.getActiveWorkbenchShell());
 		if (dlg.isActive() == false) {
-			String message = ActionMessages.getString("AddEventBreakpointActionDelegate.2");
-			MessageDialog.openError( getView().getSite().getShell(), UIMessages.getString( "CDebugUIPlugin.0" ), message); 
+			String message = ActionMessages.getString("AddEventBreakpointActionDelegate.2"); //$NON-NLS-1$
+			MessageDialog.openError( getView().getSite().getShell(), UIMessages.getString( "CDebugUIPlugin.0" ), message);  //$NON-NLS-1$
 		} else {
 			if (dlg.open() == Window.OK) {
 				addEventBreakpoint(dlg.getEventTypeId(), dlg.getEventArgument());
@@ -67,7 +67,7 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 		if (getResource() == null)
 			return;
 		try {
-			CDIDebugModel.createEventBreakpoint(id, arg, true); //$NON-NLS-1$
+			CDIDebugModel.createEventBreakpoint(id, arg, true);
 		} catch (CoreException ce) {
 			CDebugUIPlugin.errorDialog(ActionMessages.getString("AddEventBreakpointActionDelegate.0"), ce); //$NON-NLS-1$
 		}

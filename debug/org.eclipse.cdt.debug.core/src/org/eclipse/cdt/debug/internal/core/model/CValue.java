@@ -568,7 +568,7 @@ public class CValue extends AbstractCValue {
 					} catch (CharacterCodingException e) {
 						stringValue = e.toString();
 					}
-					StringBuffer sb = new StringBuffer("'");
+					StringBuffer sb = new StringBuffer("'"); //$NON-NLS-1$
 					sb.append(stringValue);
 					sb.append('\'');
 					return sb.toString();
@@ -601,7 +601,7 @@ public class CValue extends AbstractCValue {
 					} catch (CharacterCodingException e) {
 						stringValue = e.toString();
 					}
-					StringBuffer sb = new StringBuffer("'");
+					StringBuffer sb = new StringBuffer("'"); //$NON-NLS-1$
 					sb.append(stringValue);
 					sb.append('\'');
 					return sb.toString();
@@ -639,13 +639,13 @@ public class CValue extends AbstractCValue {
 				return bigValue.toString(10); 
 			}
 			else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
-				StringBuffer sb = new StringBuffer("0x");
+				StringBuffer sb = new StringBuffer("0x"); //$NON-NLS-1$
 				BigInteger bigValue = value.bigIntegerValue();
 				sb.append(bigValue.toString(16));
 				return sb.toString();
 			}
 			else if ( CVariableFormat.BINARY.equals( format ) ) {
-				StringBuffer sb = new StringBuffer("0b");
+				StringBuffer sb = new StringBuffer("0b"); //$NON-NLS-1$
 				BigInteger bigValue = value.bigIntegerValue();
 				sb.append(bigValue.toString(2));
 				return sb.toString();

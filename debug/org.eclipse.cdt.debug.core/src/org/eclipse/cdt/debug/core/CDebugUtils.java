@@ -230,7 +230,7 @@ public class CDebugUtils {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
 		transformer.setOutputProperty( OutputKeys.METHOD, "xml" ); //$NON-NLS-1$
-		transformer.setOutputProperty( OutputKeys.INDENT, indent ? "yes" : "no" ); //$NON-NLS-1$
+		transformer.setOutputProperty( OutputKeys.INDENT, indent ? "yes" : "no" ); //$NON-NLS-1$ //$NON-NLS-2$
 		DOMSource source = new DOMSource( doc );
 		StreamResult outputTarget = new StreamResult( s );
 		transformer.transform( source, outputTarget );
@@ -461,7 +461,7 @@ public class CDebugUtils {
 
 	private static void appendWatchRange( ICWatchpoint2 watchpoint, StringBuffer label ) throws CoreException {
 		String range = watchpoint.getRange().toString();
-		if ( range.length() > 0 && !range.equals( "0" ) ) {
+		if ( range.length() > 0 && !range.equals( "0" ) ) { //$NON-NLS-1$
 			label.append( ' ' );
 			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.7" ), new String[]{ range } ) ); //$NON-NLS-1$
 		}
@@ -469,17 +469,17 @@ public class CDebugUtils {
 	
 	protected static StringBuffer appendBreakpointType( ICBreakpoint breakpoint, StringBuffer label ) throws CoreException {
 		if (breakpoint instanceof ICBreakpointType) {
-			String typeString = "";
+			String typeString = ""; //$NON-NLS-1$
 			int type = ((ICBreakpointType) breakpoint).getType();
 
 			// Need to filter out the TEMPORARY bit-flag to get the real type
 			// The REGULAR type is implicit so we don't report that.
 			switch (type & ~ICBreakpointType.TEMPORARY) {
 			case ICBreakpointType.HARDWARE:
-				typeString = DebugCoreMessages.getString("CDebugUtils.Hardware");
+				typeString = DebugCoreMessages.getString("CDebugUtils.Hardware"); //$NON-NLS-1$
 				break;
 			case ICBreakpointType.SOFTWARE:
-				typeString = DebugCoreMessages.getString("CDebugUtils.Software");
+				typeString = DebugCoreMessages.getString("CDebugUtils.Software"); //$NON-NLS-1$
 				break;
 			}
 			
@@ -488,9 +488,9 @@ public class CDebugUtils {
 			// here as a just-in-case.
 			if ((type & ICBreakpointType.TEMPORARY) != 0) {
 				if (typeString.length() > 0) {
-					typeString += "/";	
+					typeString += "/";	 //$NON-NLS-1$
 				}
-				typeString += DebugCoreMessages.getString("CDebugUtils.Temporary");
+				typeString += DebugCoreMessages.getString("CDebugUtils.Temporary"); //$NON-NLS-1$
 			}
 			
 			if (typeString.length() > 0) {

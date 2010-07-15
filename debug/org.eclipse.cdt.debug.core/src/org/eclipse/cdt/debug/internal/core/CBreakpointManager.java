@@ -1185,7 +1185,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				ILineBreakpoint l = (ILineBreakpoint) breakpoint;
 				line = l.getLineNumber();
 			}
-			int oldLine = ( delta != null ) ? delta.getAttribute( IMarker.LINE_NUMBER, 0 ) : 0; //$NON-NLS-1$
+			int oldLine = ( delta != null ) ? delta.getAttribute( IMarker.LINE_NUMBER, 0 ) : 0;
 			boolean basic = oldLine>0 && oldLine != line;
 			
 			if (basic) {

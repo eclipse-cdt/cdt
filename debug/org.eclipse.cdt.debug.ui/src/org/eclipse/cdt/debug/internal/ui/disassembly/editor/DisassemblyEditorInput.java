@@ -46,7 +46,7 @@ public class DisassemblyEditorInput implements IEditorInput {
      */
     public String getName() {
         // TODO Auto-generated method stub
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -62,7 +62,7 @@ public class DisassemblyEditorInput implements IEditorInput {
      */
     public String getToolTipText() {
         // TODO Auto-generated method stub
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

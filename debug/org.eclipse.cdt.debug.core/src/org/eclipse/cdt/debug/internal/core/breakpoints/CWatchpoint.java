@@ -108,12 +108,12 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	}
 
 	public String getMemorySpace() throws CoreException {
-		return ensureMarker().getAttribute( MEMORYSPACE, "" );
+		return ensureMarker().getAttribute( MEMORYSPACE, "" ); //$NON-NLS-1$
 	}
 
 	public BigInteger getRange() throws CoreException {
-		String attr = ensureMarker().getAttribute( RANGE, "0" );
-		return new BigInteger( attr.length() > 0 ? attr : "0" );
+		String attr = ensureMarker().getAttribute( RANGE, "0" ); //$NON-NLS-1$
+		return new BigInteger( attr.length() > 0 ? attr : "0" ); //$NON-NLS-1$
 	}
 
 }

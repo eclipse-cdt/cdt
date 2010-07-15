@@ -184,13 +184,13 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			data.grabExcessHorizontalSpace = false;
 			data.grabExcessVerticalSpace = false;
 			editLookupButton.setLayoutData(data);
-			editLookupButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.5" )); 
+			editLookupButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.5" ));  //$NON-NLS-1$
 			editLookupButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					editSourceLookupPath();
 				}
 			});
-			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON); //$NON-NLS-1$
+			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON);
 			
 		}
 		syncButtons();

@@ -549,9 +549,9 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 							IStatus.ERROR, 
 							ManagedBuilderCorePlugin.getUniqueIdentifier(), 
 							IStatus.OK, 
-							"Cannot get OptionToSet for option " + 
-								option.getId() + " @ holder " + 
-								option.getOptionHolder().getId() + "\nI'm holder " +
+							"Cannot get OptionToSet for option " +  //$NON-NLS-1$
+								option.getId() + " @ holder " +  //$NON-NLS-1$
+								option.getOptionHolder().getId() + "\nI'm holder " + //$NON-NLS-1$
 								getId(),
 							null)							
 					);

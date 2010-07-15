@@ -12,6 +12,6 @@ package org.eclipse.cdt.debug.mi.ui.console.actions;
 
 public interface IMiConsoleImagesConst {
 
-	public static final String IMG_SAVE_CONSOLE = "icons/obj16/save_console.gif";
-	public static final String IMG_VERBOSE_CONSOLE = "icons/obj16/verbose_mode_co.gif";
+	public static final String IMG_SAVE_CONSOLE = "icons/obj16/save_console.gif"; //$NON-NLS-1$
+	public static final String IMG_VERBOSE_CONSOLE = "icons/obj16/verbose_mode_co.gif"; //$NON-NLS-1$
 }

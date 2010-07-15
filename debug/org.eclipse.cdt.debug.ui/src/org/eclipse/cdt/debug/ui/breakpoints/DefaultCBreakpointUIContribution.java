@@ -147,7 +147,7 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 
 	@Override
 	public String toString() {
-		return attId + " " + attLabel;
+		return attId + " " + attLabel; //$NON-NLS-1$
 	}
 
 	public String getFieldEditorClassName() {

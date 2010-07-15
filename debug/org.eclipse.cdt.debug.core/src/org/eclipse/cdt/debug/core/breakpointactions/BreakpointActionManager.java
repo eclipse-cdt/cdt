@@ -103,7 +103,7 @@ public class BreakpointActionManager {
 		if (breakpoint != null) {
 			IMarker marker = breakpoint.getMarker();
 			String actionNames = marker.getAttribute(BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
-			final String[] actions = actionNames.split(",");
+			final String[] actions = actionNames.split(","); //$NON-NLS-1$
 			if (actions.length > 0){
 				Job job = new Job("Execute breakpoint actions") { 
 					public IStatus run(final IProgressMonitor monitor) {

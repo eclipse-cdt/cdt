@@ -77,7 +77,7 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 		}
 		
 		Map macros = new HashMap(template.getValueStore());
-		macros.put("exe", Platform.getOS().equals(Platform.OS_WIN32) ? ".exe" : ""); //$NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+		macros.put("exe", Platform.getOS().equals(Platform.OS_WIN32) ? ".exe" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 		fileContents = replaceMacros(fileContents, macros);
 		contents = new ByteArrayInputStream(fileContents.getBytes());
@@ -95,8 +95,8 @@ public class SimpleMakefileGenerator extends ProcessRunner {
 		}
 	}
 
-	private static final String START = "{{";
-	private static final String END = "}}";
+	private static final String START = "{{"; //$NON-NLS-1$
+	private static final String END = "}}"; //$NON-NLS-1$
 	
 	private String replaceMacros(String fileContents, Map valueStore) {
 		StringBuffer buffer = new StringBuffer(fileContents);

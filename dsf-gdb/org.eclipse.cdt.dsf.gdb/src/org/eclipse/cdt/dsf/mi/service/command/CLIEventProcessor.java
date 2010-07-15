@@ -282,6 +282,25 @@ public class CLIEventProcessor
         int type = getSteppingOperationKind(operation);
         return type != -1;
     }
+    
+    /**
+     * Return true if the operation is a attaching operation.
+     * 
+     * @param operation
+     * @return
+     * @since 3.1
+     */
+    public static boolean isAttachingOperation(String operation) {
+        // Get the command name.
+        int indx = operation.indexOf(' ');
+        if (indx != -1) {
+            operation = operation.substring(0, indx).trim();
+        } else {
+            operation = operation.trim();
+        }
+    	/* attach: at, att, atta, attac, attach */
+    	return (operation.startsWith("at") && "attach".indexOf(operation) != -1); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
     private boolean isSettingBreakpoint(String operation) {
         boolean isbreak = false;

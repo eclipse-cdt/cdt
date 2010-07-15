@@ -506,7 +506,7 @@ public final class SteppingController {
 	 * 
 	 * @param execCtx
 	 */
-	private void enableStepping(final IExecutionDMContext execCtx) {
+	public void enableStepping(final IExecutionDMContext execCtx) {
         fStepInProgress.remove(execCtx);
 		for (IExecutionDMContext disabledCtx : fStepInProgress.keySet()) {
 			if (DMContexts.isAncestorOf(disabledCtx, execCtx)) {
@@ -550,32 +550,41 @@ public final class SteppingController {
     @DsfServiceEventHandler 
     public void eventDispatched(final ISuspendedDMEvent e) {
         // Take care of the stepping time out
-        fTimedOutFlags.remove(e.getDMContext());
-        ScheduledFuture<?> future = fTimedOutFutures.remove(e.getDMContext()); 
+        IExecutionDMContext dmc = e.getDMContext();
+		boolean timedout = fTimedOutFlags.remove(dmc) == Boolean.TRUE;
+        ScheduledFuture<?> future = fTimedOutFutures.remove(dmc); 
         if (future != null) future.cancel(false);
         
-        // Check if there's a step pending, if so execute it
-        processStepQueue(e.getDMContext());
+        if (timedout || e.getReason() != StateChangeReason.STEP) {
+        	// after step timeout or any other suspend reason do not process queued steps
+        	fStepQueues.remove(dmc);
+        } else {
+        	// Check if there's a step pending, if so execute it
+        	processStepQueue(dmc);
+        }
     }
 
     @DsfServiceEventHandler 
     public void eventDispatched(final IResumedDMEvent e) {
         if (e.getReason().equals(StateChangeReason.STEP)) {
-            fTimedOutFlags.put(e.getDMContext(), Boolean.FALSE);
+            final IExecutionDMContext dmc = e.getDMContext();
+            fTimedOutFlags.put(dmc, Boolean.FALSE);
             // We shouldn't have a stepping timeout running unless we get two 
             // stepping events in a row without a suspended, which would be a 
             // protocol error.
-            assert !fTimedOutFutures.containsKey(e.getDMContext());
+            assert !fTimedOutFutures.containsKey(dmc);
             fTimedOutFutures.put(
-                e.getDMContext(), 
+                dmc, 
                 getExecutor().schedule(
                     new DsfRunnable() { public void run() {
-                        fTimedOutFutures.remove(e.getDMContext());
+						fTimedOutFutures.remove(dmc);
 
                         if (getSession().isActive()) {
+                            fTimedOutFlags.put(dmc, Boolean.TRUE);
+                            enableStepping(dmc);
                             // Issue the stepping time-out event.
                             getSession().dispatchEvent(
-                                new SteppingTimedOutEvent(e.getDMContext()), 
+                                new SteppingTimedOutEvent(dmc), 
                                 null);
                         }
                     }},
@@ -584,11 +593,4 @@ public final class SteppingController {
             
         } 
     }    
-
-    @DsfServiceEventHandler 
-    public void eventDispatched(SteppingTimedOutEvent e) {
-        fTimedOutFlags.put(e.getDMContext(), Boolean.TRUE);
-        enableStepping(e.getDMContext());
-    }
-    
 }

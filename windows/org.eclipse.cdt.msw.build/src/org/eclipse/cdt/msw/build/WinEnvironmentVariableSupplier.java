@@ -11,6 +11,8 @@ import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSu
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.envvar.IProjectEnvironmentVariableSupplier;
 import org.eclipse.cdt.utils.WindowsRegistry;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author DSchaefer
@@ -19,7 +21,9 @@ import org.eclipse.cdt.utils.WindowsRegistry;
 public class WinEnvironmentVariableSupplier
 	implements IConfigurationEnvironmentVariableSupplier, IProjectEnvironmentVariableSupplier {
 	
-	private Map<String, IBuildEnvironmentVariable> envvars;
+	private static Map<String, IBuildEnvironmentVariable> envvars;
+	private static String sdkDir;
+	private static String vcDir;
 	
 	private static class WindowsBuildEnvironmentVariable implements IBuildEnvironmentVariable {
 		
@@ -51,63 +55,74 @@ public class WinEnvironmentVariableSupplier
 
 	}
 
+	public WinEnvironmentVariableSupplier() {
+		initvars();
+	}
+	
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IManagedProject project, IEnvironmentVariableProvider provider) {
-		if (envvars == null)
-			initvars();
 		return envvars.get(variableName);
 	}
 	
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		if (envvars == null)
-			initvars();
 		return envvars.get(variableName);
 	}
 
 	public IBuildEnvironmentVariable[] getVariables(IManagedProject project,
 			IEnvironmentVariableProvider provider) {
-		if (envvars == null)
-			initvars();
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
 	}
 	
 	public IBuildEnvironmentVariable[] getVariables(
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		if (envvars == null)
-			initvars();
 		return envvars.values().toArray(new IBuildEnvironmentVariable[envvars.size()]);
 	}
 	
-	private void addvar(IBuildEnvironmentVariable var) {
-		envvars.put(var.getName(), var);
-	}
-	
-	public static String getSDKDir() {
+	private static String getSDKDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
 		return reg.getLocalMachineValue("SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v7.0", "InstallationFolder");
 	}
 	
-	public static String getVCDir() {
+	private static String getVCDir() {
 		WindowsRegistry reg = WindowsRegistry.getRegistry();
 		return reg.getLocalMachineValue("SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VC7", "9.0");
 	}
 	
-	private void initvars() {
+	public static IPath[] getIncludePath() {
+		// Include paths
+		if (sdkDir != null) {
+			return new IPath[] {
+				new Path(vcDir.concat("Include")),
+				new Path(sdkDir.concat("Include")),
+				new Path(sdkDir.concat("Include\\gl"))
+			};
+		} else
+			return new IPath[0];
+	}
+	
+	private static void addvar(IBuildEnvironmentVariable var) {
+		envvars.put(var.getName(), var);
+	}
+	
+	private static synchronized void initvars() {
+		if (envvars != null)
+			return;
 		envvars = new HashMap<String, IBuildEnvironmentVariable>();
 		
 		// The SDK Location
-		String sdkDir = getSDKDir();
+		sdkDir = getSDKDir();
 		if (sdkDir == null)
 			return;
 		
-		String vcDir = getVCDir();
+		vcDir = getVCDir();
 		
 		// INCLUDE
 		StringBuffer buff = new StringBuffer();
-		buff.append(vcDir).append("Include;");
-		buff.append(sdkDir).append("Include;");
-		buff.append(sdkDir).append("Include\\gl;");
+		IPath includePaths[] = getIncludePath();
+		for (IPath path : includePaths) {
+			buff.append(path.toOSString()).append(';');
+		}
 		addvar(new WindowsBuildEnvironmentVariable("INCLUDE", buff.toString(), IBuildEnvironmentVariable.ENVVAR_PREPEND));
 
 		// LIB

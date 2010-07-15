@@ -8,7 +8,6 @@ import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscovere
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
@@ -21,17 +20,7 @@ public class WinDiscoveredPathInfo implements IDiscoveredPathInfo {
 	
 	public WinDiscoveredPathInfo() {
 		// Include paths
-		String sdkDir = WinEnvironmentVariableSupplier.getSDKDir();
-		if (sdkDir != null) {
-			String vcDir = WinEnvironmentVariableSupplier.getVCDir();
-			paths = new IPath[] {
-				new Path(vcDir.concat("Include")),
-				new Path(vcDir.concat("Include\\Sys")),
-				new Path(sdkDir.concat("Include")),
-				new Path(sdkDir.concat("Include\\gl"))
-			};
-		} else
-			paths = new IPath[0];
+		paths = WinEnvironmentVariableSupplier.getIncludePath();
 				
 		symbols.put("_M_IX86", "600");
 		symbols.put("_WIN32", "1");

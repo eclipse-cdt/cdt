@@ -20,7 +20,6 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.cdt.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;

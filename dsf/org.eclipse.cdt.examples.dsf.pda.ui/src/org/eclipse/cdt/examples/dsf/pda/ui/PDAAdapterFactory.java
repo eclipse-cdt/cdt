@@ -14,7 +14,6 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.launch.PDALaunch;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.ui.contexts.ISuspendTrigger;

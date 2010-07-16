@@ -33,8 +33,6 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
-import org.eclipse.cdt.managedbuilder.internal.core.InputType;
-import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;

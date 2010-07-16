@@ -29,7 +29,6 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;

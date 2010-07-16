@@ -23,7 +23,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIVersion;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.Display;
 
 
 /**

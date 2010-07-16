@@ -27,7 +27,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.preference.ListEditor;
 
 /**
  * @author Peter Graves

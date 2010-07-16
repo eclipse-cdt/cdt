@@ -82,6 +82,7 @@ public interface IManagedBuildInfo {
 	 * 
 	 * @deprecated - use generateToolCommandLineInfo instead
 	 */
+	@Deprecated
 	public IManagedCommandLineInfo generateCommandLineInfo( String sourceExtension, String[] flags, 
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources );
 
@@ -219,6 +220,7 @@ public interface IManagedBuildInfo {
 	 * 
 	 * @deprecated - use getToolFlagsForConfiguration
 	 */
+	@Deprecated
 	public String getFlagsForConfiguration(String extension);
 	
 	/**
@@ -255,6 +257,7 @@ public interface IManagedBuildInfo {
 	 * 
 	 * @deprecated - use getToolFlagsForSource
 	 */
+	@Deprecated
 	public String getFlagsForSource(String extension);
 
 	/**

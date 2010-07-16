@@ -110,6 +110,7 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	 * @return IConfigurationElement
 	 * @deprecated - use getBuildFileGenerator() instead
 	 */
+	@Deprecated
 	public IConfigurationElement getBuildFileGeneratorElement();
 	
 	/**
@@ -204,6 +205,7 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setBuildFileGeneratorElement(IConfigurationElement element);
 
 	/**

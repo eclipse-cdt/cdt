@@ -287,6 +287,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @return List
 	 * @deprecated - use getPrimaryInputExtensions or getAllInputExtensions
 	 */
+	@Deprecated
 	public List getInputExtensions();
 	
 	/**
@@ -328,6 +329,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @return List
 	 * @deprecated - use getDependency* methods
 	 */
+	@Deprecated
 	public List getInterfaceExtensions();
 
 	/**
@@ -364,6 +366,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @return <code>String[]</code> of extensions
 	 * @deprecated - use getAllOutputExtensions
 	 */
+	@Deprecated
 	public String[] getOutputExtensions();
 	
 	/**
@@ -516,6 +519,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @return IManagedDependencyGenerator
 	 * @deprecated - use getDependencyGeneratorForExtension or IInputType method
 	 */
+	@Deprecated
 	public IManagedDependencyGenerator getDependencyGenerator();
 	
 	/**
@@ -545,6 +549,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * 
 	 * @deprecated - use getToolCommandFlags instead
 	 */
+	@Deprecated
 	public String[] getCommandFlags() throws BuildException;
 	
 	/**
@@ -561,6 +566,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * 
 	 * @deprecated - use getToolCommandFlagsString instead
 	 */
+	@Deprecated
 	public String getToolFlags() throws BuildException ;
 	
 	/**

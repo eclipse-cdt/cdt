@@ -58,6 +58,7 @@ public interface IHoldsOptions extends IBuildObject {
 	 * @return <code>IOption</code>
 	 * @deprecated use getOptionById() instead
 	 */
+	@Deprecated
 	public IOption getOption(String id);
 
 	/**

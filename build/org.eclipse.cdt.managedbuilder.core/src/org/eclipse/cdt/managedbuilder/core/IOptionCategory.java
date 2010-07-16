@@ -49,6 +49,7 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * @deprecated since 3.1 - use getOption with IHoldsOptions aregument instead
 	 */
+	@Deprecated
 	public Object[][] getOptions(IConfiguration configuration);
 
 	/**
@@ -67,6 +68,7 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * @deprecated since 3.1 - use getOption with IHoldsOptions aregument instead
 	 */
+	@Deprecated
 	public Object[][] getOptions(IResourceConfiguration resConfig);
 
 	/**
@@ -84,6 +86,7 @@ public interface IOptionCategory extends IBuildObject {
 	 * @return
 	 * @deprecated since 3.0 - use getOptionHolder() instead
 	 */
+	@Deprecated
 	public ITool getTool();
 
 	/**

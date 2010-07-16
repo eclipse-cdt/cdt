@@ -100,6 +100,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @return String
 	 * @deprecated  Use getBinaryParserList
 	 */
+	@Deprecated
 	public String getBinaryParserId();
 
 	/**
@@ -115,6 +116,7 @@ public interface ITargetPlatform extends IBuildObject {
 	 * @param id
 	 * @deprecated  Use setBinaryParserList
 	 */
+	@Deprecated
 	public void setBinaryParserId(String id);
 
 	/**

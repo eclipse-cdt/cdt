@@ -35,6 +35,7 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * @deprecated - use setBuildString(BUILD_LOCATION...)
 	 */
+	@Deprecated
 	void setBuildLocation(IPath location) throws CoreException;
 	
 	boolean isStopOnError();
@@ -55,6 +56,7 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * @deprecated - use setBuildString(BUILD_COMMAND...)
 	 */
+	@Deprecated
 	void setBuildCommand(IPath command) throws CoreException;
 
 	String getBuildArguments();
@@ -62,6 +64,7 @@ public interface IMakeCommonBuildInfo {
 	/**
 	 * @deprecated - use setBuildString(BUILD_ARGUMENTS...)
 	 */
+	@Deprecated
 	void setBuildArguments(String args) throws CoreException;
 
 	String[] getErrorParsers();

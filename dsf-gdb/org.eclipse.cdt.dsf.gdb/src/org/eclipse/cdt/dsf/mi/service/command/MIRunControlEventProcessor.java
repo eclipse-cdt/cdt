@@ -360,7 +360,9 @@ public class MIRunControlEventProcessor
             		// It is important to limit this to runControl operations (e.g., 'next', 'continue', 'jump')
             		// There are other CLI commands that we use that could still be sent when the target is considered
             		// running, due to timing issues.
-            		if (CLIEventProcessor.isSteppingOperation(((CLICommand<?>)cmd).getOperation())) {
+            		boolean isAttachingOperation = isAttachingOperation(((CLICommand<?>)cmd).getOperation());
+            		boolean isSteppingOperation = CLIEventProcessor.isSteppingOperation(((CLICommand<?>)cmd).getOperation());
+            		if (isSteppingOperation || isAttachingOperation) {
             			IRunControl runControl = fServicesTracker.getService(IRunControl.class);
             			IMIProcesses procService = fServicesTracker.getService(IMIProcesses.class);
             			if (runControl != null && procService != null) {
@@ -369,7 +371,10 @@ public class MIRunControlEventProcessor
             				IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
             				IContainerDMContext processContainerDmc = procService.createContainerContext(procDmc, groupId);
 
-            				if (runControl.isSuspended(processContainerDmc) == false) {
+            				// An attaching operation is debugging a new inferior and always stops it.
+            				// We should not check that the container is suspended, because at startup, we are considered
+            				// suspended, even though we can get a *stopped event.
+            				if (isAttachingOperation || runControl.isSuspended(processContainerDmc) == false) {
             					MIEvent<?> event = MIStoppedEvent.parse(processContainerDmc, id, rr.getMIResults());
             					fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
             				}
@@ -378,5 +383,17 @@ public class MIRunControlEventProcessor
             	}
             }
         }
+    }
+    
+    private static boolean isAttachingOperation(String operation) {
+        // Get the command name.
+        int indx = operation.indexOf(' ');
+        if (indx != -1) {
+            operation = operation.substring(0, indx).trim();
+        } else {
+            operation = operation.trim();
+        }
+    	/* attach: at, att, atta, attac, attach */
+    	return (operation.startsWith("at") && "attach".indexOf(operation) != -1); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

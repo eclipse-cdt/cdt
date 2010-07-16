@@ -182,6 +182,12 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		new HashMap<IBreakpointsTargetDMContext, Map<IBreakpoint, List<TargetBP>>>();
 
 	/**
+	 * BreakpointsTargetDMContext's that are being removed from {@link #fPlatformBPs}.
+	 * See where this is used for more.
+	 */
+	private List<IBreakpointsTargetDMContext>	fBPTargetDMCsBeingRemoved = new ArrayList<IBreakpoints.IBreakpointsTargetDMContext>();
+	
+	/**
 	 * Mapping of platform breakpoints to all their attributes (standard ones and
 	 * extended ones) from UI. This will be used to check what attributes have
 	 * changed for a breakpoint when the breakpoint is changed. The map is <br>
@@ -358,8 +364,8 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		// We need to use a background thread for this operation because we are 
 		// accessing the resources system to retrieve the breakpoint attributes.
 		// Accessing the resources system potentially requires using global locks.
-		// Also we will be calling IBreakpointAttributeTranslator which is prohibited
-		// from being called on the session executor thread.
+		// Also we will be calling some IBreakpointAttributeTranslator2 methods 
+        // that are prohibited from being called on the session executor thread.
 		new Job("Install initial breakpoint list.") { //$NON-NLS-1$
             { setSystem(true); }
 
@@ -379,16 +385,31 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
      * @param rm Completion callback.
      */
     public void stopTrackingBreakpoints(final IBreakpointsTargetDMContext dmc, final RequestMonitor rm) {
-        // - Remove the target breakpoints for the given execution context
-        // - Update the maps
-
-    	// Remove the breakpoints for given DMC from the internal maps.
+        // - Remove the target breakpoints for the given DMC
+    	// - Remove the given DMC from the internal maps.
+        //
         Map<IBreakpoint, List<TargetBP>> platformBPs = fPlatformBPs.get(dmc);
-        if (platformBPs == null || platformBPs.size() == 0) {
+        if (platformBPs == null) {
             rm.setStatus(new Status(IStatus.INFO /* NOT error */, getPluginID(), INTERNAL_ERROR, "Breakpoints not installed for given context", null)); //$NON-NLS-1$
             rm.done();
             return;
         }
+        
+        if (platformBPs.size() == 0) {
+            fPlatformBPs.remove(dmc);	// dmc tracked but no bps installed for it.
+            rm.done();
+            return;
+        }
+
+        // The stopTrackingBreakpoints() may be called twice for the same DMC 
+        // on debugger termination (one on process death and one on debugger shutdown).
+        // This is to prevent double killing.
+        if (fBPTargetDMCsBeingRemoved.contains(dmc)) { // "stop" is already underway
+        	rm.done();
+        	return;
+        }
+        
+        fBPTargetDMCsBeingRemoved.add(dmc);
         
         // Just remove the IBreakpoints installed for the "dmc".
         final IBreakpoint[] bps = platformBPs.keySet().toArray(new IBreakpoint[platformBPs.size()]);
@@ -396,11 +417,19 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		new Job("Uninstall target breakpoints list.") { //$NON-NLS-1$
             { setSystem(true); }
 
-			// Get the stored breakpoints from the platform BreakpointManager
-			// and install them on the target
         	@Override
             protected IStatus run(IProgressMonitor monitor) {
-        		doBreakpointsRemoved(bps, dmc, rm);
+        		doBreakpointsRemoved(bps, dmc, new RequestMonitor(getExecutor(), rm){
+					@Override
+					protected void handleCompleted() {
+						// Regardless of success or failure in removing the breakpoints,
+						// we should stop tracking breakpoints for the "dmc" by removing it
+						// from the map.
+						fPlatformBPs.remove(dmc);
+						fBPTargetDMCsBeingRemoved.remove(dmc);
+						
+						super.handleCompleted();
+					}});
                 return Status.OK_STATUS;
             }
         }.schedule();    
@@ -531,14 +560,17 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		}
 	}
 
-    /**
-     * Un-install an individual breakpoint on the back-end. For one platform
-     * breakpoint, there could be multiple corresponding back-end breakpoints.
-     * 
-     * @param dmc
-     * @param breakpoint
-     * @param drm
-     */
+	/**
+	 * Un-install an individual breakpoint on the back-end. For one platform
+	 * breakpoint, there could be multiple corresponding back-end breakpoints.
+	 * 
+	 * @param dmc
+	 *            the context for which to remove the breakpoint.
+	 * @param breakpoint
+	 * @param drm
+	 *            contains list of Target breakpoints that are removed
+	 *            regardless of success or failure in the removal.
+	 */
     private void uninstallBreakpoint(final IBreakpointsTargetDMContext dmc, final IBreakpoint breakpoint, 
         final DataRequestMonitor<List<TargetBP>> drm)
     {
@@ -576,6 +608,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
         				new RequestMonitor(getExecutor(), countingRm) {
         					@Override
         					protected void handleCompleted() {
+        						// Remember result of the removal, success or failure.
         				        bp.setStatus(getStatus());
         				        if (isSuccess()) {
             						bp.setTargetBreakpoint(null);

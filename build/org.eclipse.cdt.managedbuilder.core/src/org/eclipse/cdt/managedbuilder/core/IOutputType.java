@@ -218,7 +218,6 @@ public interface IOutputType extends IBuildObject {
 	 * Sets the pattern, using the Gnu pattern rule syntax, for deriving the 
 	 * output resource name from the input resource name.
 	 * 
-	 * @return pattern
 	 */
 	public void setNamePattern(String pattern);
 	
@@ -243,7 +242,6 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Sets the name of the build variable associated this this output type's resources.
 	 * 
-	 * @return variableName
 	 */
 	public void setBuildVariable(String variableName);
 

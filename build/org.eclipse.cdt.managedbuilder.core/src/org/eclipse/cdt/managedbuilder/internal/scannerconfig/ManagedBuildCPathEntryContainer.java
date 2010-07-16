@@ -236,7 +236,6 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	
  	/**
  	 * @param values
- 	 * @return
  	 */
  	private void addEntries(IPathEntry[] values) {
  		if (values == null) return;

@@ -115,7 +115,6 @@ public interface IHoldsOptions extends IBuildObject {
 	 * list of Option Categories. 
 	 * 
 	 * @param category  The option category to be added
-	 * @return
 	 */
 	public void addOptionCategory(IOptionCategory category);
 	
@@ -139,7 +138,6 @@ public interface IHoldsOptions extends IBuildObject {
 	 * the new option. 
 	 *
 	 * @param IHoldsOptions The superClass 
-	 * @return 
 	 * @since 3.0
 	 */
 	public void createOptions(IHoldsOptions superClass);

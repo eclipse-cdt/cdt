@@ -48,7 +48,7 @@ public class Command extends Directive implements ICommand {
 	}
 
 	/**
-	 * @    If the command prefix contains an at sign and the
+	 * '@'    If the command prefix contains an at sign and the
 	 * command-line -n option is not specified, or the -s option is
 	 * present, or the special target .SILENT has either the current
 	 * target as a prerequisite or has no prerequisites, the command

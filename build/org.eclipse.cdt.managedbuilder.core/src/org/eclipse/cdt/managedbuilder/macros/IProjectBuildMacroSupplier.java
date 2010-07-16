@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 public interface IProjectBuildMacroSupplier {
 	/**
 	 *
-	 * @ macroName the macro name
+	 * @param macroName the macro name
 	 * @param project the instance of the managed project
 	 * @param provider the instance of the build macro provider to be used for querying the
 	 * build macros from within the supplier. The supplier should use this provider to obtain

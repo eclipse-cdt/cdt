@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 public interface IConfigurationBuildMacroSupplier {
 	/**
 	 *
-	 * @ macroName the macro name
+	 * @param macroName the macro name
 	 * @param configuration configuration
 	 * @param provider the instance of the build macro provider to be used for querying the
 	 * build macros from within the supplier. The supplier should use this provider to obtain

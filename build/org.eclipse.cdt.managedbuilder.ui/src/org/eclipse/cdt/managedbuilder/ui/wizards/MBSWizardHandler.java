@@ -634,9 +634,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	
 	/**
 	 * Mark preferred toolchains with specific images
-	 * @
 	 */
-	
 	@Override
 	public void updatePreferred(List<String> prefs) {
 		preferredTCs.clear();

@@ -30,5 +30,8 @@
          <viewShortcut id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"/>
       </perspectiveExtension>
    </extension>
-
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowserPreferenceInitializer"/>
+   </extension>
 </plugin>

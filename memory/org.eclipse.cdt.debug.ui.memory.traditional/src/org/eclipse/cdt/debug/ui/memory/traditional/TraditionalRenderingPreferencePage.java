@@ -42,14 +42,14 @@ public class TraditionalRenderingPreferencePage
 	public TraditionalRenderingPreferencePage() {
 		super(GRID);
 		setPreferenceStore(TraditionalRenderingPlugin.getDefault().getPreferenceStore());
-		setDescription(TraditionalRenderingMessages.getString("TraditionalRendering.MEMORYRENDERING_NAME")); //$NON-NLS-1$
+		setDescription("Traditional Memory Rendering");
 	}
 	
 	
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), TraditionalRenderingPlugin.getUniqueIdentifier() + ".TraditionalRenderingPreferencePage_context"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), TraditionalRenderingPlugin.getUniqueIdentifier() + ".TraditionalRenderingPreferencePage_context");
 	}
 
 

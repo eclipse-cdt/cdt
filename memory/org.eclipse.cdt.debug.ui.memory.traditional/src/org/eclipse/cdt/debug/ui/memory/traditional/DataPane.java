@@ -338,40 +338,43 @@ public class DataPane extends AbstractPane
    protected  void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
     {
 	   // TODO consider adding finer granularity?
-	   boolean anyByteEditing = false;
-	   for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-		   if(bytes[n].isEdited())
-			   anyByteEditing = true;
-
-	   if(isOdd(col))
-		   gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-	   else
-		   gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-	   gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
-
-	   if(anyByteEditing)
-	   {
-		   gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
-	   }
-	   else
-	   {
-		   boolean isColored = false;
-		   for(int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
-		   {
-			   // TODO consider adding finer granularity?
-			   for(int n = 0; n < bytes.length; n++)
-			   {
-				   if(bytes[n].isChanged(i))
-				   {
-					   if(i == 0)
-						   gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
-					   else
-						   gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
-					   isColored = true;
-					   break;
-				   }
-			   }
-		   }   
-	   }
+       boolean anyByteEditing = false;
+       for(int n = 0; n < bytes.length && !anyByteEditing; n++)
+       	if(bytes[n] instanceof TraditionalMemoryByte)
+       		if(((TraditionalMemoryByte) bytes[n]).isEdited())
+       			anyByteEditing = true;
+        
+        if(isOdd(col))
+    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+    	else
+    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+        
+        if(anyByteEditing)
+        {
+        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+        }
+        else
+        {
+        	boolean isColored = false;
+        	for(int i = 0; i < fRendering.getHistoryDepth() && !isColored; i++)
+        	{
+	        	// TODO consider adding finer granularity?
+	            for(int n = 0; n < bytes.length; n++)
+	            {
+	                if(bytes[n].isChanged(i))
+	                {
+	                	if(i == 0)
+	                		gc.setForeground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+	                	else
+	                		gc.setBackground(fRendering.getTraditionalRendering().getColorsChanged()[i]);
+	                	isColored = true;
+	                	break;
+	                }
+	            }
+        	}   
+        }
+        
     }
+
 }

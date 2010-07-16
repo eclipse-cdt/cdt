@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -53,21 +53,17 @@ public class PlainTextImporter implements IMemoryImporter {
 	
 	private Text fStartText;
 	private Text fFileText;
-	
-//	private Button fComboRestoreToThisAddress;
-//	private Button fComboRestoreToFileAddress;
-	
 	private Button fScrollToBeginningOnImportComplete;
 	
 	private IMemoryBlock fMemoryBlock;
 	
 	private ImportMemoryDialog fParentDialog;
 	
-	private Properties fProperties;
+	private IDialogSettings fProperties;
 	
 	private static final int BUFFER_LENGTH = 64 * 1024;
 	
-	public Control createControl(final Composite parent, IMemoryBlock memBlock, Properties properties, ImportMemoryDialog parentDialog)
+	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ImportMemoryDialog parentDialog)
 	{
 		fMemoryBlock = memBlock;
 		fParentDialog = parentDialog;
@@ -79,12 +75,13 @@ public class PlainTextImporter implements IMemoryImporter {
 		{
 			public void dispose()
 			{
-				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
-				fProperties.setProperty(TRANSFER_START, fStartText.getText());
-				fProperties.setProperty(TRANSFER_SCROLL_TO_START, fScrollToStart.toString());
+				fProperties.put(TRANSFER_FILE, fFileText.getText());
+				fProperties.put(TRANSFER_START, fStartText.getText());
+				fProperties.put(TRANSFER_SCROLL_TO_START, fScrollToBeginningOnImportComplete.getSelection());
 				
 				fStartAddress = getStartAddress();
 				fInputFile = getFile();
+				fScrollToStart = getScrollToStart();
 				
 				super.dispose();
 			}
@@ -109,9 +106,9 @@ public class PlainTextImporter implements IMemoryImporter {
 //		fComboRestoreToThisAddress.setLayoutData(data);
 		
 		Label labelStartText = new Label(composite, SWT.NONE);
-		labelStartText.setText("Restore to address: ");
+		labelStartText.setText(Messages.getString("PlainTextImporter.RestoreAddress")); //$NON-NLS-1$
 		
-		fStartText = new Text(composite, SWT.NONE);
+		fStartText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 //		data.top = new FormAttachment(fComboRestoreToFileAddress);
 		data.left = new FormAttachment(labelStartText);
@@ -121,10 +118,10 @@ public class PlainTextImporter implements IMemoryImporter {
 		// file
 		
 		Label fileLabel = new Label(composite, SWT.NONE);
-		fFileText = new Text(composite, SWT.NONE);
+		fFileText = new Text(composite, SWT.BORDER);
 		Button fileButton = new Button(composite, SWT.PUSH);
 		
-		fileLabel.setText("File name: "); 
+		fileLabel.setText(Messages.getString("Importer.File"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fileButton, 0, SWT.CENTER);
 		fileLabel.setLayoutData(data);
@@ -135,23 +132,17 @@ public class PlainTextImporter implements IMemoryImporter {
 		data.width = 300;
 		fFileText.setLayoutData(data);
 		
-		fileButton.setText("Browse...");
+		fileButton.setText(Messages.getString("Importer.Browse")); //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fStartText);
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
 		
-		fFileText.setText(properties.getProperty(TRANSFER_FILE, ""));
-		fScrollToStart = new Boolean(properties.getProperty(TRANSFER_SCROLL_TO_START, "true"));
-		try
-		{
-			fStartText.setText(properties.getProperty(TRANSFER_START));
-		}
-		catch(IllegalArgumentException e)
-		{
-			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-		    	DebugException.INTERNAL_ERROR, "Failure", e));
-		}
+		String textValue = fProperties.get(TRANSFER_FILE);
+		fFileText.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
+
+		textValue = fProperties.get(TRANSFER_START);
+		fStartText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
 		
 		fileButton.addSelectionListener(new SelectionListener() {
 
@@ -162,9 +153,9 @@ public class PlainTextImporter implements IMemoryImporter {
 
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
-				dialog.setText("Choose memory import file");
-				dialog.setFilterExtensions(new String[] { "*.*;*" } );
-				dialog.setFilterNames(new String[] { "All Files" } );
+				dialog.setText(Messages.getString("PlainTextImporter.ChooseFile")); //$NON-NLS-1$
+				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
+				dialog.setFilterNames(new String[] { Messages.getString("Importer.AllFiles") } ); //$NON-NLS-1$
 				dialog.setFileName(fFileText.getText());
 				dialog.open();
 			
@@ -207,10 +198,12 @@ public class PlainTextImporter implements IMemoryImporter {
 		});
 		
 		fScrollToBeginningOnImportComplete = new Button(composite, SWT.CHECK);
-		fScrollToBeginningOnImportComplete.setText("Scroll to File Start Address");
+		fScrollToBeginningOnImportComplete.setText(Messages.getString("PlainTextImporter.ScrollToStart")); //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fileButton);
 		fScrollToBeginningOnImportComplete.setLayoutData(data);
+		final boolean scrollToStart = fProperties.getBoolean(TRANSFER_SCROLL_TO_START); 
+		fScrollToBeginningOnImportComplete.setSelection(scrollToStart);
 		
 		composite.pack();
 		parent.pack();
@@ -251,7 +244,7 @@ public class PlainTextImporter implements IMemoryImporter {
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -265,12 +258,12 @@ public class PlainTextImporter implements IMemoryImporter {
 	
 	public String getId()
 	{
-		return "PlainTextImporter";
+		return "PlainTextImporter"; //$NON-NLS-1$
 	}
 	
 	public String getName()
 	{
-		return "Plain Text";	
+		return Messages.getString("PlainTextImporter.Name");	 //$NON-NLS-1$
 	}
 	
 	public void importMemory() {
@@ -293,14 +286,14 @@ public class PlainTextImporter implements IMemoryImporter {
 						jobs = jobs.divide(factor);
 					}
 						
-					monitor.beginTask("Transferring Data", jobs.intValue()); //$NON-NLS-1$
+					monitor.beginTask(Messages.getString("Importer.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
 					
 					BigInteger recordAddress = fStartAddress;
 					String line = reader.readLine();
 					int lineNo = 1; // line error reporting
 					while(line != null && !monitor.isCanceled())
 					{
-						StringTokenizer st = new StringTokenizer(line, " ");
+						StringTokenizer st = new StringTokenizer(line, " "); //$NON-NLS-1$
 						int bytesRead = 0;
 						while(st.hasMoreElements())
 						{
@@ -313,7 +306,7 @@ public class PlainTextImporter implements IMemoryImporter {
 									data[i] = new BigInteger(valueString.substring(position++, position++ + 1), 16).byteValue();
 								} catch (NumberFormatException ex) {
 									return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-									    	DebugException.REQUEST_FAILED, String.format("Invalid file format. Expected integer at line %d", lineNo ), ex);
+									    	DebugException.REQUEST_FAILED, String.format(Messages.getString("PlainTextImporter.ErrInvalidFormat"), lineNo ), ex); //$NON-NLS-1$
 								}
 							}
 							
@@ -344,24 +337,24 @@ public class PlainTextImporter implements IMemoryImporter {
 					reader.close();
 					monitor.done();
 					
-					if(fProperties.getProperty(TRANSFER_SCROLL_TO_START, "false").equals("true"))
+					if (fScrollToStart)
 						fParentDialog.scrollRenderings(scrollToAddress);
 				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, "Could not read from file.", ex));
+							DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrReadFile"), ex));  //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.REQUEST_FAILED, "Could not read from file.", ex);
+					    	DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrReadFile"), ex);  //$NON-NLS-1$
 					
 				} catch (DebugException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, "Could not write to target.", ex));	
+							DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrWriteTarget"), ex));	  //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.REQUEST_FAILED, "Could not write to target.", ex);						
+					    	DebugException.REQUEST_FAILED, Messages.getString("Importer.ErrWriteTarget"), ex);						  //$NON-NLS-1$
 				} catch (Exception ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, "Failure importing from file", ex));
+							DebugException.INTERNAL_ERROR, Messages.getString("Importer.FalureImporting"), ex));  //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure importing from file", ex);
+					    	DebugException.INTERNAL_ERROR, Messages.getString("Importer.FalureImporting"), ex);  //$NON-NLS-1$
 				}
 				return Status.OK_STATUS;
 			}};

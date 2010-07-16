@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class BufferedMemoryWriter
 				byte[] dataRemainder = new byte[data.length - length];
 				System.arraycopy(data, length, dataRemainder, 0, data.length - length);
 				data = dataRemainder;
-				address = fBufferStart.add(BigInteger.valueOf(length));
+				address = address.add(BigInteger.valueOf(length));
 			}
 			else if(fBufferStart.add(BigInteger.valueOf(fBufferPosition)).compareTo(address) != 0)
 			{
@@ -51,15 +51,15 @@ public class BufferedMemoryWriter
 			else
 			{
 				int availableBufferLength = fBuffer.length - fBufferPosition;
-				int length = data.length <= fBuffer.length - availableBufferLength 
-					? data.length : fBuffer.length - availableBufferLength;
+				int length = data.length <= availableBufferLength 
+					? data.length : availableBufferLength;
 				System.arraycopy(data, 0, fBuffer, fBufferPosition, length);
 				fBufferPosition += length;
 				
 				byte[] dataRemainder = new byte[data.length - length];
 				System.arraycopy(data, length, dataRemainder, 0, data.length - length);
 				data = dataRemainder;
-				address = fBufferStart.add(BigInteger.valueOf(length));
+				address = address.add(BigInteger.valueOf(length));
 			}
 			
 			if(fBufferPosition == fBuffer.length)

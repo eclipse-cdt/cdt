@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.ui.memory"
       label="%featureName"
-      version="1.2.0.qualifier"
+      version="1.2.1.WRSqualifier"
       provider-name="%providerName">
 
    <description>
@@ -18,12 +18,8 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/galileo"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
-
-   <includes
-         id="org.eclipse.cdt.debug.ui.memory.source"
-         version="0.0.0"/>
 
    <requires>
       <import plugin="org.eclipse.debug.core"/>

@@ -19,10 +19,9 @@
 <extension
       point="org.eclipse.ui.preferencePages">
    <page
-         category="org.eclipse.debug.ui.DebugPreferencePage"
+         category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
          class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
          id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
-         helpContextId="TraditionalRenderingPreferencePage_context"
          name="%page.name"/>
 </extension>
 <extension

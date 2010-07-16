@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,9 @@
 package org.eclipse.cdt.debug.ui.memory.transport;
 
 import java.math.BigInteger;
-import java.util.Properties;
+import java.text.MessageFormat;
 import java.util.Vector;
 
-import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryImporter;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -26,15 +25,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -51,6 +50,10 @@ import org.eclipse.ui.progress.UIJob;
 public class ImportMemoryDialog extends SelectionDialog 
 {
 
+	private static final String IMPORT_SETTINGS = "IMPORT_DIALOG"; //$NON-NLS-1$
+
+	private static final String SELECTED_IMPORTER = "SELECTED_IMPORTER"; //$NON-NLS-1$
+
 	private Combo fFormatCombo;
 	
 	private IMemoryBlock fMemoryBlock;
@@ -60,44 +63,59 @@ public class ImportMemoryDialog extends SelectionDialog
 	private IMemoryImporter fFormatImporters[];
 	private String fFormatNames[];
 	
-	private Properties fProperties = new Properties();
+	private IDialogSettings fProperties = MemoryTransportPlugin.getDefault().getDialogSettings(IMPORT_SETTINGS);
 	
 	private IMemoryRenderingSite fMemoryView;
-
-	private BigInteger fInitialStartAddr;
+	
+	private final String INITIAL_ADDRESS = "Initial address";
 	
 	public ImportMemoryDialog(Shell parent, IMemoryBlock memoryBlock, BigInteger initialStartAddr, IMemoryRenderingSite renderingSite)
 	{
 		super(parent);
-		super.setTitle("Download to Memory");  
+		super.setTitle(Messages.getString("ImportMemoryDialog.Title"));   //$NON-NLS-1$
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fMemoryBlock = memoryBlock;
 		fMemoryView = renderingSite;
-		fInitialStartAddr = initialStartAddr;
+		
+		String initialAddress = fProperties.get(INITIAL_ADDRESS);
+		
+		if ( initialAddress == null ) {
+			String addrstr = "0x" + initialStartAddr.toString(16); //$NON-NLS-1$
+			fProperties.put(IMemoryImporter.TRANSFER_START, addrstr);
+			fProperties.put(INITIAL_ADDRESS , addrstr);
+		} 
+		else {
+			String addrstr = "0x" + initialStartAddr.toString(16); //$NON-NLS-1$
+			
+			if ( ! initialAddress.equals(addrstr) ) {
+				fProperties.put(IMemoryImporter.TRANSFER_START, addrstr);
+				fProperties.put(INITIAL_ADDRESS , addrstr);
+			}
+			else {
+				String startAddr = fProperties.get(IMemoryImporter.TRANSFER_START);
+
+				if ( startAddr == null ) {
+					fProperties.put(IMemoryImporter.TRANSFER_START, addrstr);
+					fProperties.put(INITIAL_ADDRESS , addrstr);
+				}
+			}
+		}
 	}
 	
 	protected void scrollRenderings(final BigInteger address)
 	{
 		UIJob job = new UIJob("repositionRenderings"){ //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				final IMemoryRenderingContainer containers[] = fMemoryView.getMemoryRenderingContainers();
-				for(int i = 0; i < containers.length; i++)
-				{
-					if(containers[i] instanceof RenderingViewPane)
-					{
-						IMemoryRendering rendering = containers[i].getActiveRendering();
-						
-						if(rendering instanceof IRepositionableMemoryRendering)
-						{
-							try 
-							{
-								((IRepositionableMemoryRendering) rendering).goToAddress(address);
-							} 
-							catch (DebugException e) 
-							{
-								// do nothing
-							}
+				for (IMemoryRenderingContainer container : fMemoryView.getMemoryRenderingContainers()) {
+					IMemoryRendering rendering = container.getActiveRendering();
+					if(rendering instanceof IRepositionableMemoryRendering)	{
+						try  {
+							((IRepositionableMemoryRendering) rendering).goToAddress(address);
+						} 
+						catch (DebugException ex) {
+							MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
+									DebugException.REQUEST_FAILED, MessageFormat.format(Messages.getString("ImportMemoryDialog.ErrRepositioningRendering"), address.toString(16)), ex));  //$NON-NLS-1$
 						}
 					}
 				}
@@ -148,8 +166,10 @@ public class ImportMemoryDialog extends SelectionDialog
 	protected void okPressed() {
 		if(fCurrentControl != null)
 			fCurrentControl.dispose();
-		fFormatImporters[fFormatCombo.getSelectionIndex()].importMemory();
 		
+		IMemoryImporter currentImporter = getCurrentImporter();
+		currentImporter.importMemory();
+		fProperties.put(SELECTED_IMPORTER, currentImporter.getId());
 		super.okPressed();
 	}
 	
@@ -168,7 +188,7 @@ public class ImportMemoryDialog extends SelectionDialog
 		// format
 		
 		Label textLabel = new Label(composite, SWT.NONE);
-		textLabel.setText("Format: "); 
+		textLabel.setText(Messages.getString("ImportMemoryDialog.Format"));  //$NON-NLS-1$
 	
 		fFormatCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 		
@@ -180,26 +200,26 @@ public class ImportMemoryDialog extends SelectionDialog
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
 		
-		Vector importers = new Vector();
+		Vector<Object> importers = new Vector<Object>();
 		
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint =
-	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport");
+	         registry.getExtensionPoint("org.eclipse.cdt.debug.ui.memory.transport.memoryTransport"); //$NON-NLS-1$
 	    IConfigurationElement points[] =
 	         extensionPoint.getConfigurationElements();
 	     
 		for (int i = 0; i < points.length; i++) 
 		{
 			IConfigurationElement element = points[i];
-			if("importer".equals(element.getName()))
+			if("importer".equals(element.getName())) //$NON-NLS-1$
 			{
 				try 
 				{
-					importers.addElement((IMemoryImporter) element.createExecutableExtension("class"));
+					importers.addElement(element.createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch(Exception e) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-			    		DebugException.INTERNAL_ERROR, "Failure", e));
+			    		DebugException.INTERNAL_ERROR, "Failure", e)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -220,45 +240,44 @@ public class ImportMemoryDialog extends SelectionDialog
 		
 		fFormatCombo.setItems(fFormatNames);
 		
-		fFormatCombo.addSelectionListener(new SelectionListener(){
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
+		fFormatCombo.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-				if(fCurrentControl != null)
+				if(fCurrentControl != null) {
 					fCurrentControl.dispose();
-				
-				initProperties(fProperties, fInitialStartAddr); // use utility from export code
-				fCurrentControl = fFormatImporters[fFormatCombo.getSelectionIndex()].createControl(container, 
-					fMemoryBlock, fProperties, ImportMemoryDialog.this);
+				}
+				fCurrentControl = getCurrentImporter().createControl(container, fMemoryBlock, fProperties, ImportMemoryDialog.this);
 			}
 		});
 		
-		fFormatCombo.select(0);
+		setCurrentImporter(fProperties.get(SELECTED_IMPORTER));
 		
-		initProperties(fProperties, fInitialStartAddr); // use utility from export code
-		fCurrentControl = 
-			fFormatImporters[0].createControl(container,fMemoryBlock, fProperties, ImportMemoryDialog.this);
+		fCurrentControl = getCurrentImporter().createControl(container,fMemoryBlock, fProperties, ImportMemoryDialog.this);
 		
 		return composite;
-	}
-
-	/**
-	 * Initializes the start address properties to a particular value if
-	 * and only if we have a fresh/clean properties object.
-	 */
-	static void initProperties(Properties properties, BigInteger addr) {
-		final String addrstr = "0x" + addr.toString(16);
-		if (!properties.containsKey(IMemoryExporter.TRANSFER_START)) {
-			properties.setProperty(IMemoryExporter.TRANSFER_START, addrstr);
-		}
 	}
 
 	public void setValid(boolean isValid)
 	{
 		getButton(IDialogConstants.OK_ID).setEnabled(isValid);
 	}
+	
+	private IMemoryImporter getCurrentImporter() {
+		return fFormatImporters[fFormatCombo.getSelectionIndex()];
+	}
+	
+	private void setCurrentImporter(String id) {
+		if ( id == null || id.length() == 0 ) {
+			fFormatCombo.select(0);
+		}
+		
+		for (int index = 0; index< fFormatImporters.length; ++index) {
+			if (fFormatImporters[index].getId().equals(id)){
+				fFormatCombo.select(index);
+				return;
+			}
+		}
+		
+		fFormatCombo.select(0);
+	}
+
 }

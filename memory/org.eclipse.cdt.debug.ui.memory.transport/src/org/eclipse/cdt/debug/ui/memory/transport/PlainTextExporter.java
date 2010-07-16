@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Properties;
-
 import org.eclipse.cdt.debug.ui.memory.transport.model.IMemoryExporter;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,11 +24,12 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -57,9 +56,9 @@ public class PlainTextExporter implements IMemoryExporter {
 	
 	private ExportMemoryDialog fParentDialog;
 	
-	private Properties fProperties;
+	private IDialogSettings fProperties;
 	
-	public Control createControl(final Composite parent, IMemoryBlock memBlock, Properties properties, ExportMemoryDialog parentDialog)
+	public Control createControl(final Composite parent, IMemoryBlock memBlock, IDialogSettings properties, ExportMemoryDialog parentDialog)
 	{
 		fMemoryBlock = memBlock;
 		fParentDialog = parentDialog;
@@ -69,9 +68,9 @@ public class PlainTextExporter implements IMemoryExporter {
 		{
 			public void dispose()
 			{
-				fProperties.setProperty(TRANSFER_FILE, fFileText.getText());
-				fProperties.setProperty(TRANSFER_START, fStartText.getText());
-				fProperties.setProperty(TRANSFER_END, fEndText.getText());
+				fProperties.put(TRANSFER_FILE, fFileText.getText());
+				fProperties.put(TRANSFER_START, fStartText.getText());
+				fProperties.put(TRANSFER_END, fEndText.getText());
 				
 				fStartAddress = getStartAddress();
 				fEndAddress = getEndAddress();
@@ -89,11 +88,11 @@ public class PlainTextExporter implements IMemoryExporter {
 		// start address
 		
 		Label startLabel = new Label(composite, SWT.NONE);
-		startLabel.setText("Start address: "); 
+		startLabel.setText(Messages.getString("PlainTextExporter.StartAddress"));  //$NON-NLS-1$
 		FormData data = new FormData();
 		startLabel.setLayoutData(data);
 		
-		fStartText = new Text(composite, SWT.NONE);
+		fStartText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.left = new FormAttachment(startLabel);
 		data.width = 100;
@@ -102,13 +101,13 @@ public class PlainTextExporter implements IMemoryExporter {
 		// end address
 		
 		Label endLabel = new Label(composite, SWT.NONE);
-		endLabel.setText("End address: "); 
+		endLabel.setText(Messages.getString("PlainTextExporter.EndAddress"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(fStartText);
 		endLabel.setLayoutData(data);
 		
-		fEndText = new Text(composite, SWT.NONE);
+		fEndText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(endLabel);
@@ -118,13 +117,13 @@ public class PlainTextExporter implements IMemoryExporter {
 		// length
 		
 		Label lengthLabel = new Label(composite, SWT.NONE);
-		lengthLabel.setText("Length: "); 
+		lengthLabel.setText(Messages.getString("PlainTextExporter.Length"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(fEndText);
 		lengthLabel.setLayoutData(data);
 		
-		fLengthText = new Text(composite, SWT.NONE);
+		fLengthText = new Text(composite, SWT.BORDER);
 		data = new FormData();
 		data.top = new FormAttachment(fStartText, 0, SWT.CENTER);
 		data.left = new FormAttachment(lengthLabel);
@@ -134,10 +133,10 @@ public class PlainTextExporter implements IMemoryExporter {
 		// file
 		
 		Label fileLabel = new Label(composite, SWT.NONE);
-		fFileText = new Text(composite, SWT.NONE);
+		fFileText = new Text(composite, SWT.BORDER);
 		Button fileButton = new Button(composite, SWT.PUSH);
 		
-		fileLabel.setText("File name: "); 
+		fileLabel.setText(Messages.getString("Exporter.FileName"));  //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fileButton, 0, SWT.CENTER);
 		fileLabel.setLayoutData(data);
@@ -148,38 +147,30 @@ public class PlainTextExporter implements IMemoryExporter {
 		data.width = 300;
 		fFileText.setLayoutData(data);
 		
-		fileButton.setText("Browse...");
+		fileButton.setText(Messages.getString("Exporter.Browse")); //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(fLengthText);
 		data.left = new FormAttachment(fFileText);
 		fileButton.setLayoutData(data);
 		
+		String textValue = fProperties.get(TRANSFER_FILE);
+		fFileText.setText(textValue != null ? textValue : ""); //$NON-NLS-1$
 
-		fFileText.setText(properties.getProperty(TRANSFER_FILE, ""));
-		try
-		{
-			fStartText.setText(properties.getProperty(TRANSFER_START));
-			fEndText.setText(properties.getProperty(TRANSFER_END));
-			fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
-		}
-		catch(IllegalArgumentException e)
-		{
-			MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-		    	DebugException.INTERNAL_ERROR, "Failure", e));
-		}
+		textValue = fProperties.get(TRANSFER_START);
+		fStartText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
+
+		textValue = fProperties.get(TRANSFER_END);
+		fEndText.setText(textValue != null ? textValue : "0x0"); //$NON-NLS-1$
+
+		fLengthText.setText(getEndAddress().subtract(getStartAddress()).toString());
 		
-		fileButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+		fileButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
-				dialog.setText("Choose memory export file");
-				dialog.setFilterExtensions(new String[] { "*.*;*" } );
-				dialog.setFilterNames(new String[] { "All Files" } );
+				dialog.setText(Messages.getString("PlainTextExporter.ChooseFile")); //$NON-NLS-1$
+				dialog.setFilterExtensions(new String[] { "*.*;*" } ); //$NON-NLS-1$
+				dialog.setFilterNames(new String[] { Messages.getString("Exporter.AllFiles") } ); //$NON-NLS-1$
 				dialog.setFileName(fFileText.getText());
 				dialog.open();
 			
@@ -256,7 +247,7 @@ public class PlainTextExporter implements IMemoryExporter {
 					BigInteger length = getLength();
 					fLengthText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 					BigInteger startAddress = getStartAddress();
-					String endString = "0x" + startAddress.add(length).toString(16);
+					String endString = "0x" + startAddress.add(length).toString(16); //$NON-NLS-1$
 					if(!fEndText.getText().equals(endString))
 						fEndText.setText(endString);
 				}
@@ -293,7 +284,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	public BigInteger getEndAddress()
 	{
 		String text = fEndText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger endAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -303,7 +294,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	public BigInteger getStartAddress()
 	{
 		String text = fStartText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger startAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -313,7 +304,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	public BigInteger getLength()
 	{
 		String text = fLengthText.getText();
-		boolean hex = text.startsWith("0x");
+		boolean hex = text.startsWith("0x"); //$NON-NLS-1$
 		BigInteger lengthAddress = new BigInteger(hex ? text.substring(2) : text,
 			hex ? 16 : 10); 
 		
@@ -354,12 +345,12 @@ public class PlainTextExporter implements IMemoryExporter {
 
 	public String getId()
 	{
-		return "PlainTextExporter";
+		return "PlainTextExporter"; //$NON-NLS-1$
 	}
 	
 	public String getName()
 	{
-		return "Plain Text";
+		return Messages.getString("PlainTextExporter.Name"); //$NON-NLS-1$
 	}
 	
 	public void exportMemory() {
@@ -387,7 +378,7 @@ public class PlainTextExporter implements IMemoryExporter {
 						jobs = jobs.divide(factor);
 					}
 						
-					monitor.beginTask("Transferring Data", jobs.intValue());
+					monitor.beginTask(Messages.getString("Exporter.ProgressTitle"), jobs.intValue()); //$NON-NLS-1$
 					
 					BigInteger jobCount = BigInteger.ZERO;
 					while(transferAddress.compareTo(fEndAddress) < 0 && !monitor.isCanceled())
@@ -396,7 +387,7 @@ public class PlainTextExporter implements IMemoryExporter {
 						if(fEndAddress.subtract(transferAddress).compareTo(length) < 0)
 							length = fEndAddress.subtract(transferAddress);
 						
-						monitor.subTask(String.format("Transfering %s bytes at address 0x%s", length.toString(10), transferAddress.toString(16)));
+						monitor.subTask(String.format(Messages.getString("Exporter.Progress"), length.toString(10), transferAddress.toString(16))); //$NON-NLS-1$
 						
 						StringBuffer buf = new StringBuffer();
 						
@@ -413,7 +404,7 @@ public class PlainTextExporter implements IMemoryExporter {
 						for(int i = 0; i < length.divide(CELLSIZE).intValue(); i++)
 						{
 							if(i != 0)
-								buf.append(" ");
+								buf.append(" "); //$NON-NLS-1$
 							MemoryByte bytes[] = ((IMemoryBlockExtension) fMemoryBlock).getBytesFromAddress(
 								transferAddress.add(CELLSIZE.multiply(BigInteger.valueOf(i))), 
 								CELLSIZE.longValue() / ((IMemoryBlockExtension) fMemoryBlock).getAddressableSize());
@@ -421,13 +412,13 @@ public class PlainTextExporter implements IMemoryExporter {
 							{
 								String bString = BigInteger.valueOf(0xFF & bytes[byteIndex].getValue()).toString(16);
 								if(bString.length() == 1)
-									buf.append("0");
+									buf.append("0"); //$NON-NLS-1$
 								buf.append(bString);
 							}
 						}
 						
 						writer.write(buf.toString().toUpperCase());
-						writer.write("\n");
+						writer.write("\n"); //$NON-NLS-1$
 						
 						transferAddress = transferAddress.add(length);
 						
@@ -443,20 +434,20 @@ public class PlainTextExporter implements IMemoryExporter {
 					monitor.done();
 				} catch (IOException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, "Could not write to file.", ex));
+							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex)); //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.REQUEST_FAILED, "Could not write to file.", ex);
+					    	DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrFile"), ex); //$NON-NLS-1$
 					
 				} catch (DebugException ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.REQUEST_FAILED, "Could read from target.", ex));
+							DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex)); //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.REQUEST_FAILED, "Could read from target.", ex);						
+					    	DebugException.REQUEST_FAILED, Messages.getString("Exporter.ErrReadTarget"), ex); //$NON-NLS-1$
 				} catch (Exception ex) {
 					MemoryTransportPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-							DebugException.INTERNAL_ERROR, "Failure exporting memory", ex));
+							DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex)); //$NON-NLS-1$
 					return new Status(IStatus.ERROR, MemoryTransportPlugin.getUniqueIdentifier(),
-					    	DebugException.INTERNAL_ERROR, "Failure exporting memory", ex);
+				    	DebugException.INTERNAL_ERROR, Messages.getString("Exporter.Falure"), ex); //$NON-NLS-1$
 				}
 				return Status.OK_STATUS;
 			}};

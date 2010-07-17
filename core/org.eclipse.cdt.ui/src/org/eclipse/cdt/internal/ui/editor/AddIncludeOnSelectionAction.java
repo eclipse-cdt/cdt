@@ -98,7 +98,7 @@ import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * Adds an include statement and, optionally, a 'using' declaration for the currently
- * selected name. 
+ * selected name.
  */
 public class AddIncludeOnSelectionAction extends TextEditorAction {
 	public static boolean sIsJUnitTest = false;

@@ -8,7 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
- *     Sergey Prigogin, Google - https://bugs.eclipse.org/bugs/show_bug.cgi?id=13221
+ *     Sergey Prigogin (Google) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=13221
  *     Ed Swartz (Nokia)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
@@ -160,9 +160,6 @@ public class OpenIncludeAction extends Action {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void noElementsFound() {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("OpenIncludeAction.error")); //$NON-NLS-1$
@@ -254,7 +251,6 @@ public class OpenIncludeAction extends Action {
 			}
 		}, 0);
 	}
-
 
 	private IPath chooseFile(ArrayList<IPath> filesFound) {
 		ILabelProvider renderer= new LabelProvider() {

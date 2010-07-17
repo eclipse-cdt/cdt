@@ -18,13 +18,12 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * Defines the definition IDs for the C editor actions.
- * 
- * <p>
- * This interface is not intended to be implemented or extended.
- * </p>.
- * 
+ *
  * @since 2.1
- */
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+*/
 public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinitionIds {
 
 	/**

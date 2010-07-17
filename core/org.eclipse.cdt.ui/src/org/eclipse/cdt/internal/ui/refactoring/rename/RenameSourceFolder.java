@@ -51,7 +51,7 @@ public class RenameSourceFolder extends RenameParticipant {
 
 	@Override
 	public String getName() {
-		return Messages.RenameSourceFolder_0;
+		return RenameMessages.RenameSourceFolder_0;
 	}
 
 	@Override

@@ -48,16 +48,16 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
         CRefactoringArgument argument= getArgument();
         IBinding binding= argument.getBinding();
         if (binding instanceof ICPPConstructor) {
-            return RefactoringStatus.createFatalErrorStatus(Messages.CRenameMethodProcessor_fatalError_renameConstructor);
+            return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameMethodProcessor_fatalError_renameConstructor);
         }
         String identifier= argument.getName();
         if (identifier.startsWith("~")) { //$NON-NLS-1$
-            return RefactoringStatus.createFatalErrorStatus(Messages.CRenameMethodProcessor_fatalError_renameDestructor);
+            return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameMethodProcessor_fatalError_renameDestructor);
         }
         if (identifier.startsWith("operator") && //$NON-NLS-1$
                 identifier.length() > 8 && 
                 !CRefactoringUtils.isIdentifierChar(identifier.charAt(8))) { 
-            return RefactoringStatus.createFatalErrorStatus(Messages.CRenameMethodProcessor_fatalError_renameOperator);
+            return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameMethodProcessor_fatalError_renameOperator);
         }
         return super.checkInitialConditions(pm);
     }
@@ -79,18 +79,18 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
                 IASTCompositeTypeSpecifier se= (IASTCompositeTypeSpecifier) node;
                 IASTName name= ASTManager.getSimpleName(se.getName());
                 if (getReplacementText().equals(name.toString())) {
-                    return RefactoringStatus.createFatalErrorStatus(Messages.CRenameMethodProcessor_fatalError_renameToConstructor);
+                    return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameMethodProcessor_fatalError_renameToConstructor);
                 }
                 if (getReplacementText().startsWith("~")) { //$NON-NLS-1$
-                    return RefactoringStatus.createFatalErrorStatus(Messages.CRenameMethodProcessor_fatalError_renameToDestructor);
+                    return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameMethodProcessor_fatalError_renameToDestructor);
                 }
                 if (!CRefactoringUtils.checkIdentifier(getReplacementText())) {
-                    result.merge(RefactoringStatus.createErrorStatus(Messages.CRenameMethodProcessor_warning_illegalCharacters));
+                    result.merge(RefactoringStatus.createErrorStatus(RenameMessages.CRenameMethodProcessor_warning_illegalCharacters));
                 }
             }                
         }
         if (argument.getArgumentKind() == CRefactory.ARGUMENT_VIRTUAL_METHOD && (getSelectedOptions() & CRefactory.OPTION_DO_VIRTUAL) == 0) {
-            result.merge(RefactoringStatus.createWarningStatus(Messages.CRenameMethodProcessor_warning_renameVirtual));
+            result.merge(RefactoringStatus.createWarningStatus(RenameMessages.CRenameMethodProcessor_warning_renameVirtual));
         }
 
         result.merge(super.checkFinalConditions(monitor, context));

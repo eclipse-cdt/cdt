@@ -112,7 +112,7 @@ public abstract class CRenameProcessorDelegate {
     final public String getProcessorName() {
         String identifier= getArgument().getName();
         if (identifier != null) {
-            return NLS.bind(Messages.CRenameProcessorDelegate_wizard_title, fProcessorBaseName, identifier);
+            return NLS.bind(RenameMessages.CRenameProcessorDelegate_wizard_title, fProcessorBaseName, identifier);
         }
         return null;
     }
@@ -209,7 +209,7 @@ public abstract class CRenameProcessorDelegate {
 
     public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, CheckConditionsContext context) throws CoreException, OperationCanceledException {
         RefactoringStatus result= new RefactoringStatus();
-        monitor.beginTask(Messages.CRenameProcessorDelegate_task_checkFinalCondition, 2);
+        monitor.beginTask(RenameMessages.CRenameProcessorDelegate_task_checkFinalCondition, 2);
         IFile file= getArgument().getSourceFile();
         //assert file!=null;
     
@@ -258,18 +258,18 @@ public abstract class CRenameProcessorDelegate {
         if (potentialMatchCount != 0) {
             String msg= null;
             if (potentialMatchCount == 1) {
-                msg= Messages.CRenameProcessorDelegate_warning_potentialMatch_singular;
+                msg= RenameMessages.CRenameProcessorDelegate_warning_potentialMatch_singular;
             } else {
-                msg= NLS.bind(Messages.CRenameProcessorDelegate_warning_potentialMatch_plural, potentialMatchCount);
+                msg= NLS.bind(RenameMessages.CRenameProcessorDelegate_warning_potentialMatch_plural, potentialMatchCount);
             }
             result.addWarning(msg);
         }
         if (commentCount != 0) {
             String msg= null;
             if (commentCount == 1) {
-                msg= Messages.CRenameProcessorDelegate_warning_commentMatch_singular;
+                msg= RenameMessages.CRenameProcessorDelegate_warning_commentMatch_singular;
             } else {
-                msg= NLS.bind(Messages.CRenameProcessorDelegate_warning_commentMatch_plural, commentCount);
+                msg= NLS.bind(RenameMessages.CRenameProcessorDelegate_warning_commentMatch_plural, commentCount);
             }
             result.addWarning(msg);
         }
@@ -326,7 +326,7 @@ public abstract class CRenameProcessorDelegate {
                 
                 return m1.getOffset() - m2.getOffset();
             }});
-        pm.beginTask(Messages.CRenameProcessorDelegate_task_createChange, fMatches.size());
+        pm.beginTask(RenameMessages.CRenameProcessorDelegate_task_createChange, fMatches.size());
         final String identifier= getArgument().getName();
         final String replacement= getReplacementText();
         CompositeChange overallChange= new CompositeChange(getProcessorName()); 

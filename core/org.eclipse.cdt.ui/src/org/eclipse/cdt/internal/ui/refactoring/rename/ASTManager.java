@@ -821,7 +821,7 @@ public class ASTManager {
         if (fArgument.getSourceFile() == null)
             return;
 
-        pm.beginTask(Messages.ASTManager_task_analyze, 2);
+        pm.beginTask(RenameMessages.ASTManager_task_analyze, 2);
         IASTTranslationUnit tu= getTranslationUnit(index, fArgument.getSourceFile(), true, status);
         pm.worked(1);
         if (tu != null) {
@@ -930,7 +930,7 @@ public class ASTManager {
         }
         
         int count= store.getFileCount();
-        String taskName= Messages.ASTManager_task_generateAst;
+        String taskName= RenameMessages.ASTManager_task_generateAst;
         monitor.beginTask(taskName, 2*count);
         monitor.setTaskName(taskName);
 
@@ -943,7 +943,7 @@ public class ASTManager {
             if (store.contains(file)) {
                 if ((now = System.currentTimeMillis()) > update) {
                     String nofm= nth_of_m(cc, count);
-                    String taskname= NLS.bind(Messages.ASTManager_subtask_analyzing, nofm);
+                    String taskname= NLS.bind(RenameMessages.ASTManager_subtask_analyzing, nofm);
                     monitor.subTask(taskname); 
                     update= now + 1000;
                 }
@@ -1033,7 +1033,7 @@ public class ASTManager {
             IASTName macroName= mdef.getName();
             String macroNameStr= macroName.toString();
             if (fRenameTo.equals(macroNameStr)) {
-                status.addFatalError(NLS.bind(Messages.ASTManager_error_macro_name_conflict, fRenameTo));
+                status.addFatalError(NLS.bind(RenameMessages.ASTManager_error_macro_name_conflict, fRenameTo));
                 return;
             } else if (lookfor.equals(macroNameStr)) {
                 IPath path= analyzeAstMatch(macroName, store, false, status);
@@ -1238,16 +1238,16 @@ public class ASTManager {
             if (fProblemUnits.add(fpath)) {
                 String msg= pb.getMessage();
                 if (msg != null && msg.length() > 0) {
-                    msg= NLS.bind(Messages.ASTManager_warning_parsingError_detailed, msg);
+                    msg= NLS.bind(RenameMessages.ASTManager_warning_parsingError_detailed, msg);
                 } else {
-                    msg= Messages.ASTManager_warning_parsingError;
+                    msg= RenameMessages.ASTManager_warning_parsingError;
                 }
                 int line= pb.getLineNumber();
                 if (line >= 1) {
-                    msg= NLS.bind(Messages.ASTManager_warning_parsingError_withFileAndLine,
+                    msg= NLS.bind(RenameMessages.ASTManager_warning_parsingError_withFileAndLine,
                     		new Object[] { msg, fpath, line });
                 } else {
-                    msg= NLS.bind(Messages.ASTManager_warning_parsingError_withFile, msg, fpath);
+                    msg= NLS.bind(RenameMessages.ASTManager_warning_parsingError_withFile, msg, fpath);
                 }
                 status.addWarning(msg);
             }
@@ -1302,14 +1302,14 @@ public class ASTManager {
         String[] errs= null;
         if (isMacro) {
             errs= new String[] {
-                    Messages.CRenameLocalProcessor_error_conflict };
+                    RenameMessages.CRenameLocalProcessor_error_conflict };
             cflc[0]= fConflictingBinding;
         } else {
             errs= new String[] {
-                    Messages.CRenameLocalProcessor_error_shadow,
-                    Messages.CRenameLocalProcessor_error_redeclare,
-                    Messages.CRenameLocalProcessor_error_isShadowed,
-                    Messages.CRenameLocalProcessor_error_overloads };
+                    RenameMessages.CRenameLocalProcessor_error_shadow,
+                    RenameMessages.CRenameLocalProcessor_error_redeclare,
+                    RenameMessages.CRenameLocalProcessor_error_isShadowed,
+                    RenameMessages.CRenameLocalProcessor_error_overloads };
             classifyConflictingBindings(tu, (Set<IBinding>) cflc[0], (List<IBinding>) cflc[1],
             			(List<IBinding>) cflc[2], status);
         }
@@ -1323,32 +1323,32 @@ public class ASTManager {
                 String what= null;
                 if (conflict instanceof IEnumerator) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        what= Messages.CRenameLocalProcessor_enumerator;
+                        what= RenameMessages.CRenameLocalProcessor_enumerator;
                     }
                 } else if (conflict instanceof ICPPField) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        what= Messages.CRenameLocalProcessor_field;
+                        what= RenameMessages.CRenameLocalProcessor_field;
                     }
                 } else if (conflict instanceof IParameter) {
                     if (isVarParEnumerator || isFunction || isMacro) {
                         if (i == 1 && argKind == CRefactory.ARGUMENT_LOCAL_VAR) {
                             msg= errs[0];
                         }
-                        what= Messages.CRenameLocalProcessor_parameter;
+                        what= RenameMessages.CRenameLocalProcessor_parameter;
                     }
                 } else if (conflict instanceof IVariable) {
                     if (isVarParEnumerator || isFunction || isMacro) {
                         IVariable conflictingVar= (IVariable) conflict;
-                        what= Messages.CRenameLocalProcessor_globalVariable;
+                        what= RenameMessages.CRenameLocalProcessor_globalVariable;
                         if (ASTManager.isLocalVariable(conflictingVar)) {
                             if (i == 1 && argKind == CRefactory.ARGUMENT_PARAMETER) {
                                 msg= errs[2];
                             }
-                            what= Messages.CRenameLocalProcessor_localVariable;
+                            what= RenameMessages.CRenameLocalProcessor_localVariable;
                         } else {
                             try {
                                 if (conflictingVar.isStatic()) {
-                                    what= Messages.CRenameProcessorDelegate_fileStaticVariable;
+                                    what= RenameMessages.CRenameProcessorDelegate_fileStaticVariable;
                                 }
                             } catch (DOMException e) {
                             }
@@ -1356,7 +1356,7 @@ public class ASTManager {
                     }
                 } else if (conflict instanceof ICPPConstructor) {
                     if (isVarParEnumerator || isFunction || isMacro) {
-                        what= Messages.CRenameLocalProcessor_constructor;
+                        what= RenameMessages.CRenameLocalProcessor_constructor;
                     }
                 } else if (conflict instanceof ICPPMethod) {
                     if (isVarParEnumerator || isFunction || isMacro) {
@@ -1373,7 +1373,7 @@ public class ASTManager {
                                 }
                             }
                         }
-                        what= Messages.CRenameLocalProcessor_method;
+                        what= RenameMessages.CRenameLocalProcessor_method;
                     }
                 } else if (conflict instanceof IFunction) {
                     if (isVarParEnumerator || isFunction || isMacro) {
@@ -1407,9 +1407,9 @@ public class ASTManager {
                             } catch (DOMException e) {
                             }
                             if (isStatic) {
-                                what= Messages.CRenameProcessorDelegate_fileStaticFunction;
+                                what= RenameMessages.CRenameProcessorDelegate_fileStaticFunction;
                             } else {
-                                what= Messages.CRenameProcessorDelegate_globalFunction;
+                                what= RenameMessages.CRenameProcessorDelegate_globalFunction;
                             }
                         }
                     }
@@ -1417,21 +1417,21 @@ public class ASTManager {
                         conflict instanceof IEnumeration ||
                         conflict instanceof ITypedef) {
                     if (isContainer || isMacro) {
-                        what= Messages.CRenameProcessorDelegate_type;
+                        what= RenameMessages.CRenameProcessorDelegate_type;
                     }
                 } else if (conflict instanceof ICPPNamespace) {
                     if (isContainer || isMacro) {
-                        what= Messages.CRenameProcessorDelegate_namespace;
+                        what= RenameMessages.CRenameProcessorDelegate_namespace;
                         if (argKind == CRefactory.ARGUMENT_NAMESPACE) {
                             warn= true;
                         }
                     }
                 }
                 if (what != null) {
-                	String message = Messages.CRenameLocalProcessor_error_message;
-                	String message1 = NLS.bind(Messages.CRenameLocalProcessor_error_message1, msg);
-                	String message2 = NLS.bind(Messages.CRenameLocalProcessor_error_message2, conflict.getName());
-                	String message3 = NLS.bind(Messages.CRenameLocalProcessor_error_message3, what);
+                	String message = RenameMessages.CRenameLocalProcessor_error_message;
+                	String message1 = NLS.bind(RenameMessages.CRenameLocalProcessor_error_message1, msg);
+                	String message2 = NLS.bind(RenameMessages.CRenameLocalProcessor_error_message2, conflict.getName());
+                	String message3 = NLS.bind(RenameMessages.CRenameLocalProcessor_error_message3, what);
                 	String space = "  \n"; //$NON-NLS-1$
                 	String formatted = message + space + message1 + space +  message2 + space +  message3;
                     RefactoringStatusEntry[] entries= status.getEntries();

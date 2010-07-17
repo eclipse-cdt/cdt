@@ -59,7 +59,7 @@ public class RenameCSourceFolderChange extends Change {
 
 	@Override
 	public String getName() {
-		return NLS.bind(Messages.RenameCSourceFolderChange_Name0, oldName.lastSegment(), newName.lastSegment());
+		return NLS.bind(RenameMessages.RenameCSourceFolderChange_Name0, oldName.lastSegment(), newName.lastSegment());
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class RenameCSourceFolderChange extends Change {
 			return RefactoringStatus.create(Status.OK_STATUS); 
 		} else {
 			return RefactoringStatus.create(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
-					NLS.bind(Messages.RenameCSourceFolderChange_ErroMsg, folder.getName())));
+					NLS.bind(RenameMessages.RenameCSourceFolderChange_ErroMsg, folder.getName())));
 		}
 	}
 

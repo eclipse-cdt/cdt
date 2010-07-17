@@ -301,7 +301,7 @@ public class TextSearchWrapper {
     }
     
     public void categorizeMatches(List<CRefactoringMatch> matches, IProgressMonitor monitor) {
-        monitor.beginTask(Messages.TextSearch_monitor_categorizeMatches, matches.size());
+        monitor.beginTask(RenameMessages.TextSearch_monitor_categorizeMatches, matches.size());
         IFile file= null;
         ArrayList<int[]> locations= null;
         for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {

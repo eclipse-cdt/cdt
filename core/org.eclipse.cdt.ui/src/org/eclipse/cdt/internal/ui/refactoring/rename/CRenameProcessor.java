@@ -83,11 +83,11 @@ public class CRenameProcessor extends RenameProcessor {
         if (result == null) {
             String identifier= getArgument().getName();
             if (identifier != null && identifier.length() > 0) {
-                result= NLS.bind(Messages.CRenameTopProcessor_wizard_title, identifier);
+                result= NLS.bind(RenameMessages.CRenameTopProcessor_wizard_title, identifier);
             }
         }
         if (result == null) {
-            result= Messages.CRenameTopProcessor_wizard_backup_title;
+            result= RenameMessages.CRenameTopProcessor_wizard_backup_title;
         }
 
         return result;
@@ -108,7 +108,7 @@ public class CRenameProcessor extends RenameProcessor {
             identifier= fArgument.getName();
         }
         if (identifier == null || identifier.length() < 1) {
-            status.addFatalError(Messages.CRenameTopProcessor_error_invalidTextSelection);
+            status.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidTextSelection);
             return status;
         }
         IFile file= fArgument.getSourceFile();
@@ -117,12 +117,12 @@ public class CRenameProcessor extends RenameProcessor {
             path= file.getLocation();
         }
         if (path == null) {
-            return RefactoringStatus.createFatalErrorStatus(Messages.CRenameTopProcessor_error_renameWithoutSourceFile);
+            return RefactoringStatus.createFatalErrorStatus(RenameMessages.CRenameTopProcessor_error_renameWithoutSourceFile);
         }
         
         fDelegate= createDelegate();
         if (fDelegate == null) {
-            status.addFatalError(Messages.CRenameTopProcessor_error_invalidName);
+            status.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidName);
             return status;
         }            
         RefactoringStatus s1= fDelegate.checkInitialConditions(new NullProgressMonitor());
@@ -134,42 +134,42 @@ public class CRenameProcessor extends RenameProcessor {
         switch (fArgument.getArgumentKind()) {
         	case CRefactory.ARGUMENT_LOCAL_VAR: 
                 return new CRenameLocalProcessor(this, 
-                        Messages.CRenameTopProcessor_localVar,
+                        RenameMessages.CRenameTopProcessor_localVar,
                         fArgument.getScope());
         	case CRefactory.ARGUMENT_PARAMETER:
                 return new CRenameLocalProcessor(this, 
-                        Messages.CRenameTopProcessor_parameter,
+                        RenameMessages.CRenameTopProcessor_parameter,
                         fArgument.getScope());
         	case CRefactory.ARGUMENT_FILE_LOCAL_VAR:
                 return new CRenameLocalProcessor(this, 
-                        Messages.CRenameTopProcessor_filelocalVar,
+                        RenameMessages.CRenameTopProcessor_filelocalVar,
                         null);
         	case CRefactory.ARGUMENT_GLOBAL_VAR:
-                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_globalVar);
+                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_globalVar);
             case CRefactory.ARGUMENT_ENUMERATOR:
-                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_enumerator);
+                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_enumerator);
         	case CRefactory.ARGUMENT_FIELD:
-                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_field);
+                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_field);
         	case CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION:
                 return new CRenameLocalProcessor(this, 
-                        Messages.CRenameTopProcessor_filelocalFunction,
+                        RenameMessages.CRenameTopProcessor_filelocalFunction,
                         null);
         	case CRefactory.ARGUMENT_GLOBAL_FUNCTION:
-                return new CRenameGlobalProcessor(this, Messages.CRenameTopProcessor_globalFunction);
+                return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_globalFunction);
         	case CRefactory.ARGUMENT_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, Messages.CRenameTopProcessor_virtualMethod, true);
+                return new CRenameMethodProcessor(this, RenameMessages.CRenameTopProcessor_virtualMethod, true);
         	case CRefactory.ARGUMENT_NON_VIRTUAL_METHOD:
-                return new CRenameMethodProcessor(this, Messages.CRenameTopProcessor_method, false);
+                return new CRenameMethodProcessor(this, RenameMessages.CRenameTopProcessor_method, false);
             case CRefactory.ARGUMENT_CLASS_TYPE:                
-                return new CRenameClassProcessor(this, Messages.CRenameTopProcessor_type);
+                return new CRenameClassProcessor(this, RenameMessages.CRenameTopProcessor_type);
             case CRefactory.ARGUMENT_NAMESPACE:
-                return new CRenameTypeProcessor(this, Messages.CRenameTopProcessor_namespace);
+                return new CRenameTypeProcessor(this, RenameMessages.CRenameTopProcessor_namespace);
         	case CRefactory.ARGUMENT_TYPE:
-                return new CRenameTypeProcessor(this, Messages.CRenameTopProcessor_type);
+                return new CRenameTypeProcessor(this, RenameMessages.CRenameTopProcessor_type);
         	case CRefactory.ARGUMENT_MACRO:
-                return new CRenameMacroProcessor(this, Messages.CRenameTopProcessor_macro);
+                return new CRenameMacroProcessor(this, RenameMessages.CRenameTopProcessor_macro);
         	case CRefactory.ARGUMENT_INCLUDE_DIRECTIVE:
-                return new CRenameIncludeProcessor(this, Messages.CRenameIncludeProcessor_includeDirective);
+                return new CRenameIncludeProcessor(this, RenameMessages.CRenameIncludeProcessor_includeDirective);
         	default:
                 return null;
         }

@@ -114,7 +114,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         GridLayout gl;
 
         Label label= new Label(top, SWT.NONE);
-        label.setText(Messages.CRenameRefactoringInputPage_label_newName);
+        label.setText(RenameMessages.CRenameRefactoringInputPage_label_newName);
         fNewName= new Text(top, SWT.BORDER);
         fNewName.setText(fSearchString);
         fNewName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));        
@@ -122,7 +122,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         
         if (hasOption(CRefactory.OPTION_DO_VIRTUAL)) {
         	fDoVirtual= new Button(top, SWT.CHECK);
-        	fDoVirtual.setText(Messages.CRenameRefactoringInputPage_renameBaseAndDerivedMethods);
+        	fDoVirtual.setText(RenameMessages.CRenameRefactoringInputPage_renameBaseAndDerivedMethods);
         	fDoVirtual.setLayoutData(gd= new GridData());
         	gd.horizontalSpan= 2;
         }
@@ -131,7 +131,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             // Specify the scope.
             skipLine(top);
             label = new Label(top, SWT.NONE);
-            label.setText(Messages.CRenameRefactoringInputPage_label_scope);
+            label.setText(RenameMessages.CRenameRefactoringInputPage_label_scope);
             label.setLayoutData(gd= new GridData(GridData.FILL_HORIZONTAL));
             gd.horizontalSpan= 2;
             
@@ -144,29 +144,29 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             gl.marginWidth = 0;
 
             fWorkspace= new Button(group, SWT.RADIO);
-            fWorkspace.setText(Messages.CRenameRefactoringInputPage_button_workspace);
+            fWorkspace.setText(RenameMessages.CRenameRefactoringInputPage_button_workspace);
             fWorkspace.setLayoutData(gd= new GridData());
             
             fDependent= new Button(group, SWT.RADIO);
-            fDependent.setText(Messages.CRenameRefactoringInputPage_button_relatedProjects);
+            fDependent.setText(RenameMessages.CRenameRefactoringInputPage_button_relatedProjects);
             fDependent.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
     		gd.horizontalIndent= 8;
 
             fSingle= new Button(group, SWT.RADIO);
-            fSingle.setText(Messages.CRenameRefactoringInputPage_button_singleProject);
+            fSingle.setText(RenameMessages.CRenameRefactoringInputPage_button_singleProject);
             fSingle.setLayoutData(gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
     		gd.horizontalIndent= 8;
     		gd.horizontalSpan= 2;
 
             fWorkingSet= new Button(group, SWT.RADIO);
-            fWorkingSet.setText(Messages.CRenameRefactoringInputPage_button_workingSet);
+            fWorkingSet.setText(RenameMessages.CRenameRefactoringInputPage_button_workingSet);
 
             fWorkingSetSpec= new Text(group, SWT.SINGLE|SWT.BORDER|SWT.READ_ONLY);
             fWorkingSetSpec.setLayoutData(gd= new GridData(GridData.FILL_HORIZONTAL));
     		gd.horizontalIndent= 8;
     		gd.horizontalSpan= 2;
             fWorkingSetButton= new Button(group, SWT.PUSH);
-            fWorkingSetButton.setText(Messages.CRenameRefactoringInputPage_button_chooseWorkingSet);
+            fWorkingSetButton.setText(RenameMessages.CRenameRefactoringInputPage_button_chooseWorkingSet);
             setButtonLayoutData(fWorkingSetButton);
         }
 
@@ -175,43 +175,43 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         if (hasOption(CRefactory.OPTION_IN_CODE)) {
             group= createLabelAndGroup(group, skippedLine, top);
         	fReferences= new Button(group, SWT.CHECK);
-        	fReferences.setText(Messages.CRenameRefactoringInputPage_button_sourceCode);
+        	fReferences.setText(RenameMessages.CRenameRefactoringInputPage_button_sourceCode);
         }
     	if (hasOption(CRefactory.OPTION_IN_INACTIVE_CODE)) {
             group= createLabelAndGroup(group, skippedLine, top);
     	    fInInactiveCode= new Button(group, SWT.CHECK);
-    	    fInInactiveCode.setText(Messages.CRenameRefactoringInputPage_button_inactiveCode);
+    	    fInInactiveCode.setText(RenameMessages.CRenameRefactoringInputPage_button_inactiveCode);
     	}
         if (hasOption(CRefactory.OPTION_IN_COMMENT)) {
             group= createLabelAndGroup(group, skippedLine, top);
             fInComment= new Button(group, SWT.CHECK);
-            fInComment.setText(Messages.CRenameRefactoringInputPage_button_comments);
+            fInComment.setText(RenameMessages.CRenameRefactoringInputPage_button_comments);
         }
         if (hasOption(CRefactory.OPTION_IN_STRING_LITERAL)) {
             group= createLabelAndGroup(group, skippedLine, top);
             fInString= new Button(group, SWT.CHECK);
-            fInString.setText(Messages.CRenameRefactoringInputPage_button_strings);
+            fInString.setText(RenameMessages.CRenameRefactoringInputPage_button_strings);
         }
         if (hasOption(CRefactory.OPTION_IN_MACRO_DEFINITION)) {
             group= createLabelAndGroup(group, skippedLine, top);
             fInMacro= new Button(group, SWT.CHECK);
-            fInMacro.setText(Messages.CRenameRefactoringInputPage_button_macroDefinitions);
+            fInMacro.setText(RenameMessages.CRenameRefactoringInputPage_button_macroDefinitions);
         }
         if (hasOption(CRefactory.OPTION_IN_INCLUDE_DIRECTIVE)) {
             group= createLabelAndGroup(group, skippedLine, top);
             fInInclude= new Button(group, SWT.CHECK);
-            fInInclude.setText(Messages.CRenameRefactoringInputPage_button_includes);
+            fInInclude.setText(RenameMessages.CRenameRefactoringInputPage_button_includes);
         }
         if (hasOption(CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE)) {
             group= createLabelAndGroup(group, skippedLine, top);
             fInPreprocessor= new Button(group, SWT.CHECK);
-            fInPreprocessor.setText(Messages.CRenameRefactoringInputPage_button_preprocessor);
+            fInPreprocessor.setText(RenameMessages.CRenameRefactoringInputPage_button_preprocessor);
         }
 
         if (hasOption(CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH)) {
     		skipLine(top);
             fExhausiveFileSearch= new Button(top, SWT.CHECK);
-            fExhausiveFileSearch.setText(Messages.CRenameRefactoringInputPage_button_exhaustiveFileSearch);
+            fExhausiveFileSearch.setText(RenameMessages.CRenameRefactoringInputPage_button_exhaustiveFileSearch);
             fExhausiveFileSearch.setLayoutData(gd= new GridData());
     		gd.horizontalIndent= 5;
         	gd.horizontalSpan= 2;
@@ -233,7 +233,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         }
         GridData gd;
         Label label = new Label(top, SWT.NONE);
-        label.setText(Messages.CRenameRefactoringInputPage_label_updateWithin);
+        label.setText(RenameMessages.CRenameRefactoringInputPage_label_updateWithin);
         label.setLayoutData(gd= new GridData());
         gd.horizontalSpan= 2;
         group= new Composite(top, SWT.NONE);
@@ -497,7 +497,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         	setErrorMessage(null);
         	setPageComplete(false);
         } else if (!CConventions.isValidIdentifier(txt)) {
-        	setErrorMessage(NLS.bind(Messages.CRenameRefactoringInputPage_errorInvalidIdentifier, txt));
+        	setErrorMessage(NLS.bind(RenameMessages.CRenameRefactoringInputPage_errorInvalidIdentifier, txt));
         	setPageComplete(false);
         } else {
         	setErrorMessage(null);

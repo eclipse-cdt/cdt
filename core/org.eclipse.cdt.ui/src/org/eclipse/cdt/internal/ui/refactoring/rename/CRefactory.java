@@ -86,7 +86,7 @@ public class CRefactory {
 				CRenameRefactoring r= new CRenameRefactoring(processor);
 				RefactoringWizardOpenOperation op= 
 						new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-				op.run(shell, Messages.CRefactory_title_rename);
+				op.run(shell, RenameMessages.CRefactory_title_rename);
 			} finally {
 				processor.unlockIndex();
 			}
@@ -113,7 +113,7 @@ public class CRefactory {
         		CRenameRefactoring r= new CRenameRefactoring(processor);
         		RefactoringWizardOpenOperation op= 
         				new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-        		op.run(shell, Messages.CRefactory_title_rename);
+        		op.run(shell, RenameMessages.CRefactory_title_rename);
         	} finally {
         		processor.unlockIndex();
         	}

@@ -10,6 +10,7 @@
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -32,7 +33,6 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * @since 4.0.0
 	 */
 	public static final String TOGGLE_COMMENT= "org.eclipse.cdt.ui.edit.text.c.toggle.comment"; //$NON-NLS-1$
-	
 	
 	/**
 	 * Action definition ID of the source -> add block comment action

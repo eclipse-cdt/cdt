@@ -18,6 +18,7 @@
  * Anna Dushistova       (MontaVista) - [267951] [remotecdt] Support systemTypes without files subsystem
  * Anna Dushistova  (Mentor Graphics) - [314659] move remote launch/debug to DSF 
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
+ * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote.tabs;
@@ -187,10 +188,10 @@ public class RemoteCMainTab extends CMainTab {
 		connectionCombo.addModifyListener(new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				setDirty(true);
-				updateLaunchConfigurationDialog();
 				useDefaultsFromConnection();
 				updatePropertiesButton();
+				setDirty(true);
+				updateLaunchConfigurationDialog();
 			}
 		});
 
@@ -557,7 +558,7 @@ public class RemoteCMainTab extends CMainTab {
 			downloadToTarget = config
 					.getAttribute(
 							IRemoteConnectionConfigurationConstants.ATTR_SKIP_DOWNLOAD_TO_TARGET,
-							SKIP_DOWNLOAD_TO_REMOTE_DEFAULT);
+							getDefaultSkipDownload());
 		} catch (CoreException e) {
 			// Ignore for now
 		}

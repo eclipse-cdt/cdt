@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [199561][efs][dstore] Eclipse hangs when manipulating empty file
  * David McKnight   (IBM)        - [234637] [dstore][efs] RSE EFS provider seems to truncate files
  * David McKnight   (IBM)        - [236039][dstore][efs] DStoreInputStream can report EOF too early - clean up how it waits for the local temp file to be created
+ * David McKnight   (IBM)        - [320300][dstore] DstoreInputStream needs to delete tempfile on exit
  ********************************************************************************/
 package org.eclipse.rse.internal.services.dstore.files;
 
@@ -58,6 +59,8 @@ public class DStoreInputStream extends InputStream
 		try
 		{
 			_localFile = File.createTempFile("download", "rse");  //$NON-NLS-1$//$NON-NLS-2$
+			_localFile.deleteOnExit();
+
 			DataElement remoteElement = ds.createObject(universaltemp, de.getType(), _remotePath, String.valueOf(_mode));
 			DataElement localElement = ds.createObject(universaltemp, de.getType(), _localFile.getAbsolutePath(), _encoding);
 

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -1269,4 +1270,21 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		getBindingFromASTName("f255", 0);
 		getBindingFromASTName("f256", 0);
 	}		
+	
+	// void f(char16_t x);
+	// void f(char32_t x);
+	
+	// 	void test() {
+	//     char16_t c16;
+	//     char32_t c32;
+	//     f(c16); f(c32);
+	// }
+
+	public void testChar16_Bug319186() throws Exception {
+		IFunction f= getBindingFromASTName("f(c16)", 1);
+		assertEquals("char16_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
+		
+		f= getBindingFromASTName("f(c32)", 1);
+		assertEquals("char32_t", ASTTypeUtil.getType(f.getType().getParameterTypes()[0]));
+	}
 }

@@ -185,27 +185,28 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 	}
 	
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
-		int firstByte= ITypeMarshalBuffer.BASIC_TYPE;
-
-		int kind= getKind().ordinal() * ITypeMarshalBuffer.FLAG1;
-		assert kind < ITypeMarshalBuffer.FLAG4;
-		firstByte |= kind;
-
-		int modifiers= getModifiers();
-		if (modifiers != 0) {
-			buffer.putByte((byte) (firstByte | ITypeMarshalBuffer.FLAG4));
-			buffer.putByte((byte) modifiers);
+		final int kind= getKind().ordinal();
+		final int shiftedKind=  kind * ITypeMarshalBuffer.FLAG1;
+		final int modifiers= getModifiers();
+		if (shiftedKind < ITypeMarshalBuffer.FLAG4 && modifiers == 0) {
+			buffer.putByte((byte) (ITypeMarshalBuffer.BASIC_TYPE | shiftedKind));
 		} else {
-			buffer.putByte((byte) firstByte);
-		}
+			buffer.putByte((byte) (ITypeMarshalBuffer.BASIC_TYPE | ITypeMarshalBuffer.FLAG4));
+			buffer.putByte((byte) kind);
+			buffer.putByte((byte) modifiers);
+		} 
 	}
 	
 	public static IType unmarshal(int firstByte, ITypeMarshalBuffer buffer) throws CoreException {
-		int kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+		final boolean dense= (firstByte & ITypeMarshalBuffer.FLAG4) == 0;
 		int modifiers= 0;
-		if (((firstByte & ITypeMarshalBuffer.FLAG4) != 0)) {
+		int kind;
+		if (dense) {
+			kind= (firstByte & (ITypeMarshalBuffer.FLAG4-1))/ITypeMarshalBuffer.FLAG1;
+		} else {
+			kind= buffer.getByte();
 			modifiers= buffer.getByte();
-		}
+		} 
 		return new CPPBasicType(Kind.values()[kind], modifiers);
 	}
 

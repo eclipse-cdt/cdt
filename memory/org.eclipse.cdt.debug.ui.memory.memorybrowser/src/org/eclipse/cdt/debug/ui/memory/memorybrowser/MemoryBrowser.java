@@ -176,13 +176,19 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	 */
 	private final static String KEY_MEMORY_BLOCKS = "MEMORY_BLOCKS"; //$NON-NLS-1$
 	
+	/**
+	 * Property we attach to a CTabItem to track the expression we used to
+	 * create memory blocks on the tab's behalf. Value is an
+	 * {@link String}
+	 */
+	private final static String KEY_EXPRESSION    = "EXPRESSION"; //$NON-NLS-1$
 
 	public static final String PREF_DEFAULT_RENDERING = "org.eclipse.cdt.debug.ui.memory.memorybrowser.defaultRendering";  //$NON-NLS-1$
 	
 	/**
 	 * The text we use in the combobox to represent no memory space specification
 	 */
-	private static final String NA_MEMORY_SPACE_ID = "   -----";
+	private static final String NA_MEMORY_SPACE_ID = "   -----"; //$NON-NLS-1$
 
 	public MemoryBrowser() {
 	}
@@ -403,7 +409,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
 				} catch (DebugException e1) {
 					fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
-							Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1));
+							Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1)); //$NON-NLS-1$
 					item.dispose();
 					return;
 				} 
@@ -413,7 +419,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				// out the rendering in the tab with either a new one or an
 				// existing one already associated with that memory space.
 				String oldMemorySpaceId = (String)activeFolder.getSelection().getData(KEY_MEMORY_SPACE);
-				assert oldMemorySpaceId == null || !oldMemorySpaceId.equals(NA_MEMORY_SPACE_ID) : "should be null reference or an explicit, valid memory space ID (not including '----')";
+				assert oldMemorySpaceId == null || !oldMemorySpaceId.equals(NA_MEMORY_SPACE_ID) : "should be null reference or an explicit, valid memory space ID (not including '----')"; //$NON-NLS-1$
 				if ((oldMemorySpaceId != null && !oldMemorySpaceId.equals(memorySpaceId)) 
 						|| (oldMemorySpaceId == null && memorySpaceId != null)) {
 					try {
@@ -422,7 +428,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 						getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
 					} catch (DebugException e) {
 						fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
-								Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e));
+								Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e)); //$NON-NLS-1$
 						return;
 					}
 				}
@@ -452,7 +458,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 							fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 							runOnUIThread(new Runnable(){
 								public void run() {
-									updateLabel(activeFolder.getSelection(), renderingFinal);
+									CTabItem selection = activeFolder.getSelection();
+									selection.setData(KEY_EXPRESSION, expression);
+									updateLabel(selection, renderingFinal);
 								}
 							});
 						} catch (final DebugException e1) {
@@ -460,7 +468,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 							runOnUIThread(new Runnable(){
 								public void run() {
 									fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
-											Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1));
+											Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1)); //$NON-NLS-1$
 								}
 							});
 						}
@@ -846,15 +854,18 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					tabFolder.addSelectionListener(new SelectionListener() {
 						public void widgetDefaultSelected(SelectionEvent e) {}
 						public void widgetSelected(SelectionEvent e) {
-							updateMemorySpaceControlSelection((CTabItem)e.item);
-							getSite().getSelectionProvider().setSelection(new StructuredSelection(((CTabItem) e.item).getData(KEY_RENDERING)));
+							CTabItem tabItem = (CTabItem)e.item;
+							updateExpression(tabItem);
+							updateMemorySpaceControlSelection(tabItem);
+							getSite().getSelectionProvider().setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
 						}
 					});
 					
 					tabFolder.setData(KEY_RETRIEVAL, retrieval);
-					
 					fContextFolders.put(retrieval, tabFolder);
 					fStackLayout.topControl = tabFolder;
+					// set empty initial expression 
+					fGotoAddressBar.setExpressionText(""); //$NON-NLS-1$
 				}
 				// update debug context to the new selection
 				tabFolder.setData(KEY_CONTEXT, context);
@@ -887,6 +898,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					setMemorySpaceControlVisible(false);					
 				}
 
+				updateExpression(activeFolder.getSelection());
 				updateMemorySpaceControlSelection(activeFolder.getSelection());
 				
 				fStackLayout.topControl.getParent().layout(true);
@@ -894,6 +906,20 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		});
 	}
 	
+	/**
+	 * Update the expression text in goto address widget to reflect the memory
+	 * rendering expression
+	 * 
+	 * @param item
+	 *            the active tab; may be null if in a "fresh" memory browser instance
+	 */
+	protected void updateExpression(CTabItem activeFolder) {
+		String expression = (activeFolder != null) ? (String) activeFolder.getData(KEY_EXPRESSION) : null;
+		if (expression != null) {
+			fGotoAddressBar.setExpressionText(expression);
+		}
+	}
+
 	private void setMemorySpaceControlVisible(boolean visible) {
 		FormData data = (FormData)fGotoAddressBarControl.getLayoutData();
 		if (visible) {
@@ -985,7 +1011,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		if (rendering == null) {
 			// No rendering yet. Create rendering and associated memory block.
 			// createMemoryBlock will throw if expression cannot be resolved 
-			IMemoryBlockExtension block = createMemoryBlock(retrieval, expression, context, memorySpaceId); //$NON-NLS-1$
+			IMemoryBlockExtension block = createMemoryBlock(retrieval, expression, context, memorySpaceId); 
 			try {
 				rendering = type.createRendering();
 			} catch (CoreException e) {

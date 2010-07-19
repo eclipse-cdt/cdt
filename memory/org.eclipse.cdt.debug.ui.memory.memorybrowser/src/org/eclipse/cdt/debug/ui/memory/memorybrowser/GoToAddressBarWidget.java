@@ -122,11 +122,24 @@ public class GoToAddressBarWidget {
 		return null;
 	}
 	
+	/**
+	 * Get expression text
+	 * @return
+	 */
 	public String getExpressionText()
 	{
 		return fExpression.getText().trim();
 	}
-	
+
+	/**
+	 * Update expression text from the widget
+	 * @param text 
+	 */
+	public void setExpressionText(String text)
+	{
+		fExpression.setText(text);
+	}
+
 	public Text getExpressionWidget()
 	{
 		return fExpression;

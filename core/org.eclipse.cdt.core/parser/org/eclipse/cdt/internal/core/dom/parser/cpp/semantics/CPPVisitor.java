@@ -1694,7 +1694,9 @@ public class CPPVisitor extends ASTQueries {
 		IASTDeclSpecifier pDeclSpec = pdecl.getDeclSpecifier();
 		ICPPASTDeclarator pDtor = pdecl.getDeclarator();
 		pt = createType(pDeclSpec);
-		pt = createType(pt, pDtor);
+		if (pDtor != null) {
+			pt = createType(pt, pDtor);
+		}
 		pt=  adjustParameterType(pt, forFuncType);
 		
 		if (pt != null && CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {

@@ -959,6 +959,28 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0, ICPPFunction.class);
 	}
 
+	//	template <class U>
+	//	void func(const U& u, const typename U::t& v) {
+	//	}
+	//
+	//	template <class U>
+	//	void func(U& u, const typename U::t& v) {
+	//	}
+	
+	//	template <typename T> class A {
+	//	  typedef T t;
+	//	};
+	//
+	//	void test() {
+	//	  const A<int>& a;
+	//	  int b;
+	//	  func(a, b);
+	//	}
+	public void testFunctionTemplate_319498() throws Exception {
+		ICPPFunction f= getBindingFromASTName("func(a, b)", 4, ICPPFunction.class);
+		assertInstance(f, ICPPTemplateInstance.class);
+	}
+
 	// template<typename T>
 	// class Foo {};
 	//

@@ -1052,7 +1052,9 @@ public class CPPVisitor extends ASTQueries {
 					if (data != null) {
 						data.usesEnclosingScope= false;
 					}
-					IBinding binding = names[i - 1].resolveBinding();
+					// For template functions we may need to resolve a template parameter
+					// as a parent of an unknown type used as parameter type.
+					IBinding binding = names[i - 1].resolvePreBinding();
 					while (binding instanceof ITypedef) {
 						IType t = ((ITypedef) binding).getType();
 						if (t instanceof IBinding)

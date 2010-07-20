@@ -80,8 +80,10 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 		
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;
-			if (node.getPDOM() == getPDOM()) {
-				return node.getRecord() == getRecord();
+			// Different PDOM bindings may result in equal types if a parent
+			// turns out to be a template parameter.
+			if (node.getPDOM() == getPDOM() && node.getRecord() == getRecord()) {
+				return true;
 			}
 		}
 		

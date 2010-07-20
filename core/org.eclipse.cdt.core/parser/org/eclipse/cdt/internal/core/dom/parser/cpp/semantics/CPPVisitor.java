@@ -1052,9 +1052,7 @@ public class CPPVisitor extends ASTQueries {
 					if (data != null) {
 						data.usesEnclosingScope= false;
 					}
-					// For template functions we may need to resolve a template parameter
-					// as a parent of an unknown type used as parameter type.
-					IBinding binding = names[i - 1].resolvePreBinding();
+					IBinding binding = names[i - 1].resolveBinding();
 					while (binding instanceof ITypedef) {
 						IType t = ((ITypedef) binding).getType();
 						if (t instanceof IBinding)
@@ -1344,10 +1342,7 @@ public class CPPVisitor extends ASTQueries {
 				kind = KIND_TYPE;
 			} else if (binding instanceof ICPPNamespace) {
 				kind = KIND_NAMESPACE;
-			} else if (binding instanceof IParameter) {
-				requiredName= null;
-				kind = KIND_OBJ_FN;
-			} else {
+			} else { 
 				kind = KIND_OBJ_FN;
 			}
 		}
@@ -1694,7 +1689,9 @@ public class CPPVisitor extends ASTQueries {
 		IASTDeclSpecifier pDeclSpec = pdecl.getDeclSpecifier();
 		ICPPASTDeclarator pDtor = pdecl.getDeclarator();
 		pt = createType(pDeclSpec);
-		pt = createType(pt, pDtor);
+		if (pDtor != null) {
+			pt = createType(pt, pDtor);
+		}
 		pt=  adjustParameterType(pt, forFuncType);
 		
 		if (pt != null && CPPVisitor.findInnermostDeclarator(pDtor).declaresParameterPack()) {
@@ -2091,7 +2088,7 @@ public class CPPVisitor extends ASTQueries {
 			}
 		} catch (DOMException e) {
 		}
-		basicType= new CPPBasicType(Kind.eInt, 0);
+		basicType= new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 		basicType.setFromExpression(binary);
 		return basicType;
 	}

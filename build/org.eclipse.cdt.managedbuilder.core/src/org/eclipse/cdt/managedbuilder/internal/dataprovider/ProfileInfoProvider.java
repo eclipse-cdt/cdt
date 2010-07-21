@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
@@ -100,26 +100,26 @@ public class ProfileInfoProvider {
 		return new ICLanguageSettingEntry[0];
 	}
 	
-	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, Map map){
+	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, Map<String, String> map){
 		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[map.size()];
 		int num = 0;
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String name = (String)entry.getKey();
-			String value = (String)entry.getValue();
+		Set<Entry<String, String>> entrySet = map.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String name = entry.getKey();
+			String value = entry.getValue();
 			entries[num++] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, name, value, null, flags);
 		}
 		return entries;
 	}
 
-	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, String[] values){
-		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[values.length];
-		for(int i = 0; i < values.length; i++){
-			String name = values[i];
-			entries[i] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, name, null, null, flags);
-		}
-		return entries;
-	}
+//	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, String[] values){
+//		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[values.length];
+//		for(int i = 0; i < values.length; i++){
+//			String name = values[i];
+//			entries[i] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, name, null, null, flags);
+//		}
+//		return entries;
+//	}
 
 	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, IPath[] values){
 		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[values.length];
@@ -130,13 +130,13 @@ public class ProfileInfoProvider {
 		return entries;
 	}
 
-	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, List list){
-		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[list.size()];
-		int num = 0;
-		for(Iterator iter = list.iterator(); iter.hasNext();){
-			String name = (String)iter.next();
-			entries[num++] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, name, null, null, flags);
-		}
-		return entries;
-	}
+//	private ICLanguageSettingEntry[] calculateEntries(int kind, int flags, List list){
+//		ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[list.size()];
+//		int num = 0;
+//		for(Iterator iter = list.iterator(); iter.hasNext();){
+//			String name = (String)iter.next();
+//			entries[num++] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, name, null, null, flags);
+//		}
+//		return entries;
+//	}
 }

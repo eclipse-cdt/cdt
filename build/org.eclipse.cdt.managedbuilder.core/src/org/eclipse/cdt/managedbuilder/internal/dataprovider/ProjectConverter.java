@@ -96,7 +96,7 @@ public class ProjectConverter implements ICProjectConverter {
 				return false;
 		
 			IProjectDescription eDes = project.getDescription();
-			Set natureSet = new HashSet(Arrays.asList(eDes.getNatureIds()));
+			Set<String> natureSet = new HashSet<String>(Arrays.asList(eDes.getNatureIds()));
 			if(natureSet.contains(OLD_MAKE_NATURE_ID))
 				return true;
 			
@@ -112,7 +112,7 @@ public class ProjectConverter implements ICProjectConverter {
 
 	public ICProjectDescription convertProject(IProject project, IProjectDescription eDes, String oldOwnerId, ICProjectDescription oldDes)
 			throws CoreException {
-		Set natureSet = new HashSet(Arrays.asList(eDes.getNatureIds()));
+		Set<String> natureSet = new HashSet<String>(Arrays.asList(eDes.getNatureIds()));
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescription newDes = null;
 		IManagedBuildInfo info = null;
@@ -161,14 +161,14 @@ public class ProjectConverter implements ICProjectConverter {
 				changeEDes = true;
 				
 			if(changeEDes)
-				eDes.setNatureIds((String[])natureSet.toArray(new String[natureSet.size()]));
+				eDes.setNatureIds(natureSet.toArray(new String[natureSet.size()]));
 			
 			changeEDes = false;
 			ICommand[] cmds = eDes.getBuildSpec();
-			List list = new ArrayList(Arrays.asList(cmds));
+			List<ICommand> list = new ArrayList<ICommand>(Arrays.asList(cmds));
 			ICommand makeBuilderCmd = null;
-			for(Iterator iter = list.iterator(); iter.hasNext();){
-				ICommand cmd = (ICommand)iter.next();
+			for(Iterator<ICommand> iter = list.iterator(); iter.hasNext();){
+				ICommand cmd = iter.next();
 				if(OLD_MAKE_BUILDER_ID.equals(cmd.getBuilderName())){
 					makeBuilderCmd = cmd;
 					iter.remove();
@@ -220,7 +220,7 @@ public class ProjectConverter implements ICProjectConverter {
 //			}
 			
 			if(changeEDes){
-				cmds = (ICommand[])list.toArray(new ICommand[list.size()]);
+				cmds = list.toArray(new ICommand[list.size()]);
 				eDes.setBuildSpec(cmds);
 			}
 			
@@ -346,9 +346,9 @@ public class ProjectConverter implements ICProjectConverter {
 			toTarget.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, fromTarget.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, null));
 			toTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET, fromTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, null));
 			
-			Map fromMap = fromTarget.getEnvironment();
+			Map<String, String> fromMap = fromTarget.getEnvironment();
 			if(fromMap != null)
-				toTarget.setEnvironment(new HashMap(fromMap));
+				toTarget.setEnvironment(new HashMap<String, String>(fromMap));
 			
 //			toTarget.setErrorParsers(fromTarget.getErrorParsers());
 			
@@ -368,9 +368,9 @@ public class ProjectConverter implements ICProjectConverter {
 			if(el != null){
 				IPathEntry[] entries = PathEntryTranslator.decodePathEntries(project, el);
 				if(entries.length != 0){
-					List list = new ArrayList(Arrays.asList(entries));
-					for(Iterator iter = list.iterator(); iter.hasNext();){
-						IPathEntry entry = (IPathEntry)iter.next();
+					List<IPathEntry> list = new ArrayList<IPathEntry>(Arrays.asList(entries));
+					for(Iterator<IPathEntry> iter = list.iterator(); iter.hasNext();){
+						IPathEntry entry = iter.next();
 						if(entry.getEntryKind() == IPathEntry.CDT_CONTAINER){
 							iter.remove();
 							continue;
@@ -379,7 +379,7 @@ public class ProjectConverter implements ICProjectConverter {
 					
 					if(list.size() != 0){
 						PathEntryTranslator tr = new PathEntryTranslator(project, data);
-						entries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
+						entries = list.toArray(new IPathEntry[list.size()]);
 						ReferenceSettingsInfo refInfo = tr.applyPathEntries(entries, null, PathEntryTranslator.OP_REPLACE);
 						ICExternalSetting extSettings[] = refInfo.getExternalSettings();
 						des.removeExternalSettings();
@@ -396,7 +396,7 @@ public class ProjectConverter implements ICProjectConverter {
 
 						IPath projPaths[] = refInfo.getReferencedProjectsPaths();
 						if(projPaths.length != 0){
-							Map map = new HashMap(projPaths.length);
+							Map<String, String> map = new HashMap<String, String>(projPaths.length);
 							for(int i = 0; i < projPaths.length; i++){
 								map.put(projPaths[i].segment(0), "");	//$NON-NLS-1$
 							}
@@ -411,13 +411,13 @@ public class ProjectConverter implements ICProjectConverter {
 		}
 	}
 	
-	private String[] idsFromRefs(ICConfigExtensionReference refs[]){
-		String ids[] = new String[refs.length];
-		for(int i = 0; i < ids.length; i++){
-			ids[i] = refs[i].getID();
-		}
-		return ids;
-	}
+//	private String[] idsFromRefs(ICConfigExtensionReference refs[]){
+//		String ids[] = new String[refs.length];
+//		for(int i = 0; i < ids.length; i++){
+//			ids[i] = refs[i].getID();
+//		}
+//		return ids;
+//	}
 	
 //	private void loadDiscoveryOptions(ICConfigurationDescription des, IConfiguration cfg){
 //		try {
@@ -496,7 +496,7 @@ public class ProjectConverter implements ICProjectConverter {
 			
 			final IProjectDescription eDes = project.getDescription();
 			String natureIds[] = eDes.getNatureIds();
-			Set set = new HashSet(Arrays.asList(natureIds));
+			Set<String> set = new HashSet<String>(Arrays.asList(natureIds));
 			if(!set.contains(OLD_MAKE_NATURE_ID)){
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,

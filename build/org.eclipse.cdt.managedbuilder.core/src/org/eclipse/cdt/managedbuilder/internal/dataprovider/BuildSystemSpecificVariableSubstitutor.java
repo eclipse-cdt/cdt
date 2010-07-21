@@ -23,13 +23,13 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 
 public class BuildSystemSpecificVariableSubstitutor extends SupplierBasedCdtVariableSubstitutor{
-	private static final Set fFileVarsSet = new HashSet(Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE)));
-	private static final Set fOptionVarsSet = new HashSet(Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_OPTION)));
-	private static final Set fToolVarsSet =  new HashSet(Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_TOOL)));
+	private static final Set<String> fFileVarsSet = new HashSet<String>(Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE)));
+	private static final Set<String> fOptionVarsSet = new HashSet<String>(Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_OPTION)));
+	private static final Set<String> fToolVarsSet =  new HashSet<String>(Arrays.asList(MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_TOOL)));
 	
 	public BuildSystemSpecificVariableSubstitutor(
 			IVariableContextInfo contextInfo, String inexistentMacroValue,
-			String listDelimiter, Map delimiterMap,
+			String listDelimiter, Map<String, String> delimiterMap,
 			String incorrectlyReferencedMacroValue) {
 		super(contextInfo, inexistentMacroValue, listDelimiter, delimiterMap,
 				incorrectlyReferencedMacroValue);

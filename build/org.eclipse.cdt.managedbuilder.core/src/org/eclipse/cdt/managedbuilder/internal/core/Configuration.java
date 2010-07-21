@@ -26,7 +26,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
@@ -81,16 +81,13 @@ import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Version;
-import org.osgi.service.prefs.Preferences;
 
 public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
 	
@@ -135,7 +132,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //	private Boolean isPerResourceDiscovery;
 	private ICfgScannerConfigBuilderInfo2Set cfgScannerInfo;
 	private boolean isPreferenceConfig;
-	private List excludeList;
+	private List<IPath> excludeList;
 	
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
@@ -195,7 +192,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
 	 * @param element The element from the manifest that contains the configuration information.
-	 * @param managedBuildRevision 
 	 */
 	public Configuration(ProjectType projectType, IManagedConfigElement element, String managedBuildRevision) {
 		this.projectType = projectType;
@@ -224,8 +220,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		
 		// Load the children
 		IManagedConfigElement[] configElements = element.getChildren();
-		List srcPathList = new ArrayList();
-		excludeList = new ArrayList();
+		List<IPath> srcPathList = new ArrayList<IPath>();
+		excludeList = new ArrayList<IPath>();
 		for (int l = 0; l < configElements.length; ++l) {
 			IManagedConfigElement configElement = configElements[l];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
@@ -245,8 +241,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			} else if (configElement.getName().equals(SupportedProperties.SUPPORTED_PROPERTIES)){
 				loadProperties(configElement);
 			} else if (SOURCE_ENTRIES.equals(configElement.getName())){
-				List seList = LanguageSettingEntriesSerializer.loadEntriesList(new ManagedConfigStorageElement(configElement), ICSettingEntry.SOURCE_PATH);
-				sourceEntries = (ICSourceEntry[])seList.toArray(new ICSourceEntry[seList.size()]);
+				List<ICSettingEntry> seList = LanguageSettingEntriesSerializer.loadEntriesList(new ManagedConfigStorageElement(configElement), ICSettingEntry.SOURCE_PATH);
+				sourceEntries = seList.toArray(new ICSourceEntry[seList.size()]);
 			}
 		}
 		
@@ -291,9 +287,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		setDirty(false);
 	}
 	
-	private static ICSourceEntry[] createSourceEntries(ICSourceEntry[] curEntries, List pathList, List excludeList){
+	private static ICSourceEntry[] createSourceEntries(ICSourceEntry[] curEntries, List<IPath> pathList, List<IPath> excludeList){
 		for(int i = 0; i < excludeList.size(); i++){
-			IPath path = (IPath)excludeList.get(i);
+			IPath path = excludeList.get(i);
 			if(path.segmentCount() == 0)
 				excludeList.remove(i);
 		}
@@ -306,11 +302,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return curEntries;
 		
 		int pathSize = pathList.size();
-		Map map = new LinkedHashMap();
+		Map<IPath, ICSourceEntry> map = new LinkedHashMap<IPath, ICSourceEntry>();
 
 		for(int i = 0; i < pathSize; i++){
-			IPath path = (IPath)pathList.get(i);
-			ICSourceEntry entry = (ICSourceEntry)map.get(path);
+			IPath path = pathList.get(i);
+			ICSourceEntry entry = map.get(path);
 			if(entry == null)
 				entry = new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			
@@ -319,7 +315,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				map.put(path, entry);
 		}
 		
-		return (ICSourceEntry[])map.values().toArray(new ICSourceEntry[map.size()]);
+		return map.values().toArray(new ICSourceEntry[map.size()]);
 	}
 
 	/**
@@ -406,8 +402,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			managedProject.addConfiguration(this);
 
 		ICStorageElement configElements[] = element.getChildren();
-		List srcPathList = new ArrayList();
-		excludeList = new ArrayList();
+		List<IPath> srcPathList = new ArrayList<IPath>();
+		excludeList = new ArrayList<IPath>();
 		for (int i = 0; i < configElements.length; ++i) {
 			ICStorageElement configElement = configElements[i];
 			if (configElement.getName().equals(IToolChain.TOOL_CHAIN_ELEMENT_NAME)) {
@@ -425,8 +421,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				if(p.getPath() != null)
 					srcPathList.add(p.getPath());
 			} else if (SOURCE_ENTRIES.equals(configElement.getName())){
-				List seList = LanguageSettingEntriesSerializer.loadEntriesList(configElement, ICSettingEntry.SOURCE_PATH);
-				sourceEntries = (ICSourceEntry[])seList.toArray(new ICSourceEntry[seList.size()]);
+				List<ICSettingEntry> seList = LanguageSettingEntriesSerializer.loadEntriesList(configElement, ICSettingEntry.SOURCE_PATH);
+				sourceEntries = seList.toArray(new ICSourceEntry[seList.size()]);
 			}
 		}
 		
@@ -682,7 +678,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		boolean copyIds = cloneConfig.getId().equals(id);
 		String subId;
 		//  Resource Configurations
-		Map toolIdMap = new HashMap();
+		Map<IPath, Map<String, String>> toolIdMap = new HashMap<IPath, Map<String, String>>();
 		IResourceInfo infos[] = cloneConfig.rcInfos.getResourceInfos();
 		for(int i = 0; i < infos.length; i++){
 			if(infos[i] instanceof FolderInfo){
@@ -893,9 +889,6 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/**
 	 * Persist this configuration to project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 		element.setAttribute(IConfiguration.ID, id);
@@ -1399,7 +1392,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			set.toArray(result);
 			return result;
 		}
-		return CCorePlugin.getDefault().getAllErrorParsersIDs();
+		return ErrorParserManager.getErrorParserAvailableIds();
 	}
 
 	public Set<String> contributeErrorParsers(Set<String> set, boolean includeChildren) {
@@ -2185,15 +2178,15 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/**
 	 * @param parallel if true, internal builder will use parallel mode 
 	 */
-	public void setParallelDef(boolean parallel_def){
-		if(getParallelDef() == parallel_def)
+	public void setParallelDef(boolean parallel){
+		if(getParallelDef() == parallel)
 			return;
 		
 		int num = getParallelNumber();
 		if(num != 0){
 			setParallelNumber(-num);
 		} else {
-			if(parallel_def){
+			if(parallel){
 				setParallelNumber(-1);
 			} else {
 				setParallelNumber(1);
@@ -2210,10 +2203,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 	
 	/**
-	 * 
 	 * sets number of Parallel threads
-	 * 
-	 * @param int 
 	 */
 	public void setParallelNumber(int n){
 		try {
@@ -2231,23 +2221,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return getBuilder().getParallelizationNum();
 	}
 	
-	private Preferences getPreferences(String name){
-		if(isTemporary)
-			return null;
-		
-		IProject project = (IProject)getOwner();
-		
-		if(project == null || !project.exists() || !project.isOpen())
-			return null;
-
-		Preferences prefs = new ProjectScope(project).getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
-		if(prefs != null){
-			prefs = prefs.node(getId());
-			if(prefs != null && name != null)
-				prefs = prefs.node(name);
-		}
-		return prefs;
-	}
+//	private Preferences getPreferences(String name){
+//		if(isTemporary)
+//			return null;
+//		
+//		IProject project = (IProject)getOwner();
+//		
+//		if(project == null || !project.exists() || !project.isOpen())
+//			return null;
+//
+//		Preferences prefs = new ProjectScope(project).getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
+//		if(prefs != null){
+//			prefs = prefs.node(getId());
+//			if(prefs != null && name != null)
+//				prefs = prefs.node(name);
+//		}
+//		return prefs;
+//	}
 
 	public IResourceInfo[] getResourceInfos() {
 		return rcInfos.getResourceInfos();
@@ -2295,7 +2285,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		IResourceInfo info = getResourceInfo(path, false);
 		IFolderInfo folderInfo = null;
 		if(info instanceof IFileInfo){
-			folderInfo = null;
+//			folderInfo = null;
 		} else if (info instanceof IFolderInfo){
 			IFolderInfo base = (IFolderInfo)info;
 			folderInfo = createFolderInfo(path, base, id, name);
@@ -2319,7 +2309,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(sourceEntries == null || sourceEntries.length == 0){
 			if(parent != null && sourceEntries == null)
 				return parent.getSourceEntries();
-			return new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED)}; //$NON-NLS-1$
+			return new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED)};
 			
 		}
 		return sourceEntries.clone();
@@ -2577,7 +2567,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 	
 	public String[] getUserObjects(String extension) {
-		Vector objs = new Vector();
+		Vector<String> objs = new Vector<String>();
 		ITool tool = calculateTargetTool();
 		if(tool == null)
 			tool = getToolFromOutputExtension(extension);
@@ -2614,11 +2604,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					}
 				}
 		}
-		return (String[])objs.toArray(new String[objs.size()]);
+		return objs.toArray(new String[objs.size()]);
 	}
 	
 	public String[] getLibs(String extension) {
-		Vector libs = new Vector();
+		Vector<String> libs = new Vector<String>();
 		ITool tool = calculateTargetTool();
 		if(tool == null)
 			tool = getToolFromOutputExtension(extension);
@@ -2668,7 +2658,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					}
 				}
 		}
-		return (String[])libs.toArray(new String[libs.size()]);
+		return libs.toArray(new String[libs.size()]);
 	}
 
 	public boolean buildsFileType(String srcExt) {
@@ -2799,38 +2789,38 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	public String[] getRequiredTypeIds() {
 		SupportedProperties props = findSupportedProperties();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		if(props != null){
 			list.addAll(Arrays.asList(props.getRequiredTypeIds()));
 		}
 		
 		list.addAll(Arrays.asList(((ToolChain)getToolChain()).getRequiredTypeIds()));
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public String[] getSupportedTypeIds() {
 		SupportedProperties props = findSupportedProperties();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		if(props != null){
 			list.addAll(Arrays.asList(props.getSupportedTypeIds()));
 		}
 		
 		list.addAll(Arrays.asList(((ToolChain)getToolChain()).getSupportedTypeIds()));
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public String[] getSupportedValueIds(String typeId) {
 		SupportedProperties props = findSupportedProperties();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		if(props != null){
 			list.addAll(Arrays.asList(props.getSupportedValueIds(typeId)));
 		}
 		
 		list.addAll(Arrays.asList(((ToolChain)getToolChain()).getSupportedValueIds(typeId)));
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public boolean requiresType(String typeId) {

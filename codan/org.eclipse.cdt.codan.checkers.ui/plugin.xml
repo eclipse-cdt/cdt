@@ -17,6 +17,18 @@
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.SuggestedParenthesisQuickFix"
              problemId="org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem">
        </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateLocalVariable"
+             problemId="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateField"
+             problemId="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem">
+       </resolution>
+       <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateParameter"
+             problemId="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem">
+       </resolution>
     </extension>
 
 </plugin>

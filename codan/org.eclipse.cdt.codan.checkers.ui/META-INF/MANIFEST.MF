@@ -9,9 +9,13 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jface.text,
  org.eclipse.core.resources,
  org.eclipse.cdt.codan.ui,
- org.eclipse.ui.ide
+ org.eclipse.ui.ide,
+ org.eclipse.cdt.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.internal.checkers.ui;x-internal:=true,
  org.eclipse.cdt.codan.internal.checkers.ui.quickfix;x-internal:=true
+Import-Package: org.eclipse.cdt.codan.core.cxx,
+ org.eclipse.ltk.core.refactoring
+

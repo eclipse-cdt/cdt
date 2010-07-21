@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,6 +117,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
 @SuppressWarnings("restriction")
 public class MemoryBrowser extends ViewPart implements IDebugContextListener, IMemoryRenderingSite, IDebugEventSetListener
 {
+	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
+	
 	protected StackLayout fStackLayout;
 	private Composite fRenderingsComposite;
 	private GoToAddressBarWidget fGotoAddressBar;
@@ -125,7 +127,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	private Label fUnsupportedLabel;
 	private Composite fMainComposite;
 	private String defaultRenderingTypeId = null;
-
+	private IMemoryRendering fActiveRendering;
+	
 	/**
 	 * Every memory retrieval object is given its own tab folder. Typically all
 	 * elements of a "process" (process, threads, frames) have the same
@@ -191,6 +194,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		return fMainComposite;
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		// set default rendering type. use the traditional rendering if available. fallback on first registered type.
 		// this should eventually be configurable via a preference page.
@@ -320,6 +324,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
         return site.getId() + (site.getSecondaryId() != null ? (":" + site.getSecondaryId()) : ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 	
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
         IDebugContextService contextService = 
@@ -401,6 +406,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					fContextFolders.put(retrieval, activeFolder);
 					activeFolder.setSelection(item);
 					getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
+					handleTabActivated(item);
 				} catch (DebugException e1) {
 					fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
 							Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1));
@@ -420,6 +426,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 						rendering = populateTabWithRendering(item, retrieval, context, memorySpaceId, expression);
 						activeFolder.setSelection(item);
 						getSite().getSelectionProvider().setSelection(new StructuredSelection(item.getData(KEY_RENDERING)));
+						handleTabActivated(item);
 					} catch (DebugException e) {
 						fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
 								Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e));
@@ -436,6 +443,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					rendering instanceof IRepositionableMemoryRendering) {
 				final IRepositionableMemoryRendering renderingFinal = (IRepositionableMemoryRendering) rendering;
 				new Thread() {
+					@Override
 					public void run() {
 						try {
 							BigInteger newBase = getExpressionAddress(retrieval, expression, context, memorySpaceId);
@@ -534,6 +542,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		
 		// listener to dispose rendering resources for each closed tab
 		folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			@Override
 			public void close(CTabFolderEvent event) {
 				event.doit = true;
 				CTabItem item = (CTabItem) event.item;
@@ -582,6 +591,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			// always deactivate rendering before disposing it.
 			rendering.deactivated();
 			rendering.dispose();
+			if (rendering == fActiveRendering) {
+				fActiveRendering = null;
+			}
 		}
 		map.clear();
 		
@@ -632,7 +644,8 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			final Action action = new Action(
 				type.getLabel(), IAction.AS_RADIO_BUTTON)
 	        {
-	            public void run()
+	            @Override
+				public void run()
 	            {
 	            	setDefaultRenderingTypeId(type.getId());
 	            }
@@ -691,6 +704,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		});
 	}
 
+	@Override
 	public void setFocus() {
 		getControl().setFocus();
 	}
@@ -752,6 +766,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 
 		public void propertyChange(final PropertyChangeEvent event) {
 			WorkbenchJob job = new WorkbenchJob("MemoryBrowser PropertyChanged") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					if(tab.isDisposed())
 						return Status.OK_STATUS;
@@ -795,6 +810,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
 			    final IMemoryBlockRetrieval _retrieval = retrieval;
 				((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).getMemorySpaces(context, new GetMemorySpacesRequest(){
+					@Override
 					public void done() {
 						updateTab(_retrieval, context, isSuccess() ? getMemorySpaces() : new String[0]);
 					}
@@ -840,14 +856,17 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				CTabFolder tabFolder = fContextFolders.get(retrieval);
 				if(tabFolder != null) {
 					fStackLayout.topControl = tabFolder;
+					handleTabActivated(tabFolder.getSelection());
 				}
 				else {
 					tabFolder = createTabFolder(fRenderingsComposite);
 					tabFolder.addSelectionListener(new SelectionListener() {
 						public void widgetDefaultSelected(SelectionEvent e) {}
 						public void widgetSelected(SelectionEvent e) {
-							updateMemorySpaceControlSelection((CTabItem)e.item);
-							getSite().getSelectionProvider().setSelection(new StructuredSelection(((CTabItem) e.item).getData(KEY_RENDERING)));
+							CTabItem tabItem = (CTabItem)e.item;
+							updateMemorySpaceControlSelection(tabItem);
+							getSite().getSelectionProvider().setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
+							handleTabActivated(tabItem);
 						}
 					});
 					
@@ -894,6 +913,27 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		});
 	}
 	
+	protected final void handleTabActivated(CTabItem item) {
+		if (item != null) {
+			updateActiveRendering((IMemoryRendering) item.getData(KEY_RENDERING));
+		}
+	}
+	
+	private void updateActiveRendering(IMemoryRendering rendering) {
+		if (fActiveRendering == rendering) {
+			return;
+		}
+		if (fActiveRendering != null) {
+			fActiveRendering.deactivated();
+			fActiveRendering.becomesHidden();
+		}
+		if (rendering != null) {
+			rendering.activated();
+			rendering.becomesVisible();
+		}
+		fActiveRendering = rendering;
+	}
+
 	private void setMemorySpaceControlVisible(boolean visible) {
 		FormData data = (FormData)fGotoAddressBarControl.getLayoutData();
 		if (visible) {
@@ -1129,6 +1169,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		}
 		else {
 			UIJob job = new UIJob("Memory Browser UI Job"){ //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					runnable.run();
 					return Status.OK_STATUS;

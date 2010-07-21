@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx.internal.model;
 
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.internal.core.CodanBuilder;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IResource;
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  */
 public class CxxCodanReconciler {
-	private CodanBuilder builder = new CodanBuilder();
+	private CodanBuilder builder = (CodanBuilder) CodanRuntime.getInstance().getBuilder();
 
 	public void reconciledAst(IASTTranslationUnit ast, IResource resource,
 			IProgressMonitor monitor) {

@@ -13,14 +13,19 @@ package org.eclipse.cdt.codan.ui;
 
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -191,8 +196,36 @@ public abstract class AbstractCodanCMarkerResolution implements
 		final int charStart = marker.getAttribute(IMarker.CHAR_START, -1);
 		final int length = marker.getAttribute(IMarker.CHAR_END, -1)
 				- charStart;
+		return getASTNameFromPositions(ast, charStart, length);
+	}
+
+	/**
+	 * @param ast
+	 * @param charStart
+	 * @param length
+	 * @return
+	 */
+	protected IASTName getASTNameFromPositions(IASTTranslationUnit ast,
+			final int charStart, final int length) {
 		IASTName name = ast.getNodeSelector(null).findEnclosingName(charStart,
 				length);
 		return name;
+	}
+
+	/**
+	 * Receives an {@link IIndex} corresponding to the given {@link IMarker}'s
+	 * resource.
+	 * 
+	 * @param marker
+	 *        the marker to use
+	 * @return the received index
+	 * @throws CoreException
+	 */
+	protected IIndex getIndexFromMarker(final IMarker marker)
+			throws CoreException {
+		IProject project = marker.getResource().getProject();
+		ICProject cProject = CoreModel.getDefault().create(project);
+		IIndex index = CCorePlugin.getIndexManager().getIndex(cProject);
+		return index;
 	}
 }

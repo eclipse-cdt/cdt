@@ -255,7 +255,8 @@ public class PDOMFile implements IIndexFragmentFile {
 	public void setInternalLocation(String internalLocation) throws CoreException {
 		Database db = fLinkage.getDB();
 		long oldRecord = db.getRecPtr(record + LOCATION_REPRESENTATION);
-		db.free(oldRecord);
+		if (oldRecord != 0)
+			db.getString(oldRecord).delete();
 		db.putRecPtr(record + LOCATION_REPRESENTATION, db.newString(internalLocation).getRecord());
 		location= null;
 	}
@@ -524,7 +525,12 @@ public class PDOMFile implements IIndexFragmentFile {
 	 * @throws CoreException
 	 */
 	public void delete() throws CoreException {
-		fLinkage.getDB().free(record);
+		Database db = fLinkage.getDB();
+		long locRecord = db.getRecPtr(record + LOCATION_REPRESENTATION);
+		if (locRecord != 0)
+			db.getString(locRecord).delete();
+
+		db.free(record);
 	}
 
 	public void addIncludesTo(IncludeInformation[] includeInfos) throws CoreException {

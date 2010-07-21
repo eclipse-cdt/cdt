@@ -147,6 +147,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		if (params != null) {
 			params.delete();
 		}
+		linkage.getDB().free(fRecord);
 	}
 	
 	public PDOMMacroContainer getContainer() throws CoreException {

@@ -189,7 +189,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				
 				for (ICLanguageSettingEntry entry : entries) {
 					if (((CMacroEntry) entry).getName().equals(symbol)) {
-						int flags = entry.getFlags();
 						symbolFound = true; // it's already there, so don't set it
 						break;
 					}
@@ -269,11 +268,11 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			}
 		}
 		
-		public Map getPathInfoMap() {
+		public Map<IResource, PathInfo> getPathInfoMap() {
 			synchronized (fLock) {
 				IPerFileDiscoveredPathInfo2 info1 = getPerFileInfo1();
 				if (info1 != null) {
-					Map map = new HashMap();
+					Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>();
 					map.putAll(info1.getPathInfoMap());
 					map.putAll(fInfo2.getPathInfoMap());
 					return map;
@@ -383,7 +382,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			}
 		}
 
-		public Map getSymbols(IPath path) {
+		public Map<String, String> getSymbols(IPath path) {
 			synchronized (fLock) {
 
 				Map<String, String> symbols = new HashMap<String, String>();
@@ -439,7 +438,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 			return fInfo2.getSerializable();
 		}
 
-		public Map getSymbols() {
+		public Map<String, String> getSymbols() {
 			synchronized (fLock) {
 				return fInfo1.getSymbols();
 			}
@@ -630,9 +629,8 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				// get the command
 				CCommandDSC cmd = getCommand(path);
 				if (cmd != null && cmd.isDiscovered()) {
-					List symbols = cmd.getSymbols();
-					for (Iterator i = symbols.iterator(); i.hasNext();) {
-						String symbol = (String) i.next();
+					List<String> symbols = cmd.getSymbols();
+					for (String symbol : symbols) {
 						String key = ScannerConfigUtil.getSymbolKey(symbol);
 						String value = ScannerConfigUtil.getSymbolValue(symbol);
 						definedSymbols.put(key, value);
@@ -1520,7 +1518,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector#getIncludePaths()
 	 */
-	public List getIncludePaths() {
+	public List<String> getIncludePaths() {
 		synchronized (fLock) {
 			List<String> pathStrings = new LinkedList<String>();
 

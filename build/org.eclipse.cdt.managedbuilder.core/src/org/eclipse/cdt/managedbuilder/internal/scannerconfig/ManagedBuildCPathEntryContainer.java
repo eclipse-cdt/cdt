@@ -11,10 +11,10 @@
 
 package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
@@ -46,28 +46,28 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /**
- * Implements a specialized path container for managed build projects. It will 
- * either start the dynamic path collector specified for a target in the tool 
- * manifest, or it will attempt to discover the built-in values specified in 
+ * Implements a specialized path container for managed build projects. It will
+ * either start the dynamic path collector specified for a target in the tool
+ * manifest, or it will attempt to discover the built-in values specified in
  * the manifest.
- * 
+ *
  * @since 2.0
  */
 public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
     // Managed make per project scanner configuration discovery profile
     public static final String MM_PP_DISCOVERY_PROFILE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".GCCManagedMakePerProjectProfile"; //$NON-NLS-1$
-    
+
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 	private static final String ERROR_HEADER = "PathEntryContainer error [";	//$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: ";	//$NON-NLS-1$
 	private static final String TRACE_HEADER = "PathEntryContainer trace [";	//$NON-NLS-1$
-	
+
 	private ITarget defaultTarget;
-	private Vector entries;
+	private Vector<IPathEntry> entries;
 	private IProject project;
 	private ManagedBuildInfo info;
 	public static boolean VERBOSE = false;
-	
+
 	public static void outputTrace(String resourceName, String message) {
 		if (VERBOSE) {
 			System.out.println(TRACE_HEADER + resourceName + TRACE_FOOTER + message + NEWLINE);
@@ -81,48 +81,41 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	}
 
 	/**
-	 * Creates a new path container for the managed buildd project.
-	 * 
-	 * @param info the build information associated with the project
+	 * Creates a new path container for the managed build project.
 	 */
 	public ManagedBuildCPathEntryContainer(IProject project) {
 		super();
 		this.project = project;
-		entries = new Vector();
+		entries = new Vector<IPathEntry>();
 	}
-	
-	protected void addDefinedSymbols(Map definedSymbols) {
+
+	protected void addDefinedSymbols(Map<String, String> definedSymbols) {
 		// Add a new macro entry for each defined symbol
-		Iterator keyIter = definedSymbols.keySet().iterator();
-		while (keyIter.hasNext()) {
+		Set<String> macros = definedSymbols.keySet();
+		for (String macro : macros) {
 			boolean add = true;
-			String macro = (String) keyIter.next();
-			String value = (String) definedSymbols.get(macro);
+			String value = definedSymbols.get(macro);
 			// Make sure the current entries do not contain a duplicate
-			Iterator entryIter = entries.listIterator();
-			while (entryIter.hasNext()) {
-				IPathEntry entry = (IPathEntry) entryIter.next();
-				if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {	
-					if (((IMacroEntry)entry).getMacroName().equals(macro) && 
+			for (IPathEntry entry : entries) {
+				if (entry.getEntryKind() == IPathEntry.CDT_MACRO) {
+					if (((IMacroEntry)entry).getMacroName().equals(macro) &&
 							((IMacroEntry)entry).getMacroValue().equals(value)) {
 						add = false;
 						break;
 					}
 				}
 			}
-			
+
 			if (add) {
 				entries.add(CoreModel.newMacroEntry(Path.EMPTY, macro, value));
 			}
 		}
-		
+
 	}
-	
-	protected void addIncludePaths(List paths) {
+
+	protected void addIncludePaths(List<String> paths) {
 		// A little checking is needed to avoid adding duplicates
-		Iterator pathIter = paths.listIterator();
-		while (pathIter.hasNext()) {
-			String path = (String) pathIter.next();
+		for (String path : paths) {
 			IPathEntry entry = CoreModel.newIncludeEntry(Path.EMPTY, Path.EMPTY, new Path(path), true);
 			if (!entries.contains(entry)) {
 				entries.add(entry);
@@ -130,21 +123,20 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		}
 	}
 
-	protected void calculateEntriesDynamically(final IProject project, 
-                                               SCProfileInstance profileInstance, 
+	protected void calculateEntriesDynamically(final IProject project,
+                                               SCProfileInstance profileInstance,
                                                final IScannerInfoCollector collector) {
 		// TODO Get the provider from the toolchain specification
 
         final IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.
                 createScannerConfigBuildInfo2(ManagedBuilderCorePlugin.getDefault().getPluginPreferences(),
                         profileInstance.getProfile().getId(), false);
-        List providerIds = buildInfo.getProviderIdList();
-        for (Iterator i = providerIds.iterator(); i.hasNext(); ) {
-        	final String providerId = (String) i.next();
+        List<String> providerIds = buildInfo.getProviderIdList();
+        for (final String providerId : providerIds) {
 	        final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider(providerId);
-	        
+
 			// Set the arguments for the provider
-			
+
 			ISafeRunnable runnable = new ISafeRunnable() {
 				public void run() {
 					IProgressMonitor monitor = new NullProgressMonitor();
@@ -157,7 +149,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 							env.put(vars[i].getName(), vars[i].getValue());
 					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector/*, env*/);
 				}
-	
+
 				public void handleException(Throwable exception) {
 					if (exception instanceof OperationCanceledException) {
 						throw (OperationCanceledException) exception;
@@ -175,13 +167,13 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		info = (ManagedBuildInfo) ManagedBuildManager.getBuildInfo(project);
 		if (info == null) {
 			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information is null");	//$NON-NLS-1$
-			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+			return entries.toArray(new IPathEntry[entries.size()]);
 		}
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
 		if (defaultConfig == null) {
 			// The build information has not been loaded yet
 			ManagedBuildCPathEntryContainer.outputError(project.getName(), "Build information has not been loaded yet");	//$NON-NLS-1$
-			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+			return entries.toArray(new IPathEntry[entries.size()]);
 		}
 		// get the associated scanner config discovery profile id
         String scdProfileId = ManagedBuildManager.getScannerInfoProfileId(defaultConfig);
@@ -195,7 +187,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	                getSCProfileInstance(project, context, scdProfileId);
 	        collector = profileInstance.createScannerInfoCollector();
         }
-        
+
         synchronized(this) {
 		if (collector instanceof IManagedScannerInfoCollector) {
             IManagedScannerInfoCollector mCollector = (IManagedScannerInfoCollector) collector;
@@ -213,36 +205,33 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + defaultConfig.getName());	//$NON-NLS-1$
 			} else {
 				ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
-				return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+				return entries.toArray(new IPathEntry[entries.size()]);
 			}
 		}
-		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+		return entries.toArray(new IPathEntry[entries.size()]);
         }  // end synchronized
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getDescription()
 	 */
 	public String getDescription() {
 		return "CDT Managed Build Project";	//$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPath()
 	 */
 	public IPath getPath() {
 		return new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER");	//$NON-NLS-1$
 	}
-	
- 	/**
- 	 * @param values
- 	 */
+
  	private void addEntries(IPathEntry[] values) {
  		if (values == null) return;
  		for (int i=0; i<values.length; i++) {
  			if (values[i] == null) continue;
  			if (!entries.contains(values[i])) {	entries.add(values[i]); }
- 		}	
+ 		}
  	}
 
 }

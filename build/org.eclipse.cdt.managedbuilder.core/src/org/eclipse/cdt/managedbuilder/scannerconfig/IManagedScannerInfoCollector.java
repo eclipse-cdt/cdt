@@ -41,12 +41,10 @@ public interface IManagedScannerInfoCollector extends IScannerInfoCollector {
 	 * 
 	 * @return a <code>List</code> of built-in compiler include search paths.  
 	 */
-	public List getIncludePaths();
+	public List<String> getIncludePaths();
 	
 	/**
 	 * Sets the <code>IProject</code> for the receiver.
-	 * 
-	 * @param project
 	 */
 	public void setProject(IProject project);
 }

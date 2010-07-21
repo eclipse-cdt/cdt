@@ -21,8 +21,8 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.core.runtime.CoreException;
 
 public class BuildProperties implements IBuildProperties {
-	private HashMap fPropertiesMap = new HashMap();
-	private ArrayList fInexistentProperties;
+	private HashMap<String, IBuildProperty> fPropertiesMap = new HashMap<String, IBuildProperty>();
+	private ArrayList<String> fInexistentProperties;
 	
 	public BuildProperties(){
 		
@@ -37,7 +37,7 @@ public class BuildProperties implements IBuildProperties {
 				addProperty(prop);
 			} catch (CoreException e) {
 				if(fInexistentProperties == null)
-					fInexistentProperties = new ArrayList();
+					fInexistentProperties = new ArrayList<String>();
 				
 				fInexistentProperties.add(property);
 			}
@@ -47,18 +47,19 @@ public class BuildProperties implements IBuildProperties {
 			fInexistentProperties.trimToSize();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public BuildProperties(BuildProperties properties){
 		fPropertiesMap.putAll(properties.fPropertiesMap);
 		if(properties.fInexistentProperties != null)
-			fInexistentProperties = (ArrayList)properties.fInexistentProperties.clone(); 
+			fInexistentProperties = (ArrayList<String>)properties.fInexistentProperties.clone();
 	}
 
 	public IBuildProperty[] getProperties(){
-		return (BuildProperty[])fPropertiesMap.values().toArray(new BuildProperty[fPropertiesMap.size()]);
+		return fPropertiesMap.values().toArray(new BuildProperty[fPropertiesMap.size()]);
 	}
 	
 	public IBuildProperty getProperty(String id){
-		return (BuildProperty)fPropertiesMap.get(id);
+		return fPropertiesMap.get(id);
 	}
 	
 	void addProperty(IBuildProperty property){
@@ -79,7 +80,7 @@ public class BuildProperties implements IBuildProperties {
 		} catch (CoreException e){
 			if(force){
 				if(fInexistentProperties == null)
-					fInexistentProperties = new ArrayList(1);
+					fInexistentProperties = new ArrayList<String>(1);
 				
 				fInexistentProperties.add(BuildProperty.toString(propertyId, propertyValue));
 				fInexistentProperties.trimToSize();
@@ -89,7 +90,7 @@ public class BuildProperties implements IBuildProperties {
 	}
 	
 	public IBuildProperty removeProperty(String id){
-		return (IBuildProperty)fPropertiesMap.remove(id);
+		return fPropertiesMap.remove(id);
 	}
 	
 	void removeProperty(BuildProperty property){
@@ -100,7 +101,7 @@ public class BuildProperties implements IBuildProperties {
 	public String toString(){
 		String props = toStringExistingProperties();
 		if(fInexistentProperties != null){
-			String inexistentProps = CDataUtil.arrayToString((String[])fInexistentProperties.toArray(new String[fInexistentProperties.size()]), BuildPropertyManager.PROPERTIES_SEPARATOR);
+			String inexistentProps = CDataUtil.arrayToString(fInexistentProperties.toArray(new String[fInexistentProperties.size()]), BuildPropertyManager.PROPERTIES_SEPARATOR);
 			if(props.length() != 0){
 				StringBuffer buf = new StringBuffer();
 				buf.append(props).append(BuildPropertyManager.PROPERTIES_SEPARATOR).append(inexistentProps);
@@ -119,7 +120,7 @@ public class BuildProperties implements IBuildProperties {
 			return fPropertiesMap.values().iterator().next().toString();
 		
 		StringBuffer buf = new StringBuffer();
-		Iterator iter = fPropertiesMap.values().iterator();
+		Iterator<IBuildProperty> iter = fPropertiesMap.values().iterator();
 		buf.append(iter.next().toString());
 		for(;iter.hasNext();){
 			buf.append(BuildPropertyManager.PROPERTIES_SEPARATOR);
@@ -128,15 +129,16 @@ public class BuildProperties implements IBuildProperties {
 		return buf.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone() {
 		try {
 			BuildProperties clone = (BuildProperties)super.clone();
 			
 			if(fInexistentProperties != null)
-				clone.fInexistentProperties = (ArrayList)fInexistentProperties.clone();
+				clone.fInexistentProperties = (ArrayList<String>)fInexistentProperties.clone();
 			
-			clone.fPropertiesMap = (HashMap)fPropertiesMap.clone();
+			clone.fPropertiesMap = (HashMap<String, IBuildProperty>)fPropertiesMap.clone();
 /*			for(Iterator iter = clone.fPropertiesMap.entrySet().iterator(); iter.hasNext();){
 				Map.Entry entry = (Map.Entry)iter.next();
 				BuildProperty prop = (BuildProperty)entry.getValue();

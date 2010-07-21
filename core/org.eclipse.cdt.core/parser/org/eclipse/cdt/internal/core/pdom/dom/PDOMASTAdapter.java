@@ -535,6 +535,8 @@ public class PDOMASTAdapter {
 					}
 				} else if (binding instanceof ICPPTemplateParameter) {
 					return binding;
+				} else if (binding instanceof ICPPConstructor) {
+					return binding;
 				}
 				return null;
 			}

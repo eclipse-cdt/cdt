@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,7 +155,10 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
     {
         switch (event.getType()) {
         case ADDED:
-            parentDelta.addNode(element, -1, IModelDelta.ADDED);            
+            // New expressions are always added one element before last.  
+            // Last element is the "Add new expression" element.
+            int parentCount = parentDelta.getChildCount();
+            parentDelta.addNode(element, parentCount > 1 ? parentCount - 2 : -1, IModelDelta.ADDED);            
             break;
         case CHANGED:
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

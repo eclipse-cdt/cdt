@@ -147,7 +147,9 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 						uei = new UserEntryInfo(infos[i].getEntry(), null, null, null);
 					userInfos[i] = uei;
 				}
-				setUserEntries(userInfos, (List<EmptyEntryInfo>)level.getContext());
+				@SuppressWarnings("unchecked")
+				List<EmptyEntryInfo> context = (List<EmptyEntryInfo>)level.getContext();
+				setUserEntries(userInfos, context);
 				setUserUndefinedStringSet(level.containsOverrideInfo() ? level.getOverrideSet() : null);
 			}
 			break;
@@ -193,9 +195,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	/**
-	 * Return scanner discovered entries (level 2)
-	 * @param flags
-	 * @return
+	 * @return scanner discovered entries (level 2)
 	 */
 	private ICLanguageSettingEntry[] getDiscoveredEntries(int flags){
 		ICLanguageSettingEntry[] entries = ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(), flags);
@@ -225,8 +225,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	 * 
 	 * The UserEntryInfo[] is an array of all user entries from all the options
 	 * applicable to the language setting entry kind.
-	 * @param flags
-	 * @param usr
 	 * @param emptyValuesInfos list to which unresolved entries are added
 	 * @return UserEntryInfo[] (never null)
 	 */
@@ -236,6 +234,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			List<UserEntryInfo> entryList = new ArrayList<UserEntryInfo>();
 			for (IOption opt : options) {
 				Option option = (Option)opt;
+				@SuppressWarnings("unchecked")
 				List<OptionStringValue> list = usr ? (List<OptionStringValue>)option.getExactValue() : (List<OptionStringValue>)option.getExactBuiltinsList();
 				if(list != null){
 					SupplierBasedCdtVariableSubstitutor subst = createSubstitutor(option, false);
@@ -291,6 +290,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	private HashSet<String> getUserUndefinedStringSet(){
 		HashSet<String> set = null;
 		for (IOption option : fLangData.getUndefOptionsForKind(getKind())) {
+			@SuppressWarnings("unchecked")
 			List<String> list = (List<String>)option.getValue();
 			if(list.size() != 0){
 				if(set == null)
@@ -303,8 +303,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 	/**
 	 * Makes non-absolute paths relative to the build directory 
-	 * @param info
-	 * @return
 	 */
 	private PathInfo fromBuildToProj(PathInfo info){
 		if(info.isAbsolute())
@@ -363,9 +361,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	/**
-	 * Return env envtries (level 1)
-	 * @param flags
-	 * @return
+	 * @return env entries (level 1)
 	 */
 	private ICLanguageSettingEntry[] getEnvEntries(int flags){
 		String paths[] = null;
@@ -396,11 +392,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 	/**
 	 * Create an ICLanguageSettingEntry based on the passed in Option
-	 * @param option
-	 * @param optionValue
-	 * @param flags
-	 * @param subst
-	 * @return
 	 */
 	private ICLanguageSettingEntry createUserEntry(Option option, OptionStringValue optionValue, int flags, SupplierBasedCdtVariableSubstitutor subst){
 		final int kind = getKind();
@@ -536,7 +527,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	/**
-	 * @param option
 	 * @return the option type for the option
 	 */
 	private static int getOptionType(IOption option) {
@@ -671,8 +661,6 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	 * 
 	 * FIXME: As far as I can see info.fSequense only ever has a single entry in it...
 	 * 		see UserEntryInfo constructor => this method doesn't accomplish anything useful
-	 * @param infos
-	 * @return
 	 */
 	private UserEntryInfo[] combineSequenses(UserEntryInfo infos[]){
 		if(infos.length == 0)

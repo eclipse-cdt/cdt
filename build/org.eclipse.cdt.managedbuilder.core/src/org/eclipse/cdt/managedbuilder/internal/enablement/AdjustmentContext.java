@@ -12,8 +12,8 @@ package org.eclipse.cdt.managedbuilder.internal.enablement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 
 public class AdjustmentContext {
@@ -49,10 +49,10 @@ public class AdjustmentContext {
 //		return fType;
 //	}
 	
-	private HashMap fMap = new HashMap();
+	private HashMap<String, Boolean> fMap = new HashMap<String, Boolean>();
 
 	public void addAdjustedState(String attr, boolean adjusted){
-		Boolean b = (Boolean)fMap.get(attr);
+		Boolean b = fMap.get(attr);
 		if(b == null ||
 				(adjusted &&
 						!b.booleanValue())){
@@ -64,14 +64,14 @@ public class AdjustmentContext {
 		if(fMap.size() == 0)
 			return new String[0];
 		
-		ArrayList list = new ArrayList(fMap.size());
-		for(Iterator iter = fMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			Boolean b = (Boolean)entry.getValue();
+		ArrayList<String> list = new ArrayList<String>(fMap.size());
+		Set<Entry<String, Boolean>> entrySet = fMap.entrySet();
+		for (Entry<String, Boolean> entry : entrySet) {
+			Boolean b = entry.getValue();
 			if(!b.booleanValue()){
 				list.add(entry.getKey());
 			}
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 }

@@ -18,8 +18,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
 
 public class BuildBuildData extends CBuildData {
 	private Builder fBuilder;
@@ -35,11 +33,11 @@ public class BuildBuildData extends CBuildData {
 		return new Path(fBuilder.getBuildPath());//ManagedBuildManager.getBuildLocation(fCfg, fBuilder);
 	}
 	
-	private IPath createAbsolutePathFromWorkspacePath(IPath path){
-		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
-		return new Path(locationString);
-	}
+//	private IPath createAbsolutePathFromWorkspacePath(IPath path){
+//		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+//		String locationString = mngr.generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
+//		return new Path(locationString);
+//	}
 
 	@Override
 	public String[] getErrorParserIDs() {

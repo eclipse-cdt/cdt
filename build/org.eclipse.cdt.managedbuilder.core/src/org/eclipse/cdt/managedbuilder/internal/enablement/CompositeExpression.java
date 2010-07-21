@@ -64,10 +64,10 @@ public abstract class CompositeExpression implements IBooleanExpression {
 		return fChildren;
 	}
 	
-	public Map getReferencedProperties(Map map){
+	public Map<String, Set<String>> getReferencedProperties(Map<String, Set<String>> map){
 		IBooleanExpression children[] = getChildren();
 		if(map == null)
-			map = new HashMap();
+			map = new HashMap<String, Set<String>>();
 
 		for(int i = 0; i < children.length; i++){
 			IBooleanExpression child = children[i];
@@ -79,9 +79,9 @@ public abstract class CompositeExpression implements IBooleanExpression {
 				String val = bp.getValueId();
 				if(prop != null && prop.length() != 0  
 						&& val != null && val.length() != 0){
-					Set set = (Set)map.get(prop);
+					Set<String> set = map.get(prop);
 					if(set == null){
-						set = new HashSet();
+						set = new HashSet<String>();
 						map.put(prop, set);
 					}
 					set.add(val);

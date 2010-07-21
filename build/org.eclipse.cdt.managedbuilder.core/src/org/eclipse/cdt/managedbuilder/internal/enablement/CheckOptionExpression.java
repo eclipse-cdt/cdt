@@ -123,8 +123,9 @@ public class CheckOptionExpression implements IBooleanExpression {
 				case IOption.UNDEF_LIBRARY_PATHS:
 				case IOption.UNDEF_LIBRARY_FILES:
 				case IOption.UNDEF_MACRO_FILES:{
-					List list = (List)option.getValue();
-					String listValue = provider.convertStringListToString((String[])list.toArray(new String[list.size()]),delimiter);
+					@SuppressWarnings("unchecked")
+					List<String> list = (List<String>)option.getValue();
+					String listValue = provider.convertStringListToString(list.toArray(new String[list.size()]),delimiter);
 
 					listValue = provider.resolveValue(listValue, inexVal, delimiter,
 							IBuildMacroProvider.CONTEXT_OPTION,
@@ -188,11 +189,13 @@ public class CheckOptionExpression implements IBooleanExpression {
 				case IOption.UNDEF_LIBRARY_PATHS:
 				case IOption.UNDEF_LIBRARY_FILES:
 				case IOption.UNDEF_MACRO_FILES:{
-					List list = (List)option.getValue();
-					String listValue[] = (String[])list.toArray(new String[list.size()]);
+					@SuppressWarnings("unchecked")
+					List<String> list = (List<String>)option.getValue();
+					String listValue[] = list.toArray(new String[list.size()]);
 					
-					list = (List)otherOption.getValue();
-					String otherValue[] = (String[])list.toArray(new String[list.size()]);
+					@SuppressWarnings("unchecked")
+					List<String> otherList = (List<String>)otherOption.getValue();
+					String otherValue[] = otherList.toArray(new String[otherList.size()]);
 
 					IMacroContextInfo info = provider.getMacroContextInfo(IBuildMacroProvider.CONTEXT_OPTION,
 							new OptionContextData(option,holder));

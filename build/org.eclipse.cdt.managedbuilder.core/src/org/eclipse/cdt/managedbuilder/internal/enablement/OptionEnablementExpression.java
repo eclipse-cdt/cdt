@@ -129,7 +129,7 @@ public class OptionEnablementExpression extends AndExpression{
 	}
 
 	public String[] convertToList(String value, String delimiter){
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		int delLength = delimiter.length();
 		int valLength = value.length();
 
@@ -149,7 +149,7 @@ public class OptionEnablementExpression extends AndExpression{
 			}
 		}
 
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	protected int calculateFlags(String flagsString){

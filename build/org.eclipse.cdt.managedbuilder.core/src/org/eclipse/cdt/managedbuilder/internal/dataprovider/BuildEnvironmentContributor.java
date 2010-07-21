@@ -61,7 +61,7 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 		EnvironmentCollector collector = new EnvironmentCollector();
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
 		
-		Set set = null;
+		Set<String> set = null;
 
 		IEnvironmentVariable vars[] = extSupplier.getVariables(fCfg.getManagedProject());
 		set = processVariables(vars, collector, provider, set); 
@@ -89,11 +89,11 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 		return varFound;
 	}
 
-	private Set processVariables(IEnvironmentVariable vars[], EnvironmentCollector collector, IEnvironmentVariableManager provider, Set set){
+	private Set<String> processVariables(IEnvironmentVariable vars[], EnvironmentCollector collector, IEnvironmentVariableManager provider, Set<String> set){
 		boolean checkSet = true;
 		if(vars != null && vars.length != 0){
 			if(set == null){
-				set = new HashSet();
+				set = new HashSet<String>();
 				checkSet = false;
 			}
 			

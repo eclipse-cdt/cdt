@@ -56,4 +56,19 @@ public enum CodanSeverity {
 		}
 		return svalues;
 	}
+
+	/**
+	 * @param intValue
+	 * @return value of severity by its integer value
+	 * @since 1.1
+	 */
+	public static CodanSeverity valueOf(int intValue) {
+		if (intValue == IMarker.SEVERITY_INFO)
+			return Info;
+		if (intValue == IMarker.SEVERITY_WARNING)
+			return Warning;
+		if (intValue == IMarker.SEVERITY_ERROR)
+			return Error;
+		return null;
+	}
 }

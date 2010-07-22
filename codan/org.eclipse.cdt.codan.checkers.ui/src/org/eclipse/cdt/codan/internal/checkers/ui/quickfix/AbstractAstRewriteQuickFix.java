@@ -20,9 +20,11 @@ import org.eclipse.jface.text.IDocument;
 
 public abstract class AbstractAstRewriteQuickFix extends
 		AbstractCodanCMarkerResolution {
+	private IDocument document;
 	@Override
 	public void apply(final IMarker marker, IDocument document) {
 		try {
+			this.document = document;
 			openEditor(marker).doSave(new NullProgressMonitor());
 			IIndex index;
 			try {
@@ -55,4 +57,11 @@ public abstract class AbstractAstRewriteQuickFix extends
 	 * @param r
 	 */
 	public abstract void modifyAST(IIndex index, IMarker marker);
+
+	/**
+	 * @return the document
+	 */
+	public IDocument getDocument() {
+		return document;
+	}
 }

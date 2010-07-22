@@ -107,7 +107,9 @@ public abstract class AbstractCodanCMarkerResolution implements
 
 	/**
 	 * Opens an editor with the document corresponding to the given problem and
-	 * returns the corresponding IEditorPart.
+	 * returns the corresponding IEditorPart. Please note that is code analysis
+	 * is setup to run on reconsile this action would trigger checkers run, and
+	 * original marker may be removed as a result.
 	 * 
 	 * @param marker
 	 *        the problem marker

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Abstract Implementation of IProblemLocation
@@ -23,13 +24,20 @@ import org.eclipse.core.resources.IFile;
  * </p>
  */
 public abstract class AbstractProblemLocation implements IProblemLocation {
-	protected IFile file;
+	protected IResource file;
 	protected int line;
 	protected int posStart;
 	protected int posEnd;
 	protected Object extra;
 
 	protected AbstractProblemLocation(IFile file, int line) {
+		this((IResource) file, line);
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	protected AbstractProblemLocation(IResource file, int line) {
 		this.file = file;
 		this.line = line;
 		this.posStart = -1;
@@ -37,6 +45,13 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	}
 
 	protected AbstractProblemLocation(IFile file, int startChar, int endChar) {
+		this((IResource) file, startChar, endChar);
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	protected AbstractProblemLocation(IResource file, int startChar, int endChar) {
 		this.file = file;
 		this.line = -1;
 		this.posStart = startChar;
@@ -66,7 +81,15 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getFile()
 	 */
-	public IFile getFile() {
+	public IResource getFile() {
+		return file;
+	}
+
+	/**
+	 * @return resource for which marker is created
+	 * @since 1.1
+	 */
+	public IResource getResource() {
 		return file;
 	}
 

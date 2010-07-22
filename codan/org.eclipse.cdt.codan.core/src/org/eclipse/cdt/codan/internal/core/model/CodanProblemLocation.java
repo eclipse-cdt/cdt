@@ -12,22 +12,49 @@ package org.eclipse.cdt.codan.internal.core.model;
 
 import org.eclipse.cdt.codan.core.model.AbstractProblemLocation;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Codan Problem Location, so far same as abstract class
  * 
  */
 public class CodanProblemLocation extends AbstractProblemLocation {
+	/**
+	 * @param file - resource
+	 * @param startChar - start chart, absolute file offset starts with 0
+	 * @param endChar - end char, absolute file offset, exclusive
+	 * @param line - line number
+	 */
+	public CodanProblemLocation(IResource file, int startChar, int endChar,
+			int line) {
+		super(file, startChar, endChar);
+		this.line = line;
+	}
+
+	/**
+	 * @deprecated use {@link #CodanProblemLocation(IResource, int, int, int)}
+	 *             otherwise no line number will be shown
+	 * @param file
+	 * @param startChar
+	 * @param endChar
+	 */
+	@Deprecated
 	public CodanProblemLocation(IFile file, int startChar, int endChar) {
 		super(file, startChar, endChar);
 	}
 
+	/**
+	 * @param file - resource
+	 * @param startChar - start chart, absolute file offset starts with 0
+	 * @param endChar - end char, absolute file offset, exclusive
+	 * @param line - line number
+	 */
 	public CodanProblemLocation(IFile file, int startChar, int endChar, int line) {
 		super(file, startChar, endChar);
 		this.line = line;
 	}
 
-	protected CodanProblemLocation(IFile file, int line) {
+	protected CodanProblemLocation(IResource file, int line) {
 		super(file, line);
 	}
 }

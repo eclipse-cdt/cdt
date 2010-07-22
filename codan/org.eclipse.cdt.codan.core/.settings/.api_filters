@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.codan.core" version="2">
+    <resource path="src/org/eclipse/cdt/codan/core/model/AbstractProblemLocation.java" type="org.eclipse.cdt.codan.core.model.AbstractProblemLocation">
+        <filter comment="getFile method should return IResource not IFile according to interface. Don't know how it compiled before like that..." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.codan.core.model.AbstractProblemLocation"/>
+                <message_argument value="getFile()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="upgrade file attribute to IResource from IFile - it is backward compatible" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.codan.core.model.AbstractProblemLocation"/>
+                <message_argument value="file"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

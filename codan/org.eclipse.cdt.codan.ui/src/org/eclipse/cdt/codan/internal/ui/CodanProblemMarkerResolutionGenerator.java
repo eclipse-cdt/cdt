@@ -48,7 +48,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 			readExtensions();
 		}
 		String id = marker.getAttribute(IMarker.PROBLEM, null);
-		if (id == null)
+		if (id == null && resolutions.get(null) == null)
 			return new IMarkerResolution[0];
 		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 		Collection<ConditionalResolution> collection = resolutions.get(id);
@@ -62,7 +62,8 @@ public class CodanProblemMarkerResolutionGenerator implements
 						continue;
 				}
 				if (res.res instanceof AbstractCodanCMarkerResolution) {
-					if (!((AbstractCodanCMarkerResolution)res.res).isApplicable(marker))
+					if (!((AbstractCodanCMarkerResolution) res.res)
+							.isApplicable(marker))
 						continue;
 				}
 				list.add(res.res);
@@ -97,7 +98,9 @@ public class CodanProblemMarkerResolutionGenerator implements
 			IConfigurationElement configurationElement) {
 		if (configurationElement.getName().equals("resolution")) { //$NON-NLS-1$
 			String id = configurationElement.getAttribute("problemId"); //$NON-NLS-1$
-			if (id == null) {
+			String messagePattern = configurationElement
+					.getAttribute("messagePattern"); //$NON-NLS-1$
+			if (id == null && messagePattern == null) {
 				CodanUIActivator.log("Extension for " + EXTENSION_POINT_NAME //$NON-NLS-1$
 						+ " problemId is not defined"); //$NON-NLS-1$
 				return;
@@ -110,8 +113,6 @@ public class CodanProblemMarkerResolutionGenerator implements
 				CodanUIActivator.log(e);
 				return;
 			}
-			String messagePattern = configurationElement
-					.getAttribute("messagePattern"); //$NON-NLS-1$
 			if (messagePattern != null) {
 				try {
 					Pattern.compile(messagePattern);

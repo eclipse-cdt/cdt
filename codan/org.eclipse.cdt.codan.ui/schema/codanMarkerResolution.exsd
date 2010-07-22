@@ -7,7 +7,6 @@
       </appinfo>
       <documentation>
          Extension point to plugin quick fix for codan markers
-
       </documentation>
    </annotation>
 
@@ -65,10 +64,11 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="problemId" type="string" use="required">
+         <attribute name="problemId" type="string">
             <annotation>
                <documentation>
-                  Problem id of the problem for which quick fix is defined
+                  Problem id of the problem for which quick fix is defined.
+If this is not codan problem (for example gcc error), it can be ommitted. Message pattern must be used in this case.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/checker/problem/@id"/>

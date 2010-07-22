@@ -230,4 +230,20 @@ public abstract class AbstractCodanCMarkerResolution implements
 		IIndex index = CCorePlugin.getIndexManager().getIndex(cProject);
 		return index;
 	}
+
+	/**
+	 * @param marker
+	 * @return
+	 */
+	public String getProblemId(IMarker marker) {
+		return CodanProblemMarker.getProblemId(marker);
+	}
+
+	/**
+	 * @param marker
+	 * @return
+	 */
+	public String getProblemMessage(IMarker marker) {
+		return CodanProblemMarker.getMessage(marker);
+	}
 }

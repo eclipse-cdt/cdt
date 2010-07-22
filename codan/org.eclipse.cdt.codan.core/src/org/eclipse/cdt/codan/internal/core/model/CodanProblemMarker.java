@@ -219,17 +219,28 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 */
 	public static ICodanProblemMarker createCodanProblemMarkerFromResourceMarker(
 			IMarker marker) {
+		CodanProblem problem = getProblem(marker);
+		if (problem == null)
+			return null;
+		CodanProblemLocation loc = getLocation(marker);
+		return new CodanProblemMarker(problem, loc, getProblemArguments(marker));
+	}
+
+	/**
+	 * @param marker
+	 * @return
+	 */
+	public static CodanProblem getProblem(IMarker marker) {
 		String id = getProblemId(marker);
 		if (id == null)
 			return null;
-		CodanSeverity sev = getSeverity(marker);
-		CodanProblemLocation loc = getLocation(marker);
+		IResource resource = marker.getResource();
 		CodanProblem problem = (CodanProblem) ((CodanProblem) CheckersRegistry
-				.getInstance().getWorkspaceProfile().findProblem(id)).clone();
-		if (problem == null)
-			return null;
+				.getInstance().getResourceProfile(resource).findProblem(id))
+				.clone();
+		CodanSeverity sev = getSeverity(marker);
 		problem.setSeverity(sev);
-		return new CodanProblemMarker(problem, loc, getProblemArguments(marker));
+		return problem;
 	}
 
 	/**

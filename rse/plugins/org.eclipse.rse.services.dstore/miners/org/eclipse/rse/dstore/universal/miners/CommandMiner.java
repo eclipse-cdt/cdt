@@ -20,6 +20,7 @@
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight (IBM) - [286671] Dstore shell service interprets &lt; and &gt; sequences - cmd descriptor to identify ability
  * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
+ * David McKnight   (IBM)     [320624] [dstore] shell &lt; and &gt; sequence conversion not being applied to thread
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -233,8 +234,9 @@ public class CommandMiner extends Miner
 		}
 		else if (name.equals("C_CHAR_CONVERSION")) //$NON-NLS-1$
 		{
-			DataElement cmdStatus = getCommandStatus(subject);
+			DataElement cmdStatus = getCommandArgument(theElement, 0);
 			CommandMinerThread theThread = (CommandMinerThread) _threads.get(cmdStatus.getAttribute(DE.A_ID));
+
 			if (theThread != null)
 			{	
 				theThread._supportsCharConversion = true;

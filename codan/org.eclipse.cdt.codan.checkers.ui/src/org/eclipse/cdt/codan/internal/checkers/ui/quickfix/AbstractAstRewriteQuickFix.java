@@ -15,6 +15,7 @@ import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 
 public abstract class AbstractAstRewriteQuickFix extends
@@ -22,7 +23,7 @@ public abstract class AbstractAstRewriteQuickFix extends
 	@Override
 	public void apply(final IMarker marker, IDocument document) {
 		try {
-			openEditor(marker);
+			openEditor(marker).doSave(new NullProgressMonitor());
 			IIndex index;
 			try {
 				index = getIndexFromMarker(marker);

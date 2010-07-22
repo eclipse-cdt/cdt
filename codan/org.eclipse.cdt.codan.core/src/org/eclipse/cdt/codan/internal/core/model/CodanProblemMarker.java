@@ -16,9 +16,11 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Properties;
 
+import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -196,10 +198,50 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * @return problem message
 	 */
 	public static String getMessage(IMarker marker) {
-		try {
-			return (String) marker.getAttribute(IMarker.MESSAGE);
-		} catch (CoreException e) {
+		return marker.getAttribute(IMarker.MESSAGE, (String) null);
+	}
+
+	/**
+	 * @param marker
+	 * @return codan severity
+	 */
+	public static CodanSeverity getSeverity(IMarker marker) {
+		int sev = marker.getAttribute(IMarker.SEVERITY, 0);
+		return CodanSeverity.valueOf(sev);
+	}
+
+	/**
+	 * Attempt to restore CodamProblemMaker from the resource marker
+	 * 
+	 * @param marker
+	 * @return new instanceof of ICodanProblemMarker or null if marker is not
+	 *         codan marker
+	 */
+	public static ICodanProblemMarker createCodanProblemMarkerFromResourceMarker(
+			IMarker marker) {
+		String id = getProblemId(marker);
+		if (id == null)
 			return null;
-		}
+		CodanSeverity sev = getSeverity(marker);
+		CodanProblemLocation loc = getLocation(marker);
+		CodanProblem problem = (CodanProblem) ((CodanProblem) CheckersRegistry
+				.getInstance().getWorkspaceProfile().findProblem(id)).clone();
+		if (problem == null)
+			return null;
+		problem.setSeverity(sev);
+		return new CodanProblemMarker(problem, loc, getProblemArguments(marker));
+	}
+
+	/**
+	 * @param marker
+	 * @return location object using marker attributes
+	 */
+	public static CodanProblemLocation getLocation(IMarker marker) {
+		int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+		int charend = marker.getAttribute(IMarker.CHAR_END, -1);
+		int charstart = marker.getAttribute(IMarker.CHAR_START, -1);
+		CodanProblemLocation loc = new CodanProblemLocation(
+				marker.getResource(), charstart, charend, line);
+		return loc;
 	}
 }

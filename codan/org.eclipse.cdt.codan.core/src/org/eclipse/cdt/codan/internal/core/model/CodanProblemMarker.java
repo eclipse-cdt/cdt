@@ -176,4 +176,30 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		}
 		return args;
 	}
+
+	/**
+	 * Return problemId from marker
+	 * 
+	 * @param marker
+	 * @return codan problemId
+	 */
+	public static String getProblemId(IMarker marker) {
+		try {
+			return (String) marker.getAttribute(IMarker.PROBLEM);
+		} catch (CoreException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * @param marker
+	 * @return problem message
+	 */
+	public static String getMessage(IMarker marker) {
+		try {
+			return (String) marker.getAttribute(IMarker.MESSAGE);
+		} catch (CoreException e) {
+			return null;
+		}
+	}
 }

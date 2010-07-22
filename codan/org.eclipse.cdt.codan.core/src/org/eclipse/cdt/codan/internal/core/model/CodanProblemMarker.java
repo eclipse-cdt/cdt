@@ -120,7 +120,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * @param args2
 	 * @return
 	 */
-	private String serializeArgs(Object[] args) {
+	private static String serializeArgs(Object[] args) {
 		if (args != null) {
 			Properties prop = new Properties();
 			prop.put("len", String.valueOf(args.length)); //$NON-NLS-1$
@@ -254,5 +254,16 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		CodanProblemLocation loc = new CodanProblemLocation(
 				marker.getResource(), charstart, charend, line);
 		return loc;
+	}
+
+	/**
+	 * @param marker
+	 * @param res
+	 * @throws CoreException
+	 */
+	public static void setProblemArguments(IMarker marker, String[] args)
+			throws CoreException {
+		String propArgs = serializeArgs(args);
+		marker.setAttribute(PROBLEM_ARGS, propArgs);
 	}
 }

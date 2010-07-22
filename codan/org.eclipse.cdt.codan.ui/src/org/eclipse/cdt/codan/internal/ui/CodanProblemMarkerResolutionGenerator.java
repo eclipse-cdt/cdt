@@ -11,12 +11,15 @@
 package org.eclipse.cdt.codan.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -58,8 +61,19 @@ public class CodanProblemMarkerResolutionGenerator implements
 					.iterator(); iterator.hasNext();) {
 				ConditionalResolution res = iterator.next();
 				if (res.messagePattern != null) {
-					if (!message.matches(res.messagePattern))
+					try {
+						Pattern pattern = Pattern.compile(res.messagePattern);
+						Matcher matcher = pattern.matcher(message);
+						if (!matcher.matches())
+							continue;
+						if (id == null) {
+							setArgumentsFromPattern(matcher, marker);
+						}
+					} catch (Exception e) {
+						CodanUIActivator
+								.log("Cannot compile regex: " + res.messagePattern); //$NON-NLS-1$
 						continue;
+					}
 				}
 				if (res.res instanceof AbstractCodanCMarkerResolution) {
 					if (!((AbstractCodanCMarkerResolution) res.res)
@@ -72,6 +86,28 @@ public class CodanProblemMarkerResolutionGenerator implements
 				return list.toArray(new IMarkerResolution[list.size()]);
 		}
 		return new IMarkerResolution[0];
+	}
+
+	/**
+	 * @param matcher
+	 * @param marker
+	 */
+	private void setArgumentsFromPattern(Matcher matcher, IMarker marker) {
+		int n = matcher.groupCount();
+		if (n == 0)
+			return;
+		String[] res = new String[n];
+		for (int i = 0; i < n; i++) {
+			res[i] = matcher.group(i + 1);
+		}
+		String[] old = CodanProblemMarker.getProblemArguments(marker);
+		if (!Arrays.deepEquals(res, old)) {
+			try {
+				CodanProblemMarker.setProblemArguments(marker, res);
+			} catch (CoreException e) {
+				CodanUIActivator.log(e);
+			}
+		}
 	}
 
 	private static synchronized void readExtensions() {

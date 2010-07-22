@@ -177,7 +177,7 @@ public final class CxxAstUtils {
 		} else { // Fallback - return a `void` declaration
 			IASTDeclarator declarator = factory.newDeclarator(astName.copy());
 			IASTSimpleDeclSpecifier declspec = factory.newSimpleDeclSpecifier();
-			declspec.setType(Kind.eVoid);
+			declspec.setType(Kind.eInt);
 			IASTSimpleDeclaration simpleDeclaration = factory
 					.newSimpleDeclaration(declspec);
 			simpleDeclaration.addDeclarator(declarator);

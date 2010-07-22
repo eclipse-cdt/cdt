@@ -15,7 +15,7 @@ import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 
-public class CodanProblem implements IProblemWorkingCopy {
+public class CodanProblem implements IProblemWorkingCopy, Cloneable {
 	private String id;
 	private String name;
 	private String message;
@@ -69,12 +69,17 @@ public class CodanProblem implements IProblemWorkingCopy {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		CodanProblem prob = (CodanProblem) super.clone();
-		if (preference != null) {
-			prob.preference = (IProblemPreference) preference.clone();
+	public Object clone() {
+		CodanProblem prob;
+		try {
+			prob = (CodanProblem) super.clone();
+			if (preference != null) {
+				prob.preference = (IProblemPreference) preference.clone();
+			}
+			return prob;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(); // not possible
 		}
-		return prob;
 	}
 
 	public void setPreference(IProblemPreference value) {
@@ -100,7 +105,7 @@ public class CodanProblem implements IProblemWorkingCopy {
 
 	/**
 	 * @param message
-	 *            the message to set
+	 *        the message to set
 	 */
 	public void setMessagePattern(String message) {
 		checkSet();

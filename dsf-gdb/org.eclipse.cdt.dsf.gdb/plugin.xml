@@ -15,7 +15,7 @@
       </launchDelegate>
       <launchDelegate
             id="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"
-            type="org.eclipse.cdt.launch.applicationLaunchType"
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
             modes="debug"
             delegate="org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate"
             name="%launchDelegate.remoteApplication.name"

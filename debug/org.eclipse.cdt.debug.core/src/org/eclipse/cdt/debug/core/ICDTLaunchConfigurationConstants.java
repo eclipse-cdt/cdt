@@ -28,6 +28,13 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.applicationLaunchType"; //$NON-NLS-1$
 
 	/**
+	 * This is the remote application launch type id.
+	 *
+	 * @since 7.1
+	 */
+	public static final String ID_LAUNCH_C_REMOTE_APP = "org.eclipse.cdt.launch.remoteApplicationLaunchType"; //$NON-NLS-1$
+	
+	/**
      * This is the attach launch type id.
      *
      * @since 6.0
@@ -46,6 +53,16 @@ public interface ICDTLaunchConfigurationConstants {
 	 * @since 7.0
 	 */
     public static final String PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE = "org.eclipse.cdt.dsf.gdb.launch.localCLaunch"; //$NON-NLS-1$
+
+    /**
+	 * Specifies the default launch delegate for a Remote Debug session.
+	 * This default is part of the optional plugin org.eclipse.cdt.launch.remote.  If that plugin is not installed
+	 * then we won't set a default, which is ok since we only have one other delegate 
+	 * (which is org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch).
+	 * @since 7.1
+	 */
+    public static final String PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE = "org.eclipse.rse.remotecdt.dsf.debug"; //$NON-NLS-1$
+
 
     /**
 	 * Specifies the default launch delegate for an Attach Debug session

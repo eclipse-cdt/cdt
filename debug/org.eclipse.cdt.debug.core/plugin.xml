@@ -28,6 +28,11 @@
             name="%PostMortemLaunch.name"
             public="true">
       </launchConfigurationType>
+      <launchConfigurationType
+            id="org.eclipse.cdt.launch.remoteApplicationLaunchType"
+            name="%RemoteApplicationLaunch.name"
+            public="true">
+      </launchConfigurationType>
    </extension>
 
    <extension

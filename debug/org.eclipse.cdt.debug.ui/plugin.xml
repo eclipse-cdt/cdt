@@ -24,6 +24,11 @@
             configTypeID="org.eclipse.cdt.launch.postmortemLaunchType"
             id="org.eclipse.cdt.launch.coreFileLaunchImage">
       </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/obj16/c_app.gif"
+            configTypeID="org.eclipse.cdt.launch.remoteApplicationLaunchType"
+            id="org.eclipse.cdt.launch.remoteRunLaunchImage">
+      </launchConfigurationTypeImage>
    </extension>
 
    <extension
@@ -49,6 +54,18 @@
             type="org.eclipse.cdt.launch.postmortemLaunchType"
             class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.postmortemLaunchTabGroup">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup">
+         <launchMode mode="debug"/>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup">
+         <launchMode mode="run"/>
       </launchConfigurationTabGroup>
    </extension>
 

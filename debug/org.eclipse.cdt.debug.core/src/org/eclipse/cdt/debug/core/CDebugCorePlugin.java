@@ -455,6 +455,19 @@ public class CDebugCorePlugin extends Plugin {
 			}
 		} catch (CoreException e) {}
 
+		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_REMOTE_APP);
+		try {
+			if (remoteCfg.getPreferredDelegate(debugSet) == null) {
+				ILaunchDelegate[] delegates = remoteCfg.getDelegates(debugSet);
+				for (ILaunchDelegate delegate : delegates) {
+					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE.equals(delegate.getId())) {
+						remoteCfg.setPreferredDelegate(debugSet, delegate);
+						break;
+					}
+				}
+			}
+		} catch (CoreException e) {}
+		
 		ILaunchConfigurationType attachCfg = launchMgr.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
 		try {
 			if (attachCfg.getPreferredDelegate(debugSet) == null) {

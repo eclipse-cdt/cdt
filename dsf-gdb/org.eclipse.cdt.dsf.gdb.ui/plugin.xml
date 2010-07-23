@@ -55,14 +55,14 @@
       <!-- Remote application launch tabs-->
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.mainTab"
-            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="%launchTab.main.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
       </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.debuggerTab"
-            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="%launchTab.debugger.name"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.RemoteApplicationCDebuggerTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
@@ -70,7 +70,7 @@
       </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.sourceLookupTab"
-            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="%launchTab.sourceLookup.name"
             class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
@@ -78,7 +78,7 @@
       </tab>
       <tab
             id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.commonTab"
-            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="%launchTab.common.name"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>

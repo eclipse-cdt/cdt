@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
@@ -94,7 +95,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 				if (wizard.supportsConfigurationType(type)) {
 					configTypes.add(configTypeName);
 					
-					if (type.getIdentifier().equals("org.eclipse.cdt.launch.applicationLaunchType")) { //$NON-NLS-1$
+					if (type.getIdentifier().equals(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP)) {
 						capp = j;
 					}
 					j++;

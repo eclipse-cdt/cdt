@@ -12,14 +12,7 @@
 
 package org.eclipse.cdt.internal.launch.remote;
 
-import java.util.HashSet;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchDelegate;
-import org.eclipse.debug.core.ILaunchManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -30,13 +23,6 @@ public class Activator extends Plugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.launch.remote"; //$NON-NLS-1$
 
-
-	private static final String REMOTE_LAUNCH_TYPE = "org.eclipse.rse.remotecdt.RemoteApplicationLaunch"; //$NON-NLS-1$
-
-
-	private static final String PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE = "org.eclipse.rse.remotecdt.dsf.debug"; //$NON-NLS-1$
-
-	
 	/* The shared instance */
 	private static Activator plugin;
 	
@@ -53,7 +39,6 @@ public class Activator extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		setDefaultLaunchDelegates();
 	}
 
 	/*
@@ -77,27 +62,4 @@ public class Activator extends Plugin {
 	public static BundleContext getBundleContext() {
 		return getDefault().getBundle().getBundleContext();
 	}
-
-	private void setDefaultLaunchDelegates() {
-		// Set the default launch delegates as early as possible, and do it only once (Bug 312997) 
-		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
-
-		HashSet<String> debugSet = new HashSet<String>();
-		debugSet.add(ILaunchManager.DEBUG_MODE);
-
-		ILaunchConfigurationType remoteCfg = launchMgr.getLaunchConfigurationType(REMOTE_LAUNCH_TYPE);
-		try {
-			if (remoteCfg.getPreferredDelegate(debugSet) == null) {
-				ILaunchDelegate[] delegates = remoteCfg.getDelegates(debugSet);
-				for (ILaunchDelegate delegate : delegates) {
-					if (PREFERRED_DEBUG_REMOTE_LAUNCH_DELEGATE.equals(delegate.getId())) {
-						remoteCfg.setPreferredDelegate(debugSet, delegate);
-						break;
-					}
-				}
-			}
-		} catch (CoreException e) {}
-	}
-	
-
 }

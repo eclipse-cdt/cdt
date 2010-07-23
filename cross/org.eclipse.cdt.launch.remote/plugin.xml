@@ -14,19 +14,10 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
 -->
 <?eclipse version="3.0"?>
 <plugin>
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            public="true"
-            name="%launchConfigurationType.name"
-            id="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
-       >
-      </launchConfigurationType>
-   </extension>
        <extension point="org.eclipse.debug.core.launchDelegates">
       <launchDelegate
             id="org.eclipse.rse.remotecdt.launch"
-            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
             modes="run,debug"
             delegate="org.eclipse.cdt.launch.remote.launching.RemoteRunLaunchDelegate"
             name="%cdiLaunchDelegate.name"
@@ -36,7 +27,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </launchDelegate>
       <launchDelegate
             id="org.eclipse.rse.remotecdt.dsf.debug"
-            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
+            type="org.eclipse.cdt.launch.remoteApplicationLaunchType"
             modes="debug"
             delegate="org.eclipse.cdt.launch.remote.launching.RemoteGdbLaunchDelegate"
             name="%dsfLaunchDelegate.name"
@@ -46,63 +37,32 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </launchDelegate>
    </extension>
    
-   
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            icon="icons/full/obj16/c_app.gif"
-            configTypeID="org.eclipse.rse.remotecdt.RemoteApplicationLaunch"
-            id="org.eclipse.cdt.launch.localRunLaunchImagefff">
-      </launchConfigurationTypeImage>
-   </extension>    
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.remote.tabs.RemoteLaunchConfigurationTabGroup"
-            helpContextId="org.eclipse.rse.remotecdt.launchgroup"
-            id="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
-            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
-         <launchMode
-               mode="run">
-         </launchMode>
-      </launchConfigurationTabGroup>
-      <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.remote.tabs.RemoteLaunchConfigurationTabGroup"
-            helpContextId="org.eclipse.rse.remotecdt.launchgroup"
-            id="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
-            type="org.eclipse.rse.remotecdt.RemoteApplicationLaunch">
-         <launchMode
-               mode="debug">
-         </launchMode>
-      </launchConfigurationTabGroup>
-   </extension>
-   
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabs">
      <tab
             id="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"
-            group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
             name="Main"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
      </tab>         
      <tab
             id="org.eclipse.rse.remotecdt.debug.RemoteCMainTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Main"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
      </tab>         
      <tab
             id="org.eclipse.rse.remotecdt.dsf.gdb.mainTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Main"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFMainTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
      </tab>         
      <tab
             id="org.eclipse.rse.remotecdt.launch.CAgrumentsTab"
-            group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
             name="Arguments"
             class="org.eclipse.cdt.launch.ui.CArgumentsTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
@@ -110,14 +70,14 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.CArgumentsTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Arguments"
             class="org.eclipse.cdt.launch.ui.CArgumentsTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
         <placement after="org.eclipse.rse.remotecdt.launch.RemoteCMainTab"/>                
       </tab> 
       <tab id="org.eclipse.rse.remotecdt.dsf.debug.CArgumentsTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Arguments"
             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
@@ -125,14 +85,14 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>
       <tab
             id="org.eclipse.rse.remotecdt.launch.RemoteCDebuggerTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Debugger"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCDebuggerTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
         <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>        
       </tab>
       <tab id="org.eclipse.rse.remotecdt.dsf.debug.RemoteCDSFDebuggerTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Debugger"
             class="org.eclipse.cdt.launch.remote.tabs.RemoteCDSFDebuggerTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
@@ -140,7 +100,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>
       <tab
             id="org.eclipse.rse.remotecdt.launch.SourceLookupTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Source"
             class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
@@ -148,7 +108,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.dsf.SourceLookupTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Source"
             class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>
@@ -156,7 +116,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.launch.CommonTab"
-            group="org.eclipse.rse.remotecdt.RemoteLaunchTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationRunLaunchTabGroup"
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
@@ -164,7 +124,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.CommonTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.launch"/>
@@ -172,7 +132,7 @@ Anna Dushistova  (Mentor Graphics) - code restructuring
       </tab>         
       <tab
             id="org.eclipse.rse.remotecdt.debug.dsf.CommonTab"
-            group="org.eclipse.rse.remotecdt.RemoteDebugTabGroup"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
             name="Common"
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.rse.remotecdt.dsf.debug"/>

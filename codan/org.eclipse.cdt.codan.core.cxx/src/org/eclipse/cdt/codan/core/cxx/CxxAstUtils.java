@@ -143,10 +143,11 @@ public final class CxxAstUtils {
 	 *            a name for the declaration
 	 * @param factory
 	 *            the factory
+	 * @param index 
 	 * @return
 	 */
 	public IASTDeclaration createDeclaration(IASTName astName,
-			INodeFactory factory) {
+			INodeFactory factory, IIndex index) {
 
 		// Depending on context, either a type or a declaration is easier to
 		// infer
@@ -156,7 +157,7 @@ public final class CxxAstUtils {
 
 		inferredType = tryInferTypeFromBinaryExpr(astName);
 		if (inferredType == null)
-			declaration = tryInferTypeFromFunctionCall(astName, factory);
+			declaration = tryInferTypeFromFunctionCall(astName, factory, index);
 
 		// After the inference, create the statement is needed
 
@@ -208,11 +209,12 @@ public final class CxxAstUtils {
 	/**
 	 * For a function call, tries to find a matching function declaration.
 	 * Checks the argument count.
+	 * @param index 
 	 * 
 	 * @return a generated declaration or null if not suitable
 	 */
 	private IASTSimpleDeclaration tryInferTypeFromFunctionCall(
-			IASTName astName, INodeFactory factory) {
+			IASTName astName, INodeFactory factory, IIndex index) {
 		if (astName.getParent() instanceof IASTIdExpression
 				&& astName.getParent().getParent() instanceof IASTFunctionCallExpression
 				&& astName.getParent().getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
@@ -238,10 +240,6 @@ public final class CxxAstUtils {
 				return null;
 			}
 
-			IIndex index = astName.getTranslationUnit().getIndex();
-			if (index == null) {
-				return null;
-			}
 			IBinding[] bindings;
 			{
 				IBinding binding = funcname.resolveBinding();
@@ -311,9 +309,9 @@ public final class CxxAstUtils {
 
 				}
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				// skip
 			} catch (CoreException e) {
-				e.printStackTrace();
+				Activator.log(e);
 			} finally {
 				index.releaseReadLock();
 			}
@@ -403,7 +401,7 @@ public final class CxxAstUtils {
 				} catch (InterruptedException e) {
 					return PROCESS_ABORT;
 				} catch (CoreException e) {
-					e.printStackTrace();
+					Activator.log(e);
 					return PROCESS_ABORT;
 				} finally {
 					index.releaseReadLock();

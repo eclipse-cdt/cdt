@@ -46,7 +46,7 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 				return;
 			}
 			IASTDeclaration declaration = utils
-					.createDeclaration(astName, ast.getASTNodeFactory());
+					.createDeclaration(astName, ast.getASTNodeFactory(), index);
 			IASTCompositeTypeSpecifier targetCompositeType = utils
 					.getEnclosingCompositeTypeSpecifier(astName);
 			if (targetCompositeType == null) {

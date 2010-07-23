@@ -55,7 +55,7 @@ public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
 				return;
 			}
 			IASTDeclaration declaration = CxxAstUtils.getInstance()
-					.createDeclaration(astName, baseAST.getASTNodeFactory());
+					.createDeclaration(astName, baseAST.getASTNodeFactory(), index);
 			// We'll need a FunctionParameterDeclaration later
 			final IASTDeclSpecifier finalDeclSpec = (IASTDeclSpecifier) declaration
 					.getChildren()[0];

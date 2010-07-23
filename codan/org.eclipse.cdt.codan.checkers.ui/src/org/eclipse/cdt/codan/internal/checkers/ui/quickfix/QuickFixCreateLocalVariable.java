@@ -39,7 +39,6 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 	 */
 	public void modifyAST(IIndex index, IMarker marker) {
 		CxxAstUtils utils = CxxAstUtils.getInstance();
-
 		IASTTranslationUnit ast;
 		try {
 			ITranslationUnit tu = getTranslationUnitViaEditor(marker);
@@ -48,14 +47,19 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 			CheckersUiActivator.log(e);
 			return;
 		}
-		
-		IASTName astName = getASTNameFromMarker(marker, ast);
+		IASTName astName;
+		if (isCodanProblem()) {
+			astName = getASTNameFromMarker(marker, ast);
+		} else {
+			astName = getAstNameFromProblemArgument(marker, ast, 0);
+		}
 		if (astName == null) {
 			return;
 		}
 		ASTRewrite r = ASTRewrite.create(ast);
 		INodeFactory factory = ast.getASTNodeFactory();
-		IASTDeclaration declaration = utils.createDeclaration(astName, factory, index);
+		IASTDeclaration declaration = utils.createDeclaration(astName, factory,
+				index);
 		IASTDeclarationStatement newStatement = factory
 				.newDeclarationStatement(declaration);
 		IASTNode targetStatement = utils.getEnclosingStatement(astName);
@@ -71,11 +75,19 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 			CheckersUiActivator.log(e);
 			return;
 		}
+		try {
+			marker.delete();
+		} catch (CoreException e) {
+			CheckersUiActivator.log(e);
+		}
 	}
 
 	@Override
 	public boolean isApplicable(IMarker marker) {
-		String problemArgument = getProblemArgument(marker, 1);
-		return problemArgument.contains(":func"); //$NON-NLS-1$
+		if (isCodanProblem()) {
+			String problemArgument = getProblemArgument(marker, 1);
+			return problemArgument.contains(":func"); //$NON-NLS-1$
+		}
+		return true; // gcc problem that matched the pattern
 	}
 }

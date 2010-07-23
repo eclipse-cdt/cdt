@@ -45,6 +45,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public abstract class AbstractCodanCMarkerResolution implements
 		IMarkerResolution {
+	private boolean codanProblem;
+
 	/**
 	 * Get position offset from marker. If CHAR_START attribute is not set for
 	 * marker, line and document would be used.
@@ -69,6 +71,10 @@ public abstract class AbstractCodanCMarkerResolution implements
 		return position;
 	}
 
+	public boolean isCodanProblem() {
+		return codanProblem;
+	}
+
 	public String getProblemArgument(IMarker marker, int index) {
 		return CodanProblemMarker.getProblemArgument(marker, index);
 	}
@@ -82,6 +88,7 @@ public abstract class AbstractCodanCMarkerResolution implements
 	public void run(IMarker marker) {
 		IDocument doc = openDocument(marker);
 		if (doc != null) {
+			codanProblem = getProblemId(marker) != null;
 			apply(marker, doc);
 		}
 	}

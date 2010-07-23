@@ -12,11 +12,16 @@ package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 
 public abstract class AbstractAstRewriteQuickFix extends
 		AbstractCodanCMarkerResolution {
@@ -63,5 +68,39 @@ public abstract class AbstractAstRewriteQuickFix extends
 	 */
 	public IDocument getDocument() {
 		return document;
+	}
+	
+	/**
+	 * @param marker
+	 * @param ast
+	 * @param argumentIndex TODO
+	 * @return
+	 * @throws BadLocationException
+	 */
+	public IASTName getAstNameFromProblemArgument(IMarker marker,
+			IASTTranslationUnit ast, int argumentIndex) {
+		IASTName astName = null;
+		int pos = getOffset(marker, getDocument());
+		String name = null;
+		try {
+			name = getProblemArgument(marker, argumentIndex);
+		} catch (Exception e) {
+			return null;
+		}
+		if (name == null)
+			return null;
+		FindReplaceDocumentAdapter dad = new FindReplaceDocumentAdapter(
+				getDocument());
+		IRegion region;
+		try {
+			region = dad.find(pos, name,
+			/* forwardSearch */true, /* caseSensitive */true,
+			/* wholeWord */true, /* regExSearch */false);
+		} catch (BadLocationException e) {
+			return null;
+		}
+		astName = getASTNameFromPositions(ast, region.getOffset(),
+				region.getLength());
+		return astName;
 	}
 }

@@ -22,6 +22,10 @@
              problemId="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem">
        </resolution>
        <resolution
+             class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateLocalVariable"
+             messagePattern="`(.*)' undeclared \(first use in this function\)">
+       </resolution>
+       <resolution
              class="org.eclipse.cdt.codan.internal.checkers.ui.quickfix.QuickFixCreateField"
              problemId="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem">
        </resolution>

@@ -45,7 +45,7 @@ public abstract class RefactoringAction extends Action {
         if (editor instanceof ITextEditor) {
             fEditor= (ITextEditor) editor;
         }
-        setEnabled(fEditor!=null);
+        setEnabled(fEditor != null);
     }
 
 	public void setSite(IWorkbenchSite site) {
@@ -56,7 +56,7 @@ public abstract class RefactoringAction extends Action {
     @Override
 	public final void run() {
     	EclipseObjects.getActivePage().saveAllEditors(true);
-    	if(EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
+    	if (EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
     		return;
     	}
     	if (fEditor != null) {
@@ -69,8 +69,7 @@ public abstract class RefactoringAction extends Action {
             			run(fEditor.getSite(), wc, (ITextSelection) s);
                 }
             }
-        }
-        else if (fSite != null) {
+        } else if (fSite != null) {
             if (fElement != null) {
             	run(fSite, fElement);
             }                        

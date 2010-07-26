@@ -95,12 +95,20 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * - The second "display job" positions and annotates the editor. <br>  
  * - The third clears the old IP annotations when a thread or process has resumed
  * or exited.
+ * </p>
  * <p>
  * The the lookup jobs can run in parallel with the display or the clearing job, 
  * but the clearing job and the display job must not run at the same time.
  * Hence there is some involved logic which ensures that the jobs are run in 
  * proper order.  To avoid race conditions, this logic uses the session's 
  * dispatch thread to synchronize access to the state data of the running jobs.
+ * </p>
+ * <p>
+ * Debuggers can override the default source editor used by the source display
+ * adapter by registering their own ISourcePresentation adapter. 
+ * </p>
+ * 
+ * @see ISourcePresentation
  * 
  * @since 1.0
  */

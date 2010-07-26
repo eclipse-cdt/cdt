@@ -52,7 +52,7 @@
       <import plugin="org.eclipse.cdt.make.core" version="7.0.0" match="compatible"/>
       <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
       <import plugin="org.eclipse.compare" version="3.3.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core" version="7.0.0" match="compatible"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core" version="8.0.0" match="compatible"/>
       <import plugin="org.eclipse.ui.ide" version="3.3.0" match="compatible"/>
       <import plugin="org.eclipse.jface.text" version="3.4.0" match="compatible"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.5.0" match="compatible"/>

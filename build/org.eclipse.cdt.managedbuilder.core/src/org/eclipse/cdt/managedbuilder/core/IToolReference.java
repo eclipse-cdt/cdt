@@ -37,7 +37,7 @@ public interface IToolReference extends ITool {
 	 * 
 	 * @return List
 	 */
-	public List getOptionReferenceList();
+	public List<OptionReference> getOptionReferenceList();
 
 	/**
 	 * Answers the tool that the reference has been created for.

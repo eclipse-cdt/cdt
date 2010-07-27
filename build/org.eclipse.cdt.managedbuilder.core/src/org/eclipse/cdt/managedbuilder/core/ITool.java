@@ -26,7 +26,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ITool extends IBuildObject, IHoldsOptions {
+public interface ITool extends IHoldsOptions {
 	// Schema element names
 	public static final String COMMAND = "command";	//$NON-NLS-1$
 	public static final String COMMAND_LINE_PATTERN = "commandLinePattern"; //$NON-NLS-1$
@@ -288,7 +288,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @deprecated - use getPrimaryInputExtensions or getAllInputExtensions
 	 */
 	@Deprecated
-	public List getInputExtensions();
+	public List<String> getInputExtensions();
 	
 	/**
 	 * Returns the array of valid primary source extensions this tool knows how to build.
@@ -330,7 +330,7 @@ public interface ITool extends IBuildObject, IHoldsOptions {
 	 * @deprecated - use getDependency* methods
 	 */
 	@Deprecated
-	public List getInterfaceExtensions();
+	public List<String> getInterfaceExtensions();
 
 	/**
 	 * Answers a constant corresponding to the project nature the tool should be used 

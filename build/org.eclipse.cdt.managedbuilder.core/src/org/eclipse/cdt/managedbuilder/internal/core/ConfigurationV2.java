@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -36,9 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This class is deprecated in 2.1
- * 
- * @deprecated
+ * @deprecated This class is deprecated in 2.1
  */
 @Deprecated
 public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
@@ -47,7 +44,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	private boolean rebuildNeeded = false;
 	private boolean resolved = true;
 	private ITarget target;
-	private List toolReferences;
+	private List<IToolReference> toolReferences;
 	private IConfiguration createdConfig;
 
 	/**
@@ -113,12 +110,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		IProject project = (IProject) target.getOwner();
 		
 		// Get the tool references from the target and parent
-		List allToolRefs = new Vector(target.getLocalToolReferences());
+		List<IToolReference> allToolRefs = new Vector<IToolReference>(target.getLocalToolReferences());
 		allToolRefs.addAll(((ConfigurationV2)parentConfig).getLocalToolReferences());
-		Iterator iter = allToolRefs.listIterator();
-		while (iter.hasNext()) {
-			ToolReference toolRef = (ToolReference)iter.next();
-
+		for (IToolReference toolRef : allToolRefs) {
 			// Make a new ToolReference based on the tool in the ref
 			ITool parentTool = toolRef.getTool();
 			ToolReference newRef = new ToolReference(this, parentTool);
@@ -129,10 +123,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				newRef.setToolCommand(refCmd);
 			}
 			
-			List optRefs = toolRef.getOptionReferenceList();
-			Iterator optIter = optRefs.listIterator();
-			while (optIter.hasNext()) {
-				OptionReference optRef = (OptionReference)optIter.next();
+			List<OptionReference> optRefs = toolRef.getOptionReferenceList();
+			for (OptionReference optRef : optRefs) {
 				IOption opt = optRef.getOption();
 				try {
 					switch (opt.getValueType()) {
@@ -218,10 +210,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		if (!resolved) {
 			resolved = true;
 //			IManagedConfigElement element = ManagedBuildManager.getConfigElement(this);
-			Iterator refIter = getLocalToolReferences().iterator();
-			while (refIter.hasNext()) {
-				ToolReference ref = (ToolReference)refIter.next();
-				ref.resolveReferences();
+			List<IToolReference> localToolReferences = getLocalToolReferences();
+			for (IToolReference ref : localToolReferences) {
+				((ToolReference)ref).resolveReferences();
 			}
 		}
 	}
@@ -239,7 +230,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getToolReferences()
 	 */
 	public IToolReference[] getToolReferences() {
-		List list = getLocalToolReferences();
+		List<IToolReference> list = getLocalToolReferences();
 		IToolReference[] tools = new IToolReference[list.size()];
 		list.toArray(tools);
 		return tools;
@@ -251,7 +242,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	private OptionReference createOptionReference(IOption option) {
 		ToolReference searchRef = null;
-		ToolReference answer = null;
+		IToolReference answer = null;
 		// The option may already be a reference created to hold user settings
 		if (option instanceof OptionReference) {
 			// The option reference belongs to an existing tool reference
@@ -293,11 +284,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 * @param toolRef
 	 * @return
 	 */
-	private ToolReference findLocalReference(ToolReference toolRef) {
-		Iterator iter = getLocalToolReferences().iterator();
-		
-		while (iter.hasNext()) {
-			ToolReference ref = (ToolReference)iter.next();
+	private IToolReference findLocalReference(ToolReference toolRef) {
+		List<IToolReference> localToolReferences = getLocalToolReferences();
+		for (IToolReference ref : localToolReferences) {
 			if (toolRef.getTool().equals(ref.getTool())) {
 				return ref;
 			}
@@ -311,9 +300,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	public ITool[] getFilteredTools(IProject project) {
 		ITool[] localTools = getTools();
-		Vector tools = new Vector(localTools.length);
-		for (int i = 0; i < localTools.length; i++) {
-			ITool tool = localTools[i];
+		Vector<ITool> tools = new Vector<ITool>(localTools.length);
+		for (ITool tool : localTools) {
 			try {
 				// Make sure the tool is right for the project
 				switch (tool.getNatureFilter()) {
@@ -339,7 +327,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		}
 		
 		// Answer the filtered tools as an array
-		return (ITool[])tools.toArray(new ITool[tools.size()]);
+		return tools.toArray(new ITool[tools.size()]);
 	}
 
 	/* (non-javadoc)
@@ -348,9 +336,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 * 
 	 * @return List
 	 */
-	protected List getLocalToolReferences() {
+	protected List<IToolReference> getLocalToolReferences() {
 		if (toolReferences == null) {
-			toolReferences = new ArrayList();
+			toolReferences = new ArrayList<IToolReference>();
 		}
 		return toolReferences;
 	}
@@ -374,7 +362,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// Validate that the tools correspond to the nature
 		IProject project = (IProject)target.getOwner();
 		if (project != null) {
-			List validTools = new ArrayList();
+			List<ITool> validTools = new ArrayList<ITool>();
 			
 			// The target is associated with a real project
 			for (int i = 0; i < tools.length; ++i) {
@@ -405,7 +393,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				} 
 			}
 			// Now put the valid tools back into the array
-			tools = (ITool[]) validTools.toArray(new ITool[validTools.size()]);			
+			tools = validTools.toArray(new ITool[validTools.size()]);			
 		}
 		
 		// Replace tools with local overrides
@@ -426,9 +414,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		if (isDirty) return true;
 		
 		// Otherwise see if any tool references need saving
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			IToolReference ref = (IToolReference) iter.next();
+		List<IToolReference> localToolReferences = getLocalToolReferences();
+		for (IToolReference ref : localToolReferences) {
 			if (ref.isDirty()) return true;
 		}
 		
@@ -454,8 +441,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 * @param tool
 	 * @return List
 	 */
-	protected List getOptionReferences(ITool tool) {
-		List references = new ArrayList();
+	protected List<OptionReference> getOptionReferences(ITool tool) {
+		List<OptionReference> references = new ArrayList<OptionReference>();
 		
 		// Get all the option references I add for this tool
 		IToolReference toolRef = getToolReference(tool);
@@ -465,10 +452,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		
 		// See if there is anything that my parents add that I don't
 		if (parent != null) {
-			List temp = ((ConfigurationV2)parent).getOptionReferences(tool);
-			Iterator iter = temp.listIterator();
-			while (iter.hasNext()) {
-				OptionReference ref = (OptionReference) iter.next();
+			List<OptionReference> temp = ((ConfigurationV2)parent).getOptionReferences(tool);
+			for (OptionReference ref : temp) {
 				if (!references.contains(ref)) {
 					references.add(ref);
 				}
@@ -529,9 +514,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		if (tool == null) return null;
 
 		// See if the receiver has a reference to the tool
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			ToolReference temp = (ToolReference)iter.next(); 
+		List<IToolReference> localToolReferences = getLocalToolReferences();
+		for (IToolReference temp : localToolReferences) {
 			if (temp.references(tool)) {
 				return temp;
 			}
@@ -583,12 +567,11 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			element.setAttribute(IConfigurationV2.PARENT, parent.getId());
 		
 		// Serialize only the tool references defined in the configuration
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			ToolReference toolRef = (ToolReference) iter.next();
+		List<IToolReference> localToolReferences = getLocalToolReferences();
+		for (IToolReference toolRef : localToolReferences) {
 			Element toolRefElement = doc.createElement(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 			element.appendChild(toolRefElement);
-			toolRef.serialize(doc, toolRefElement);
+			((ToolReference)toolRef).serialize(doc, toolRefElement);
 		}
 		
 		// I am clean now
@@ -602,9 +585,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		// Override the dirty flag
 		this.isDirty = isDirty;
 		// And do the same for the tool references
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			((ToolReference)iter.next()).setDirty(isDirty);
+		List<IToolReference> localToolReferences = getLocalToolReferences();
+		for (IToolReference toolRef : localToolReferences) {
+			((ToolReference)toolRef).setDirty(isDirty);
 		}
 	}
 
@@ -692,10 +675,8 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				ref = new ToolReference(this, tool);
 			}
 			// Set the ref's command
-			if (ref != null) {
-				isDirty = ref.setToolCommand(command);
-				rebuildNeeded = isDirty;
-			}
+			isDirty = ref.setToolCommand(command);
+			rebuildNeeded = isDirty;
 		}
 	}
 

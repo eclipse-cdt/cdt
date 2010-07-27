@@ -12,13 +12,12 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfigurationV2;
@@ -41,14 +40,13 @@ import org.w3c.dom.Node;
 
 public class Target extends BuildObject implements ITarget {
 	private static final String EMPTY_STRING = new String();
-	private static final IConfigurationV2[] emptyConfigs = new IConfigurationV2[0];
 	private String artifactName;
 	private String binaryParserId;
 	private String cleanCommand;
-	private List configList;
-	private Map configMap;
+	private List<IConfigurationV2> configList;
+	private Map<String, IConfigurationV2> configMap;
 	private String defaultExtension;
-	private Map depCalculatorsMap;
+//	private Map depCalculatorsMap;
 	private String errorParserIds;
 	private String extension;
 	private boolean isAbstract = false;
@@ -59,11 +57,11 @@ public class Target extends BuildObject implements ITarget {
 	private IResource owner;
 	private ITarget parent;
 	private boolean resolved = true;
-	private List targetArchList;
-	private List targetOSList;
-	private List toolList;
-	private Map toolMap;
-	private List toolReferences;
+	private List<String> targetArchList;
+	private List<String> targetOSList;
+	private List<ITool> toolList;
+	private Map<String, ITool> toolMap;
+	private List<ToolReference> toolReferences;
 	private ProjectType createdProjectType;
 	private String scannerInfoCollectorId;
 
@@ -125,7 +123,7 @@ public class Target extends BuildObject implements ITarget {
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
-			targetOSList = new ArrayList();
+			targetOSList = new ArrayList<String>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
 				targetOSList.add(osTokens[i].trim());
@@ -135,7 +133,7 @@ public class Target extends BuildObject implements ITarget {
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
-			targetArchList = new ArrayList();
+			targetArchList = new ArrayList<String>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
 				targetArchList.add(archTokens[j].trim());
@@ -303,7 +301,7 @@ public class Target extends BuildObject implements ITarget {
 	 *  
 	 * @param toolArray
 	 */
-	private void addToolsToArray(Vector toolArray) {
+	private void addToolsToArray(Vector<ITool> toolArray) {
 		if (parent != null) {
 			((Target)parent).addToolsToArray(toolArray);
 		}
@@ -410,7 +408,7 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
 	 */
 	public IConfigurationV2 getConfiguration(String id) {
-		return (IConfigurationV2)getConfigurationMap().get(id);
+		return getConfigurationMap().get(id);
 	}
 	
 	/* (non-Javadoc)
@@ -418,9 +416,9 @@ public class Target extends BuildObject implements ITarget {
 	 * 
 	 * @return List containing the configurations
 	 */
-	private List getConfigurationList() {
+	private List<IConfigurationV2> getConfigurationList() {
 		if (configList == null) {
-			configList = new ArrayList();
+			configList = new ArrayList<IConfigurationV2>();
 		}
 		return configList;
 	}
@@ -430,9 +428,9 @@ public class Target extends BuildObject implements ITarget {
 	 * 
 	 * @return
 	 */
-	private Map getConfigurationMap() {
+	private Map<String, IConfigurationV2> getConfigurationMap() {
 		if (configMap == null) {
-			configMap = new HashMap();
+			configMap = new HashMap<String, IConfigurationV2>();
 		}
 		return configMap;
 	}
@@ -441,7 +439,7 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getConfigurations()
 	 */
 	public IConfigurationV2[] getConfigurations() {
-		return (IConfigurationV2[])getConfigurationList().toArray(new IConfigurationV2[getConfigurationList().size()]);
+		return getConfigurationList().toArray(new IConfigurationV2[getConfigurationList().size()]);
 	}
 
 	/* (non-Javadoc)
@@ -451,12 +449,12 @@ public class Target extends BuildObject implements ITarget {
 		return defaultExtension == null ? EMPTY_STRING : defaultExtension;
 	}
 	
-	private Map getDepCalcMap() {
-		if (depCalculatorsMap == null) {
-			depCalculatorsMap = new HashMap();
-		}
-		return depCalculatorsMap;
-	}
+//	private Map getDepCalcMap() {
+//		if (depCalculatorsMap == null) {
+//			depCalculatorsMap = new HashMap();
+//		}
+//		return depCalculatorsMap;
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getErrorParserIds()
@@ -483,17 +481,17 @@ public class Target extends BuildObject implements ITarget {
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List list = new ArrayList(tok.countTokens());
+				List<String> list = new ArrayList<String>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
 				String[] strArr = {""};	//$NON-NLS-1$
-				errorParsers = (String[]) list.toArray(strArr);
+				errorParsers = list.toArray(strArr);
 			}
 		} else {
 			// If no error parsers are specified by the target, the default is 
 			// all error parsers
-			errorParsers = CCorePlugin.getDefault().getAllErrorParsersIDs();
+			errorParsers = ErrorParserManager.getErrorParserAvailableIds();
 		}
 		return errorParsers;
 	}
@@ -504,9 +502,9 @@ public class Target extends BuildObject implements ITarget {
 	 * 
 	 * @return List
 	 */
-	protected List getLocalToolReferences() {
+	protected List<ToolReference> getLocalToolReferences() {
 		if (toolReferences == null) {
-			toolReferences = new ArrayList();
+			toolReferences = new ArrayList<ToolReference>();
 		}
 		return toolReferences;
 	}
@@ -566,8 +564,8 @@ public class Target extends BuildObject implements ITarget {
 	 * @param tool
 	 * @return List
 	 */
-	protected List getOptionReferences(ITool tool) {
-		List references = new ArrayList();
+	protected List<OptionReference> getOptionReferences(ITool tool) {
+		List<OptionReference> references = new ArrayList<OptionReference>();
 		
 		// Get all the option references I add for this tool
 		ToolReference toolRef = getToolReference(tool);
@@ -577,10 +575,8 @@ public class Target extends BuildObject implements ITarget {
 		
 		// See if there is anything that my parents add that I don't
 		if (parent != null) {
-			List temp = ((Target)parent).getOptionReferences(tool);
-			Iterator iter = temp.listIterator();
-			while (iter.hasNext()) {
-				OptionReference ref = (OptionReference) iter.next();
+			List<OptionReference> refs = ((Target)parent).getOptionReferences(tool);
+			for (OptionReference ref : refs) {
 				if (!references.contains(ref)) {
 					references.add(ref);
 				}
@@ -617,7 +613,7 @@ public class Target extends BuildObject implements ITarget {
 				return new String[] {"all"}; //$NON-NLS-1$
 			}
 		}
-		return (String[]) targetArchList.toArray(new String[targetArchList.size()]);
+		return targetArchList.toArray(new String[targetArchList.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -633,7 +629,7 @@ public class Target extends BuildObject implements ITarget {
 				return new String[] {"all"};	//$NON-NLS-1$
 			}
 		}
-		return (String[]) targetOSList.toArray(new String[targetOSList.size()]);
+		return targetOSList.toArray(new String[targetOSList.size()]);
 	}
 	
 	/* (non-Javadoc)
@@ -643,7 +639,7 @@ public class Target extends BuildObject implements ITarget {
 		ITool result = null;
 
 		// See if receiver has it in list
-		result = (ITool) getToolMap().get(id);
+		result = getToolMap().get(id);
 
 		// If not, check if parent has it
 		if (result == null && parent != null) {
@@ -663,9 +659,9 @@ public class Target extends BuildObject implements ITarget {
 	 * target
 	 * 
 	 */
-	private List getToolList() {
+	private List<ITool> getToolList() {
 		if (toolList == null) {
-			toolList = new ArrayList();
+			toolList = new ArrayList<ITool>();
 		}
 		return toolList;
 	}
@@ -674,9 +670,9 @@ public class Target extends BuildObject implements ITarget {
 	 * A safe accessor for the tool map
 	 * 
 	 */
-	private Map getToolMap() {
+	private Map<String, ITool> getToolMap() {
 		if (toolMap == null) {
-			toolMap = new HashMap();
+			toolMap = new HashMap<String, ITool>();
 		}
 		return toolMap;
 	}
@@ -692,9 +688,8 @@ public class Target extends BuildObject implements ITarget {
 		// See if the receiver has a reference to the tool
 		ToolReference ref = null;
 		if (tool == null) return ref;
-		Iterator iter = getLocalToolReferences().listIterator();
-		while (iter.hasNext()) {
-			ToolReference temp = (ToolReference)iter.next(); 
+		List<ToolReference> localToolReferences = getLocalToolReferences();
+		for (ToolReference temp : localToolReferences) {
 			if (temp.references(tool)) {
 				ref = temp;
 				break;
@@ -707,9 +702,9 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTools()
 	 */
 	public ITool[] getTools() {
-		Vector toolArray = new Vector();
+		Vector<ITool> toolArray = new Vector<ITool>();
 		addToolsToArray(toolArray);
-		return (ITool[]) toolArray.toArray(new ITool[toolArray.size()]);
+		return toolArray.toArray(new ITool[toolArray.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -738,9 +733,9 @@ public class Target extends BuildObject implements ITarget {
 		}
 		
 		// Iterate over the configurations and ask them if they need saving
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			if (((IConfigurationV2)iter.next()).isDirty()) {
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 cfgV2 : configurationList) {
+			if (cfgV2.isDirty()) {
 				return true;
 			}
 		}
@@ -760,9 +755,9 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public boolean needsRebuild(){
 		// Iterate over the configurations and ask them if they need saving
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			if (((IConfigurationV2)iter.next()).needsRebuild()) {
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 cfgV2 : configurationList) {
+			if (cfgV2.needsRebuild()) {
 				return true;
 			}
 		}
@@ -774,11 +769,10 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public void removeConfiguration(String id) {
 		// Remove the specified configuration from the list and map
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			 IConfigurationV2 config = (IConfigurationV2)iter.next();
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 config : configurationList) {
 			 if (config.getId().equals(id)) {
-			 	getConfigurationList().remove(config);
+			 	configurationList.remove(config);
 				getConfigurationMap().remove(id);
 				isDirty = true;
 			 	break;
@@ -813,25 +807,23 @@ public class Target extends BuildObject implements ITarget {
 				((Target)parent).resolveReferences();
 				// copy over the parents configs
 				IConfigurationV2[] parentConfigs = parent.getConfigurations();
-				for (int i = 0; i < parentConfigs.length; ++i)
-					addConfiguration(parentConfigs[i]);
+				for (IConfigurationV2 cfgV2 : parentConfigs) {
+					addConfiguration(cfgV2);
+				}
 			}
 
 			// call resolve references on any children
-			Iterator toolIter = getToolList().iterator();
-			while (toolIter.hasNext()) {
-				Tool current = (Tool)toolIter.next();
+			List<ITool> toolList = getToolList();
+			for (ITool current : toolList) {
+				((Tool)current).resolveReferences();
+			}
+			List<ToolReference> localToolReferences = getLocalToolReferences();
+			for (ToolReference current : localToolReferences) {
 				current.resolveReferences();
 			}
-			Iterator refIter = getLocalToolReferences().iterator();
-			while (refIter.hasNext()) {
-				ToolReference current = (ToolReference)refIter.next();
-				current.resolveReferences();
-			}
-			Iterator configIter = getConfigurationList().iterator();
-			while (configIter.hasNext()) {
-				ConfigurationV2 current = (ConfigurationV2)configIter.next();
-				current.resolveReferences();
+			List<IConfigurationV2> configurationList = getConfigurationList();
+			for (IConfigurationV2 current : configurationList) {
+				((ConfigurationV2)current).resolveReferences();
 			}
 		}
 	}
@@ -868,12 +860,11 @@ public class Target extends BuildObject implements ITarget {
 		}
 
 		// Serialize the configuration settings
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			ConfigurationV2 config = (ConfigurationV2) iter.next();
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 config : configurationList) {
 			Element configElement = doc.createElement(IConfigurationV2.CONFIGURATION_ELEMENT_NAME);
 			element.appendChild(configElement);
-			config.serialize(doc, configElement);
+			((ConfigurationV2)config).serialize(doc, configElement);
 		}
 		
 		// I am clean now
@@ -908,9 +899,8 @@ public class Target extends BuildObject implements ITarget {
 		// Override the dirty flag here
 		this.isDirty = isDirty;
 		// and in the configurations
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			IConfigurationV2 config = (IConfigurationV2)iter.next();
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 config : configurationList) {
 			config.setDirty(isDirty);
 		}
 	}
@@ -953,9 +943,9 @@ public class Target extends BuildObject implements ITarget {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setRebuildState(boolean)
 	 */
 	public void setRebuildState(boolean rebuild) {
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			((IConfigurationV2)iter.next()).setRebuildState(rebuild);
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 config : configurationList) {
+			config.setRebuildState(rebuild);
 		}
 	}
 
@@ -993,9 +983,8 @@ public class Target extends BuildObject implements ITarget {
 		projectType.setIsTest(isTest);
 		// Add children
 		// Add configurations  (Configuration -> ToolChain -> Builder -> TargetPlatform)
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			IConfigurationV2 configV2 = (IConfigurationV2)iter.next();
+		List<IConfigurationV2> configurationList = getConfigurationList();
+		for (IConfigurationV2 configV2 : configurationList) {
 			if (configV2.getCreatedConfig() != null) continue;
 			// The new config's superClass needs to be the 
 			// Configuration created from the ConfigurationV2 parent...
@@ -1056,7 +1045,7 @@ public class Target extends BuildObject implements ITarget {
 			IToolReference[] configToolRefs = configV2.getToolReferences();
 			// Add the "local" tool references (they are direct children of the target and 
 			//  its parent targets)
-			Vector targetToolRefs = new Vector();
+			Vector<IToolReference> targetToolRefs = new Vector<IToolReference>();
 			addTargetToolReferences(targetToolRefs);
 			IToolReference[] toolRefs;
 			if (targetToolRefs.size() > 0) {
@@ -1064,10 +1053,9 @@ public class Target extends BuildObject implements ITarget {
 				int i;
 				for (i = 0; i < configToolRefs.length; ++i) {
 					toolRefs[i] = configToolRefs[i];
-				}				
-				Iterator localToolRefIter = targetToolRefs.iterator();			
-				while (localToolRefIter.hasNext()) {
-					toolRefs[i++] = (IToolReference)localToolRefIter.next();
+				}
+				for (IToolReference toolRef : targetToolRefs) {
+					toolRefs[i++] = toolRef;
 				}
 			} else {
 				toolRefs = configToolRefs;
@@ -1083,9 +1071,8 @@ public class Target extends BuildObject implements ITarget {
 				newTool.setOutputFlag(toolRef.getRawOutputFlag());
 				newTool.setOutputsAttribute(toolRef.getRawOutputExtensions());
 				// Handle ToolReference children (OptionReference)
-				Iterator optRefIter = toolRef.getOptionReferenceList().listIterator();
-				while (optRefIter.hasNext()) {
-					OptionReference optRef = (OptionReference)optRefIter.next();
+				List<OptionReference> optionReferenceList = toolRef.getOptionReferenceList();
+				for (OptionReference optRef : optionReferenceList) {
 					subId = id + "." + optRef.getId(); //$NON-NLS-1$
 					IOption newOption = newTool.createOption(optRef.getOption(), subId, optRef.getName(), true);
 					// Set the option attributes

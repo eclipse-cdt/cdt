@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
@@ -50,7 +49,7 @@ public class ToolReference implements IToolReference {
 
 	private String command;
 	private boolean isDirty = false;
-	private List optionReferences;
+	private List<OptionReference> optionReferences;
 	private IBuildObject owner;
 	private String outputExtensions;
 	private String outputFlag;
@@ -193,10 +192,8 @@ public class ToolReference implements IToolReference {
 		
 		// Create a copy of the option references of the parent in the receiver
 		if (tool instanceof ToolReference) {
-			List parentRefs = ((ToolReference)tool).getOptionReferenceList();
-			Iterator iter = parentRefs.iterator();
-			while (iter.hasNext()) {
-				IOption parent = (IOption)iter.next();
+			List<OptionReference> parentRefs = ((ToolReference)tool).getOptionReferenceList();
+			for (OptionReference parent : parentRefs) {
 				OptionReference clone = createOptionReference(parent);
 				try {
 					switch (parent.getValueType()) {
@@ -265,9 +262,8 @@ public class ToolReference implements IToolReference {
 				((ToolReference)parent).resolveReferences();
 			}
 
-			Iterator it = getOptionReferenceList().iterator();
-			while (it.hasNext()) {
-				OptionReference optRef = (OptionReference)it.next();
+			List<OptionReference> optionReferenceList = getOptionReferenceList();
+			for (OptionReference optRef : optionReferenceList) {
 				optRef.resolveReferences();
 			}
 		}		
@@ -327,7 +323,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @return
 	 */
-	protected List getAllOptionRefs() {
+	protected List<OptionReference> getAllOptionRefs() {
 		// First get all the option references this tool reference contains
 		if (owner instanceof ConfigurationV2) {
 			return ((ConfigurationV2)owner).getOptionReferences(parent);
@@ -364,9 +360,9 @@ public class ToolReference implements IToolReference {
  	/* (non-Javadoc)
  	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
  	 */
- 	public List getInputExtensions() {
+ 	public List<String> getInputExtensions() {
 		String[] exts = getPrimaryInputExtensions();
-		List extList = new ArrayList();
+		List<String> extList = new ArrayList<String>();
 		for (int i=0; i<exts.length; i++) {
 			extList.add(exts[i]);
 		}
@@ -432,8 +428,8 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @return
 	 */
-	private List getOutputsList() {
-		ArrayList answer = new ArrayList();
+	private List<String> getOutputsList() {
+		ArrayList<String> answer = new ArrayList<String>();
 		if (outputExtensions != null) {
 			String[] exts = outputExtensions.split(DEFAULT_SEPARATOR);
 			answer.addAll(Arrays.asList(exts));
@@ -574,9 +570,8 @@ public class ToolReference implements IToolReference {
 	 */
 	private OptionReference getOptionReference(IOption option) {
 		// Get all the option references for this option
-		Iterator iter = getAllOptionRefs().listIterator();
-		while (iter.hasNext()) {
-			OptionReference optionRef = (OptionReference) iter.next();
+		List<OptionReference> allOptionRefs = getAllOptionRefs();
+		for (OptionReference optionRef : allOptionRefs) {
 			if (optionRef.references(option))
 				return optionRef;
 		}
@@ -605,9 +600,9 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getOptionReferenceList()
 	 */
-	public List getOptionReferenceList() {
+	public List<OptionReference> getOptionReferenceList() {
 		if (optionReferences == null) {
-			optionReferences = new ArrayList();
+			optionReferences = new ArrayList<OptionReference>();
 		}
 		return optionReferences;
 	}
@@ -747,9 +742,8 @@ public class ToolReference implements IToolReference {
 		}
 		
 		// Output the option references
-		Iterator iter = getOptionReferenceList().listIterator();
-		while (iter.hasNext()) {
-			OptionReference optionRef = (OptionReference) iter.next();
+		List<OptionReference> optionReferenceList = getOptionReferenceList();
+		for (OptionReference optionRef : optionReferenceList) {
 			Element optionRefElement = doc.createElement(ITool.OPTION_REF);
 			element.appendChild(optionRefElement);
 			optionRef.serialize(doc, optionRefElement);

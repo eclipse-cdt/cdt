@@ -18,11 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
@@ -31,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
 
 public class ProjectBuildState implements IProjectBuildState {
 	private Properties fCfgIdToFileNameProps;
-	private Map fCfgIdToStateMap = new HashMap();
+	private Map<String, ConfigurationBuildState> fCfgIdToStateMap = new HashMap<String, ConfigurationBuildState>();
 	private IProject fProject; 
 	private boolean fIsMapInfoDirty;
 	
@@ -41,14 +42,14 @@ public class ProjectBuildState implements IProjectBuildState {
 	
 	void setProject(IProject project){
 		fProject = project;
-		for(Iterator iter = fCfgIdToStateMap.values().iterator(); iter.hasNext();){
-			ConfigurationBuildState cbs = (ConfigurationBuildState)iter.next();
+		Collection<ConfigurationBuildState> cbStates = fCfgIdToStateMap.values();
+		for (ConfigurationBuildState cbs : cbStates) {
 			cbs.setProject(project);
 		}
 	}
 
 	public IConfigurationBuildState getConfigurationBuildState(String id, boolean create) {
-		ConfigurationBuildState state = (ConfigurationBuildState)fCfgIdToStateMap.get(id);
+		ConfigurationBuildState state = fCfgIdToStateMap.get(id);
 		if(state == null){
 			state = loadState(id, create);
 			if(state.exists() || create)
@@ -78,14 +79,15 @@ public class ProjectBuildState implements IProjectBuildState {
 
 	public IConfigurationBuildState[] getConfigurationBuildStates() {
 		Properties props = getIdToNameProperties();
-		List list = new ArrayList(props.size());
-		for(Iterator iter = props.keySet().iterator(); iter.hasNext();){
-			String id = (String)iter.next();
+		List<IConfigurationBuildState> list = new ArrayList<IConfigurationBuildState>(props.size());
+		Set<Object> keySet = props.keySet();
+		for (Object key : keySet) {
+			String id = (String)key;
 			IConfigurationBuildState state = getConfigurationBuildState(id, false);
 			if(state != null)
 				list.add(state);
 		}
-		return (ConfigurationBuildState[])list.toArray(new ConfigurationBuildState[list.size()]);
+		return list.toArray(new ConfigurationBuildState[list.size()]);
 	}
 
 	public void removeConfigurationBuildState(String id) {
@@ -189,8 +191,8 @@ public class ProjectBuildState implements IProjectBuildState {
 	
 	void serialize(){
 		
-		for(Iterator iter = fCfgIdToStateMap.values().iterator(); iter.hasNext();){
-			ConfigurationBuildState s = (ConfigurationBuildState)iter.next();
+		Collection<ConfigurationBuildState> cbStates = fCfgIdToStateMap.values();
+		for (ConfigurationBuildState s : cbStates) {
 			String id = s.getConfigurationId();
 			if(!s.exists()){
 				File file = getFileForCfg(id, false);

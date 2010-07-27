@@ -58,14 +58,14 @@ public class ParallelBuilder {
 	protected OutputStream err;
 	protected boolean resumeOnErrors;
 	protected boolean buildIncrementally;
-	protected HashSet unsorted = new HashSet();
-	protected HashMap queueHash = new HashMap();
-	protected LinkedList queue = new LinkedList();
+	protected HashSet<BuildQueueElement> unsorted = new HashSet<BuildQueueElement>();
+	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<IBuildStep, BuildQueueElement>();
+	protected LinkedList<BuildQueueElement> queue = new LinkedList<BuildQueueElement>();
 
 	/**
 	 * This class implements queue element
 	 */
-	protected class BuildQueueElement implements Comparable {
+	protected class BuildQueueElement implements Comparable<BuildQueueElement> {
 		protected IBuildStep step;
 		protected int level;
 		
@@ -91,10 +91,9 @@ public class ParallelBuilder {
 			return step.hashCode();
 		}
 		
-		public int compareTo(Object obj) {
-			if (obj == null)
+		public int compareTo(BuildQueueElement elem) {
+			if (elem == null)
 				throw new NullPointerException();
-			BuildQueueElement elem = (BuildQueueElement)obj;
 			
 			if (elem.getLevel() > level)
 				return -1;
@@ -248,9 +247,8 @@ public class ParallelBuilder {
 	 * Sorts the queue
 	 */
 	protected void sortQueue() {
-		Iterator iter = unsorted.iterator();
-		while (iter.hasNext()) {
-			queue.add(iter.next());
+		for (BuildQueueElement elem : unsorted) {
+			queue.add(elem);
 		}
 		unsorted.clear();
 		unsorted = null;
@@ -272,7 +270,7 @@ public class ParallelBuilder {
 			for (int j = 0; j < steps.length; j++) {
 				IBuildStep st = steps[j];
 				if (st != null && st.getBuildDescription().getOutputStep() != st) {
-					BuildQueueElement b = (BuildQueueElement)queueHash.get(st);
+					BuildQueueElement b = queueHash.get(st);
 					if (b != null){
 						if (b.level < level) b.setLevel(level);
 				 	} else {
@@ -380,11 +378,11 @@ public class ParallelBuilder {
 			// Check if we need to schedule another process
 			if (queue.size() != 0 && activeCount < active.length) {
 				// Need to schedule another process 
-				Iterator iter = queue.iterator();
+				Iterator<BuildQueueElement> iter = queue.iterator();
 
 				// Iterate over build queue
 				while (iter.hasNext()) {
-					BuildQueueElement elem = (BuildQueueElement)iter.next();
+					BuildQueueElement elem = iter.next();
 					
 					// If "active steps" list is full, then break loop
 					if (activeCount == active.length)

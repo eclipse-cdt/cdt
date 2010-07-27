@@ -72,20 +72,20 @@ public class BuildSettingsUtil {
 	
 	public static ITool[] getDependentTools(IConfiguration cfg, ITool tool){
 		IResourceInfo rcInfos[] = cfg.getResourceInfos();
-		List list = new ArrayList();
+		List<ITool> list = new ArrayList<ITool>();
 		for(int i = 0; i < rcInfos.length; i++){
 			calcDependentTools(rcInfos[i], tool, list);
 		}
-		return (Tool[])list.toArray(new Tool[list.size()]);
+		return list.toArray(new Tool[list.size()]);
 	}
 	
-	private static List calcDependentTools(IResourceInfo info, ITool tool, List list){
+	private static List<ITool> calcDependentTools(IResourceInfo info, ITool tool, List<ITool> list){
 		return calcDependentTools(info.getTools(), tool, list);
 	}
 	
-	public static List calcDependentTools(ITool tools[], ITool tool, List list){
+	public static List<ITool> calcDependentTools(ITool tools[], ITool tool, List<ITool> list){
 		if(list == null)
-			list = new ArrayList();
+			list = new ArrayList<ITool>();
 		
 		for(int i = 0; i < tools.length; i++){
 			ITool superTool = tools[i];
@@ -102,7 +102,7 @@ public class BuildSettingsUtil {
 	public static void copyCommonSettings(ITool fromTool, ITool toTool){
 		Tool fromT = (Tool)fromTool;
 		Tool toT = (Tool)toTool;
-		List values = new ArrayList();
+		List<OptionStringValue> values = new ArrayList<OptionStringValue>();
 		for(int i = 0; i < COMMON_SETTINGS_IDS.length; i++){
 			int type = COMMON_SETTINGS_IDS[i];
 			IOption[] toOptions = toT.getOptionsOfType(type);
@@ -116,7 +116,8 @@ public class BuildSettingsUtil {
 				if(fromOption.getParent() != fromTool)
 					continue;
 				
-				List v = (List)fromOption.getExactValue();
+				@SuppressWarnings("unchecked")
+				List<OptionStringValue> v = (List<OptionStringValue>)fromOption.getExactValue();
 				values.addAll(v);
 			}
 			
@@ -133,7 +134,7 @@ public class BuildSettingsUtil {
 				ManagedBuilderCorePlugin.log(e);
 			}
 			
-			OptionStringValue[] v = (OptionStringValue[])values.toArray(new OptionStringValue[values.size()]);
+			OptionStringValue[] v = values.toArray(new OptionStringValue[values.size()]);
 			IResourceInfo rcInfo = toTool.getParentResourceInfo();
 			
 			ManagedBuildManager.setOption(rcInfo, toTool, toOption, v);
@@ -211,7 +212,7 @@ public class BuildSettingsUtil {
 	}
 	
 	public static ITool[] getToolsBySuperClassId(ITool[] tools, String id) {
-		List retTools = new ArrayList();
+		List<ITool> retTools = new ArrayList<ITool>();
 		if (id != null) {
 			for (int i = 0; i < tools.length; i++) {
 				ITool targetTool = tools[i];
@@ -225,6 +226,6 @@ public class BuildSettingsUtil {
 				} while (tool != null);
 			}
 		}
-		return (ITool[])retTools.toArray( new ITool[retTools.size()]);
+		return retTools.toArray( new ITool[retTools.size()]);
 	}
 }

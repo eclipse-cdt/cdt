@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,8 +46,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BuildStep implements IBuildStep {
-	private List fInputTypes = new ArrayList();
-	private List fOutputTypes = new ArrayList();
+	private List<BuildIOType> fInputTypes = new ArrayList<BuildIOType>();
+	private List<BuildIOType> fOutputTypes = new ArrayList<BuildIOType>();
 	private ITool fTool;
 	private BuildGroup fBuildGroup;
 	private boolean fNeedsRebuild;
@@ -73,14 +72,14 @@ public class BuildStep implements IBuildStep {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getInputIOTypes()
 	 */
 	public IBuildIOType[] getInputIOTypes() {
-		return (BuildIOType[])fInputTypes.toArray(new BuildIOType[fInputTypes.size()]);
+		return fInputTypes.toArray(new BuildIOType[fInputTypes.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getOutputIOTypes()
 	 */
 	public IBuildIOType[] getOutputIOTypes() {
-		return (BuildIOType[])fOutputTypes.toArray(new BuildIOType[fOutputTypes.size()]);
+		return fOutputTypes.toArray(new BuildIOType[fOutputTypes.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -179,35 +178,27 @@ public class BuildStep implements IBuildStep {
 	}
 	
 	public BuildIOType[] getPrimaryTypes(boolean input){
-		Iterator iter = input ?
-				fInputTypes.iterator() :
-				fOutputTypes.iterator();
+		List<BuildIOType> types = input ? fInputTypes : fOutputTypes;
 		
-		List list = new ArrayList();
-		while(iter.hasNext()){
-			BuildIOType arg = (BuildIOType)iter.next();
+		List<BuildIOType> list = new ArrayList<BuildIOType>();
+		for (BuildIOType arg : types) {
 			if(arg.isPrimary())
 				list.add(arg);
 		}
-		return (BuildIOType[])list.toArray(new BuildIOType[list.size()]);
+		return list.toArray(new BuildIOType[list.size()]);
 	}
 	
 	public BuildIOType getIOTypeForType(IBuildObject ioType, boolean input){
-		List list;
-		if(input)
-			list = fInputTypes;
-		else 
-			list = fOutputTypes;
+		List<BuildIOType> list = input ? fInputTypes : fOutputTypes;
 		
 		if(ioType != null){ 
-			for(Iterator iter = list.iterator();iter.hasNext();){
-				BuildIOType arg = (BuildIOType)iter.next();
+			for (BuildIOType arg : list) {
 				if(arg.getIoType() == ioType)
 					return arg;
 			}
 		} else {
 			if(list.size() > 0)
-				return (BuildIOType)list.get(0);
+				return list.get(0);
 		}
 		return null;
 	}
@@ -231,19 +222,16 @@ public class BuildStep implements IBuildStep {
 	}
 	
 	public IBuildResource[] getResources(boolean input){
-		Iterator iter = input ?
-				fInputTypes.iterator() :
-					fOutputTypes.iterator();
-		
-		Set set = new HashSet();
+		List<BuildIOType> list = input ? fInputTypes : fOutputTypes;
+		Set<IBuildResource> set = new HashSet<IBuildResource>();
 
-		while(iter.hasNext()){
-			IBuildResource rcs[] = ((BuildIOType)iter.next()).getResources();
+		for (BuildIOType arg : list) {
+			IBuildResource rcs[] = arg.getResources();
 			for(int j = 0; j < rcs.length; j++){
 				set.add(rcs[j]);
 			}
 		}
-		return (BuildResource[])set.toArray(new BuildResource[set.size()]);
+		return set.toArray(new BuildResource[set.size()]);
 	}
 
 	
@@ -288,14 +276,14 @@ public class BuildStep implements IBuildStep {
 						commands[commands.length - 1] = commands[commands.length - 1] + appendToLastStep;
 					}
 	
-					List list = new ArrayList(); 
+					List<IBuildCommand> list = new ArrayList<IBuildCommand>(); 
 					for(int i = 0; i < commands.length; i++){
 						IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
 						for(int j = 0; j < cmds.length; j++){
 							list.add(cmds[j]);
 						}
 					}
-					return (IBuildCommand[])list.toArray(new BuildCommand[list.size()]);
+					return list.toArray(new BuildCommand[list.size()]);
 				}
 			}
 			return new IBuildCommand[0];
@@ -379,16 +367,16 @@ public class BuildStep implements IBuildStep {
 		return cwd;
 	}
 
-	protected Map getEnvironment(){
+	protected Map<String, String> getEnvironment(){
 		return fBuildDescription.getEnvironment();
 	}
 	
-	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map env){
+	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map<String, String> env){
 		char arr[] = cmd.toCharArray();
 		char expect = 0;
 		char prev = 0;
 //		int start = 0;
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0; i < arr.length; i++){
 			char ch = arr[i]; 
@@ -431,8 +419,8 @@ public class BuildStep implements IBuildStep {
 		if(buf.length() > 0)
 			list.add(buf.toString());
 		
-		IPath c = new Path((String)list.remove(0));
-		String[] args = (String[])list.toArray(new String[list.size()]);
+		IPath c = new Path(list.remove(0));
+		String[] args = list.toArray(new String[list.size()]);
 		
 		return new IBuildCommand[]{new BuildCommand(c, args, env, cwd, this)};
 	}
@@ -441,7 +429,7 @@ public class BuildStep implements IBuildStep {
 		BuildIOType[] types = getPrimaryTypes(input);
 		if(types.length == 0)
 			types = input ? (BuildIOType[])getInputIOTypes() : (BuildIOType[])getOutputIOTypes();
-		List list = new ArrayList();
+		List<BuildResource> list = new ArrayList<BuildResource>();
 		
 		for(int i = 0; i < types.length; i++){
 			BuildResource [] rcs = (BuildResource[])types[i].getResources();
@@ -451,18 +439,18 @@ public class BuildStep implements IBuildStep {
 			}
 		}
 		
-		return (BuildResource[])list.toArray(new BuildResource[list.size()]);
+		return list.toArray(new BuildResource[list.size()]);
 	}
 	
 	private String[] resourcesToStrings(IPath cwd, BuildResource rcs[], String prefixToRm){
-		List list = new ArrayList(rcs.length);
+		List<String> list = new ArrayList<String>(rcs.length);
 		
 		for(int i = 0; i < rcs.length; i++){
 			IPath path = BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation());
 			path = rmNamePrefix(path, prefixToRm);
 			list.add(path.toOSString());
 		}
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	private String resolveMacros(String str, IFileContextData fileData, boolean resolveAll){
@@ -611,8 +599,7 @@ public class BuildStep implements IBuildStep {
 
 		IConfiguration cfg = fBuildDescription.getConfiguration();
 		
-		for(Iterator iter = fInputTypes.iterator(); iter.hasNext();){
-			BuildIOType bType = (BuildIOType)iter.next();
+		for (BuildIOType bType : fInputTypes) {
 			IInputType type = (IInputType)bType.getIoType();
 			
 			if(type == null)

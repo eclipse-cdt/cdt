@@ -48,7 +48,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	private IPath fCWD;
 	private boolean fBuildIncrementaly;
 	private boolean fResumeOnErrs;
-	private Map fStepToStepBuilderMap = new HashMap();
+	private Map<IBuildStep, StepBuilder> fStepToStepBuilderMap = new HashMap<IBuildStep, StepBuilder>();
 	private int fNumCommands = -1;
 	private GenDirInfo fDir;
 	private IResourceRebuildStateContainer fRebuildStateContainer;
@@ -195,7 +195,7 @@ public class DescriptionBuilder implements IBuildModelBuilder {
 	}
 	
 	protected StepBuilder getStepBuilder(IBuildStep step){
-		StepBuilder b = (StepBuilder)fStepToStepBuilderMap.get(step);
+		StepBuilder b = fStepToStepBuilderMap.get(step);
 		if(b == null){
 			b = new StepBuilder(step, fCWD, fResumeOnErrs, fDir, fRebuildStateContainer);
 			fStepToStepBuilderMap.put(step, b);

@@ -15,8 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -29,7 +28,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 	private final static Integer REMOVED_STATE = new Integer(REMOVED);
 	private final static Integer NONE_STATE = new Integer(0);
 	
-	private Map fStateToPathListMap;
+	private HashMap<Integer, Set<String>> fStateToPathListMap;
 	private Properties fPathToStateProps;
 	private String fCfgId;
 	private IProject fProject;
@@ -49,19 +48,18 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		if(fStateToPathListMap == null)
 			return new IPath[0];
 		
-		Set set = (Set)fStateToPathListMap.get(new Integer(state));
+		Set<String> set = fStateToPathListMap.get(new Integer(state));
 		if(set == null)
 			return new IPath[0];
 
 		return setToFullPaths(set);
 	}
 	
-	private IPath[] setToFullPaths(Set set){
+	private IPath[] setToFullPaths(Set<String> set){
 		IPath paths[] = new IPath[set.size()];
 		IPath path = fProject.getFullPath();
 		int num = 0;
-		for(Iterator iter = set.iterator(); iter.hasNext();){
-			String projRel = (String)iter.next();
+		for (String projRel : set) {
 			paths[num++] = path.append(projRel);
 		}
 		return paths;
@@ -88,7 +86,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		
 		if(fPathToStateProps == null){
 			fPathToStateProps = new Properties();
-			fStateToPathListMap = new HashMap();
+			fStateToPathListMap = new HashMap<Integer, Set<String>>();
 		}
 		String strState = stateToString(new Integer(state));
 		Integer iState = stateToInt(strState);
@@ -96,7 +94,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 			throw new IllegalArgumentException();
 		
 		if(cur != 0){
-			Set set = (Set)fStateToPathListMap.get(new Integer(cur));
+			Set<String> set = fStateToPathListMap.get(new Integer(cur));
 			set.remove(str);
 			if(set.size() == 0)
 				fStateToPathListMap.remove(iState);
@@ -104,9 +102,9 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 
 		if(state != 0){
 			fPathToStateProps.setProperty(str, strState);
-			Set set = (Set)fStateToPathListMap.get(iState);
+			Set<String> set = fStateToPathListMap.get(iState);
 			if(set == null){
-				set = new HashSet();
+				set = new HashSet<String>();
 				fStateToPathListMap.put(iState, set);
 			}
 			set.add(str);
@@ -126,16 +124,15 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 	}
 
 	private void load(Properties props){
-		Map map = new HashMap();
-		for(Iterator iter = props.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
+		HashMap<Integer, Set<String>> map = new HashMap<Integer, Set<String>>();
+		for (@SuppressWarnings("rawtypes") Entry entry : props.entrySet()) {
 			Integer i = stateToInt((String)entry.getValue());
-			Set list = (Set)map.get(i);
+			Set<String> list = map.get(i);
 			if(list == null){
-				list = new HashSet();
+				list = new HashSet<String>();
 				map.put(i, list);
 			}
-			list.add(entry.getKey());
+			list.add((String)entry.getKey());
 		}
 		
 		//TODO: trim lists

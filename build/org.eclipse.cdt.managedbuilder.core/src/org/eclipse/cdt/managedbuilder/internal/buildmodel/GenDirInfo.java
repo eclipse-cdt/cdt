@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class GenDirInfo {
 	private IProject fProject;
 	private IPath fProjPath;
-	private Set fDirPathSet = new HashSet();
+	private Set<IPath> fDirPathSet = new HashSet<IPath>();
 	
 	public GenDirInfo(IProject proj){
 		fProject = proj;

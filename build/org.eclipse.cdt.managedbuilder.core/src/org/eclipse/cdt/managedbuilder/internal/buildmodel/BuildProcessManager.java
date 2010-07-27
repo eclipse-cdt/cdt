@@ -17,9 +17,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -135,18 +136,18 @@ public class BuildProcessManager {
 	/**
 	 * Converts map to strings array
 	 */
-	protected String[] mapToStringArray(Map map){
+	protected String[] mapToStringArray(Map<String, String> map){
 		if(map == null)
 			return null;
 		
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			list.add((String)entry.getKey() + "=" + (String)entry.getValue());	//$NON-NLS-1$
+		Set<Entry<String, String>> entrySet = map.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			list.add(entry.getKey() + '=' + entry.getValue());
 		}
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/**

@@ -40,11 +40,11 @@ public interface IBuildCommand {
 	
 	/**
 	 * Returns the Map representing the environment to be used for the executable process
-	 * The map conntains the String to String pairs representing the variable name and value respectively
+	 * The map contains the String to String pairs representing the variable name and value respectively
 	 * 
 	 * @return Map
 	 */
-	Map getEnvironment();
+	Map<String, String> getEnvironment();
 	
 	/**
 	 * Returns the working directory to be used for the process

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
  * David McKnight  (IBM)  - [255390] memory checking
  * David McKnight  (IBM)  - [261644] [dstore] remote search improvements
  * David McKnight  (IBM)  - [243495] [api] New: Allow file name search in Remote Search to not be case sensitive
+ * David McKnight  (IBM)  - [299568] Remote search only shows result in the symbolic linked file
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -82,6 +83,7 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 
 	protected boolean _fsCaseSensitive;
 	private MemoryManager _memoryManager;
+	private boolean _searchOnlyUniqueFolders = true;
 
 	public UniversalSearchHandler(DataStore dataStore, UniversalFileSystemMiner miner, SystemSearchString searchString, boolean fsCaseSensitive, File theFile, DataElement status) {
 		super(dataStore);
@@ -99,6 +101,12 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		_deVirtualFile = _dataStore.findObjectDescriptor(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
 		boolean includeSubfolders = searchString.isIncludeSubfolders();
 
+		String searchUnique = System.getProperty("DSTORE_SEARCH_ONLY_UNIQUE_FOLDERS"); //$NON-NLS-1$
+		if (searchUnique != null && searchUnique.equals("false")) //$NON-NLS-1$
+		{
+			_searchOnlyUniqueFolders = false;
+		}
+		
 		if (includeSubfolders) {
 			_depth = -1;
 		}
@@ -171,15 +179,23 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 	protected boolean hasSearched(File file)
 	{       
         boolean result = false;
-        try {
-        	String canonicalPath = file.getCanonicalPath();
-        	
-        	// check whether it's already been searched
-        	result = _alreadySearched.contains(canonicalPath);
+        String path = null;
+        if (!_searchOnlyUniqueFolders){
+        	path = file.getAbsolutePath();
+        	result = _alreadySearched.contains(path);
         }
-        catch (Exception e){	
-        	result = _alreadySearched.contains(file.getAbsolutePath());
-        	_dataStore.trace(e);
+        else {
+	        try {
+	        	        	
+	        	path = file.getCanonicalPath();
+	        	
+	        	// check whether it's already been searched
+	        	result = _alreadySearched.contains(path);
+	        }
+	        catch (Exception e){	
+	        	result = _alreadySearched.contains(file.getAbsolutePath());
+	        	_dataStore.trace(e);
+	        }
         }
 
 		return result;
@@ -189,14 +205,18 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		
 		if (!hasSearched(theFile)) {
 			
-			try {
-				_alreadySearched.add(theFile.getCanonicalPath());
-			}
-			catch (Exception e){
+			if (!_searchOnlyUniqueFolders){
 				_alreadySearched.add(theFile.getAbsolutePath());
-				_dataStore.trace(e);
-				
-			}			
+			}
+			else {
+				try {
+					_alreadySearched.add(theFile.getCanonicalPath());
+				}
+				catch (Exception e){
+					_alreadySearched.add(theFile.getAbsolutePath());
+					_dataStore.trace(e);				
+				}			
+			}
 	
 			boolean isDirectory = theFile.isDirectory();	
 	

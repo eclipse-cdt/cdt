@@ -22,7 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.IOutputType;
 
 public class BuildIOType implements IBuildIOType {
 	private BuildStep fStep;
-	private List fResources = new ArrayList();
+	private List<BuildResource> fResources = new ArrayList<BuildResource>();
 	private boolean fIsInput;
 	private boolean fIsPrimary;
 	private String fLinkId;
@@ -52,7 +52,7 @@ public class BuildIOType implements IBuildIOType {
 	}
 
 	public IBuildResource[] getResources() {
-		return (BuildResource[])fResources.toArray(new BuildResource[fResources.size()]);
+		return fResources.toArray(new BuildResource[fResources.size()]);
 	}
 
 	public IBuildStep getStep() {

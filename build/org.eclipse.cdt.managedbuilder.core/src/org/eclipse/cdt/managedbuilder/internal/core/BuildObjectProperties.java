@@ -49,13 +49,13 @@ public class BuildObjectProperties extends BuildProperties implements
 		IBuildPropertyType types[] = BuildPropertyManager.getInstance().getPropertyTypes();
 		
 		if(fRestriction != null && types.length != 0){
-			List list = new ArrayList(types.length);
-			for(int i = 0; i < types.length; i++){
-				if(fRestriction.supportsType(types[i].getId()))
-					list.add(types[i]);
+			List<IBuildPropertyType> list = new ArrayList<IBuildPropertyType>(types.length);
+			for (IBuildPropertyType type : types) {
+				if(fRestriction.supportsType(type.getId()))
+					list.add(type);
 			}
 			
-			types = (IBuildPropertyType[])list.toArray(new IBuildPropertyType[list.size()]);
+			types = list.toArray(new IBuildPropertyType[list.size()]);
 		}
 
 		return types;
@@ -66,13 +66,13 @@ public class BuildObjectProperties extends BuildProperties implements
 		if(type != null){
 			IBuildPropertyValue values[] = type.getSupportedValues();
 			if(fRestriction != null && values.length != 0){
-				List list = new ArrayList(values.length);
-				for(int i = 0; i < values.length; i++){
-					if(fRestriction.supportsValue(type.getId(), values[i].getId()))
-						list.add(values[i]);
+				List<IBuildPropertyValue> list = new ArrayList<IBuildPropertyValue>(values.length);
+				for (IBuildPropertyValue value : values) {
+					if(fRestriction.supportsValue(type.getId(), value.getId()))
+						list.add(value);
 				}
 				
-				return (IBuildPropertyValue[])list.toArray(new IBuildPropertyValue[list.size()]);
+				return list.toArray(new IBuildPropertyValue[list.size()]);
 			}
 		}
 		return new IBuildPropertyValue[0];

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.core.runtime.CoreException;
@@ -66,6 +67,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 	
 	public Map<String, String> toStringMap(){
+		@SuppressWarnings("unchecked")
 		Map<String, String> map = (Map<String, String>)fMap.clone();
 		if(fName != null)
 			map.put(getMapKey(NAME_KEY), fName);
@@ -291,9 +293,9 @@ public class MapStorageElement implements ICStorageElement {
 
 	public String[] getAttributeNames() {
 		List<String> list = new ArrayList<String>(fMap.size());
-		for(Iterator iter = fMap.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String key = (String)entry.getKey();
+		Set<Entry<String, String>> entrySet = fMap.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String key = entry.getKey();
 			if(!isSystemKey(key)){
 				list.add(key);
 			}

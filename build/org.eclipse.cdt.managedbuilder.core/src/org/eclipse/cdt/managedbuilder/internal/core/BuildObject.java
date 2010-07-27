@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.runtime.IStatus;
 import org.osgi.framework.Version;
 
 public class BuildObject implements IBuildObject {
@@ -90,11 +89,7 @@ public class BuildObject implements IBuildObject {
 
 	
 	public Version getVersionFromId() {
-		String versionNumber;
-		IStatus status = null;
-	
-		
-		versionNumber = ManagedBuildManager.getVersionFromIdAndVersion( getId());
+		String versionNumber = ManagedBuildManager.getVersionFromIdAndVersion( getId());
 		
 		if( versionNumber == null) {
 			// It means, Tool Integrator either not provided version information in 'id' or  provided in wrong format,

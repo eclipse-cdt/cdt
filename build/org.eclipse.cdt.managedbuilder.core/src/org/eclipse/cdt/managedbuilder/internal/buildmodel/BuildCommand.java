@@ -22,20 +22,17 @@ import org.eclipse.core.runtime.IPath;
 public class BuildCommand implements IBuildCommand {
 	private IPath fCmd;
 	private String fArgs[];
-	private Map fEnv;
+	private Map<String, String> fEnv;
 	private IPath fCWD;
-	private BuildStep fStep;
 	
-	public BuildCommand(IPath cmd, String args[], Map env, IPath cwd, BuildStep step){
+	public BuildCommand(IPath cmd, String args[], Map<String, String> env, IPath cwd, BuildStep step){
 		fCmd = cmd;
 		if(args != null)
 			fArgs = args.clone();
 		if(env != null)
-			fEnv = new HashMap(env);
+			fEnv = new HashMap<String, String>(env);
 		
 		fCWD = cwd;
-		
-		fStep = step;
 	}
 
 	/* (non-Javadoc)
@@ -57,9 +54,9 @@ public class BuildCommand implements IBuildCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildCommand#getEnvironment()
 	 */
-	public Map getEnvironment() {
+	public Map<String, String> getEnvironment() {
 		if(fEnv != null)
-			return new HashMap(fEnv);
+			return new HashMap<String, String>(fEnv);
 		return null;
 	}
 

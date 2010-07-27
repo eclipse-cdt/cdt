@@ -14,9 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ICommandLauncher;
@@ -227,18 +228,18 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return fErrMsg;
 	}
 	
-	private String[] mapToStringArray(Map map){
+	private String[] mapToStringArray(Map<String, String> map){
 		if(map == null)
 			return null;
 		
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
-		for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-			Map.Entry entry = (Map.Entry)iter.next();
-			list.add((String)entry.getKey() + "=" + (String)entry.getValue());	//$NON-NLS-1$
+		Set<Entry<String, String>> entrySet = map.entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			list.add(entry.getKey() + '=' + entry.getValue());
 		}
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	protected void printMessage(String msg, OutputStream os){
@@ -272,19 +273,19 @@ public class CommandBuilder implements IBuildModelBuilder {
 		return buf.toString();
 	}
 
-	private String getExecutable(String command, Map environment){
+	private String getExecutable(String command, Map<String, String> environment){
 		if(new Path(command).isAbsolute())
 			return command;
 		return searchExecutable(command, getPaths(environment));
 	}
 	
-	private String[] getPaths(Map env){
-		String pathsStr = (String)env.get(PATH_ENV);
+	private String[] getPaths(Map<String, String> env){
+		String pathsStr = env.get(PATH_ENV);
 		if(pathsStr == null){
-			for(Iterator iter = env.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				if(PATH_ENV.equalsIgnoreCase((String)entry.getKey())){
-					pathsStr = (String)entry.getValue();
+			Set<Entry<String, String>> entrySet = env.entrySet();
+			for (Entry<String, String> entry : entrySet) {
+				if(PATH_ENV.equalsIgnoreCase(entry.getKey())){
+					pathsStr = entry.getValue();
 					break;
 				}
 			}

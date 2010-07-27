@@ -11,20 +11,19 @@
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 
 public class BuildGroup {
-	private Set fActions = new HashSet();
+	private Set<BuildStep> fActions = new HashSet<BuildStep>();
 	private boolean fNeedsRebuild;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildGroup#getSteps()
 	 */
 	public IBuildStep[] getSteps() {
-		return (IBuildStep[])fActions.toArray(new IBuildStep[fActions.size()]);
+		return fActions.toArray(new IBuildStep[fActions.size()]);
 	}
 	
 	public void addAction(BuildStep action){
@@ -48,9 +47,7 @@ public class BuildGroup {
 	public void setRebuildState(boolean rebuild){
 		fNeedsRebuild = rebuild;
 		
-		for(Iterator iter = fActions.iterator(); iter.hasNext();){
-			BuildStep action = (BuildStep)iter.next();
-			
+		for (BuildStep action : fActions) {
 			action.setRebuildState(rebuild);
 		}
 	}

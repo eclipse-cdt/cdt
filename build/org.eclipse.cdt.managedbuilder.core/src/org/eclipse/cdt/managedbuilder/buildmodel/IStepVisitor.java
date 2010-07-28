@@ -43,10 +43,6 @@ public interface IStepVisitor {
 	 * @see IStepVisitor#VISIT_CONTINUE
 	 * @see IStepVisitor#VISIT_STOP
 	 * @see BuildDescriptionManager#accept(IStepVisitor, IBuildDescription, boolean)
-	 * 
-	 * @param step
-	 * @return int
-	 * @throws CoreException
 	 */
 	int visit(IBuildStep step) throws CoreException;
 }

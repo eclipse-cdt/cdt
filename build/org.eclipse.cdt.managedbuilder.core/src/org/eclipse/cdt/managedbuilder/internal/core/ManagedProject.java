@@ -74,7 +74,6 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 * that is owned by the specified Eclipse project.
 	 * 
 	 * @param owner  the Eclipse project that owns the Managed Project
-	 * @param projectType
 	 */
 	public ManagedProject(IResource owner, IProjectType projectType) {
 		// Make the owner of the ProjectType the project resource
@@ -115,8 +114,6 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/**
 	 * Create the project instance from project file.
 	 * 
-	 * @param buildInfo
-	 * @param element
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
 	public ManagedProject(ManagedBuildInfo buildInfo, ICStorageElement element, boolean loadConfigs, String managedBuildRevision) {

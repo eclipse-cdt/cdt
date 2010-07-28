@@ -16,9 +16,6 @@ import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 
 public class InputOrder implements IInputOrder {
-
-	private static final String EMPTY_STRING = new String();
-
 	//  Superclass
 	//  Parent and children
 	private IInputType parent;
@@ -58,8 +55,8 @@ public class InputOrder implements IInputOrder {
 	 * This constructor is called to create an InputOrder whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param InputType The parent of the an InputOrder
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent The parent of the an InputOrder
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public InputOrder(InputType parent, boolean isExtensionElement) {
 		this.parent = parent;
@@ -165,9 +162,6 @@ public class InputOrder implements IInputOrder {
 
 	/**
 	 * Persist the InputOrder to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 

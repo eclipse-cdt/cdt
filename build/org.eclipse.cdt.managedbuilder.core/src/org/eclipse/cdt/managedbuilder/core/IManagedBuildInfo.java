@@ -72,9 +72,6 @@ public interface IManagedBuildInfo {
 	 * @param sourceExtension - source extension
 	 * @param flags - build flags
 	 * @param outputFlag - output flag for build tool
-	 * @param outputPrefix 
-	 * @param outputName
-	 * @param inputResources
 	 * @return IManagedCommandLineInfo
 	 * 
 	 * @deprecated - use generateToolCommandLineInfo instead
@@ -92,16 +89,6 @@ public interface IManagedBuildInfo {
 	 * chosen to keep the environment build macros unresolved, the command line info contains values contain
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved
-	 * 
-	 * @param sourceExtension
-	 * @param flags
-	 * @param outputFlag
-	 * @param outputPrefix
-	 * @param outputName
-	 * @param inputResources
-	 * @param inputLocation
-	 * @param outputLocation
-	 * @return
 	 */
 	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation );
@@ -167,8 +154,6 @@ public interface IManagedBuildInfo {
 	
     /** 
 	 * Answers the command needed to remove files on the build machine
-	 * 
-	 * @return
 	 */
 	public String getCleanCommand();
 
@@ -195,10 +180,6 @@ public interface IManagedBuildInfo {
 	 */
 	public IConfiguration getDefaultConfiguration();
 	
-	/**
-	 * @param sourceExtension
-	 * @return
-	 */
 	public IManagedDependencyGeneratorType getDependencyGenerator(String sourceExtension);
 
 	/**
@@ -211,9 +192,6 @@ public interface IManagedBuildInfo {
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
-	 * 
-	 * @param extension
-	 * @return
 	 * 
 	 * @deprecated - use getToolFlagsForConfiguration
 	 */
@@ -230,11 +208,6 @@ public interface IManagedBuildInfo {
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
-	 * 
-	 * @param extension
-	 * @param inputLocation
-	 * @param outputLocation
-	 * @return
 	 */
 	public String getToolFlagsForConfiguration(String extension, IPath inputLocation, IPath outputLocation);
 
@@ -248,9 +221,6 @@ public interface IManagedBuildInfo {
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
-	 * 
-	 * @param extension
-	 * @return
 	 * 
 	 * @deprecated - use getToolFlagsForSource
 	 */
@@ -267,19 +237,11 @@ public interface IManagedBuildInfo {
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
-	 * 
-	 * @param extension
-	 * @param inputLocation
-	 * @param outputLocation
-	 * @return
 	 */
 	public String getToolFlagsForSource(String extension, IPath inputLocation, IPath outputLocation);
 
 	/**
 	 * Answers the libraries the project links in.
-	 * 
-	 * @param extension
-	 * @return
 	 */
 	public String[] getLibsForConfiguration(String extension);
 
@@ -293,9 +255,6 @@ public interface IManagedBuildInfo {
 	/**
 	 * Answers the extension that will be built by the current configuration
 	 * for the extension passed in the argument or <code>null</code>.
-	 * 
-	 * @param resourceExtension
-	 * @return
 	 */
 	public String getOutputExtension(String resourceExtension);
 	
@@ -304,9 +263,6 @@ public interface IManagedBuildInfo {
 	 * or an empty <code>String</code> if there is no special flag. For example, the
 	 * GCC tools use the '-o' flag to produce a named output, for example
 	 * 		gcc -c foo.c -o foo.o
-	 * 
-	 * @param outputExt
-	 * @return
 	 */
 	public String getOutputFlag(String outputExt);
 	
@@ -315,7 +271,6 @@ public interface IManagedBuildInfo {
 	 * artifact. For example, a library foo, should have the prefix 'lib' and 
 	 * the extension '.a', so the final goal would be 'libfoo.a' 
 	 * 
-	 * @param outputExtension
 	 * @return the prefix or an empty string
 	 */
 	public String getOutputPrefix(String outputExtension);
@@ -457,36 +412,27 @@ public interface IManagedBuildInfo {
 	public void setDefaultConfiguration(IConfiguration configuration);
 	
 	/**
-	 * @param configName 
 	 * @return boolean indicating if setDefaultConfiguration was successful
 	 */
 	public boolean setDefaultConfiguration(String configName);
 	
 	/**
 	 * Sets the dirty flag for the build model to the value of the argument.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	
 	/**
 	 * Sets the valid flag for the build model to the value of the argument.
-	 * 
-	 * @param isValid
 	 */
 	public void setValid(boolean isValid);
 
 	/**
 	 * Sets the ManagedProject associated with this build info
-	 * 
-	 * @param project
 	 */
 	public void setManagedProject(IManagedProject project);
 	
 	/**
 	 * sets the read only status of Managed Build Info
-	 * 
-	 * @param readOnly 
 	 */
 	public void setReadOnly(boolean readOnly);
 	

@@ -172,11 +172,11 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 * This constructor is called to create a Builder whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param ToolChain The parent of the builder, if any
-	 * @param Builder The superClass, if any
-	 * @param String The id for the new Builder
-	 * @param String The name for the new Builder
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent The parent of the builder, if any
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new Builder
+	 * @param name The name for the new Builder
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public Builder(ToolChain parent, IBuilder superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
@@ -754,9 +754,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 
 	/**
 	 * Persist the builder to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element, boolean resetDirtyState) {
 		if (superClass != null)

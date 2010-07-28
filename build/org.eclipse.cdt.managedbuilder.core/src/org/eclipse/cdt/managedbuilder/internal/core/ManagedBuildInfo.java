@@ -94,9 +94,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	
 
 	/**
-	 * Basic contructor used when the project is brand new.
-	 * 
-	 * @param owner
+	 * Basic constructor used when the project is brand new.
 	 */
 	public ManagedBuildInfo(IResource owner) {
 		this.owner = owner;
@@ -110,11 +108,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/**
 	 * Reads the build information from the project file and creates the 
 	 * internal representation of the build settings for the project.
-	 * 
-	 * @param owner
-	 * @param element
-	 * @param loadConfigs 
-	 * @param managedBuildRevision
 	 */
 	public ManagedBuildInfo(IResource owner, ICStorageElement element, boolean loadConfigs, String managedBuildRevision) {
 		this(owner);
@@ -723,9 +716,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/**
 	 * Write the contents of the build model to the persistent store 
 	 * specified in the argument.
-	 * 
-	 * @param doc
-	 * @param element
 	 * @deprecated as of CDT 7.0
 	 */
 	@Deprecated
@@ -865,9 +855,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		rebuildNeeded = rebuild;
 	}
 
-	/**
-	 * @param version
-	 */
 	public void setVersion(String version) {
 		updateRevision(version);
 		if (version != null && !version.equals(this.version))
@@ -875,9 +862,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			//setDirty(true);  - It is primarily up to the ManagedProject to maintain the dirty state
 	}
 
-	/**
-	 * @param bInited
-	 */
 	public void setContainerInited(boolean bInited) {
 		 bIsContainerInited = bInited;
 	}
@@ -891,8 +875,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	/**
 	 * Sets the owner of the receiver to be the <code>IResource</code> specified
 	 * in the argument.
-	 * 
-	 * @param resource
 	 */
 	public void updateOwner(IResource resource) {
 		// Check to see if the owner is the same as the argument
@@ -983,10 +965,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return targetList;	
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	private String getCWD() {
 		String cwd = ""; //$NON-NLS-1$
 		IBuildEnvironmentVariable cwdvar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable("CWD", getDefaultConfiguration(), false, true); //$NON-NLS-1$
@@ -1090,11 +1068,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return entries.toArray(new IPathEntry[entries.size()]);
 	}
 	
-	/**
-	 * 
-	 * @param entryType
-	 * @return IPathEntry[]
-	 */
 	public IPathEntry[] getManagedBuildValues(int entryType) {
 		// obtain option values
 		List<IPathEntry> entries = getOptionValues(entryType, false);
@@ -1107,10 +1080,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return entries.toArray(new IPathEntry[entries.size()]);
 	}
 	
-	/**
-	 * @param entryType
-	 * @return IPathEntry[]
-	 */
 	public IPathEntry[] getManagedBuildBuiltIns(int entryType) {
 		List<IPathEntry> entries = getOptionValues(entryType, true);
 		return entries.toArray(new IPathEntry[entries.size()]);		
@@ -1159,7 +1128,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 	/**
 	 * 
-	 * @param optionType - data type: include | library | symbols 
+	 * @param entryType - data type: include | library | symbols 
 	 * @param entries    - list to be affected
 	 * @param builtIns   - whether get actual values or builtins 
 	 * @param obj        - object to be processed (ResCfg | Cfg) 
@@ -1220,15 +1189,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return entries;
 	}
 	
-	/**
-	 * 
-	 * @param entries
-	 * @param values
-	 * @param resPath
-	 * @param context 
-	 * @param obj 
-	 * @return List<IPathEntry>
-	 */
 	protected List<IPathEntry> addIncludes(List<IPathEntry> entries, String[] values, IPath resPath, int context ,Object obj) {
 		return addPaths(entries, values, resPath, context, obj, IPathEntry.CDT_INCLUDE);
 	}
@@ -1257,28 +1217,10 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return entries;
 	}
 	
-	/**
-	 * 
-	 * @param entries
-	 * @param values
-	 * @param resPath
-	 * @param context 
-	 * @param obj 
-	 * @return List<IPathEntry>
-	 */
 	protected List<IPathEntry> addLibraries(List<IPathEntry> entries, String[] values, IPath resPath, int context, Object obj) {
 		return addPaths(entries, values, resPath, context, obj, IPathEntry.CDT_LIBRARY);
 	}
 	
-	/**
-	 * 
-	 * @param entries
-	 * @param values
-	 * @param resPath
-	 * @param context 
-	 * @param obj 
-	 * @return List<IPathEntry>
-	 */
 	protected List<IPathEntry> addSymbols(List<IPathEntry> entries, String[] values, IPath resPath, int context, Object obj) {
 		if (values == null) return entries;
 		for (int i=0; i<values.length; i++) {

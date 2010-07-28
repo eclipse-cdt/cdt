@@ -193,15 +193,11 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	/**
 	 * Sets the arguments to be passed to the build utility used by the 
 	 * receiver to produce a build goal.
-	 * 
-	 * @param makeArgs
 	 */
 	public void setArguments(String makeArgs);
 	
 	/**
 	 * Sets the BuildFileGenerator plugin.xml element
-	 * 
-	 * @param element
 	 * 
 	 * @deprecated as of CDT 4.0
 	 */
@@ -210,29 +206,21 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 
 	/**
 	 * Sets the build command for the receiver to the value in the argument.
-	 * 
-	 * @param command
 	 */
 	public void setCommand(String command);
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 
 	/**
 	 * Sets the semicolon separated list of error parser ids
-	 * 
-	 * @param ids
 	 */
 	public void setErrorParserIds(String ids);
 
 	/**
 	 * Sets the isAbstract attribute of the builder. 
-	 * 
-	 * @param b
 	 */
 	public void setIsAbstract(boolean b);
 	
@@ -254,16 +242,12 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	
 	/**
 	 * Sets the 'versionsSupported' attribute of the builder. 
-	 * 
-	 * @param versionsSupported
 	 */
 	
 	public void setVersionsSupported(String versionsSupported);
 	
 	/**
 	 * Sets the 'convertToId' attribute of the builder. 
-	 * 
-	 * @param convertToId
 	 */
 	public void setConvertToId(String convertToId);
 

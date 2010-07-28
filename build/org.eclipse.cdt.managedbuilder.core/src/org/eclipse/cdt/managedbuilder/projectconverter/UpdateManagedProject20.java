@@ -62,7 +62,6 @@ class UpdateManagedProject20 {
 	/**
 	 * @param monitor the monitor to allow users to cancel the long-running operation
 	 * @param project the <code>IProject</code> that needs to be upgraded
-	 * @throws CoreException
 	 */
 	static void doProjectUpdate(IProgressMonitor monitor, final IProject project) throws CoreException {
 		String[] projectName = new String[]{project.getName()};

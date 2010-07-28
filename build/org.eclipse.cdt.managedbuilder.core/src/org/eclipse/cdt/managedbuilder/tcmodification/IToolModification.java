@@ -23,8 +23,6 @@ public interface IToolModification extends IModification {
 	 * with the configuration
 	 * for system tools specifies whether the tool can be added to the
 	 * configuration
-	 * 
-	 * @return
 	 */
 	CompatibilityStatus getCompatibilityStatus();
 	
@@ -37,26 +35,21 @@ public interface IToolModification extends IModification {
 	 * with the configuration
 	 * for system tools specifies whether the tool can be added to the
 	 * configuration
-	 * 
-	 * @return
 	 */
 	boolean isCompatible();
 	
 	/**
 	 * returns the tool of the given Modification 
-	 * @return
 	 */
 	ITool getTool();
 	
 	/**
 	 * specifies whether the current tools belongs to the resource configuration
-	 * @return
 	 */
 	boolean isProjectTool();
 	
 	/**
 	 * returns the list of supported operations
-	 * @return
 	 */
 	IModificationOperation[] getSupportedOperations();
 }

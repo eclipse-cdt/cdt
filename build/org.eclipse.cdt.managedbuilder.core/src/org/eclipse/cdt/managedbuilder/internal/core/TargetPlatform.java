@@ -80,11 +80,11 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * This constructor is called to create a TargetPlatform whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param ToolChain The parent of the builder, if any
-	 * @param TargetPlatform The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent The parent of the builder, if any
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new tool chain
+	 * @param name The name for the new tool chain
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public TargetPlatform(ToolChain parent, ITargetPlatform superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
@@ -128,7 +128,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * Create a <code>TargetPlatform</code> based upon an existing TargetPlatform.
 	 * 
 	 * @param parent The <code>IToolChain</code> the TargetPlatform will be added to. 
-	 * @param builder The existing TargetPlatform to clone.
+	 * @param targetPlatform The existing TargetPlatform to clone.
 	 */
 	public TargetPlatform(IToolChain parent, String Id, String name, TargetPlatform targetPlatform) {
 		this.parent = parent;
@@ -310,9 +310,6 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 	/**
 	 * Persist the target platform to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 		if (superClass != null)

@@ -619,8 +619,6 @@ public class InputType extends BuildObject implements IInputType {
 
 	/**
 	 * Persist the InputType to the project file.
-	 *
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 		if (superClass != null)

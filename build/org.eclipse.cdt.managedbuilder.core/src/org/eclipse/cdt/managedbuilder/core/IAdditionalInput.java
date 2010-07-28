@@ -52,10 +52,8 @@ public interface IAdditionalInput {
 	public String[] getPaths();
 
 	/**
-	 * Sets semi-colon separated list of the relative or absolute paths of the resources to 
+	 * Sets semicolon separated list of the relative or absolute paths of the resources to 
 	 * which this element applies.
-	 * 
-	 * @param paths
 	 */
 	public void setPaths(String paths);
 
@@ -83,8 +81,6 @@ public interface IAdditionalInput {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	

@@ -256,7 +256,6 @@ public class BuildDescriptionManager {
 	 * cleans the resources to be rebuilt
 	 * 
 	 * @param des build description
-	 * @throws CoreException
 	 */
 	public static void cleanGeneratedRebuildResources(IBuildDescription des) throws CoreException{
 		IBuildResource bRcs[] = filterGeneratedBuildResources(des.getResources(), REMOVED | REBUILD);

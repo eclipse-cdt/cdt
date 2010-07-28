@@ -75,9 +75,6 @@ public interface ITarget extends IBuildObject {
 	 */
 	public String getArtifactName();
 	
-	/**
-	 * @param isDirty
-	 */
 	public void setDirty(boolean isDirty);
 
 	/**
@@ -129,8 +126,6 @@ public interface ITarget extends IBuildObject {
 	/**
 	 * Answers the command line arguments to pass to the make utility used 
 	 * by the receiver to build a project.
-	 * 
-	 * @return
 	 */
 	public String getMakeArguments();
 	
@@ -143,9 +138,6 @@ public interface ITarget extends IBuildObject {
 
 	/**
 	 * Returns the configuration with the given id, or <code>null</code> if not found.
-	 * 
-	 * @param id
-	 * @return IConfigurationV2
 	 */
 	public IConfigurationV2 getConfiguration(String id);
 	
@@ -188,9 +180,6 @@ public interface ITarget extends IBuildObject {
 	/**
 	 * Answers the tool in the receiver with the ID specified in the argument, 
 	 * or <code>null</code> 
-	 * 
-	 * @param id
-	 * @return
 	 */
 	public ITool getTool(String id);
 	
@@ -236,46 +225,34 @@ public interface ITarget extends IBuildObject {
 
 	/**
 	 * Removes the configuration with the ID specified in the argument.
-	 * 
-	 * @param id 
 	 */
 	public void removeConfiguration(String id);
 	
 	/**
 	 * Set (override) the extension that should be appended to the build artifact
 	 * for the receiver.
-	 *  
-	 * @param extension
 	 */
 	public void setArtifactExtension(String extension);
 
 	/**
 	 * Set the name of the artifact that will be produced when the receiver
 	 * is built.
-	 * 
-	 * @param name
 	 */
 	public void setArtifactName(String name);
 
 	/**
 	 * Sets the arguments to be passed to the make utility used by the 
 	 * receiver to produce a build goal.
-	 * 
-	 * @param makeArgs
 	 */
 	public void setMakeArguments(String makeArgs);
 
 	/**
 	 * Sets the make command for the receiver to the value in the argument.
-	 * 
-	 * @param command
 	 */
 	public void setMakeCommand(String command);
 
 	/**
 	 * Sets the semicolon separated list of error parser ids
-	 * 
-	 * @param ids
 	 */
 	public void setErrorParserIds(String ids);
 	
@@ -289,15 +266,12 @@ public interface ITarget extends IBuildObject {
 
 	/**
 	 * Sets the resource that owns the receiver.
-	 * 
-	 * @param resource
 	 */
 	public void updateOwner(IResource resource);
 
 	/**
 	 * Converts a CDT V2.0 target into a ProjectType + Configuration + Toolchain +
 	 * Builder + TargetPlatform.
-	 * @param managedBuildRevision
 	 */
 	public void convertToProjectType(String managedBuildRevision);
 

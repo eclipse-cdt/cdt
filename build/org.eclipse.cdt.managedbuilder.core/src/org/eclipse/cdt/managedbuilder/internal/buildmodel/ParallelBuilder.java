@@ -104,9 +104,6 @@ public class ParallelBuilder {
 
 		/**
 		 * Updates level value 
-		 * 
-		 * @param _step 
-		 * @param _level
 		 */
 		public boolean check(IBuildStep _step, int _level) {
 			if (level < _level && step.equals(_step)) {
@@ -464,7 +461,6 @@ public class ParallelBuilder {
 	
 	/**
 	 * Updates info about generated files (after step completed)
-	 * @param step 
 	 */
 	protected void refreshOutputs(IBuildStep step){
 		IProgressMonitor mon = new NullProgressMonitor();

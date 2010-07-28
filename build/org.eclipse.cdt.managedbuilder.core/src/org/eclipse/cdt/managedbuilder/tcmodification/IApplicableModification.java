@@ -21,7 +21,6 @@ public interface IApplicableModification extends IModification {
 	/**
 	 * applies the settings made to the given modification to the underlying
 	 * resource info 
-	 * @throws CoreException
 	 */
 	void apply() throws CoreException;
 }

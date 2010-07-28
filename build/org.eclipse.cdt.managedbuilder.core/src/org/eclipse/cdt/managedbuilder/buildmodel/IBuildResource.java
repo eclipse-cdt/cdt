@@ -52,7 +52,7 @@ public interface IBuildResource {
 	 * In case the resource is the project source,
 	 * The returned output io type belongs to the main input step
 	 * 
-	 * @see IBuildRepresentation.getInputStep()
+	 * @see IBuildDescription#getInputStep()
 	 * 
 	 * @return IBuildIOType
 	 */
@@ -70,7 +70,7 @@ public interface IBuildResource {
 	 * In case the resource is the project source,
 	 * The main input step is returned
 	 * 
-	 * @see IBuildRepresentation.getInputStep()
+	 * @see IBuildDescription#getInputStep()
 	 * 
 	 * @return IBuildIOType
 	 */

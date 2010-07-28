@@ -32,10 +32,10 @@ public interface IHoldsOptions extends IBuildObject {
 	/**
 	 * Creates a child Option
 	 * 
-	 * @param Option The superClass, if any
-	 * @param String The id for the new option 
-	 * @param String The name for the new option
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new option 
+	 * @param name The name for the new option
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return IOption
 	 */
@@ -43,8 +43,6 @@ public interface IHoldsOptions extends IBuildObject {
 
 	/**
 	 * Removes an option.
-	 * 
-	 * @param option
 	 */
 	public void removeOption(IOption option);
 
@@ -52,7 +50,7 @@ public interface IHoldsOptions extends IBuildObject {
 	 * This is a deprecated method for retrieving an <code>IOption</code> from 
 	 * the receiver based on an ID. It is preferred that you use the newer method 
 	 * <code>getOptionById</code>
-	 * @see org.eclipse.cdt.core.build.managed.IHoldsOptions#getOptionById(java.lang.String)
+	 * @see IHoldsOptions#getOptionById(java.lang.String)
 	 *  
 	 * @param id unique identifier of the option to search for
 	 * @return <code>IOption</code>
@@ -137,7 +135,7 @@ public interface IHoldsOptions extends IBuildObject {
 	 * Each individual option in superclass, will become the superclass for
 	 * the new option. 
 	 *
-	 * @param IHoldsOptions The superClass 
+	 * @param superClass The superClass 
 	 * @since 3.0
 	 */
 	public void createOptions(IHoldsOptions superClass);
@@ -146,7 +144,7 @@ public interface IHoldsOptions extends IBuildObject {
 
 	* This method should be called in order to obtain the option whose value and attributes could be directly changed/adjusted
 	* 
-	* @param id -the option to be modified
+	* @param option -the option to be modified
 	* @param adjustExtension - if false, modifications are to be made for the non-extension element 
 	* (only for some particular configuration associated with some eclipse project)
 	* This is the most common use of this method.
@@ -167,7 +165,6 @@ public interface IHoldsOptions extends IBuildObject {
 	
 	/**
 	 * sets the holder rebuild state
-	 * @param rebuild
 	 */
 	public void setRebuildState(boolean rebuild);
 }

@@ -110,10 +110,6 @@ public class NewManagedProject extends ProcessRunner {
 	
 	/**
 	 * setOptionValue
-	 * @param config
-	 * @param option
-	 * @param val
-	 * @throws BuildException
 	 */
 	protected void setOptionValue(IConfiguration config, IOption option, String val) throws BuildException {
 		if (val != null) {

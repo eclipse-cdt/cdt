@@ -69,10 +69,10 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Creates a child InputType for this tool.
 	 * 
-	 * @param InputType The superClass, if any
-	 * @param String The id for the new InputType 
-	 * @param String The name for the new InputType
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new InputType 
+	 * @param name The name for the new InputType
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return IInputType
 	 * @since 3.0
@@ -82,7 +82,6 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Removes an InputType from the tool's list.
 	 * 
-	 * @param type
 	 * @since 3.0
 	 */
 	public void removeInputType(IInputType type);
@@ -159,10 +158,10 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Creates a child OutputType for this tool.
 	 * 
-	 * @param OutputType The superClass, if any
-	 * @param String The id for the new OutputType 
-	 * @param String The name for the new OutputType
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new OutputType 
+	 * @param name The name for the new OutputType
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return IOutputType
 	 * @since 3.0
@@ -172,7 +171,6 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Removes an OutputType from the tool's list.
 	 * 
-	 * @param type
 	 * @since 3.0
 	 */
 	public void removeOutputType(IOutputType type);
@@ -244,8 +242,6 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Sets the isAbstract attribute of the tool-chain. 
-	 * 
-	 * @param b
 	 */
 	public void setIsAbstract(boolean b);
 	
@@ -275,8 +271,6 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Sets the semicolon separated list of error parser ids
-	 * 
-	 * @param ids
 	 */
 	public void setErrorParserIds(String ids);
 	
@@ -390,8 +384,6 @@ public interface ITool extends IHoldsOptions {
 	 * Sets all of the output extensions that the receiver can build,
 	 * into the outputs attribute.  Note that the outputs attribute is
 	 * ignored when one or more outputTypes are specified.  
-	 * 
-	 * @param String
 	 */
 	public void setOutputsAttribute(String extensions);
 	
@@ -408,8 +400,6 @@ public interface ITool extends IHoldsOptions {
 	 * Sets the argument that must be passed to a specific tool in order to 
 	 * control the name of the output artifact. For example, the GCC compile and 
 	 * linker use '-o', while the archiver does not. 
-	 * 
-	 * @param String
 	 */
 	public void setOutputFlag(String flag);
 
@@ -423,8 +413,8 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Sets the prefix that the tool should prepend to the name of the build artifact.
 	 * For example, a librarian usually prepends 'lib' to the target.a
-	 * @param String
-	 * @see {@link #setOutputPrefixForPrimaryOutput(String)} 
+	 * 
+	 * @see #setOutputPrefixForPrimaryOutput(String) 
 	 */
 	public void setOutputPrefix(String prefix);
 	
@@ -443,8 +433,6 @@ public interface ITool extends IHoldsOptions {
 	 * Sets whether the Tool wants the MBS to display the Advanced 
 	 * Input category that allows the user to specify additional input resources and
 	 * dependencies. 
-	 * 
-	 * @param display   
 	 */
 	public void setAdvancedInputCategory(boolean display);
 	
@@ -458,8 +446,6 @@ public interface ITool extends IHoldsOptions {
 	
 	/**
 	 * Sets whether the Tool represents a user-define custom build step.
-	 * 
-	 * @param customBuildStep
 	 */
 	public void setCustomBuildStep(boolean customBuildStep);
 	
@@ -471,7 +457,6 @@ public interface ITool extends IHoldsOptions {
 	
 	/**
 	 * Sets the announcement string for this tool 
-	 * @param announcement
 	 */
 	public void setAnnouncement(String announcement);
 	
@@ -485,8 +470,6 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Sets the command-line invocation command defined for this tool.
 	 * 
-	 * @param String
-	 * 
 	 * @return boolean  if <code>true</code>, then the tool command was modified 
 	 */
 	public boolean setToolCommand(String command);
@@ -499,7 +482,6 @@ public interface ITool extends IHoldsOptions {
 	
 	/**
 	 * Sets the command line pattern for this tool 
-	 * @param String
 	 */
 	public void setCommandLinePattern(String pattern);
 	
@@ -544,9 +526,6 @@ public interface ITool extends IHoldsOptions {
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
 	 * 
-	 * @return String[]
-	 * @throws BuildException
-	 * 
 	 * @deprecated - use getToolCommandFlags instead
 	 */
 	@Deprecated
@@ -578,11 +557,6 @@ public interface ITool extends IHoldsOptions {
 	 * chosen to keep the environment build macros unresolved, the flags contain
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
-	 * 
-	 * @param inputFileLocation
-	 * @param outputFileLocation
-	 * @return
-	 * @throws BuildException
 	 */
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation) throws BuildException;
 	
@@ -595,11 +569,6 @@ public interface ITool extends IHoldsOptions {
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
 	 * all other macro references are resolved 
-	 * 
-	 * @param inputFileLocation
-	 * @param outputFileLocation
-	 * @return
-	 * @throws BuildException
 	 */
 	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException;
 
@@ -660,8 +629,6 @@ public interface ITool extends IHoldsOptions {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	
@@ -689,15 +656,11 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Sets the 'versionsSupported' attribute of the tool. 
-	 * 
-	 * @param versionsSupported
 	 */	
 	public void setVersionsSupported(String versionsSupported);
 	
 	/**
 	 * Sets the 'convertToId' attribute of the tool. 
-	 * 
-	 * @param convertToId
 	 */
 	public void setConvertToId(String convertToId);
 	

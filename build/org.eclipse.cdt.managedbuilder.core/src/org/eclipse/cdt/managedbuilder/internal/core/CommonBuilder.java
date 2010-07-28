@@ -273,10 +273,6 @@ public class CommonBuilder extends ACBuilder {
 			reservedNames = Arrays.asList(new String[]{".cdtbuild", ".cdtproject", ".project"});	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		/**
-		 * @param changedResource
-		 * @return
-		 */
 		private boolean isGeneratedResource(IResource resource) {
 			// Is this a generated directory ...
 			IPath path = resource.getFullPath();
@@ -288,10 +284,6 @@ public class CommonBuilder extends ACBuilder {
 			return false;
 		}
 
-		/**
-		 * @param resource
-		 * @return
-		 */
 		private boolean isProjectFile(IResource resource) {
 			return reservedNames.contains(resource.getName());
 		}
@@ -1985,7 +1977,6 @@ public class CommonBuilder extends ACBuilder {
 
 	/**
 	 * Check whether the build has been canceled.
-	 * @param monitor
 	 */
 	public void checkCancel(IProgressMonitor monitor) {
 		if (monitor != null && monitor.isCanceled())
@@ -2049,8 +2040,6 @@ public class CommonBuilder extends ACBuilder {
 
 	/**
 	 * Parsing arguments in a shell style
-	 * @param builder
-	 * @return
 	 */
 	private String[] argumentsToArray(String args) {
 		return CommandLineUtil.argumentsToArray(args);

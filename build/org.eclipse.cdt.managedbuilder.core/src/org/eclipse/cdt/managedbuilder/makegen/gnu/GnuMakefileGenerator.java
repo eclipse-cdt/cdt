@@ -383,11 +383,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 ************************************************************************/
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#initialize()
-	 *
-	 * @param project
-	 * @param info
-	 * @param monitor
+	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#initialize(IProject, IManagedBuildInfo, IProgressMonitor)
 	 */
 	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
 		// Save the project so we can get path and member information
@@ -948,13 +944,10 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *   M A K E F I L E S   P O P U L A T I O N   M E T H O D S
 	 ************************************************************************/
 
-	/* (non-javadoc)
+	/**
 	 * This method generates a "fragment" make file (subdir.mk).
 	 * One of these is generated for each project directory/subdirectory
 	 * that contains source files.
-	 *
-	 * @param module
-	 * @throws CoreException
 	 */
 	protected void populateFragmentMakefile(IContainer module) throws CoreException {
 		// Calculate the new directory relative to the build output
@@ -980,12 +973,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		Util.save(makeBuf, modMakefile);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * The makefile generator generates a Macro for each type of output, other than final artifact,
 	 * created by the build.
 	 *
 	 * @param fileHandle The file that should be populated with the output
-	 * @throws CoreException
 	 */
 	protected void populateObjectsMakefile(IFile fileHandle) throws CoreException {
 
@@ -1042,10 +1034,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	}
 
-	/* (non-Javadoc)
-	 * @param fileHandle
-	 * @throws CoreException
-	 */
 	protected void populateSourcesMakefile(IFile fileHandle) throws CoreException {
 		// Add the comment
 		StringBuffer buffer = addDefaultHeader();
@@ -1130,12 +1118,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		Util.save(buffer, fileHandle);
 	}
 
-	/*  (non-Javadoc)
+	/**
 	 * Create the entire contents of the makefile.
 	 *
 	 * @param fileHandle The file to place the contents in.
-	 * @param rebuild FLag signalling that the user is doing a full rebuild
-	 * @throws CoreException
+	 * @param rebuild FLag signaling that the user is doing a full rebuild
 	 */
 	protected void populateTopMakefile(IFile fileHandle, boolean rebuild) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
@@ -1167,7 +1154,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *   M A I N (makefile)   M A K E F I L E   M E T H O D S
 	 ************************************************************************/
 
-	/* (non-Javadoc)
+	/**
 	 * Answers a <code>StringBuffer</code> containing the comment(s)
 	 * for the top-level makefile.
 	 */
@@ -1175,7 +1162,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return addDefaultHeader();
 	}
 
-	/* (non-javadoc)
+	/**
 	 */
 	private StringBuffer addMacros() {
 		StringBuffer buffer = new StringBuffer();
@@ -1249,13 +1236,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return (buffer.append(NEWLINE));
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Answers a <code>StringBuffer</code> containing all of the required targets to
 	 * properly build the project.
 	 *
 	 * @param outputVarsAdditionsList  list to add needed build output variables to
-	 * @param rebuild
-	 * @return StringBuffer
 	 */
 	private StringBuffer addTargets(List<String> outputVarsAdditionsList, boolean rebuild) {
 		StringBuffer buffer = new StringBuffer();
@@ -1489,7 +1474,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buffer;
  	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the targets rules.  The targets make file (top makefile) contains:
 	 *  1  the rule for the final target tool
 	 *  2  the rules for all of the tools that use multipleOfType in their primary input type
@@ -1573,17 +1558,16 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buffer;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Create the rule
 	 *
-	 * @param tool
 	 * @param buffer  Buffer to add makefile rules to
 	 * @param bTargetTool True if this is the target tool
 	 * @param targetName  If this is the "targetTool", the target file name, else <code>null</code>
-	 * @param targetName  If this is the "targetTool", the target file extension, else <code>null</code>
+	 * @param targetExt  If this is the "targetTool", the target file extension, else <code>null</code>
 	 * @param outputVarsAdditionsList  list to add needed build output variables to
 	 * @param managedProjectOutputs  Other projects in the workspace that this project depends upon
-	 * @param bPostBuildStep  Emit post-build step invocation
+	 * @param bEmitPostBuildStepCall  Emit post-build step invocation
 	 */
 	protected boolean addRuleForTool(ITool tool, StringBuffer buffer, boolean bTargetTool, String targetName, String targetExt,
 			List<String> outputVarsAdditionsList, Vector<String> managedProjectOutputs, boolean bEmitPostBuildStepCall) {
@@ -1754,7 +1738,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @param outputVarsAdditionsList  list to add needed build output variables to
 	 * @param buffer  buffer to add rules to
 	 */
@@ -1834,10 +1818,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @param fileHandle
-	 * @throws CoreException
-	 */
 	protected Vector<String> calculateSecondaryOutputs(IOutputType[] secondaryOutputs) {
 		ToolInfoHolder h = (ToolInfoHolder)toolInfos.getValue();
 		ITool[] buildTools = h.buildTools;
@@ -1897,9 +1877,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *   S O U R C E S (sources.mk)   M A K E F I L E   M E T H O D S
 	 ************************************************************************/
 
-	/* (non-javadoc)
-	 * @return
-	 */
 	private StringBuffer addSubdirectories() {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
@@ -1928,7 +1905,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *   F R A G M E N T (subdir.mk)   M A K E F I L E   M E T H O D S
 	 ************************************************************************/
 
-	/* (non-Javadoc)
+	/**
 	 * Returns a <code>StringBuffer</code> containing the comment(s)
 	 * for a fragment makefile (subdir.mk).
 	 */
@@ -1936,7 +1913,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return addDefaultHeader();
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns a <code>StringBuffer</code> containing makefile text for all of the sources
 	 * contributed by a container (project directory/subdirectory) to the fragement makefile
 	 *
@@ -2177,7 +2154,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return new Path(resource.getLocationURI().getPath());
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Adds the source file to the appropriate build variable
 	 *
 	 * @param buildVarToRuleStringMap  map of build variable names to the list of files assigned to the variable
@@ -2261,7 +2238,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Create a rule for this source file.  We create a pattern rule if possible.
 	 *
 	 * This is an example of a pattern rule:
@@ -2283,7 +2260,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * 		@echo Building file: $<
 	 * 		@echo Invoking tool xxx
 	 * 		@echo g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $<
-	 * 		@ g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $< && \
+	 *		@g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o$@ $< && \
 	 * 		echo -n $(@:%.o=%.d) ' source1/' >> $(@:%.o=%.d) && \
 	 * 		g++ -P -MM -MG -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers $< >> $(@:%.o=%.d)
 	 * 		@echo Finished building: $<
@@ -2293,9 +2270,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * @param buffer  buffer to populate with the build rule
 	 * @param resource  the source file for this invocation of the tool
 	 * @param sourceLocation  the full path of the source
-	 * @param resConfig  the IResourceConfiguration associated with this file or null
+	 * @param rcInfo  the IResourceInfo associated with this file or null
 	 * @param generatedSource  <code>true</code> if the resource is a generated output
-	 * @param generatedDepFile  build directory relative paths of the dependency files generated by the rule
 	 * @param enumeratedOutputs  vector of the filenames that are the output of this rule
 	 */
 	protected void addRuleForSource(String relativePath, StringBuffer buffer, IResource resource,
@@ -2921,7 +2897,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 
-	/* (non-Javadoc)
+	/**
 	 * Returns any additional resources specified for the tool in other InputType elements and AdditionalInput elements
 	 */
 	protected IPath[] getAdditionalResourcesForSource(ITool tool) {
@@ -3031,9 +3007,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	}
 
 
-	/* (non-Javadoc)
+	/**
 	 * Returns the output <code>IPath</code>s for this invocation of the tool with the specified source file
-	 /*
+	 *
 	 * The priorities for determining the names of the outputs of a tool are:
 	 *  1.  If the tool is the build target and primary output, use artifact name & extension -
 	 *      This case does not apply here...
@@ -3044,9 +3020,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *      so that the source names can be transformed into the target names
 	 *      using the built-in string substitution functions of <code>make</code>.
 	 *
-	 *  @param tool
 	 *  @param relativePath  build output directory relative path of the current output directory
-	 *  @param resource
 	 *  @param ruleOutputs  Vector of rule IPaths that are relative to the build directory
 	 *  @param enumeratedPrimaryOutputs  Vector of IPaths of primary outputs
 	 *                            that are relative to the build directory
@@ -3365,7 +3339,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * If the path contains a %, returns the path resolved using the resource name
 	 *
 	 */
@@ -3378,7 +3352,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return DOT_SLASH_PATH.isPrefixOf(outPath) ? DOT_SLASH_PATH.append(result) : result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Returns the dependency <code>IPath</code>s for this invocation of the tool with the specified source file
 	 *
 	 *  @param depGen  the dependency calculator
@@ -3419,7 +3393,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return deps.toArray(new IPath[deps.size()]);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Returns the dependency <code>IPath</code>s relative to the build directory
 	 *
 	 *  @param depCalculator  the dependency calculator
@@ -3444,7 +3418,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *   M A K E F I L E   G E N E R A T I O N   C O M M O N   M E T H O D S
 	 ************************************************************************/
 
-	/* (non-Javadoc)
+	/**
 	 * Generates a source macro name from a file extension
 	 */
 	public StringBuffer getSourceMacroName(String extensionName) {
@@ -3466,7 +3440,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return macroName;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Generates a generated dependency file macro name from a file extension
 	 */
 	public StringBuffer getDepMacroName(String extensionName) {
@@ -3488,7 +3462,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return macroName;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Answers all of the output extensions that the target
 	 * of the build has tools defined to work on.
 	 *
@@ -3712,8 +3686,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/**
 	 * prepend all instanced of '\' or '"' with a backslash
 	 *
-	 * @param string
-	 * @return
+	 * @return resulting string
 	 */
 	static public String escapedEcho(String string) {
 		String escapedString = string.replaceAll("'", "'\"'\"'");  //$NON-NLS-1$ //$NON-NLS-2$
@@ -3722,7 +3695,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 	static public String ECHO_BLANK_LINE = ECHO + WHITESPACE + SINGLE_QUOTE + WHITESPACE + SINGLE_QUOTE + NEWLINE;
 
-	/* (non-Javadoc)
+	/**
 	 * Outputs a comment formatted as follows:
 	 * ##### ....... #####
 	 * # <Comment message>
@@ -3737,7 +3710,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buffer;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Put COLS_PER_LINE comment charaters in the argument.
 	 */
 	static protected void outputCommentLine(StringBuffer buffer) {
@@ -3752,10 +3725,8 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return path.matches(".*(\\s|[\\{\\}\\(\\)\\$\\@%=;]).*"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Answers the argument with all whitespaces replaced with an escape sequence.
-	 *
-	 * @param path
 	 */
 	static public String escapeWhitespaces(String path) {
 		// Escape the spaces in the path/filename if it has any
@@ -3774,7 +3745,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Adds a macro addition prefix to a map of macro names to entries.
 	 * Entry prefixes look like:
 	 * 	C_SRCS += \
@@ -3793,7 +3764,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		map.put(macroName, tempBuffer.toString());
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Adds a file to an entry in a map of macro names to entries.
 	 * File additions look like:
 	 * 	example.c, \
@@ -3810,7 +3781,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		map.put(macroName, buffer.toString());
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Adds a file to an entry in a map of macro names to entries.
 	 * File additions look like:
 	 * 	example.c, \
@@ -3842,7 +3813,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		addMacroAdditionFile(map, macroName, srcName);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Adds file(s) to an entry in a map of macro names to entries.
 	 * File additions look like:
 	 * 	example.c, \
@@ -3860,7 +3831,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		map.put(macroName, buffer.toString());
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Write all macro addition entries in a map to the buffer
 	 */
 	protected StringBuffer writeAdditionMacros(LinkedHashMap<String, String> map) {
@@ -3892,7 +3863,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buffer.append(NEWLINE);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Write all macro addition entries in a map to the buffer
 	 */
 	protected StringBuffer writeTopAdditionMacros(List<String> varList, HashMap<String, ?> varMap) {
@@ -3912,7 +3883,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buffer.append(NEWLINE);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Calculates the inputs and outputs for tools that will be generated in the top makefile.
 	 * This information is used by the top level makefile generation methods.
 	 */
@@ -4057,7 +4028,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		});
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the (String) list of files associated with the build variable
 	 *
 	 * @param variable  the variable name
@@ -4109,7 +4080,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return fileList;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the list of files associated with the build variable in the top makefile
 	 *
 	 * @param variable  the variable name
@@ -4119,7 +4090,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return (List)topBuildOutVars.get(variable);
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the map of build variables to list of files
 	 *
 	 * @return HashMap
@@ -4128,7 +4099,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return buildOutVars;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the map of build variables used in the top makefile to list of files
 	 *
 	 * @return HashMap
@@ -4137,7 +4108,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return topBuildOutVars;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the list of known build rules. This keeps me from generating duplicate
 	 * rules for known file extensions.
 	 *
@@ -4150,7 +4121,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return ruleList;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the list of known dependency lines. This keeps me from generating duplicate
 	 * lines.
 	 *
@@ -4163,7 +4134,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return depLineList;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Returns the list of known dependency file generation lines. This keeps me from
 	 * generating duplicate lines.
 	 *
@@ -4185,8 +4156,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * contribute source files to the build. The resource visitor has already established
 	 * that the build model knows how to build the files. It has also checked that
 	 * the resource is not generated as part of the build.
-	 *
-	 * @param resource
 	 */
 	protected void appendBuildSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
@@ -4200,8 +4169,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * Adds the container of the argument to a list of subdirectories that are to be
 	 * deleted. As a result, the directories that are generated for the output
 	 * should be removed as well.
-	 *
-	 * @param container
 	 */
 	protected void appendDeletedSubdirectory(IContainer container) {
 		// No point in adding a folder if the parent is already there
@@ -4216,8 +4183,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * If a file is removed from a source folder (either because of a delete
 	 * or move action on the part of the user), the makefilegenerator has to
 	 * remove the dependency makefile along with the old build goal
-	 *
-	 * @param resource
 	 */
 	protected void appendDeletedFile(IResource resource) {
 		// Cache this for now
@@ -4228,8 +4193,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 * Adds the container of the argument to a list of subdirectories that are part
 	 * of an incremental rebuild of the project. The makefile fragments for these
 	 * directories will be regenerated as a result of the build.
-	 *
-	 * @param resource
 	 */
 	protected void appendModifiedSubdirectory(IResource resource) {
 		IContainer container = resource.getParent();
@@ -4244,16 +4207,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *   O T H E R   M E T H O D S
 	 ************************************************************************/
 
-	/* (non-Javadoc)
-	 * @param message
-	 */
 	protected void cancel(String message) {
 		if (monitor != null && !monitor.isCanceled()) {
 			throw new OperationCanceledException(message);
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Check whether the build has been cancelled. Cancellation requests
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
 	 *
@@ -4265,14 +4225,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Return or create the folder needed for the build output. If we are
 	 * creating the folder, set the derived bit to true so the CM system
 	 * ignores the contents. If the resource exists, respect the existing
 	 * derived setting.
-	 *
-	 * @param string
-	 * @return IPath
 	 */
 	private IPath createDirectory(String dirName) throws CoreException {
 		// Create or get the handle for the build directory
@@ -4308,14 +4265,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return folder.getFullPath();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Return or create the makefile needed for the build. If we are creating
 	 * the resource, set the derived bit to true so the CM system ignores
 	 * the contents. If the resource exists, respect the existing derived
 	 * setting.
-	 *
-	 * @param makefilePath
-	 * @return IFile
 	 */
 	private IFile createFile(IPath makefilePath) throws CoreException {
 		// Create or get the handle for the makefile
@@ -4345,9 +4299,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return newFile;
 	}
 
-	/**
-	 * @param deletedFile
-	 */
 	private void deleteBuildTarget(IResource deletedFile) {
 		// Get the project relative path of the file
 		String fileName = getFileName(deletedFile);
@@ -4387,9 +4338,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return inPath;
 	}
 
-	/**
-	 * @param deletedFile
-	 */
 	private void deleteDepFile(IResource deletedFile) {
 		// Calculate the top build directory relative paths of the dependency files
 		IPath[] depFilePaths = null;
@@ -4461,9 +4409,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return deletedDirList;
 	}
 
-	/* (non-Javadoc)
-	 * @return
-	 */
 	private Vector<IResource> getDeletedFileList() {
 		if (deletedFileList == null) {
 			deletedFileList = new Vector<IResource>();
@@ -4471,9 +4416,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return deletedFileList;
 	}
 
-	/* (non-Javadoc)
-	 * @return
-	 */
 	private List<IPath> getDependencyMakefiles(ToolInfoHolder h) {
 		if (h.dependencyMakefiles == null) {
 			h.dependencyMakefiles = new ArrayList<IPath>();
@@ -4481,12 +4423,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return h.dependencyMakefiles;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Strips off the file extension from the argument and returns
 	 * the name component in a <code>String</code>
-	 *
-	 * @param file
-	 * @return
 	 */
 	private String getFileName(IResource file) {
 		String answer = new String();
@@ -4498,7 +4437,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return answer;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Answers a Vector containing a list of directories that are invalid for the
 	 * build for some reason. At the moment, the only reason a directory would
 	 * not be considered for the build is if it contains a space in the relative
@@ -4513,7 +4452,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return invalidDirList;
 	}
 
-	/* (non-javadoc)
+	/**
 	 *
 	 * @return Vector
 	 */
@@ -4524,7 +4463,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return modifiedList;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * Answers the list of subdirectories (IContainer's) contributing source code to the build
 	 *
 	 * @return List
@@ -4536,9 +4475,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return subdirList;
 	}
 
-	/* (non-Javadoc)
-	 * @param subDir
-	 */
 	private void removeGeneratedDirectory(IContainer subDir) {
 		try {
 			// The source directory isn't empty
@@ -4564,9 +4500,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @param msg
-	 */
 	protected void updateMonitor(String msg) {
 		if (monitor!= null && !monitor.isCanceled()) {
 			monitor.subTask(msg);
@@ -4601,7 +4534,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/**
 	 * Strips outermost quotes of Strings of the form "a" and 'a' or returns the original
 	 * string if the input is not of this form.
-	 * @param path
+	 * 
 	 * @throws NullPointerException if path is null
 	 * @return a String without the outermost quotes (if the input has them)
 	 */

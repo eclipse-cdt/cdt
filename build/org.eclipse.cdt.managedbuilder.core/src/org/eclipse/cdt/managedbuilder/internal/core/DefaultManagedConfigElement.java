@@ -24,9 +24,6 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	private IConfigurationElement element;
 	private IExtension extension;
 	
-	/**
-	 * @param element
-	 */
 	public DefaultManagedConfigElement(IConfigurationElement element, IExtension extension) {
 		this.element = element;
 		this.extension = extension;
@@ -67,9 +64,6 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 		return extension;
 	}
 	
-	/**
-	 * @return
-	 */
 	public IConfigurationElement getConfigurationElement() {
 		return element;
 	}

@@ -195,9 +195,6 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	
 	/**
 	 * A fresh new configuration for a target.
-	 * 
-	 * @param target
-	 * @param id
 	 */	
 	public ConfigurationV2(Target target, String id) {
 		this.id = id;
@@ -219,8 +216,6 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	
 	/**
 	 * Adds a tool reference to the receiver.
-	 * 
-	 * @param toolRef
 	 */
 	public void addToolReference(ToolReference toolRef) {
 		getLocalToolReferences().add(toolRef);
@@ -534,9 +529,6 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		return null;
 	}
 	
-	/**
-	 * @param targetElement
-	 */
 	public void reset(IManagedConfigElement element) {
 		// I just need to reset the tool references
 		getLocalToolReferences().clear();
@@ -553,9 +545,6 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 
 	/**
 	 * Persist receiver to project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(IConfigurationV2.ID, id);

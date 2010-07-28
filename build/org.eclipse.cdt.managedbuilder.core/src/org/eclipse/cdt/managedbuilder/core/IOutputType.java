@@ -84,8 +84,6 @@ public interface IOutputType extends IBuildObject {
 	 * NOTE: The value of this attribute will NOT be used if a 
 	 *       output content type is specified and is registered with
 	 *       Eclipse.
-	 * 
-	 * @param String
 	 */
 	public void setOutputExtensionsAttribute(String extensions);
 	
@@ -125,8 +123,6 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Sets the id of the option that is associated with this
 	 * output type on the command line. 
-	 * 
-	 * @param optionId  
 	 */
 	public void setOptionId(String optionId);
 	
@@ -141,8 +137,6 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Sets whether this outputType can create multiple output resources in
 	 * one invocation of the tool.
-	 * 
-	 * @param multiple   
 	 */
 	public void setMultipleOfType(boolean multiple);
 	
@@ -157,8 +151,6 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Sets the input type that is used in determining the default
 	 * names of this output type.
-	 * 
-	 * @param inputType
 	 */
 	public void setPrimaryInputType(IInputType contentType);
 	
@@ -172,8 +164,6 @@ public interface IOutputType extends IBuildObject {
 	
 	/**
 	 * Sets whether this is the primary output of the tool.
-	 * 
-	 * @param primary   
 	 */
 	public void setPrimaryOutput(boolean primary);
 
@@ -187,7 +177,6 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Sets the prefix that the tool should prepend to the name of the build artifact.
 	 * For example, a librarian usually prepends 'lib' to the target.a
-	 * @param String
 	 */
 	public void setOutputPrefix(String prefix);
 
@@ -200,8 +189,6 @@ public interface IOutputType extends IBuildObject {
 
 	/**
 	 * Sets the complete set of output file names for this outputType 
-	 * 
-	 * @param names
 	 */
 	public void setOutputNames(String names);
 
@@ -263,8 +250,6 @@ public interface IOutputType extends IBuildObject {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 

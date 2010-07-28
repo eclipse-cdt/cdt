@@ -31,17 +31,12 @@ public interface IOptionCategory extends IBuildObject {
 
 	/**
 	 * Returns the list of children of this node in the option category tree
-	 * 
-	 * @return
 	 */
 	public IOptionCategory[] getChildCategories();
 	
 	/**
 	 * Returns an array of ITool/IOption pairs for the options in this category
 	 * for a given configuration.
-	 * 
-	 * @param tool
-	 * @return Object[][]
 	 * 
 	 * @since 3.1
 	 */
@@ -52,21 +47,24 @@ public interface IOptionCategory extends IBuildObject {
 	@Deprecated
 	public Object[][] getOptions(IConfiguration configuration);
 
+//	/**
+//	 * Returns an array of ITool/IOption pairs for the options in this category
+//	 * for a given resource configuration.
+//	 * 
+//	 * @since 3.1
+//	 */
+//	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optHolder);
+
 	/**
 	 * Returns an array of ITool/IOption pairs for the options in this category
 	 * for a given resource configuration.
 	 * 
-	 * @param tool
-	 * @return Object[][]
-	 * 
 	 * @since 3.1
 	 */
-//	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optHolder);
-
 	public Object[][] getOptions(IResourceInfo resInfo, IHoldsOptions optHolder);
 	
 	/**
-	 * @deprecated since 3.1 - use getOption with IHoldsOptions aregument instead
+	 * @deprecated since 3.1 - use getOption with IHoldsOptions argument instead
 	 */
 	@Deprecated
 	public Object[][] getOptions(IResourceConfiguration resConfig);
@@ -74,8 +72,6 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * Returns the category that owns this category, or null if this is the
 	 * top category for a tool.
-	 * 
-	 * @return
 	 */
 	public IOptionCategory getOwner();
 	
@@ -83,7 +79,6 @@ public interface IOptionCategory extends IBuildObject {
 	 * Returns the tool that ultimately owns this category.
 	 * If owned by a toolChain return null.
 	 * 
-	 * @return
 	 * @deprecated since 3.0 - use getOptionHolder() instead
 	 */
 	@Deprecated
@@ -122,8 +117,6 @@ public interface IOptionCategory extends IBuildObject {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 }

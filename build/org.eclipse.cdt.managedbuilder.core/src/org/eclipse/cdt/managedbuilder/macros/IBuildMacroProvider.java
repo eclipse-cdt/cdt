@@ -40,7 +40,7 @@ public interface IBuildMacroProvider{
 	 * differs depending on the context type and can be one of the following: 
 	 * 1. IFileContextData interface � used to represent currently selected file context
 	 *      the IFileContextData interface is defined as follows:
-	 * 	    pulic interface IFileContextData{
+	 * 	    public interface IFileContextData{
 	 *     		IFile getFile();
 	 *	    	IOption getOption();
 	 *  	    }
@@ -53,7 +53,7 @@ public interface IBuildMacroProvider{
 	 * 5.  IWorkspace � used to represent current workspace context
 	 * 6.  null � to represent the CDT and Eclipse installation context
 	 * 7.  null � to represent process environment context
-	 * @param includeParentContext specifies whether lower-precedence context macros should 
+	 * @param includeParentContexts specifies whether lower-precedence context macros should 
 	 *     be included
 	 */
 	public IBuildMacro getMacro(String macroName,
@@ -123,7 +123,7 @@ public interface IBuildMacroProvider{
 	 * 
 	 * if the string contains a value that can be treated as a StringList resolves it to arrays of strings
 	 * otherwise throws the BuildMacroException exception
-	 * @see isStringListValue
+	 * @see #isStringListValue
 	 */
 	public String[] resolveStringListValue(String value, 
 					String nonexistentMacrosValue,
@@ -135,7 +135,7 @@ public interface IBuildMacroProvider{
 	 * 
 	 * resolves macros in the array of string-list values
 	 * 
-	 * @see isStringListValue
+	 * @see #isStringListValue
 	 */
 	public String[] resolveStringListValues(String value[], 
 					String nonexistentMacrosValue,
@@ -176,7 +176,7 @@ public interface IBuildMacroProvider{
 	 * each string of the returned array will contain all macro references resolved in case of
 	 * a user has specified to resolve the build macros, and will contain the string with the 
 	 * environment macro references unresolved and converted to the buildfile format otherwise
-	 * @see isStringListValue
+	 * @see #isStringListValue
 	 */
 	public String[] resolveStringListValueToMakefileFormat(String value, 
 					String nonexistentMacrosValue,
@@ -188,7 +188,7 @@ public interface IBuildMacroProvider{
 	 * resolves macros in the array of string-list values
 	 * macros are resolved to the makefile format
 	 * 
-	 * @see isStringListValue
+	 * @see #isStringListValue
 	 */
 	public String[] resolveStringListValuesToMakefileFormat(String value[], 
 					String nonexistentMacrosValue,

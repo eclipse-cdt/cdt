@@ -73,9 +73,6 @@ public interface IResourceInfo extends IBuildObject {
 	 * @param value The value to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
-	 * 
-	 * @throws BuildException
-	 * 
 	 */
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) 
 		throws BuildException;	
@@ -88,9 +85,6 @@ public interface IResourceInfo extends IBuildObject {
 	 * @param value The value to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
-	 * 
-	 * @throws BuildException
-	 * 
 	 */
 	public IOption setOption(IHoldsOptions parent, IOption option, String value)
 		throws BuildException;
@@ -103,9 +97,6 @@ public interface IResourceInfo extends IBuildObject {
 	 * @param value The values to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
-	 * 
-	 * @throws BuildException
-	 * 
 	 */
 	public IOption setOption(IHoldsOptions parent, IOption option, String[] value)
 		throws BuildException;

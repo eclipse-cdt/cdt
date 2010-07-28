@@ -704,7 +704,6 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * Persist the option to the {@link ICStorageElement}.
 	 * 
 	 * @param element - storage element to persist the option
-	 * @throws BuildException 
 	 */
 	public void serialize(ICStorageElement element) throws BuildException {
 		if (superClass != null)

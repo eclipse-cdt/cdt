@@ -151,8 +151,7 @@ public class BuildProcessManager {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * @return Number of processors detected
 	 */
 	static public int checkCPUNumber() {
 		if (procNumber > 0) return procNumber;

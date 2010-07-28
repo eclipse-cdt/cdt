@@ -24,8 +24,6 @@ public interface IToolListModification extends IApplicableModification {
 	 * i.e. one should re-query the ToolModification for each tool needed
 	 * Note that this method does NOT apply the tools to the underlying resource info
 	 * For applying the settings the {@link IApplicableModification#apply()} method should be called
-	 * 
-	 * @param tools
 	 */
 	void changeProjectTools(ITool removeTools, ITool addTool);
 	
@@ -33,9 +31,7 @@ public interface IToolListModification extends IApplicableModification {
 	 * returns the list of tools assigned to the given resource info
 	 * on the ToolListModificatrion creation the tool-list is the one
 	 * contained by the given resource info
-	 * the list can be changed by calling the {@link #setProjectTools(ITool[])} method
-	 * 
-	 * @return
+	 * the list can be changed by calling the {@code #setProjectTools(ITool[])} method
 	 */
 	ITool[] getProjectTools();
 
@@ -59,9 +55,6 @@ public interface IToolListModification extends IApplicableModification {
 	 * the returned ToolModification is a project modification for that tool
 	 * otherwise the returned ToolModification tool is a system tool modification for the
 	 * given system tool
-	 * 
-	 * @param tool
-	 * @return
 	 */
 	IToolModification getToolModification(ITool tool);
 	

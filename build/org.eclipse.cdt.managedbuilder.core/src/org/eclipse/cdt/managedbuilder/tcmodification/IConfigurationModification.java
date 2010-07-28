@@ -18,41 +18,34 @@ import org.eclipse.cdt.managedbuilder.core.IBuilder;
  */
 public interface IConfigurationModification extends IFolderInfoModification {
 	/**
-	 * returns a builder currently assigned to this Configuration Modification
-	 * @return
+	 * @return a builder currently assigned to this Configuration Modification
 	 */
 	IBuilder getBuilder();
 	
 	IBuilder getRealBuilder();
 	
 	/**
-	 * returns a set of compatible builders 
-	 * @return
+	 * @return a set of compatible builders 
 	 */
 	IBuilder[] getCompatibleBuilders();
 	
 	/**
-	 * returns the compatibility status for the builder
-	 * 
-	 * @return
+	 * @return the compatibility status for the builder
 	 */
 	CompatibilityStatus getBuilderCompatibilityStatus();
 	
 	/**
-	 * returns the compatibility status for the builder, 
+	 * @return the compatibility status for the builder, 
 	 * i.e. true when the getCompatibilityStatus() returns an non-ERROR status,
 	 * and false otherwise
-	 * 
-	 * @return
-	 */	boolean isBuilderCompatible();
+	 */
+	boolean isBuilderCompatible();
 	
 	/**
 	 * sets the builder to this Configuration Modification
 	 * Note that this does NOT apply the builder to the underlying configuration
 	 * For applying the Modification settings the {@link IApplicableModification#apply()} 
 	 * method should be called
-	 * 
-	 * @param builder
 	 */
 	void setBuilder(IBuilder builder);
 }

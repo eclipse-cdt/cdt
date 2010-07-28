@@ -26,9 +26,6 @@ public interface IToolReference extends ITool {
 	/**
 	 * Answers a reference to the option. If the reference does not exist, 
 	 * a new reference is created. 
-	 * 
-	 * @param option
-	 * @return OptionReference
 	 */
 	public OptionReference createOptionReference(IOption option);
 	
@@ -41,8 +38,6 @@ public interface IToolReference extends ITool {
 
 	/**
 	 * Answers the tool that the reference has been created for.
-	 * 
-	 * @return
 	 */
 	public ITool getTool();
 
@@ -57,7 +52,7 @@ public interface IToolReference extends ITool {
 	 * Answers <code>true</code> if the reference is a reference to the 
 	 * tool specified in the argument.
 	 * 
-	 * @param target the tool that should be tested
+	 * @param tool the tool that should be tested
 	 * @return boolean
 	 */
 	public boolean references(ITool tool);
@@ -70,7 +65,6 @@ public interface IToolReference extends ITool {
 	/**
 	 * Set the tool command in the receiver to be the argument.
 	 * 
-	 * @param cmd
 	 * @return <code>true</code> if the command is changed, else <code>false</code>
 	 */
 	public boolean setToolCommand(String cmd);

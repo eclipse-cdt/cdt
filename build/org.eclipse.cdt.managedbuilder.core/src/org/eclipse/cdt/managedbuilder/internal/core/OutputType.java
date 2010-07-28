@@ -95,11 +95,11 @@ public class OutputType extends BuildObject implements IOutputType {
 	 * This constructor is called to create an OutputType whose attributes will be 
 	 * set by separate calls.
 	 * 
-	 * @param Tool The parent of the an OutputType
-	 * @param OutputType The superClass, if any
-	 * @param String The id for the new OutputType
-	 * @param String The name for the new OutputType
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent The parent of the an OutputType
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new OutputType
+	 * @param name The name for the new OutputType
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public OutputType(Tool parent, IOutputType superClass, String Id, String name, boolean isExtensionElement) {
 		this.parent = parent;
@@ -357,9 +357,6 @@ public class OutputType extends BuildObject implements IOutputType {
 
 	/**
 	 * Persist the OutputType to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 		if (superClass != null)

@@ -39,7 +39,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/**
 	 * Utility method for adding a managed nature to a project.
 	 * 
-	 * @param proj the project to add the managed nature to.
+	 * @param project the project to add the managed nature to.
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
 	 */
@@ -91,7 +91,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/**
 	 * Utility method for adding a nature to a project.
 	 * 
-	 * @param proj the project to add the nature to.
+	 * @param project the project to add the nature to.
 	 * @param natureId the id of the nature to assign to the project
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
@@ -190,7 +190,6 @@ public class ManagedCProjectNature implements IProjectNature {
 	 * @param project to remove the managed nature from
 	 * @param mon progress monitor to indicate the duration of the operation, or 
 	 * <code>null</code> if progress reporting is not required. 
-	 * @throws CoreException
 	 */
 	public static void removeManagedNature(IProject project, IProgressMonitor mon) throws CoreException {
 		removeNature(project, MNG_NATURE_ID, mon);
@@ -199,7 +198,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/**
 	 * Utility method for removing a project nature from a project.
 	 * 
-	 * @param proj the project to remove the nature from
+	 * @param project the project to remove the nature from
 	 * @param natureId the nature id to remove
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.

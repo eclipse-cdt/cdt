@@ -4485,7 +4485,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Build the specified build configurations
 	 * @param configs - configurations to build
 	 * @param monitor - progress monitor
-	 * @throws CoreException
 	 */
 	public static void buildConfigurations(IConfiguration[] configs, IProgressMonitor monitor) throws CoreException{
 		buildConfigurations(configs, null, monitor);
@@ -4496,7 +4495,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param configs - configurations to build
 	 * @param builder - builder to retrieve build arguments
 	 * @param monitor - progress monitor
-	 * @throws CoreException
 	 */
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor) throws CoreException{
 		buildConfigurations(configs, builder, monitor, true);
@@ -4510,8 +4508,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param monitor - progress monitor
 	 * @param allBuilders - {@code true} if all builders need to be building
 	 *    or {@code false} to build with {@link CommonBuilder}
-	 * 
-	 * @throws CoreException
 	 */
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor, boolean allBuilders) throws CoreException{
 		buildConfigurations(configs, builder, monitor, allBuilders, IncrementalProjectBuilder.FULL_BUILD);
@@ -4529,8 +4525,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 *    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
 	 *    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
 	 *    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
-	 * 
-	 * @throws CoreException
 	 * 
 	 * @since 7.0
 	 */

@@ -335,13 +335,11 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 
 	/**
 	 * sets whether the environment macros are to be expanded in the buildfile or not
-	 * If a bulder does not support treating environment variables as its own ones this method
+	 * If a builder does not support treating environment variables as its own ones this method
 	 * has no effect
 	 * Returns the result of this set operation. That is whether the environment macros are to be expanded in the buildfile
 	 * 
-	 * @param cfg
-	 * @param expand
-	 * @return
+	 * @return whether the environment macros are to be expanded in the buildfile
 	 */
 	public boolean expandMacrosInBuildfile(IConfiguration cfg, boolean expand){
 		if(expand || canKeepMacrosInBuildfile(cfg)){
@@ -386,11 +384,8 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	}
 	
 	/**
-	 * answers whether the builder used for the given configuration is capable
+	 * @return whether the builder used for the given configuration is capable
 	 * of handling macros in the buildfile
-	 * 
-	 * @param cfg
-	 * @return
 	 */
 	public static boolean canKeepMacrosInBuildfile(IConfiguration cfg){
 		if(cfg != null){
@@ -402,11 +397,8 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	}
 
 	/**
-	 * answers whether the given builder is capable
+	 * @return whether the given builder is capable
 	 * of handling macros in the buildfile
-	 * 
-	 * @param builder
-	 * @return
 	 */
 	public static boolean canKeepMacrosInBuildfile(IBuilder builder){
 		if(builder != null){
@@ -420,9 +412,6 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	/**
 	 * creates a macro reference in the buildfile format for the given builder.
 	 * If the builder can not treat macros, returns null
-	 * @param name
-	 * @param builder
-	 * @return String
 	 */
 	public static String createBuildfileMacroReference(String name, IBuilder builder){
 		String ref = null;
@@ -438,9 +427,6 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	 * creates a macro reference in the buildfile format for the builder used for
 	 * the given configuration.
 	 * If the builder can not treat macros, returns null
-	 * @param name
-	 * @param cfg
-	 * @return String
 	 */
 	public static String createBuildfileMacroReference(String name, IConfiguration cfg){
 		String ref = null;
@@ -453,13 +439,10 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	}
 	
 	/**
-	 * Returns the array of the explicit file macros, referenced in the tool's options
+	 * @return the array of the explicit file macros, referenced in the tool's options
 	 * (Explicit file macros are the file-specific macros, whose values are not provided
 	 * by the tool-integrator. As a result these macros contain explicit values, but not the values
 	 * specified in the format of the builder automatic variables and text functions)
-	 * 
-	 * @param tool
-	 * @return
 	 */
 	public static IBuildMacro[] getReferencedExplitFileMacros(ITool tool){
 		if(tool instanceof Tool){
@@ -483,15 +466,10 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 
 	
 	/**
-	 * Returns the array of the explicit file macros, referenced in the given string
+	 * @return the array of the explicit file macros, referenced in the given string
 	 * (Explicit file macros are the file-specific macros, whose values are not provided
 	 * by the tool-integrator. As a result these macros contain explicit values, but not the values
 	 * specified in the format of the builder automatic variables and text functions)
-	 * 
-	 * @param expression
-	 * @param contextType
-	 * @param contextData
-	 * @return
 	 */
 	public static IBuildMacro[] getReferencedExplitFileMacros(String expression, int contextType, Object contextData){
 		ExplicitFileMacroCollector collector = new ExplicitFileMacroCollector(getDefault().getMacroContextInfo(contextType, contextData));

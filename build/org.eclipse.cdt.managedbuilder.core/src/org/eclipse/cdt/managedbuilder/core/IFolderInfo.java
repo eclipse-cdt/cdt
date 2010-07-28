@@ -44,7 +44,7 @@ public interface IFolderInfo extends IResourceInfo {
 	 * Returns a <code>ITool</code> for the tool associated with the 
 	 * input extension.
 	 * 
-	 * @param extension the file extension of the input file
+	 * @param sourceExtension the file extension of the input file
 	 * @return ITool
 	 * 
 	 * @since 3.1

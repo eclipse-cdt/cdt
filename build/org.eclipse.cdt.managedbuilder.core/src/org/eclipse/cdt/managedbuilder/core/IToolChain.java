@@ -63,10 +63,10 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	/**
 	 * Creates the <code>TargetPlatform</code> child of this tool-chain.
 	 *
-	 * @param ITargetPlatform The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new tool chain
+	 * @param name The name for the new tool chain
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return ITargetPlatform
 	 */
@@ -102,26 +102,22 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	
 	/**
 	 * Sets the 'versionsSupported' attribute of the tool-chain. 
-	 * 
-	 * @param versionsSupported
 	 */
 	
 	public void setVersionsSupported(String versionsSupported);
 	
 	/**
 	 * Sets the 'convertToId' attribute of the tool-chain. 
-	 * 
-	 * @param convertToId
 	 */
 	public void setConvertToId(String convertToId);
 	
 	/**
 	 * Creates the <code>Builder</code> child of this tool-chain.
 	 *
-	 * @param IBuilder The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new tool chain
+	 * @param name The name for the new tool chain
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return IBuilder
 	 */
@@ -143,10 +139,10 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	/**
 	 * Creates a <code>Tool</code> child of this tool-chain.
 	 *
-	 * @param ITool The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new tool chain
+	 * @param name The name for the new tool chain
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return ITool
 	 */
@@ -199,8 +195,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 
 	/**
 	 * Sets the isAbstract attribute of the tool-chain. 
-	 * 
-	 * @param b
 	 */
 	public void setIsAbstract(boolean b);
 	
@@ -222,7 +216,7 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	/**
 	 * Sets the OS list.
 	 * 
-	 * @param String[] The list of OS names
+	 * @param OSs The list of OS names
 	 */
 	public void setOSList(String[] OSs);
 		 
@@ -236,7 +230,7 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	/**
 	 * Sets the architecture list.
 	 * 
-	 * @param String[] The list of architecture names
+	 * @param archs The list of architecture names
 	 */
 	public void setArchList(String[] archs);
 
@@ -251,9 +245,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	/**
 	 * Returns the semicolon separated list of unique IDs of the error parsers associated
 	 * with the tool-chain, filtered for the specified configuration.
-	 * 
-	 * @param config
-	 * @return String
 	 */
 	public String getErrorParserIds(IConfiguration config);
 
@@ -267,8 +258,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 
 	/**
 	 * Sets the semicolon separated list of error parser ids.
-	 * 
-	 * @param ids
 	 */
 	public void setErrorParserIds(String ids);
 
@@ -281,8 +270,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 
 	/**
 	 * Sets the scanner config discovery profile id.
-	 * 
-	 * @param profileId
 	 */
 	public void setScannerConfigDiscoveryProfileId(String profileId);
 
@@ -302,8 +289,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	 * Sets the sem-colon separated list of Tool ids containing each 
 	 * tool that can create the final build artifact (the end target of 
 	 * the build).  
-	 * 
-	 * @param targetToolIds
 	 */
 	public void setTargetToolIds(String targetToolIds);
 
@@ -332,8 +317,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	 * Sets the semicolon separated list of OutputType identifiers in 
 	 * this tool-chain, besides the primary output of the targetTool,
 	 * that are also considered to be build artifacts.  
-	 * 
-	 * @param ids
 	 */
 	public void setSecondaryOutputs(String ids);
 
@@ -347,8 +330,6 @@ public interface IToolChain extends IBuildObject, IHoldsOptions {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	

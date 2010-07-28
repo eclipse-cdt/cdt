@@ -37,20 +37,20 @@ public class BuildMacroException extends CdtVariableException {
 		super(status);
 	}
 
-	/**
-	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity
-	 * 
-	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
-	 * @param message message, can be null. In this case the default message will
-	 *  be generated base upon the other status info
-	 * @param exception a low-level exception, or <code>null</code> if not
-	 *    applicable 
-	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
-	 * @param expression the string whose resolutinon caused caused this status creation or null if none
-	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
-	 */
+//	/**
+//	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity
+//	 * 
+//	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
+//	 * @param message message, can be null. In this case the default message will
+//	 *  be generated base upon the other status info
+//	 * @param exception a low-level exception, or <code>null</code> if not
+//	 *    applicable 
+//	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
+//	 * @param expression the string whose resolutinon caused caused this status creation or null if none
+//	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
+//	 * @param contextType the context type used in the operation
+//	 * @param contextData the context data used in the operation
+//	 */
 //	public BuildMacroException(int code, 
 //			String message, 
 //			Throwable exception, 
@@ -62,18 +62,18 @@ public class BuildMacroException extends CdtVariableException {
 //		super(new BuildMacroStatus(code, message, exception, macroName, expression, referencedName, contextType, contextData));
 //	}
 
-	/**
-	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity and with the default message
-	 * 
-	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
-	 * @param exception a low-level exception, or <code>null</code> if not
-	 *    applicable 
-	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
-	 * @param expression the string whose resolutinon caused caused this status creation or null if none
-	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
-	 * @param contextType the context type used in the operation
-	 * @param contextData the context data used in the operation
-	 */
+//	/**
+//	 * Creates an exception containing a single IBuildMacroStatus status with the IStatus.ERROR severity and with the default message
+//	 * 
+//	 * @param code one of the IBuildMacroStatus.TYPE_xxx statusses
+//	 * @param exception a low-level exception, or <code>null</code> if not
+//	 *    applicable 
+//	 * @param macroName the name of the build macro whose resolution caused this status creation or null if none
+//	 * @param expression the string whose resolutinon caused caused this status creation or null if none
+//	 * @param referencedName the macro name referenced in the resolution string that caused this this status creation or null if none
+//	 * @param contextType the context type used in the operation
+//	 * @param contextData the context data used in the operation
+//	 */
 //	public BuildMacroException(int code, 
 //			String macroName, 
 //			String expression, 

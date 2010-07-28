@@ -121,10 +121,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			reservedNames = Arrays.asList(new String[]{".cdtbuild", ".cdtproject", ".project"});	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		/**
-		 * @param changedResource
-		 * @return
-		 */
 		private boolean isGeneratedResource(IResource resource) {
 			// Is this a generated directory ...
 			IPath path = resource.getProjectRelativePath();
@@ -138,10 +134,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			return false;
 		}
 
-		/**
-		 * @param resource
-		 * @return
-		 */
 		private boolean isProjectFile(IResource resource) {
 			return reservedNames.contains(resource.getName()); 
 		}
@@ -335,9 +327,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public GeneratedMakefileBuilder() {
 	}
 
-	/**
-	 * @param epm
-	 */
 	private void addBuilderMarkers(ErrorParserManager epm) {
 		IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		Iterator<IStatus> iter = getGenerationProblems().iterator();
@@ -569,7 +558,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	/**
 	 * Check whether the build has been canceled. Cancellation requests 
 	 * propagated to the caller by throwing <code>OperationCanceledException</code>.
-	 * @param monitor 
 	 * 
 	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
 	 */
@@ -1690,10 +1678,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	}
 
 
-	/**
-	 * @param currentProject
-	 * @throws CoreException
-	 */
 	private void initNewBuildConsole(IProject currentProject) throws CoreException {
 		// Get a build console for the project
 		console = CCorePlugin.getDefault().getConsole();

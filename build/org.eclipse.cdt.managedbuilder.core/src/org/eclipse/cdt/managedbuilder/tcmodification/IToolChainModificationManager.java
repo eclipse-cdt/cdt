@@ -29,17 +29,11 @@ public interface IToolChainModificationManager {
 	 * returns the modification info calculator for the given folder info
 	 * if the folder info is a root folder info,
 	 * returns the {@link IConfigurationModification}
-	 * 
-	 * @param rcInfo
-	 * @return
 	 */
 	IFolderInfoModification createModification(IFolderInfo rcInfo);
 
 	/**
 	 * returns the modification info calculator for the given file info
-	 * 
-	 * @param rcInfo
-	 * @return
 	 */
 	IFileInfoModification createModification(IFileInfo rcInfo);
 	

@@ -53,8 +53,6 @@ public interface ITargetPlatform extends IBuildObject {
 
 	/**
 	 * Sets the isAbstract attribute of the target paltform. 
-	 * 
-	 * @param b
 	 */
 	public void setIsAbstract(boolean b);
 	
@@ -76,7 +74,7 @@ public interface ITargetPlatform extends IBuildObject {
 	/**
 	 * Sets the OS list.
 	 * 
-	 * @param String[] The list of OS names
+	 * @param OSs The list of OS names
 	 */
 	public void setOSList(String[] OSs);
 		 
@@ -90,7 +88,7 @@ public interface ITargetPlatform extends IBuildObject {
 	/**
 	 * Sets the architecture list.
 	 * 
-	 * @param String[] The list of architecture names
+	 * @param archs The list of architecture names
 	 */
 	public void setArchList(String[] archs);
 
@@ -113,7 +111,6 @@ public interface ITargetPlatform extends IBuildObject {
 	/**
 	 * Sets the string id of the binary parser for this target platform.
 	 * 
-	 * @param id
 	 * @deprecated  Use setBinaryParserList
 	 */
 	@Deprecated
@@ -121,8 +118,6 @@ public interface ITargetPlatform extends IBuildObject {
 
 	/**
 	 * Sets the string ids of the binary parsers for this target platform.
-	 * 
-	 * @param ids
 	 */
 	public void setBinaryParserList(String[] ids);
 
@@ -136,8 +131,6 @@ public interface ITargetPlatform extends IBuildObject {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	

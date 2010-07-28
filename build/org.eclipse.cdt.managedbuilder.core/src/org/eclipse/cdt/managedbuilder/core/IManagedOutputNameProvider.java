@@ -13,11 +13,5 @@ package org.eclipse.cdt.managedbuilder.core;
 import org.eclipse.core.runtime.IPath;
 
 public interface IManagedOutputNameProvider {
-	/**
-	 * 
-	 * @param tool
-	 * @param primaryInputNames
-	 * @return IPath[]
-	 */
 	public IPath[] getOutputNames( ITool tool, IPath[] primaryInputNames );
 }

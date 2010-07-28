@@ -43,22 +43,17 @@ public interface IConfigurationV2 extends IBuildObject {
 	ITool[] getFilteredTools(IProject project);
 	
 	/**
-	 * Returns the resource that owns the project that owns the configuration.
-	 * @return
+	 * @return the resource that owns the project that owns the configuration.
 	 */
 	public IResource getOwner();
 	
 	/**
-	 * Answers the configuration that this configuration is based on. 
-	 * 
-	 * @return
+	 * @return the configuration that this configuration is based on. 
 	 */
 	public IConfigurationV2 getParent();
 	
 	/**
-	 * Returns the target for this configuration.
-	 * 
-	 * @return
+	 * @return the target for this configuration.
 	 */
 	public ITarget getTarget();
 	
@@ -79,9 +74,7 @@ public interface IConfigurationV2 extends IBuildObject {
 	public ITool[] getTools();
 	
 	/**
-	 * Returns the tool references that are children of this configuration.
-	 * 
-	 * @return
+	 * @return the tool references that are children of this configuration.
 	 */
 	public IToolReference[] getToolReferences();
 
@@ -104,15 +97,13 @@ public interface IConfigurationV2 extends IBuildObject {
 
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 
 	/**
 	 * Sets the name of the receiver to the value specified in the argument
 	 * 
-	 * @param name
+	 * @param name new name
 	 */
 	public void setName(String name);
 
@@ -121,8 +112,6 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * 
 	 * @param option The option to change.
 	 * @param value The value to apply to the option.
-	 * 
-	 * @throws BuildException
 	 */
 	public void setOption(IOption option, boolean value) 
 		throws BuildException;	
@@ -132,8 +121,6 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * 
 	 * @param option The option that will be effected by change.
 	 * @param value The value to apply to the option.
-	 * 
-	 * @throws BuildException
 	 */
 	public void setOption(IOption option, String value)
 		throws BuildException;
@@ -143,8 +130,6 @@ public interface IConfigurationV2 extends IBuildObject {
 	 * 
 	 * @param option The option to change.
 	 * @param value The values to apply to the option.
-	 * 
-	 * @throws BuildException
 	 */
 	public void setOption(IOption option, String[] value)
 		throws BuildException;
@@ -167,8 +152,6 @@ public interface IConfigurationV2 extends IBuildObject {
 
 	/**
 	 * Sets the configuration that was created from this V2.0 configuration.
-	 * 
-	 * @param config
 	 */
 	public void setCreatedConfig(IConfiguration config);
 

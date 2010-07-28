@@ -146,7 +146,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 *            working directory for the tool. This IPath is relative to the
 	 *            project directory.
 	 *            
-	 * @see DefaultGCCDependencyCalculatorPreBuildCommands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
+	 * @see #DefaultGCCDependencyCalculatorPreBuildCommands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
 	public DefaultGCCDependencyCalculatorPreBuildCommands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	{

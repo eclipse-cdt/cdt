@@ -171,10 +171,8 @@ public class MakeScannerProvider extends ScannerProvider {
 	/**
 	 * The build model manager for standard builds only caches the build information for a resource on a per-session basis. This
 	 * method allows clients of the build model manager to programmatically remove the association between the resource and the
-	 * information while the reource is still open or in the workspace. The Eclipse core will take care of removing it if a resource
+	 * information while the resource is still open or in the workspace. The Eclipse core will take care of removing it if a resource
 	 * is closed or deleted.
-	 * 
-	 * @param resource
 	 */
 	public static void removeScannerInfo(IResource resource) {
 		try {
@@ -186,8 +184,6 @@ public class MakeScannerProvider extends ScannerProvider {
 	/**
 	 * Persists build-specific information in the build file. Build information for standard make projects consists of preprocessor
 	 * symbols and includes paths. Other project-related information is stored in the persistent properties of the project.
-	 * 
-	 * @param project
 	 */
 	public static void updateScannerInfo(final MakeScannerInfo scannerInfo) throws CoreException {
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {

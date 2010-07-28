@@ -65,18 +65,12 @@ public interface IManagedBuilderMakefileGenerator {
 	public static final int NO_SOURCE_FOLDERS = 1;
 
 	
-	/**
-	 * @throws CoreException
-	 */
 	public void generateDependencies() throws CoreException;
 
 	/**
 	 * Clients call this method when an incremental rebuild is required. The argument
 	 * contains a set of resource deltas that will be used to determine which 
 	 * subdirectories need a new makefile and dependency list (if any). 
-	 * 
-	 * @param delta
-	 * @throws CoreException
 	 */
 	public MultiStatus generateMakefiles(IResourceDelta delta)  throws CoreException ;
 	
@@ -97,29 +91,16 @@ public interface IManagedBuilderMakefileGenerator {
 	
 	/**
 	 * This method initializes the makefile generator
-	 * 
-	 * @param project
-	 * @param info
-	 * @param monitor
 	 */
 	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor);	
 
 	/**
 	 * Answers <code>true</code> if the argument is a resource created by the generator
-	 * @param resource
-	 * @return
 	 */
 	public boolean isGeneratedResource(IResource resource);
 	
-	/**
-	 * @param force
-	 * @throws CoreException
-	 */
 	public void regenerateDependencies(boolean force) throws CoreException;
 	
-	/**
-	 * @throws CoreException
-	 */
 	public MultiStatus regenerateMakefiles() throws CoreException;
 
 }

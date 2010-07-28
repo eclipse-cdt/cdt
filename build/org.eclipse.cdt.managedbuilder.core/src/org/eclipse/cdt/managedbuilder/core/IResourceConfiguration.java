@@ -83,8 +83,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	/**
 	 * Sets the new value representing the users desire for ordering the application of
 	 * a resource custom build step tool.
-	 *
-	 * @param int
 	 */
 	public void setRcbsApplicability(int value);
 	
@@ -92,8 +90,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 * Sets the "excluded" flag for the resource.
 	 * If <code>true</code>, the project resource identified by the resoursePath
 	 * attribute is excluded from the build of the parent configuration.
-	 * 
-	 * @param boolean
 	 */
 	public void setExclude(boolean excluded);
 
@@ -112,8 +108,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 
@@ -135,18 +129,16 @@ public interface IResourceConfiguration extends IResourceInfo {
 	
 	/**
 	 * Removes the Tool from the Tool list and map
-	 * 
-	 * @param Tool
 	 */
 	public void removeTool(ITool tool);
 
 	/**
 	 * Creates a <code>Tool</code> child for this resource configuration.
 	 *
-	 * @param ITool The superClass, if any
-	 * @param String The id for the new tool chain
-	 * @param String The name for the new tool chain
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new tool chain
+	 * @param name The name for the new tool chain
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 * 
 	 * @return ITool
 	 */
@@ -169,8 +161,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 * 
-	 * @throws BuildException
-	 * 
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
@@ -186,8 +176,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 * 
-	 * @throws BuildException
-	 * 
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
@@ -202,8 +190,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 	 * @param value The values to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
-	 * 
-	 * @throws BuildException
 	 * 
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
@@ -228,7 +214,6 @@ public interface IResourceConfiguration extends IResourceInfo {
 
 	/**
 	 * sets the resource configuration rebuild state
-	 * @param rebuild
 	 */
 	void setRebuildState(boolean rebuild);
 	

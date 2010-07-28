@@ -1163,7 +1163,6 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	
 	/**
 	 * Returns "default" configuration.
-	 * @return
 	 */
 	private IConfiguration curr() {
 		return fCfgs[curr];

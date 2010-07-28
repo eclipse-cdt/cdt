@@ -76,16 +76,8 @@ public interface IBuildStep {
 	IBuildDescription getBuildDescription();
 	
 	/**
-	 * 
-	 * Returns the set of commands used for building the step
-	 * 
+	 * @return the set of commands used for building the step
 	 * NOTE: This is a preliminary method
-	 * 
-	 * @param cwd
-	 * @param inStepMap
-	 * @param outStepMap
-	 * @param resolveAll
-	 * @return
 	 */
 	IBuildCommand[] getCommands(IPath cwd, Map inStepMap, Map outStepMap, boolean resolveAll);
 }

@@ -303,8 +303,6 @@ public interface IInputType extends IBuildObject {
 	 * Sets the id of the option that is associated with this input type on 
 	 * the command line.  If specified, the name(s) of the input files for 
 	 * this input type are taken from the value specified for the option.
-	 * 
-	 * @param optionId  
 	 */
 	public void setOptionId(String optionId);
 
@@ -329,8 +327,6 @@ public interface IInputType extends IBuildObject {
 	 * option value is only updated during build file generation and therefore
 	 * could be out of sync with the project until build file generation 
 	 * occurs.
-	 * 
-	 * @param optionId  
 	 */
 	public void setAssignToOptionId(String optionId);
 		
@@ -345,8 +341,6 @@ public interface IInputType extends IBuildObject {
 	
 	/**
 	 * Sets whether this inputType can contain multiple input resources
-	 * 
-	 * @param multiple   
 	 */
 	public void setMultipleOfType(boolean multiple);
 	
@@ -360,8 +354,6 @@ public interface IInputType extends IBuildObject {
 	
 	/**
 	 * Sets whether this inputType is considered the primary input of the tool
-	 * 
-	 * @param primary   
 	 */
 	public void setPrimaryInput(boolean primary);
 
@@ -410,8 +402,6 @@ public interface IInputType extends IBuildObject {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	

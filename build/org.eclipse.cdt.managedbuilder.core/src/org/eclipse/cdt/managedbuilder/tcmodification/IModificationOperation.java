@@ -24,14 +24,11 @@ public interface IModificationOperation {
 	 * that is to replace the project tool
 	 * For system IToolModification the replacement tool is a project tool
 	 * to be replaced with the system tool
-	 *   
-	 * @return
 	 */
 	ITool getReplacementTool();
 	
 	/**
 	 * returns the containing {@link IToolModification}
-	 * @return
 	 */
 	IToolModification getToolModification();
 }

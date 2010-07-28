@@ -68,16 +68,11 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	
 	/**
 	 * Sets the description of the receiver to the value specified in the argument
-	 * 
-	 * @param description
 	 */
 	public void setDescription(String description);
 
 	/**
 	 * Creates a child resource configuration corresponding to the passed in file.
-	 * 
-	 * @param file
-	 * @return IResourceConfiguration
 	 */
 	public IResourceConfiguration createResourceConfiguration(IFile file);
 
@@ -347,59 +342,43 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	/**
 	 * Set (override) the extension that should be appended to the build artifact
 	 * for the receiver.
-	 *  
-	 * @param extension
 	 */
 	public void setArtifactExtension(String extension);
 
 	/**
 	 * Set the name of the artifact that will be produced when the receiver
 	 * is built.
-	 * 
-	 * @param name
 	 */
 	public void setArtifactName(String name);
 
 	/**
 	 * Sets the arguments to be passed to the build utility used by the 
 	 * receiver to produce a build goal.
-	 * 
-	 * @param makeArgs
 	 */
 	public void setBuildArguments(String makeArgs);
 
 	/**
 	 * Sets the build command for the receiver to the value in the argument.
-	 * 
-	 * @param command
 	 */
 	public void setBuildCommand(String command);
 
 	/**
      * Sets the prebuild step for the receiver to the value in the argument. 
-     * 
-     * @param step 
      */ 
     public void setPrebuildStep(String step); 
    
     /** 
      * Sets the postbuild step for the receiver to the value in the argument. 
-     * 
-     * @param step 
      */ 
     public void setPostbuildStep(String step); 
  
     /** 
      * Sets the prebuild step display string for the receiver to the value in the argument. 
-     * 
-     * @param announceStep 
      */     
     public void setPreannouncebuildStep(String announceStep); 
    
     /** 
      * Sets the postbuild step display string for the receiver to the value in the argument. 
-     * 
-     * @param announceStep 
      */     
     public void setPostannouncebuildStep(String announceStep); 
    
@@ -411,15 +390,11 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 
 	/**
 	 * Sets the semicolon separated list of error parser ids
-	 * 
-	 * @param ids
 	 */
 	public void setErrorParserIds(String ids);
 
@@ -427,8 +402,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 
 	/**
 	 * Sets the name of the receiver to the value specified in the argument
-	 * 
-	 * @param name
 	 */
 	public void setName(String name);
 	
@@ -440,8 +413,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * @param value The value to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
-	 * 
-	 * @throws BuildException
 	 * 
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
@@ -458,8 +429,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 * 
-	 * @throws BuildException
-	 * 
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.
 	 */
@@ -474,8 +443,6 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 * @param value The values to apply to the option.
 	 * 
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
-	 * 
-	 * @throws BuildException
 	 * 
 	 * @since 3.0 - The type of parent has changed from ITool to IHoldsOptions.
 	 *        Code assuming ITool as type, will continue to work unchanged.

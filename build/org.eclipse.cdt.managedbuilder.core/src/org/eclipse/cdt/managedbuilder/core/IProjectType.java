@@ -118,8 +118,6 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 
 	/**
 	 * Sets the isAbstract attribute of the tool-chain. 
-	 * 
-	 * @param b
 	 */
 	public void setIsAbstract(boolean b);
 	
@@ -182,8 +180,6 @@ public interface IProjectType extends IBuildObject, IBuildObjectPropertiesContai
 	
 	/**
 	 * Sets the 'convertToId' attribute of the project type. 
-	 * 
-	 * @param convertToId
 	 */
 	public void setConvertToId(String convertToId);
 	

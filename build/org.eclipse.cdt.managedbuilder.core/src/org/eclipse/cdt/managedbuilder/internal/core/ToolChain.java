@@ -1098,8 +1098,6 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	
 	/**
 	 * Safe accessor for the map of tool ids to tools
-	 * 
-	 * @return
 	 */
 	private Map<String, Tool> getToolMap() {
 		if (toolMap == null) {

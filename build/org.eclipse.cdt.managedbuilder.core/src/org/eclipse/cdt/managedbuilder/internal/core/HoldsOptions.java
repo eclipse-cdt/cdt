@@ -191,7 +191,6 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 * class only, thus do not handle exceptions.
 	 * 
 	 * @param element where to serialize the tool
-	 * @throws BuildException 
 	 */
 	protected void serialize(ICStorageElement element) throws BuildException {
 		if (childOptionCategories != null) {
@@ -396,7 +395,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 *  M E T H O D S   M O V E D   F R O M   T O O L   I N   3 . 0
 	 */
 
-	/* (non-Javadoc)
+	/**
 	 * Memory-safe way to access the vector of category IDs
 	 */
 	private Vector<String> getCategoryIds() {
@@ -406,23 +405,17 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		return categoryIds;
 	}
 	
-	/**
-	 * @param category
-	 */
 	public void addChildCategory(IOptionCategory category) {
 		if (childOptionCategories == null)
 			childOptionCategories = new ArrayList<IOptionCategory>();
 		childOptionCategories.add(category);
 	}
 	
-	/**
-	 * @param option
-	 */
 	public void addOption(Option option) {
 		getOptionMap().put(option.getId(), option);
 	}
-	/* (non-Javadoc)
-	 * Memeory-safe way to access the map of category IDs to categories
+	/**
+	 * Memory-safe way to access the map of category IDs to categories
 	 */
 	private Map<String, IOptionCategory> getCategoryMap() {
 		if (categoryMap == null) {
@@ -431,7 +424,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		return categoryMap;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Memory-safe way to access the list of options
 	 */
 	private Collection<Option> getOptionCollection() {
@@ -441,7 +434,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		else return Collections.emptyList();
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Memory-safe way to access the list of IDs to options
 	 */
 	private Map<String, Option> getOptionMap() {
@@ -477,7 +470,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
 		
-	/* (non-Javadoc)
+	/**
 	 * Implements isDirty() for children of HoldsOptions. Intended to be
 	 * called by derived class.
 	 */
@@ -493,7 +486,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		return isDirty;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Implements setDirty() for children of HoldsOptions. Intended to be
 	 * called by derived class.
 	 */
@@ -507,7 +500,7 @@ public abstract class HoldsOptions extends BuildObject implements IHoldsOptions,
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 *  Resolve the element IDs to interface references. Intended to be
 	 *  called by derived class.
 	 */

@@ -72,12 +72,6 @@ public final class OptionStringValue {
 
 	/**
 	 * source path settings are applicable for the {@link IOption#LIBRARY_FILES} only
-	 * 
-	 * @param value
-	 * @param isBuiltIn
-	 * @param srcPath
-	 * @param srcRootPath
-	 * @param srcPrefixMapping
 	 */
 	public OptionStringValue(String value, boolean isBuiltIn, String srcPath, String srcRootPath, String srcPrefixMapping){
 		if(value == null)
@@ -112,8 +106,6 @@ public final class OptionStringValue {
 	 * source attachment settings are applicable for the {@link IOption#LIBRARY_FILES} only
 	 * added to fully support the {@link ICLibraryFileEntry} settings 
 	 * 
-	 * @return
-	 * 
 	 * @see ICLibraryFileEntry
 	 * @see ICLibraryFileEntry#getSourceAttachmentPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentRootPath()
@@ -128,8 +120,6 @@ public final class OptionStringValue {
 	 * source attachment settings are applicable for the {@link IOption#LIBRARY_FILES} only
 	 * added to fully support the {@link ICLibraryFileEntry} settings 
 	 * 
-	 * @return
-	 * 
 	 * @see ICLibraryFileEntry
 	 * @see ICLibraryFileEntry#getSourceAttachmentPath()
 	 * @see ICLibraryFileEntry#getSourceAttachmentRootPath()
@@ -143,8 +133,6 @@ public final class OptionStringValue {
 	/**
 	 * source attachment settings are applicable for the {@link IOption#LIBRARY_FILES} only
 	 * added to fully support the {@link ICLibraryFileEntry} settings 
-	 * 
-	 * @return
 	 * 
 	 * @see ICLibraryFileEntry
 	 * @see ICLibraryFileEntry#getSourceAttachmentPath()

@@ -184,9 +184,6 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	/**
 	 * Persist the OptionCategory to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 		element.setAttribute(IBuildObject.ID, id);
@@ -490,7 +487,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * a concatenation of the tool and categories, e.g. Tool->Cat1->Cat2 
 	 * maps onto the string "Tool|Cat1|Cat2|"
 	 * 
-	 * @param category or tool for which to build the match name 
+	 * @param catOrTool category or tool for which to build the match name 
 	 * @return match name
 	 */
 	static public String makeMatchName(IBuildObject catOrTool) {
@@ -515,7 +512,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 * e.g. Tool->Cat1->Cat2 maps onto the string "Tool|Cat1|Cat2|"
 	 * 
 	 * @param matchName an identifier to search 
-	 * @param categories as returned by getChildCategories(), i.e. non-flattened 
+	 * @param cats as returned by getChildCategories(), i.e. non-flattened 
 	 * @return category or tool, if found and null otherwise
 	 */
 	static public Object findOptionCategoryByMatchName(String matchName, IOptionCategory[] cats) {

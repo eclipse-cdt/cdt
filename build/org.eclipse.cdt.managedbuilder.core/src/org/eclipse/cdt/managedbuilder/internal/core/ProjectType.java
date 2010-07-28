@@ -78,9 +78,6 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/**
 	 * This constructor is called to create a projectType defined by an extension point in 
 	 * a plugin manifest file.
-	 * 
-	 * @param element
-	 * @param managedBuildRevision
 	 */
 	public ProjectType(IManagedConfigElement element, String managedBuildRevision) {
 		// setup for resolving
@@ -119,9 +116,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * This constructor is called to create a project type whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param ProjectType The superClass, if any
-	 * @param String The id for the new project type
-	 * @param String The name for the new project type
+	 * @param superClass The superClass, if any
+	 * @param Id The id for the new project type
+	 * @param managedBuildRevision The name for the new project type
 	 */
 	public ProjectType(ProjectType superClass, String Id, String name, String managedBuildRevision) {
 		// setup for resolving
@@ -145,7 +142,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
 	
-	/* (non-Javadoc)
+	/**
 	 * Load the project-type information from the XML element specified in the 
 	 * argument
 	 * @param element An XML element containing the project type information 
@@ -268,10 +265,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Adds the Configuration to the Configuration list and map
-	 * 
-	 * @param Tool
 	 */
 	public void addConfiguration(Configuration configuration) {
 		if(!configuration.isTemporary()){
@@ -280,7 +275,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the list of configurations.
 	 * 
 	 * @return List containing the configurations
@@ -292,10 +287,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return configList;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of configuration ids to configurations
-	 * 
-	 * @return
 	 */
 	private Map getConfigurationMap() {
 		if (configMap == null) {
@@ -379,14 +372,14 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return isTest.booleanValue();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Sets the isAbstract attribute
 	 */
 	public void setIsAbstract(boolean b) {
 		isAbstract = new Boolean(b);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Sets the isTest attribute
 	 */
 	public void setIsTest(boolean b) {
@@ -397,7 +390,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
 	
-	/* (non-Javadoc)
+	/**
 	 *  Resolve the element IDs to interface references
 	 */
 	public void resolveReferences() {

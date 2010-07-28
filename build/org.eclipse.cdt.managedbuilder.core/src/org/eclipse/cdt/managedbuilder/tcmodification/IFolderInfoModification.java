@@ -19,29 +19,24 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 public interface IFolderInfoModification extends IToolListModification {
 
 	/**
-	 * returns a set of tool-chains compatible with the current one
-	 * @return
+	 * @return a set of tool-chains compatible with the current one
 	 */
 	IToolChain[] getCompatibleToolChains();
 	
 	/**
-	 * returns compatibility status for the current tool-chain 
-	 * @return
+	 * @return compatibility status for the current tool-chain 
 	 */
 	CompatibilityStatus getToolChainCompatibilityStatus();
 	
 	/**
-	 * answers whether the current tool-chain is compatible,
+	 * @return whether the current tool-chain is compatible,
 	 * i.e. whether the {@link #getToolChainCompatibilityStatus()} returns a
 	 * non-ERROR status
-	 *  
-	 * @return
 	 */
 	boolean isToolChainCompatible();
 	
 	/**
-	 * returns the current tool-chain
-	 * @return
+	 * @return the current tool-chain
 	 */
 	IToolChain getToolChain();
 
@@ -49,8 +44,6 @@ public interface IFolderInfoModification extends IToolListModification {
 	 * sets the current tool-chain
 	 * once the tool-chain is changed all child Tool and Builder Modifications
 	 * become invalid, i.e. one should re-query the modifications needed
-	 *   
-	 * @param tc
 	 */
 	void setToolChain(IToolChain tc);
 }

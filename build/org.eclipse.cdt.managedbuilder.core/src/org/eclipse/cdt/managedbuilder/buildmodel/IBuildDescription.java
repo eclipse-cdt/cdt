@@ -43,16 +43,12 @@ public interface IBuildDescription {
 	/**
 	 * Returns the Build resource for the given resource location
 	 * 
-	 * @param location 
-	 * 
 	 * @return the IBuildResource or null if not found
 	 */
 	IBuildResource getBuildResource(IPath location);
 
 	/**
 	 * Returns the Build resource for the given resource
-	 * 
-	 * @param location 
 	 * 
 	 * @return the IBuildResource or null if not found
 	 */
@@ -93,8 +89,7 @@ public interface IBuildDescription {
 	URI getDefaultBuildDirLocationURI();
 
 	/**
-	 * The Workspace FullPath of the build directory
-	 * @return
+	 * @return The Workspace FullPath of the build directory
 	 */
 	IPath getDefaultBuildDirFullPath();
 }

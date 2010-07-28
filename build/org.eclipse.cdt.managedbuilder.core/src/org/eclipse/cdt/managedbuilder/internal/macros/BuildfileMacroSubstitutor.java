@@ -43,7 +43,7 @@ import org.eclipse.core.resources.IResource;
  * If a user has chosen to keep those macros in the buildfile, the environment macro references
  * are converted to the buildfile variable references, otherwise those macros are also resolved
  * 
- * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroSubstitutor
+ * @see org.eclipse.cdt.managedbuilder.internal.macros#IMacroSubstitutor
  * @since 3.0
  */
 public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitutor {

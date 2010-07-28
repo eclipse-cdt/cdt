@@ -58,8 +58,8 @@ public class AdditionalInput implements IAdditionalInput {
 	 * This constructor is called to create an AdditionalInput whose attributes and children will be 
 	 * added by separate calls.
 	 * 
-	 * @param InputType The parent of the an AdditionalInput
-	 * @param boolean Indicates whether this is an extension element or a managed project element
+	 * @param parent The parent of the an AdditionalInput
+	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public AdditionalInput(InputType parent, boolean isExtensionElement) {
 		this.parent = parent;
@@ -162,9 +162,6 @@ public class AdditionalInput implements IAdditionalInput {
 
 	/**
 	 * Persist the AdditionalInput to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(ICStorageElement element) {
 

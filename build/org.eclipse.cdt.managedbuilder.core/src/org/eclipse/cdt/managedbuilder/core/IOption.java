@@ -161,7 +161,6 @@ public interface IOption extends IBuildObject {
 
 	/**
 	 * @return the value for a boolean option.
-	 * @throws BuildException
 	 */
 	public boolean getBooleanValue() throws BuildException;
 	
@@ -237,7 +236,6 @@ public interface IOption extends IBuildObject {
 	
 	/**
 	 * Sets the category for this option.
-	 * @param category
 	 */
 	public void setCategory(IOptionCategory category);
 	
@@ -298,7 +296,6 @@ public interface IOption extends IBuildObject {
 	
 	/**
 	 * @return the user-defined preprocessor symbols. 
-	 * @throws BuildException
 	 */
 	public String[] getDefinedSymbols() throws BuildException;
 
@@ -310,38 +307,30 @@ public interface IOption extends IBuildObject {
 	 * for the debug level option of the Gnu compiler, and the plugin 
 	 * manifest defined that as -g, then the return value would be the 
 	 * String "-g"
-	 * 
-	 * @throws BuildException 
 	 */
 	public String getEnumCommand (String id) throws BuildException;
 
 	/**
 	 * @param id - enumeration id
 	 * @return the "name" associated with the enumeration id.
-	 * 
-	 * @throws BuildException 
 	 */
 	public String getEnumName (String id) throws BuildException;
 
 	/**
 	 * @param name - a "name" associated with enumeration id
 	 * @return enumeration id
-	 * 
-	 * @throws BuildException 
 	 */
 	public String getEnumeratedId(String name) throws BuildException;
 
 	/**
 	 * @return an array of <code>String</code> containing the includes paths
 	 * defined in the build model.
-	 * @throws BuildException
 	 */
 	public String[] getIncludePaths() throws BuildException;
 		
 	/**
 	 * @return an array or <code>String</code>s containing the libraries
 	 * that must be linked into the project.
-	 * @throws BuildException
 	 */
 	public String[] getLibraries() throws BuildException ;
 
@@ -349,7 +338,6 @@ public interface IOption extends IBuildObject {
 	 * @return an array or <code>String</code>s containing the library files
 	 * that must be linked into the project.
 	 * 
-	 * @throws BuildException
 	 * @since 7.0
 	 */
 	public String[] getLibraryFiles() throws BuildException ;
@@ -367,21 +355,17 @@ public interface IOption extends IBuildObject {
 
 	/**
 	 * @return the current value for this option if it is a List of Strings.
-	 * @throws BuildException
 	 */
 	public String [] getStringListValue() throws BuildException;
 	
 	/**
 	 * @return the current value for this option if it is a String
-	 * @throws BuildException
 	 */
 	public String getStringValue() throws BuildException;
 		
 	/**
 	 * @return all of the user-defined object files that must be linked with
 	 * the final build target. 
-	 * 
-	 * @throws BuildException
 	 */
 	public String [] getUserObjects() throws BuildException;
 	
@@ -399,8 +383,6 @@ public interface IOption extends IBuildObject {
 	
 	/**
 	 * @return the type for the value of the option.
-	 * 
-	 * @throws BuildException 
 	 */
 	public int getValueType() throws BuildException;
 
@@ -408,17 +390,11 @@ public interface IOption extends IBuildObject {
 	 * Sets the boolean value of the receiver to the value specified in the argument. 
 	 * If the receiver is not a reference to a boolean option, method will throw an
 	 * exception.
-	 * 
-	 * @param value
-	 * @throws BuildException
 	 */
 	public void setValue(boolean value) throws BuildException;
 
 	/**
 	 * Sets the string value of the receiver to the value specified in the argument.
-	 *  
-	 * @param value
-	 * @throws BuildException
 	 */
 	public void setValue(String value) throws BuildException;
 	
@@ -426,7 +402,6 @@ public interface IOption extends IBuildObject {
 	 * Sets the value of the receiver to be an array of strings.
 	 * 
 	 * @param value An array of strings to place in the option reference.
-	 * @throws BuildException
 	 */
 	public void setValue(String [] value) throws BuildException;
 	
@@ -448,8 +423,6 @@ public interface IOption extends IBuildObject {
 
 	/**
 	 * Sets the value-type of this option.  Use with care.
-	 * 
-	 * @param type
 	 */
 	public void setValueType(int type);
 	
@@ -467,7 +440,6 @@ public interface IOption extends IBuildObject {
 		
 	/**
 	 * Sets the value handlers extra argument specified for this tool
-	 * @param extraArgument
 	 * @since 3.0
 	 */
 	public void setValueHandlerExtraArgument(String extraArgument);
@@ -501,16 +473,12 @@ public interface IOption extends IBuildObject {
 	 *    {@link IOption#INCLUDE_PATH}, {@link IOption#PREPROCESSOR_SYMBOLS}, {@link IOption#LIBRARIES},
 	 *    {@link IOption#OBJECTS}, {@link IOption#INCLUDE_FILES}, {@link IOption#LIBRARY_PATHS},
 	 *    {@link IOption#LIBRARY_FILES}, {@link IOption#MACRO_FILES}
-	 *    
-	 * @throws BuildException 
 	 */
 	int getBasicValueType() throws BuildException ;
 	
 	/**
 	 * @return in case the option basic value type is STRING_LIST, returns the String list value,
 	 * throws BuildException otherwise 
-	 * 
-	 * @throws BuildException 
 	 */
 	String[] getBasicStringListValue() throws BuildException;
 	

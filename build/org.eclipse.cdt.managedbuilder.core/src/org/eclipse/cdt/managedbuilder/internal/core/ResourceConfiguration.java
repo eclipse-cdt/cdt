@@ -69,7 +69,6 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * @param parent  The IConfiguration parent of this resource configuration
 	 * @param element The resource configuration definition from the manifest file 
 	 *                or a dynamic element provider
-	 * @param managedBuildRevision
 	 */
 	public ResourceConfiguration(IConfiguration parent, IManagedConfigElement element, String managedBuildRevision) {
 		super(parent, element, true);
@@ -101,7 +100,6 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * 
 	 * @param parent The <code>IConfiguration</code> the resource configuration will be added to. 
 	 * @param element The XML element that contains the resource configuration settings.
-	 * @param managedBuildRevision
 	 */
 	public ResourceConfiguration(IConfiguration parent, ICStorageElement element, String managedBuildRevision) {
 		super(parent, element, true);
@@ -171,9 +169,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/**
 	 * Create a new resource configuration based on one already defined.
 	 * 
-	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
-	 * @param parentConfig The <code>IConfiguration</code> to copy the settings from.
-	 * @param id A unique ID for the new configuration.
+	 * @param cfg The <code>IConfiguration</code> the resource configuration will be added to. 
+	 * @param cloneConfig The <code>ResourceConfiguration</code> to copy the settings from.
+	 * @param id A unique ID for the new resource configuration.
 	 */
 	public ResourceConfiguration(IConfiguration cfg, ResourceConfiguration cloneConfig, String id, Map superClassIdMap, boolean cloneChildren) {
 		super(cfg, cloneConfig, id);
@@ -400,9 +398,6 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 	/**
 	 * Persist the resource configuration to the project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	@Override
 	public void serialize(ICStorageElement element) {

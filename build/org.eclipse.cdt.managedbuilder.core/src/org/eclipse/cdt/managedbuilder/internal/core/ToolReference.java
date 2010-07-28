@@ -271,8 +271,6 @@ public class ToolReference implements IToolReference {
 	
 	/**
 	 * Adds the option reference specified in the argument to the receiver.
-	 * 
-	 * @param optionRef
 	 */
 	public void addOptionReference(OptionReference optionRef) {
 		getOptionReferenceList().add(optionRef);
@@ -699,9 +697,6 @@ public class ToolReference implements IToolReference {
 	/**
 	 * Answers <code>true</code> if the owner of the receiver matches 
 	 * the argument.
-	 * 
-	 * @param config
-	 * @return
 	 */
 	public boolean ownedByConfiguration(IConfigurationV2 config) {
 		if (owner instanceof ConfigurationV2) {

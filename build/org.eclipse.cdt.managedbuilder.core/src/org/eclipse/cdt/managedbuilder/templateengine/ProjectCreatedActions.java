@@ -75,13 +75,7 @@ public class ProjectCreatedActions {
 	 * </ul>
 	 * <p>
 	 * 
-	 * @param project the IProject to turn into a CDT MBS project
-	 * @param projType
-	 * @param configs
-	 * @param artifactExtn
 	 * @return an IManagedBuildInfo instance (from which the IManagedProject can be retrieved)
-	 * @throws CoreException
-	 * @throws BuildException
 	 */
 	public IManagedBuildInfo createProject(IProgressMonitor monitor, String indexerId, boolean isCProject) throws CoreException, BuildException {
 		if(!areFieldsValid()) {

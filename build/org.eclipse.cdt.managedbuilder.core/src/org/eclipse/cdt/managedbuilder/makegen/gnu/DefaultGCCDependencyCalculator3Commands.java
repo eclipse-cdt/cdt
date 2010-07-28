@@ -153,7 +153,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 *            working directory for the tool. This IPath is relative to the
 	 *            project directory.
 	 *            
-	 * @see DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
+	 * @see #DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
 	public DefaultGCCDependencyCalculator3Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	{

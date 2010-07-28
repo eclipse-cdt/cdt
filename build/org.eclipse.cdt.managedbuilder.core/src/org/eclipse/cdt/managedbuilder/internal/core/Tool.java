@@ -975,8 +975,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 	/**
 	 * Persist the tool to the project file.
-	 * 
-	 * @param element
 	 */
 	@Override
 	public void serialize(ICStorageElement element) {
@@ -1546,9 +1544,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return inputTypeMap;
 	}
 	
-	/**
-	 * @param type
-	 */
 	public void addInputType(InputType type) {
 		getInputTypeList().add(type);
 		getInputTypeMap().put(type.getId(), type);
@@ -1574,9 +1569,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 		return outputTypeMap;
 	}
 	
-	/**
-	 * @param type
-	 */
 	public void addOutputType(OutputType type) {
 		getOutputTypeList().add(type);
 		getOutputTypeMap().put(type.getId(), type);
@@ -2500,9 +2492,6 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * but could be also used by other MBS components to adjust the tool flags resolution 
 	 * behavior by passing the method some custom macro substitutor
 	 *  
-	 * @param inputFileLocation
-	 * @param outputFileLocation
-	 * @param macroSubstitutor
 	 * @return the command flags with the build macros resolved
 	 */
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation,

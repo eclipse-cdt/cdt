@@ -57,9 +57,6 @@ public class OptionReference implements IOption {
 	/**
 	 * This constructor will be called when the receiver is created from 
 	 * the settings found in an extension point.
-	 * 
-	 * @param owner
-	 * @param element
 	 */
 	public OptionReference(ToolReference owner, IManagedConfigElement element) {
 		// setup for resolving
@@ -75,9 +72,6 @@ public class OptionReference implements IOption {
 	/**
 	 * Constructor called when the option reference is created from an 
 	 * existing <code>IOption</code>
-	 * 
-	 * @param owner
-	 * @param option
 	 */
 	public OptionReference(ToolReference owner, IOption option) {
 		this.owner = owner;
@@ -89,9 +83,6 @@ public class OptionReference implements IOption {
 
 	/**
 	 * Created from project file.
-	 * 
-	 * @param owner
-	 * @param element
 	 */
 	public OptionReference(ToolReference owner, Element element) {
 		this.owner = owner;
@@ -234,9 +225,6 @@ public class OptionReference implements IOption {
 	
 	/**
 	 * Persist receiver to project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(ID, option.getId());
@@ -653,9 +641,6 @@ public class OptionReference implements IOption {
 	/**
 	 * Answers <code>true</code> if the receiver is a reference to the 
 	 * <code>IOption</code> specified in the argument, esle answers <code>false</code>.
-	 * 
-	 * @param target
-	 * @return boolean
 	 */
 	public boolean references(IOption target) {
 		if (equals(target)) {
@@ -674,9 +659,6 @@ public class OptionReference implements IOption {
 	 * Sets the boolean value of the receiver to the value specified in the argument. 
 	 * If the receive is not a reference to a boolean option, method will throw an
 	 * exception.
-	 * 
-	 * @param value
-	 * @throws BuildException
 	 */
 	public void setValue(boolean value) throws BuildException {
 		if (getValueType() == BOOLEAN)
@@ -685,10 +667,6 @@ public class OptionReference implements IOption {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param value
-	 * @throws BuildException
-	 */
 	public void setValue(String value) throws BuildException {
 		// Note that we can still set the human-readable value here 
 		if (getValueType() == STRING || getValueType() == ENUMERATED) {
@@ -702,7 +680,6 @@ public class OptionReference implements IOption {
 	 * Sets the value of the receiver to be an array of items.
 	 * 
 	 * @param value An array of strings to place in the option reference.
-	 * @throws BuildException
 	 */
 	public void setValue(String [] value) throws BuildException {
 		if (getValueType() == STRING_LIST

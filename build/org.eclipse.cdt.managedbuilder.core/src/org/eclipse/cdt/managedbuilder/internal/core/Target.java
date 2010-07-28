@@ -69,7 +69,6 @@ public class Target extends BuildObject implements ITarget {
 	 * This constructor is called to create a target defined by an extension point in 
 	 * a plugin manifest file.
 	 * 
-	 * @param element
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
 	public Target(IManagedConfigElement element, String managedBuildRevision) {
@@ -159,10 +158,8 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Set the resource that owns the target.
-	 * 
-	 * @param owner
 	 */
 	protected Target(IResource owner) {
 		this.owner = owner;
@@ -171,9 +168,6 @@ public class Target extends BuildObject implements ITarget {
 	/**
 	 * Create a copy of the target specified in the argument, 
 	 * that is owned by the owned by the specified resource.
-	 * 
-	 * @param owner 
-	 * @param parent
 	 */
 	public Target(IResource owner, ITarget parent) {
 		// Make the owner of the target the project resource
@@ -202,9 +196,6 @@ public class Target extends BuildObject implements ITarget {
 
 	/**
 	 * Create target from project file.
-	 * 
-	 * @param buildInfo
-	 * @param element
 	 */
 	public Target(ManagedBuildInfo buildInfo, Element element) {
 		this(buildInfo.getOwner());
@@ -266,9 +257,6 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 
-	/**
-	 * @param configuration
-	 */
 	public void addConfiguration(IConfigurationV2 configuration) {
 		getConfigurationList().add(configuration);
 		getConfigurationMap().put(configuration.getId(), configuration);
@@ -277,8 +265,6 @@ public class Target extends BuildObject implements ITarget {
 	/**
 	 * Adds a tool specification to the receiver. This tool is defined 
 	 * only for the receiver, and cannot be shared by other targets.
-	 *  
-	 * @param tool
 	 */
 	public void addTool(ITool tool) {
 		getToolList().add(tool);
@@ -287,19 +273,15 @@ public class Target extends BuildObject implements ITarget {
 
 	/**
 	 * Adds a tool reference to the receiver.
-	 * 
-	 * @param toolRef
 	 */
 	public void addToolReference(ToolReference toolRef) {
 		getLocalToolReferences().add(toolRef);
 	}
 	
 
-	/* (non-Javadoc)
+	/**
 	 * Tail-recursion method that creates a lits of tools and tool reference 
 	 * walking the receiver's parent hierarchy. 
-	 *  
-	 * @param toolArray
 	 */
 	private void addToolsToArray(Vector<ITool> toolArray) {
 		if (parent != null) {
@@ -411,7 +393,7 @@ public class Target extends BuildObject implements ITarget {
 		return getConfigurationMap().get(id);
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the list of configurations.
 	 * 
 	 * @return List containing the configurations
@@ -423,10 +405,8 @@ public class Target extends BuildObject implements ITarget {
 		return configList;
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Safe accessor for the map of configuration ids to configurations
-	 * 
-	 * @return
 	 */
 	private Map<String, IConfigurationV2> getConfigurationMap() {
 		if (configMap == null) {
@@ -496,7 +476,7 @@ public class Target extends BuildObject implements ITarget {
 		return errorParsers;
 	}
 
-	/* (non-javadoc)
+	/**
 	 * A safe accesor method. It answers the tool reference list in the 
 	 * receiver.
 	 * 
@@ -559,11 +539,6 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 
-	/* (non-javadoc)
-	 * 
-	 * @param tool
-	 * @return List
-	 */
 	protected List<OptionReference> getOptionReferences(ITool tool) {
 		List<OptionReference> references = new ArrayList<OptionReference>();
 		
@@ -654,7 +629,7 @@ public class Target extends BuildObject implements ITarget {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * A safe accessor method for the list of tools maintained by the 
 	 * target
 	 * 
@@ -666,7 +641,7 @@ public class Target extends BuildObject implements ITarget {
 		return toolList;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * A safe accessor for the tool map
 	 * 
 	 */
@@ -677,12 +652,9 @@ public class Target extends BuildObject implements ITarget {
 		return toolMap;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Returns the reference for a given tool or <code>null</code> if one is not
 	 * found.
-	 * 
-	 * @param tool
-	 * @return ToolReference
 	 */
 	private ToolReference getToolReference(ITool tool) {
 		// See if the receiver has a reference to the tool
@@ -830,9 +802,6 @@ public class Target extends BuildObject implements ITarget {
 	
 	/**
 	 * Persist receiver to project file.
-	 * 
-	 * @param doc
-	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(ID, getId());

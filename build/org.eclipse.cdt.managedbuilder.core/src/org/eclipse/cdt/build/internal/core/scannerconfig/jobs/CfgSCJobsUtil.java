@@ -65,10 +65,6 @@ public class CfgSCJobsUtil {
 
     /**
      * Call ESI providers to get scanner info
-     * 
-     * @param collector 
-     * @param buildInfo
-     * @param monitor
      */
     public static SCProfileInstance getProviderScannerInfo(final IProject project,
     											 final CfgInfoContext context,
@@ -121,10 +117,6 @@ public class CfgSCJobsUtil {
 
     /**
      * Update and persist scanner configuration
-     * 
-     * @param project
-     * @param buildInfo
-     * @param monitor
      */
     public static boolean updateScannerConfiguration(IProject project,
     												 CfgInfoContext context,

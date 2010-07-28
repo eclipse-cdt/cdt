@@ -113,8 +113,6 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 
 	/**
 	 * Sets the owner of the managed project.
-	 * 
-	 * @param resource
 	 */
 	public void updateOwner(IResource resource);
 
@@ -128,8 +126,6 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 
@@ -143,17 +139,15 @@ public interface IManagedProject extends IBuildObject, IBuildObjectPropertiesCon
 	
 	/**
 	 * Sets the element's "Valid" flag.
-	 * 
-	 * @param isValid
 	 */
 	public void setValid(boolean isValid);
 
-	/**
-	 * Persist the managed project to the project file (.cdtbuild).
-	 * 
-	 * @param doc
-	 * @param element
-	 */
+//	/**
+//	 * Persist the managed project to the project file (.cdtbuild).
+//	 * 
+//	 * @param doc
+//	 * @param element
+//	 */
 //	public void serialize(Document doc, Element element);
 
 	/**

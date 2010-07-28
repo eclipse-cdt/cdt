@@ -45,8 +45,6 @@ public interface IInputOrder {
 
 	/**
 	 * Sets the relative or absolute path of the resource to which this element applies.
-	 * 
-	 * @param path
 	 */
 	public void setPath(String path);
 	
@@ -66,8 +64,6 @@ public interface IInputOrder {
 	
 	/**
 	 * Sets the comma-separated list of integer values that specify the order of this resource.
-	 * 
-	 * @param order
 	 */
 	public void setOrder(String order);
 
@@ -80,8 +76,6 @@ public interface IInputOrder {
 
 	/**
 	 * Sets whether this resource is not used as an input for the tool.
-	 * 
-	 * @param excluded
 	 */
 	public void setExcluded(boolean excluded);
 
@@ -95,8 +89,6 @@ public interface IInputOrder {
 	
 	/**
 	 * Sets the element's "dirty" (have I been modified?) flag.
-	 * 
-	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
 	

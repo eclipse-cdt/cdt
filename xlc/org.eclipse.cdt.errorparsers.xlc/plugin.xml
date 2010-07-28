@@ -3,73 +3,17 @@
 <plugin>
 	<extension id="XlcErrorParser" name="%CDTXLCErrorParser.name" point="org.eclipse.cdt.core.ErrorParser">
 		<errorparser
-			class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
-			id="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-			name="%CDTXLCErrorParser.name">
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.error"
-				severity="Error"
-				file-expr="$1"
-				line-expr="$2"
-				description-expr="$4"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.warning"
-				severity="Warning"
-				file-expr="$1"
-				line-expr="$2"
-				description-expr="$4"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.macro"
-				severity="Warning"
-				file-expr="$6"
-				line-expr="$5"
-				description-expr="%CDTXLCErrorParser.pattern.macro.replacement"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.info"
-				severity="Info"
-				description-expr="$4"
-				file-expr="$1"
-				line-expr="$2"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.ld.error"
-				severity="Error"
-				file-expr=""
-				line-expr=""
-				description-expr="$2"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.ld.error2"
-				severity="Error"
-				file-expr=""
-				line-expr=""
-				description-expr="$2"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.ld.warning"
-				severity="Warning"
-				file-expr=""
-				line-expr=""
-				description-expr="$2"
-				eat-processed-line="true">
-			</pattern>
-			<pattern
-				regex="%CDTXLCErrorParser.pattern.ld.info"
-				severity="Info"
-				file-expr=""
-				line-expr=""
-				description-expr="$2"
-				eat-processed-line="true">
-			</pattern>
+				class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
+				id="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
+				name="%CDTXLCErrorParser.name">
+			<pattern regex="%CDTXLCErrorParser.pattern.error" severity="Error" file-expr="$1" line-expr="$2" description-expr="$4" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.warning" severity="Warning" file-expr="$1" line-expr="$2" description-expr="$4" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.macro" severity="Warning" file-expr="$6" line-expr="$5" description-expr="%CDTXLCErrorParser.pattern.macro.replacement" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.info" severity="Info" file-expr="$1" line-expr="$2" description-expr="$4" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.ld.error" severity="Error" file-expr="" line-expr="" description-expr="$2" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.ld.error2" severity="Error" file-expr="" line-expr="" description-expr="$2" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.ld.warning" severity="Warning" file-expr="" line-expr="" description-expr="$2" eat-processed-line="true"/>
+			<pattern regex="%CDTXLCErrorParser.pattern.ld.info" severity="Info" file-expr="" line-expr="" description-expr="$2" eat-processed-line="true"/>
 		</errorparser>
 	</extension>
 </plugin>

@@ -28,11 +28,11 @@ public class TestFloatingPoint extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp9.c", aix.getFileName());
-		assertEquals(11, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
+		assertEquals("temp9.c", aix.getFileName(0));
+		assertEquals(11, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
 		assertEquals("Floating point constant 10.23.3 is not valid",
-					aix.getMessage());
+					aix.getMessage(0));
 	}
 	public TestFloatingPoint( String name)
 	{

@@ -12,6 +12,9 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.ErrorParserManager;
@@ -44,10 +47,14 @@ public class XlcErrorParserTester {
 		}
 	}
 
-	private String fileName;
-	private int lineNumber;
-	private int severity;
-	private String message;
+	private class MarkerData {
+		private String fileName;
+		private int lineNumber;
+		private int severity;
+		private String message;
+	}
+	
+	private List<MarkerData> markerDataList = new ArrayList<MarkerData>();
 
 	/*
 	 * Dummy class implementing IMarkerGenerator lets get through testing
@@ -97,14 +104,17 @@ public class XlcErrorParserTester {
 		@Override
 		public void generateExternalMarker(IResource rc, int lineNumb, String desc, int sev, String varName, IPath externalPath) {
 			// if rc is this project it means that file was not found
+			MarkerData markerData = new MarkerData();
 			if (rc!=null && rc!=fTempProject) {
-				fileName = rc.getName();
+				markerData.fileName = rc.getName();
 			} else {
-				fileName="";
+				markerData.fileName="";
 			}
-			lineNumber = lineNumb;
-			message = desc;
-			severity = sev;
+			markerData.lineNumber = lineNumb;
+			markerData.message = desc;
+			markerData.severity = sev;
+			
+			markerDataList.add(markerData);
 		}
 	}
 
@@ -121,19 +131,23 @@ public class XlcErrorParserTester {
 		return errorParser.processLine(line, epManager);
 	}
 
-	String getFileName() {
-		return fileName;
+	int getNumberOfMarkers() {
+		return markerDataList.size();
 	}
 
-	int getLineNumber() {
-		return lineNumber;
+	String getFileName(int i) {
+		return markerDataList.get(i).fileName;
 	}
 
-	int getSeverity() {
-		return severity;
+	int getLineNumber(int i) {
+		return markerDataList.get(i).lineNumber;
 	}
 
-	String getMessage() {
-		return message;
+	int getSeverity(int i) {
+		return markerDataList.get(i).severity;
+	}
+
+	String getMessage(int i) {
+		return markerDataList.get(i).message;
 	}
 }

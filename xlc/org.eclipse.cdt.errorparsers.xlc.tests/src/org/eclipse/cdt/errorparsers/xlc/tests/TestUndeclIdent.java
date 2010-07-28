@@ -27,10 +27,10 @@ public class TestUndeclIdent extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp5.c", aix.getFileName());
-		assertEquals(5, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
-		assertEquals("Undeclared identifier y.",aix.getMessage());
+		assertEquals("temp5.c", aix.getFileName(0));
+		assertEquals(5, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
+		assertEquals("Undeclared identifier y.",aix.getMessage(0));
 	}
 	public TestUndeclIdent( String name)
 	{

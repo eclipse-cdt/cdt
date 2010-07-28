@@ -28,10 +28,10 @@ public class TestMissingArg extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp8.c", aix.getFileName());
-		assertEquals(9, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
-		assertEquals("Missing argument(s).",aix.getMessage());
+		assertEquals("temp8.c", aix.getFileName(0));
+		assertEquals(9, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
+		assertEquals("Missing argument(s).",aix.getMessage(0));
 	}
 	public TestMissingArg( String name)
 	{

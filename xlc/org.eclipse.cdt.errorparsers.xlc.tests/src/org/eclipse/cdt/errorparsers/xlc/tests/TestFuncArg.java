@@ -27,12 +27,12 @@ public class TestFuncArg extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp9.c", aix.getFileName());
-		assertEquals(12, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
+		assertEquals("temp9.c", aix.getFileName(0));
+		assertEquals(12, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
 		assertEquals("Function argument assignment between types " +
 				"\"int\" and \"char*\" is not allowed.",
-					aix.getMessage());
+					aix.getMessage(0));
 	}
 	public TestFuncArg( String name)
 	{

@@ -27,10 +27,10 @@ public class TestLinkerSevereError extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("", aix.getFileName());
-		assertEquals(0, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
-		assertEquals("EXEC binder commands nested too deeply.",aix.getMessage());
+		assertEquals("", aix.getFileName(0));
+		assertEquals(0, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
+		assertEquals("EXEC binder commands nested too deeply.",aix.getMessage(0));
 	}
 	public TestLinkerSevereError( String name)
 	{

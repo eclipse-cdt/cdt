@@ -26,10 +26,10 @@ public class TestSyntaxError extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp1.c", aix.getFileName());
-		assertEquals(5, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
-		assertEquals("Syntax error: possible missing ')'?",aix.getMessage());
+		assertEquals("temp1.c", aix.getFileName(0));
+		assertEquals(5, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
+		assertEquals("Syntax error: possible missing ')'?",aix.getMessage(0));
 	}
 	public TestSyntaxError( String name)
 	{

@@ -27,10 +27,10 @@ public class TestOperModi extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp9.c", aix.getFileName());
-		assertEquals(13, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity());
-		assertEquals("Operand must be a modifiable lvalue.",aix.getMessage());
+		assertEquals("temp9.c", aix.getFileName(0));
+		assertEquals(13, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_ERROR_RESOURCE, aix.getSeverity(0));
+		assertEquals("Operand must be a modifiable lvalue.",aix.getMessage(0));
 	}
 	public TestOperModi( String name)
 	{

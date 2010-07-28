@@ -27,10 +27,10 @@ public class TestLinkerDuplicateSymbol extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("", aix.getFileName());
-		assertEquals(0, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity());
-		assertEquals("Duplicate symbol: dupefun",aix.getMessage());
+		assertEquals("", aix.getFileName(0));
+		assertEquals(0, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_WARNING, aix.getSeverity(0));
+		assertEquals("Duplicate symbol: dupefun",aix.getMessage(0));
 	}
 	public TestLinkerDuplicateSymbol( String name)
 	{

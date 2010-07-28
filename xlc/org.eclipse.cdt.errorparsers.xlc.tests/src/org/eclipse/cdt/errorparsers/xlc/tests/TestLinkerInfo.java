@@ -27,10 +27,10 @@ public class TestLinkerInfo extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("", aix.getFileName());
-		assertEquals(0, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_INFO, aix.getSeverity());
-		assertEquals("Use the -bloadmap or -bnoquiet option to obtain more information.",aix.getMessage());
+		assertEquals("", aix.getFileName(0));
+		assertEquals(0, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_INFO, aix.getSeverity(0));
+		assertEquals("Use the -bloadmap or -bnoquiet option to obtain more information.",aix.getMessage(0));
 	}
 	public TestLinkerInfo( String name)
 	{

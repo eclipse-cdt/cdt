@@ -27,10 +27,10 @@ public class TestConditional extends TestCase {
 	{
 		XlcErrorParserTester aix = new XlcErrorParserTester();
 		aix.parseLine(err_msg);
-		assertEquals("temp8.c", aix.getFileName());
-		assertEquals(12, aix.getLineNumber());
-		assertEquals(IMarkerGenerator.SEVERITY_INFO, aix.getSeverity());
-		assertEquals("The then branch of conditional is an empty statement.",aix.getMessage());
+		assertEquals("temp8.c", aix.getFileName(0));
+		assertEquals(12, aix.getLineNumber(0));
+		assertEquals(IMarkerGenerator.SEVERITY_INFO, aix.getSeverity(0));
+		assertEquals("The then branch of conditional is an empty statement.",aix.getMessage(0));
 	}
 	public TestConditional( String name)
 	{

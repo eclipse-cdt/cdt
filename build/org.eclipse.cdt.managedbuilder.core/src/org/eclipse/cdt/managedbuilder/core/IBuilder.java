@@ -203,7 +203,7 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	 * 
 	 * @param element
 	 * 
-	 * @deprecated
+	 * @deprecated as of CDT 4.0
 	 */
 	@Deprecated
 	public void setBuildFileGeneratorElement(IConfigurationElement element);

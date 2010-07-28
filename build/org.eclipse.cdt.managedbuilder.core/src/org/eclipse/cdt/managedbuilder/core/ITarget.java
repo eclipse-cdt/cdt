@@ -120,7 +120,8 @@ public interface ITarget extends IBuildObject {
 	 * created by this target.
 	 * 
 	 * @return String
-	 * @deprecated
+	 * 
+	 * @deprecated as of CDT 2.0
 	 */
 	@Deprecated
 	public String getDefaultExtension();	

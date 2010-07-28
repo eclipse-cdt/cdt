@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @deprecated
+ * @deprecated as of CDT 4.0
  * @author DInglis
  *
  * @noextend This class is not intended to be subclassed by clients.

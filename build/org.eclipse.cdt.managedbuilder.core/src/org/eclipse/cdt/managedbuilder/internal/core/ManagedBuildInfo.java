@@ -726,7 +726,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * 
 	 * @param doc
 	 * @param element
-	 * @deprecated
+	 * @deprecated as of CDT 7.0
 	 */
 	@Deprecated
 	public void serializeLegacy(Document doc, Element element) {

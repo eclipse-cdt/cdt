@@ -124,11 +124,6 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 		return (IBuildMacroSupplier[])list.toArray(new IBuildMacroSupplier[list.size()]);
 	}
 	
-	/**
-	 * @param contextType
-	 * @param contextData
-	 * @return
-	 */
 	public IMacroContextInfo getMacroContextInfo(
 			int contextType,
 			Object contextData){
@@ -328,10 +323,7 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	}
 
 	/**
-	 * answers whether the environment macros are to be expanded in the buildfile
-	 * 
-	 * @param cfg
-	 * @return
+	 * @return whether the environment macros are to be expanded in the buildfile
 	 */
 	public boolean areMacrosExpandedInBuildfile(IConfiguration cfg){
 		IBuilder builder = cfg.getBuilder();

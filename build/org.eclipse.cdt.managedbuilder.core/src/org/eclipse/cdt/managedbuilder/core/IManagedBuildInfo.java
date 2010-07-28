@@ -45,19 +45,16 @@ public interface IManagedBuildInfo {
 	/**
 	 * Add a new target to the build information for the receiver
 	 * 
-	 * @param target
-	 * @deprecated
+	 * @deprecated as of CDT 7.0
 	 */
 	@Deprecated
 	public void addTarget(ITarget target);
 		
 	/**
-	 * Answers <code>true</code> if the build system knows how to 
+	 * @return <code>true</code> if the build system knows how to 
 	 * build a file with the extension passed in the argument.
 	 *  
-	 * @param srcExt
-	 * @return
-	 * @deprecated
+	 * @deprecated as of CDT 7.0
 	 */
 	@Deprecated
 	public boolean buildsFileType(String srcExt);
@@ -332,11 +329,9 @@ public interface IManagedBuildInfo {
 	public IConfiguration getSelectedConfiguration();
 
 	/**
-	 * Get the target specified in the argument.
+	 * @return the target specified in the argument.
 	 * 
-	 * @param id
-	 * @return ITarget
-	 * @deprecated
+	 * @deprecated as of CDT 7.0
 	 */
 	@Deprecated
 	public ITarget getTarget(String id);
@@ -344,7 +339,8 @@ public interface IManagedBuildInfo {
 	/**
 	 * Get all of the targets associated with the receiver.
 	 * @return List<ITarget>
-	 * @deprecated
+	 * 
+	 * @deprecated as of CDT 7.0
 	 */
 	@Deprecated
 	public List<ITarget> getTargets();
@@ -386,11 +382,10 @@ public interface IManagedBuildInfo {
 	public ITool getToolFromOutputExtension(String extension);
 
 	/**
-	 * Answers a <code>String</code> array containing the contents of the 
-	 * user objects option, if one is defined for the target.
+	 * @param extension the file extension of the build target
 	 * 
-	 * @param extension the file ecxtension of the build target
-	 * @return
+	 * @return a <code>String</code> array containing the contents of the 
+	 * user objects option, if one is defined for the target.
 	 */
 	public String[] getUserObjectsForConfiguration(String extension);
 

@@ -102,6 +102,13 @@
          <viewShortcut id="org.eclipse.cdt.codan.internal.ui.views.ProblemDetails"/>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
+            markerType="org.eclipse.cdt.codan.core.codanProblem">
+      </markerResolutionGenerator>
+   </extension>
     <extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator

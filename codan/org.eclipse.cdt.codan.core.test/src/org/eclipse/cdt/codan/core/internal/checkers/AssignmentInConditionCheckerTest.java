@@ -15,7 +15,7 @@ import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * Test for {@see SuggestedParenthesisChecker} class
+ * Test for {@see AssignmentInConditionChecker} class
  * 
  */
 public class AssignmentInConditionCheckerTest extends CheckerTestCase {

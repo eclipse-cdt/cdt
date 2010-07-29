@@ -250,5 +250,19 @@
                       name="Field cannot be resolved">
                 </problem>
              </checker>
+             <checker
+		            class="org.eclipse.cdt.codan.internal.checkers.AssignmentToItselfChecker"
+		            id="org.eclipse.cdt.codan.internal.checkers.AssignmentToItselfChecker"
+		            name="%checker.name.AssignmentToItself">
+		     	<problem
+              category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+              defaultEnabled="true"
+              defaultSeverity="Error"
+              description="%problem.description.AssignmentToItself"
+              id="org.eclipse.cdt.codan.internal.checkers.AssignmentToItselfProblem"
+              messagePattern="%problem.messagePattern.AssignmentToItself"
+              name="%problem.name.AssignmentToItself">
+		      	</problem>
+		     </checker>
    </extension>
 </plugin>

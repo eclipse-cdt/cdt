@@ -100,21 +100,6 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	@Override
 	public void createFieldEditors() {
-		//		ScrolledComposite sc = new ScrolledComposite(getFieldEditorParent(),
-		//				SWT.H_SCROLL | SWT.V_SCROLL);
-		//		sc.setLayoutData(new GridData(GridData.FILL_BOTH));
-		//		sc.setExpandHorizontal(true);
-		//		sc.setExpandVertical(true);
-		//		sc.setMinWidth(400);
-		//		sc.setMinHeight(400);
-		//		//		Composite pane = new Composite(sc, SWT.NONE);
-		//		Button pane = new Button(sc, SWT.PUSH);
-		//		pane.setText("push");
-		//		sc.setContent(pane);
-		//		GridLayout gl = new GridLayout();
-		//		gl.marginHeight = 0;
-		//		gl.marginWidth = 0;
-		//		pane.setLayout(gl);
 		checkedTreeEditor = new ProblemsTreeEditor(getFieldEditorParent(),
 				profile);
 		addField(checkedTreeEditor);

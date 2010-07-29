@@ -69,6 +69,10 @@
       name="%category.name.CodeStyle"
       >
       </category>
+      <category
+      id="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+      name="%category.name.CompilerErrors"
+      />
    </extension>
    
       <extension

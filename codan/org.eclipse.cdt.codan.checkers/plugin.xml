@@ -124,25 +124,25 @@
                    id="org.eclipse.cdt.codan.internal.checkers.ProblemBindingChecker"
                    name="Problem Binding Checker">
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem"
                       messagePattern="Symbol &apos;&apos;{0}&apos;&apos; could not be resolved"
-                      name="Variable resolution problem">
+                      name="Symbol is not resolved">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.OverloadProblem"
                       messagePattern="Invalid overload of {0}"
-                      name="Overload problem">
+                      name="Invalid overload">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
@@ -151,34 +151,34 @@
                       name="Ambiguous problem">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.CircularReferenceProblem"
                       messagePattern="Circular inheritance encountered in {0}"
-                      name="Circular reference problem">
+                      name="Circular inheritance">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.RedeclarationProblem"
                       messagePattern="Invalid redeclaration of {0}"
-                      name="Redeclaration problem">
+                      name="Invalid redeclaration">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.RedefinitionProblem"
                       messagePattern="Invalid redefinition of {0}"
-                      name="Redefinition problem">
+                      name="Invalid redefinition">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
@@ -187,7 +187,7 @@
                       name="Member declaration not found">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
@@ -196,7 +196,7 @@
                       name="Label statement not found">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
@@ -205,49 +205,49 @@
                       name="Invalid template argument">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem"
                       messagePattern="{0} type could not be resolved"
-                      name="Type resolution problem">
+                      name="Type cannot be resolved">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.FunctionResolutionProblem"
                       messagePattern="{0} : function could not be resolved"
-                      name="Function resolution problem">
+                      name="Function cannot be resolved">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.InvalidArguments"
                       messagePattern="Invalid arguments {0}"
-                      name="Invalid arguments problem">
+                      name="Invalid arguments">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.MethodResolutionProblem"
                       messagePattern="{0} : method could not be resolved"
-                      name="Method resolution problem">
+                      name="Method cannot be resolved">
                 </problem>
                 <problem
-                      category="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                      category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                       defaultEnabled="true"
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.FieldResolutionProblem"
                       messagePattern="{0} : field could not be resolved"
-                      name="Field resolution problem">
+                      name="Field cannot be resolved">
                 </problem>
              </checker>
    </extension>

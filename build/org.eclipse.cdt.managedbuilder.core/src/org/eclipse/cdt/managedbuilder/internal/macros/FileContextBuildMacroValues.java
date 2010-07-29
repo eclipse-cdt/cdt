@@ -11,8 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -30,8 +29,8 @@ public class FileContextBuildMacroValues implements
 	private IBuilder fBuilder;
 	private IFileContextBuildMacroValues fSupperClassValues;
 
-	private HashMap fValues = new HashMap();
-	private HashMap fAllValues = new HashMap();
+	private HashMap<String, String> fValues = new HashMap<String, String>();
+	private HashMap<String, String> fAllValues = new HashMap<String, String>();
 	private boolean fInitialized;
 	
 	public FileContextBuildMacroValues(IBuilder builder, IManagedConfigElement element){
@@ -56,17 +55,16 @@ public class FileContextBuildMacroValues implements
 			if(supperValues != null) {
 				String names[] = MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE);
 				for(int i = 0; i < names.length; i++){
-					String value = (String)fValues.get(names[i]); 
+					String value = fValues.get(names[i]); 
 					if(value == null)
 						value = supperValues.getMacroValue(names[i]);
 					if(value != null && value.length() > 0)
 						fAllValues.put(names[i],value);
 				}
 			} else {
-				Iterator iter = fValues.entrySet().iterator();
-				while(iter.hasNext()){
-					Map.Entry entry = (Map.Entry)iter.next();
-					String value = (String)entry.getValue();
+				Set<Entry<String, String>> entrySet = fValues.entrySet();
+				for (Entry<String, String> entry : entrySet) {
+					String value = entry.getValue();
 					if(value != null && value.length() > 0)
 						fAllValues.put(entry.getKey(),value);
 				}
@@ -80,11 +78,8 @@ public class FileContextBuildMacroValues implements
 	 */
 	public String[] getSupportedMacros() {
 		load();
-		Set set = fAllValues.keySet();
-		String names[] = new String[set.size()];
-		Iterator iter = set.iterator();
-		for(int i = 0; i < names.length; i++)
-			names[i] = (String)iter.next();
+		Set<String> set = fAllValues.keySet();
+		String names[] = set.toArray(new String[set.size()]);
 		return names;
 	}
 
@@ -93,7 +88,7 @@ public class FileContextBuildMacroValues implements
 	 */
 	public String getMacroValue(String macroName) {
 		load();
-		return (String)fAllValues.get(macroName);
+		return fAllValues.get(macroName);
 	}
 	
 	public IFileContextBuildMacroValues getSupperClassValues(){
@@ -113,13 +108,14 @@ public class FileContextBuildMacroValues implements
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone(){
 		FileContextBuildMacroValues cloned = null;
 		try{
 			cloned = (FileContextBuildMacroValues)super.clone();
-			cloned.fValues = (HashMap)fValues.clone();
-			cloned.fAllValues = (HashMap)fAllValues.clone();
+			cloned.fValues = (HashMap<String, String>)fValues.clone();
+			cloned.fAllValues = (HashMap<String, String>)fAllValues.clone();
 		} catch (CloneNotSupportedException e){
 		}
 		

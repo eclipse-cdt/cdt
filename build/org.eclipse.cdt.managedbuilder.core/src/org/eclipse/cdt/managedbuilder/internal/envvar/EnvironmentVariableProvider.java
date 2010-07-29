@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.internal.envvar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -33,7 +32,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 
 /**
  * This class implements the IEnvironmentVariableProvider interface and provides all
- * build environment funvtionality to the MBS
+ * build environment functionality to the MBS
  * 
  * @since 3.0
  *
@@ -46,7 +45,7 @@ public class EnvironmentVariableProvider implements
 //	private static final String DELIMITER_UNIX = ":";  //$NON-NLS-1$
 	
 	private static EnvironmentVariableProvider fInstance = null;
-	private List fListeners = null;
+	private List<IEnvironmentBuildPathsChangeListener> fListeners = null;
 	private IEnvironmentVariableManager fMngr;
 	private boolean fBuildPathVarCheckAllowed;
 
@@ -74,8 +73,8 @@ public class EnvironmentVariableProvider implements
 			if(fDelimiter == null || "".equals(fDelimiter)) //$NON-NLS-1$
 				return new String[]{variableValue};
 			
-			List list = EnvVarOperationProcessor.convertToList(variableValue,fDelimiter);
-			return (String[]) list.toArray(new String[list.size()]);
+			List<String> list = EnvVarOperationProcessor.convertToList(variableValue,fDelimiter);
+			return list.toArray(new String[list.size()]);
 		}
 
 	}
@@ -208,7 +207,7 @@ public class EnvironmentVariableProvider implements
 	public String[] getBuildPaths(IConfiguration configuration,
 			int buildPathType) {
 		ITool tools[] = configuration.getFilteredTools();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		
 		for(int i = 0; i < tools.length; i++){
 			IEnvVarBuildPath pathDescriptors[] = tools[i].getEnvVarBuildPaths();
@@ -248,15 +247,15 @@ public class EnvironmentVariableProvider implements
 			}
 		}
 		
-		return (String[])list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 	
 	/*
 	 * returns a list of registered listeners
 	 */
-	private List getListeners(){
+	private List<IEnvironmentBuildPathsChangeListener> getListeners(){
 		if(fListeners == null)
-			fListeners = new ArrayList();
+			fListeners = new ArrayList<IEnvironmentBuildPathsChangeListener>();
 		return fListeners;
 	}
 	
@@ -264,10 +263,10 @@ public class EnvironmentVariableProvider implements
 	 * notifies registered listeners
 	 */
 	private void notifyListeners(IConfiguration configuration, int buildPathType){
-		List listeners = getListeners();
-		Iterator iterator = listeners.iterator();
-		while(iterator.hasNext())
-			((IEnvironmentBuildPathsChangeListener)iterator.next()).buildPathsChanged(configuration,buildPathType);
+		List<IEnvironmentBuildPathsChangeListener> listeners = getListeners();
+		for (IEnvironmentBuildPathsChangeListener listener : listeners) {
+			listener.buildPathsChanged(configuration,buildPathType);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -277,7 +276,7 @@ public class EnvironmentVariableProvider implements
 		if(listener == null)
 			return;
 		
-		List listeners = getListeners();
+		List<IEnvironmentBuildPathsChangeListener> listeners = getListeners();
 		
 		if(!listeners.contains(listener))
 			listeners.add(listener);
@@ -290,7 +289,7 @@ public class EnvironmentVariableProvider implements
 		if(listener == null)
 			return;
 		
-		List listeners = getListeners();
+		List<IEnvironmentBuildPathsChangeListener> listeners = getListeners();
 		
 		listeners.remove(listener);
 	}

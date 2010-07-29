@@ -40,8 +40,8 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 
 	private static BuildPropertyManager fInstance;
 	
-	private List fTypeCfgElements;
-	private List fValueCfgElements;
+	private List<IConfigurationElement> fTypeCfgElements;
+	private List<IConfigurationElement> fValueCfgElements;
 	
 	private BuildPropertyManager(){
 		loadExtensions();
@@ -61,10 +61,10 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		return properties.toString();
 	}
 
-	private Map fPropertyTypeMap = new HashMap();
+	private Map<String, IBuildPropertyType> fPropertyTypeMap = new HashMap<String, IBuildPropertyType>();
 	
 	public IBuildPropertyType getPropertyType(String id){
-		return (BuildPropertyType)fPropertyTypeMap.get(id);
+		return fPropertyTypeMap.get(id);
 	}
 	
 	public IBuildPropertyType createPropertyType(String id, String name) throws CoreException{
@@ -108,7 +108,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 	}
 	
 	public IBuildPropertyType[] getPropertyTypes(){
-		return (BuildPropertyType[])fPropertyTypeMap.values().toArray(new BuildPropertyType[fPropertyTypeMap.size()]);
+		return fPropertyTypeMap.values().toArray(new BuildPropertyType[fPropertyTypeMap.size()]);
 	}
 	
 	public IBuildProperty createProperty(String id, String value) throws CoreException {
@@ -134,15 +134,15 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		return false;
 	}
 	
-	private List getTypeElList(boolean create){
+	private List<IConfigurationElement> getTypeElList(boolean create){
 		if(fTypeCfgElements == null && create)
-			fTypeCfgElements = new ArrayList();
+			fTypeCfgElements = new ArrayList<IConfigurationElement>();
 		return fTypeCfgElements;
 	}
 
-	private List getValueElList(boolean create){
+	private List<IConfigurationElement> getValueElList(boolean create){
 		if(fValueCfgElements == null && create)
-			fValueCfgElements = new ArrayList();
+			fValueCfgElements = new ArrayList<IConfigurationElement>();
 		return fValueCfgElements;
 	}
 	
@@ -164,10 +164,9 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 	
 
 	private void resolveConfigElements(){
-		List typeEls = getTypeElList(false);
+		List<IConfigurationElement> typeEls = getTypeElList(false);
 		if(typeEls != null){
-			for(int i = 0; i < typeEls.size(); i++){
-				IConfigurationElement el = (IConfigurationElement)typeEls.get(i);
+			for (IConfigurationElement el : typeEls) {
 				try {
 					createPropertyType(el);
 				} catch (CoreException e) {
@@ -175,10 +174,9 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			}
 		}
 
-		List valEls = getValueElList(false);
+		List<IConfigurationElement> valEls = getValueElList(false);
 		if(valEls != null){
-			for(int i = 0; i < valEls.size(); i++){
-				IConfigurationElement el = (IConfigurationElement)valEls.get(i);
+			for (IConfigurationElement el : valEls) {
 				try {
 					createPropertyValue(el);
 				} catch (CoreException e) {

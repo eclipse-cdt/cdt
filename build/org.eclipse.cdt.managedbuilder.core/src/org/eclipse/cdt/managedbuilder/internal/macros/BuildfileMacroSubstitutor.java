@@ -50,7 +50,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	private static final String PATTERN_MACRO_NAME = "="; //$NON-NLS-1$
 	private IConfiguration fConfiguration;
 	private IBuilder fBuilder;
-	private HashSet fCaseInsensitiveReferencedNames;
+	private HashSet<String> fCaseInsensitiveReferencedNames;
 	private ICdtVariableManager fVarMngr;
 	private ICConfigurationDescription fCfgDes;
 	
@@ -91,7 +91,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		protected String[] getConfigurationReservedNames(IConfiguration configuration){
 			ITool tools[] = configuration.getFilteredTools();
 			if(tools != null){
-				Set set = new HashSet();
+				Set<String> set = new HashSet<String>();
 				for(int i = 0; i < tools.length; i++){
 					IOutputType ots[] = tools[i].getOutputTypes();
 					if(ots != null){
@@ -115,7 +115,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 
 				}
 				
-				return (String[])set.toArray(new String[set.size()]);
+				return set.toArray(new String[set.size()]);
 			}
 			return null;
 		}
@@ -268,9 +268,9 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		return ref;
 	}
 	
-	protected Set getCaseInsensitiveReferencedNames(){
+	protected Set<String> getCaseInsensitiveReferencedNames(){
 		if(fCaseInsensitiveReferencedNames == null)
-			fCaseInsensitiveReferencedNames = new HashSet();
+			fCaseInsensitiveReferencedNames = new HashSet<String>();
 		return fCaseInsensitiveReferencedNames;
 	}
 	

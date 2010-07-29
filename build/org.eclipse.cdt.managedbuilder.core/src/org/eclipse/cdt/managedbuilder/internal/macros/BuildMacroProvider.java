@@ -116,12 +116,12 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	}
 
 	private static IBuildMacroSupplier[] filterMacroSuppliers(ICdtVariableSupplier suppliers[]){
-		List list = new ArrayList(suppliers.length);
+		List<ICdtVariableSupplier> list = new ArrayList<ICdtVariableSupplier>(suppliers.length);
 		for(int i = 0; i < suppliers.length; i++){
 			if(suppliers[i] instanceof IBuildMacroSupplier)
 				list.add(suppliers[i]);
 		}
-		return (IBuildMacroSupplier[])list.toArray(new IBuildMacroSupplier[list.size()]);
+		return list.toArray(new IBuildMacroSupplier[list.size()]);
 	}
 	
 	public IMacroContextInfo getMacroContextInfo(
@@ -150,9 +150,9 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 			fVariable = var;
 		}
 
-		public ICdtVariable getVariable(){
-			return fVariable;
-		}
+//		public ICdtVariable getVariable(){
+//			return fVariable;
+//		}
 
 		public int getMacroValueType() {
 			return fVariable.getValueType();

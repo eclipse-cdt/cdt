@@ -100,9 +100,21 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	@Override
 	public void createFieldEditors() {
-		profile = isPropertyPage() ? getRegistry()
-				.getResourceProfileWorkingCopy((IResource) getElement())
-				: getRegistry().getWorkspaceProfile();
+		//		ScrolledComposite sc = new ScrolledComposite(getFieldEditorParent(),
+		//				SWT.H_SCROLL | SWT.V_SCROLL);
+		//		sc.setLayoutData(new GridData(GridData.FILL_BOTH));
+		//		sc.setExpandHorizontal(true);
+		//		sc.setExpandVertical(true);
+		//		sc.setMinWidth(400);
+		//		sc.setMinHeight(400);
+		//		//		Composite pane = new Composite(sc, SWT.NONE);
+		//		Button pane = new Button(sc, SWT.PUSH);
+		//		pane.setText("push");
+		//		sc.setContent(pane);
+		//		GridLayout gl = new GridLayout();
+		//		gl.marginHeight = 0;
+		//		gl.marginWidth = 0;
+		//		pane.setLayout(gl);
 		checkedTreeEditor = new ProblemsTreeEditor(getFieldEditorParent(),
 				profile);
 		addField(checkedTreeEditor);
@@ -114,6 +126,11 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 						openCustomizeDialog();
 					}
 				});
+		GridData layoutData = new GridData(GridData.FILL, GridData.FILL, true,
+				true);
+		layoutData.heightHint = 400;
+		checkedTreeEditor.getTreeViewer().getControl()
+				.setLayoutData(layoutData);
 	}
 
 	/*
@@ -125,6 +142,9 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
+		profile = isPropertyPage() ? getRegistry()
+				.getResourceProfileWorkingCopy((IResource) getElement())
+				: getRegistry().getWorkspaceProfile();
 		Composite comp = (Composite) super.createContents(parent);
 		createInfoControl(comp);
 		return comp;
@@ -135,7 +155,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	 */
 	private void createInfoControl(Composite comp) {
 		info = new Group(comp, SWT.NONE);
-		info.setLayoutData(new GridData(GridData.FILL_BOTH));
+		info.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		info.setLayout(new GridLayout(3, false));
 		info.setText(CodanUIMessages.CodanPreferencePage_Info);
 		GridDataFactory gdLab = GridDataFactory.swtDefaults()
@@ -221,7 +241,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements
 	private void restoreWidgetValues() {
 		String id = CodanUIActivator.getDefault().getDialogSettings()
 				.get(getWidgetId());
-		if (id != null && id.length() > 0) {
+		if (id != null && id.length() > 0 && checkedTreeEditor != null) {
 			checkedTreeEditor.getTreeViewer().setSelection(
 					new StructuredSelection(profile.findProblem(id)), true);
 		} else {

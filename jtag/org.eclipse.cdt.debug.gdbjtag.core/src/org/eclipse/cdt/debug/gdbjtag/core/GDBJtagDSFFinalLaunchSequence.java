@@ -144,7 +144,30 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 
                 requestMonitor.done();
             }},
-    	/*
+        /*
+         * Specify GDB's working directory
+         */
+        new Step() { 
+        	@Override
+        	public void execute(final RequestMonitor requestMonitor) {
+        		IPath dir = null;
+        		try {
+        			dir = fGDBBackend.getGDBWorkingDirectory();
+        		} catch (CoreException e) {
+        			requestMonitor.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
+        			requestMonitor.done();
+        			return;
+        		}
+
+        		if (dir != null) {
+        			fCommandControl.queueCommand(
+        					fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
+        					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+        		} else {
+        			requestMonitor.done();
+        		}
+        	}},
+	/*
     	 * Source the gdbinit file specified in the launch
     	 */
         new Step() { 
@@ -197,29 +220,6 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
         			requestMonitor.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get inferior arguments", e)); //$NON-NLS-1$
         			requestMonitor.done();
         		}    		
-            }},
-    	/*
-    	 * Specify GDB's working directory
-    	 */
-        new Step() { 
-            @Override
-            public void execute(final RequestMonitor requestMonitor) {
-       			IPath dir = null;
-           		try {
-           			dir = fGDBBackend.getGDBWorkingDirectory();
-           		} catch (CoreException e) {
-           			requestMonitor.setStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID, -1, "Cannot get working directory", e)); //$NON-NLS-1$
-           			requestMonitor.done();
-           			return;
-          		}
-
-            	if (dir != null) {
-            		fCommandControl.queueCommand(
-            				fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
-            				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-            	} else {
-            		requestMonitor.done();
-            	}
             }},
     	/*
     	 * Specify environment variables if needed

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
@@ -189,8 +189,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 		int type = -1;
 		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			type = ((IASTSimpleDeclSpecifier) declSpecifier).getType();
-		} else if (declSpecifier instanceof ICASTTypedefNameSpecifier) {
-			IBinding binding = ((ICASTTypedefNameSpecifier) declSpecifier)
+		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
+			IBinding binding = ((IASTNamedTypeSpecifier) declSpecifier)
 					.getName().resolveBinding();
 			IType utype = CxxAstUtils.getInstance().unwindTypedef(
 					(IType) binding);

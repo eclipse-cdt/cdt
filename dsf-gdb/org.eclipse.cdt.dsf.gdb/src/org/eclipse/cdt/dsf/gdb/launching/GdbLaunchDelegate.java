@@ -288,7 +288,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	/**
 	 * Returns true if the specified version of GDB supports
 	 * non-stop mode.
-	 * @since 3.1
+	 * @since 4.0
 	 */
 	protected boolean isNonStopSupportedInGdbVersion(String version) {
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
@@ -305,7 +305,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 	/**
 	 * Returns true if the specified version of GDB supports
 	 * post-mortem tracing.
-	 * @since 3.1
+	 * @since 4.0
 	 */
 	protected boolean isPostMortemTracingSupportedInGdbVersion(String version) {
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {

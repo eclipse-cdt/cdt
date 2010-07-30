@@ -417,7 +417,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
 		}
 
 		/**
-         * @since 3.1
+         * @since 4.0
          */
 		public boolean hasChildren() {
 		    return numChildrenHint > 0;
@@ -1170,7 +1170,7 @@ public class MIExpressions extends AbstractDsfService implements IExpressions3, 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IExpressions3#getExpressionDataExtension(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
-    /** @since 3.1 */
+    /** @since 4.0 */
     public void getExpressionDataExtension(IExpressionDMContext dmc, final DataRequestMonitor<IExpressionDMDataExtension> rm) {
         getExpressionData(dmc, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
             @Override

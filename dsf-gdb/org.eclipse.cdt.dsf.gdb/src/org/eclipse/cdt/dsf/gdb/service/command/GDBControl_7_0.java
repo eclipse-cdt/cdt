@@ -500,7 +500,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
      * instead of the -exec-run method.
      * This can be overridden to allow for customization.
      * 
-     * @since 3.1
+     * @since 4.0
      */
     protected boolean useContinueCommand(ILaunch launch, boolean restart) {
     	// When doing remote debugging, we use -exec-continue instead of -exec-run

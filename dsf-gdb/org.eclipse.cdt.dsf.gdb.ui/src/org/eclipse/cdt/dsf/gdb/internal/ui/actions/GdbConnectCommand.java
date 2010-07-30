@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -30,7 +29,9 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
+import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses.IGdbThreadDMData;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -87,10 +88,10 @@ public class GdbConnectCommand implements IConnect {
     class PromptForPidJob extends Job {
 
     	// The list of processes used in the case of an ATTACH session
-    	IProcessInfo[] fProcessList = null;
+    	IProcessExtendedInfo[] fProcessList = null;
     	DataRequestMonitor<Integer> fRequestMonitor;
 
-    	public PromptForPidJob(String name, IProcessInfo[] procs, DataRequestMonitor<Integer> rm) {
+    	public PromptForPidJob(String name, IProcessExtendedInfo[] procs, DataRequestMonitor<Integer> rm) {
     		super(name);
     		fProcessList = procs;
     		fRequestMonitor = rm;
@@ -157,14 +158,14 @@ public class GdbConnectCommand implements IConnect {
     							@Override
     							protected void handleSuccess() {
 
-    								final List<IProcessInfo> procInfoList = new ArrayList<IProcessInfo>();
+    								final List<IProcessExtendedInfo> procInfoList = new ArrayList<IProcessExtendedInfo>();
 
 									final CountingRequestMonitor countingRm = 
 										new CountingRequestMonitor(fExecutor, rm) {
 										@Override
 										protected void handleSuccess() {
 											new PromptForPidJob(
-													"Prompt for Process", procInfoList.toArray(new IProcessInfo[0]),   //$NON-NLS-1$
+													"Prompt for Process", procInfoList.toArray(new IProcessExtendedInfo[0]),   //$NON-NLS-1$
 													new DataRequestMonitor<Integer>(fExecutor, rm) {
 														@Override
 														protected void handleSuccess() {
@@ -190,7 +191,13 @@ public class GdbConnectCommand implements IConnect {
 												pid = Integer.parseInt(processData.getId());
 											} catch (NumberFormatException e) {
 											}
-											procInfoList.add(new ProcessInfo(pid, processData.getName()));
+											String[] cores = null;
+											String owner = null;
+											if (processData instanceof IGdbThreadDMData) {
+												cores = ((IGdbThreadDMData)processData).getCores();
+												owner = ((IGdbThreadDMData)processData).getOwner();
+											}
+											procInfoList.add(new ProcessInfo(pid, processData.getName(), cores, owner));
 										}
 
 										// Re-use the counting monitor and trigger it right away.
@@ -215,12 +222,19 @@ public class GdbConnectCommand implements IConnect {
     													new DataRequestMonitor<IThreadDMData> (fExecutor, countingRm) {
     														@Override
     														protected void handleSuccess() {
+    															IThreadDMData processData = getData();
     															int pid = 0;
     															try {
-    																pid = Integer.parseInt(getData().getId());
+    																pid = Integer.parseInt(processData.getId());
     															} catch (NumberFormatException e) {
     															}
-    															procInfoList.add(new ProcessInfo(pid, getData().getName()));
+    															String[] cores = null;
+    															String owner = null;
+    															if (processData instanceof IGdbThreadDMData) {
+    																cores = ((IGdbThreadDMData)processData).getCores();
+    																owner = ((IGdbThreadDMData)processData).getOwner();
+    															}
+    															procInfoList.add(new ProcessInfo(pid, processData.getName(), cores, owner));
     															countingRm.done();
     														}
     													});

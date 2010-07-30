@@ -152,20 +152,27 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 public class MIListThreadGroupsInfo extends MIInfo {
 	
+	/**
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @noimplement This interface is not intended to be implemented by clients.
+	 */
 	public interface IThreadGroupInfo {
 		String getGroupId();
 		String getPid();
 		String getName();
 		String getDesciption();
-	}
-
-	/** @since 4.0 */
-	public interface IThreadGroupInfoExtension extends IThreadGroupInfo {
+		/**@since 4.0 */
+		String getUser();
+		/**@since 4.0 */
+		String getType();
+		/**@since 4.0 */
 		String[] getCores();
+		/**@since 4.0 */
+		String getExecutable();
 	}
 	
 	@Immutable
-	private static class ThreadGroupInfo implements IThreadGroupInfoExtension {
+	private static class ThreadGroupInfo implements IThreadGroupInfo {
 		final String fGroupId;
 		final String fDescription;
 		final String fName;
@@ -214,14 +221,9 @@ public class MIListThreadGroupsInfo extends MIInfo {
 
 		public String getDesciption() { return fDescription; }
 		public String[] getCores() { return fCores; }
-
-		// The following are not used yet, but it's good to keep
-		// them as a way to document what is available from GDB.
-		@SuppressWarnings("unused")
-		public String getType() { return fType;	}
-		@SuppressWarnings("unused")
 		public String getUser() { return fUser;	}
-		@SuppressWarnings("unused")
+
+		public String getType() { return fType;	}
 		public String getExecutable() { return fExecutable; }
 	}
 	

@@ -213,7 +213,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	
 	/**
 	 * Context representing a thread. 
-	 * @since 3.1
+	 * @since 4.0
 	 */
     @Immutable
     protected static class MIThreadDMC extends AbstractDMContext
@@ -317,13 +317,24 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		}
     }
     
+    /**
+     * This class provides an implementation of both a process context and process data.
+     * It is used to be able to return a list of processes including their data all at once.
+     * @since 4.0
+     */
     @Immutable
-    private static class MIProcessDMCAndData extends MIProcessDMC implements IThreadDMData {
+    protected static class MIProcessDMCAndData extends MIProcessDMC implements IGdbThreadDMData {
     	final String fName;
-    	
-    	public MIProcessDMCAndData(String sessionId, ICommandControlDMContext controlDmc, String id, String name) {
+    	// Note that cores are only available from GDB 7.1.
+    	final String[] fCores;
+    	final String fOwner;
+
+    	public MIProcessDMCAndData(String sessionId, ICommandControlDMContext controlDmc, 
+    			                   String id, String name, String[] cores, String owner) {
     		super(sessionId, controlDmc, id);
     		fName = name;
+    		fCores = cores;
+    		fOwner = owner;
     	}
 
 		public String getId() { return getProcId(); }
@@ -332,17 +343,25 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 			return true;
 		}
 
+		public String[] getCores() { return fCores; }
+
+		public String getOwner() { return fOwner; }
+
 		@Override
-    	public String toString() { return baseToString() + ".proc[" + getId() + "," + getName() + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    	public String toString() { return baseToString() + 
+			".proc[" + getId() + "," + getName() + "," + getOwner() + "]"; }  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
 
 		@Override
 		public boolean equals(Object obj) {
 			return super.equals(obj) &&
-			       (((MIProcessDMCAndData)obj).fName == null ? fName == null : ((MIProcessDMCAndData)obj).fName.equals(fName));
+			       (((MIProcessDMCAndData)obj).fName == null ? fName == null : ((MIProcessDMCAndData)obj).fName.equals(fName)) &&
+			       (((MIProcessDMCAndData)obj).fOwner == null ? fOwner == null : ((MIProcessDMCAndData)obj).fOwner.equals(fOwner));
 		}
 
 		@Override
-		public int hashCode() { return super.hashCode() ^ (fName == null ? 0 : fName.hashCode()); }
+		public int hashCode() { return super.hashCode() ^ 
+			(fName == null ? 0 : fName.hashCode()) ^
+			(fOwner == null ? 0 : fOwner.hashCode()) ; }
     }
     
     /**
@@ -866,24 +885,36 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 	}
 	
-	private MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
+	/**
+	 * Create the joint process DMC and data based on IProcessInfo, which is a local listing.
+	 * @since 4.0
+	 */
+	protected MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IProcessInfo[] processes) {
 		MIProcessDMCAndData[] procDmcs = new MIProcessDMCAndData[processes.length];
 		for (int i=0; i<procDmcs.length; i++) {
 			procDmcs[i] = new MIProcessDMCAndData(controlDmc.getSessionId(),
 					                              controlDmc, 
 					                              Integer.toString(processes[i].getPid()),
-					                              processes[i].getName());
+					                              processes[i].getName(),
+					                              null, null);
 		}
 		return procDmcs;
 	}
 
-	private MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IThreadGroupInfo[] processes) {
+	/**
+	 * Create the joint process DMC and data based on IThreadGroupInfo, which is obtained from GDB.
+	 * @since 4.0
+	 */
+	protected MIProcessDMCAndData[] makeProcessDMCAndData(ICommandControlDMContext controlDmc, IThreadGroupInfo[] processes) {
 		MIProcessDMCAndData[] procDmcs = new MIProcessDMCAndData[processes.length];
-		for (int i=0; i<procDmcs.length; i++) {
-			procDmcs[i] = new MIProcessDMCAndData(controlDmc.getSessionId(),
-					                              controlDmc, 
-					                              processes[i].getGroupId(),
-					                              processes[i].getName());
+		int i=0;
+		for (IThreadGroupInfo process : processes) {
+			procDmcs[i++] = new MIProcessDMCAndData(controlDmc.getSessionId(),
+					                                controlDmc, 
+					                                process.getGroupId(),
+					                                process.getName(),
+					                                process.getCores(),
+					                                process.getUser());
 		}
 		return procDmcs;
 	}

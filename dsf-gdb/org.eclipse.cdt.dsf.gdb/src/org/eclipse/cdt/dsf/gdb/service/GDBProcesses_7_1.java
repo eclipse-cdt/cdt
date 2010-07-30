@@ -32,7 +32,6 @@ import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfoExtension;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -44,7 +43,7 @@ import org.eclipse.core.runtime.Status;
  * This class implements the IProcesses interface for GDB 7.1
  * which provides new information about cores for threads and processes.
  * 
- * @since 3.1
+ * @since 4.0
  */
 public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
@@ -58,6 +57,8 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 		}
 
 		public String[] getCores() { return fCores; }
+
+		public String getOwner() { return null; }
 	}
 
     private CommandFactory fCommandFactory;
@@ -123,6 +124,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 			// Starting with GDB 7.1, we can obtain the list of cores a process is currently
 			// running on (each core that has a thread of that process).
 			// We have to use -list-thread-groups to obtain that information
+			// Note that -list-thread-groups does not show the 'user' field
 			super.getExecutionData(dmc, new DataRequestMonitor<IThreadDMData>(ImmediateExecutor.getInstance(), rm) {
 				@Override
 				protected void handleSuccess() {
@@ -141,9 +143,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 										if (groups != null) {
 											for (IThreadGroupInfo group : groups) {
 												if (group.getGroupId().equals(groupId)) {
-													if (group instanceof IThreadGroupInfoExtension) {
-														cores = ((IThreadGroupInfoExtension)group).getCores();
-													}
+													cores = group.getCores();
 													break;
 												}
 											}

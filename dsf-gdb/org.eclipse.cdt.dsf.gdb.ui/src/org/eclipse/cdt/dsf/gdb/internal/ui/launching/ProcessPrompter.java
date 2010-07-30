@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
-import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.IProcessExtendedInfo;
 import org.eclipse.cdt.dsf.gdb.launching.LaunchMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -47,7 +47,7 @@ public class ProcessPrompter implements IStatusHandler {
 			throw new CoreException(error);
 		}
 
-		IProcessInfo[] plist = (IProcessInfo[])processList;		
+		IProcessExtendedInfo[] plist = (IProcessExtendedInfo[])processList;		
 		if (plist == null) {
 			MessageDialog.openError(
 					shell,
@@ -78,9 +78,32 @@ public class ProcessPrompter implements IStatusHandler {
 				 */
 				@Override
 				public String getText(Object element) {
-					IProcessInfo info = (IProcessInfo)element;
+					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
 					IPath path = new Path(info.getName());
-					return path.lastSegment() + " - " + info.getPid(); //$NON-NLS-1$
+					StringBuffer text = new StringBuffer(path.lastSegment());
+					
+					String owner = info.getOwner();
+					if (owner != null) {
+						text.append(" (" + owner + ")");  //$NON-NLS-1$//$NON-NLS-2$
+					}
+					
+					text.append(" - " + info.getPid()); //$NON-NLS-1$
+
+					String[] cores = info.getCores();
+					if (cores != null && cores.length > 0) {
+						if (cores.length == 1) {
+							text.append(" [core: ");
+						} else {
+							text.append(" [cores: ");
+						}
+						for (String core : cores) {
+							text.append(core + ", "); //$NON-NLS-1$
+						}
+						// Remove the last comma and space
+						text.replace(text.length()-2, text.length(), "]"); //$NON-NLS-1$
+					}
+					
+					return text.toString();
 				}
 				/*
 				 * (non-Javadoc)
@@ -95,7 +118,7 @@ public class ProcessPrompter implements IStatusHandler {
 			ILabelProvider qprovider = new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					IProcessInfo info = (IProcessInfo)element;
+					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
 					return info.getName();
 				}
 				/*
@@ -116,7 +139,7 @@ public class ProcessPrompter implements IStatusHandler {
 
 			dialog.setElements(plist);
 			if (dialog.open() == Window.OK) {
-				IProcessInfo info = (IProcessInfo)dialog.getFirstResult();
+				IProcessExtendedInfo info = (IProcessExtendedInfo)dialog.getFirstResult();
 				if (info != null) {
 					return new Integer(info.getPid());
 				}

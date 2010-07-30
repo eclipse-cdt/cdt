@@ -19,7 +19,8 @@ public interface IGDBProcesses extends IMIProcesses {
 	
     /**
      * This interface extends the DSF ThreadDMData to provide
-     * the cores on which a process or a thread is located.
+     * the cores on which a process or a thread is located as well
+     * as the owner of the process.
      * 
 	 * @since 4.0
 	 */
@@ -32,6 +33,13 @@ public interface IGDBProcesses extends IMIProcesses {
     	 *         is located.  Returns null if the information is not available.
     	 */
         String[] getCores();
+        
+        /**
+         * @return The owner of the process, usually a user ID.  Returns null if the
+         *         information is not available.  For threads, this method can return
+         *         null or the owner of the parent process, if available.    
+         */
+        String getOwner();
     }
     
     /**

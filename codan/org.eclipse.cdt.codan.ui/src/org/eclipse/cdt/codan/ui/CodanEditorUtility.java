@@ -17,7 +17,7 @@
 /*
  * Created by: Elena Laskavaia
  * Created on: 2010-05-05
- * Last modified by: $Author$
+ * Last modified by: $Author: elaskavaia $
  */
 package org.eclipse.cdt.codan.ui;
 
@@ -40,12 +40,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class CodanEditorUtility {
 	/**
 	 * @param fileUrl - file "url", like file:/tmp/a.c#22
-	 * @throws PartInitException 
-	 * @throws BadLocationException 
+	 * @throws PartInitException
+	 * @throws BadLocationException
 	 */
-	public static void openFileURL(String fileUrl, IResource markerResource) throws PartInitException, BadLocationException {
+	public static void openFileURL(String fileUrl, IResource markerResource)
+			throws PartInitException, BadLocationException {
 		String file = getFileFromURL(fileUrl);
-		
 		IEditorPart part = openInEditor(file, markerResource);
 		int line = getLineFromURL(fileUrl);
 		revealLine(part, line);
@@ -53,18 +53,19 @@ public class CodanEditorUtility {
 
 	/**
 	 * Line is the part the follows # in this URL
+	 * 
 	 * @return -1 if not line found in URL, and line number if there is
 	 */
 	public static int getLineFromURL(String fileUrl) {
-	    String sline = fileUrl.replaceAll(".*#(\\d+)$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
+		String sline = fileUrl.replaceAll(".*#(\\d+)$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		int line = -1;
 		try {
 			line = Integer.parseInt(sline);
 		} catch (NumberFormatException e2) {
 			// no line
 		}
-	    return line;
-    }
+		return line;
+	}
 
 	public static String getFileFromURL(String link) {
 		String file = link.replaceFirst("^file:", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,27 +73,31 @@ public class CodanEditorUtility {
 		return file;
 	}
 
-	public static void revealLine(IEditorPart part, int line) throws BadLocationException {
+	public static void revealLine(IEditorPart part, int line)
+			throws BadLocationException {
 		if (line > 0) {
 			if (part instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor) part;
-				IDocument document = textEditor.getDocumentProvider().getDocument(part.getEditorInput());
+				IDocument document = textEditor.getDocumentProvider()
+						.getDocument(part.getEditorInput());
 				textEditor.selectAndReveal(document.getLineOffset(line - 1), 0);
 			}
 		}
 	}
 
 	@SuppressWarnings("restriction")
-	public static IEditorPart openInEditor(String file, IResource markerResource) throws PartInitException {
+	public static IEditorPart openInEditor(String file, IResource markerResource)
+			throws PartInitException {
 		IPath pfile = new Path(file);
 		ICElement element = null;
 		if (markerResource != null)
-			CoreModel.getDefault().create(markerResource);
+			element = CoreModel.getDefault().create(markerResource);
 		IEditorPart part = EditorUtility.openInEditor(pfile, element);
 		return part;
 	}
 
-	public static IEditorPart openInEditor(IMarker marker) throws PartInitException {
+	public static IEditorPart openInEditor(IMarker marker)
+			throws PartInitException {
 		String href = getLocationHRef(marker);
 		String file = getFileFromURL(href);
 		return openInEditor(file, marker.getResource());

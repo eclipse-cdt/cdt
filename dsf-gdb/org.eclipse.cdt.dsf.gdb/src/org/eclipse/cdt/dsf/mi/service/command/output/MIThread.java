@@ -54,7 +54,7 @@ public class MIThread {
 	public String getState()          { return fState;    }
 	/**
 	 * Available since GDB 7.1
-	 * @since 3.1
+	 * @since 4.0
 	 */
 	public String getCore()           { return fCore; }
 	

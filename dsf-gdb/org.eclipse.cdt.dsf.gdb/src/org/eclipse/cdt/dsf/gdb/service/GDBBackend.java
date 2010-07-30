@@ -168,9 +168,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend {
     }        
 
     
-    /**
-	 * @since 3.1
-	 */
+	/** @since 4.0 */
     protected IPath getGDBPath() {
         return LaunchUtils.getGDBPath(fLaunchConfiguration);
     }

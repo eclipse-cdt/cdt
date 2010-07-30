@@ -14,7 +14,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 /**
  * 
  *     -gdb-set solib-absolute-prefix PATH
- * @since 3.1
+ * @since 4.0
  * 
  */
 public class MIGDBSetSolibAbsolutePrefix extends MIGDBSet {

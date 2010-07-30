@@ -408,7 +408,7 @@ public class LaunchUtils {
 	 * This methods return true if the launch is meant to be in Non-Stop mode.
 	 * Returns false otherwise.
 	 * 
-	 * @since 3.1
+	 * @since 4.0
 	 */
 	public static boolean getIsNonStopMode(ILaunchConfiguration config) {
 		try {
@@ -424,7 +424,7 @@ public class LaunchUtils {
 	 * This methods return true if the launch is meant to be for post-mortem
 	 * tracing.  Returns false otherwise.
 	 * 
-	 * @since 3.1
+	 * @since 4.0
 	 */
 	public static boolean getIsPostMortemTracing(ILaunchConfiguration config) {
 		SessionType sessionType = LaunchUtils.getSessionType(config);

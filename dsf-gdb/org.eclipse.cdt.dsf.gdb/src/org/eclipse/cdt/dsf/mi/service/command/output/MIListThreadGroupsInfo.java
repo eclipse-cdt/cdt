@@ -159,9 +159,7 @@ public class MIListThreadGroupsInfo extends MIInfo {
 		String getDesciption();
 	}
 
-	/**
-	 * @since 3.1
-	 */
+	/** @since 4.0 */
 	public interface IThreadGroupInfoExtension extends IThreadGroupInfo {
 		String[] getCores();
 	}

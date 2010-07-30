@@ -21,7 +21,7 @@ public interface IGDBProcesses extends IMIProcesses {
      * This interface extends the DSF ThreadDMData to provide
      * the cores on which a process or a thread is located.
      * 
-	 * @since 3.1
+	 * @since 4.0
 	 */
     public interface IGdbThreadDMData extends IThreadDMData {
     	/**

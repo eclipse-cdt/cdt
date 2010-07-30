@@ -288,7 +288,7 @@ public class CLIEventProcessor
      * 
      * @param operation
      * @return
-     * @since 3.1
+     * @since 4.0
      */
     public static boolean isAttachingOperation(String operation) {
         // Get the command name.

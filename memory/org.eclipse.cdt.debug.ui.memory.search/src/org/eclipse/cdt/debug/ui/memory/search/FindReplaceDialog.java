@@ -63,7 +63,7 @@ public class FindReplaceDialog extends SelectionDialog
 
 	private IMemoryBlockExtension fMemoryBlock;
 	
-	final static int preFetchSize = 10 * 1024;
+	final static int preFetchSize = 20 * 1024;
 	
 	private Text fFindText;
 	private Text fReplaceText;
@@ -98,7 +98,8 @@ public class FindReplaceDialog extends SelectionDialog
 	protected final static String SEARCH_REPLACE = "SEARCH_REPLACE"; //$NON-NLS-1$
 	protected final static String SEARCH_START = "SEARCH_START"; //$NON-NLS-1$
 	protected final static String SEARCH_END = "SEARCH_END"; //$NON-NLS-1$
-	protected final static String SEARCH_LAST_FOUND = "SEARCH_LAST_FOUND"; //$NON-NLS-1$
+	protected final static String SEARCH_LAST_START = "SEARCH_LAST_START"; //$NON-NLS-1$
+	protected final static String SEARCH_LAST_END = "SEARCH_LAST_END"; //$NON-NLS-1$
 	protected final static String SEARCH_FORMAT = "SEARCH_FORMAT"; //$NON-NLS-1$
 	protected final static String SEARCH_FORMAT_ASCII = "SEARCH_FORMAT_ASCII"; //$NON-NLS-1$
 	protected final static String SEARCH_FORMAT_HEX = "SEARCH_FORMAT_HEX"; //$NON-NLS-1$
@@ -705,6 +706,7 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		fCaseInSensitiveCheckbox = new Button(optionsGroup, SWT.CHECK);
 		fCaseInSensitiveCheckbox.setText(Messages.getString("FindReplaceDialog.ButtonCaseInsensitive")); //$NON-NLS-1$
+		fCaseInSensitiveCheckbox.setEnabled(format.equals(SEARCH_FORMAT_ASCII));
 		
 		fFormatAsciiButton.addSelectionListener(new SelectionListener()
 		{
@@ -802,26 +804,212 @@ public class FindReplaceDialog extends SelectionDialog
 		MemoryByte memoryCacheData[] = new MemoryByte[0];
 	}
 	
-	MemoryByte[] getBytesFromAddress(final BigInteger address, final int length, FindReplaceMemoryCache cache) 
-		throws DebugException
+	/**
+	 * Function : getSearchableBytes
+	 * 
+	 * This function returns to the user an array of memory 
+	 * @param start Address ( inclusive ) of the beginning byte of the memory region to be searched
+	 * @param end Address ( inclusive ) of the ending 
+	 * @param forwardSearch direction of the search ( true == searching forward , false = searching backwards
+	 * @param address Address ( inclusive ) of the byte set being requested/returned
+	 * @param length Number of bytes of data to be returned
+	 * @param cache Cached memory byte data ( this routine fetches additional bytes of memory to try and reduce interaction with the debug engine )
+	 * @return MemoryByte[] array which contains the requested bytes
+	 * @throws DebugException
+	 */
+	private MemoryByte[] getSearchableBytes(BigInteger start, BigInteger end, boolean forwardSearch, BigInteger address, int length, FindReplaceMemoryCache cache) throws DebugException
 	{
-		if(! (address.compareTo(cache.memoryCacheStartAddress) >= 0 
-			&& address.add(BigInteger.valueOf(length)).compareTo(cache.memoryCacheStartAddress
-					.add(BigInteger.valueOf(cache.memoryCacheData.length))) < 0))
+		BigInteger endCacheAddress = cache.memoryCacheStartAddress.add(BigInteger.valueOf(cache.memoryCacheData.length));
+
+		/*
+		 * Determine if the requested data is already within the cache.
+		 */
+
+		if( ! ( ( address.compareTo(cache.memoryCacheStartAddress) >= 0                  ) &&
+				( address.add(BigInteger.valueOf(length)).compareTo(endCacheAddress) < 0 )    ) )
 		{
-			BigInteger fetchAddress = address.subtract(BigInteger.valueOf(preFetchSize));
-			if(fetchAddress.compareTo(BigInteger.ZERO) < 0) // TODO replace ZERO with address space start
-				fetchAddress = BigInteger.ZERO;
-			
-			MemoryByte bytes[] = fMemoryBlock.getBytesFromAddress(fetchAddress, preFetchSize * 2);
-			
+			BigInteger prefetchSize = BigInteger.valueOf(preFetchSize);
+			BigInteger len          = BigInteger.valueOf(length);
+			BigInteger fetchAddress = address;
+			BigInteger fetchSize;
+
+			/*
+			 *  Determine which way we are searching. Whichever way we are searching we need to make sure
+			 *  we capture the minimum requested amount of data in the forward direction.
+			 */
+
+			if ( forwardSearch ) {
+				/*
+				 *  Legend : "#" == minimum requested data , "*" == additional data we want to prefetch/cache
+				 *
+				 *  This is the best case where everything cleanly fits within the starting/ending ranges
+				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user 
+				 *  has specified them, if they are in error that is OK, but we must respect the boundaries 
+				 *  they specified.
+				 *
+				 *  +-- address
+				 *  |
+				 *  +--length--+--prefetch--+------------------------------------+
+				 *  |##########|************|                                    |
+				 *  |##########|************|                                    |
+				 *  |##########|************|                                    |
+				 *  +----------+------------+------------------------------------+
+				 *  |                                                            |
+				 *  +-- start                                              end --+
+				 *
+				 *  This is the worst case scenario. We cannot even get the requested minimum ( no matter
+				 *  the desired prefetch ) before we run out of the specified range.
+				 *
+				 *                                                       +-- address
+				 *                                                       |
+				 *  +----------------------------------------------------+--length--+--prefetch--+
+				 *  |                                                    |##########|************|
+				 *  |                                                    |##########|************|
+				 *  |                                                    |##########|************|
+				 *  +----------------------------------------------------+-------+--+------------+
+				 *  |                                                            |
+				 *  +-- start                                              end --+
+				 *
+				 *  See if the desired size ( minimum length + desired prefetch ) fits in to the current range.
+				 *  If so there is nothing to adjust.
+				 */
+
+				if ( prefetchSize.compareTo(len) >= 0 ) {
+					fetchSize = prefetchSize;
+				}
+				else {
+					fetchSize = len;
+				}
+				
+				if ( address.add( fetchSize ).compareTo(end) > 0 ) {
+					/*
+					 *  It does not all fit. Get as much as we can ( end - current ) + 1.
+					 */
+					fetchSize = end.subtract(address).add(BigInteger.ONE);
+
+					/*
+					 *  If the amount of data we can get does not even meet the minimum request. In this case
+					 *  we have to readjust how much we copy to match what we can actually read. If we do not
+					 *  do this then we will run past the actual data fetched and generate an exception.
+					 */
+					if ( fetchSize.compareTo(len) < 0 ) {
+						length = fetchSize.intValue();
+					}
+				}
+
+				/*
+				 *  The fetch address just starts at the current requested location since we are searching in
+				 *  the forward direction and thus prefetching in the forward direction.
+				 */
+				fetchAddress = address;
+			}
+			else {
+
+				/*
+				 *  Legend : "#" == minimum requested data , "*" == additional data we want to prefetch/cache
+				 *
+				 *  This is the best case where everything cleanly fits within the starting/ending ranges
+				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user 
+				 *  has specified them, if they are in error that is OK, but we must respect the boundaries 
+				 *  they specified.
+				 *
+				 *               +-- address
+				 *               |
+				 *  +--prefetch--+--length--+------------------------------------+
+				 *  |************|##########|                                    |
+				 *  |************|##########|                                    |
+				 *  |************|##########|                                    |
+				 *  +------------+----------+------------------------------------+
+				 *  |                                                            |
+				 *  +-- start                                              end --+
+				 *
+				 *  This is the second worst case scenario. We cannot even get the requested minimum ( no matter
+				 *  the desired prefetch ) before we run out of the specified range.
+				 *
+				 *                                                            +-- address
+				 *                                                            |
+				 *  +--------------------------------------------+--prefetch--+--length--+
+				 *  |                                            |************|##########|
+				 *  |                                            |************|##########|
+				 *  |                                            |************|##########|
+				 *  +--------------------------------------------+------------+--+-------+
+				 *  |                                                            |
+				 *  +-- start                                              end --+
+				 *
+				 *  This is the worst case scenario. The minimum length moves us off the end of the high range
+				 *  end and the prefetch before this minimum data request ( remember we are fetching backwards
+				 *  since we are searching backwards ) runs us off the start of the data.
+				 *
+				 *                                                                +-- address
+				 *                                                                |
+				 *  +---+-----------------------------------------------prefetch--+--length--+
+				 *  |*************************************************************|##########|
+				 *  |*************************************************************|##########|
+				 *  |*************************************************************|##########|
+				 *  +---+---------------------------------------------------------+--+-------+
+				 *      |                                                            |
+				 *      +-- start                                              end --+
+				 *
+				 *  See if the desired size ( minimum length + desired prefetch ) fits in to the current range.
+				 *  Without running off the end. 
+				 */
+				if ( address.add(len).compareTo(end) > 0 ) {
+					/*
+					 *  We need to reduce the amount we can ask for to whats left. Also make sure to reduce the
+					 *  amount to copy, otherwise we will overrun the buffer and generate an exception.
+					 */
+					len    = end.subtract(address).add(BigInteger.ONE);
+					length = len.intValue();
+				}
+
+				/*
+				 *  Now determine  if the prefetch is going to run backwards past the "start" of where we are allowed
+				 *  to access the memory. We will normalize the prefetch size so it takes in to account the amount of
+				 *  data being gathered as part of the length requested portion.  This should insure that  in the end
+				 *  we will request the prefetch amount of data unless there is not enough to service this request.
+				 */
+				if ( len.compareTo(prefetchSize) > 0 ) {
+					prefetchSize = BigInteger.ZERO;
+				}
+				else {
+					prefetchSize = prefetchSize.subtract(len);
+				}
+				
+				if ( address.subtract(prefetchSize).compareTo(start) < 0) {
+					/*
+					 *  Just get what we can from the beginning up to the current required address.
+					 */
+					prefetchSize = address.subtract(start);
+					fetchAddress = start;
+				}
+				else {
+					/*
+					 *  It fits so just start reading from the calculated position prior to the requested point.
+					 */
+					fetchAddress = address.subtract(prefetchSize);
+				}
+
+				fetchSize = len.add(prefetchSize);
+			}
+
+			/*
+			 *  OK, we have determined where to start reading the data and how much. Just get the data
+			 *  and store it in the cache.
+			 */
+			MemoryByte bytes[] = fMemoryBlock.getBytesFromAddress(fetchAddress, fetchSize.longValue());
+
 			cache.memoryCacheStartAddress = fetchAddress;
 			cache.memoryCacheData = bytes;
 		}
-		
+
+		/*
+		 * Either it was already cached or just has been, either way we have the data so copy what we can
+		 * back to the user buffer.
+		 */
+
 		MemoryByte bytes[] = new MemoryByte[length];
-		System.arraycopy(cache.memoryCacheData, address.subtract(cache.memoryCacheStartAddress).intValue(), 
-			bytes, 0, length);
+		System.arraycopy(cache.memoryCacheData, address.subtract(cache.memoryCacheStartAddress).intValue(), bytes, 0, length);
+
 		return bytes;
 	}
 	
@@ -837,28 +1025,21 @@ public class FindReplaceDialog extends SelectionDialog
 	{
 		try
 		{
-			BigInteger start = parseHexBigInteger(fProperties.getProperty(SEARCH_LAST_FOUND));
-			BigInteger end = parseHexBigInteger(fProperties.getProperty(SEARCH_END));
+			BigInteger start = parseHexBigInteger(fProperties.getProperty(SEARCH_LAST_START));
+			BigInteger end = parseHexBigInteger(fProperties.getProperty(SEARCH_LAST_END));
 			boolean searchForward = Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_FORWARD, Boolean.FALSE.toString()));
 			boolean caseInSensitive = Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_CASEINSENSTIVE, Boolean.FALSE.toString()));
-			if(searchForward)
-				start = start.add(BigInteger.ONE);
-			else
-				start = start.subtract(BigInteger.ONE);
 			SearchPhrase phrase = null;
 			String findText = fProperties.getProperty(SEARCH_FIND);
 			
 			if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_ASCII))
 				phrase = new AsciiSearchPhrase(findText, caseInSensitive);
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_HEX))
-				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0X")  //$NON-NLS-1$
-					? findText.substring(2) : findText, 16), 16);
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0X") ? findText.substring(2) : findText, 16), 16); //$NON-NLS-1$
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_OCTAL))
-				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.startsWith("0")  //$NON-NLS-1$
-					? findText.substring(1) : findText, 8), 8);
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.startsWith("0") ? findText.substring(1) : findText, 8), 8); //$NON-NLS-1$
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_BINARY))
-				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0B")  //$NON-NLS-1$
-					? findText.substring(2) : findText, 2), 2);
+				phrase = new BigIntegerSearchPhrase(new BigInteger(findText.toUpperCase().startsWith("0B") ? findText.substring(2) : findText, 2), 2); //$NON-NLS-1$
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_DECIMAL))
 				phrase = new BigIntegerSearchPhrase(new BigInteger(findText, 10), 10);
 			else if(fProperties.getProperty(SEARCH_FORMAT).equals(SEARCH_FORMAT_BYTESEQUENCE))
@@ -902,10 +1083,10 @@ public class FindReplaceDialog extends SelectionDialog
 					throws OperationCanceledException {
 
 				final BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
-				BigInteger range = start.subtract(end);
+				BigInteger range = end.subtract(start).add(BigInteger.ONE);
 				BigInteger currentPosition = searchForward ? start : end.subtract(searchPhraseLength);
 
-				if ( range.compareTo(searchPhraseLength) >= 0 ) {
+				if ( searchPhraseLength.compareTo(range) >= 0 ) {
 					return Status.OK_STATUS;
 				}
 				
@@ -933,7 +1114,7 @@ public class FindReplaceDialog extends SelectionDialog
 				{
 					try
 					{
-						MemoryByte bytes[] = getBytesFromAddress(currentPosition, searchPhraseLength.intValue(), cache);
+						MemoryByte bytes[] = getSearchableBytes(start, end, searchForward, currentPosition, searchPhraseLength.intValue(), cache);
 						matched = searchPhrase.isMatch(bytes);
 						if(matched)
 						{
@@ -963,6 +1144,8 @@ public class FindReplaceDialog extends SelectionDialog
 							if(matched && !all)
 							{
 								final BigInteger finalCurrentPosition = currentPosition;
+								final BigInteger finalStart = start ;
+								final BigInteger finalEnd = end;
 								Display.getDefault().asyncExec(new Runnable(){
 
 									public void run() {
@@ -995,7 +1178,16 @@ public class FindReplaceDialog extends SelectionDialog
 								});
 								
 								fProperties.setProperty(SEARCH_ENABLE_FIND_NEXT, Boolean.TRUE.toString());
-								fProperties.setProperty(SEARCH_LAST_FOUND, "0x" + finalCurrentPosition.toString(16)); //$NON-NLS-1$
+								if ( searchForward ) {
+									BigInteger newFinalStart = finalCurrentPosition.add(BigInteger.ONE);
+									fProperties.setProperty(SEARCH_LAST_START, "0x" + newFinalStart.toString(16)); //$NON-NLS-1$
+									fProperties.setProperty(SEARCH_LAST_END, "0x" + finalEnd.toString(16)); //$NON-NLS-1$
+								}
+								else {
+									BigInteger newFinalEnd = finalCurrentPosition.subtract(BigInteger.ONE);
+									fProperties.setProperty(SEARCH_LAST_START, "0x" + finalStart.toString(16)); //$NON-NLS-1$
+									fProperties.setProperty(SEARCH_LAST_END, "0x" + newFinalEnd.toString(16)); //$NON-NLS-1$
+								}
 								if ( fFindAction != null ) {
 									fFindAction.setEnabled(true);
 								}

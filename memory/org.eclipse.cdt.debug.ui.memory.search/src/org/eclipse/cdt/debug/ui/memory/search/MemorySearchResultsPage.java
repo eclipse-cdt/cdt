@@ -54,22 +54,11 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 	
 	private ISearchResultViewPart fPart;
 	
-	public void queryAdded(ISearchQuery query) {
-		
-	}
-
-	public void queryFinished(ISearchQuery query) {
-		
-	}
-
-	public void queryRemoved(ISearchQuery query) {
-		
-	}
-
-	public void queryStarting(ISearchQuery query) {
-		
-	}
-
+	public void queryAdded(ISearchQuery query) {}
+	public void queryFinished(ISearchQuery query) {}
+	public void queryRemoved(ISearchQuery query) {}
+	public void queryStarting(ISearchQuery query) {}
+	
 	public String getID() {
 		
 		return MemorySearchPlugin.getUniqueIdentifier();
@@ -87,26 +76,14 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		return fTreeViewer.getSelection();
 	}
 
-	public void restoreState(IMemento memento) {
-		
-		
-	}
-
-	public void saveState(IMemento memento) {
-		
-		
-	}
-
-	public void setID(String id) {
-		
-		
-	}
+	public void restoreState(IMemento memento) {}
+	public void saveState(IMemento memento) {}
+	public void setID(String id) {}
 
 	public void setInput(ISearchResult search, Object uiState) {
-		if(search instanceof MemorySearchResult)
+		if(search instanceof MemorySearchResult) {
 			((MemorySearchResult) search).addListener(new ISearchResultListener()
 			{
-
 				public void searchResultChanged(SearchResultEvent e) {
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run()
@@ -114,11 +91,9 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 							fTreeViewer.refresh();
 						}
 					});
-					
 				}
-				
 			});
-		
+		}
 	}
 
 	public void setViewPart(ISearchResultViewPart part) {
@@ -135,10 +110,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		
 		fTreeViewer.setContentProvider(new ITreeContentProvider() {
 
-			public void dispose() {
-				
-				
-			}
+			public void dispose() {}
 
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
@@ -166,7 +138,6 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 					return ((MemorySearchResult) fQuery.getSearchResult()).getMatches();
 				}
 			}
-			
 		});
 		
 		fTreeViewer.setInput(new Object());
@@ -177,40 +148,37 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				{
 					IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView().getMemoryRenderingContainers();
 					MemoryMatch match = (MemoryMatch) ((StructuredSelection) event.getSelection()).getFirstElement();
-					for(int i = 0; i < containers.length; i++)
-					{
-						IMemoryRendering rendering = containers[i].getActiveRendering();
-						if(rendering instanceof IRepositionableMemoryRendering)
+					if ( match != null ) {
+						for(int i = 0; i < containers.length; i++)
 						{
-							try {
-								((IRepositionableMemoryRendering) rendering).goToAddress(match.getStartAddress());
-							} catch (DebugException e) {
-								MemorySearchPlugin.logError(Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
+							IMemoryRendering rendering = containers[i].getActiveRendering();
+							if(rendering instanceof IRepositionableMemoryRendering)
+							{
+								try {
+									((IRepositionableMemoryRendering) rendering).goToAddress(match.getStartAddress());
+								} catch (DebugException e) {
+									MemorySearchPlugin.logError(Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), e); //$NON-NLS-1$
+								}
 							}
-						}
-						
-						if(rendering != null)
-						{
-							// Temporary, until platform accepts/adds new interface for setting the selection
-							try {
-								Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } ); //$NON-NLS-1$
-								if(m != null)
-									m.invoke(rendering, match.getStartAddress(), match.getEndAddress());
-							} catch (Exception e) {
-								// do nothing
+
+							if(rendering != null)
+							{
+								// Temporary, until platform accepts/adds new interface for setting the selection
+								try {
+									Method m = rendering.getClass().getMethod("setSelection", new Class[] { BigInteger.class, BigInteger.class } ); //$NON-NLS-1$
+									if(m != null)
+										m.invoke(rendering, match.getStartAddress(), match.getEndAddress());
+								} catch (Exception e) {
+									// do nothing
+								}
 							}
 						}
 					}
 				}
 			}
-			
 		});
+		
 		fTreeViewer.setLabelProvider(new ILabelProvider() {
-
-			public Image getImage(Object element) {
-				
-				return null;
-			}
 
 			public String getText(Object element) {
 				if(element instanceof MemoryMatch)
@@ -219,26 +187,11 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				return element.toString();
 			}
 
-			public void addListener(ILabelProviderListener listener) {
-				
-				
-			}
-
-			public void dispose() {
-				
-				
-			}
-
-			public boolean isLabelProperty(Object element, String property) {
-				
-				return false;
-			}
-
-			public void removeListener(ILabelProviderListener listener) {
-				
-				
-			}
-			
+			public Image getImage(Object element) {	return null; }
+			public void addListener(ILabelProviderListener listener) {}
+			public void dispose() {}
+			public boolean isLabelProperty(Object element, String property) { return false;	}
+			public void removeListener(ILabelProviderListener listener) {}
 		});
 		
 		fQueryListener = createQueryListener();
@@ -250,9 +203,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 	
 	private IQueryListener createQueryListener() {
 		return new IQueryListener() {
-			public void queryAdded(ISearchQuery query) {
-				// ignore
-			}
+			public void queryAdded(ISearchQuery query) {}
 
 			public void queryRemoved(ISearchQuery query) {
 				queryStarting(query);
@@ -272,9 +223,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 				});
 			}
 
-			public void queryFinished(final ISearchQuery query) {
-               
-			}
+			public void queryFinished(final ISearchQuery query) {}
 		};
 	}
 	
@@ -287,14 +236,6 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		return fViewerContainer;
 	}
 
-	public void setActionBars(IActionBars actionBars) {
-		
-		
-	}
-
-	public void setFocus() {
-		
-		
-	}
-
+	public void setActionBars(IActionBars actionBars) {}
+	public void setFocus() {}
 }

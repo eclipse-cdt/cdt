@@ -12,9 +12,9 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
+import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatch;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatchSet;
 import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
 import org.eclipse.cdt.managedbuilder.tcmodification.IConfigurationModification;
@@ -34,8 +35,8 @@ public class ConfigurationModification extends FolderInfoModification implements
 	private IBuilder fSelectedBuilder;
 	private IBuilder fRealBuilder;
 	private boolean fCompatibilityInfoInited;
-	private Map fCompatibleBuilders;
-	private Map fInCompatibleBuilders;
+	private Map<Builder, BuilderCompatibilityInfoElement> fCompatibleBuilders;
+	private Map<Builder, BuilderCompatibilityInfoElement> fInCompatibleBuilders;
 	private ConflictMatchSet fConflicts;
 	private IBuilder[] fAllSysBuilders;
 	private BuilderCompatibilityInfoElement fCurrentBuilderCompatibilityInfo;
@@ -43,10 +44,10 @@ public class ConfigurationModification extends FolderInfoModification implements
 
 	public static class BuilderCompatibilityInfoElement {
 		private Builder fBuilder;
-		private List fErrComflictMatchList;
+		private List<ConflictMatch> fErrComflictMatchList;
 		private CompatibilityStatus fStatus;
 		
-		BuilderCompatibilityInfoElement(Builder builder, List errConflictList){
+		BuilderCompatibilityInfoElement(Builder builder, List<ConflictMatch> errConflictList){
 			fBuilder = builder;
 			if(errConflictList != null && errConflictList.size() != 0)
 				fErrComflictMatchList = errConflictList;
@@ -125,14 +126,14 @@ public class ConfigurationModification extends FolderInfoModification implements
 		if(fCompatibilityInfoInited)
 			return;
 		
-		fCompatibleBuilders = new HashMap();
-		fInCompatibleBuilders = new HashMap();
+		fCompatibleBuilders = new HashMap<Builder, BuilderCompatibilityInfoElement>();
+		fInCompatibleBuilders = new HashMap<Builder, BuilderCompatibilityInfoElement>();
 		ConflictMatchSet conflicts = getParentConflictMatchSet();
 		Builder sysBs[] = (Builder[])getAllSysBuilders();
-		Map conflictMap = conflicts.fObjToConflictListMap;
+		Map<Builder, List<ConflictMatch>> conflictMap = conflicts.fObjToConflictListMap;
 		for(int i = 0; i < sysBs.length; i++){
 			Builder b = sysBs[i];
-			List l = (List)conflictMap.get(b);
+			List<ConflictMatch> l = conflictMap.get(b);
 			BuilderCompatibilityInfoElement info = new BuilderCompatibilityInfoElement(b, l);
 			if(info.isCompatible()){
 				fCompatibleBuilders.put(b, info);
@@ -147,9 +148,9 @@ public class ConfigurationModification extends FolderInfoModification implements
 	private BuilderCompatibilityInfoElement getCurrentBuilderCompatibilityInfo(){
 		if(fCurrentBuilderCompatibilityInfo == null){
 			initCompatibilityInfo();
-			BuilderCompatibilityInfoElement info = (BuilderCompatibilityInfoElement)fCompatibleBuilders.get(fRealBuilder);
+			BuilderCompatibilityInfoElement info = fCompatibleBuilders.get(fRealBuilder);
 			if(info == null)
-				info = (BuilderCompatibilityInfoElement)fInCompatibleBuilders.get(fRealBuilder);
+				info = fInCompatibleBuilders.get(fRealBuilder);
 			fCurrentBuilderCompatibilityInfo = info;
 		}
 		return fCurrentBuilderCompatibilityInfo;
@@ -157,15 +158,15 @@ public class ConfigurationModification extends FolderInfoModification implements
 	
 	public IBuilder[] getCompatibleBuilders() {
 		initCompatibilityInfo();
-		List l = new ArrayList(fCompatibleBuilders.size());
+		List<Builder> l = new ArrayList<Builder>(fCompatibleBuilders.size());
 		IConfiguration cfg = getResourceInfo().getParent();
 		
-		for(Iterator iter = fCompatibleBuilders.keySet().iterator(); iter.hasNext(); ){
-			Builder b = (Builder)iter.next();
+		Set<Builder> keySet = fCompatibleBuilders.keySet();
+		for (Builder b : keySet) {
 			if(b != fRealBuilder && cfg.isBuilderCompatible(b))
 				l.add(b);
 		}
-		return (Builder[])l.toArray(new Builder[l.size()]);
+		return l.toArray(new Builder[l.size()]);
 	}
 
 	public boolean isBuilderCompatible() {

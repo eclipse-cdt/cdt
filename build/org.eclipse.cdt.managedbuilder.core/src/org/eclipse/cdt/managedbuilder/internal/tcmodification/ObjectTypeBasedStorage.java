@@ -47,20 +47,20 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 		}
 	}
 	
-	private int getType(int index){
-		switch (index) {
-		case TOOL_INDEX:
-			return IRealBuildObjectAssociation.OBJECT_TOOL;
-		case TOOLCHAIN_INDEX:
-			return IRealBuildObjectAssociation.OBJECT_TOOLCHAIN;
-		case BUILDER_INDEX:
-			return IRealBuildObjectAssociation.OBJECT_BUILDER;
-		case CFG_INDEX:
-			return IRealBuildObjectAssociation.OBJECT_CONFIGURATION;
-		default:
-			throw new IllegalArgumentException();
-		}
-	}
+//	private int getType(int index){
+//		switch (index) {
+//		case TOOL_INDEX:
+//			return IRealBuildObjectAssociation.OBJECT_TOOL;
+//		case TOOLCHAIN_INDEX:
+//			return IRealBuildObjectAssociation.OBJECT_TOOLCHAIN;
+//		case BUILDER_INDEX:
+//			return IRealBuildObjectAssociation.OBJECT_BUILDER;
+//		case CFG_INDEX:
+//			return IRealBuildObjectAssociation.OBJECT_CONFIGURATION;
+//		default:
+//			throw new IllegalArgumentException();
+//		}
+//	}
 	
 	public Object get(int type){
 		return fStorage[getIndex(type)];

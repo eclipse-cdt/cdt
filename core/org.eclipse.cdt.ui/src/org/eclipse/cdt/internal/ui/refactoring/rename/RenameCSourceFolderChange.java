@@ -72,7 +72,7 @@ public class RenameCSourceFolderChange extends Change {
 			return RefactoringStatus.create(Status.OK_STATUS); 
 		} else {
 			return RefactoringStatus.create(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
-					NLS.bind(RenameMessages.RenameCSourceFolderChange_ErroMsg, folder.getName())));
+					NLS.bind(RenameMessages.RenameCSourceFolderChange_ErrorMsg, folder.getName())));
 		}
 	}
 

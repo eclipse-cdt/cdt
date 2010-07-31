@@ -106,7 +106,7 @@ public class RenameMessages extends NLS {
 	public static String CRenameTopProcessor_virtualMethod;
 	public static String CRenameTopProcessor_wizard_backup_title;
 	public static String CRenameTopProcessor_wizard_title;
-	public static String RenameCSourceFolderChange_ErroMsg;
+	public static String RenameCSourceFolderChange_ErrorMsg;
 	public static String RenameCSourceFolderChange_Name0;
 	public static String RenameSourceFolder_0;
 	public static String TextSearch_monitor_categorizeMatches;

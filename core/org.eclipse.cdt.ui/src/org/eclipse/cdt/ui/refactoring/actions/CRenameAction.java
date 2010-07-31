@@ -47,8 +47,7 @@ public class CRenameAction extends RefactoringAction {
     	super.updateSelection(elem);
     	if (elem == null || elem instanceof IInclude || elem instanceof ITranslationUnit) {
     		setEnabled(false);
-    	}
-    	else {
+    	} else {
     		setEnabled(true);
     	}
     }

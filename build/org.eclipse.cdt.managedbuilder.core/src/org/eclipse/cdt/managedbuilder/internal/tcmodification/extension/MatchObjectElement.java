@@ -38,7 +38,7 @@ public class MatchObjectElement {
 		private int fType;
 		private String fString;
 		private static ObjectTypeBasedStorage fTypeAssociationStorage = new ObjectTypeBasedStorage();
-		private static Map fStringAssociationStorage = new HashMap();
+		private static Map<String, TypeToStringAssociation> fStringAssociationStorage = new HashMap<String, TypeToStringAssociation>();
 		
 		public static TypeToStringAssociation TOOL = new TypeToStringAssociation(IRealBuildObjectAssociation.OBJECT_TOOL, "tool"); //$NON-NLS-1$
 		public static TypeToStringAssociation TOOLCHAIN = new TypeToStringAssociation(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, "toolChain"); //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class MatchObjectElement {
 		}
 		
 		public static TypeToStringAssociation getAssociation(String str){
-			return (TypeToStringAssociation)fStringAssociationStorage.get(str);
+			return fStringAssociationStorage.get(str);
 		}
 		
 		public static TypeToStringAssociation getAssociation(int type){
@@ -94,8 +94,8 @@ public class MatchObjectElement {
 	}
 	
 	public class PatternElement {
-		private HashSet fIds;
-		private int fHash;
+		private HashSet<String> fIds;
+		private int fHashPE;
 		private int fType;
 		
 		private static final int SEARCH_TYPE_MASK = 0xff;
@@ -118,7 +118,7 @@ public class MatchObjectElement {
 		
 		PatternElement(IConfigurationElement el, int defaultSearchType, int defaultIdType){
 			String tmp = el.getAttribute(ATTR_OBJECT_IDS);
-			fIds = new HashSet(Arrays.asList(CDataUtil.stringToArray(tmp, DELIMITER)));
+			fIds = new HashSet<String>(Arrays.asList(CDataUtil.stringToArray(tmp, DELIMITER)));
 			
 			int type = 0;
 			tmp = el.getAttribute(ATTR_PATTERN_TYPE_SEARCH_SCOPE);
@@ -150,13 +150,13 @@ public class MatchObjectElement {
 			fType = type;
 		}
 
-		private PatternElement(HashSet ids, int type){
+		private PatternElement(HashSet<String> ids, int type){
 			fIds = ids;
 			fType = type;
 		}
 
 		public String[] getIds(){
-			return (String[])fIds.toArray(new String[fIds.size()]);
+			return fIds.toArray(new String[fIds.size()]);
 		}
 
 		@Override
@@ -176,17 +176,17 @@ public class MatchObjectElement {
 
 		@Override
 		public int hashCode() {
-			if(fHash == 0){
-				fHash = fIds.hashCode();
+			if(fHashPE == 0){
+				fHashPE = fIds.hashCode();
 			}
-			return fHash;
+			return fHashPE;
 		}
 		
 		public PatternElement merge(PatternElement el) throws IllegalArgumentException {
 			if(el.fType != fType)
 				throw new IllegalArgumentException();
 			
-			HashSet set = new HashSet();
+			HashSet<String> set = new HashSet<String>();
 			set.addAll(fIds);
 			set.addAll(el.fIds);
 			return new PatternElement(set, fType);
@@ -212,7 +212,7 @@ public class MatchObjectElement {
 		
 		fObjectType = assoc.getType();
 		
-		Map patternMap = new HashMap();
+		Map<PatternTypeKey, PatternElement> patternMap = new HashMap<PatternTypeKey, PatternElement>();
 		int defaultSearchType = PatternElement.DEFAULT_PATTERN_SEARCH_TYPE;
 		int defaultIdType = PatternElement.DEFAULT_PATTERN_ID_TYPE;
 		
@@ -228,7 +228,7 @@ public class MatchObjectElement {
 			for(int i = 0; i < patternsChildren.length; i++){
 				PatternElement el = new PatternElement(patternsChildren[i], defaultSearchType, defaultIdType);
 				PatternTypeKey key = new PatternTypeKey(el);
-				PatternElement cur = (PatternElement)patternMap.get(key);
+				PatternElement cur = patternMap.get(key);
 				if(cur != null){
 					patternMap.put(key, cur.merge(el));
 				} else {
@@ -241,7 +241,7 @@ public class MatchObjectElement {
 			throw new IllegalArgumentException();
 		}
 		
-		fPatterns = (PatternElement[])patternMap.values().toArray(new PatternElement[patternMap.size()]);
+		fPatterns = patternMap.values().toArray(new PatternElement[patternMap.size()]);
 	}
 	
 	public int getObjectType(){

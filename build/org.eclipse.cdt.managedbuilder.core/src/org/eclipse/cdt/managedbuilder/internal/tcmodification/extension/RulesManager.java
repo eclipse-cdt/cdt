@@ -43,7 +43,7 @@ public class RulesManager {
 	
 	private ConflictDefinition[] fConflictDefinitions;
 	
-	private Map fMatchObjectMap = new HashMap();
+	private Map<MatchObjectElement, IObjectSet> fMatchObjectMap = new HashMap<MatchObjectElement, IObjectSet>();
 	private PerTypeMapStorage fObjToChildSuperClassMap;
 	private StarterJob fStarter;
 	private boolean fIsStartInited; 
@@ -103,7 +103,7 @@ public class RulesManager {
 			fConflictDefinitions = new ConflictDefinition[0];
 		} else {
 			IExtension[] extensions = extensionPoint.getExtensions();
-			List conflictDefs = new ArrayList();
+			List<ConflictDefinition> conflictDefs = new ArrayList<ConflictDefinition>();
 			for (int i = 0; i < extensions.length; ++i) {
 				IExtension extension = extensions[i];
 				IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -123,7 +123,7 @@ public class RulesManager {
 				}
 			}
 			
-			fConflictDefinitions = (ConflictDefinition[])conflictDefs.toArray(new ConflictDefinition[conflictDefs.size()]);
+			fConflictDefinitions = conflictDefs.toArray(new ConflictDefinition[conflictDefs.size()]);
 		}
 	}
 	
@@ -146,11 +146,11 @@ public class RulesManager {
 	}
 	
 	private IObjectSet resolve(MatchObjectElement el){
-		IObjectSet oSet = (IObjectSet)fMatchObjectMap.get(el);
+		IObjectSet oSet = fMatchObjectMap.get(el);
 		if(oSet == null){
 			int type = el.getObjectType();
 			PatternElement[] patterns = el.getPatterns();
-			HashSet objectsSet = new HashSet(); 
+			HashSet<IRealBuildObjectAssociation> objectsSet = new HashSet<IRealBuildObjectAssociation>(); 
 			for(int i = 0; i < patterns.length; i++){
 				PatternElement pattern = patterns[i];
 				processPattern(type, pattern, objectsSet);
@@ -171,19 +171,19 @@ public class RulesManager {
 		
 		IRealBuildObjectAssociation[] allObjs = TcModificationUtil.getExtensionObjects(objType);
 		Pattern pattern = Pattern.compile(id);
-		List list = new ArrayList();
+		List<IRealBuildObjectAssociation> list = new ArrayList<IRealBuildObjectAssociation>();
 		
 		for(int i = 0; i < allObjs.length; i++){
 			if(pattern.matcher(allObjs[i].getId()).matches())
 				list.add(allObjs[i]);
 		}
 		
-		return (IRealBuildObjectAssociation[])list.toArray(new IRealBuildObjectAssociation[list.size()]);
+		return list.toArray(new IRealBuildObjectAssociation[list.size()]);
 	}
 	
-	private Set processPattern(int objType, PatternElement el, Set set){
+	private Set<IRealBuildObjectAssociation> processPattern(int objType, PatternElement el, Set<IRealBuildObjectAssociation> set){
 		if(set == null)
-			set = new HashSet();
+			set = new HashSet<IRealBuildObjectAssociation>();
 		
 		String ids[] = el.getIds();
 		if(el.getSearchType() == PatternElement.TYPE_SEARCH_EXTENSION_OBJECT){
@@ -202,7 +202,7 @@ public class RulesManager {
 					
 					set.add(obj.getRealBuildObject());
 
-					Set childRealSet = getChildSuperClassRealSet(obj, allReal);
+					Set<IRealBuildObjectAssociation> childRealSet = getChildSuperClassRealSet(obj, allReal);
 					
 					set.addAll(childRealSet);
 //					for(int k = 0; k < allReal.length; k++){
@@ -230,15 +230,15 @@ public class RulesManager {
 		return set;
 	}
 	
-	private Set getChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all){
+	private Set<IRealBuildObjectAssociation> getChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all){
 		if(fObjToChildSuperClassMap == null)
 			fObjToChildSuperClassMap = new PerTypeMapStorage();
 
 		if(all == null)
 			all = TcModificationUtil.getExtensionObjects(obj.getType());
 
-		Map map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
-		Set set = (Set)map.get(obj);
+		Map<IRealBuildObjectAssociation, Set<IRealBuildObjectAssociation>> map = fObjToChildSuperClassMap.getMap(obj.getType(), true);
+		Set<IRealBuildObjectAssociation> set = map.get(obj);
 		if(set == null){
 			set = createChildSuperClassRealSet(obj, all, null);
 			map.put(obj, set);
@@ -247,9 +247,9 @@ public class RulesManager {
 		return set;
 	}
 	
-	private static Set createChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all, Set set){
+	private static Set<IRealBuildObjectAssociation> createChildSuperClassRealSet(IRealBuildObjectAssociation obj, IRealBuildObjectAssociation[] all, Set<IRealBuildObjectAssociation> set){
 		if(set == null)
-			set = new HashSet();
+			set = new HashSet<IRealBuildObjectAssociation>();
 		
 		if(all == null)
 			all = TcModificationUtil.getExtensionObjects(obj.getType());

@@ -20,7 +20,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IPath;
 
-public class PathComparator implements Comparator {
+public class PathComparator implements Comparator<IPath> {
 	public static PathComparator INSTANCE = new PathComparator();
 //	public static final SortedSet EMPTY_SET = Collections.unmodifiableSortedSet(new TreeSet(INSTANCE));
 //	public static final SortedMap EMPTY_MAP = Collections.unmodifiableSortedMap(new TreeMap(INSTANCE));
@@ -28,12 +28,12 @@ public class PathComparator implements Comparator {
 	private PathComparator(){
 	}
 	
-	public int compare(Object arg0, Object arg1) {
+	public int compare(IPath arg0, IPath arg1) {
 		if(arg0 == arg1)
 			return 0;
 		
-		IPath path1 = (IPath)arg0;
-		IPath path2 = (IPath)arg1;
+		IPath path1 = arg0;
+		IPath path2 = arg1;
 		
 		int length1 = path1.segmentCount();
 		int length2 = path2.segmentCount();
@@ -69,45 +69,43 @@ public class PathComparator implements Comparator {
 		return path.append("\0"); //$NON-NLS-1$
 	}
 
-	public static SortedMap getChildPathMap(SortedMap map, IPath path, boolean includeThis, boolean copy){
+	public static SortedMap<IPath, PerTypeSetStorage> getChildPathMap(SortedMap<IPath, PerTypeSetStorage> map, IPath path, boolean includeThis, boolean copy){
 		IPath start = includeThis ? path : getFirstChild(path); 
 		IPath next = getNext(path);
-		SortedMap result = next != null ? map.subMap(start, next) : map.tailMap(start);
+		SortedMap<IPath, PerTypeSetStorage> result = next != null ? map.subMap(start, next) : map.tailMap(start);
 		if(copy)
-			result = new TreeMap(result);
+			result = new TreeMap<IPath, PerTypeSetStorage>(result);
 		return result;
 	}
 
-	public static SortedSet getChildPathSet(SortedSet set, IPath path, boolean includeThis, boolean copy){
+	public static SortedSet<IPath> getChildPathSet(SortedSet<IPath> set, IPath path, boolean includeThis, boolean copy){
 		IPath start = includeThis ? path : getFirstChild(path); 
 		IPath next = getNext(path);
-		SortedSet result = next != null ? set.subSet(start, next) : set.tailSet(start);
+		SortedSet<IPath> result = next != null ? set.subSet(start, next) : set.tailSet(start);
 		if(copy)
-			result = new TreeSet(result);
+			result = new TreeSet<IPath>(result);
 		return result;
 	}
 	
-	public static SortedSet getDirectChildPathSet(SortedSet set, IPath path){
+	public static SortedSet<IPath> getDirectChildPathSet(SortedSet<IPath> set, IPath path){
 		//all children
-		SortedSet children = getChildPathSet(set, path, false, false);
-		SortedSet result = new TreeSet(INSTANCE);
-		for(Iterator iter = children.iterator(); iter.hasNext(); iter = children.iterator()){
-			IPath childPath = (IPath)iter.next();
+		SortedSet<IPath> children = getChildPathSet(set, path, false, false);
+		SortedSet<IPath> result = new TreeSet<IPath>(INSTANCE);
+		for (IPath childPath : children) {
 			result.add(childPath);
-			
-			children = children.tailSet(getNext(childPath));//getChildPathSet(children, getNext(childPath), true, false);
+			children = children.tailSet(getNext(childPath));
 		}
 		
 		return result;
 	}
 	
-	public static SortedMap getDirectChildPathMap(SortedMap map, IPath path){
+	public static SortedMap<IPath,PerTypeSetStorage> getDirectChildPathMap(SortedMap<IPath, PerTypeSetStorage> map, IPath path){
 		//all children
-		SortedMap children = getChildPathMap(map, path, false, false);
-		SortedMap result = new TreeMap(INSTANCE);
-		for(Iterator iter = children.entrySet().iterator(); iter.hasNext(); iter = children.entrySet().iterator()){
-			Map.Entry entry = (Map.Entry)iter.next();
-			IPath childPath = (IPath)entry.getKey();
+		SortedMap<IPath,PerTypeSetStorage> children = getChildPathMap(map, path, false, false);
+		SortedMap<IPath,PerTypeSetStorage> result = new TreeMap<IPath, PerTypeSetStorage>(INSTANCE);
+		for(Iterator<Map.Entry<IPath,PerTypeSetStorage>> iter = children.entrySet().iterator(); iter.hasNext(); iter = children.entrySet().iterator()){
+			Map.Entry<IPath,PerTypeSetStorage> entry = iter.next();
+			IPath childPath = entry.getKey();
 			result.put(childPath, entry.getValue());
 			
 			children = children.tailMap(getNext(childPath));//getChildPathMap(children, getNext(childPath), true, false);

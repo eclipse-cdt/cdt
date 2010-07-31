@@ -21,11 +21,12 @@ import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.tcmodification.IFileInfoModification;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 
 public class FileInfoModification extends
 		ToolListModification implements IFileInfoModification {
 	private String fFileExt;
-	private Set fApplPathSet;
+	private Set<IPath> fApplPathSet;
 	private IProject fProject;
 	
 	public FileInfoModification(ResourceConfiguration rcInfo) {
@@ -54,9 +55,9 @@ public class FileInfoModification extends
 	}
 	
 	@Override
-	protected Set getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
+	protected Set<IPath> getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
 		if(fApplPathSet == null){
-			Set s = new HashSet(1);
+			Set<IPath> s = new HashSet<IPath>(1);
 			s.add(getResourceInfo().getPath());
 			fApplPathSet = Collections.unmodifiableSet(s);
 		}
@@ -64,8 +65,8 @@ public class FileInfoModification extends
 	}
 
 	@Override
-	protected Set getExtensionConflictToolSet(Tool tool, Tool[] toos) {
-		return Collections.EMPTY_SET;
+	protected Set<Tool> getExtensionConflictToolSet(Tool tool, Tool[] toos) {
+		return Collections.emptySet();
 	}
 
 	@Override

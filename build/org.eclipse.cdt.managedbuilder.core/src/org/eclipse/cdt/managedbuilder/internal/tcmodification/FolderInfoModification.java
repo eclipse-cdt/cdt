@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -29,12 +30,14 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
+import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatch;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatchSet;
 import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
 import org.eclipse.cdt.managedbuilder.tcmodification.IFolderInfoModification;
@@ -47,8 +50,8 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	private ToolChainCompatibilityInfoElement fCurrentCompatibilityInfo;
 	private ToolChain fSelectedToolChain;
 	private IToolChain[] fAllSysToolChains;
-	private Map fCompatibleToolChains;
-	private Map fInCompatibleToolChains;
+	private Map<ToolChain, ToolChainCompatibilityInfoElement> fCompatibleToolChains;
+	private Map<ToolChain, ToolChainCompatibilityInfoElement> fInCompatibleToolChains;
 	private PerTypeMapStorage fParentObjectStorage;
 	private ConflictMatchSet fParentConflicts;
 //	private PerTypeMapStorage fChildObjectStorage;
@@ -93,18 +96,18 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	}
 	
 	private static class ToolChainApplicabilityPaths {
-		private Set fFileInfoPaths = new HashSet();
-		private Set fFolderInfoPaths = new HashSet();
-		private Map fToolPathMap = new HashMap(); 
+		private Set<IPath> fFileInfoPaths = new HashSet<IPath>();
+		private Set<IPath> fFolderInfoPaths = new HashSet<IPath>();
+		private Map<Tool, Set<IPath>> fToolPathMap = new HashMap<Tool, Set<IPath>>(); 
 	}
 	
 	public static class ToolChainCompatibilityInfoElement {
 		private ToolChain fTc;
-		private List fErrComflictMatchList;
-		private List fWarningConflictMatchList;
+		private List<ConflictMatch> fErrComflictMatchList;
+//		private List fWarningConflictMatchList;
 		private CompatibilityStatus fStatus;
 		
-		ToolChainCompatibilityInfoElement(ToolChain tc, List errConflictList){
+		ToolChainCompatibilityInfoElement(ToolChain tc, List<ConflictMatch> errConflictList){
 			fTc = tc;
 			if(errConflictList != null && errConflictList.size() != 0)
 				fErrComflictMatchList = errConflictList;
@@ -135,14 +138,13 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		initCompatibilityInfo();
 		FolderInfo foInfo = (FolderInfo)getResourceInfo();
 
-		List l = new ArrayList(fCompatibleToolChains.size());
-		for(Iterator iter = fCompatibleToolChains.keySet().iterator(); iter.hasNext(); ){
-			ToolChain tc = (ToolChain)iter.next();
-
+		List<ToolChain> l = new ArrayList<ToolChain>(fCompatibleToolChains.size());
+		Set<ToolChain> keySet = fCompatibleToolChains.keySet();
+		for (ToolChain tc : keySet) {
 			if(tc != fRealToolChain && foInfo.isToolChainCompatible(fRealToolChain, tc))
 				l.add(tc);
 		}
-		return (ToolChain[])l.toArray(new ToolChain[l.size()]);
+		return l.toArray(new ToolChain[l.size()]);
 	}
 	
 	public CompatibilityStatus getToolChainCompatibilityStatus(){
@@ -152,9 +154,9 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	private ToolChainCompatibilityInfoElement getCurrentCompatibilityInfo(){
 		if(fCurrentCompatibilityInfo == null){
 			initCompatibilityInfo();
-			ToolChainCompatibilityInfoElement info = (ToolChainCompatibilityInfoElement)fCompatibleToolChains.get(fRealToolChain);
+			ToolChainCompatibilityInfoElement info = fCompatibleToolChains.get(fRealToolChain);
 			if(info == null)
-				info = (ToolChainCompatibilityInfoElement)fInCompatibleToolChains.get(fRealToolChain);
+				info = fInCompatibleToolChains.get(fRealToolChain);
 			fCurrentCompatibilityInfo = info;
 		}
 		return fCurrentCompatibilityInfo;
@@ -168,15 +170,14 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		if(fCompatibilityInfoInited)
 			return;
 		
-		fCompatibleToolChains = new HashMap();
-		fInCompatibleToolChains = new HashMap();
+		fCompatibleToolChains = new HashMap<ToolChain, ToolChainCompatibilityInfoElement>();
+		fInCompatibleToolChains = new HashMap<ToolChain, ToolChainCompatibilityInfoElement>();
 		ConflictMatchSet parentConflicts = getParentConflictMatchSet();
 		ToolChain sysTCs[] = (ToolChain[])getAllSysToolChains();
 		
-		Map conflictMap = parentConflicts.fObjToConflictListMap;
-		for(int i = 0; i < sysTCs.length; i++){
-			ToolChain tc = sysTCs[i];
-			List l = (List)conflictMap.get(tc);
+		Map<Builder, List<ConflictMatch>>  conflictMap = parentConflicts.fObjToConflictListMap;
+		for (ToolChain tc : sysTCs) {
+			List<ConflictMatch> l = conflictMap.get(tc);
 			ToolChainCompatibilityInfoElement info = new ToolChainCompatibilityInfoElement(tc, l);
 			if(info.isCompatible()){
 				fCompatibleToolChains.put(tc, info);
@@ -243,14 +244,14 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	@Override
 	protected boolean canReplace(Tool fromTool, Tool toTool) {
 		String[] exts = toTool.getPrimaryInputExtensions();
-		Set curInputExts = null;
-		Set inputExts = getInputExtsSet();
-		for(int k = 0; k < exts.length; k++){
-			if(inputExts.contains(exts[k])){
+		Set<String> curInputExts = null;
+		Set<String> inputExts = getInputExtsSet();
+		for (String ext : exts) {
+			if(inputExts.contains(ext)){
 				if(curInputExts == null)
-					curInputExts = new HashSet(Arrays.asList(fromTool.getPrimaryInputExtensions()));
+					curInputExts = new HashSet<String>(Arrays.asList(fromTool.getPrimaryInputExtensions()));
 				
-				if(curInputExts.contains(exts[k])){
+				if(curInputExts.contains(ext)){
 					return true;
 				}
 			}
@@ -259,17 +260,17 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	}
 
 	@Override
-	protected Set getExtensionConflictToolSet(Tool tool, Tool[] tools) {
+	protected Set<Tool> getExtensionConflictToolSet(Tool tool, Tool[] tools) {
 		String exts[] = tool.getPrimaryInputExtensions();
-		Set extsSet = new HashSet(Arrays.asList(exts));
-		Set conflictsSet = null;
+		Set<String> extsSet = new HashSet<String>(Arrays.asList(exts));
+		Set<Tool> conflictsSet = null;
 		for(int i = 0; i < tools.length; i++){
 			Tool t = tools[i];
 			if(t == tool)
 				continue;
 			if(TcModificationUtil.containCommonEntries(extsSet, t.getPrimaryInputExtensions())){
 				if(conflictsSet == null)
-					conflictsSet = new HashSet();
+					conflictsSet = new HashSet<Tool>();
 				
 				conflictsSet.add(t);
 			}
@@ -277,14 +278,14 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		}
 		
 		if(conflictsSet == null)
-			conflictsSet = Collections.EMPTY_SET;
+			conflictsSet = Collections.emptySet();
 		return conflictsSet;
 	}
 
 	@Override
-	protected Set getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
+	protected Set<IPath> getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
 		if(isProject)
-			return (Set)getToolChainApplicabilityPaths().fToolPathMap.get(realTool);
+			return getToolChainApplicabilityPaths().fToolPathMap.get(realTool);
 		return getToolChainApplicabilityPaths().fFolderInfoPaths;
 	}
 
@@ -306,24 +307,24 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ToolChainApplicabilityPaths tcApplicabilityPaths = new ToolChainApplicabilityPaths();
 		IPath path = getResourceInfo().getPath();
 		
-		TreeMap pathMap = getCompletePathMapStorage();
+		TreeMap<IPath, PerTypeSetStorage> pathMap = getCompletePathMapStorage();
 		
-		PerTypeSetStorage oSet = (PerTypeSetStorage)pathMap.get(path);
-		Set toolSet = oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
-		Set tcSet = oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+		PerTypeSetStorage oSet = pathMap.get(path);
+		Set<Tool> toolSet = oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+		Set<IPath> tcSet = oSet.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
 		
 		ToolChain curTc = (ToolChain)tcSet.iterator().next();
 		
-		Set foInfoPaths = tcApplicabilityPaths.fFolderInfoPaths;
-		Set fileInfoPaths = tcApplicabilityPaths.fFileInfoPaths;
+		Set<IPath> foInfoPaths = tcApplicabilityPaths.fFolderInfoPaths;
+		Set<IPath> fileInfoPaths = tcApplicabilityPaths.fFileInfoPaths;
 
 		foInfoPaths.add(path);
 		
-		Map toolPathsMap = tcApplicabilityPaths.fToolPathMap;
+		Map<Tool, Set<IPath>> toolPathsMap = tcApplicabilityPaths.fToolPathMap;
 		if(toolSet != null){
-			for(Iterator iter = toolSet.iterator(); iter.hasNext(); ){
-				Set set = new HashSet();
-				toolPathsMap.put(iter.next(), set);
+			for (Tool tool : toolSet) {
+				Set<IPath> set = new HashSet<IPath>();
+				toolPathsMap.put(tool, set);
 				set.add(path);
 			}
 		}
@@ -339,11 +340,10 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		fTcApplicabilityPaths = null;
 	}
 	
-	private static void putToolInfo(Set ct, Map toolPathsMap, Set fileInfoPaths, Object p){
+	private static void putToolInfo(Set<Tool> ct, Map<Tool, Set<IPath>> toolPathsMap, Set<IPath> fileInfoPaths, IPath p){
 		if(ct != null && ct.size() != 0){
-			for(Iterator toolIter = ct.iterator(); toolIter.hasNext(); ){
-				Object t = toolIter.next();
-				Set set = (Set)toolPathsMap.get(t);
+			for (Tool t : ct) {
+				Set<IPath> set = toolPathsMap.get(t);
 				if(set != null){
 					if(fileInfoPaths != null)
 						fileInfoPaths.add(p);
@@ -353,14 +353,14 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		}
 	}
 
-	private static void calculateChildPaths(TreeMap pathMap, IPath path, ToolChain tc, Set tcPaths, Map toolPathsMap, Set fileInfoPaths){
-		SortedMap directCMap = PathComparator.getDirectChildPathMap(pathMap, path);
-		for(Iterator iter = directCMap.entrySet().iterator(); iter.hasNext(); ){
-			Map.Entry entry = (Map.Entry)iter.next();
-			PerTypeSetStorage cst = (PerTypeSetStorage)entry.getValue();
+	private static void calculateChildPaths(TreeMap<IPath, PerTypeSetStorage> pathMap, IPath path, ToolChain tc, Set<IPath> tcPaths, Map<Tool,Set<IPath>> toolPathsMap, Set<IPath> fileInfoPaths){
+		SortedMap<IPath, PerTypeSetStorage> directCMap = PathComparator.getDirectChildPathMap(pathMap, path);
+		Set<Entry<IPath, PerTypeSetStorage>> entrySet = directCMap.entrySet();
+		for (Entry<IPath, PerTypeSetStorage> entry : entrySet) {
+			PerTypeSetStorage cst = entry.getValue();
 			
-			Set ctc = cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
-			Set ct = cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+			Set<ToolChain> ctc = cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+			Set<Tool> ct = cst.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 
 
 			if(ctc == null || ctc.size() == 0){
@@ -368,7 +368,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 				putToolInfo(ct, toolPathsMap, fileInfoPaths, entry.getKey());
 			} else {
 				if(ctc.contains(tc)){
-					IPath cp = (IPath)entry.getKey();
+					IPath cp = entry.getKey();
 					tcPaths.add(cp);
 					putToolInfo(ct, toolPathsMap, null, entry.getKey());
 					//recurse
@@ -384,8 +384,8 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		ToolChainApplicabilityPaths tcApplicability = getToolChainApplicabilityPaths();
 		PerTypeMapStorage storage = getCompleteObjectStore();
 		
-		Map tcMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
-		Map toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+		Map<ToolChain, Set<IPath>> tcMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+		Map<Tool, Set<IPath>> toolMap = storage.getMap(IRealBuildObjectAssociation.OBJECT_TOOL, false);
 		
 		
 		TcModificationUtil.removePaths(tcMap, fRealToolChain, tcApplicability.fFolderInfoPaths);
@@ -396,10 +396,11 @@ public class FolderInfoModification extends ToolListModification implements IFol
 			newTools[i] = (Tool)ManagedBuildManager.getRealTool(newTools[i]);
 		}
 		
-		for(Iterator iter = tcApplicability.fToolPathMap.entrySet().iterator(); iter.hasNext(); ){
-			Map.Entry entry = (Map.Entry)iter.next();
-			Tool tool = (Tool)entry.getKey();
-			Set pathSet = (Set)entry.getValue();
+		Set<Entry<Tool, Set<IPath>>> entrySet = tcApplicability.fToolPathMap.entrySet();
+		for(Iterator<Entry<Tool, Set<IPath>>> iter = entrySet.iterator(); iter.hasNext(); ){
+			Map.Entry<Tool, Set<IPath>> entry = iter.next();
+			Tool tool = entry.getKey();
+			Set<IPath> pathSet = entry.getValue();
 			
 			TcModificationUtil.removePaths(toolMap, tool, pathSet);
 		}
@@ -414,8 +415,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 			IProject project = mProj.getOwner().getProject();
 			Tool[] filtered = (Tool[])foInfo.filterTools(newTools, mProj);
 			if(filtered.length != 0){
-				for(Iterator iter = tcApplicability.fFileInfoPaths.iterator(); iter.hasNext(); ){
-					IPath p = (IPath)iter.next();
+				for (IPath p : tcApplicability.fFileInfoPaths) {
 					boolean found = false;
 					String ext = p.getFileExtension();
 					if(ext == null)

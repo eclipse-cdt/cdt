@@ -92,3 +92,10 @@ int b, a;
 }
 
 
+//!ICPPASTReferenceOperator rvalue reference
+//%CPP
+int && foo(int && a)
+{
+    char && b;
+}
+

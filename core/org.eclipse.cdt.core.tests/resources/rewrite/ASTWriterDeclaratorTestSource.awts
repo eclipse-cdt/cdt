@@ -92,6 +92,20 @@ int b, a;
 }
 
 
+//!ICPPASTDeclarator with nested declarator being a variable
+//%C
+int *(*var[3]);
+
+//!ICPPASTDeclarator with nested declarator and redundant parentheses 
+//%C
+char (*((*fptr))(int, char));
+
+//!ICPPASTDeclarator with nested declarator as a method
+//%CPP
+class Foo
+{
+    int (*(*aMethod())[2]);
+};
 //!ICPPASTReferenceOperator rvalue reference
 //%CPP
 int && foo(int && a)

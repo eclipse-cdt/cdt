@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -160,7 +161,7 @@ public abstract class CRenameProcessorDelegate {
      * @return A set of files containing references to the name, or <code>null</code> if
      * exhaustive file search is requested.
      */
-    private IResource[] getFileFilter() {
+    private Collection<IResource> getFileFilter() {
     	if ((getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0) {
     		return null;
     	}
@@ -200,7 +201,7 @@ public abstract class CRenameProcessorDelegate {
 			}
 		}
 
-		return files.toArray(new IResource[files.size()]);
+		return files;
 	}
 
     public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
@@ -216,9 +217,13 @@ public abstract class CRenameProcessorDelegate {
         // perform text-search
         fMatches= new ArrayList<CRefactoringMatch>();
         TextSearchWrapper txtSearch= getManager().getTextSearch();
+        Collection<IResource> fileFilter = getFileFilter();
+        if (!fileFilter.contains(file)) {
+        	fileFilter.add(file);
+        }
         IStatus stat= txtSearch.searchWord(getSearchScope(), file, getSelectedWorkingSet(), 
-                getFileFilter(), getManager().getCCppPatterns(), getArgument().getName(), 
-                new SubProgressMonitor(monitor, 1), fMatches);
+        		fileFilter.toArray(new IResource[fileFilter.size()]), getManager().getCCppPatterns(),
+        		getArgument().getName(), new SubProgressMonitor(monitor, 1), fMatches);
         if (monitor.isCanceled()) {
             throw new OperationCanceledException();
         }

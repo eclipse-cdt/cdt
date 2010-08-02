@@ -78,6 +78,7 @@ public class DeclaratorWriter extends NodeWriter {
 		writePointerOperators(declarator, pointOps);
 		IASTName name = declarator.getName();
 		name.accept(visitor);
+		writeNestedDeclarator(declarator);
 		IASTInitializer init = getInitializer(declarator);
 		if(init!= null) {
 			init.accept(visitor);

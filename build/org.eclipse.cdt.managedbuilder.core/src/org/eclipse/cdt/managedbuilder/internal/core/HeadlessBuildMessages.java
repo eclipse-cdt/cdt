@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import org.eclipse.osgi.util.NLS;
 
 public class HeadlessBuildMessages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.core.PluginResources"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.core.HeadlessBuildMessages"; //$NON-NLS-1$
 	public static String HeadlessBuilder_already_exists_in_workspace;
 	public static String HeadlessBuilder_build_failed;
 	public static String HeadlessBuilder_building_all;

@@ -239,7 +239,6 @@ public class FinalLaunchSequence extends Sequence {
         	// We really should set it to false when GDB supports it though.
         	// Something to fix later.
         	if (isNonStop) {
-        		// The raw commands should not be necessary in the official GDB release
         		fCommandControl.queueCommand(
         			fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), true),
        				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {

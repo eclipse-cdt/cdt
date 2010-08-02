@@ -192,7 +192,11 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 					if (props.getName().contains(MEMBER_DECLARATION)) {
 						final IASTDeclarator[] declarators = fieldDeclaration.getDeclarators();
 						if (declarators.length > 0) {
-							if ((declarators[0] instanceof IASTFunctionDeclarator)) {
+							IASTDeclarator innermostDeclarator = declarators[0];
+							while (innermostDeclarator.getNestedDeclarator() != null) {
+								innermostDeclarator = innermostDeclarator.getNestedDeclarator();
+							}
+							if ((innermostDeclarator instanceof IASTFunctionDeclarator)) {
 								context.existingFunctionDeclarations.add(fieldDeclaration);
 							} else {
 								if(SelectionHelper.isInSameFile(fieldDeclaration, file)){

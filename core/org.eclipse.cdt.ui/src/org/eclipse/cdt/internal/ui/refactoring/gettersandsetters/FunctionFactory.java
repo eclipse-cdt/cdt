@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -42,7 +44,12 @@ public class FunctionFactory {
 		IASTFunctionDefinition getter = new CPPASTFunctionDefinition();
 		
 		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy());	
-		getter.setDeclarator(getGetterDeclarator(varName, fieldDeclaration, name));
+		IASTDeclarator getterDeclarator = getGetterDeclarator(varName, fieldDeclaration, name);
+		// IASTFunctionDefinition. expects the outermost IASTFunctionDeclarator in declarator hierarchy
+		while (!(getterDeclarator instanceof IASTFunctionDeclarator)) {
+			getterDeclarator = getterDeclarator.getNestedDeclarator();
+		}
+		getter.setDeclarator((IASTFunctionDeclarator) getterDeclarator);
 		
 		getter.setBody(getGetterBody(varName));
 		
@@ -61,23 +68,45 @@ public class FunctionFactory {
 		return compound;
 	}
 
-	private static CPPASTFunctionDeclarator getGetterDeclarator(String varName,
+	private static IASTDeclarator getGetterDeclarator(String varName,
 			IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {
+		
 		CPPASTName getterName = new CPPASTName();
 		String varPartOfGetterName = NameHelper.makeFirstCharUpper(NameHelper.trimFieldName(varName));
 		getterName.setName("get".concat(varPartOfGetterName).toCharArray()); //$NON-NLS-1$
-		CPPASTFunctionDeclarator declarator = new CPPASTFunctionDeclarator();
-		declarator.setConst(true);
+		
+		// copy declarator hierarchy
+		IASTDeclarator topDeclarator = fieldDeclaration.getDeclarators()[0].copy();
+		
+		// find the innermost declarator in hierarchy
+		IASTDeclarator innermost = topDeclarator;
+		while (innermost.getNestedDeclarator() != null) {
+			innermost = innermost.getNestedDeclarator();
+		}
+		
+		// create a new innermost function declarator basing on the field declarator 
+		CPPASTFunctionDeclarator functionDeclarator = new CPPASTFunctionDeclarator();
+		functionDeclarator.setConst(true);
 		if(name != null) {
 			name.addName(getterName);
-			declarator.setName(name);
+			functionDeclarator.setName(name);
 		}else {
-			declarator.setName(getterName);
+			functionDeclarator.setName(getterName);
 		}
-		for(IASTPointerOperator pointer : fieldDeclaration.getDeclarators()[0].getPointerOperators()){
-			declarator.addPointerOperator(pointer.copy());
+		for(IASTPointerOperator pointer : innermost.getPointerOperators()){
+			functionDeclarator.addPointerOperator(pointer.copy());
 		}
-		return declarator;
+		
+		// replace innermost with functionDeclarator and return the whole declarator tree
+		if (innermost == topDeclarator) {
+			// no tree
+			return functionDeclarator;
+		} else {
+			IASTDeclarator parent = (IASTDeclarator) innermost.getParent();
+			parent.setNestedDeclarator(functionDeclarator);
+			return topDeclarator;
+			
+		}
 	}
 	
 	public static IASTFunctionDefinition createSetterDefinition(String varName, IASTSimpleDeclaration fieldDeclaration, ICPPASTQualifiedName name) {

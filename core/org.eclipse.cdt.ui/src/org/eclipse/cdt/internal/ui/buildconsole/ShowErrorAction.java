@@ -45,6 +45,8 @@ public class ShowErrorAction extends Action {
 		super.run();
 		if ( isChecked() ) {
 			IProject project = fConsolePage.getProject();
+			if (project == null) return;
+			
 			IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
 			IConsole console = consoleManager.getConsole(project);
 			if ( console instanceof BuildConsolePartitioner) {

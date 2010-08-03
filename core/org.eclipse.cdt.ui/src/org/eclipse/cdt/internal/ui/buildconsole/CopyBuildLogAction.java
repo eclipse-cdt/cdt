@@ -47,7 +47,7 @@ public class CopyBuildLogAction extends Action {
 	@Override
 	public void run() {
 		IProject project = fConsolePage.getProject();
-		if (!project.isAccessible())
+		if (project == null || !project.isAccessible())
 			return;
 
 		IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();

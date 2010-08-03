@@ -554,6 +554,8 @@ public class BuildConsolePage extends Page
 	 */
 	void moveToError(int position) {
 		IProject project = getProject();
+		if (project == null) return;
+		
 		IBuildConsoleManager consoleManager = CUIPlugin.getDefault().getConsoleManager();
 		IConsole console = consoleManager.getConsole(project);
 		if ( console instanceof BuildConsolePartitioner) {

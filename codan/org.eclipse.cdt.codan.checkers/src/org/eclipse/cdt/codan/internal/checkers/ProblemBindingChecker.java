@@ -16,7 +16,6 @@ import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.index.IIndex;
 
 public class ProblemBindingChecker extends AbstractIndexAstChecker {
 
@@ -186,14 +184,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		if (utils.getEnclosingCompositeTypeSpecifier(name) != null) {
 			return true;
 		}
-		IASTFunctionDefinition function = utils.getEnclosingFunction(name);
-		if (name == null || function == null) {
-			return false;
-		}
-		IIndex index = name.getTranslationUnit().getIndex();
-		IASTCompositeTypeSpecifier composite = utils.getCompositeTypeFromFunction(function, index);
-		
-		return composite != null;
+		return false;
 	}
 	
 	private boolean isInFunctionContext(IASTName name) {

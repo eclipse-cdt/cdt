@@ -53,7 +53,8 @@
    <element name="checker">
       <annotation>
          <documentation>
-            Checker Element. Sets id, name and class that implements checker
+            Checker Element. 
+Sets id, name and class that implements checker
          </documentation>
       </annotation>
       <complexType>
@@ -80,7 +81,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  User Friendly name of the chcker or error. Would be display to enable/disable an error.
+                  User Friendly name of the chcker, currently not used. Will default to a class name.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -93,7 +94,7 @@
    <element name="problem">
       <annotation>
          <documentation>
-            Problem description (Error, Warning, Info produced by a checker)
+            Problem meta-data.
          </documentation>
       </annotation>
       <complexType>
@@ -107,7 +108,8 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  User Friendly name of the error. Would be display to enable/disable an error.
+                  User Friendly name of the error. Would be displyed to enable/disable a problem and get access to problem properties.
+Should be as short as possible, but recogniziable.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -117,7 +119,7 @@
          <attribute name="defaultSeverity" use="default" value="Warning">
             <annotation>
                <documentation>
-                  
+                  Set defult problem severity. User can override later. Default is Warning.
                </documentation>
             </annotation>
             <simpleType>
@@ -134,7 +136,7 @@
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  
+                  Category id for the problem. There are few that are defined in core codan plugin, other user defined. If none specified it would be &quot;Programming Problems&quot;.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/category/@id"/>
@@ -151,7 +153,15 @@
          <attribute name="messagePattern" type="string">
             <annotation>
                <documentation>
-                  Default error message pattern. Use java pattern notation such as {0} to replace with first argument, and so on.
+                  Default error message pattern. Use java pattern notation (such as {0} to replace with first problem argument, and so on. To place single quote &apos; in a message - use quot symbol twice &apos;&apos;).
+For example message pattern 
+Invalid argument &apos;&apos;{0}&apos;&apos;
+
+would be printed as 
+
+Invalid argument &apos;xxx&apos;
+
+where xxx what checker would post as an argument for the problem.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -161,7 +171,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  Short description of the problem
+                  Short description of the problem. Help user to understand that message means. Can be used as tooltip.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -182,18 +192,23 @@
    </element>
 
    <element name="category">
+      <annotation>
+         <documentation>
+            Category for problem. Allows to group problems for the user.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Unique qualified category id.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  User visible name of the category
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -203,7 +218,7 @@
          <attribute name="parentCategory" type="string">
             <annotation>
                <documentation>
-                  
+                  Id of the parent category. Root is used if not specified.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/category/@id"/>

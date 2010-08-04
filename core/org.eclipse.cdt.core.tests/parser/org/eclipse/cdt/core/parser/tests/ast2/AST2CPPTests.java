@@ -8600,5 +8600,53 @@ public class AST2CPPTests extends AST2BaseTest {
 		IFunction fA= bh.assertNonProblem("f(A)", 1);
 		IFunction f= bh.assertNonProblem("f(a= 1)", 1);
 		assertSame(fA, f);
-	}		
+	}
+	
+	
+	
+	
+//		  struct X {};
+//		  struct Y : X {};
+//		  struct A {
+//		      virtual X* m();//0
+//		      virtual X* m(X*);//1
+//		  };
+//		  struct B : A {
+//		      Y* m();//2
+//		      Y* m(Y*);//3
+//		  };
+	public void testOverrideSimpleCovariance_Bug321617() throws Exception {
+		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPMethod m0= helper.assertNonProblem("m();//0", 1, ICPPMethod.class);
+		ICPPMethod m1= helper.assertNonProblem("m(X*);//1", 1, ICPPMethod.class);
+		ICPPMethod m2= helper.assertNonProblem("m();//2", 1, ICPPMethod.class);
+		ICPPMethod m3= helper.assertNonProblem("m(Y*);//3", 1, ICPPMethod.class);
+		
+		assertTrue(ClassTypeHelper.isVirtual(m0));
+		assertTrue(ClassTypeHelper.isVirtual(m1));
+		assertTrue(ClassTypeHelper.isVirtual(m2));
+		assertFalse(ClassTypeHelper.isVirtual(m3));
+		
+		assertFalse(ClassTypeHelper.isOverrider(m0, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m0, m1));
+		
+		assertFalse(ClassTypeHelper.isOverrider(m1, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m1, m1));
+		
+		assertTrue(ClassTypeHelper.isOverrider(m2, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m2, m1));
+		
+		assertFalse(ClassTypeHelper.isOverrider(m3, m0));
+		assertFalse(ClassTypeHelper.isOverrider(m3, m1));
+		
+		ICPPMethod[] ors= ClassTypeHelper.findOverridden(m0);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m1);
+		assertEquals(0, ors.length);
+		ors= ClassTypeHelper.findOverridden(m2);
+		assertEquals(1, ors.length);
+		assertSame(ors[0], m0);
+		ors= ClassTypeHelper.findOverridden(m3);
+		assertEquals(0, ors.length);
+	}
 }

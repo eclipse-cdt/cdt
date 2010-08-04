@@ -58,10 +58,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <choice>
-               <element ref="problem"/>
-               <element ref="problemRef"/>
-            </choice>
+            <element ref="problem"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -210,21 +207,6 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/category/@id"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="problemRef">
-      <complexType>
-         <attribute name="problem" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Reference to a problem
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/checker/problem/@id"/>
                </appinfo>
             </annotation>
          </attribute>

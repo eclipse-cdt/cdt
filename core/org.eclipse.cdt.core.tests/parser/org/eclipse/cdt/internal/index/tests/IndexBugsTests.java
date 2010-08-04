@@ -357,7 +357,7 @@ public class IndexBugsTests extends BaseTestCase {
 	public void test154563() throws Exception {
 		// Because of fix for http://bugs.eclipse.org/193779 this test case passes.
 		// However http://bugs.eclipse.org/154563 remains to be fixed.
-		String[] content= getContentsForTest(3);
+		String[] content= getContentsForTest(2);
 		
 		IFile file= createFile(getProject(), "header.h", content[0]);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
@@ -373,7 +373,7 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 		
-		file.setContents(new ByteArrayInputStream(content[1].getBytes()), true, false, npm());
+		file= createFile(getProject(), "header.h", content[1]);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
 		
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);
@@ -809,7 +809,7 @@ public class IndexBugsTests extends BaseTestCase {
 			index.releaseReadLock();
 		}
 		
-		file.setContents(new ByteArrayInputStream(content[1].getBytes()), true, false, npm());
+		file= createFile(getProject(), "header.h", content[1]);
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);
 		
 		index= CCorePlugin.getIndexManager().getIndex(fCProject);

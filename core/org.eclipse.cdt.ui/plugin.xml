@@ -1697,7 +1697,31 @@
             commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+            platform="carbon"
             sequence="M1+M3+H"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            platform="carbon"
+            sequence="M3+M4+H"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M1+M3+H"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            platform="carbon"
+            sequence="M1+M3+H"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            platform="carbon"
+            sequence="M3+M4+H"
             contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>

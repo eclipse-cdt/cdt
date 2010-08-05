@@ -35,7 +35,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	}
 
 	/**
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	protected AbstractProblemLocation(IResource file, int line) {
 		this.file = file;
@@ -49,7 +49,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	}
 
 	/**
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	protected AbstractProblemLocation(IResource file, int startChar, int endChar) {
 		this.file = file;
@@ -87,7 +87,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 
 	/**
 	 * @return resource for which marker is created
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public IResource getResource() {
 		return file;
@@ -123,5 +123,43 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	 */
 	public int getEndingChar() {
 		return posEnd;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((extra == null) ? 0 : extra.hashCode());
+		result = prime * result + ((file == null) ? 0 : file.hashCode());
+		result = prime * result + line;
+		result = prime * result + posEnd;
+		result = prime * result + posStart;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof AbstractProblemLocation))
+			return false;
+		AbstractProblemLocation other = (AbstractProblemLocation) obj;
+		if (line != other.line)
+			return false;
+		if (posEnd != other.posEnd)
+			return false;
+		if (posStart != other.posStart)
+			return false;
+		if (extra == null) {
+			if (other.extra != null)
+				return false;
+		} else if (!extra.equals(other.extra))
+			return false;
+		if (file == null) {
+			if (other.file != null)
+				return false;
+		} else if (!file.equals(other.file))
+			return false;
+		return true;
 	}
 }

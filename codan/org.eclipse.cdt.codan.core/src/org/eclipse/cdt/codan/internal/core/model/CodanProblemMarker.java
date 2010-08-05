@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
@@ -36,6 +37,10 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	private IProblemLocation loc;
 	private IProblem problem;
 	private Object args[];
+
+	public Object[] getArgs() {
+		return args;
+	}
 
 	/**
 	 * @param problem
@@ -265,5 +270,31 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 			throws CoreException {
 		String propArgs = serializeArgs(args);
 		marker.setAttribute(PROBLEM_ARGS, propArgs);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(args);
+		result = prime * result + ((loc == null) ? 0 : loc.hashCode());
+		result = prime * result + problem.getId().hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof ICodanProblemMarker))
+			return false;
+		CodanProblemMarker other = (CodanProblemMarker) obj;
+		if (!Arrays.equals(args, other.args))
+			return false;
+		if (!loc.equals(other.loc))
+			return false;
+		if (!problem.getId().equals(other.problem.getId()))
+			return false;
+		return true;
 	}
 }

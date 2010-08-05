@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.core.model;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.internal.core.CheckerInvocationContext;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -22,6 +23,10 @@ import org.eclipse.core.resources.IResource;
  */
 public abstract class AbstractChecker implements IChecker {
 	protected String name;
+	/**
+	 * @since 2.0
+	 */
+	protected ICheckerInvocationContext context;
 
 	/**
 	 * Default constructor
@@ -34,7 +39,7 @@ public abstract class AbstractChecker implements IChecker {
 	 *         false checker's "processResource" method won't be called
 	 */
 	public boolean enabledInContext(IResource res) {
-		return true;
+		return res instanceof IFile;
 	}
 
 	/**
@@ -93,9 +98,14 @@ public abstract class AbstractChecker implements IChecker {
 
 	/**
 	 * @return problem reporter for given checker
+	 * @since 2.0
 	 */
-	protected IProblemReporter getProblemReporter() {
-		return CodanRuntime.getInstance().getProblemReporter();
+	public IProblemReporter getProblemReporter() {
+		try {
+			return getContext().getProblemReporter();
+		} catch (Exception e) {
+			return CodanRuntime.getInstance().getProblemReporter();
+		}
 	}
 
 	/**
@@ -157,5 +167,64 @@ public abstract class AbstractChecker implements IChecker {
 	public void reportProblem(String problemId, IProblemLocation loc,
 			Object... args) {
 		getProblemReporter().reportProblem(problemId, loc, args);
+	}
+
+	/**
+	 * Get invocation context.
+	 * 
+	 * @return checker invocation context
+	 * 
+	 * @since 2.0
+	 */
+	public ICheckerInvocationContext getContext() {
+		return context;
+	}
+
+	/**
+	 * Set the invocation context. Usually called by codan builder.
+	 * Object that calls this should also synchronize of checker object
+	 * to prevent multi-thread access to a running context
+	 * 
+	 * @since 2.0
+	 */
+	public void setContext(ICheckerInvocationContext context) {
+		this.context = context;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean before(IResource resource) {
+		IChecker checker = this;
+		IProblemReporter problemReporter = CodanRuntime.getInstance()
+				.getProblemReporter();
+		IProblemReporter sessionReporter = problemReporter;
+		if (problemReporter instanceof IProblemReporterSessionPersistent) {
+			// create session problem reporter
+			sessionReporter = ((IProblemReporterSessionPersistent) problemReporter)
+					.createReporter(resource, checker);
+			((IProblemReporterSessionPersistent) sessionReporter).start();
+		} else if (problemReporter instanceof IProblemReporterPersistent) {
+			// delete markers if checker can possibly run on this
+			// resource  this way if checker is not enabled markers would be
+			// deleted too
+			((IProblemReporterPersistent) problemReporter).deleteProblems(
+					resource, checker);
+		}
+		((AbstractChecker) checker).setContext(new CheckerInvocationContext(
+				resource, sessionReporter));
+		return true;
+	}
+
+	/**
+	 * @since 2.0
+	 */
+	public boolean after(IResource resource) {
+		if (getContext().getProblemReporter() instanceof IProblemReporterSessionPersistent) {
+			// delete general markers
+			((IProblemReporterSessionPersistent) getContext()
+					.getProblemReporter()).done();
+		}
+		return true;
 	}
 }

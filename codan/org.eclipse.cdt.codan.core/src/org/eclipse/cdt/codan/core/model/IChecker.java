@@ -38,6 +38,21 @@ public interface IChecker {
 	boolean processResource(IResource resource);
 
 	/**
+	 * @since 2.0
+	 */
+	boolean before(IResource resource);
+
+	/**
+	 * @since 2.0
+	 */
+	boolean after(IResource resource);
+
+	/**
+	 * @since 2.0
+	 */
+	IProblemReporter getProblemReporter();
+
+	/**
 	 * Implement this method to trim down type of resource you are interested
 	 * in, usually it will be c/c++ files only. This method should be
 	 * independent from current user preferences.

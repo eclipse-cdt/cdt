@@ -13,12 +13,9 @@ package org.eclipse.cdt.codan.internal.core;
 import java.util.Map;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.Messages;
 import org.eclipse.cdt.codan.core.model.IChecker;
 import org.eclipse.cdt.codan.core.model.ICodanBuilder;
-import org.eclipse.cdt.codan.core.model.IProblemReporter;
-import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
 import org.eclipse.cdt.codan.core.model.IRunnableInEditorChecker;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -115,31 +112,35 @@ public class CodanBuilder extends IncrementalProjectBuilder implements
 		monitor.beginTask(Messages.CodanBuilder_Code_Analysis_On + resource,
 				checkers + memsize * tick);
 		try {
-			IProblemReporter problemReporter = CodanRuntime.getInstance()
-					.getProblemReporter();
 			for (IChecker checker : chegistry) {
 				try {
 					if (monitor.isCanceled())
 						return;
 					if (checker.enabledInContext(resource)) {
-						// delete markers if checker can possibly run on this
-						// resource
-						// this way if checker is not enabled markers would be
-						// deleted too
-						if (problemReporter instanceof IProblemReporterPersistent) {
-							// delete general markers
-							((IProblemReporterPersistent) problemReporter)
-									.deleteProblems(resource, checker);
-						}
-						if (chegistry.isCheckerEnabled(checker, resource)) {
-							if (inEditor) {
-								if (checker.runInEditor()
-										&& checker instanceof IRunnableInEditorChecker) {
-									((IRunnableInEditorChecker) checker)
-											.processModel(model);
+						synchronized (checker) {
+							try {
+								checker.before(resource);
+								if (chegistry.isCheckerEnabled(checker,
+										resource)) {
+									//long time = System.currentTimeMillis();
+									if (inEditor) {
+										if (checker.runInEditor()
+												&& checker instanceof IRunnableInEditorChecker) {
+											((IRunnableInEditorChecker) checker)
+													.processModel(model);
+										}
+									} else {
+										checker.processResource(resource);
+									}
+									//	System.err
+									//	.println("Checker "
+									//	+ checker.getClass()
+									//	+ " worked "
+									//	+ (System
+									//	.currentTimeMillis() - time));
 								}
-							} else {
-								checker.processResource(resource);
+							} finally {
+								checker.after(resource);
 							}
 						}
 					}

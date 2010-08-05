@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * Instance of a problem. Intermediate representation before problem become a
  * marker.
  * 
- * @since 1.1
+ * @since 2.0
  */
 public interface ICodanProblemMarker {
 	/**
@@ -56,4 +56,9 @@ public interface ICodanProblemMarker {
 	 * @return message
 	 */
 	public String createMessage();
+
+	/**
+	 * @return problem arguments
+	 */
+	public Object[] getArgs();
 }

@@ -60,7 +60,7 @@ public enum CodanSeverity {
 	/**
 	 * @param intValue
 	 * @return value of severity by its integer value
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public static CodanSeverity valueOf(int intValue) {
 		if (intValue == IMarker.SEVERITY_INFO)

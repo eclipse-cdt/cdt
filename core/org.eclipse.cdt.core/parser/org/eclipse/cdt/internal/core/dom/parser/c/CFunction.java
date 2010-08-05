@@ -196,23 +196,25 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 		return null;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IFunction#getType()
-     */
-	public IFunctionType getType() {
+    public IFunctionType getType() {
 		if (type == null) {
-			IASTDeclarator declarator = getPhysicalNode();
-			if (declarator == null && (bits & FULLY_RESOLVED) == 0) {
-				resolveAllDeclarations();
-				declarator = getPhysicalNode();
-			}
-			if (declarator != null) {
-				IType tempType = CVisitor.unwrapTypedefs(CVisitor.createType(declarator));
-				if (tempType instanceof IFunctionType)
-					type = (IFunctionType) tempType;
-			}
+			type = createType();
 		}
-		return type;
+        return type;
+    }
+
+	protected IFunctionType createType() {
+		IASTDeclarator declarator = getPhysicalNode();
+		if (declarator == null && (bits & FULLY_RESOLVED) == 0) {
+			resolveAllDeclarations();
+			declarator = getPhysicalNode();
+		}
+		if (declarator != null) {
+			IType tempType = CVisitor.unwrapTypedefs(CVisitor.createType(declarator));
+			if (tempType instanceof IFunctionType)
+				return (IFunctionType) tempType;
+		}
+		return null;
 	}
 	
     public IBinding resolveParameter( IASTName paramName ){

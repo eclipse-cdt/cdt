@@ -804,7 +804,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (exception != null) {
 				Throwable masked= getMaskedException(exception);
 				if (masked != exception) {
-					e= exception;
+					e= masked;
 					exception= null;
 				}
 			} 

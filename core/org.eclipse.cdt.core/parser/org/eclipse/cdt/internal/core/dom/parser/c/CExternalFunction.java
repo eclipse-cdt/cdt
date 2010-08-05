@@ -39,11 +39,15 @@ public class CExternalFunction extends CFunction implements ICExternalBinding {
 
     @Override
 	public IFunctionType getType() {
-    	IFunctionType t = super.getType();
-    	if( t == null ) {
-    		type = new CPPFunctionType( CPPSemantics.VOID_TYPE, IType.EMPTY_TYPE_ARRAY );
-    	}
-        return type;
+		if (type == null) {
+			// Bug 321856: Prevent recursions
+			type = new CPPFunctionType(CPPSemantics.VOID_TYPE, IType.EMPTY_TYPE_ARRAY);
+			IFunctionType computedType = createType();
+			if (computedType != null) {
+				type = computedType;
+			}
+		}
+		return type;
     }
     
     @Override

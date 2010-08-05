@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -90,7 +91,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
@@ -6510,11 +6510,7 @@ public class AST2Tests extends AST2BaseTest {
 	        }
 	    }
 	}
-	
-	
-	
-	
-	//
+
 	// /* check that enumerator values are evaluated correctly for
 	//  * conditional expressions */
 	//
@@ -6541,5 +6537,14 @@ public class AST2Tests extends AST2BaseTest {
 	public void testSkipAggregateInitializer_297550() throws Exception {
         final String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.C, false, true);
+	}
+	
+	// typeof(b(1)) b(int);
+	public void testRecursiveFunctionType_321856() throws Exception {
+        final String code = getAboveComment();
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+        IFunction f= bh.assertNonProblem("b(1)", 1);
+        f= bh.assertNonProblem("b(int)", 1);
+        f.getType();
 	}
 }

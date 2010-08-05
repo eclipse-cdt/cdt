@@ -218,11 +218,12 @@ public abstract class CRenameProcessorDelegate {
         fMatches= new ArrayList<CRefactoringMatch>();
         TextSearchWrapper txtSearch= getManager().getTextSearch();
         Collection<IResource> fileFilter = getFileFilter();
-        if (!fileFilter.contains(file)) {
+        if (fileFilter != null && !fileFilter.contains(file)) {
         	fileFilter.add(file);
         }
         IStatus stat= txtSearch.searchWord(getSearchScope(), file, getSelectedWorkingSet(), 
-        		fileFilter.toArray(new IResource[fileFilter.size()]), getManager().getCCppPatterns(),
+        		fileFilter != null ? fileFilter.toArray(new IResource[fileFilter.size()]) : null,
+        		getManager().getCCppPatterns(),
         		getArgument().getName(), new SubProgressMonitor(monitor, 1), fMatches);
         if (monitor.isCanceled()) {
             throw new OperationCanceledException();

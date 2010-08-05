@@ -13,12 +13,13 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 
 /**
  * Models functions used without declarations.
@@ -38,9 +39,13 @@ public class CExternalFunction extends CFunction implements ICExternalBinding {
 
     @Override
 	public IFunctionType getType() {
-		IFunctionType t = super.getType();
-		if (t == null) {
-			type = new CFunctionType(VOID_TYPE, IType.EMPTY_TYPE_ARRAY);
+		if (type == null) {
+			// Bug 321856: Prevent recursions
+			type = new CPPFunctionType(VOID_TYPE, IType.EMPTY_TYPE_ARRAY);
+			IFunctionType computedType = createType();
+			if (computedType != null) {
+				type = computedType;
+			}
 		}
 		return type;
 	}

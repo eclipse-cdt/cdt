@@ -7120,6 +7120,15 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings(code, ParserLanguage.C, false, true);
 	}
 	
+	// typeof(b(1)) b(int);
+	public void testRecursiveFunctionType_321856() throws Exception {
+        final String code = getAboveComment();
+        BindingAssertionHelper bh= new BindingAssertionHelper(code, false);
+        IFunction f= bh.assertNonProblem("b(1)", 1);
+        f= bh.assertNonProblem("b(int)", 1);
+        f.getType();
+	}
+	
 	public void testDeepBinaryExpression_294969() throws Exception {
 		sValidateCopy= false;
 		StringBuilder buf= new StringBuilder("void f() {0");

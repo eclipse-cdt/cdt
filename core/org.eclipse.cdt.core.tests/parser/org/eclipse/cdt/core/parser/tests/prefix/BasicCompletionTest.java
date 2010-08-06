@@ -224,4 +224,39 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkCompletion(code, false, expected);
 	}
 	
+	//	struct B {
+	//		int m;
+	//	};
+	//	int foo() {
+	//		B * b;
+	//		new (b->
+	public void testNewExpressions_Bug313982a() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"B", "m"};
+		checkCompletion(code, true, expected);
+	}
+
+	//	struct B {
+	//		int m;
+	//	};
+	//	int foo() {
+	//		B * b;
+	//		new (b->m) B
+	public void testNewExpressions_Bug313982b() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"B"};
+		checkCompletion(code, true, expected);
+	}
+
+	//	struct B {
+	//		int m;
+	//	};
+	//	int foo() {
+	//		B * b;
+	//		new (b->m) (B
+	public void testNewExpressions_Bug313982c() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"B"};
+		checkCompletion(code, true, expected);
+	}
 }

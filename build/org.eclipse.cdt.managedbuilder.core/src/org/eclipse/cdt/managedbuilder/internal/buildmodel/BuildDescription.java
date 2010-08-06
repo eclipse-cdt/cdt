@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -102,7 +102,7 @@ public class BuildDescription implements IBuildDescription {
 	private Map<ITool, BuildStep> fToolToMultiStepMap = new HashMap<ITool, BuildStep>();
 	private BuildStep fOrderedMultiActions[];
 
-//	private Map<IPath, BuildResource> fLocationToRcMap = new HashMap<IPath, BuildResource>();
+	/** Map from Location URI to BuildResource */
 	private Map<URI, BuildResource> fLocationToRcMap = new HashMap<URI, BuildResource>();
 
 	private Map<String, Set<BuildIOType>> fVarToAddlInSetMap = new HashMap<String, Set<BuildIOType>>();
@@ -1034,7 +1034,7 @@ public class BuildDescription implements IBuildDescription {
 					}
 				}
 
-				BuildResource outRc = createResource(outWorkspacePath, getURIForFullPath(outFullPath));
+				BuildResource outRc = createResource(outWorkspacePath, getURIForLocation(outFullPath));
 				list.add(outRc);
 				buildArg.addResource(outRc);
 
@@ -1044,7 +1044,13 @@ public class BuildDescription implements IBuildDescription {
 		return null;
 	}
 
-	private URI getURIForFullPath(IPath fullPath) {
+	/**
+	 * Turns a filesystem location into a URI using the project as the hint for the 
+	 * URI metadata.
+	 * @param location toString() is used as the URI path
+	 * @return URI representing the location or null
+	 */
+	private URI getURIForLocation(IPath location) {
 		// Basically, assume that we use the same type of URI that the project uses.
 		// Create one using the same info, except point the path at the path provided.
 		URI projURI = fProject.getLocationURI();
@@ -1054,7 +1060,7 @@ public class BuildDescription implements IBuildDescription {
 
 			if(projStore.toLocalFile(EFS.NONE, null) != null) {
 				// local file
-				return URIUtil.toURI(fullPath);
+				return URIUtil.toURI(location);
 			}
 		} catch (CoreException e1) {
 			ManagedBuilderCorePlugin.log(e1);
@@ -1063,12 +1069,11 @@ public class BuildDescription implements IBuildDescription {
 
 		try {
 			URI newURI = new URI(projURI.getScheme(), projURI.getUserInfo(),
-					projURI.getHost(), projURI.getPort(), fullPath.toString(), projURI.getQuery(), projURI
+					projURI.getHost(), projURI.getPort(), location.toString(), projURI.getQuery(), projURI
 							.getFragment());
 			return newURI;
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ManagedBuilderCorePlugin.log(e);
 		}
 
 		return null;
@@ -1377,7 +1382,7 @@ public class BuildDescription implements IBuildDescription {
 
 				BuildIOType buildArg = action.createIOType(false, true, null);
 
-				BuildResource outRc = createResource(outFullPath, getURIForFullPath(outLocation));
+				BuildResource outRc = createResource(outFullPath, getURIForLocation(outLocation));
 				buildArg.addResource(outRc);
 		}
 
@@ -1467,7 +1472,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	public IBuildResource getBuildResource(IPath location) {
-		return getBuildResource(URIUtil.toURI(location));
+		return getBuildResource(getURIForLocation(location));
 	}
 
 	private IBuildResource getBuildResource(URI locationURI) {
@@ -1894,38 +1899,45 @@ public class BuildDescription implements IBuildDescription {
 		return null;
 	}
 
-	private BuildResource addInput(IPath path, BuildIOType buildArg){
-			IPath inFullPath = path;
-			IPath inLocation;
+	/**
+	 * Add the calculated BuildResource input to the build argument
+	 * @param path IPath relative to the project, or absolute filesystem location
+	 * @param buildArg builds setps BuildIOType to which the input resource is added
+	 * @return BuildResource
+	 */
+	private BuildResource addInput(final IPath path, BuildIOType buildArg){
+		BuildResource rc;
 
-			if(inFullPath.isAbsolute()){
-				inLocation = inFullPath;
-				inFullPath = null;
-				IFile files[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(inLocation);
+		// Is path a location, or project relative?
+		if (path.isAbsolute()) {
+			URI uri = getURIForLocation(path);
+			IPath inFullPath = null;
+
+			// If this is a location, check whether we've already created the BuildResource
+			rc = (BuildResource)getBuildResource(uri);
+			if (rc == null) {
+				IFile files[] = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri);
 				for (IFile file : files) {
-					IPath fl = file.getFullPath();
-					if(fl.segment(0).equals(fProject.getName())){
-						inFullPath = fl;
+					if (file.getProject().equals(fProject)) {
+						inFullPath = file.getFullPath();
 						break;
 					}
 				}
 				if(inFullPath == null && files.length > 0)
 					inFullPath = files[0].getFullPath();
-				if(inFullPath == null && getProjectLocation().isPrefixOf(inLocation)){
-					inFullPath = fProject.getFullPath().append(inLocation.removeFirstSegments(getProjectLocation().segmentCount()));
-				}
-			} else {
-				inFullPath = fProject.getFullPath().append(inFullPath);
-
-				IResource res = ResourcesPlugin.getWorkspace().getRoot().getFile(inFullPath);//.findMember(inFullPath);
-				inLocation = calcResourceLocation(res);
+				if(inFullPath == null && getProjectLocation().isPrefixOf(path))
+					inFullPath = fProject.getFullPath().append(path.removeFirstSegments(getProjectLocation().segmentCount()));
+				rc = createResource(inFullPath, uri);
 			}
+		} else {
+			IResource res = fProject.getFile(path);
+			IPath inFullPath = res.getFullPath();
+			IPath inLocation = calcResourceLocation(res);
+			rc = createResource(inFullPath, getURIForLocation(inLocation));
+		}
 
-
-			BuildResource rc = createResource(inFullPath, getURIForFullPath(inLocation));
-			buildArg.addResource(rc);
-
-			return rc;
+		buildArg.addResource(rc);
+		return rc;
 	}
 
 
@@ -1962,11 +1974,17 @@ public class BuildDescription implements IBuildDescription {
 		return createResource(rc.getFullPath(), rc.getLocationURI());
 	}
 
+	/**
+	 * Fetches the cached BuildResource based on the passed in locationURI.
+	 * If the BuildResource doesn't yet exist, it is created and cached.
+	 * @param fullWorkspacePath for the BuildResource
+	 * @param locationURI URI of the resource (must be unique)
+	 * @return BuildResource
+	 */
 	public BuildResource createResource(IPath fullWorkspacePath, URI locationURI){
-
 		BuildResource rc = (BuildResource)getBuildResource(locationURI);
-
-		if(rc == null)
+		if (rc == null)
+			// Creating the BuildResource implicitly adds it to fLocationToRcMap.
 			rc = new BuildResource(this, fullWorkspacePath, locationURI);
 
 		return rc;

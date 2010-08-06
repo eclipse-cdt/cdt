@@ -942,7 +942,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		plcmt= expressionList();
         		endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
         		
-        		if (LT(1) == IToken.tLPAREN) {
+        		final int lt1= LT(1);
+        		if (lt1 == IToken.tEOC) {
+            		return newExpression(isGlobal, plcmt, typeid, isNewTypeId, init, offset, endOffset);
+        		} 
+        		if (lt1 == IToken.tLPAREN) {
         			// (P)(T) ...
         			isNewTypeId= false;
         			consume(IToken.tLPAREN);
@@ -959,12 +963,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		typeid= null;
         	}
 
-        	int lt1= LT(1);
-        	if (typeid != null && plcmt != null && (lt1 == IToken.tLPAREN || lt1 == IToken.tLBRACE)) {        		
+        	if (typeid != null && plcmt != null) {
         		// (P)(T)(I) or (P) T (I)
-        		init= bracedOrCtorStyleInitializer();
-        		endOffset= calculateEndOffset(init);
-        		return newExpression(isGlobal, plcmt, typeid, isNewTypeId, init, offset, endOffset);
+            	int lt1= LT(1);
+            	if (lt1 == IToken.tEOC)
+            		return newExpression(isGlobal, plcmt, typeid, isNewTypeId, init, offset, endOffset);
+            	
+            	if (lt1 == IToken.tLPAREN || lt1 == IToken.tLBRACE) {        		
+            		init= bracedOrCtorStyleInitializer();
+            		endOffset= calculateEndOffset(init);
+            		return newExpression(isGlobal, plcmt, typeid, isNewTypeId, init, offset, endOffset);
+            	}
         	}
 
         	// (T) ...
@@ -976,7 +985,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		typeid2= typeId(DeclarationOptions.TYPEID);
         		endOffset2= consumeOrEOC(IToken.tRPAREN).getEndOffset();
         	
-            	lt1= LT(1);
+            	final int lt1= LT(1);
+            	if (lt1 == IToken.tEOC) 
+            		return newExpression(isGlobal, null, typeid2, false, init2, offset, endOffset2);
+            	
         		if (lt1 == IToken.tLPAREN || lt1 == IToken.tLBRACE) {
             		if (plcmt != null && 
             				ASTQueries.findTypeRelevantDeclarator(typeid2.getAbstractDeclarator()) instanceof IASTArrayDeclarator) {

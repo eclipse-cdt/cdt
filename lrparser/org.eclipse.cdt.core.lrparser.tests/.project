@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.cdt.core.parser.c99.tests</name>
+	<name>org.eclipse.cdt.core.lrparser.tests</name>
 	<comment></comment>
 	<projects>
 	</projects>

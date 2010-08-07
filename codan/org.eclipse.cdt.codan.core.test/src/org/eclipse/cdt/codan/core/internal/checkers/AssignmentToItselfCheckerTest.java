@@ -54,4 +54,14 @@ public class AssignmentToItselfCheckerTest extends CheckerTestCase {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(4);
 	}
+
+	// #define X a = 1
+	// void main() {
+	//    int a;
+	//    X;
+	// }
+	public void testNoError_Bug321933() {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
 }

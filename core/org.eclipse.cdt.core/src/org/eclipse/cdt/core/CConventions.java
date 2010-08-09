@@ -196,7 +196,6 @@ public class CConventions {
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateScopeName(String name) {
-
 		if (name == null) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_scope_nullName, null); 
 		}
@@ -230,6 +229,7 @@ public class CConventions {
 		}
 		return CModelStatus.VERIFIED_OK;
 	}
+
 	/**
 	 * Validate the given field name.
 	 * <p>
@@ -291,7 +291,7 @@ public class CConventions {
 	/**
 	 * Validate the given include name.
 	 * <p>
-	 * The name of an include without the surroounding double quotes or brakets
+	 * The name of an include without the surrounding double quotes or brackets
 	 * For example, <code>stdio.h</code> or <code>iostream</code>.
 	 *
 	 * @param name the include declaration
@@ -317,7 +317,7 @@ public class CConventions {
 	}
 
 	public static boolean isValidIdentifier(String name){
-		// create a scanner and get the type of the token
+		// Create a scanner and get the type of the token
 		// assuming that you are given a valid identifier
 		IToken token = null;
 		Lexer lexer= new Lexer(name.toCharArray(), new Lexer.LexerOptions(), ILexerLog.NULL, null);
@@ -365,7 +365,7 @@ public class CConventions {
 	 *      the name
 	 */
 	public static IStatus validateFileName(String name) {
-		//TODO could use a prefs option for file naming conventions
+		//TODO could use a preferences option for file naming conventions
 		if (name == null || name.length() == 0) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Messages.convention_filename_nullName, null); 
 		}
@@ -397,7 +397,7 @@ public class CConventions {
 	 *      the name
 	 */
 	public static IStatus validateHeaderFileName(IProject project, String name) {
-		//TODO could use a prefs option for header file naming conventions
+		//TODO could use a preferences option for header file naming conventions
 	    IStatus val = validateFileName(name);
 	    if (val.getSeverity() == IStatus.ERROR) {
 	        return val;
@@ -424,7 +424,7 @@ public class CConventions {
 	 *      the name
 	 */
 	public static IStatus validateSourceFileName(IProject project, String name) {
-		//TODO could use a prefs option for source file naming conventions
+		//TODO could use a preferences option for source file naming conventions
 	    IStatus val = validateFileName(name);
 	    if (val.getSeverity() == IStatus.ERROR) {
 	        return val;

@@ -551,6 +551,90 @@ conditional_expression
            /. $Build  consumeExpressionConditional();  $EndBuild ./
 
 
+--rules for template arguments, relational_expression needs brackets when it contains >
+
+relational_expression_inTemplate
+    ::= shift_expression
+      | relational_expression_inTemplate '<' shift_expression 
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_lessThan);  $EndBuild ./
+      | '(' relational_expression_inTemplate '>' shift_expression ')'
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_greaterThan);  $EndBuild ./
+      | relational_expression_inTemplate '<=' shift_expression
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_lessEqual);  $EndBuild ./
+      | relational_expression_inTemplate '>=' shift_expression
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_greaterEqual);  $EndBuild ./
+
+equality_expression_inTemplate
+    ::= relational_expression_inTemplate
+      | equality_expression_inTemplate '==' relational_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_equals);  $EndBuild ./
+      | equality_expression_inTemplate '!=' relational_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_notequals);  $EndBuild ./
+
+
+and_expression_inTemplate
+    ::= equality_expression_inTemplate
+      | and_expression_inTemplate '&' equality_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryAnd);  $EndBuild ./
+exclusive_or_expression_inTemplate
+    ::= and_expression_inTemplate
+      | exclusive_or_expression_inTemplate '^' and_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryXor);  $EndBuild ./
+
+
+inclusive_or_expression_inTemplate
+    ::= exclusive_or_expression_inTemplate
+      | inclusive_or_expression_inTemplate '|' exclusive_or_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryOr);  $EndBuild ./
+
+
+logical_and_expression_inTemplate
+    ::= inclusive_or_expression_inTemplate
+      | logical_and_expression_inTemplate '&&' inclusive_or_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_logicalAnd);  $EndBuild ./
+
+
+logical_or_expression_inTemplate
+    ::= logical_and_expression_inTemplate
+      | logical_or_expression_inTemplate '||' logical_and_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_logicalOr);  $EndBuild ./
+      
+
+conditional_expression_inTemplate
+    ::= logical_or_expression_inTemplate
+      | logical_or_expression_inTemplate '?' expression ':' assignment_expression_inTemplate
+           /. $Build  consumeExpressionConditional();  $EndBuild ./
+
+assignment_expression_inTemplate
+    ::= conditional_expression_inTemplate
+      | throw_expression
+      | logical_or_expression_inTemplate '=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_assign);  $EndBuild ./
+      | logical_or_expression_inTemplate '*=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_multiplyAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '/=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_divideAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '%=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_moduloAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '+=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_plusAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '-=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_minusAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '>>=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftRightAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '<<=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftLeftAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '&=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryAndAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '^=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryXorAssign);  $EndBuild ./
+      | logical_or_expression_inTemplate '|=' assignment_expression_inTemplate
+          /. $Build  consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryOrAssign);  $EndBuild ./
+
+
+
+
+--end of rules for template arguments
 throw_expression
     ::= 'throw'
           /. $Build  consumeExpressionThrow(false);  $EndBuild ./
@@ -1185,7 +1269,6 @@ type_specifier_seq
     ::= declaration_specifiers
 
 
-
 abstract_declarator
     ::= direct_abstract_declarator 
       | <openscope-ast> ptr_operator_seq 
@@ -1583,28 +1666,110 @@ type_parameter
           /. $Build  consumeTemplatedTypeTemplateParameter(true);  $EndBuild ./
 
 
-
 template_id_name
     ::= identifier_name '<' <openscope-ast> template_argument_list_opt '>'
           /. $Build  consumeTemplateId();  $EndBuild ./
+--        | ERROR_TOKEN
+--          /. $Build consumeTemplateIDError(); $EndBuild ./  
 
 
 template_argument_list
     ::= template_argument
-      | template_argument_list ',' template_argument
+       | template_argument_list ',' template_argument
 
 
 template_argument_list_opt
     ::= template_argument_list
       | $empty
       
+--type_id in template
+
+class_name_inTemplate
+    ::= identifier_name
+
+class_or_namespace_name_inTemplate -- just identifiers
+    ::= class_name_inTemplate
+      --| namespace_name -- namespace_name name can only be an identifier token, which is already accepted by 
+
+nested_name_specifier_inTemplate
+    ::= class_or_namespace_name_inTemplate '::' nested_name_specifier_with_template_inTemplate
+          /. $Build  consumeNestedNameSpecifier(true);  $EndBuild ./
+      | class_or_namespace_name_inTemplate '::' 
+          /. $Build  consumeNestedNameSpecifier(false);  $EndBuild ./
+      
+
+nested_name_specifier_with_template_inTemplate
+    ::= class_or_namespace_name_with_template_inTemplate '::' nested_name_specifier_with_template_inTemplate
+          /. $Build  consumeNestedNameSpecifier(true);  $EndBuild ./
+      | class_or_namespace_name_with_template_inTemplate '::' 
+          /. $Build  consumeNestedNameSpecifier(false);  $EndBuild ./
+
+      
+class_or_namespace_name_with_template_inTemplate
+    ::= template_opt class_or_namespace_name_inTemplate
+          /. $Build  consumeNameWithTemplateKeyword();  $EndBuild ./
+    
+nested_name_specifier_opt_inTemplate
+    ::= nested_name_specifier_inTemplate
+      | $empty
+           /. $Build  consumeNestedNameSpecifierEmpty();  $EndBuild ./
+
+
+type_name_inTemplate  -- all identifiers of some kind
+    ::= class_name_inTemplate
+
+-- last two rules moved here from simple_type_specifier
+type_name_specifier_inTemplate  -- all identifiers of some kind
+    ::= type_name_inTemplate
+--      | dcolon_opt nested_name_specifier_opt_inTemplate type_name_inTemplate
+--          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+--      | dcolon_opt nested_name_specifier_inTemplate 'template' template_id_name
+--          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      | 'typename' dcolon_opt nested_name_specifier identifier_name
+          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      | 'typename' dcolon_opt nested_name_specifier template_opt template_id_name
+          /. $Build  consumeQualifiedId(true);  $EndBuild ./
+      | 'typename' identifier_name
+
+type_name_declaration_specifiers_inTemplate
+    ::= type_name_specifier_inTemplate
+      | no_type_declaration_specifiers  type_name_specifier_inTemplate
+      | type_name_declaration_specifiers_inTemplate no_type_declaration_specifier
+
+
+          
+declaration_specifiers_inTemplate
+    ::= <openscope-ast> simple_declaration_specifiers
+          /. $Build  consumeDeclarationSpecifiersSimple();  $EndBuild ./
+      | <openscope-ast> class_declaration_specifiers
+          /. $Build  consumeDeclarationSpecifiersComposite();  $EndBuild ./
+      | <openscope-ast> elaborated_declaration_specifiers
+          /. $Build  consumeDeclarationSpecifiersComposite();  $EndBuild ./
+      | <openscope-ast> enum_declaration_specifiers
+          /. $Build  consumeDeclarationSpecifiersComposite();  $EndBuild ./
+      | <openscope-ast> type_name_declaration_specifiers_inTemplate
+          /. $Build  consumeDeclarationSpecifiersTypeName();  $EndBuild ./          
+          
+
+type_specifier_seq_inTemplate
+      ::= declaration_specifiers_inTemplate
+
+
+type_id_inTemplate
+    ::= type_specifier_seq_inTemplate
+          /. $Build  consumeTypeId(false);  $EndBuild ./
+      | type_specifier_seq_inTemplate abstract_declarator
+          /. $Build  consumeTypeId(true);  $EndBuild ./
+          
+--end type_id in template
+
 
 template_argument
-    ::= assignment_expression
-          /. $Build  consumeTemplateArgumentExpression();  $EndBuild ./
-      | type_id
+    ::= assignment_expression_inTemplate
+          /. $Build  consumeTemplateArgumentExpression();  $EndBuild ./  
+    | type_id_inTemplate
           /. $Build  consumeTemplateArgumentTypeId();  $EndBuild ./
-      --| qualified_or_unqualified_name -- accessible through assignment_expression
+
 
 explicit_instantiation
     ::= 'template' declaration

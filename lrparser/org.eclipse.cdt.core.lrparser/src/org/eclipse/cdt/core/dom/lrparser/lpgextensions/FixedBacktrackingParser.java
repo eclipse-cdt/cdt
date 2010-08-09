@@ -305,14 +305,11 @@ public class FixedBacktrackingParser extends Stacks
             current_kind = tokStream.getKind(curtok),
             act = tAction(stateStack[stateStackTop], current_kind);
 
-        int count = 0;
-
         //
         // The main driver loop
         //
         for (;;)
         {
-        	count++;
             //
             // if the parser needs to stop processing,
             // it may do so here.
@@ -393,8 +390,6 @@ public class FixedBacktrackingParser extends Stacks
         //System.out.println("****Number of actions: " + action.size());
         //System.out.println("****Max Stack Size = " + maxStackTop);
         //System.out.flush();
-        System.out.println("The backtrace parser count is: " + count );
-
         return (act == ERROR_ACTION ? error_token : 0);
     }
 

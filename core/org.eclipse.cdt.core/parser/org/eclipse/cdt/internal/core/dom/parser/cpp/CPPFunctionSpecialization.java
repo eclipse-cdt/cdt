@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,6 +98,18 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	public boolean isMutable() {
+		return false;
+	}
+
+	public boolean isDeleted() {
+		IASTNode def = getDefinition();
+		if (def != null)
+			return CPPFunction.isDeletedDefinition(def);
+		
+		IBinding f = getSpecializedBinding();
+		if (f instanceof ICPPFunction) {
+			return ((ICPPFunction) f).isDeleted();
+		}
 		return false;
 	}
 

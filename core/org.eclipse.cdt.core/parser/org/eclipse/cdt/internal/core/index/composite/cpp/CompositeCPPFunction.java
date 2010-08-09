@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,10 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 	public ICPPFunctionType getType() throws DOMException {
 		IType rtype = ((ICPPFunction)rbinding).getType();
 		return (ICPPFunctionType) cf.getCompositeType(rtype);
+	}
+
+	public boolean isDeleted() {
+		return ((ICPPFunction)rbinding).isDeleted();
 	}
 
 	public boolean isAuto() throws DOMException {

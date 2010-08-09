@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Models a function definition without a try-block. If used for a constructor definition it may contain
@@ -39,6 +38,8 @@ public class CPPASTFunctionDefinition extends ASTNode implements
     private IASTStatement bodyStatement;
     private ICPPASTConstructorChainInitializer[] memInits = null;
     private int memInitPos= -1;
+    private boolean fDeleted= false;
+    private boolean fDefaulted= false;
 
 
     public CPPASTFunctionDefinition() {
@@ -56,9 +57,9 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy());
 		
 		if(declarator != null) {
-			IASTDeclarator outer = CVisitor.findOutermostDeclarator(declarator);
+			IASTDeclarator outer = ASTQueries.findOutermostDeclarator(declarator);
 			outer = outer.copy();
-			copy.setDeclarator((IASTFunctionDeclarator)CVisitor.findTypeRelevantDeclarator(outer));
+			copy.setDeclarator((IASTFunctionDeclarator)ASTQueries.findTypeRelevantDeclarator(outer));
 		}	
 		
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy());
@@ -66,6 +67,8 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		for(ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
 			copy.addMemberInitializer(initializer == null ? null : initializer.copy());
 		
+		copy.fDefaulted= fDefaulted;
+		copy.fDeleted= fDeleted;
 		copy.setOffsetAndLength(this);
 		return copy;
 	}
@@ -91,7 +94,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
         assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
-        	IASTDeclarator outerDtor= CPPVisitor.findOutermostDeclarator(declarator);
+        	IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
         	outerDtor.setParent(this);
         	outerDtor.setPropertyInParent(DECLARATOR);
 		}
@@ -132,7 +135,25 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		return ((ICPPASTFunctionDeclarator)declarator).getFunctionScope();
 	}
 
-    @Override
+	public boolean isDefaulted() {
+		return fDefaulted;
+	}
+
+	public boolean isDeleted() {
+		return fDeleted;
+	}
+
+	public void setIsDefaulted(boolean isDefaulted) {
+		assertNotFrozen();
+		fDefaulted= isDefaulted;
+	}
+
+	public void setIsDeleted(boolean isDeleted) {
+		assertNotFrozen();
+		fDeleted= isDeleted;
+	}
+
+	@Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclarations) {
 			switch (action.visit(this)) {
@@ -148,7 +169,7 @@ public class CPPASTFunctionDefinition extends ASTNode implements
 		if (declSpecifier != null && !declSpecifier.accept(action))
 			return false;
 
-		final IASTDeclarator outerDtor = CPPVisitor.findOutermostDeclarator(declarator);
+		final IASTDeclarator outerDtor = ASTQueries.findOutermostDeclarator(declarator);
 		if (outerDtor != null && !outerDtor.accept(action))
 			return false;
 

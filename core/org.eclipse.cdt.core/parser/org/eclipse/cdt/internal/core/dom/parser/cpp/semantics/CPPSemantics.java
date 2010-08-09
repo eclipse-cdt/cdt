@@ -3260,35 +3260,40 @@ public class CPPSemantics {
         IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
         if (!map.isEmpty()) {
             char[] key = null;
-            Object obj = null;
             int size = map.size(); 
             for (int i = 0; i < size; i++) {
                 key = map.keyAt(i);
-                obj = map.get(key);
-                if (obj instanceof IBinding) {
-                    result = ArrayUtil.append(result, (IBinding) obj);
-                } else if (obj instanceof IASTName) {
-					IBinding binding = ((IASTName) obj).resolveBinding();
-                    if (binding != null && !(binding instanceof IProblemBinding))
-                        result = ArrayUtil.append(result, binding);
-                } else if (obj instanceof Object[]) {
-					Object[] objs = (Object[]) obj;
-					for (int j = 0; j < objs.length && objs[j] != null; j++) {
-						Object item = objs[j];
-						if (item instanceof IBinding) {
-		                    result = ArrayUtil.append(result, (IBinding) item);
-						} else if (item instanceof IASTName) {
-							IBinding binding = ((IASTName) item).resolveBinding();
-		                    if (binding != null && !(binding instanceof IProblemBinding))
-		                        result = ArrayUtil.append(result, binding);
-		                }
-					}
-                }
+                result = addContentAssistBinding(result, map.get(key));
             }
         }
-
         return ArrayUtil.trim(result);
     }
+
+	public static IBinding[] addContentAssistBinding(IBinding[] result, Object obj) {
+		if (obj instanceof Object[]) {
+			for (Object	o : (Object[]) obj) {
+				result= addContentAssistBinding(result, o);
+			}
+			return result;
+		}
+		
+        if (obj instanceof IASTName) {
+            return addContentAssistBinding(result, ((IASTName) obj).resolveBinding());
+        }
+        
+        if (obj instanceof IBinding && !(obj instanceof IProblemBinding)) {
+        	final IBinding binding = (IBinding) obj;
+        	if (binding instanceof ICPPFunction) {
+        		final ICPPFunction function = (ICPPFunction) binding;
+				if (function.isDeleted()) {
+        			return result;
+        		}
+        	}
+			return ArrayUtil.append(result, binding);
+        }
+        
+        return result;
+	}
 
     private static IBinding[] standardLookup(LookupData data, IScope start) {
     	try {

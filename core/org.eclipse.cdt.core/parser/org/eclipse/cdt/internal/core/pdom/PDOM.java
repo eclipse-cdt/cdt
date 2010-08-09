@@ -199,10 +199,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  CDT 8.0 development (versions not supported on the 7.0.x branch)
 	 *  110.0 - update index on encoding change, bug 317435.
 	 *  111.0 - correct marshalling of basic types, bug 319186.
+	 *  111.1 - defaulted and deleted functions, bug 305978
 	 */
 	private static final int MIN_SUPPORTED_VERSION= version(111, 0);
 	private static final int MAX_SUPPORTED_VERSION= version(111, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(111, 0);
+	private static final int DEFAULT_VERSION = version(111, 1);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

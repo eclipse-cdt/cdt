@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,4 +43,28 @@ public interface ICPPASTFunctionDefinition extends IASTFunctionDefinition {
 	 * @since 5.1
 	 */
 	public ICPPASTFunctionDefinition copy();
+
+	/**
+	 * Make this a defaulted function definition, e.g.: C::C() = default;
+	 * @since 5.3
+	 */
+	public void setIsDefaulted(boolean isDefaulted);
+
+	/**
+	 * Returns whether this is a defaulted function definition.
+	 * @since 5.3
+	 */
+	public boolean isDefaulted();
+
+	/**
+	 * Make this a deleted function definition, e.g.: void f() = delete;
+	 * @since 5.3
+	 */
+	public void setIsDeleted(boolean isDeleted);
+
+	/**
+	 * Returns whether this is a deleted function definition.
+	 * @since 5.3
+	 */
+	public boolean isDeleted();
 }

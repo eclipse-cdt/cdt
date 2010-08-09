@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,8 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverloader {
 
-	private static final short ANNOT_PARAMETER_PACK = 0x100;
+	private static final short ANNOT_PARAMETER_PACK = 8;
+	private static final short ANNOT_IS_DELETED = 9;
 
 	/**
 	 * Offset of total number of function parameters (relative to the
@@ -101,7 +102,10 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	private short getAnnotation(ICPPFunction function) throws DOMException {
 		int annot= PDOMCPPAnnotation.encodeAnnotation(function);
 		if (function.hasParameterPack()) {
-			annot |= ANNOT_PARAMETER_PACK;
+			annot |= (1<<ANNOT_PARAMETER_PACK);
+		}
+		if (function.isDeleted()) {
+			annot |= (1<<ANNOT_IS_DELETED);
 		}
 		return (short) annot;
 	}
@@ -319,6 +323,10 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return false; 
 	}
 
+	public boolean isDeleted() {
+		return getBit(getAnnotation(), ANNOT_IS_DELETED);
+	}
+	
 	public boolean isExtern() {
 		return getBit(getAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}

@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -66,6 +65,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		}
 		public boolean isGloballyQualified() throws DOMException {
 			throw new DOMException(this);
+		}
+		public boolean isDeleted() {
+			return false;
 		}
 		public boolean isMutable() throws DOMException {
 			throw new DOMException(this);
@@ -311,7 +313,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 	}
 
     public boolean isMutable() {
-        return hasStorageClass(ICPPASTDeclSpecifier.sc_mutable);
+        return hasStorageClass(IASTDeclSpecifier.sc_mutable);
     }
 
     public boolean isInline() throws DOMException {
@@ -360,6 +362,10 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
     public boolean isExtern() {
         return hasStorageClass(IASTDeclSpecifier.sc_extern);
     }
+
+	public boolean isDeleted() {
+		return CPPFunction.isDeletedDefinition(getDefinition());
+	}
 
     public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);

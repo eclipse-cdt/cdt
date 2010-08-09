@@ -1972,6 +1972,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_try:
         case IToken.tCOLON:
         case IToken.tLBRACE:
+        case IToken.tASSIGN: // defaulted or deleted function definition
         	if (declarators.length != 1)
         		throwBacktrack(LA(1));
         	
@@ -2050,6 +2051,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		} else {
 			fdef= nodeFactory.newFunctionDefinition(declSpec, (ICPPASTFunctionDeclarator) dtor, null); 
 		}
+		if (LT(1) == IToken.tASSIGN) {
+			consume();
+			IToken kind= consume();
+			switch(kind.getType()) {
+			case IToken.t_default:
+				fdef.setIsDefaulted(true);
+				break;
+			case IToken.t_delete:
+				fdef.setIsDeleted(true);
+				break;
+			default:
+				throwBacktrack(kind);
+			}
+			return adjustEndOffset(fdef, consume(IToken.tSEMI).getEndOffset());
+		}
+
 		if (LT(1) == IToken.tCOLON) {
 		    ctorInitializer(fdef);
 		}
@@ -2708,8 +2725,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				//$FALL-THROUGH$
 			case IToken.t_throw: case IToken.t_try:
     		case IToken.t_const: case IToken.t_volatile:
-    		case IToken.tARROW:
-    			if (ASTQueries.findTypeRelevantDeclarator(dtor1) instanceof IASTFunctionDeclarator) {
+    		case IToken.tASSIGN: // defaulted or deleted function definition
+    			if (option == DeclarationOptions.TYPEID_TRAILING_RETURN_TYPE ||
+    					ASTQueries.findTypeRelevantDeclarator(dtor1) instanceof IASTFunctionDeclarator) {
     				return dtor1;
     			} else {
     				dtor1= null;
@@ -2904,6 +2922,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	
     	// = initializer-clause
         if (lt1 == IToken.tASSIGN) {
+        	// Check for deleted or defaulted function syntax.
+        	final int lt2= LTcatchEOF(2);
+        	if (lt2 == IToken.t_delete || lt2 == IToken.t_default)
+        		return null;
+        	
             int offset= consume().getOffset();
             IASTInitializerClause initClause = initClause(LT(1) == IToken.tLBRACE);
             IASTEqualsInitializer initExpr= nodeFactory.newEqualsInitializer(initClause);

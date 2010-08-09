@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -8648,5 +8649,38 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(ors[0], m0);
 		ors= ClassTypeHelper.findOverridden(m3);
 		assertEquals(0, ors.length);
+	}
+	
+	//	struct X {
+	//		X();
+	//	};
+	//	X::X() = default;
+	//	int f(int) = delete;
+	//	auto g() -> int = delete;
+	public void testDefaultedAndDeletedFunctions_305978() throws Exception {
+		String code= getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code);
+		
+		ICPPASTFunctionDefinition f= getDeclaration(tu, 1);
+		assertTrue(f.isDefaulted());
+		assertFalse(f.isDeleted());
+		
+		f= getDeclaration(tu, 2);
+		assertFalse(f.isDefaulted());
+		assertTrue(f.isDeleted());
+
+		f= getDeclaration(tu, 3);
+		assertFalse(f.isDefaulted());
+		assertTrue(f.isDeleted());
+		
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPFunction fb= bh.assertNonProblem("X() =", 1);
+		assertFalse(fb.isDeleted());
+
+		fb= bh.assertNonProblem("f(int)", 1);
+		assertTrue(fb.isDeleted());
+
+		fb= bh.assertNonProblem("g()", 1);
+		assertTrue(fb.isDeleted());
 	}
 }

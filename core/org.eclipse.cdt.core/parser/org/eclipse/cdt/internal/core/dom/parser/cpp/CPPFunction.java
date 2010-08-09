@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -84,7 +85,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         public boolean isGloballyQualified() throws DOMException {
             throw new DOMException(this);
         }
-        public boolean isMutable() throws DOMException {
+		public boolean isDeleted() {
+			return false;
+		}
+		public boolean isMutable() throws DOMException {
             throw new DOMException(this);
         }
         public boolean isInline() throws DOMException {
@@ -471,7 +475,21 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
 	}
 	
-    public boolean isMutable() {
+	public boolean isDeleted() {
+		return isDeletedDefinition(getDefinition());
+	}
+
+	public static boolean isDeletedDefinition(IASTNode def) {
+		while (def != null && !(def instanceof IASTDeclaration)) {
+			def= def.getParent();
+		}
+		if (def instanceof ICPPASTFunctionDefinition) {
+			return ((ICPPASTFunctionDefinition) def).isDeleted();
+		}
+		return false;
+	}
+
+	public boolean isMutable() {
         return false;
     }
 

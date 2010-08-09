@@ -72,7 +72,8 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	protected static final int RECORD_SIZE = REQUIRED_ARG_COUNT_OFFSET + 4;
 
 	
-	private static final short ANNOT_HAS_PACK = 0x100;
+	private static final short ANNOT_PARAMETER_PACK = 8;
+	private static final short ANNOT_IS_DELETED = 9;
 
 	private ICPPFunctionType fType;
 	private short fAnnotation= -1;
@@ -138,7 +139,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	private short getAnnotation(ICPPFunction astFunction) throws DOMException {
 		int annot= PDOMCPPAnnotation.encodeAnnotation(astFunction);
 		if (astFunction.hasParameterPack()) {
-			annot |= ANNOT_HAS_PACK;
+			annot |= (1 << ANNOT_PARAMETER_PACK);
 		}
 		return (short) annot;
 	}
@@ -254,7 +255,11 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	public boolean hasParameterPack() {
-		return getBit(readAnnotation(), ANNOT_HAS_PACK);
+		return getBit(readAnnotation(), ANNOT_PARAMETER_PACK);
+	}
+
+	public boolean isDeleted() {
+		return getBit(readAnnotation(), ANNOT_IS_DELETED);
 	}
 
 	public boolean isConst() {

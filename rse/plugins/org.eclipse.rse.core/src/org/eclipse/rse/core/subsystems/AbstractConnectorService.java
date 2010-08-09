@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -19,6 +19,7 @@
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David McKnight (IBM) - [249222] [api] Access to communication listeners in AbstractConnectorService
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
+ * David Dykstal (IBM) - [321766] safely serialize connect and disconnect operations
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 

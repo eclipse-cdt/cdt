@@ -13,13 +13,20 @@
 package org.eclipse.cdt.debug.ui.editors;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
@@ -200,7 +207,26 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 						int length = hoverRegion.getLength();
 						IASTName name= ast.getNodeSelector(null).findEnclosingName(offset, length);
 						if (name != null) {
-							computeExpressionExtent(name, expressionPosition);
+						    IASTImageLocation imageLoc = name.getImageLocation();
+						    int kind = imageLoc.getLocationKind();
+						    switch (kind) {
+                            case IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION:
+                                computeMacroArgumentExtent(expressionPosition, name);
+                                break;
+                            default:
+                                if (name.getParent() instanceof IASTPreprocessorMacroExpansion) {
+                                    // special case: macro expansion as expression
+                                    IASTNode node = ast.getNodeSelector(null).findEnclosingNodeInExpansion(imageLoc.getNodeOffset(), imageLoc.getNodeLength());
+                                    if (node instanceof IASTExpression) {
+                                        IASTFileLocation exprLoc = node.getFileLocation();
+                                        if (exprLoc.getNodeOffset() == imageLoc.getNodeOffset()) {
+                                            computeExpressionExtent(node, expressionPosition);
+                                        }
+                                    }
+                                } else {
+                                    computeExpressionExtent(name, expressionPosition);
+                                }
+						    }
 						} else {
 							// not a name, but might still be an expression (e.g. this)
 							IASTNode node = ast.getNodeSelector(null).findFirstContainedNode(offset, length);
@@ -211,24 +237,65 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 					}
 					return Status.OK_STATUS;
 				}
+				
+                private void computeMacroArgumentExtent(final Position pos, IASTName name) {
+                    IASTImageLocation imageLoc = name.getImageLocation();
+                    int startOffset = imageLoc.getNodeOffset();
+                    int endOffset = startOffset + imageLoc.getNodeLength();
+                    // do some black magic to consider field reference expressions
+                    IASTNode expr = name.getParent();
+                    int macroOffset = name.getFileLocation().getNodeOffset();
+                    if (expr instanceof IASTFieldReference) {
+                        IASTExpression ownerExpr= ((IASTFieldReference) expr).getFieldOwner();
+                        while (ownerExpr instanceof IASTFieldReference || ownerExpr instanceof IASTArraySubscriptExpression) {
+                            if (ownerExpr instanceof IASTArraySubscriptExpression) {
+                                ownerExpr = ((IASTArraySubscriptExpression) ownerExpr).getArrayExpression();
+                            } else {
+                                ownerExpr= ((IASTFieldReference) ownerExpr).getFieldOwner();
+                            }
+                        }
+                        if (ownerExpr instanceof IASTIdExpression) {
+                            IASTName ownerName = ((IASTIdExpression) ownerExpr).getName();
+                            IASTImageLocation ownerImageLoc = ownerName.getImageLocation();
+                            final int nameOffset= ownerImageLoc.getNodeOffset();
+                            // offset should be inside macro expansion
+                            if (nameOffset < startOffset && nameOffset > macroOffset) {
+                                startOffset = nameOffset;
+                            }
+                        }
+                    }
+                    ExpressionChecker checker = new ExpressionChecker();
+                    if (checker.check(expr)) {
+                        pos.offset = startOffset;
+                        pos.length = endOffset - startOffset;
+                    }
+                }
 				private void computeExpressionExtent(IASTNode node0, Position pos) {
 					IASTNode node = node0;
 					while (node != null && !(node instanceof IASTExpression) && !(node instanceof IASTDeclaration)) {
 						node = node.getParent();
 					}
-					if (node instanceof IASTExpression) {
+                    IASTNodeLocation loc = null;
+					if (node instanceof IASTExpression && !(node instanceof IASTIdExpression)) {
 						ExpressionChecker checker = new ExpressionChecker();
 						if (checker.check(node)) {
-							IASTNodeLocation loc = node.getFileLocation();
-							pos.offset = loc.getNodeOffset();
-							pos.length = loc.getNodeLength();
+							loc = node.getFileLocation();
 						}
 					} else if (node0 instanceof IASTName) {
 						// fallback: use simple name
-						IASTNodeLocation loc = node0.getFileLocation();
-						pos.offset = loc.getNodeOffset();
-						pos.length = loc.getNodeLength();
+						loc = ((IASTName) node0).getImageLocation();
+						if (loc == null) {
+						    IASTNodeLocation[] locations = node0.getNodeLocations();
+						    // avoid macro expansions
+						    if (locations.length == 1 && !(locations[0] instanceof IASTMacroExpansionLocation)) {
+						        loc = locations[0];
+						    }
+						}
 					}
+                    if (loc != null) {
+                        pos.offset = loc.getNodeOffset();
+                        pos.length = loc.getNodeLength();
+                    }
 				}
 			};
 			job.setPriority(Job.SHORT);

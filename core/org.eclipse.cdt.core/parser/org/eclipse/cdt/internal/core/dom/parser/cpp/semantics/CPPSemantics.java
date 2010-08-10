@@ -2920,6 +2920,9 @@ public class CPPSemantics {
 		
 		final IASTExpression op1 = exp.getOperand1();
 		final IASTExpression op2 = exp.getOperand2();
+		if(op2==null){
+			return null;
+		}
 		IType op1type = getNestedType(op1.getExpressionType(), TDEF | REF | CVTYPE);
 		IType op2type = getNestedType(op2.getExpressionType(), TDEF | REF | CVTYPE);
 		if (!isUserDefined(op1type) && !isUserDefined(op2type))

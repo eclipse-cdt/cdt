@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -63,12 +63,11 @@ public class ChangeBuildConfigActionBase {
 		for (MenuItem item2 : items)
 			item2.dispose();
 		
-		List<String> configNames = new ArrayList<String>();
-		Iterator<IProject> projIter = fProjects.iterator();
+		SortedSet<String> configNames = new TreeSet<String>();
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
-		while (projIter.hasNext()) {
-			ICConfigurationDescription[] cfgDescs = getCfgs(projIter.next());
+		for (IProject prj : fProjects) {
+			ICConfigurationDescription[] cfgDescs = getCfgs(prj);
 
 			String sActiveConfig = null;
 			// Store names and detect active configuration
@@ -91,17 +90,14 @@ public class ChangeBuildConfigActionBase {
 			}
 		}
 		
-		Iterator<String> confIter = configNames.iterator();
 		int accel = 0;
-		while (confIter.hasNext()) {
-			String sName = confIter.next();
+		for (String sName : configNames) {
 			String sDesc = null;
-			projIter = fProjects.iterator();
 			boolean commonName = true;
 			boolean commonDesc = true;
 			boolean firstProj = true;
-			while (projIter.hasNext()) {
-				ICConfigurationDescription[] cfgDescs = getCfgs(projIter.next());
+			for (IProject prj : fProjects) {
+				ICConfigurationDescription[] cfgDescs = getCfgs(prj);
 				int i = 0;
 				for (; i < cfgDescs.length; i++) {
 					if (cfgDescs[i].getName().equals(sName)) {

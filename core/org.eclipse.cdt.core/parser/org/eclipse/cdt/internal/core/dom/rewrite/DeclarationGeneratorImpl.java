@@ -100,9 +100,16 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				returnedDeclSpec.setVolatile(true);
 			}
 		} else if (type instanceof IBasicType) {
-			Kind kind = ((IBasicType) type).getKind();
+			IBasicType basicType = (IBasicType) type;
 			IASTSimpleDeclSpecifier declSpec = factory.newSimpleDeclSpecifier();
-			declSpec.setType(kind);
+			declSpec.setType(basicType.getKind());
+			declSpec.setComplex(basicType.isComplex());
+			declSpec.setImaginary(basicType.isImaginary());
+			declSpec.setShort(basicType.isShort());
+			declSpec.setLong(basicType.isLong());
+			declSpec.setLongLong(basicType.isLongLong());
+			declSpec.setSigned(basicType.isSigned());
+			declSpec.setUnsigned(basicType.isUnsigned());
 			returnedDeclSpec = declSpec;
 		} else if (type instanceof IBinding) { /* ITypedef, ICompositeType... */
 			// BTW - we need to distinguish (and fail explicitly) on literal composites like:

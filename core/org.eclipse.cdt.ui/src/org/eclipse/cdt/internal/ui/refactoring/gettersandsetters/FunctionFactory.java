@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -128,12 +129,17 @@ public class FunctionFactory {
 		CPPASTLiteralExpression litExpr = new CPPASTLiteralExpression();
 		litExpr.setValue(Keywords.cTHIS); 
 		fieldRef.setFieldOwner(litExpr);
-		fieldRef.setFieldName(fieldDeclaration.getDeclarators()[0].getName().copy());
+		IASTDeclarator innerDeclarator = fieldDeclaration.getDeclarators()[0];
+		while (innerDeclarator.getNestedDeclarator() != null) {
+			innerDeclarator = innerDeclarator.getNestedDeclarator();
+		}
+		IASTName fieldName = innerDeclarator.getName();
+		fieldRef.setFieldName(fieldName.copy());
 		fieldRef.setIsPointerDereference(true);
 		binExpr.setOperand1(fieldRef);
 		binExpr.setOperator(IASTBinaryExpression.op_assign);
 		CPPASTIdExpression idExpr = new CPPASTIdExpression();
-		idExpr.setName(fieldDeclaration.getDeclarators()[0].getName().copy());
+		idExpr.setName(fieldName.copy());
 		binExpr.setOperand2(idExpr);
 		exprStmt.setExpression(binExpr);
 		compound.addStatement(exprStmt);

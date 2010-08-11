@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -52,7 +53,11 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	
 	@Override
 	public String toString(){
-		return functionDeclaration.getDeclarators()[0].getName().toString();
+		IASTDeclarator declarator = functionDeclaration.getDeclarators()[0];
+		while (declarator.getNestedDeclarator() != null) {
+			declarator = declarator.getNestedDeclarator();
+		}
+		return declarator.getName().toString();
 	}
 
 	public IASTFunctionDefinition getFunctionDefinition(boolean qualifedName) {

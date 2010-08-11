@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -55,12 +56,12 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 	}
 
 	public GetterSetterInsertEditProvider createGetterInserter(IASTSimpleDeclaration simpleDeclaration) {
-		String varName = simpleDeclaration.getDeclarators()[0].getName().toString();
+		String varName = getFieldDeclarationName(simpleDeclaration).toString();
 		return new GetterSetterInsertEditProvider(varName, simpleDeclaration, Type.getter);
 	}
 
 	public GetterSetterInsertEditProvider createSetterInserter(IASTSimpleDeclaration simpleDeclaration) {
-		String varName = simpleDeclaration.getDeclarators()[0].getName().toString();
+		String varName = getFieldDeclarationName(simpleDeclaration).toString();
 		return new GetterSetterInsertEditProvider(varName, simpleDeclaration, Type.setter);
 	}
 
@@ -114,17 +115,25 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 
 	private FunctionWrapper getGetterForField(IASTSimpleDeclaration currentField) {
 		FunctionWrapper wrapper = new FunctionWrapper();
-		String trimmedName = NameHelper.trimFieldName(currentField.getDeclarators()[0].getName().toString());
+		String trimmedName = NameHelper.trimFieldName(getFieldDeclarationName(currentField).toString());
 		String getterName = "get" + NameHelper.makeFirstCharUpper(trimmedName); //$NON-NLS-1$
 		
 		setFunctionToWrapper(wrapper, getterName);
 		
 		return wrapper;
 	}
+
+	private IASTName getFieldDeclarationName(IASTSimpleDeclaration fieldDeclaration) {
+		IASTDeclarator declarator = fieldDeclaration.getDeclarators()[0];
+		while (declarator.getNestedDeclarator() != null) {
+			declarator = declarator.getNestedDeclarator();
+		}
+		return declarator.getName();
+	}
 	
 	private FunctionWrapper getSetterForField(IASTSimpleDeclaration currentField) {
 		FunctionWrapper wrapper = new FunctionWrapper();
-		String trimmedName = NameHelper.trimFieldName(currentField.getDeclarators()[0].getName().toString());
+		String trimmedName = NameHelper.trimFieldName(getFieldDeclarationName(currentField).toString());
 		String setterName = "set" + NameHelper.makeFirstCharUpper(trimmedName); //$NON-NLS-1$
 		
 		setFunctionToWrapper(wrapper, setterName);
@@ -139,7 +148,7 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 		}
 		
 		for(IASTSimpleDeclaration currentDeclaration : existingFunctionDeclarations){
-			if(currentDeclaration.getDeclarators()[0].getName().toString().endsWith(getterName)){
+			if(getFieldDeclarationName(currentDeclaration).toString().endsWith(getterName)){
 				wrapper.functionDeclaration = currentDeclaration;
 			}
 		}
@@ -154,7 +163,11 @@ public class GetterAndSetterContext implements ITreeContentProvider{
 		
 		@Override
 		public String toString(){
-			return field.getDeclarators()[0].getName().toString();
+			IASTDeclarator declarator = field.getDeclarators()[0];
+			while (declarator.getNestedDeclarator() != null) {
+				declarator = declarator.getNestedDeclarator();
+			}
+			return declarator.getName().toString();
 		}
 
 		public ArrayList<GetterSetterInsertEditProvider> getChildNodes() {

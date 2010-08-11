@@ -478,16 +478,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		IASTExpression expr = (IASTExpression) astStack.peek();
 		
 		if(expr instanceof IASTIdExpression) {
-			IASTName orgName =((IASTIdExpression)expr).getName();
-			IASTName name = null;
-			try{
-			 name = orgName.copy();
-			 //if there is node throws UnsupportedOperationException in copy, just use the original node
-			} catch(UnsupportedOperationException ue){
-				name = orgName;
-			}
-			
-			ParserUtil.setOffsetAndLength(name, expr);
+			IASTName name = ((IASTIdExpression)expr).getName().copy();
 			
 			IASTNamedTypeSpecifier declSpec = nodeFactory.newTypedefNameSpecifier(name);
 			ParserUtil.setOffsetAndLength(declSpec, name);

@@ -85,7 +85,21 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 
 
 	public IASTNode copy() {
-		throw new UnsupportedOperationException();
+		
+		int sizeOfNodes = fNodes.size();
+		IASTNode[] copyNodes = new IASTNode[sizeOfNodes];
+		int arrayIndex = 0;
+		for(IASTNode node : fNodes) {
+			if(node!=null){
+				copyNodes[arrayIndex]=node.copy();
+			}else{
+				copyNodes[arrayIndex]=null;
+			}
+			arrayIndex++;
+		}
+		
+		ICPPASTAmbiguousTemplateArgument ambiguityNode = new CPPASTAmbiguousTemplateArgument(copyNodes);
+		return ambiguityNode;
 	}
 	
 	@Override

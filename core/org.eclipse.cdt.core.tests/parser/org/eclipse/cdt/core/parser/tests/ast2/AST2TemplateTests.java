@@ -5006,6 +5006,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		}
 		code.append("int_<0> >::type tdef;");
 		IASTTranslationUnit tu= parse(code.toString(), ParserLanguage.CPP, true, true);
+		tu = validateCopy(tu);
 		assertEquals(1, tu.getDeclarations().length);
 	}
 }

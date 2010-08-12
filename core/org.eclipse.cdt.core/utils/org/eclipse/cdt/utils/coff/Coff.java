@@ -397,6 +397,40 @@ public class Coff {
 		public final static int N_BTSHFT = 4;
 		public final static int N_TSHIFT = 2;
 
+		/** @since 5.3 */
+		public final static int T_NULL = 0x00;		/* No symbol                                       */
+		/** @since 5.3 */
+		public final static int T_VOID 	 = 0x01;	/* -- 0001 	void function argument (not used)      */
+		/** @since 5.3 */
+		public final static int T_CHAR 	 = 0x02;	/* -- 0010 	character                              */
+		/** @since 5.3 */
+		public final static int T_SHORT  = 0x03;	/* -- 0011 	short integer                          */
+		/** @since 5.3 */
+		public final static int T_INT 	 = 0x04;	/* -- 0100 	integer                                */
+		/** @since 5.3 */
+		public final static int T_LONG 	 = 0x05;	/* -- 0101 	long integer                           */
+		/** @since 5.3 */
+		public final static int T_FLOAT  = 0x06;	/* -- 0110 	floating point                         */
+		/** @since 5.3 */
+		public final static int T_DOUBLE = 0x07;	/* -- 0111 	double precision float                 */
+		/** @since 5.3 */
+		public final static int T_STRUCT = 0x08; 	/* -- 1000 	structure                              */
+		/** @since 5.3 */
+		public final static int T_UNION  = 0x09;	/* -- 1001 	union                                  */
+		/** @since 5.3 */
+		public final static int T_ENUM 	 = 0x10;	/* -- 1010 	enumeration                            */
+		/** @since 5.3 */
+		public final static int T_MOE 	 = 0x11;	/* -- 1011 	member of enumeration                  */
+		/** @since 5.3 */
+		public final static int T_UCHAR  = 0x12;	/* -- 1100 	unsigned character                     */
+		/** @since 5.3 */
+		public final static int T_USHORT = 0x13; 	/* -- 1101 	unsigned short                         */
+		/** @since 5.3 */
+		public final static int T_UINT 	 = 0x14;	/* -- 1110 	unsigned integer                       */
+		/** @since 5.3 */
+		public final static int T_ULONG  = 0x15;	/* -- 1111 	unsigned long                          */
+		/** @since 5.3 */
+		public final static int T_LNGDBL = 0x16; 	/* -1 0000 	long double (special case bit pattern) */
 
 		public byte[] _n_name = new byte[SYMNMLEN]; /* Symbol name, or pointer into
 								string table if symbol name
@@ -458,6 +492,11 @@ public class Coff {
 			return getName();
 		}
 
+		/** @since 5.3 */
+		public boolean isNoSymbol() {
+			return (n_type == T_NULL);
+		}
+		
 		public boolean isPointer() {
 			return (n_type & N_TMASK) == (DT_PTR << N_BTSHFT);
 		}

@@ -41,6 +41,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLISource;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIThread;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIAddInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCommands;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCondition;
@@ -94,6 +95,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIRemoveInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackInfoDepth;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListArguments;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackListFrames;
@@ -136,6 +138,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoSharedLibraryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoThreadsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataDisassembleInfo;
@@ -252,6 +255,11 @@ public class CommandFactory {
 		return new CLIUnsetEnv(ctx, name);
 	}
 
+	/** @since 4.0 */
+	public ICommand<MIAddInferiorInfo> createMIAddInferior(ICommandControlDMContext ctx) {
+		return new MIAddInferior(ctx);
+	}
+	
 	public ICommand<MIInfo> createMIBreakAfter(IBreakpointsTargetDMContext ctx, int breakpoint, int ignoreCount) {
 		return new MIBreakAfter(ctx, breakpoint, ignoreCount);
 	}
@@ -590,6 +598,11 @@ public class CommandFactory {
 
 	public ICommand<MIListThreadGroupsInfo> createMIListThreadGroups(ICommandControlDMContext ctx, boolean listAll) {
 		return new MIListThreadGroups(ctx, listAll);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIRemoveInferior(ICommandControlDMContext ctx, String groupId) {
+		return new MIRemoveInferior(ctx, groupId);
 	}
 
 	public ICommand<MIStackInfoDepthInfo> createMIStackInfoDepth(IMIExecutionDMContext ctx) {

@@ -284,4 +284,10 @@ public interface IIndexFragment {
 	 * Clears the result cache.
 	 */
 	void clearResultCache();
+
+	/**
+	 * Returns the global inline namespaces.
+	 * @throws CoreException 
+	 */
+	IIndexScope[] getInlineNamespaces() throws CoreException;
 }

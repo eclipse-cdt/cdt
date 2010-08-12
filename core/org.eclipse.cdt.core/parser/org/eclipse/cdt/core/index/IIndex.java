@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -393,4 +394,11 @@ public interface IIndex {
 	 * linkages, or in multiple fragments only one of the files will be returned.
 	 */
 	public IIndexFile[] getAllFiles() throws CoreException;
+
+	/**
+	 * Returns the global inline c++ namespaces.
+	 * @throws CoreException 
+	 * @since 5.3
+	 */
+	public IScope[] getInlineNamespaces() throws CoreException;
 }

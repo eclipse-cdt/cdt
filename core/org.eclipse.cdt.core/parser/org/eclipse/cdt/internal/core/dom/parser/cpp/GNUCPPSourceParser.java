@@ -1810,6 +1810,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_inline:
         	if (supportExtendedTemplateSyntax && LT(2) == IToken.t_template)
                 return templateDeclaration(option);
+        	if (LT(2) == IToken.t_namespace) {
+        		return namespaceDefinitionOrAlias();
+        	}
         	break;
         case IToken.tSEMI:
         	IToken t= consume();
@@ -1858,8 +1861,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request a backtrack
      */
     protected IASTDeclaration namespaceDefinitionOrAlias() throws BacktrackException, EndOfFileException {
-        final int offset= consume().getOffset();
+    	final int offset= LA().getOffset();
         int endOffset;
+        boolean isInline= false;
+        
+        if (LT(1) == IToken.t_inline) {
+        	consume();
+        	isInline= true;
+        }
+        consume(IToken.t_namespace);
         
         // optional name
         IASTName name = null;
@@ -1875,6 +1885,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         if (LT(1) == IToken.tLBRACE) {
 	        ICPPASTNamespaceDefinition ns = nodeFactory.newNamespaceDefinition(name);
+	        ns.setIsInline(isInline);
 	        declarationListInBraces(ns, offset, DeclarationOptions.GLOBAL);
             return ns;
         } 

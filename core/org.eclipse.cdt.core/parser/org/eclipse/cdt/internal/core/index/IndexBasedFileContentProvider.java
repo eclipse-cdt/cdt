@@ -29,8 +29,8 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.IndexFileContent;
@@ -290,5 +290,13 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			directives.add(ud);
 		}
 		return true;
+	}
+
+	public IIndexFile findIndexFile(InternalFileContent fc) throws CoreException {
+		IIndexFileLocation ifl = fPathResolver.resolveASTPath(fc.getFileLocation());
+		if (ifl != null) {
+			return fIndex.getFile(fLinkage, ifl);
+		}
+		return null;
 	}
 }

@@ -247,11 +247,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 	@Override
 	public final String toString() {
 		String name = toStringBase();
-		try {
-			return name + " " + getConstantNameForValue(getLinkage(), getNodeType());  //$NON-NLS-1$
-		} catch (CoreException e) {
-			return name + " " + getNodeType();  //$NON-NLS-1$
-		}
+		return name + " " + getConstantNameForValue(getLinkage(), getNodeType());  //$NON-NLS-1$
 	}
 
 	protected String toStringBase() {

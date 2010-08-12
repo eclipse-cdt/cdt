@@ -252,7 +252,15 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IAdaptabl
      * @since 5.1
      */
     IIndexFileSet getIndexFileSet();
-    
+
+    /**
+     * Return the set of files in the index that are superseded by this AST, 
+     * or <code>null</code> if not available.
+     * Applies only, if AST was created with an index.
+     * @since 5.3
+     */
+    IIndexFileSet getASTFileSet();
+
 	/**
 	 * In case the AST was created in a way that supports comment parsing,
 	 * all comments of the translation unit are returned. Otherwise an

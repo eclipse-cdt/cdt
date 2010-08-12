@@ -168,9 +168,6 @@ class BaseClassLookup {
 			infoMap.put(baseClassScope, result);
 			try {
 				IBinding[] members= CPPSemantics.getBindingsFromScope(baseClassScope, fileSet, data);
-				if (data.typesOnly) {
-					CPPSemantics.removeObjects(members);
-				}
 				if (members != null && members.length > 0 && members[0] != null) {
 					if (data.prefixLookup) {
 						matches= members;

@@ -64,6 +64,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
@@ -200,10 +201,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  110.0 - update index on encoding change, bug 317435.
 	 *  111.0 - correct marshalling of basic types, bug 319186.
 	 *  111.1 - defaulted and deleted functions, bug 305978
+	 *  112.0 - inline namespaces, bug 305980
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(111, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(111, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(111, 1);
+	private static final int MIN_SUPPORTED_VERSION= version(112, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(112, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(112, 0);
 	
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -1553,5 +1555,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IIndexFragment#getInlineNamespaces()
+	 */
+	public IIndexScope[] getInlineNamespaces() throws CoreException {
+		PDOMLinkage linkage = getLinkage(ILinkage.CPP_LINKAGE_ID);
+		if (linkage == null) {
+			return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
+		}
+		return linkage.getInlineNamespaces();
 	}
 }

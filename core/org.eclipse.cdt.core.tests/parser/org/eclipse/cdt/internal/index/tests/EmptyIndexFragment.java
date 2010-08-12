@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -147,5 +148,9 @@ public class EmptyIndexFragment implements IIndexFragment {
 	}
 
 	public void clearResultCache() {
+	}
+
+	public IIndexScope[] getInlineNamespaces() {
+		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}
 }

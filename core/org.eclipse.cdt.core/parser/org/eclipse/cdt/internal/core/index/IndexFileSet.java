@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 public class IndexFileSet implements IIndexFileSet {
-
+	private IIndexFileSet fInverse;
 	private HashMap<IIndexFragment, IIndexFragmentFileSet> fSubSets= new HashMap<IIndexFragment, IIndexFragmentFileSet>();
 
 	public IndexFileSet() {
@@ -40,13 +41,18 @@ public class IndexFileSet implements IIndexFileSet {
 	}
 
 	public boolean containsDeclaration(IIndexBinding binding) {
+		return containsDeclaration(binding, false);
+	}
+
+	boolean containsDeclaration(IIndexBinding binding, boolean inverse) {
 		for (Map.Entry<IIndexFragment, IIndexFragmentFileSet> entry : fSubSets.entrySet()) {
 			try {
 				IIndexFragmentName[] names =
 						entry.getKey().findNames(binding, IIndexFragment.FIND_DECLARATIONS_DEFINITIONS);
 				for (IIndexFragmentName name : names) {
 					try {
-						if (entry.getValue().contains((IIndexFragmentFile) name.getFile())) {
+						final boolean foundDecl = entry.getValue().contains((IIndexFragmentFile) name.getFile());
+						if (foundDecl != inverse) {
 							return true;
 						}
 					} catch (CoreException e) {
@@ -61,10 +67,18 @@ public class IndexFileSet implements IIndexFileSet {
 	}
 
 	public IBinding[] filterFileLocalBindings(IBinding[] bindings) {
+		return filterFileLocalBindings(bindings, false);
+	}
+	
+	public IBinding[] filterFileLocalBindings(IBinding[] bindings, boolean invert) {
 		if (bindings == null || bindings.length == 0) {
 			return bindings;
 		}
 		BitSet ok= new BitSet(bindings.length);
+		if (invert) {
+			ok.set(0, bindings.length);
+		}
+		
 		for (int i = 0; i < bindings.length; i++) {
 			IBinding binding = bindings[i];
 			if (binding != null) {
@@ -90,10 +104,16 @@ public class IndexFileSet implements IIndexFileSet {
 				}
 			}
 		}
-		if (ok.cardinality() == bindings.length) {
+		
+		if (invert) {
+			ok.flip(0, bindings.length);
+		}
+		final int cardinality = ok.cardinality();
+		if (cardinality == bindings.length) {
 			return bindings;
 		}
-		IBinding[] result= new IBinding[ok.cardinality()];
+
+		IBinding[] result= new IBinding[cardinality];
 		int j= ok.nextSetBit(0);
 		for (int i = 0; i < result.length; i++) {
 			result[i]= bindings[j];
@@ -103,14 +123,48 @@ public class IndexFileSet implements IIndexFileSet {
 	}
 
 	public boolean contains(IIndexFile file) throws CoreException {
+		return contains(file, false);
+	}
+	
+	public boolean contains(IIndexFile file, boolean invert) throws CoreException {
 		if (!(file instanceof IIndexFragmentFile))
-			return false;
+			return invert;
 		
 		IIndexFragmentFile ifile= (IIndexFragmentFile) file;
 		IIndexFragmentFileSet subSet= fSubSets.get(ifile.getIndexFragment());
-		if (subSet != null) {
-			return subSet.contains(ifile);
+		if (subSet != null && subSet.contains(ifile)) {
+			return !invert;
 		}
-		return false;
+		return invert;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.index.IIndexFileSet#invert()
+	 */
+	public IIndexFileSet invert() {
+		if (fInverse == null) {
+			fInverse= new IIndexFileSet() {
+				public IIndexFileSet invert() {
+					return IndexFileSet.this;
+				}
+				
+				public IBinding[] filterFileLocalBindings(IBinding[] bindings) {
+					return IndexFileSet.this.filterFileLocalBindings(bindings, true);
+				}
+				
+				public boolean containsDeclaration(IIndexBinding binding) {
+					return IndexFileSet.this.containsDeclaration(binding, true);
+				}
+				
+				public boolean contains(IIndexFile file) throws CoreException {
+					return IndexFileSet.this.contains(file, true);
+				}
+				
+				public void add(IIndexFile indexFile) {
+					Assert.isLegal(false);
+				}
+			};
+		}
+		return fInverse;
 	}
 }

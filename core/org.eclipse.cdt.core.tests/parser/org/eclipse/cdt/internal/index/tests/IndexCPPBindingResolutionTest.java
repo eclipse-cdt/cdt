@@ -19,6 +19,7 @@ import java.util.Set;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -1406,6 +1407,185 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}
 	public void testInlineFriendFunction_284690() throws Exception {
     	getBindingFromASTName("m(a)", 1, IFunction.class);
+	}
+
+	//	namespace ns {
+	//		struct S {};
+	//	}
+	//	namespace m {
+	//		void h(ns::S);
+	//	}
+	//	namespace ns {
+	//		inline namespace a {
+	//			using namespace m;
+	//			struct A {};
+	//			void fa(S s);
+	//		}
+	//		inline namespace b {
+	//			struct B {};
+	//			void fb(S s);
+	//			void gb(a::A);
+	//		}
+	//		void f(S s);
+	//		void g(a::A);
+	//		void g(b::B);
+	//	}
+
+	//	ns::S s;
+	//	ns::A a0;
+	//	ns::B b0;
+	//	ns::a::A a;
+	//	ns::b::B b;
+	//
+	//	void ok() {
+	//		fa(s); fb(s); f(s);
+	//		g(a);
+	//		gb(a);
+	//	}
+	public void testInlineNamespace_305980a() throws Exception {
+		IFunction f= getBindingFromASTName("fa(s)", 2);
+		f= getBindingFromASTName("fb(s)", 2);
+		f= getBindingFromASTName("f(s)", 1);
+		f= getBindingFromASTName("g(a)", 1);
+		f= getBindingFromASTName("gb(a)", 2);
+	}
+
+	//	namespace ns {
+	//		struct S {};
+	//	}
+	//	namespace m {
+	//		void h(ns::S);
+	//	}
+	//	namespace ns {
+	//		inline namespace a {
+	//			using namespace m;
+	//			struct A {};
+	//			void fa(S s);
+	//		}
+	//		inline namespace b {
+	//			struct B {};
+	//			void fb(S s);
+	//			void gb(a::A);
+	//		}
+	//		void f(S s);
+	//		void g(a::A);
+	//		void g(b::B);
+	//	}
+
+	//  namespace ns {}
+	//  namespace m {}
+	//	ns::S s;
+	//	ns::A a0;
+	//	ns::B b0;
+	//	ns::a::A a;
+	//	ns::b::B b;
+	//
+	//	void ok() {
+	//		fa(s); fb(s); f(s);
+	//		g(a);
+	//		gb(a);
+	//	}
+	public void testInlineNamespace_305980am() throws Exception {
+		IFunction f= getBindingFromASTName("fa(s)", 2);
+		f= getBindingFromASTName("fb(s)", 2);
+		f= getBindingFromASTName("f(s)", 1);
+		f= getBindingFromASTName("g(a)", 1);
+		f= getBindingFromASTName("gb(a)", 2);
+	}
+
+	//	namespace ns {
+	//		inline namespace m {
+	//			int a;
+	//		}
+	//	}
+	
+	//	void test() {
+	//		ns::m::a; //1
+	//		ns::a; //2
+	//	}
+	public void testInlineNamespace_305980b() throws Exception {
+		IVariable v1= getBindingFromASTName("a; //1", 1);
+		IVariable v2= getBindingFromASTName("a; //2", 1);
+		assertEquals(v1, v2);
+	}
+
+	//	namespace ns {
+	//		inline namespace m {
+	//			int a;
+	//		}
+	//	}
+	
+	//  namespace ns {
+	//	   void test() {
+	//		  m::a; //1
+	//		  a; //2
+	//     }
+	//  }
+	//	void test() {
+	//		ns::m::a; //3
+	//		ns::a; //4
+	//	}
+	public void testInlineNamespace_305980bm() throws Exception {
+		IVariable v1= getBindingFromASTName("a; //1", 1);
+		IVariable v2= getBindingFromASTName("a; //2", 1);
+		IVariable v3= getBindingFromASTName("a; //3", 1);
+		IVariable v4= getBindingFromASTName("a; //4", 1);
+		assertEquals(v1, v2);
+		assertEquals(v2, v3);
+		assertEquals(v3, v4);
+	}
+
+	//	namespace out {
+	//		void f(int);
+	//	}
+	//  namespace out2 {
+	//      void g(int);
+	//  }
+	//	using namespace out;
+	//	inline namespace in {
+	//      inline namespace in2 {
+	//		   void f(char);
+	//         using namespace out2;
+	//      }
+	//	}
+	
+	// #include "header.h"
+	//	void test() {
+	//		::f(1);
+	//      ::g(1);
+	//	}
+	public void testInlineNamespace_305980c() throws Exception {
+		IFunction ref= getBindingFromASTName("f(1)", 1);
+		assertEquals("void (char)", ASTTypeUtil.getType(ref.getType()));
+		getBindingFromASTName("g(1)", 1);
+	}
+
+	//	namespace out {
+	//		void f(int);
+	//	}
+	//  namespace out2 {
+	//      void g(int);
+	//  }
+	//	using namespace out;
+	//	inline namespace in {
+	//      inline namespace in2 {
+	//		   void f(char);
+	//         using namespace out2;
+	//      }
+	//	}
+	
+	// #include "header.h"
+	//	namespace out {}
+	//  namespace out2 {}
+	//	namespace in {}
+	//	void test() {
+	//		::f(1);
+	//      ::g(1);
+	//	}
+	public void testInlineNamespace_305980cm() throws Exception {
+		IFunction ref= getBindingFromASTName("f(1)", 1);
+		assertEquals("void (char)", ASTTypeUtil.getType(ref.getType()));
+		getBindingFromASTName("g(1)", 1);
 	}
 
 	/* CPP assertion helpers */

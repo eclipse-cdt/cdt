@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM.ChangeEvent;
 import org.eclipse.cdt.internal.core.pdom.PDOM.DebugLockInfo;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
@@ -282,5 +283,14 @@ public class PDOMProxy implements IPDOM {
 	public void clearResultCache() {
 		if (fDelegate != null)
 			fDelegate.clearResultCache();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IIndexFragment#getInlineNamespaces()
+	 */
+	public IIndexScope[] getInlineNamespaces() throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getInlineNamespaces();
+		
+		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,11 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return EScopeKind.eNamespace;
 	}
 
-	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException {
+	public void addUsingDirective(ICPPUsingDirective directive) {
 		fail();
 	}
 
-	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+	public ICPPUsingDirective[] getUsingDirectives() {
 		return new ICPPUsingDirective[0]; // same behavior as PDOMCPPNamespace
 	}
 
@@ -82,14 +82,39 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	
 	@Override
 	public IIndexName getScopeName() {
-		for(int i=0; i<namespaces.length; i++) {
-			if(namespaces[i] instanceof IIndexScope) {
-				IIndexScope s= (IIndexScope) namespaces[i];
+		for (ICPPNamespace namespace : namespaces) {
+			if(namespace instanceof IIndexScope) {
+				IIndexScope s= (IIndexScope) namespace;
 				IIndexName nm= s.getScopeName();
 				if(nm!=null)
 					return nm;
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getInlineNamespaces()
+	 */
+	public ICPPNamespaceScope[] getInlineNamespaces() {
+		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
+		try {
+			for(int i=0; i<namespaces.length; i++) {
+				ICPPNamespaceScope[] raw = namespaces[i].getNamespaceScope().getInlineNamespaces();
+				IIndexFragmentBinding[] arr = preresult[i] = new IIndexFragmentBinding[raw.length];
+				for (int j=0; j<raw.length; j++) {
+					arr[j]= (IIndexFragmentBinding) ((IIndexScope) raw[j]).getScopeBinding();
+				}
+			}
+			IIndexBinding[] compBinding = cf.getCompositeBindings(preresult);
+			ICPPNamespaceScope[] result = new ICPPNamespaceScope[compBinding.length];
+			for(int i=0; i<result.length; i++) {
+				result[i]= ((ICPPNamespace) compBinding[i]).getNamespaceScope();
+			}
+			return result;
+		} catch (DOMException e) {
+			// Index bindings don't throw DOMExceptions.
+			return new ICPPNamespaceScope[0];
+		}
 	}
 }

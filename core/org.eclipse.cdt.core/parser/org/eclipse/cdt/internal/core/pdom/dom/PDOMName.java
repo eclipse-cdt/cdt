@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
+ *    Doug Schaefer (QNX) - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Sergey Prigogin (Google)
  *******************************************************************************/
@@ -28,9 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-/**
- * @author Doug Schaefer
- */
+
 public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private final PDOMLinkage linkage;
 	private final long record;
@@ -51,8 +49,10 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	public static final int IS_DEFINITION 						= 0x02;
 	public static final int IS_REFERENCE 						= IS_DECLARATION | IS_DEFINITION;
 	public static final int DECL_DEF_REF_MASK					= IS_DECLARATION | IS_DEFINITION | IS_REFERENCE;
+	public static final int INHERIT_FRIEND_INLINE_MASK	    	= 0x0C;
 	public static final int IS_INHERITANCE_SPEC 				= 0x04;
 	public static final int IS_FRIEND_SPEC						= 0x08;
+	public static final int IS_INLINE_NAMESPACE					= 0x0C;
 	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL	= 0x10;
 	public static final int READ_ACCESS 						= 0x20;
 	public static final int WRITE_ACCESS 						= 0x40;
@@ -222,32 +222,36 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return linkage.getDB().getByte(record + FLAGS) & mask;
 	}
 
-	public void setIsFriendSpecifier(boolean val) throws CoreException {
+	public void setIsFriendSpecifier() throws CoreException {
 		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
-		if (val) 
-			flags |= IS_FRIEND_SPEC;
-		else
-			flags &= ~IS_FRIEND_SPEC;
+		flags |= IS_FRIEND_SPEC;
 		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
-	public void setIsBaseSpecifier(boolean val) throws CoreException {
+	public void setIsBaseSpecifier() throws CoreException {
 		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
-		if (val) 
-			flags |= IS_INHERITANCE_SPEC;
-		else
-			flags &= ~IS_INHERITANCE_SPEC;
+		flags |= IS_INHERITANCE_SPEC;
+		linkage.getDB().putByte(record + FLAGS, (byte) flags);
+	}
+
+	public void setIsInlineNamespace() throws CoreException {
+		int flags= linkage.getDB().getByte(record + FLAGS) & 0xff;
+		flags |= IS_INLINE_NAMESPACE;
 		linkage.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
 	public boolean isFriendSpecifier() throws CoreException {
-		return getFlags(IS_FRIEND_SPEC) == IS_FRIEND_SPEC;
+		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_FRIEND_SPEC;
 	}
 
 	public boolean isBaseSpecifier() throws CoreException {
-		return getFlags(IS_INHERITANCE_SPEC) == IS_INHERITANCE_SPEC;
+		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_INHERITANCE_SPEC;
 	}
 	
+	public boolean isInlineNamespaceDefinition() throws CoreException {
+		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_INLINE_NAMESPACE;
+	}
+
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return getFlags(COULD_BE_POLYMORPHIC_METHOD_CALL) == COULD_BE_POLYMORPHIC_METHOD_CALL;
 	}

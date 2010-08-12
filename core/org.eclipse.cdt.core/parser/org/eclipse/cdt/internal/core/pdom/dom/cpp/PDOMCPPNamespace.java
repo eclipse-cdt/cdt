@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -49,17 +50,39 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPNamespace extends PDOMCPPBinding
 		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
 
-	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
+	private static final int INDEX_OFFSET = PDOMCPPBinding.RECORD_SIZE;
+	private static final int FIRST_NAMESPACE_CHILD_OFFSET = INDEX_OFFSET + Database.PTR_SIZE;
+	private static final int NEXT_NAMESPACE_SIBBLING_OFFSET = FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
+	private static final int FLAG_OFFSET = NEXT_NAMESPACE_SIBBLING_OFFSET + Database.PTR_SIZE;
 
 	@SuppressWarnings("hiding")
-	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
+	protected static final int RECORD_SIZE = FLAG_OFFSET + 1;
+	
+	private static int INLINE_FLAG= 0x1;
+	
+	private int fFlag= -1;
+	private ICPPNamespaceScope[] fInlineNamespaces;
 
 	public PDOMCPPNamespace(PDOMLinkage linkage, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
 		super(linkage, parent, namespace.getNameCharArray());
+		updateFlag(namespace);
 	}
 
 	public PDOMCPPNamespace(PDOMLinkage linkage, long record) throws CoreException {
 		super(linkage, record);
+	}
+	
+	@Override
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		updateFlag((ICPPNamespace) newBinding);
+	}
+
+	private void updateFlag(ICPPNamespace namespace) throws CoreException {
+		int flag= 0;
+		if (namespace.isInline())
+			flag |= INLINE_FLAG;
+		
+		getDB().putByte(record + FLAG_OFFSET, (byte) flag);
 	}
 
 	public EScopeKind getKind() {
@@ -104,14 +127,25 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	@Override
 	public void addChild(PDOMNode child) throws CoreException {
-		getIndex().insert(child.getRecord());
+		final long childRec = child.getRecord();
+		getIndex().insert(childRec);
+		if (child instanceof PDOMCPPNamespace) {
+			((PDOMCPPNamespace) child).addToList(record + FIRST_NAMESPACE_CHILD_OFFSET);
+		}
 	}
 
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+	public void addToList(final long listRecord) throws CoreException {
+		final Database db= getDB();
+		final long nextRec= db.getRecPtr(listRecord);
+		db.putRecPtr(record + NEXT_NAMESPACE_SIBBLING_OFFSET, nextRec);
+		db.putRecPtr(listRecord, record);
+	}
+
+	public ICPPNamespaceScope getNamespaceScope() {
 		return this;
 	}
 
-	public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+	public ICPPUsingDirective[] getUsingDirectives() {
 		return new ICPPUsingDirective[0];
 	}
 
@@ -203,7 +237,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return result;
 	}
 	
-	public void addUsingDirective(ICPPUsingDirective directive) throws DOMException { fail(); }
+	public void addUsingDirective(ICPPUsingDirective directive) { fail(); }
 	
 	public IIndexBinding getScopeBinding() {
 		return this;
@@ -216,5 +250,50 @@ class PDOMCPPNamespace extends PDOMCPPBinding
     		return "<unnamed namespace>"; //$NON-NLS-1$
     	}
     	return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
+	}
+
+	public ICPPNamespaceScope[] getInlineNamespaces() {
+		if (fInlineNamespaces == null) {
+			List<PDOMCPPNamespace> nslist = collectInlineNamespaces(getDB(), getLinkage(), record+FIRST_NAMESPACE_CHILD_OFFSET);
+			if (nslist == null) {
+				fInlineNamespaces= new PDOMCPPNamespace[0];
+			} else {
+				fInlineNamespaces= nslist.toArray(new PDOMCPPNamespace[nslist.size()]);
+			}
+		}
+		return fInlineNamespaces;
+	}
+
+	public static List<PDOMCPPNamespace> collectInlineNamespaces(Database db,
+			PDOMLinkage linkage, long listRecord) {
+		List<PDOMCPPNamespace> nslist= null;
+		try {
+			long rec= db.getRecPtr(listRecord);
+			while (rec != 0) {
+				PDOMCPPNamespace ns= new PDOMCPPNamespace(linkage, rec);
+				if (ns.isInline()) {
+					if (nslist == null) {
+						nslist= new ArrayList<PDOMCPPNamespace>();
+					}
+					nslist.add(ns);
+				}
+				rec= db.getRecPtr(rec + NEXT_NAMESPACE_SIBBLING_OFFSET);
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return nslist;
+	}
+
+	public boolean isInline() {
+		if (fFlag == -1) {
+			try {
+				fFlag= getDB().getByte(record + FLAG_OFFSET);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fFlag= 0;
+			}
+		}
+		return (fFlag & INLINE_FLAG) != 0;
 	}
 }

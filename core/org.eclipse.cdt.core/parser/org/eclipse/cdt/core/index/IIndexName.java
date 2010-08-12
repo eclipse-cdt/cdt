@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -71,6 +70,12 @@ public interface IIndexName extends IName {
 	 * No checks are performed whether the method is actually virtual or not.
 	 */
 	public boolean couldBePolymorphicMethodCall() throws CoreException;
+	
+	/**
+	 * Returns whether this name specifies an inline namespace.
+	 * @since 5.3
+	 */
+	public boolean isInlineNamespaceDefinition() throws CoreException;
 	
 	/**
 	 * Returns whether this name is a read-reference to a variable or field.

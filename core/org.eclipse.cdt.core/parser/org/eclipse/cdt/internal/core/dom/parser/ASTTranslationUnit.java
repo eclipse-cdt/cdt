@@ -36,9 +36,11 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.ISkippedIndexedFilesListener;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.core.runtime.CoreException;
 
@@ -61,6 +63,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private IIndex fIndex;
 	private boolean fIsHeader= true;
 	private IIndexFileSet fIndexFileSet;
+	private IIndexFileSet fASTFileSet;
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	
@@ -300,6 +303,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
     	this.fIndex = index;
     	if (index != null) {
     		fIndexFileSet= index.createFileSet();
+    		fASTFileSet= index.createFileSet();
     	}
     }
 
@@ -363,6 +367,26 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	public final IIndexFileSet getIndexFileSet() {
 		return fIndexFileSet;
 	}
+	
+	public void replacingFile(InternalFileContentProvider provider, InternalFileContent fc) {
+		if (fASTFileSet != null) {
+			if (provider instanceof IndexBasedFileContentProvider) {
+				try {
+					IIndexFile file= ((IndexBasedFileContentProvider) provider).findIndexFile(fc);
+					if (file != null) {
+						fASTFileSet.add(file);
+					}
+				} catch (CoreException e) {
+					// Ignore, tracking of replaced files fails.
+				}
+			}
+		}
+	}	
+	
+	public final IIndexFileSet getASTFileSet() {
+		return fASTFileSet;
+	}
+	
 	
 	/*
 	 * (non-Javadoc)

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -1291,5 +1292,51 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 		assertEquals(id1, id2);
+	}
+	
+	// namespace ns {
+	//    namespace m {}
+	// }
+
+	// inline namespace ns {
+	//    inline namespace m {}
+	// }
+
+	// namespace ns {
+	//    namespace m {}
+	// }
+	public void testInlineNamespaces_305980() throws Exception {
+		setupFile(3, true);
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPNamespace ns = (ICPPNamespace) findBinding("ns");
+			assertFalse(ns.isInline());
+			final ICPPNamespace m = (ICPPNamespace) findBinding("ns::m");
+			assertFalse(ns.isInline());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPNamespace ns = (ICPPNamespace) findBinding("ns");
+			assertTrue(ns.isInline());
+			final ICPPNamespace m = (ICPPNamespace) findBinding("ns::m");
+			assertTrue(ns.isInline());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		updateFile();
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPNamespace ns = (ICPPNamespace) findBinding("ns");
+			assertFalse(ns.isInline());
+			final ICPPNamespace m = (ICPPNamespace) findBinding("ns::m");
+			assertFalse(ns.isInline());
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 }

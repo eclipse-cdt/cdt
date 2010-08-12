@@ -163,6 +163,10 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		return false;
 	}
 
+	public boolean isInlineNamespaceDefinition() {
+		return false;
+	}
+
 	public boolean isReadAccess() throws CoreException {
 		return false;
 	}

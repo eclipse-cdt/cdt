@@ -164,8 +164,8 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 					} catch (CoreException e) {
 		        		CCorePlugin.log(e);
 					}
-				} else if (physicalNode instanceof ICPPASTNamespaceDefinition) {
-					ICPPNamespace nsbinding= getNamespaceIndexBinding((ICPPASTNamespaceDefinition)physicalNode, index);
+				} else {
+					ICPPNamespace nsbinding= getNamespaceIndexBinding(index);
 					if (nsbinding != null) {
 						return nsbinding.getNamespaceScope().getBinding(name, forceResolve, fileSet);
 					}
@@ -175,14 +175,17 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return binding;
 	}
 
-	private ICPPNamespace getNamespaceIndexBinding(ICPPASTNamespaceDefinition nsdef, IIndex index) {
+	protected ICPPNamespace getNamespaceIndexBinding(IIndex index) {
 		if (fIndexNamespace == UNINITIALIZED) {
 			fIndexNamespace= null;
-			IASTName nsname = nsdef.getName();
-			IBinding nsbinding= nsname.resolveBinding();
-			if (nsbinding != null) {
-				fIndexNamespace= (ICPPNamespace) index.adaptBinding(nsbinding);
-			}
+			IASTNode node= getPhysicalNode();
+			if (node instanceof ICPPASTNamespaceDefinition) {
+				IASTName nsname = ((ICPPASTNamespaceDefinition) node).getName();
+				IBinding nsbinding= nsname.resolveBinding();
+				if (nsbinding != null) {
+					fIndexNamespace= (ICPPNamespace) index.adaptBinding(nsbinding);
+				}
+			} 	
 		}
 		return fIndexNamespace;
 	}

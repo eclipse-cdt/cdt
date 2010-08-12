@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
+import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -94,7 +95,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 	
 	@Override
-	public final PDOMLinkage getLinkage() throws CoreException {
+	public final PDOMLinkage getLinkage() {
 		return this;
 	}
 	
@@ -163,7 +164,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 
 	@Override
-	public final void addChild(PDOMNode child) throws CoreException {
+	public void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
 	
@@ -284,7 +285,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			IASTDeclSpecifier ds= (IASTDeclSpecifier) parentNode;
 			if (ds.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 				if (pdomName.getEnclosingDefinitionRecord() != 0) {
-					pdomName.setIsBaseSpecifier(true);
+					pdomName.setIsBaseSpecifier();
 				}
 			}
 		}
@@ -490,5 +491,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return new TypeMarshalBuffer(this, data).unmarshalType();
 		}
 		return null;
+	}
+
+	public IIndexScope[] getInlineNamespaces() {
+		return IIndexScope.EMPTY_INDEX_SCOPE_ARRAY;
 	}
 }

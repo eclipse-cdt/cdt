@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
     private int fLastDeclaration=-1;
+    private boolean fIsInline;
 
     public CPPASTNamespaceDefinition() {
 	}
@@ -45,6 +46,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 
 	public CPPASTNamespaceDefinition copy() {
 		CPPASTNamespaceDefinition copy = new CPPASTNamespaceDefinition(fName == null ? null : fName.copy());
+		copy.fIsInline= fIsInline;
 		for(IASTDeclaration declaration : getDeclarations())
 			copy.addDeclaration(declaration == null ? null : declaration.copy());
 		copy.setOffsetAndLength(this);
@@ -64,6 +66,15 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 		}
     }
     
+	public void setIsInline(boolean isInline) {
+		assertNotFrozen();
+		fIsInline= isInline;
+	}
+
+	public boolean isInline() {
+		return fIsInline;
+	}
+
 	public final void addDeclaration(IASTDeclaration decl) {
 		if (decl != null) {
 			decl.setParent(this);

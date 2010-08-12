@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,9 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 		}
 		public boolean isGloballyQualified() throws DOMException {
 			throw new DOMException(this);
+		}
+		public boolean isInline() {
+			return false;
 		}
     }
 
@@ -205,8 +208,8 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	    namespaceDef.getTranslationUnit().accept(collector);
 
 	    namespaceDefinitions = collector.getNamespaces();
-	    for (int i = 0; i < namespaceDefinitions.length; i++) {
-	        namespaceDefinitions[i].setBinding(this);
+	    for (IASTName namespaceDefinition : namespaceDefinitions) {
+	        namespaceDefinition.setBinding(this);
 	    }
 	}
 	
@@ -327,18 +330,26 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	public IBinding[] getMemberBindings() {
 		if (namespaceDefinitions != null) {
 			NamespaceMemberCollector collector = new NamespaceMemberCollector();
-			for (int i = 0; i < namespaceDefinitions.length; i++) {
-				IASTNode parent = namespaceDefinitions[i].getParent();
+			for (IASTName namespaceDefinition : namespaceDefinitions) {
+				IASTNode parent = namespaceDefinition.getParent();
 				if (parent instanceof ICPPASTNamespaceDefinition) {
 					IASTDeclaration[] decls = ((ICPPASTNamespaceDefinition)parent).getDeclarations();
-					for (int j = 0; j < decls.length; j++) {
-						decls[j].accept(collector);
+					for (IASTDeclaration decl : decls) {
+						decl.accept(collector);
 					}
 				}
 			}
 			return collector.members.keyArray(IBinding.class);
 		}
 		return IBinding.EMPTY_BINDING_ARRAY;
+	}
+
+	public boolean isInline() {
+		final ICPPNamespaceScope nsScope = getNamespaceScope();
+		if (nsScope instanceof CPPNamespaceScope) {
+			return ((CPPNamespaceScope) nsScope).isInlineNamepace();
+		}
+		return false;
 	}
 
 	public ILinkage getLinkage() {

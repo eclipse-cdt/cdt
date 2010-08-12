@@ -8683,4 +8683,107 @@ public class AST2CPPTests extends AST2BaseTest {
 		fb= bh.assertNonProblem("g()", 1);
 		assertTrue(fb.isDeleted());
 	}
+	
+	//	namespace ns {
+	//		struct S {};
+	//	}
+	//
+	//	namespace m {
+	//		void h(ns::S);
+	//	}
+	//
+	//	namespace ns {
+	//		inline namespace a {
+	//			using namespace m;
+	//			struct A {};
+	//			void fa(S s);
+	//		}
+	//		inline namespace b {
+	//			struct B {};
+	//			void fb(S s);
+	//			void gb(a::A);
+	//		}
+	//		void f(S s);
+	//		void g(a::A);
+	//		void g(b::B);
+	//	}
+	//
+	//	ns::S s;
+	//	ns::A a0;
+	//	ns::B b0;
+	//	ns::a::A a;
+	//	ns::b::B b;
+	//
+	//	void ok() {
+	//		fa(s); fb(s); f(s);
+	//		ns::h(s);
+	//		g(a);
+	//		gb(a);
+	//	}
+	public void testInlineNamespace_305980a() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+	
+	//	namespace ns {
+	//		inline namespace m {
+	//			int a;
+	//		}
+	//	}
+	//	void test() {
+	//		ns::m::a;
+	//		ns::a;
+	//	}
+	public void testInlineNamespace_305980b() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+	
+	//	namespace out {
+	//		void f(int);
+	//	}
+	//  namespace out2 {
+	//      void g(int);
+	//  }
+	//	using namespace out;
+	//	inline namespace in {
+	//      inline namespace in2 {
+	//		   void f(char);
+	//         using namespace out2;
+	//      }
+	//	}
+	//	void test() {
+	//		::f(1);
+	//      ::g(1);
+	//	}
+	public void testInlineNamespace_305980c() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction fo= bh.assertNonProblem("f(int)", 1);
+		IFunction g= bh.assertNonProblem("g(int)", 1);
+		IFunction fi= bh.assertNonProblem("f(char)", 1);
+		
+		IFunction ref= bh.assertNonProblem("f(1)", 1);
+		assertSame(fi, ref);
+		ref= bh.assertNonProblem("g(1)", 1);
+		assertSame(g, ref);
+	}
+
+	// namespace ns {
+	//    inline namespace m {
+	//       void f();
+	//    }
+	// }
+	// void ns::f() {}
+	public void testInlineNamespace_305980d() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f1= bh.assertNonProblem("f();", 1);
+		IFunction f2= bh.assertNonProblem("f() {", 1);
+		assertSame(f1, f2);
+	}
 }

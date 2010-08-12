@@ -28,9 +28,9 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
@@ -730,4 +730,11 @@ public class LocationMap implements ILocationResolver {
 			l.skippedFile(sequenceNumber, fi);
 		}
 	}
+	
+	public void replacingFile(InternalFileContentProvider fileContentProvider, 
+			InternalFileContent fileContent) {
+		for (ISkippedIndexedFilesListener l : fSkippedFilesListeners) {
+			l.replacingFile(fileContentProvider, fileContent);
+		}
+	}		
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 
 /**
  * A namespace scope is either a block-scope or a namespace-scope or global scope.
@@ -22,13 +21,24 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 public interface ICPPNamespaceScope extends ICPPScope {
 
 	/**
+	 * @since 5.3
+	 */
+	ICPPNamespaceScope[] EMPTY_NAMESPACE_SCOPE_ARRAY = {};
+
+	/**
 	 * Add a directive that nominates another namespace to this scope.
 	 */
-	public void addUsingDirective(ICPPUsingDirective usingDirective) throws DOMException;
+	public void addUsingDirective(ICPPUsingDirective usingDirective);
 
 	/**
 	 * Get the using directives that have been added to this scope to nominate other
 	 * namespaces during lookup. 
 	 */
-	public ICPPUsingDirective[] getUsingDirectives() throws DOMException;
+	public ICPPUsingDirective[] getUsingDirectives();
+	
+	/**
+	 * Returns the inline namespaces that are members of this scope.
+	 * @since 5.3
+	 */
+	public ICPPNamespaceScope[] getInlineNamespaces();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Andrew Niefer (IBM Corporation) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -32,4 +33,10 @@ public interface ICPPNamespace extends ICPPBinding {
 	 * @throws DOMException
 	 */
 	public IBinding[] getMemberBindings() throws DOMException;
+
+	/**
+	 * Returns whether this is an inline namespace.
+	 * @since 5.3
+	 */
+	public boolean isInline();
 }

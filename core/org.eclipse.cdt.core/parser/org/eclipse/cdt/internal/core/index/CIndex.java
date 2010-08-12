@@ -28,8 +28,10 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -637,5 +639,34 @@ public class CIndex implements IIndex {
 			}
 		}
 		return result.values().toArray(new IIndexFile[result.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.index.IIndex#getInlineNamespaces()
+	 */
+	public IIndexScope[] getInlineNamespaces() throws CoreException {
+		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
+			return fFragments[0].getInlineNamespaces();
+		} 
+
+		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[fPrimaryFragmentCount][];
+		try {
+			for (int i = 0; i < fPrimaryFragmentCount; i++) {
+				IIndexScope[] raw = fFragments[i].getInlineNamespaces();
+				IIndexFragmentBinding[] arr = preresult[i] = new IIndexFragmentBinding[raw.length];
+				for (int j=0; j<raw.length; j++) {
+					arr[j]= (IIndexFragmentBinding) raw[j].getScopeBinding();
+				} 
+			}
+			IIndexBinding[] compBinding = getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
+			IIndexScope[] result = new IIndexScope[compBinding.length];
+			for(int i=0; i<result.length; i++) {
+				result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();
+			}
+			return result;
+		} catch (DOMException e) {
+			// Index bindings don't throw DOMExceptions.
+			return new IIndexScope[0];
+		}
 	}
 }

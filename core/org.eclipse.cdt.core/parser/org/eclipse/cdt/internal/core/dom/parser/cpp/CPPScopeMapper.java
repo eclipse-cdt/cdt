@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,15 +48,40 @@ import org.eclipse.cdt.internal.core.index.IIndexScope;
  * scopes that can be reopened, i.e. namespaces.
  */
 public class CPPScopeMapper {
+
+	/**
+	 * Used for implicit inline directives for inline namespaces found in the index.
+	 */
+	public static final class InlineNamespaceDirective implements ICPPUsingDirective {
+		private final ICPPInternalNamespaceScope fContainer;
+		private final ICPPInternalNamespaceScope fNominated;
+
+		public InlineNamespaceDirective(ICPPInternalNamespaceScope container, ICPPInternalNamespaceScope inline) {
+			fContainer= container;
+			fNominated= inline;
+		}
+		public IScope getContainingScope() {
+			return fContainer;
+		}
+		public ICPPNamespaceScope getNominatedScope() throws DOMException {
+			return fNominated;
+		}
+		public int getPointOfDeclaration() {
+			return 0;
+		}
+	}
+
 	/**
 	 * Wrapper for namespace-scopes from the index.
 	 */
-	private class NamespaceScopeWrapper implements ICPPNamespaceScope {
+	private class NamespaceScopeWrapper implements ICPPInternalNamespaceScope {
 		private final ICPPNamespaceScope fScope;
 		private ArrayList<ICPPUsingDirective> fUsingDirectives;
+		private ICPPNamespaceScope[] fEnclosingNamespaceSet;
 
 		public NamespaceScopeWrapper(ICPPNamespaceScope scope) {
 			fScope= scope;
+			assert fScope instanceof IIndexScope;
 		}
 
 		public EScopeKind getKind() {
@@ -90,18 +115,49 @@ public class CPPScopeMapper {
 			return fScope.getScopeName();
 		}
 
-		public void addUsingDirective(ICPPUsingDirective usingDirective) throws DOMException {
-			if (fUsingDirectives == null) {
-				fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
-			}
+		public void addUsingDirective(ICPPUsingDirective usingDirective) {
+			initUsingDirectives();
 			fUsingDirectives.add(usingDirective);
 		}
 
-		public ICPPUsingDirective[] getUsingDirectives() throws DOMException {
+		private void initUsingDirectives() {
 			if (fUsingDirectives == null) {
-				return ICPPUsingDirective.EMPTY_ARRAY;
+				fUsingDirectives= new ArrayList<ICPPUsingDirective>(1);
+				// Insert a using directive for every inline namespace
+				for (ICPPInternalNamespaceScope inline: getInlineNamespaces()) {
+					fUsingDirectives.add(new InlineNamespaceDirective(this, inline));
+				}
 			}
+		}
+
+		public ICPPUsingDirective[] getUsingDirectives() {
+			initUsingDirectives();
 			return fUsingDirectives.toArray(new ICPPUsingDirective[fUsingDirectives.size()]);
+		}
+
+		public ICPPNamespaceScope[] getEnclosingNamespaceSet() {
+			if (fEnclosingNamespaceSet == null)
+				return fEnclosingNamespaceSet= CPPNamespaceScope.computeEnclosingNamespaceSet(this);
+			
+			return fEnclosingNamespaceSet;
+		}
+
+		public boolean isInlineNamepace() {
+			IIndexBinding binding = ((IIndexScope) fScope).getScopeBinding();
+			if (binding instanceof ICPPNamespace && ((ICPPNamespace) binding).isInline())
+				return true;
+			
+			return false;
+		}
+
+		public ICPPInternalNamespaceScope[] getInlineNamespaces() {
+			// Obtain the inline namespaces from the index and map them to the ast
+			ICPPNamespaceScope[] pre = fScope.getInlineNamespaces();
+			ICPPInternalNamespaceScope[] result= new ICPPInternalNamespaceScope[pre.length];
+			for (int i = 0; i < result.length; i++) {
+				result[i]= (ICPPInternalNamespaceScope) mapToASTScope((IIndexScope) pre[i]);
+			}
+			return result;
 		}
 	}
 

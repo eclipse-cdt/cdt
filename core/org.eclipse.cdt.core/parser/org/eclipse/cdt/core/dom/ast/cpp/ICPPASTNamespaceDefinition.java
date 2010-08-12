@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    John Camelon (IBM) - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -54,6 +55,18 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	 */
 	public void setName(IASTName name);
 
+	/**
+	 * Specify whether the namespace definition is inline.
+	 * @since 5.3
+	 */
+	public void setIsInline(boolean isInline);
+
+	/**
+	 * Returns whether this namespace definition is inline.
+	 * @since 5.3
+	 */
+	public boolean isInline();
+	
 	/**
 	 * A translation unit contains an ordered sequence of declarations.
 	 * 

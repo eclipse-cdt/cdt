@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -146,5 +147,9 @@ final public class EmptyCIndex implements IIndex {
 
 	public IIndexBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IScope[] getInlineNamespaces() {
+		return new IScope[0];
 	}
 }

@@ -190,6 +190,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private Token fPrefetchedTokens;
     private Token fLastToken;
 
+	private InternalFileContent fRootContent;
+
 
     public CPreprocessor(FileContent fileContent, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, IncludeFileContentProvider readerFactory) {
@@ -200,9 +202,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	} else {
     		throw new IllegalArgumentException("Illegal reader factory"); //$NON-NLS-1$
     	}
-    	InternalFileContent content;
     	if (fileContent instanceof InternalFileContent) {
-    		content= (InternalFileContent) fileContent;
+    		fRootContent= (InternalFileContent) fileContent;
     	} else {
     		throw new IllegalArgumentException("Illegal file content object"); //$NON-NLS-1$
     	}
@@ -224,14 +225,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fIncludeFileResolutionHeuristics= fFileContentProvider.getIncludeHeuristics();
 
-        final String filePath= content.getFileLocation();
+        final String filePath= fRootContent.getFileLocation();
         configureIncludeSearchPath(new File(filePath).getParentFile(), info);
         setupMacroDictionary(configuration, info, language);		
 
-        ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, content.getSource());
+        ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
         fAllIncludedFiles.add(filePath);
     	fFileContentProvider.reportTranslationUnitFile(filePath);
-        fRootLexer= new Lexer(content.getSource(), fLexOptions, this, this);
+        fRootLexer= new Lexer(fRootContent.getSource(), fLexOptions, this, this);
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
@@ -367,6 +368,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
 			processInclusionFromIndex(0, location, content);
 		}
+		fLocationMap.replacingFile(fFileContentProvider, fRootContent);
+		fRootContent= null;
 	}
 
     private void handlePreIncludedFiles() {
@@ -1269,6 +1272,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 						fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
 						fCurrentContext= fctx;
 					}
+					fLocationMap.replacingFile(fFileContentProvider, fi);
 					break;
 					
 				case SKIP_FILE:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,9 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 		return true;
 	}
 	public boolean isReference() {
+		return false;
+	}
+	public boolean isInlineNamespaceDefinition() {
 		return false;
 	}
 

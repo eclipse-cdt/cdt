@@ -319,6 +319,10 @@ public class LookupData {
         return false;
     }
 
+    public boolean hasResultOrProblem() {
+    	return problem != null || hasResults();
+    }
+    
     public boolean hasResults() {
         if (foundItems == null)
             return false;

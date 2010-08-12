@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -86,6 +87,7 @@ import org.eclipse.cdt.internal.core.index.composite.CompositeIndexBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
+import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
@@ -104,6 +106,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	public final static int CACHE_BASES= 1;
 	public final static int CACHE_INSTANCES= 2;
 	public final static int CACHE_INSTANCE_SCOPE= 3;
+	
+	private final static int FIRST_NAMESPACE_CHILD_OFFSET= PDOMLinkage.RECORD_SIZE;
+	
+	@SuppressWarnings("hiding")
+	private final static int RECORD_SIZE= FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
 
 	private LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
 	
@@ -396,6 +403,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return pdomBinding;
 	}
 
+	@Override
+	public void addChild(PDOMNode node) throws CoreException {
+		super.addChild(node);
+		if (node instanceof PDOMCPPNamespace) {
+			((PDOMCPPNamespace) node).addToList(record + FIRST_NAMESPACE_CHILD_OFFSET);
+		}
+	}
+	
 	private PDOMBinding createSpecialization(PDOMNode parent, PDOMBinding orig, IBinding special) 
 			throws CoreException, DOMException {
 		PDOMBinding result= null;
@@ -590,6 +605,22 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		result= doAdaptBinding(parent, binding, fileLocalRecHolder);
 		if (result != null) {
 			getPDOM().putCachedResult(inputBinding, result);
+		}
+		return result;
+	}
+
+	@Override
+	public PDOMCPPNamespace[] getInlineNamespaces() {
+		final Long key = record + CACHE_BASES;
+		PDOMCPPNamespace[] result= (PDOMCPPNamespace[]) getPDOM().getCachedResult(key);
+		if (result == null) {
+			List<PDOMCPPNamespace> nslist = PDOMCPPNamespace.collectInlineNamespaces(getDB(), getLinkage(), record+FIRST_NAMESPACE_CHILD_OFFSET);
+			if (nslist == null) {
+				result= new PDOMCPPNamespace[0];
+			} else {
+				result= nslist.toArray(new PDOMCPPNamespace[nslist.size()]);
+			}
+			getPDOM().putCachedResult(key, result, true);
 		}
 		return result;
 	}
@@ -814,13 +845,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					PDOMCPPBase pdomBase = new PDOMCPPBase(this, pdomName, baseNode.isVirtual(),
 							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
-					pdomName.setIsBaseSpecifier(true);
+					pdomName.setIsBaseSpecifier();
 				} else if (derivedClassBinding instanceof PDOMCPPClassSpecialization) {
 					PDOMCPPClassSpecialization ownerClass = (PDOMCPPClassSpecialization) derivedClassBinding;
 					PDOMCPPBase pdomBase = new PDOMCPPBase(this, pdomName, baseNode.isVirtual(),
 							baseNode.getVisibility());
 					ownerClass.addBase(pdomBase);
-					pdomName.setIsBaseSpecifier(true);
+					pdomName.setIsBaseSpecifier();
 				}
 			}
 		} else if (parentNode instanceof ICPPASTUsingDirective) {
@@ -860,7 +891,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;
 			if (elaboratedSpecifier.isFriend()) {
-				pdomName.setIsFriendSpecifier(true);
+				pdomName.setIsFriendSpecifier();
 				PDOMName enclClassName = (PDOMName) pdomName.getEnclosingDefinition();
 				if (enclClassName != null) {
 					PDOMBinding enclClassBinding = enclClassName.getBinding();
@@ -874,7 +905,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				IASTSimpleDeclaration grandparentNode = (IASTSimpleDeclaration) parentNode.getParent();
 				if (grandparentNode.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
 					if (((ICPPASTDeclSpecifier) grandparentNode.getDeclSpecifier()).isFriend()) {
-						pdomName.setIsFriendSpecifier(true);
+						pdomName.setIsFriendSpecifier();
 						PDOMName enclClassName = (PDOMName) pdomName.getEnclosingDefinition();
 						if (enclClassName != null) {
 							PDOMBinding enclClassBinding = enclClassName.getBinding();
@@ -884,6 +915,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 						}
 					}
 				}
+			}
+		} else if (parentNode instanceof ICPPASTNamespaceDefinition) {
+			ICPPASTNamespaceDefinition nsdef= (ICPPASTNamespaceDefinition) parentNode;
+			if (nsdef.isInline()) {
+				pdomName.setIsInlineNamespace();
 			}
 		}
 	}

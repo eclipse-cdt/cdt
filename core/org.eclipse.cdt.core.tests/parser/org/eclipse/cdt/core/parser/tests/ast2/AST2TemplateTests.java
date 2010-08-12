@@ -63,6 +63,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -5008,5 +5009,41 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IASTTranslationUnit tu= parse(code.toString(), ParserLanguage.CPP, true, true);
 		tu = validateCopy(tu);
 		assertEquals(1, tu.getDeclarations().length);
+	}
+	
+	//	namespace N {
+	//		inline namespace M {
+	//			template<class T> void f(T&) { }
+	//
+	//		}
+	//		template void f<char>(char&);
+	//		template<> void f<short>(short&) {}
+	//	}
+	//
+	//	template void N::f<int>(int&);
+	//	template<> void N::f<long>(long&) {}
+	public void testInlineNamespaces_305980() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		ICPPFunctionTemplate ft= bh.assertNonProblem("f(T&)", 1);
+		ICPPNamespace M= (ICPPNamespace) ft.getOwner();
+		
+		ICPPTemplateInstance inst;
+		inst= bh.assertNonProblem("f<char>", 0);
+		assertSame(ft, inst.getTemplateDefinition());
+		assertSame(M, inst.getOwner());
+
+		inst= bh.assertNonProblem("f<short>", 0);
+		assertSame(ft, inst.getTemplateDefinition());
+		assertSame(M, inst.getOwner());
+
+		inst= bh.assertNonProblem("f<int>", 0);
+		assertSame(ft, inst.getTemplateDefinition());
+		assertSame(M, inst.getOwner());
+
+		inst= bh.assertNonProblem("f<long>", 0);
+		assertSame(ft, inst.getTemplateDefinition());
+		assertSame(M, inst.getOwner());
 	}
 }

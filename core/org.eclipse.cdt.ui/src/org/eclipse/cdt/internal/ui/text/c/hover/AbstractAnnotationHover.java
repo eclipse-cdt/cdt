@@ -192,7 +192,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		@Override
 		public void setFocus() {
 			super.setFocus();
-			if (fFocusControl != null)
+			if (fFocusControl != null && !fFocusControl.isDisposed())
 				fFocusControl.setFocus();
 		}
 

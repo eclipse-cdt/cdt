@@ -23,6 +23,7 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
@@ -38,7 +39,7 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
  */
 public class CodeFormatterTest extends BaseUITestCase {
 
-	private Map<String, String> fOptions;
+	private Map<String, Object> fOptions;
 	private Map<String, String> fDefaultOptions;
 
 	public static TestSuite suite() {
@@ -49,7 +50,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fDefaultOptions= DefaultCodeFormatterOptions.getDefaultSettings().getMap();
-		fOptions= new HashMap<String, String>(fDefaultOptions);
+		fOptions= new HashMap<String, Object>(fDefaultOptions);
 	}
 
 	@Override
@@ -243,7 +244,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    A();
 	//    };
 	public void testWhiteSmithsAccessSpecifierIndentation1_Bug204575() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.FALSE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
 		assertFormatterResult();
@@ -260,7 +261,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    A();
 	//    };
 	public void testWhiteSmithsAccessSpecifierIndentation2_Bug204575() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
@@ -277,7 +278,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//	A();
 	//    };
 	public void testWhiteSmithsAccessSpecifierIndentation3_Bug204575() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
 		assertFormatterResult();
@@ -564,7 +565,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    // Types:
 	//  };
 	public void testGNUCodingStyleConformance_Bug192764() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getGNUSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getGNUSettings().getMap());
 		assertFormatterResult();
 	}
 
@@ -604,7 +605,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    E1 = 1
 	//    };
 	public void testPreserveWhitespace2_Bug225326() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		assertFormatterResult();
 	}
 	
@@ -628,7 +629,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//
 	//CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
 	public void testFormatterRegressions_Bug225858() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap());
 		assertFormatterResult();
 	}
 
@@ -1001,7 +1002,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//    }
 	//}
 	public void testCompoundStatementAsMacroGNU_Bug244928() throws Exception {
-		fOptions= DefaultCodeFormatterOptions.getGNUSettings().getMap();
+		fOptions.putAll(DefaultCodeFormatterOptions.getGNUSettings().getMap());
 		assertFormatterResult();
 	}
 
@@ -1356,4 +1357,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testCastAsMacro_Bug285901() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//PARENT_T sample={.a=1,.b={a[2]=1,.b.c=2}};
+
+	//PARENT_T sample = { .a = 1, .b = { a[2] = 1, .b.c = 2 } };
+	public void testDesignatedInitializer_Bug314958() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, GCCLanguage.getDefault());
+		assertFormatterResult();
+	}
+
 }

@@ -73,14 +73,6 @@ public class CMainTab extends CAbstractMainTab {
      */
     public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
 
-	// Core file UI widgets
-	/** @since 6.0 */
-	protected Label fCoreLabel;
-	/** @since 6.0 */
-	protected Text fCoreText;
-	/** @since 6.0 */
-	protected Button fCoreButton;
-
 	private final boolean fWantsTerminalOption;
 	protected Button fTerminalButton;
 

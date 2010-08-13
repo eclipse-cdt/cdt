@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -78,7 +79,10 @@ public class CElementSorter extends ViewerSorter {
 	 * @since 5.1
 	 */
 	protected static final int TYPES = 35;
+
+	@Deprecated
 	protected static final int VARIABLEDECLARATIONS = 36;
+	@Deprecated
 	protected static final int FUNCTIONDECLARATIONS = 37;
 	protected static final int VARIABLES = 38;
 	protected static final int VARIABLES_RESERVED = 39;
@@ -86,6 +90,7 @@ public class CElementSorter extends ViewerSorter {
 	protected static final int FUNCTIONS = 41;
 	protected static final int FUNCTIONS_RESERVED = 42;
 	protected static final int FUNCTIONS_SYSTEM = 43;
+	@Deprecated
 	protected static final int METHODDECLARATIONS = 44;
 
 	protected static final int CELEMENTS = 100;
@@ -186,21 +191,18 @@ public class CElementSorter extends ViewerSorter {
 			case ICElement.C_TEMPLATE_UNION_DECLARATION:
 			case ICElement.C_ENUMERATION:
 				return TYPES;
-			case ICElement.C_FUNCTION_DECLARATION:
-			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
-				return FUNCTIONDECLARATIONS;
-			case ICElement.C_METHOD_DECLARATION:
-			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-				return METHODDECLARATIONS;
 			case ICElement.C_VARIABLE_DECLARATION:
-				return VARIABLEDECLARATIONS;
 			case ICElement.C_VARIABLE:
 			case ICElement.C_TEMPLATE_VARIABLE:
 			case ICElement.C_FIELD:
 				return VARIABLES + getNameKind(cElement.getElementName());
+			case ICElement.C_FUNCTION_DECLARATION:
 			case ICElement.C_FUNCTION:
+			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
 			case ICElement.C_TEMPLATE_FUNCTION:
+			case ICElement.C_METHOD_DECLARATION:
 			case ICElement.C_METHOD:
+			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 			case ICElement.C_TEMPLATE_METHOD:
 				return FUNCTIONS + getNameKind(cElement.getElementName());
 			case ICElement.C_ARCHIVE:

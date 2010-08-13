@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools;
 
@@ -54,6 +55,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	protected static final String MULTILINE_START = "/*"; //$NON-NLS-1$#
 	protected static final String MULTILINE_MID = " * "; //$NON-NLS-1$
 	protected static final String MULTILINE_END = "*/"; //$NON-NLS-1$
+	private static String fgDefaultLineDelim = "\n"; //$NON-NLS-1$
 	
 	public DefaultMultilineCommentAutoEditStrategy() {
 	}
@@ -62,6 +64,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
 	 */
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
+		fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		if(doc instanceof IDocumentExtension4) {
 			boolean forNewLine= cmd.length == 0 && cmd.text != null && endsWithDelimiter(doc, cmd.text);
 			boolean forCommentEnd= "/".equals(cmd.text); //$NON-NLS-1$
@@ -115,6 +118,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		if (offset == -1 || doc.getLength() == 0)
 			return;
 		
+		String lineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		final StringBuilder buf= new StringBuilder(c.text);
 		try {
 			// find start of line
@@ -139,7 +143,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 			if(commentAtStart && shouldCloseMultiline(doc, c.offset)) {
 				try {
 					doc.replace(c.offset, 0, indentation+" "+MULTILINE_END); // close the comment in order to parse //$NON-NLS-1$
-					buf.append("\n"); //$NON-NLS-1$
+					buf.append(lineDelim);
 
 					// as we are auto-closing, the comment becomes eligible for auto-doc'ing
 					IASTDeclaration dec= null;
@@ -159,7 +163,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 					if(dec!=null) {
 						ITypedRegion partition= TextUtilities.getPartition(doc, ICPartitions.C_PARTITIONING /* this! */, offset, false);
 						StringBuilder content= customizeAfterNewLineForDeclaration(doc, dec, partition);
-						buf.append(indent(content, indentation + MULTILINE_MID));
+						buf.append(indent(content, indentation + MULTILINE_MID, lineDelim));
 					}
 
 				} catch(BadLocationException ble) {
@@ -322,18 +326,33 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * of each line in the specified input buffer
 	 * @param buffer
 	 * @param indent
+	 * @param lineDelim 
+	 * @since 5.2
 	 */
-	protected static final StringBuilder indent(StringBuilder buffer, String indent) {
+	protected static final StringBuilder indent(StringBuilder buffer, String indent, String lineDelim) {
 		StringBuilder result= new StringBuilder();
 		BufferedReader br= new BufferedReader(new StringReader(buffer.toString()));
 		try {
 			for(String line= br.readLine(); line!=null; line= br.readLine()) {
-				result.append(indent + line + "\n"); //$NON-NLS-1$
+				result.append(indent).append(line).append(lineDelim);
 			}
 		} catch(IOException ioe) {
 			throw new AssertionError(); // we can't get IO errors from a string backed reader
 		}
 		return result;
+	}
+	
+	/**
+	 * Returns a new buffer with the specified indent string inserted at the beginning
+	 * of each line in the specified input buffer
+	 * @param buffer
+	 * @param indent
+	 * 
+	 * @deprecated Use {{@link #indent(StringBuilder, String, String)} instead.
+	 */
+	@Deprecated
+	protected static final StringBuilder indent(StringBuilder buffer, String indent) {
+		return indent(buffer, indent, fgDefaultLineDelim);
 	}
 	
 	/**

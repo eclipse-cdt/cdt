@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
+ *    John Camelon (IBM) - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -26,11 +26,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-/**
- * @author jcamelon
- */
 public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
-        ICPPASTNamedTypeSpecifier, IASTCompletionContext {
+        ICPPASTNamedTypeSpecifier, ICPPASTCompletionContext {
 
     private boolean typename;
     private IASTName name;
@@ -107,20 +104,24 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		return r_unclear;
 	}
 
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
 
-		for (int i = 0; i < bindings.length; i++) {
-			if (bindings[i] instanceof ICPPClassType
-					|| bindings[i] instanceof IEnumeration
-					|| bindings[i] instanceof ICPPNamespace
-					|| bindings[i] instanceof ITypedef
-					|| bindings[i] instanceof ICPPTemplateTypeParameter) {
-				filtered.add(bindings[i]);
+		for (IBinding binding : bindings) {
+			if (binding instanceof ICPPClassType
+					|| binding instanceof IEnumeration
+					|| binding instanceof ICPPNamespace
+					|| binding instanceof ITypedef
+					|| binding instanceof ICPPTemplateTypeParameter) {
+				filtered.add(binding);
 			}
 		}
 
 		return filtered.toArray(new IBinding[filtered.size()]);
+	}
+	
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

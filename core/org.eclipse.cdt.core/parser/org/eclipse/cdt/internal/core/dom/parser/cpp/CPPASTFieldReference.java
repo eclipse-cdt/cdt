@@ -20,12 +20,12 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -46,7 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReference, IASTAmbiguityParent,
-		IASTCompletionContext {
+		ICPPASTCompletionContext {
 
     private boolean isTemplate;
     private IASTExpression owner;
@@ -258,8 +258,8 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		return false;
 	}
 
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
 
 		for (IBinding binding : bindings) {
@@ -273,5 +273,9 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		}
 		
 		return filtered.toArray(new IBinding[filtered.size()]);
+	}
+	
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

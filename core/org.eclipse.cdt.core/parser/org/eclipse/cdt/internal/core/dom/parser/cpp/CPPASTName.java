@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -33,7 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Unqualified name, also base class for operator and conversion name.
  */
-public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext {
+public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionContext {
 	public static IASTName NOT_INITIALIZED= new CPPASTName(null);
 	
 	private char[] name;
@@ -71,7 +72,7 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
     	return null;
     }
 
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IASTNode parent = getParent();
 		if (parent instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier specifier = (ICPPASTElaboratedTypeSpecifier) parent;
@@ -84,11 +85,11 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
 			default:
 				return null;
 			}
-			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 			return filterByElaboratedTypeSpecifier(kind, bindings);
 		}
 		else if (parent instanceof IASTDeclarator) {
-			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 			for (int i = 0; i < bindings.length; i++) {
 				if (bindings[i] instanceof ICPPNamespace || bindings[i] instanceof ICPPClassType) {
 				} else {
@@ -177,4 +178,8 @@ public class CPPASTName extends CPPASTNameBase implements IASTCompletionContext 
         }
         return true;
     }
+    
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
+	}
 }

@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
  * {@code Base()} and {@code field()} are the constructor chain initializers.<br>
  */
 public class CPPASTConstructorChainInitializer extends ASTNode implements
-        ICPPASTConstructorChainInitializer, IASTImplicitNameOwner, IASTCompletionContext {
+        ICPPASTConstructorChainInitializer, IASTImplicitNameOwner, ICPPASTCompletionContext {
     private IASTName name;
 	private IASTImplicitName[] implicitNames; 
     private IASTInitializer initializer;
@@ -128,8 +128,8 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
         return r_unclear;
     }
 
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 
 		ICPPASTBaseSpecifier[] baseClasses = null;
 
@@ -237,5 +237,9 @@ public class CPPASTConstructorChainInitializer extends ASTNode implements
     	}
 
     	return implicitNames;  
+	}
+	
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

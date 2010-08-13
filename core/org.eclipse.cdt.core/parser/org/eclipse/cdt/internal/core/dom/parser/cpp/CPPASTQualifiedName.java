@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -25,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.Assert;
  * template id).
  */
 public class CPPASTQualifiedName extends CPPASTNameBase 
-		implements ICPPASTQualifiedName, IASTCompletionContext {
+		implements ICPPASTQualifiedName, ICPPASTCompletionContext {
 
 	private IASTName[] names = null;
 	private int namesPos= -1;
@@ -246,8 +246,8 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return false;
 	}
     
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		
 		if (namesPos > 0) {
 			IBinding binding = names[namesPos-1].resolveBinding();
@@ -343,5 +343,9 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	protected IBinding createIntermediateBinding() {
 		Assert.isLegal(false);
 		return null;
+	}
+	
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

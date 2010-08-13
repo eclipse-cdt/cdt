@@ -1,12 +1,12 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *    IBM - Initial API and implementation
+ *    John Camelon (IBM) - Initial API and implementation
  *    Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -16,19 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
-/**
- * @author jcamelon
- */
+
 public class CPPASTUsingDeclaration extends ASTNode
-		implements ICPPASTUsingDeclaration, IASTCompletionContext {
+		implements ICPPASTUsingDeclaration, ICPPASTCompletionContext {
 
     private boolean typeName;
     private IASTName name;
@@ -97,13 +95,13 @@ public class CPPASTUsingDeclaration extends ASTNode
 		return r_unclear;
 	}
 	
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
 		
-		for (int i = 0; i < bindings.length; i++) {
-			if (bindings[i] instanceof ICPPNamespace) {
-				filtered.add(bindings[i]);
+		for (IBinding binding : bindings) {
+			if (binding instanceof ICPPNamespace) {
+				filtered.add(binding);
 			}
 		}
 		
@@ -113,5 +111,9 @@ public class CPPASTUsingDeclaration extends ASTNode
 	@Override
 	public String toString() {
 		return name.toString();
+	}
+	
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,19 +17,19 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Base class specifier
  */
-public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier, IASTCompletionContext {
+public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier, ICPPASTCompletionContext {
 
     private boolean isVirtual;
     private int visibility;
@@ -117,8 +117,8 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		return r_unclear;
 	}
 
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
 
 		ICPPClassType classType = null;
@@ -154,5 +154,9 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 	public void setIsPackExpansion(boolean val) {
 		assertNotFrozen();
 		fIsPackExpansion= val;
+	}
+
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

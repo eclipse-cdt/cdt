@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IASTCompletionContext {
+public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICPPASTCompletionContext {
 
 	private IASTName name;
 
@@ -134,12 +134,16 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, IAS
 		return false;
 	}
 
-	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		return CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
+		return CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 	}
 
 	@Override
 	public String toString() {
 		return name != null ? name.toString() : "<unnamed>"; //$NON-NLS-1$
+	}
+	
+	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
+		return findBindings(n, isPrefix, null);
 	}
 }

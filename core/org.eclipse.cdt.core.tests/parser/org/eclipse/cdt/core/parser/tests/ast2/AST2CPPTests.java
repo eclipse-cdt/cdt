@@ -2327,7 +2327,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		
 		IASTName name = col.getName(11);
 		assertEquals("a", name.toString());
-		IBinding[] bs = CPPSemantics.findBindingsForContentAssist(name, true);
+		IBinding[] bs = CPPSemantics.findBindingsForContentAssist(name, true, null);
 		
 		// check the result
 		HashSet result= new HashSet();
@@ -2341,7 +2341,34 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(result.contains("A"));
 		assertEquals(7, bs.length); // the bindings above + 2 constructors
 	}
-	
+
+	// namespace ns {
+	//   int v_outer;
+	//   namespace inner {
+	//     int v_inner;
+	//   }
+	// }
+	// void test(){
+	//   v_;
+	// }                     
+	public void testAdditionalNamespaceLookup() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		
+		IASTName name = col.getName(5);
+		assertEquals("v_", name.toString());
+		IBinding[] bs = CPPSemantics.findBindingsForContentAssist(name, true, new String[] {"ns::inner"});
+		
+		// check the result
+		HashSet result= new HashSet();
+		for (IBinding binding : bs) {
+			result.add(binding.getName());
+		}
+		assertTrue(result.contains("v_inner"));
+		assertEquals(1, bs.length); // the bindings above
+	}
+
 	// static void f();    
 	// void f() {}         
 	public void testIsStatic() throws Exception {

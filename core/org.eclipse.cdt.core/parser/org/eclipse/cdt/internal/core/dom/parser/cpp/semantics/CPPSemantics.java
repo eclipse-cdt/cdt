@@ -3291,18 +3291,77 @@ public class CPPSemantics {
 		return standardLookup(data, scope);
 	}
 	
-	public static IBinding[] findBindingsForContentAssist(IASTName name, boolean prefixLookup) {
+	public static IBinding[] findBindingsForContentAssist(IASTName name, boolean prefixLookup,
+			String[] additionalNamespaces) {
 		LookupData data = createLookupData(name, true);
 		data.contentAssist = true;
 		data.prefixLookup = prefixLookup;
 		data.foundItems = new CharArrayObjectMap(2);
 
-		return contentAssistLookup(data, null);
+		// Convert namespaces to scopes.
+		List<ICPPScope> nsScopes= new ArrayList<ICPPScope>();
+		IASTTranslationUnit tu = name.getTranslationUnit();
+		if (additionalNamespaces != null && tu != null) {
+			for (String nsName : additionalNamespaces) {
+				nsName= nsName.trim();
+				if (nsName.startsWith("::")) { //$NON-NLS-1$
+					nsName= nsName.substring(2);
+				}
+				String[] namespaceParts = nsName.split("::"); //$NON-NLS-1$
+				try {
+					ICPPScope nsScope = getNamespaceScope(tu, namespaceParts);
+					if (nsScope != null) {
+						nsScopes.add(nsScope);
+					}
+				} catch (DOMException e) {
+					// Errors in source code, continue with next candidate.
+				}
+			}
+		}
+		return contentAssistLookup(data, nsScopes);
 	}
 
-	private static IBinding[] contentAssistLookup(LookupData data, IScope start) {        
+	private static ICPPScope getNamespaceScope(IASTTranslationUnit tu, String[] namespaceParts)
+			throws DOMException {
+		ICPPScope nsScope= (ICPPScope) tu.getScope();
+		outer: for (String nsPart : namespaceParts) {
+			nsPart= nsPart.trim();
+			if (nsPart.length() != 0) {
+				CPPASTName searchName= new CPPASTName(nsPart.toCharArray());
+				searchName.setParent(tu);
+				searchName.setPropertyInParent(STRING_LOOKUP_PROPERTY);
+				IBinding[] nsBindings = nsScope.getBindings(searchName, true, false);
+				for (IBinding nsBinding : nsBindings) {
+					if (nsBinding instanceof ICPPNamespace) {
+						nsScope= ((ICPPNamespace) nsBinding).getNamespaceScope();
+						continue outer;
+					}
+				}
+				// There was no matching namespace
+				return null;
+			}
+		}
+		
+		// Name did not specify a namespace, e.g. "::"
+		if (nsScope == tu.getScope())
+			return null;
+		
+		return nsScope;
+	}
+
+	private static IBinding[] contentAssistLookup(LookupData data, List<ICPPScope> additionalNamespaces) {        
         try {
-            lookup(data, start);
+            lookup(data, null);
+            
+            if (additionalNamespaces != null) {
+        		data.ignoreUsingDirectives = true;
+        		data.forceQualified = true;
+            	for (ICPPScope nsScope : additionalNamespaces) {
+        			if (!data.visited.containsKey(nsScope)) {
+        				lookup(data, nsScope);
+        			}
+				}
+    		}
         } catch (DOMException e) {
         }
         CharArrayObjectMap map = (CharArrayObjectMap) data.foundItems;

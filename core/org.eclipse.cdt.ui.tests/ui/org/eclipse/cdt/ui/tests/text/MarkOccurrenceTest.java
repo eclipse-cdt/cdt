@@ -127,7 +127,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertNotNull(fEditor);
 		fTextWidget= fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
-		EditorTestHelper.joinReconciler((SourceViewer)fEditor.getViewer(), 10, 200, 20);
+		EditorTestHelper.joinReconciler((SourceViewer)fEditor.getViewer(), 10, 1000, 20);
 		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);
 		fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);

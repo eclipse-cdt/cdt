@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class CElementHyperlink implements IHyperlink {
 
 	
 	/**
-	 * Creates a new Java element hyperlink.
+	 * Creates a new C element hyperlink.
 	 */
 	public CElementHyperlink(IRegion region, IAction openAction) {
 		Assert.isNotNull(openAction);
@@ -39,35 +39,19 @@ public class CElementHyperlink implements IHyperlink {
 		fOpenAction= openAction;
 	}
 	
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkRegion()
-	 * @since 3.1
-	 */
 	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#open()
-	 * @since 3.1
-	 */
 	public void open() {
 		fOpenAction.run();
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getTypeLabel()
-	 * @since 3.1
-	 */
 	public String getTypeLabel() {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkText()
-	 * @since 3.1
-	 */
 	public String getHyperlinkText() {
-		return null;
+		return fOpenAction.getText();
 	}
 }

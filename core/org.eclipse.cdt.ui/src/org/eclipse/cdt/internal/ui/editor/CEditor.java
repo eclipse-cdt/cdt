@@ -12,6 +12,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *     Axel Mueller - [289339] Surround with
+ *     Tomasz Wesolowski - [320561] Override indicators
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -2039,6 +2040,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		// cancel possible running computation
 		fMarkOccurrenceAnnotations= false;
 		uninstallOccurrencesFinder();
+		uninstallOverrideIndicator();
 
     	uninstallSemanticHighlighting();
 
@@ -2235,7 +2237,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
         action = new TextOperationAction(bundle, "OpenMacroExplorer.", this, CSourceViewer.SHOW_MACRO_EXPLORER, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_MACRO_EXPLORER);
         setAction("OpenMacroExplorer", action); //$NON-NLS-1$*/
-
+        
         // Assorted action groupings
 		fSelectionSearchGroup = createSelectionSearchGroup();
 		fTextSearchGroup= new TextSearchGroup(this);
@@ -2408,6 +2410,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		if (isMarkingOccurrences())
 			installOccurrencesFinder(false);
+		
+		installOverrideIndicator(true);
+		
 	}
 
 	/*
@@ -2740,6 +2745,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	private OccurrencesAnnotationUpdaterJob fOccurrencesAnnotationUpdaterJob;
 	private OccurrencesFinderJobCanceler fOccurrencesFinderJobCanceler;
 	private ISelectionListenerWithAST fPostSelectionListenerWithAST;
+
+	private OverrideIndicatorManager fOverrideIndicatorManager;
 
 	/**
 	 * Sets the outliner's context menu ID.
@@ -3451,5 +3458,34 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	}
 	public boolean shouldProcessLocalParsingCompletions() {
 		return true;
+	}
+	
+	protected void uninstallOverrideIndicator() {
+		if (fOverrideIndicatorManager != null) {
+			fOverrideIndicatorManager.removeAnnotations();
+			removeReconcileListener(fOverrideIndicatorManager);
+			fOverrideIndicatorManager= null;
+		}
+	}
+	
+	protected void installOverrideIndicator(boolean provideAST) {
+		uninstallOverrideIndicator();
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+
+		if (model == null)
+			return;
+		
+		fOverrideIndicatorManager= new OverrideIndicatorManager(model);
+		
+		addReconcileListener(fOverrideIndicatorManager);
+
+		if (provideAST) {
+			ASTProvider.getASTProvider().runOnAST(getInputCElement(), ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
+				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+					if (ast != null)
+						fOverrideIndicatorManager.reconciled(ast, true, getProgressMonitor());
+					return Status.OK_STATUS;
+				}});
+		}
 	}
 }

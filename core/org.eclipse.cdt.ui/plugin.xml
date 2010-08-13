@@ -2525,6 +2525,31 @@
             textStylePreferenceKey="org.eclipse.cdt.ui.occurrenceTextStyle"
             textStylePreferenceValue="NONE">
 	  </specification>
+	  <specification
+            annotationType="org.eclipse.cdt.ui.overrideIndicator"
+            label="C/C++ Override indicators"
+			annotationImageProvider ="org.eclipse.cdt.internal.ui.editor.OverrideIndicatorImageProvider"
+            textPreferenceKey="overrideIndicator"
+            textPreferenceValue="false"
+            highlightPreferenceKey="overrideIndicatorHighlighting"
+            highlightPreferenceValue="false"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="overrideIndicatorInOverviewRuler"
+            overviewRulerPreferenceValue="false"
+            verticalRulerPreferenceKey="overrideIndicatorInVerticalRuler"
+            verticalRulerPreferenceValue="true"
+            colorPreferenceKey="overrideIndicatorColor"
+            colorPreferenceValue="180,207,205"
+            presentationLayer="3"
+            showInNextPrevDropdownToolbarActionKey="showoverrideIndicatorInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="false"
+            isGoToNextNavigationTargetKey="isOverrideIndicatorGoToNextNavigationTarget"
+	        isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isOverrideIndicatorGoToPreviousNavigationTarget"
+	        isGoToPreviousNavigationTarget="false"
+            textStylePreferenceKey="overrideIndicatorTextStyle"
+            textStylePreferenceValue="SQUIGGLES">
+	  </specification>
    </extension>
    <extension
          point="org.eclipse.search.searchResultViewPages">
@@ -2676,6 +2701,7 @@
       <type
          name="org.eclipse.cdt.ui.occurrences">
       </type>
+      <type name="org.eclipse.cdt.ui.overrideIndicator"/>
    </extension>
    <extension point="org.eclipse.ui.workbench.texteditor.spellingEngine">
       <engine

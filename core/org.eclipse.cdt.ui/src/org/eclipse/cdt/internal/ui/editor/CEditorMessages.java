@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Tomasz Wesolowski
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -44,6 +45,10 @@ public final class CEditorMessages extends NLS {
 	public static String OpenDeclarations_dialog_title;
 	public static String OpenDeclarations_label;
 	public static String OpenDeclarations_tooltip;
+	public static String OverrideIndicatorManager_implements;
+	public static String OverrideIndicatorManager_overrides;
+	public static String OverrideIndicatorManager_shadows;
+	public static String OverrideIndicatorManager_via;
 	public static String DefaultCEditorTextHover_html_name;
 	public static String DefaultCEditorTextHover_html_prototype;
 	public static String DefaultCEditorTextHover_html_description;

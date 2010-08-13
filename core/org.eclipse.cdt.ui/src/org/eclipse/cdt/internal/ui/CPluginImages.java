@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google) 
  *     Dmitry Kozlov (CodeSourcery)
+ *     Tomasz Wesolowski
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -216,6 +217,10 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_EXPORT_SETTINGS = createManaged(T_OBJ, IMG_OBJS_EXPORT_SETTINGS);
 	public static final ImageDescriptor DESC_OVR_PATH_INHERIT= create(T_OVR, "path_inherit_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_FOCUS= create(T_OVR, "focus_ovr.gif"); //$NON-NLS-1$
+	
+	public static final ImageDescriptor DESC_OBJS_OVERRIDES = create(T_OBJ, "over_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_IMPLEMENTS = create(T_OBJ, "implm_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_SHADOWS= create(T_OBJ, "shad_co.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_PROBLEM= createManaged(T_OBJ, IMG_OBJS_FIXABLE_PROBLEM);
 	public static final ImageDescriptor DESC_OBJS_FIXABLE_ERROR= createManaged(T_OBJ, IMG_OBJS_FIXABLE_ERROR);

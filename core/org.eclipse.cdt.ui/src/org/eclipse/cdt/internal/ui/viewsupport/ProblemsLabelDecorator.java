@@ -384,10 +384,12 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(rc.getProject(), false);
 		if (prjDescription != null) {
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-			IPath path = rc.getProjectRelativePath();
-			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
-			if (rcDescription != null)
-				result |= TICK_CONFIGURATION;
+			if (cfgDescription != null) {
+				IPath path = rc.getProjectRelativePath();
+				ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
+				if (rcDescription != null)
+					result |= TICK_CONFIGURATION;
+			}
 		}
 		return result;
 	}

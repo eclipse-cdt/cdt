@@ -8711,6 +8711,13 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertTrue(fb.isDeleted());
 	}
 	
+	//	const int b=12;
+	//	void f(int a= b) = delete ;
+	public void testDefaultedAndDeletedFunctions_305978b() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+	
 	//	namespace ns {
 	//		struct S {};
 	//	}

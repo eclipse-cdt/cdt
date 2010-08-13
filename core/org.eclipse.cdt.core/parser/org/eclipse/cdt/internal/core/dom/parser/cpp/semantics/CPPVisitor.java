@@ -896,8 +896,12 @@ public class CPPVisitor extends ASTQueries {
 						ASTNodeProperty prop = parent.getPropertyInParent();
 						if (prop == IASTSimpleDeclaration.DECLARATOR)
 						    return dtor.getFunctionScope();
-						else if (prop == IASTFunctionDefinition.DECLARATOR)
-						    return ((IASTCompoundStatement) ((IASTFunctionDefinition) parent.getParent()).getBody()).getScope();
+						else if (prop == IASTFunctionDefinition.DECLARATOR) {
+						    final IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition) parent.getParent()).getBody();
+						    if (body != null)
+						    	return body.getScope();
+						    return dtor.getFunctionScope();
+						}
 					}
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);

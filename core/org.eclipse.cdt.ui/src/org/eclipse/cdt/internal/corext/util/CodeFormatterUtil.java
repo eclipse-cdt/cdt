@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ public class CodeFormatterUtil {
 	 * @throws IllegalArgumentException If the offset and length are not inside the string, a
 	 *  IllegalArgumentException is thrown.
 	 */
-	public static TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator, Map<String, String> options) {
+	public static TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator, Map<String, ?> options) {
 		if (offset < 0 || length < 0 || offset + length > source.length()) {
 			throw new IllegalArgumentException("offset or length outside of string. offset: " + offset + ", length: " + length + ", string size: " + source.length());   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		}
@@ -128,7 +128,7 @@ public class CodeFormatterUtil {
 		return null;
 	}
 	
-	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator, Map<String, String> options) {
+	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator, Map<String, ?> options) {
 		String prefix= ""; //$NON-NLS-1$
 		String suffix= ""; //$NON-NLS-1$
 		switch (kind) {

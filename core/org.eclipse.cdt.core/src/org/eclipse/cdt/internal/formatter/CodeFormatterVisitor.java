@@ -93,6 +93,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -412,9 +413,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			if (node instanceof IASTEqualsInitializer) {
 				visit((IASTEqualsInitializer) node);
 			} else if (node instanceof IASTInitializerList) {
-				visit((IASTInitializerList)node);
+				visit((IASTInitializerList) node);
 			} else if (node instanceof ICASTDesignatedInitializer) {
-				formatRaw(node);
+				visit((ICASTDesignatedInitializer) node);
 			} else {
 				formatRaw(node);
 			}
@@ -1973,6 +1974,47 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     	return PROCESS_SKIP;
 	}
 
+	private int visit(ICASTDesignatedInitializer node) {
+		scribe.printComment();
+		ICASTDesignator[] designators = node.getDesignators();
+		for (ICASTDesignator designator : designators) {
+			designator.accept(this);
+			if (scribe.printComment()) {
+				scribe.space();
+			}
+		}
+
+		if (peekNextToken() == Token.tASSIGN) {
+			scribe.printNextToken(Token.tASSIGN, preferences.insert_space_before_assignment_operator);
+			if (preferences.insert_space_after_assignment_operator) {
+				scribe.space();
+			}
+		}
+
+    	Alignment expressionAlignment= scribe.createAlignment(
+    			"designatedInitializer", //$NON-NLS-1$
+    			Alignment.M_COMPACT_SPLIT,
+    			1,
+    			scribe.scanner.getCurrentPosition());
+
+    	scribe.enterAlignment(expressionAlignment);
+    	boolean ok = false;
+    	do {
+    		try {
+    			scribe.alignFragment(expressionAlignment, 0);
+
+    			IASTInitializerClause initializer = node.getOperand();
+    			initializer.accept(this);
+
+    			ok = true;
+    		} catch (AlignmentException e) {
+    			scribe.redoAlignment(e);
+    		}
+    	} while (!ok);
+    	scribe.exitAlignment(expressionAlignment, true);
+		return PROCESS_SKIP;
+	}
+	
 	private int visit(IASTInitializerList node) {
 		scribe.printComment();
 
@@ -2215,7 +2257,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			scribe.space();
 		}
 		
-		node.getSubscriptExpression().accept(this);
+		node.getArgument().accept(this);
 		
 		scribe.printNextToken(Token.tRBRACKET, preferences.insert_space_before_closing_bracket);
     	return PROCESS_SKIP;

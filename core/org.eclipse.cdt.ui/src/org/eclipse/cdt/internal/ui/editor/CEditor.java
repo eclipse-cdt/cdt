@@ -87,10 +87,10 @@ import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedModeUI;
-import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedModeUI.ExitFlags;
 import org.eclipse.jface.text.link.LinkedModeUI.IExitPolicy;
+import org.eclipse.jface.text.link.LinkedPosition;
+import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
@@ -198,15 +198,20 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
 import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
 import org.eclipse.cdt.internal.ui.actions.IndentAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
 import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
-import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
+import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
@@ -1304,6 +1309,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 	private CTemplatesPage fTemplatesPage;
 
+	private SelectionHistory fSelectionHistory;
+
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
 		angularIntroducers.add("template"); //$NON-NLS-1$
@@ -2093,6 +2100,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener = null;
 		}
+		
+		if (fSelectionHistory != null) {
+			fSelectionHistory.dispose();
+			fSelectionHistory = null;
+		}
 
 		super.dispose();
 	}
@@ -2237,6 +2249,25 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
         action = new TextOperationAction(bundle, "OpenMacroExplorer.", this, CSourceViewer.SHOW_MACRO_EXPLORER, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_MACRO_EXPLORER);
         setAction("OpenMacroExplorer", action); //$NON-NLS-1$*/
+        
+        fSelectionHistory = new SelectionHistory(this);
+        
+        action = new StructureSelectEnclosingAction(bundle, this, fSelectionHistory);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_ENCLOSING);
+        setAction(StructureSelectionAction.ENCLOSING, action);
+        
+        action = new StructureSelectNextAction(bundle, this, fSelectionHistory);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_NEXT);
+        setAction(StructureSelectionAction.NEXT, action);
+        
+        action = new StructureSelectPreviousAction(bundle, this, fSelectionHistory);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_PREVIOUS);
+        setAction(StructureSelectionAction.PREVIOUS, action);
+        
+        action = new StructureSelectHistoryAction(bundle, this, fSelectionHistory);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_LAST);
+        setAction(StructureSelectionAction.HISTORY, action);
+        
         
         // Assorted action groupings
 		fSelectionSearchGroup = createSelectionSearchGroup();

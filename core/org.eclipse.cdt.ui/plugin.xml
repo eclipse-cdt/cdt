@@ -1628,6 +1628,79 @@
  
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
+            
+<!-- edit -->            
+      <key
+            sequence="M2+M3+ARROW_UP"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.enclosing"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+M3+ARROW_RIGHT"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.next"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+M3+ARROW_LEFT"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.previous"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+M3+ARROW_DOWN"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.last"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="M2+M3+ARROW_UP"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="M2+M3+ARROW_RIGHT"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="M2+M3+ARROW_LEFT"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="M2+M3+ARROW_DOWN"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="CTRL+SHIFT+ARROW_UP"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.enclosing"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="CTRL+SHIFT+ARROW_RIGHT"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.next"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="CTRL+SHIFT+ARROW_LEFT"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.previous"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"      
+            sequence="CTRL+SHIFT+ARROW_DOWN"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.select.last"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+
+
+            
       <key
             sequence="M2+M3+S"
             commandId="org.eclipse.cdt.ui.edit.text.c.source.quickMenu"
@@ -2384,6 +2457,30 @@
             description="%ActionDefinition.surroundWith.quickMenu.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.surround.with.quickMenu">
+      </command>
+      <command
+            name="%ActionDefinition.selectEnclosing.name"
+            description="%ActionDefinition.selectEnclosing.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.cdt.ui.edit.text.c.select.enclosing">
+      </command>
+      <command
+            name="%ActionDefinition.selectNext.name"
+            description="%ActionDefinition.selectNext.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.cdt.ui.edit.text.c.select.next">
+      </command>
+      <command
+            name="%ActionDefinition.selectPrevious.name"
+            description="%ActionDefinition.selectPrevious.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.cdt.ui.edit.text.c.select.previous">
+      </command>
+      <command
+            name="%ActionDefinition.selectLast.name"
+            description="%ActionDefinition.selectLast.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.cdt.ui.edit.text.c.select.last">
       </command>
    </extension>
    <extension

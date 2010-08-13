@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     Tomasz Wesolowski
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -17,6 +18,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -31,6 +33,11 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.cdt.ui.actions.CdtActionConstants;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
 import org.eclipse.cdt.internal.ui.actions.FindWordAction;
 import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
@@ -51,6 +58,10 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fToggleSourceHeader;
 	private ToggleMarkOccurrencesAction fToggleMarkOccurrencesAction;
 	private RetargetTextEditorAction fFindWord;
+	private RetargetTextEditorAction fExpandSelectionToEnclosing;
+	private RetargetTextEditorAction fExpandSelectionToNext;
+	private RetargetTextEditorAction fExpandSelectionToPrevious;
+	private RetargetTextEditorAction fExpandSelectionToHistory;
 	
 	public CEditorActionContributor() {
 		super();
@@ -93,6 +104,15 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 		fFindWord = new RetargetTextEditorAction(bundle, "FindWord."); //$NON-NLS-1$
 		fFindWord.setActionDefinitionId(ICEditorActionDefinitionIds.FIND_WORD);
+		
+		fExpandSelectionToEnclosing = new RetargetTextEditorAction(bundle, StructureSelectEnclosingAction.PREFIX);
+		fExpandSelectionToEnclosing.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_ENCLOSING);
+		fExpandSelectionToNext= new RetargetTextEditorAction(bundle, StructureSelectNextAction.PREFIX);
+		fExpandSelectionToNext.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_NEXT);
+		fExpandSelectionToPrevious= new RetargetTextEditorAction(bundle, StructureSelectPreviousAction.PREFIX);
+		fExpandSelectionToPrevious.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_PREVIOUS);
+		fExpandSelectionToHistory= new RetargetTextEditorAction(bundle, StructureSelectHistoryAction.PREFIX);
+		fExpandSelectionToHistory.setActionDefinitionId(ICEditorActionDefinitionIds.SELECT_LAST);
 	}	
 
 	/*
@@ -118,6 +138,15 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 //			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_GENERATE, new Separator());
 
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fToggleInsertModeAction);
+			
+			{
+				MenuManager structureSelection = new MenuManager(CEditorMessages.CEditorActionContributor_ExpandSelectionMenu_label,"expandSelection"); //$NON-NLS-1$
+				editMenu.insertAfter(ITextEditorActionConstants.SELECT_ALL, structureSelection);
+				structureSelection.add(fExpandSelectionToEnclosing);
+				structureSelection.add(fExpandSelectionToNext);
+				structureSelection.add(fExpandSelectionToPrevious);
+				structureSelection.add(fExpandSelectionToHistory);
+			}
 		}
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
@@ -135,7 +164,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 				gotoMenu.appendToGroup("additions2", fGotoNextBookmark); //$NON-NLS-1$
 			}
 		}
-
 	}
 	
 	/**
@@ -183,6 +211,11 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fToggleSourceHeader.setAction(getAction(textEditor, "ToggleSourceHeader")); //$NON-NLS-1$
 		fToggleInsertModeAction.setAction(getAction(textEditor, ITextEditorActionConstants.TOGGLE_INSERT_MODE));
 		fFindWord.setAction(getAction(textEditor, FindWordAction.FIND_WORD));
+		
+		fExpandSelectionToEnclosing.setAction(getAction(textEditor, StructureSelectionAction.ENCLOSING));
+		fExpandSelectionToNext.setAction(getAction(textEditor, StructureSelectionAction.NEXT));
+		fExpandSelectionToPrevious.setAction(getAction(textEditor, StructureSelectionAction.PREVIOUS));
+		fExpandSelectionToHistory.setAction(getAction(textEditor, StructureSelectionAction.HISTORY));
 
 		// Source menu.
 		IActionBars bars= getActionBars();

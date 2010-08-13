@@ -11,6 +11,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     Tomasz Wesolowski
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -247,4 +248,28 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * @since 5.2
 	 */
 	public static final String SORT_LINES = "org.eclipse.cdt.ui.edit.text.c.sort.lines"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the edit -> select enclosing action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.enclosing"</code>).
+	 */
+	public static final String SELECT_ENCLOSING = "org.eclipse.cdt.ui.edit.text.c.select.enclosing"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the edit -> select next action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.next"</code>).
+	 */
+	public static final String SELECT_NEXT = "org.eclipse.cdt.ui.edit.text.c.select.next"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the edit -> select previous action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.previous"</code>).
+	 */
+	public static final String SELECT_PREVIOUS = "org.eclipse.cdt.ui.edit.text.c.select.previous"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition ID of the edit -> select restore last action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.select.last"</code>).
+	 */
+	public static final String SELECT_LAST = "org.eclipse.cdt.ui.edit.text.c.select.last"; //$NON-NLS-1$
 }

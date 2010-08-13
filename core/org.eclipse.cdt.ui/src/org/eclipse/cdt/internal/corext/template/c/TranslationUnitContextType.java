@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,9 +80,27 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		}
 	}
 	
-	protected static class Method extends EnclosingCElement {
+	protected static class Method extends TemplateVariableResolver {
 		public Method() {
-			super("enclosing_method", TemplateMessages.CContextType_variable_description_enclosing_method, ICElement.C_METHOD);  //$NON-NLS-1$
+			super("enclosing_method", TemplateMessages.CContextType_variable_description_enclosing_method);  //$NON-NLS-1$
+		}
+		@Override
+		public String resolve(TemplateContext context) {
+			ICElement element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_FUNCTION);
+			if (element == null) {
+				element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_FUNCTION_DECLARATION);
+				if (element == null) {
+					element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_METHOD);
+					if (element == null) {
+						element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_METHOD_DECLARATION);
+					}
+				}
+			}
+
+			if (element instanceof IFunctionDeclaration) {
+				return element.getElementName();
+			}
+			return null;
 		}
 	}
 

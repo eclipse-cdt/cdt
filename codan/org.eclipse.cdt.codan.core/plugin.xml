@@ -42,7 +42,7 @@
           name="category">
     </attribute>
     <attribute
-          name="org.eclipse.core.resources.problemmarker">
+          name="id">
     </attribute>
       <persistent
             value="true">

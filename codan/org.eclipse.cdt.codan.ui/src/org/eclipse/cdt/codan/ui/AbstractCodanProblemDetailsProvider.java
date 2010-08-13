@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.ui;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.core.resources.IMarker;
@@ -63,7 +64,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * @return
 	 */
 	protected String getProblemId() {
-		String id = marker.getAttribute(IMarker.PROBLEM, (String) null);
+		String id = marker.getAttribute(ICodanProblemMarker.ID, (String) null);
 		return id;
 	}
 

@@ -116,4 +116,58 @@
             markerType="org.eclipse.cdt.core.problem">
       </markerResolutionGenerator>
    </extension>
+    <extension
+          point="org.eclipse.ui.ide.markerSupport">
+       <markerTypeCategory
+             name="Code Analysis Problem">
+          <markerTypeReference
+                id="org.eclipse.cdt.codan.core.codanProblem">
+          </markerTypeReference>
+       </markerTypeCategory>
+       <markerGrouping
+             id="org.eclipse.cdt.codan.ui.markerGrouping"
+             label="Codan Problem Type">
+       </markerGrouping>
+       <markerAttributeGrouping
+             attribute="category"
+             defaultGroupingEntry="org.eclipse.cdt.codan.ui.markerGroupingUnknown"
+             markerType="org.eclipse.cdt.codan.core.codanProblem">
+          <markerAttributeMapping
+                markerGroupingEntry="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+                value="org.eclipse.cdt.codan.core.categories.ProgrammingProblems">
+          </markerAttributeMapping>
+                  <markerAttributeMapping
+                markerGroupingEntry="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+                value="org.eclipse.cdt.codan.core.categories.CompilerErrors">
+          </markerAttributeMapping>
+                  <markerAttributeMapping
+                markerGroupingEntry="org.eclipse.cdt.codan.core.categories.CodeStyle"
+                value="org.eclipse.cdt.codan.core.categories.CodeStyle">
+          </markerAttributeMapping>
+       </markerAttributeGrouping>
+       <markerGroupingEntry
+             id="org.eclipse.cdt.codan.ui.markerGroupingUnknown"
+             label="Unknown"
+             markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
+             priority="90">
+       </markerGroupingEntry>
+       <markerGroupingEntry
+             id="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+             label="Programming Problems"
+             markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
+             priority="10">
+       </markerGroupingEntry>
+       <markerGroupingEntry
+             id="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+             label="Compiler Errors"
+             markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
+             priority="2">
+       </markerGroupingEntry>
+       <markerGroupingEntry
+             id="org.eclipse.cdt.codan.core.categories.CodeStyle"
+             label="Coding Style"
+             markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
+             priority="80">
+       </markerGroupingEntry>
+    </extension>
 </plugin>

@@ -20,7 +20,9 @@ import java.util.Properties;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.core.model.IProblem;
+import org.eclipse.cdt.codan.core.model.IProblemCategory;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
+import org.eclipse.cdt.codan.core.model.IProblemProfile;
 import org.eclipse.cdt.codan.internal.core.CheckersRegistry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -95,12 +97,16 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		marker.setAttribute(IMarker.MESSAGE, message);
 		marker.setAttribute(IMarker.SEVERITY, severity);
 		marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-		marker.setAttribute(IMarker.PROBLEM, problem.getId());
+		marker.setAttribute(ID, problem.getId());
 		marker.setAttribute(IMarker.CHAR_END, loc.getEndingChar());
 		marker.setAttribute(IMarker.CHAR_START, loc.getStartingChar());
 		marker.setAttribute("org.eclipse.cdt.core.problem", 42); //$NON-NLS-1$
 		String propArgs = serializeArgs(args);
 		marker.setAttribute(PROBLEM_ARGS, propArgs);
+		IProblemCategory[] cats = CodanProblemCategory.findProblemCategories(
+				getProfile(file).getRoot(), problem.getId());
+		String cat = cats.length > 0 ? cats[0].getId() : ""; //$NON-NLS-1$
+		marker.setAttribute(CATEGORY, cat);
 		return marker;
 	}
 
@@ -192,7 +198,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 */
 	public static String getProblemId(IMarker marker) {
 		try {
-			return (String) marker.getAttribute(IMarker.PROBLEM);
+			return (String) marker.getAttribute(ICodanProblemMarker.ID);
 		} catch (CoreException e) {
 			return null;
 		}
@@ -240,12 +246,21 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		if (id == null)
 			return null;
 		IResource resource = marker.getResource();
-		CodanProblem problem = (CodanProblem) ((CodanProblem) CheckersRegistry
-				.getInstance().getResourceProfile(resource).findProblem(id))
-				.clone();
+		IProblemProfile profile = getProfile(resource);
+		CodanProblem problem = (CodanProblem) ((CodanProblem) profile.findProblem(id)).clone();
 		CodanSeverity sev = getSeverity(marker);
 		problem.setSeverity(sev);
 		return problem;
+	}
+
+	/**
+	 * @param resource
+	 * @return
+	 */
+	public static IProblemProfile getProfile(IResource resource) {
+		IProblemProfile profile = CheckersRegistry.getInstance()
+				.getResourceProfile(resource);
+		return profile;
 	}
 
 	/**

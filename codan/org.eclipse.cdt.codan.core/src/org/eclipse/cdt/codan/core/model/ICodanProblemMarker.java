@@ -21,6 +21,9 @@ import org.eclipse.core.runtime.CoreException;
  * @since 2.0
  */
 public interface ICodanProblemMarker {
+	public static final String ID = "id"; //$NON-NLS-1$
+	public static final String CATEGORY = "category"; //$NON-NLS-1$
+
 	/**
 	 * @return problem location
 	 */

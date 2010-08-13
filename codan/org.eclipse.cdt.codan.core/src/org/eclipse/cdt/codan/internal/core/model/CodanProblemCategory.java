@@ -11,6 +11,7 @@
 package org.eclipse.cdt.codan.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.cdt.codan.core.model.IProblem;
@@ -54,23 +55,55 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 			if (object instanceof IProblemCategory) {
 				IProblemCategory cat = (IProblemCategory) object;
 				IProblem found = findProblem(cat, id);
-				if (found != null) return found;
+				if (found != null)
+					return found;
 			} else if (object instanceof IProblem) {
 				IProblem p = (IProblem) object;
-				if (p.getId().equals(id)) return p;
+				if (p.getId().equals(id))
+					return p;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Find all categories in which problem with id present
+	 * 
+	 * @param c - root category
+	 * @param id - problem id
+	 * @return list of categories
+	 */
+	public static IProblemCategory[] findProblemCategories(IProblemCategory c,
+			String id) {
+		ArrayList<IProblemCategory> list = new ArrayList<IProblemCategory>();
+		Object[] children = c.getChildren();
+		for (Object object : children) {
+			if (object instanceof IProblemCategory) {
+				IProblemCategory cat = (IProblemCategory) object;
+				IProblemCategory[] found = findProblemCategories(cat, id);
+				if (found.length > 0) {
+					list.addAll(Arrays.asList(found));
+				}
+			} else if (object instanceof IProblem) {
+				IProblem p = (IProblem) object;
+				if (p.getId().equals(id)) {
+					list.add(c);
+				}
+			}
+		}
+		return list.toArray(new IProblemCategory[list.size()]);
+	}
+
 	public static IProblemCategory findCategory(IProblemCategory cat, String id) {
-		if (cat.getId().equals(id)) return cat;
+		if (cat.getId().equals(id))
+			return cat;
 		Object[] children = cat.getChildren();
 		for (Object object : children) {
 			if (object instanceof IProblemCategory) {
 				IProblemCategory cat2 = (IProblemCategory) object;
 				IProblemCategory found = findCategory(cat2, id);
-				if (found != null) return found;
+				if (found != null)
+					return found;
 			}
 		}
 		return null;
@@ -86,7 +119,8 @@ public class CodanProblemCategory implements IProblemCategory, Cloneable {
 		try {
 			CodanProblemCategory clone = (CodanProblemCategory) super.clone();
 			clone.list = new ArrayList<IProblemElement>();
-			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator.hasNext();) {
+			for (Iterator<IProblemElement> iterator = this.list.iterator(); iterator
+					.hasNext();) {
 				IProblemElement child = iterator.next();
 				clone.list.add((IProblemElement) child.clone());
 			}

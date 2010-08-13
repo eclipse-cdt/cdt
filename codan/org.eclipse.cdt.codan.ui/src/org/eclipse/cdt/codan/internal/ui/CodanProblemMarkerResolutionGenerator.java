@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 import org.eclipse.core.resources.IMarker;
@@ -50,7 +51,7 @@ public class CodanProblemMarkerResolutionGenerator implements
 		if (resolutionsLoaded == false) {
 			readExtensions();
 		}
-		String id = marker.getAttribute(IMarker.PROBLEM, null);
+		String id = marker.getAttribute(ICodanProblemMarker.ID, null);
 		if (id == null && resolutions.get(null) == null)
 			return new IMarkerResolution[0];
 		String message = marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$

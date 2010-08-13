@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.ui.cxx;
 
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
@@ -63,7 +64,7 @@ public abstract class AbstractCodanCQuickFixProcessor implements IQuickFixProces
 			IMarker m = markers[i];
 			int start = m.getAttribute(IMarker.CHAR_START, -1);
 			if (start==loc.getOffset()) {
-				String id = m.getAttribute(IMarker.PROBLEM,""); //$NON-NLS-1$
+				String id = m.getAttribute(ICodanProblemMarker.ID,""); //$NON-NLS-1$
 				return getCorrections(context, id, m);
 			}
 		}

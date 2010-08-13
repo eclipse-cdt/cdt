@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.internal.ui.views;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
 import org.eclipse.cdt.codan.ui.CodanEditorUtility;
@@ -34,7 +35,7 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * Problems Details view show details for selected problem marker.
- * Other plugins can contribute to override default behaviour using 
+ * Other plugins can contribute to override default behaviour using
  * codanProblemDetails extension point.
  */
 public class ProblemDetails extends ViewPart {
@@ -48,7 +49,8 @@ public class ProblemDetails extends ViewPart {
 	 */
 	private Link message;
 	/**
-	 * Control for problem description which can include links to help or web-sites with extra info
+	 * Control for problem description which can include links to help or
+	 * web-sites with extra info
 	 */
 	private Link description;
 	private GenericCodanProblemDetailsProvider genProvider = new GenericCodanProblemDetailsProvider();
@@ -64,6 +66,7 @@ public class ProblemDetails extends ViewPart {
 	 * This is a callback that will allow us
 	 * to create the area and initialize it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		final String problemsViewId = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
 		area = new Composite(parent, SWT.NONE);
@@ -81,10 +84,11 @@ public class ProblemDetails extends ViewPart {
 				// link file format example "file:/tmp/file.c#42", 42 is the line number
 				if (link.startsWith("file:")) { //$NON-NLS-1$
 					try {
-	                    CodanEditorUtility.openInEditor(link, curProvider.getMarker().getResource());
-                    } catch (PartInitException e1) {
-	                    CodanUIActivator.log(e1);
-                    }
+						CodanEditorUtility.openInEditor(link, curProvider
+								.getMarker().getResource());
+					} catch (PartInitException e1) {
+						CodanUIActivator.log(e1);
+					}
 					return;
 				}
 				if (link.startsWith("help:")) { //$NON-NLS-1$
@@ -99,9 +103,11 @@ public class ProblemDetails extends ViewPart {
 		description = new Link(area, SWT.WRAP);
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.addSelectionListener(linkSelAdapter);
-		ISelectionService ser = (ISelectionService) getSite().getService(ISelectionService.class);
+		ISelectionService ser = (ISelectionService) getSite().getService(
+				ISelectionService.class);
 		ser.addSelectionListener(new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+			public void selectionChanged(IWorkbenchPart part,
+					ISelection selection) {
 				if (part.getSite().getId().equals(problemsViewId)) {
 					processSelection(selection);
 				}
@@ -115,10 +121,12 @@ public class ProblemDetails extends ViewPart {
 		if (selection == null || selection.isEmpty())
 			return;
 		if (selection instanceof IStructuredSelection) {
-			Object firstElement = ((IStructuredSelection) selection).getFirstElement();
+			Object firstElement = ((IStructuredSelection) selection)
+					.getFirstElement();
 			IMarker marker = null;
 			if (firstElement instanceof IAdaptable) {
-				marker = (IMarker) ((IAdaptable) firstElement).getAdapter(IMarker.class);
+				marker = (IMarker) ((IAdaptable) firstElement)
+						.getAdapter(IMarker.class);
 			} else if (firstElement instanceof IMarker) {
 				marker = (IMarker) firstElement;
 			}
@@ -130,8 +138,9 @@ public class ProblemDetails extends ViewPart {
 	}
 
 	private void queryProviders(IMarker marker) {
-		String id = marker.getAttribute(IMarker.PROBLEM, "id"); //$NON-NLS-1$
-		Collection<AbstractCodanProblemDetailsProvider> providers = ProblemDetailsExtensions.getProviders(id);
+		String id = marker.getAttribute(ICodanProblemMarker.ID, "id"); //$NON-NLS-1$
+		Collection<AbstractCodanProblemDetailsProvider> providers = ProblemDetailsExtensions
+				.getProviders(id);
 		for (AbstractCodanProblemDetailsProvider provider : providers) {
 			synchronized (provider) {
 				provider.setMarker(marker);
@@ -148,10 +157,12 @@ public class ProblemDetails extends ViewPart {
 	private void applyProvider(AbstractCodanProblemDetailsProvider provider) {
 		curProvider = provider;
 		setTextSafe(message, provider, provider.getStyledProblemMessage());
-		setTextSafe(description, provider, provider.getStyledProblemDescription());
+		setTextSafe(description, provider,
+				provider.getStyledProblemDescription());
 	}
 
-	protected void setTextSafe(Link control, AbstractCodanProblemDetailsProvider provider, String text) {
+	protected void setTextSafe(Link control,
+			AbstractCodanProblemDetailsProvider provider, String text) {
 		try {
 			control.setText(text);
 		} catch (Exception e) {
@@ -163,6 +174,7 @@ public class ProblemDetails extends ViewPart {
 	/**
 	 * Passing the focus request to the area's control.
 	 */
+	@Override
 	public void setFocus() {
 		message.setFocus();
 	}

@@ -140,7 +140,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 		Collection<IProblem> problems = reg.getRefProblems(checker);
 		for (int i = 0; i < markers.length; i++) {
 			IMarker m = markers[i];
-			String id = m.getAttribute(IMarker.PROBLEM, ""); //$NON-NLS-1$
+			String id = m.getAttribute(ICodanProblemMarker.ID, ""); //$NON-NLS-1$
 			for (Iterator<IProblem> iterator = problems.iterator(); iterator
 					.hasNext();) {
 				IProblem iProblem = iterator.next();

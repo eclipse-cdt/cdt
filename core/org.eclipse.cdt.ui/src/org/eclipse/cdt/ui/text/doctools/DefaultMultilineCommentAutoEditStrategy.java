@@ -327,7 +327,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * @param buffer
 	 * @param indent
 	 * @param lineDelim 
-	 * @since 5.2
+	 * @since 5.3
 	 */
 	protected static final StringBuilder indent(StringBuilder buffer, String indent, String lineDelim) {
 		StringBuilder result= new StringBuilder();

@@ -216,10 +216,11 @@ public class Messages extends NLS {
 	public static String ProjectContentsArea_7;
 	public static String ProjectContentsArea_8;
 	public static String ProjectContentsArea_9;
-	public static String RefsTab_0;
-	public static String RefsTab_2;
-	public static String RefsTab_3;
-	public static String RefsTab_4;
+	public static String RefsTab_ExpandAll;
+	public static String RefsTab_CollapseAll;
+	public static String RefsTab_Active;
+	public static String RefsTab_ProjectsList;
+	public static String RefsTab_ConfigurationsAccessError;
 	public static String RenameConfiguration_error_caseName;
 	public static String RenameConfiguration_error_duplicateName;
 	public static String RenameConfiguration_error_invalidName;

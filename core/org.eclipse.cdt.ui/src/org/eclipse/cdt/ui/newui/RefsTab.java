@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
@@ -52,7 +53,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	public Composite comp;
 	private Tree tree;
 
-	static private final String ACTIVE = "[" + Messages.RefsTab_3 + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
+	static private final String ACTIVE = "[" + Messages.RefsTab_Active + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final int EXPAND_ALL_BUTTON = 0;
 	private static final int COLLAPSE_ALL_BUTTON = 1;
@@ -63,8 +64,8 @@ public class RefsTab extends AbstractCPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		initButtons(new String[] {
-				Messages.RefsTab_0, 
-				Messages.RefsTab_2, 
+				Messages.RefsTab_ExpandAll,
+				Messages.RefsTab_CollapseAll,
 				null,
 				MOVEUP_STR,
 				MOVEDOWN_STR}, 120);
@@ -73,10 +74,10 @@ public class RefsTab extends AbstractCPropertyTab {
 		tree = new Tree(usercomp, SWT.SINGLE | SWT.CHECK | SWT.BORDER);
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.getAccessible().addAccessibleListener(
-            new AccessibleAdapter() {                       
+            new AccessibleAdapter() {
                 @Override
 				public void getName(AccessibleEvent e) {
-                	e.result = Messages.RefsTab_4; 
+                	e.result = Messages.RefsTab_ProjectsList;
                 }
             }
         );
@@ -134,12 +135,12 @@ public class RefsTab extends AbstractCPropertyTab {
 
 		tree.addTreeListener(new TreeListener() {
 			public void treeCollapsed(TreeEvent e) {
-				updateExpandButtons(e, false, true); 
+				updateExpandButtons(e, false, true);
 			}
 			public void treeExpanded(TreeEvent e) {
-				updateExpandButtons(e, true, false); 
+				updateExpandButtons(e, true, false);
 			}});
-			
+
 	}
 
     @Override
@@ -148,7 +149,7 @@ public class RefsTab extends AbstractCPropertyTab {
     	{
     	case COLLAPSE_ALL_BUTTON:
     	case EXPAND_ALL_BUTTON:
-       		for (TreeItem item : tree.getItems()) 
+       		for (TreeItem item : tree.getItems())
        			item.setExpanded(n==EXPAND_ALL_BUTTON);
        		updateButtons();
        		break;
@@ -185,7 +186,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		if (page.isMultiCfg()) {
 			setAllVisible(false, null);
 		} else {
-			if (!usercomp.isVisible()) 
+			if (!usercomp.isVisible())
 				setAllVisible(true, null);
 			initData();
 		}
@@ -218,7 +219,7 @@ public class RefsTab extends AbstractCPropertyTab {
 
 	/**
 	 * Initialises the tree.
-	 * 
+	 *
 	 * TreeItems are either
 	 * TI:       Text            ,     Data
 	 *   {IProject.getName()}    , {IProject}
@@ -253,8 +254,15 @@ public class RefsTab extends AbstractCPropertyTab {
 		for (String pname : projects) {
 			// The referenced configuration ID
 			String ref = refs.get(pname);
-			IProject prj = p.getWorkspace().getRoot().getProject(pname);
-			ICConfigurationDescription[] cfgs = page.getCfgsReadOnly(prj);
+			IProject prj;
+			ICConfigurationDescription[] cfgs;
+			try {
+				prj = p.getWorkspace().getRoot().getProject(pname);
+				cfgs = page.getCfgsReadOnly(prj);
+			} catch (Exception e) {
+				CUIPlugin.log(Messages.RefsTab_ConfigurationsAccessError+pname, e);
+				continue;
+			}
 			if (cfgs == null || cfgs.length == 0) {
 				// If the project is referenced, then make sure the user knows about it!
 				if (ref != null) {
@@ -338,7 +346,7 @@ public class RefsTab extends AbstractCPropertyTab {
 		getResDesc().getConfiguration().setReferenceInfo(new HashMap<String, String>());
 		initData();
 	}
-	
+
 	@Override
 	protected void updateButtons() {
 		updateExpandButtons(null, false, false);
@@ -359,11 +367,11 @@ public class RefsTab extends AbstractCPropertyTab {
    				continue;
    			if (item.getExpanded())
    				cntE = true;
-   			else 
+   			else
    				cntC = true;
    		}
-		buttonSetEnabled(EXPAND_ALL_BUTTON, cntC); // Expand All 
-		buttonSetEnabled(COLLAPSE_ALL_BUTTON, cntE); // Collapse all 
+		buttonSetEnabled(EXPAND_ALL_BUTTON, cntC); // Expand All
+		buttonSetEnabled(COLLAPSE_ALL_BUTTON, cntE); // Collapse all
 	}
 
 	/**
@@ -375,7 +383,7 @@ public class RefsTab extends AbstractCPropertyTab {
 			// Is a project selected?
 			if (ti.getParentItem() == null && ti.getChecked()) {
 				int index = tree.indexOf(ti);
-				buttonSetEnabled(MOVEUP_BUTTON, index > 0);				
+				buttonSetEnabled(MOVEUP_BUTTON, index > 0);
 				buttonSetEnabled(MOVEDOWN_BUTTON, index < tree.getItemCount() - 1);
 				return;
 			}

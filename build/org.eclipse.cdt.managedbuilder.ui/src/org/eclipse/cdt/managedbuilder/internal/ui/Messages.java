@@ -240,6 +240,8 @@ public class Messages extends NLS {
 	public static String ToolChainEditTab_7;
 	public static String ToolChainEditTab_8;
 	public static String ToolChainEditTab_9;
+	public static String ToolChainEditTab_OrphanedBuilder;
+	public static String ToolChainEditTab_OrphanedToolchain;
 	public static String ToolSelectionDialog_0;
 	public static String ToolSelectionDialog_1;
 	public static String ToolSelectionDialog_10;

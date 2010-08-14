@@ -40,6 +40,7 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -204,7 +205,13 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private void showErrorMessage() {
 		if (ri instanceof IFolderInfo) {
 			IFolderInfoModification foim = (IFolderInfoModification)mod;
-			if (foim.isToolChainCompatible()) {
+			IToolChain toolChain = ((IFolderInfoModification)mod).getToolChain();
+			IToolChain realToolChain = ManagedBuildManager.getRealToolChain(toolChain);
+			if (realToolChain==null) {
+				// The toolchain is not derived from extension
+				String errText = NLS.bind(Messages.ToolChainEditTab_OrphanedToolchain, toolChain.getId(), toolChain.getName());
+				st_toolchain.setText(errText);
+			} else if (foim.isToolChainCompatible()) {
 				st_toolchain.setText(EMPTY_STR);
 			} else {
 				String s = foim.getToolChainCompatibilityStatus().getMessage();
@@ -214,10 +221,18 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			if (foim instanceof IConfigurationModification) {
 				IConfigurationModification cm = (IConfigurationModification)foim;
 				if (!cm.isBuilderCompatible()) {
-					CompatibilityStatus cs = cm.getBuilderCompatibilityStatus();
-					if (cs != null) {
-						String s = cs.getMessage();
-						st_builder.setText(s);
+					IBuilder builder = cfg.getBuilder();
+					IBuilder realBuilder = ManagedBuildManager.getRealBuilder(builder);
+					if (realBuilder==null) {
+						// The builder is not derived from extension
+						String errText = NLS.bind(Messages.ToolChainEditTab_OrphanedBuilder, builder.getId(), builder.getName());
+						st_builder.setText(errText);
+					} else {
+						CompatibilityStatus cs = cm.getBuilderCompatibilityStatus();
+						if (cs != null) {
+							String s = cs.getMessage();
+							st_builder.setText(s);
+						}
 					}
 				}
 			}
@@ -228,9 +243,13 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 
 	private void fillToolChainCombo() {
-		IToolChain tc = null;
-		if (ri instanceof IFolderInfo)
-	  	    tc = ManagedBuildManager.getRealToolChain(((IFolderInfoModification)mod).getToolChain());
+		IToolChain realToolChain = null;
+		if (ri instanceof IFolderInfo) {
+			IToolChain toolChainInstance = ((IFolderInfoModification)mod).getToolChain();
+			realToolChain = ManagedBuildManager.getRealToolChain(toolChainInstance);
+			if (realToolChain==null)
+				realToolChain = toolChainInstance;
+		}
 
 		c_toolchain.removeAll();
 		boolean isMng = cfg.getBuilder().isManagedBuildOn();
@@ -242,16 +261,15 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			tcs = fim.getCompatibleToolChains();
 			IToolChain[] tcs1 = new IToolChain[tcs.length + 1];
 			System.arraycopy(tcs, 0, tcs1, 0, tcs.length);
-			tcs1[tcs.length] = tc; // add existing toolchain
+			tcs1[tcs.length] = realToolChain; // add existing toolchain
 			tcs = tcs1;
 		}
-		for (int i=0; i<tcs.length; i++) {
-			if (tcs[i].isSystemObject() &&
-			    !( ((ToolChain)tcs[i]).isPreferenceToolChain() &&
-			       !isMng)
-			     ) // NO TOOLCHAIN
+		for (IToolChain tc : tcs) {
+			if ( tc.isSystemObject() && !(((ToolChain)tc).isPreferenceToolChain() && !isMng) ) {
+				// NO TOOLCHAIN
 				continue;
-			list.add(tcs[i]);
+			}
+			list.add(tc);
 		}
 		Collections.sort(list, BuildListComparator.getInstance());
 
@@ -259,7 +277,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		v_tcs = list.toArray(new IToolChain[list.size()]);
 		for (int i=0; i<v_tcs.length; i++) {
 			c_toolchain.add(v_tcs[i].getUniqueRealName());
-			if (v_tcs[i].matches(tc)) pos = i;
+			if (v_tcs[i].matches(realToolChain)) pos = i;
 		}
 
 		if (pos != -1) {
@@ -273,7 +291,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 
 	private void fillBuilderCombo() {
-		IBuilder b = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
+		IBuilder realBuilder = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
+		if (realBuilder==null)
+			realBuilder = cfg.getBuilder();
 		int pos = -1;
 		c_builder.removeAll();
 		ArrayList<IBuilder> list = new ArrayList<IBuilder>();
@@ -283,14 +303,15 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
 			IFolderInfoModification fim = (IFolderInfoModification)mod;
 			if (fim instanceof IConfigurationModification) {
-				IBuilder[] bs1 = ((IConfigurationModification)fim).getCompatibleBuilders();
-				bs = new IBuilder[bs1.length + 1];
-				System.arraycopy(bs1, 0, bs, 0, bs1.length);
-				bs[bs1.length] = b;
+				bs = ((IConfigurationModification)fim).getCompatibleBuilders();
+				IBuilder[] bs1 = new IBuilder[bs.length + 1];
+				System.arraycopy(bs, 0, bs1, 0, bs.length);
+				bs1[bs.length] = realBuilder;
+				bs = bs1;
 			}
 		}
 		for (int i=0; i<bs.length; i++) {
-			if (bs[i].isSystemObject() && ! b.equals(bs[i]))
+			if (bs[i].isSystemObject() && ! bs[i].equals(realBuilder))
 				continue;
 			list.add(bs[i]);
 		}
@@ -299,7 +320,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		v_bs = list.toArray(new IBuilder[list.size()]);
 		for (int i=0; i<v_bs.length; i++) {
 			c_builder.add(v_bs[i].getUniqueRealName());
-			if (v_bs[i].matches(b)) pos = i;
+			if (v_bs[i].matches(realBuilder)) pos = i;
 		}
 		if (pos != -1)
 			c_builder.select(pos);

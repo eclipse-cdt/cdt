@@ -73,10 +73,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			setManagedBuildRevision(folderInfo.getParent().getManagedBuildRevision());
 
 		IToolChain parTc = folderInfo.getToolChain();
-		IToolChain extTc = parTc;
-		for(; extTc != null && !extTc.isExtensionElement(); extTc = extTc.getSuperClass()) {
-			// empty body, loop is to find extension element only
-		}
+		IToolChain extTc = ManagedBuildManager.getExtensionToolChain(parTc);
 		if(extTc == null)
 			extTc = parTc;
 
@@ -89,10 +86,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		ITool tools[] = parTc.getTools();
 		String subId = new String();
 		for (ITool tool : tools) {
-			ITool extTool = tool;
-			for(; extTool != null && !extTool.isExtensionElement(); extTool = extTool.getSuperClass()) {
-				// empty body, loop is to find extension element only
-			}
+			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
 			if(extTool == null)
 				extTool = tool;
 
@@ -174,10 +168,9 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		boolean copyIds = cloneChildren && id.equals(cloneInfo.id);
 
 		IToolChain cloneToolChain = cloneInfo.getToolChain();
-		IToolChain extToolChain = cloneToolChain;
-		for(; !extToolChain.isExtensionElement(); extToolChain = extToolChain.getSuperClass()) {
-			// empty body, loop is to find extension element only
-		}
+		IToolChain extToolChain = ManagedBuildManager.getExtensionToolChain(cloneToolChain);
+		if (extToolChain==null)
+			extToolChain = cloneToolChain;
 
 		subName = cloneToolChain.getName();
 

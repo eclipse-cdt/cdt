@@ -60,31 +60,31 @@ import org.eclipse.swt.widgets.Text;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ToolChainEditTab extends AbstractCBuildPropertyTab {
-	
+
 	private static final IToolChainModificationManager tcmmgr = ManagedBuildManager.getToolChainModificationManager();
-	private static final String NO_TC = Messages.StdProjectTypeHandler_0;  
+	private static final String NO_TC = Messages.StdProjectTypeHandler_0;
 	private static final IToolChain[] r_tcs = ManagedBuildManager.getRealToolChains();
 	private static final IBuilder[]    r_bs = ManagedBuildManager.getRealBuilders();
 	private static final ITool[]    r_tools = ManagedBuildManager.getRealTools();
 	private static final Color          red = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 	private static final String SPACE = " "; //$NON-NLS-1$
-	
+
 	static private final Image IMG_WARNING = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
 	static private final Image IMG_ERROR   = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_ERROR);
 	static private final Image IMG_INFO    = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_INFO);
-	
+
 	private Text text;
 	private Button b_dispCompatible;
 	private Combo  c_toolchain;
 	private Combo  c_builder;
-	private Combo  c_tool; 
+	private Combo  c_tool;
 	private Button button_edit;
 	private Group tools_group;
-	private Group single_tool_group;	
+	private Group single_tool_group;
 	private Label st_builder;
 	private Label st_toolchain;
 	private Label st_tool;
-	
+
 	private IBuilder[] v_bs;
 	private IToolChain[] v_tcs;
 	private ITool[] v_tools;
@@ -92,15 +92,15 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private IConfiguration cfg;
 	private IResourceInfo ri;
 	private IToolListModification mod;
-	
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(2, false));
-		b_dispCompatible = setupCheck(usercomp, Messages.ToolChainEditTab_0, 2, GridData.BEGINNING); 
+		b_dispCompatible = setupCheck(usercomp, Messages.ToolChainEditTab_0, 2, GridData.BEGINNING);
 		b_dispCompatible.setSelection(true);
 
-		setupLabel(usercomp, Messages.ToolChainEditTab_1, 1, GridData.BEGINNING); 
+		setupLabel(usercomp, Messages.ToolChainEditTab_1, 1, GridData.BEGINNING);
 		c_toolchain = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
@@ -115,7 +115,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		st_toolchain = setupLabel(usercomp, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
 		st_toolchain.setForeground(red);
 
-		setupLabel(usercomp, Messages.ToolChainEditTab_2, 1, GridData.BEGINNING); 
+		setupLabel(usercomp, Messages.ToolChainEditTab_2, 1, GridData.BEGINNING);
 		c_builder = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
@@ -132,7 +132,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 
 		// make table for tools list
 		if (page.isForFile()) {
-			single_tool_group = setupGroup(usercomp, Messages.ToolChainEditTab_5, 2, GridData.FILL_BOTH); 
+			single_tool_group = setupGroup(usercomp, Messages.ToolChainEditTab_5, 2, GridData.FILL_BOTH);
 			setupControl(single_tool_group, 2, GridData.FILL_BOTH);
 			c_tool = new Combo(single_tool_group, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -143,11 +143,11 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				public void widgetSelected(SelectionEvent e) {
 					saveToolSelected();
 				}});
-			
+
 			st_tool = setupLabel(single_tool_group, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
 			st_tool.setForeground(red);
 		} else { // Folder or Project
-			tools_group = setupGroup(usercomp, Messages.ToolChainEditTab_3, 2, GridData.FILL_BOTH); 
+			tools_group = setupGroup(usercomp, Messages.ToolChainEditTab_3, 2, GridData.FILL_BOTH);
 			setupControl(tools_group, 2, GridData.FILL_BOTH);
 
 			text = new Text(tools_group, SWT.BORDER | SWT.WRAP | SWT.MULTI |
@@ -169,7 +169,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				}});
 
 			button_edit.setLayoutData(new GridData(GridData.END));
-			button_edit.setText(Messages.ToolChainEditTab_4); 
+			button_edit.setText(Messages.ToolChainEditTab_4);
 		}
 	}
 
@@ -179,7 +179,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		else
 			return tcmmgr.createModification((IFileInfo)ri);
 	}
-	
+
 	@Override
 	protected void updateData(ICResourceDescription rcfg) {
 		if (page.isMultiCfg()) {
@@ -193,14 +193,14 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		mod = getModification();
 		updateData();
 	}
-	
-	private void updateData() {	
+
+	private void updateData() {
 		showErrorMessage();
 		fillToolChainCombo();
 		fillBuilderCombo();
 		fillToolsList();
 	}
-	
+
 	private void showErrorMessage() {
 		if (ri instanceof IFolderInfo) {
 			IFolderInfoModification foim = (IFolderInfoModification)mod;
@@ -226,16 +226,16 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 //			fim.getProjectToolModifications();
 		}
 	}
-	
+
 	private void fillToolChainCombo() {
 		IToolChain tc = null;
 		if (ri instanceof IFolderInfo)
 	  	    tc = ManagedBuildManager.getRealToolChain(((IFolderInfoModification)mod).getToolChain());
-		
+
 		c_toolchain.removeAll();
 		boolean isMng = cfg.getBuilder().isManagedBuildOn();
 		ArrayList<IToolChain> list = new ArrayList<IToolChain>();
-		
+
 		IToolChain[] tcs = r_tcs;
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
 			IFolderInfoModification fim = (IFolderInfoModification)mod;
@@ -246,22 +246,22 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			tcs = tcs1;
 		}
 		for (int i=0; i<tcs.length; i++) {
-			if (tcs[i].isSystemObject() && 
+			if (tcs[i].isSystemObject() &&
 			    !( ((ToolChain)tcs[i]).isPreferenceToolChain() &&
 			       !isMng)
-			     ) // NO TOOLCHAIN 
+			     ) // NO TOOLCHAIN
 				continue;
 			list.add(tcs[i]);
 		}
 		Collections.sort(list, BuildListComparator.getInstance());
 
 		int pos = -1;
-		v_tcs = list.toArray(new IToolChain[list.size()]); 
+		v_tcs = list.toArray(new IToolChain[list.size()]);
 		for (int i=0; i<v_tcs.length; i++) {
 			c_toolchain.add(v_tcs[i].getUniqueRealName());
 			if (v_tcs[i].matches(tc)) pos = i;
 		}
-		
+
 		if (pos != -1) {
 			c_toolchain.select(pos);
 			c_builder.setEnabled(page.isForProject());
@@ -277,9 +277,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		int pos = -1;
 		c_builder.removeAll();
 		ArrayList<IBuilder> list = new ArrayList<IBuilder>();
-		
+
 		IBuilder[] bs = r_bs;
-		
+
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
 			IFolderInfoModification fim = (IFolderInfoModification)mod;
 			if (fim instanceof IConfigurationModification) {
@@ -290,7 +290,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		for (int i=0; i<bs.length; i++) {
-			if (bs[i].isSystemObject() && ! b.equals(bs[i])) 
+			if (bs[i].isSystemObject() && ! b.equals(bs[i]))
 				continue;
 			list.add(bs[i]);
 		}
@@ -305,9 +305,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			c_builder.select(pos);
 		else
 			c_builder.setText(EMPTY_STR);
-		
+
 	}
-	
+
 	private ITool getToolForFile() {
 		ITool[] tools = ((IFileInfoModification)mod).getProjectTools();
 		if (tools != null && tools.length > 0) {
@@ -326,25 +326,25 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		for (int i=0; i<v_tools.length; i++) {
 			if (pos == -1 && curr.matches(v_tools[i])) {
 				pos = i;
-				c_tool.add(curr.getUniqueRealName());  
+				c_tool.add(curr.getUniqueRealName());
 			} else {
 				c_tool.add(v_tools[i].getUniqueRealName());
 			}
 		}
 		// Add NO_TOOL
 		if (add) {
-			c_tool.add(Messages.ToolChainEditTab_6); 
+			c_tool.add(Messages.ToolChainEditTab_6);
 		}
 		c_tool.select(pos);
 	}
-	
+
 	private void fillToolsList() {
 		updateAllTools(); // modifies v_tools inside !!!
-		
+
 		ToolChain tc = null;
 		if (ri instanceof IFolderInfo)
 			tc = (ToolChain)ManagedBuildManager.getRealToolChain(((IFolderInfo)ri).getToolChain());
-		
+
 		if (page.isForFile()) { // Edit tool in combo for File
 			ITool curr = getToolForFile();
 			boolean canAddNO_TOOL = true;
@@ -358,19 +358,20 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			tools_group.setVisible(true);
 			String s = EMPTY_STR;
 			ITool[] tools = ri.getTools();
-			for (int i = 0; i < tools.length; i++)
-				s = s + tools[i].getUniqueRealName() + "\n"; //$NON-NLS-1$
+			for (ITool tool : tools) {
+				s = s + tool.getUniqueRealName() + "\n"; //$NON-NLS-1$
+			}
 			text.setText(s);
 		}
 	}
-	
+
 	private void updateAllTools() {
 		int cnt = 0;
 		v_tools = new ITool[r_tools.length];
-		for (int i=0; i<r_tools.length; i++) {
-			if (r_tools[i].isSystemObject()) continue;
-			if (r_tools[i].isAbstract()) continue;
-			v_tools[cnt++] = r_tools[i];
+		for (ITool r_tool : r_tools) {
+			if (r_tool.isSystemObject()) continue;
+			if (r_tool.isAbstract()) continue;
+			v_tools[cnt++] = r_tool;
 		}
 		ITool[] tmp = new ITool[cnt];
 		System.arraycopy(v_tools, 0, tmp, 0, cnt);
@@ -393,19 +394,19 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 		}
 	}
-	
+
 	private boolean updateCompatibleTools(ITool real) {
 		boolean result = false;
 		ArrayList<ITool> list = new ArrayList<ITool>();
 		IFileInfoModification fim = (IFileInfoModification)mod;
-		
-		if (real != null) { // Current tool exists 
+
+		if (real != null) { // Current tool exists
 			real = ManagedBuildManager.getRealTool(real);
 			list.add(real);
 			IToolModification tm = fim.getToolModification(real);
-			IModificationOperation[] mo = tm.getSupportedOperations();
-			for (int i=0; i<mo.length; i++) {
-				ITool t = mo[i].getReplacementTool();
+			IModificationOperation[] mos = tm.getSupportedOperations();
+			for (IModificationOperation mo : mos) {
+				ITool t = mo.getReplacementTool();
 				if (t == null)
 					result = true;
 				else {
@@ -415,12 +416,12 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 		} else { // Current tool is NO_TOOL
 			result = true;
-			IToolModification[] tm = fim.getSystemToolModifications();
-			for (int i=0; i<tm.length; i++) {
-				IModificationOperation[] mo = tm[i].getSupportedOperations();
-				for (int j=0; j<mo.length; j++) {
-					if (mo[j].getReplacementTool() == null) {
-						ITool t = tm[i].getTool(); 
+			IToolModification[] tms = fim.getSystemToolModifications();
+			for (IToolModification tm : tms) {
+				IModificationOperation[] mos = tm.getSupportedOperations();
+				for (IModificationOperation mo : mos) {
+					if (mo.getReplacementTool() == null) {
+						ITool t = tm.getTool();
 						if (! t.isSystemObject() && ! t.isAbstract())
 							list.add(t);
 						break;
@@ -432,7 +433,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		v_tools = list.toArray(new ITool[list.size()]);
 		return result;
 	}
-		
+
     @Override
 	protected void checkPressed(SelectionEvent e) {
     	updateData();
@@ -452,7 +453,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			ManagedBuilderUIPlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		if (mod != null) {
@@ -461,13 +462,13 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			updateData();
 		}
 	}
-	
+
 	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 
 	private void saveToolSelected() {
-		
-		IFileInfoModification fim = (IFileInfoModification)mod; 
+
+		IFileInfoModification fim = (IFileInfoModification)mod;
 
 		// Find old tool
 		ITool oldTool = null;
@@ -485,7 +486,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			newTool = v_tools[pos];
 
 		// May be we've seleceted the same tool
-		if (newTool == null && oldTool == null) 
+		if (newTool == null && oldTool == null)
 			return; // nothing to change
 		if (newTool != null && newTool.matches(oldTool))
 			return; // nothing to change
@@ -495,18 +496,18 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		apply();
 		updateData();
 	}
-	
+
 	/**
 	 * Opens Tools selection dialog.
 	 * Depending of result (OK/Cancel)
 	 * either applies tools changes,
-	 * or re-creates modification to abandon changes 
+	 * or re-creates modification to abandon changes
 	 */
 	private void modifyTools() {
-		
+
 		ToolSelectionDialog d = new ToolSelectionDialog(usercomp.getShell(), ri);
 		d.all = v_tools;
-		d.fi = (IFolderInfo)ri; 
+		d.fi = (IFolderInfo)ri;
 		d.mod = mod;
 		int result = d.open();
 		if (d.removed.size() > 0 || d.added.size() > 0) {
@@ -518,7 +519,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 		}
 	}
-	
+
 	/**
 	 * Applies changes to Modification
 	 */
@@ -529,7 +530,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			ManagedBuilderUIPlugin.log(e);
 		}
 	}
-	
+
 	private void modifyToolchain() {
 		IFolderInfoModification foim = (IFolderInfoModification)mod;
 		int x = c_toolchain.getSelectionIndex();
@@ -543,9 +544,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		apply();
 		updateData();
 	}
-	
+
 	public static Image getErrorIcon(IStatus st) {
-		if (st.isOK()) 
+		if (st.isOK())
 			return null;
 		int sev = st.getSeverity();
 		if (sev == IStatus.ERROR)
@@ -555,7 +556,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		else
 			return IMG_INFO;
 	}
-	
+
 	private void modifyBuilder() {
 		IConfigurationModification cm = (IConfigurationModification)mod;
 		cm.setBuilder(v_bs[c_builder.getSelectionIndex()]);
@@ -564,7 +565,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 
 	/**
-	 * Forms a message containing 
+	 * Forms a message containing
 	 * @param cs
 	 * @return
 	 */
@@ -573,7 +574,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		StringBuffer result = new StringBuffer();
 		for (int i=0; i<cons.length; i++) {
 			IBuildObject bo = cons[i].getBuildObject();
-			String n = (bo == null) ? 
+			String n = (bo == null) ?
 					"NULL" : //$NON-NLS-1$
 				    (bo instanceof ITool) ?
 						((ITool)bo).getUniqueRealName() :
@@ -581,39 +582,39 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			String t = EMPTY_STR;
 			switch (cons[i].getConflictType()) {
 			case IConflict.INCOMPATIBLE:
-				t = Messages.ToolChainEditTab_7; 
+				t = Messages.ToolChainEditTab_7;
 				break;
 			case IConflict.SOURCE_EXT_CONFLICT:
-				t = Messages.ToolChainEditTab_8; 
+				t = Messages.ToolChainEditTab_8;
 				break;
 			}
-			
+
 			String o = EMPTY_STR;
 			switch (cons[i].getObjectType()) {
 			case IRealBuildObjectAssociation.OBJECT_TOOLCHAIN:
-				o = Messages.ToolChainEditTab_9; 
+				o = Messages.ToolChainEditTab_9;
 				break;
 			case IRealBuildObjectAssociation.OBJECT_BUILDER:
-				o = Messages.ToolChainEditTab_10; 
+				o = Messages.ToolChainEditTab_10;
 				break;
 			case IRealBuildObjectAssociation.OBJECT_CONFIGURATION:
-				o = Messages.ToolChainEditTab_11; 
+				o = Messages.ToolChainEditTab_11;
 				break;
 			case IRealBuildObjectAssociation.OBJECT_FILE_INFO:
-				o = Messages.ToolChainEditTab_12; 
+				o = Messages.ToolChainEditTab_12;
 				break;
 			case IRealBuildObjectAssociation.OBJECT_FOLDER_INFO:
-				o = Messages.ToolChainEditTab_13; 
+				o = Messages.ToolChainEditTab_13;
 				break;
 			case IRealBuildObjectAssociation.OBJECT_TOOL:
-				o = Messages.ToolChainEditTab_14; 
+				o = Messages.ToolChainEditTab_14;
 				break;
 			}
-			
-			result.append(Messages.ToolChainEditTab_15 + 
-					(i+1) + Messages.ToolChainEditTab_16 + 
-					SPACE + t + SPACE + o + SPACE + n + 
-					Messages.ToolChainEditTab_17); 
+
+			result.append(Messages.ToolChainEditTab_15 +
+					(i+1) + Messages.ToolChainEditTab_16 +
+					SPACE + t + SPACE + o + SPACE + n +
+					Messages.ToolChainEditTab_17);
 		}
 		String s = result.toString();
 		if (s.trim().length() == 0)
@@ -622,4 +623,4 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			s = EMPTY_STR;
 		return s;
 	}
-} 
+}

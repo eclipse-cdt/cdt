@@ -359,7 +359,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 			} else if(queryParent){
 //				IResourceInfo rcInfo = tool.getParentResourceInfo();
 				ITool superTool = tool.getSuperClass();
-				if(!superTool.isExtensionElement()){
+				if(superTool!=null && !superTool.isExtensionElement()){
 					if(inType != null){
 						IInputType superInType = null;
 						String exts[] = inType.getSourceExtensions(tool);

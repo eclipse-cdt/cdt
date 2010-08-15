@@ -82,8 +82,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private Button button_edit;
 	private Group tools_group;
 	private Group single_tool_group;
-	private Label st_builder;
-	private Label st_toolchain;
+	private Text st_builder;
+	private Text st_toolchain;
 	private Label st_tool;
 
 	private IBuilder[] v_bs;
@@ -113,7 +113,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}});
 		c_toolchain.setEnabled(!page.isForFile());
 
-		st_toolchain = setupLabel(usercomp, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
+		st_toolchain = new Text(usercomp, SWT.LEFT | SWT.READ_ONLY);
+		setupControl(st_toolchain, 2, GridData.FILL_HORIZONTAL);
 		st_toolchain.setForeground(red);
 
 		setupLabel(usercomp, Messages.ToolChainEditTab_2, 1, GridData.BEGINNING);
@@ -128,7 +129,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}});
 		c_builder.setEnabled(page.isForProject());
 
-		st_builder = setupLabel(usercomp, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
+		st_builder = new Text(usercomp, SWT.LEFT | SWT.READ_ONLY);
+		setupControl(st_builder, 2, GridData.FILL_HORIZONTAL);
 		st_builder.setForeground(red);
 
 		// make table for tools list
@@ -240,6 +242,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 //			IFileInfoModification fim = (IFileInfoModification)mod;
 //			fim.getProjectToolModifications();
 		}
+		st_toolchain.setEnabled(!EMPTY_STR.equals(st_toolchain.getText()));
+		st_builder.setEnabled(!EMPTY_STR.equals(st_builder.getText()));
 	}
 
 	private void fillToolChainCombo() {

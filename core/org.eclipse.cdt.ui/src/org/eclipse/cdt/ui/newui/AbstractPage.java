@@ -72,6 +72,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
@@ -159,7 +160,7 @@ implements
 	private Button manageButton;
 	private Button excludeFromBuildCheck;
 	private Label errIcon;
-	private Label errMessage;
+	private Text errMessage;
 	private Composite errPane;
 	private Composite parentComposite;
 	/*
@@ -314,7 +315,7 @@ implements
 			errIcon.setLayoutData(new GridData(GridData.BEGINNING));
 			errIcon.setImage(IMG_WARN);
 
-			errMessage = new Label(errPane, SWT.LEFT);
+			errMessage = new Text(errPane, SWT.LEFT | SWT.READ_ONLY);
 			errMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 			if (isForFolder() || isForFile()) {

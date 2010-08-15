@@ -90,6 +90,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.Preferences;
 
 public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
@@ -848,6 +849,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			// If not, then try the extension configurations
 			if (parent == null) {
 				parent = ManagedBuildManager.getExtensionConfiguration(element.getAttribute(IConfiguration.PARENT));
+				if (parent==null) {
+					String message = NLS.bind(ManagedMakeMessages.getResourceString("Configuration.orphaned"), getId(), element.getAttribute(IConfiguration.PARENT)); //$NON-NLS-1$
+					ManagedBuilderCorePlugin.error(message);
+				}
 			}
 		}
 

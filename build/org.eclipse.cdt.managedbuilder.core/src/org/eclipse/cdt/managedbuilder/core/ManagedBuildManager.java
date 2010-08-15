@@ -572,6 +572,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
+	 * @return the base extension configuration from the manifest (plugin.xml)
+	 *  or {@code null} if not found.
+	 *  
+	 * @since 8.0
+	 */
+	public static IConfiguration getExtensionConfiguration(IConfiguration cfg) {
+		for(;cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent()) {
+			// empty loop to find base configuration
+		}
+		return cfg;
+	}
+
+	/**
 	 * @return the configuration from the manifest with the ID specified in the argument
 	 *  or {@code null}.
 	 */

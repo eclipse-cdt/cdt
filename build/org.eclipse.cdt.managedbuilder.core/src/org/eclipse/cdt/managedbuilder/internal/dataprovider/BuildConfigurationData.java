@@ -31,6 +31,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.osgi.util.NLS;
 
 public class BuildConfigurationData extends CConfigurationData {
 	private Configuration fCfg;
@@ -177,7 +178,11 @@ public class BuildConfigurationData extends CConfigurationData {
 		String msg = null;
 		if(!fCfg.isSupported()){
 			flags |= CConfigurationStatus.TOOLCHAIN_NOT_SUPPORTED;
-			msg = DataProviderMessages.getString("BuildConfigurationData.0"); //$NON-NLS-1$
+			msg = DataProviderMessages.getString("BuildConfigurationData.NoConfigurationSupport"); //$NON-NLS-1$
+			
+		} else if (ManagedBuildManager.getExtensionConfiguration(fCfg)==null){
+			flags |= CConfigurationStatus.SETTINGS_INVALID;
+			msg = NLS.bind(DataProviderMessages.getString("BuildConfigurationData.OrphanedConfiguration"), fCfg.getId()); //$NON-NLS-1$
 		}
 		
 		if(flags != 0)

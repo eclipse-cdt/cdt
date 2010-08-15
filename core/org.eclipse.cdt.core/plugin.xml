@@ -480,6 +480,13 @@
    </extension>
 
 <!-- =================================================================================== -->
+<!-- .cproject Content Type                                                              -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association content-type="org.eclipse.core.runtime.xml" file-names=".cproject"/>
+   </extension>
+
+<!-- =================================================================================== -->
 <!-- Define C/C++ files ContentTypes                                                     -->
 <!-- =================================================================================== -->
    <extension point="org.eclipse.core.contenttype.contentTypes">

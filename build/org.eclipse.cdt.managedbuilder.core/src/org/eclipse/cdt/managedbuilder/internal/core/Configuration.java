@@ -90,8 +90,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
 
-import com.ibm.icu.text.MessageFormat;
-
 public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
 	
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$

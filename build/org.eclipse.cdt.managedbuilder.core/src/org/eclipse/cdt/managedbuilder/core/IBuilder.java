@@ -16,6 +16,7 @@ import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
 import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -95,6 +96,11 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	 * @since 6.0
 	 */
 	static final String ATTRIBUTE_COMMAND_LAUNCHER = "commandLauncher"; //$NON-NLS-1$
+
+	/**
+	 * @since 8.0
+	 */
+	static final String ATTRIBUTE_BUILD_RUNNER = "buildRunner"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the command line arguments to pass to the build/make utility used 
@@ -319,4 +325,13 @@ public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
 	 * @since 6.0
 	 */
 	public ICommandLauncher getCommandLauncher();
+
+	/**
+	 * Returns the build runner for this builder.
+	 * 
+	 * @return build runner
+	 * @since 8.0
+	 */
+	public IBuildRunner getBuildRunner() throws CoreException;
+	
 }

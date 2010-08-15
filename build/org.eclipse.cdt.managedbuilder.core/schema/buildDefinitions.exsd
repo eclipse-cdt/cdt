@@ -1316,7 +1316,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="browseFilterExtensions" type="string">
             <annotation>
                <documentation>
-                  An optional value that specifies a comma-separated string of file-extension filters for the underlying file browse-dialog. For filters with multiple extensions, use semicolon as a separator - eg. "*.lib;*.a;*.cmd,*.*". This attribute only applies when user chooses to browse the file-system, and only when browseType is 'file'.
+                  An optional value that specifies a comma-separated string of file-extension filters for the underlying file browse-dialog. For filters with multiple extensions, use semicolon as a separator - eg. &quot;*.lib;*.a;*.cmd,*.*&quot;. This attribute only applies when user chooses to browse the file-system, and only when browseType is &apos;file&apos;.
                </documentation>
             </annotation>
          </attribute>
@@ -1738,6 +1738,16 @@ If the builder supports specifying custom number of parallel jobs, the option de
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.ICommandLauncher"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="buildRunner" type="string">
+            <annotation>
+               <documentation>
+                  A runner for the build. Overrides or extends the built-in external and internal build runners.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.IBuildRunner"/>
                </appInfo>
             </annotation>
          </attribute>

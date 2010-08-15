@@ -37,13 +37,16 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
+import org.eclipse.cdt.managedbuilder.core.ExternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.InternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildBuildData;
@@ -136,6 +139,9 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	
 	private ICommandLauncher fCommandLauncher = null;
 	private IConfigurationElement fCommandLauncherElement = null;
+
+	private IBuildRunner fBuildRunner = null;
+	private IConfigurationElement fBuildRunnerElement = null;
 
 	/*
 	 *  C O N S T R U C T O R S
@@ -326,6 +332,9 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		
 		fCommandLauncher = builder.fCommandLauncher;
 		fCommandLauncherElement = builder.fCommandLauncherElement;
+		
+		fBuildRunner = builder.fBuildRunner;
+		fBuildRunnerElement = builder.fBuildRunnerElement;
 	}
 	
 	public void copySettings(Builder builder, boolean allBuildSettings){
@@ -577,6 +586,9 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			fCommandLauncherElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
         
+		String buildRunner = element.getAttribute(ATTRIBUTE_BUILD_RUNNER);
+		if (buildRunner != null && element instanceof DefaultManagedConfigElement)
+			fBuildRunnerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 	}
 	
 	/* (non-Javadoc)
@@ -2745,4 +2757,26 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return fCommandLauncher;
 	}
 
+	public IBuildRunner getBuildRunner() throws CoreException {
+		// Already defined
+		if (fBuildRunner != null)
+			return fBuildRunner;
+		
+		// Instantiate from model
+		if (fBuildRunnerElement != null) {
+			fBuildRunner = (IBuildRunner)fBuildRunnerElement.createExecutableExtension(ATTRIBUTE_BUILD_RUNNER);
+			return fBuildRunner;
+		}
+		
+		// Check with superClass
+		if (superClass != null)
+			return superClass.getBuildRunner();
+		
+		// Default internal or external builder
+		if (isInternalBuilder())
+			return new InternalBuildRunner();
+		
+		return new ExternalBuildRunner();
+	}
+	
 }

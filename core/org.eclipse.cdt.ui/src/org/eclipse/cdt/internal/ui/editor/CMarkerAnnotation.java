@@ -38,7 +38,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 
 	public CMarkerAnnotation(IMarker marker) {
 		super(marker);
-		fIsProblemMarker = MarkerUtilities.isMarkerType(getMarker(), ICModelMarker.C_MODEL_PROBLEM_MARKER);
+		fIsProblemMarker = MarkerUtilities.isMarkerType(getMarker(), IMarker.PROBLEM); 
 	}
 
 	/**

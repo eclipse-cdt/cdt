@@ -35,9 +35,6 @@
       <super type="org.eclipse.core.resources.problemmarker"/> 
       <super type="org.eclipse.core.resources.textmarker"/> 
       
-      <super
-            type="org.eclipse.cdt.core.problem">
-      </super>
               <attribute
           name="category">
     </attribute>

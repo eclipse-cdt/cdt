@@ -100,7 +100,6 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 		marker.setAttribute(ID, problem.getId());
 		marker.setAttribute(IMarker.CHAR_END, loc.getEndingChar());
 		marker.setAttribute(IMarker.CHAR_START, loc.getStartingChar());
-		marker.setAttribute("org.eclipse.cdt.core.problem", 42); //$NON-NLS-1$
 		String propArgs = serializeArgs(args);
 		marker.setAttribute(PROBLEM_ARGS, propArgs);
 		IProblemCategory[] cats = CodanProblemCategory.findProblemCategories(
@@ -247,7 +246,8 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 			return null;
 		IResource resource = marker.getResource();
 		IProblemProfile profile = getProfile(resource);
-		CodanProblem problem = (CodanProblem) ((CodanProblem) profile.findProblem(id)).clone();
+		CodanProblem problem = (CodanProblem) ((CodanProblem) profile
+				.findProblem(id)).clone();
 		CodanSeverity sev = getSeverity(marker);
 		problem.setSeverity(sev);
 		return problem;

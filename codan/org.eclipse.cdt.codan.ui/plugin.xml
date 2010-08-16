@@ -170,4 +170,25 @@
              priority="80">
        </markerGroupingEntry>
     </extension>
+    <extension
+          point="org.eclipse.ui.editors.annotationTypes">
+       <type
+             markerSeverity="2"
+             markerType="org.eclipse.cdt.codan.core.codanProblem"
+             name="org.eclipse.cdt.codan.ui.annotation.error"
+             super="org.eclipse.ui.workbench.texteditor.error">
+       </type>
+       <type
+             markerSeverity="1"
+             markerType="org.eclipse.cdt.codan.core.codanProblem"
+             name="org.eclipse.cdt.codan.ui.annotation.warning"
+             super="org.eclipse.ui.workbench.texteditor.warning">
+       </type>
+       <type
+             markerSeverity="0"
+             markerType="org.eclipse.cdt.codan.core.codanProblem"
+             name="org.eclipse.cdt.codan.ui.annotation.info"
+             super="org.eclipse.ui.workbench.texteditor.info">
+       </type>
+    </extension>
 </plugin>

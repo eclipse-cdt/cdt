@@ -119,14 +119,14 @@
     <extension
           point="org.eclipse.ui.ide.markerSupport">
        <markerTypeCategory
-             name="Code Analysis Problem">
+             name="%markerTypeCategory.name">
           <markerTypeReference
                 id="org.eclipse.cdt.codan.core.codanProblem">
           </markerTypeReference>
        </markerTypeCategory>
        <markerGrouping
              id="org.eclipse.cdt.codan.ui.markerGrouping"
-             label="Codan Problem Type">
+             label="%markerGrouping.label">
        </markerGrouping>
        <markerAttributeGrouping
              attribute="category"
@@ -147,25 +147,25 @@
        </markerAttributeGrouping>
        <markerGroupingEntry
              id="org.eclipse.cdt.codan.ui.markerGroupingUnknown"
-             label="Unknown"
+             label="%markerGroupingEntry.category.Unknown"
              markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
              priority="90">
        </markerGroupingEntry>
        <markerGroupingEntry
              id="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
-             label="Programming Problems"
+             label="%markerGroupingEntry.category.ProgrammingProblems"
              markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
              priority="10">
        </markerGroupingEntry>
        <markerGroupingEntry
              id="org.eclipse.cdt.codan.core.categories.CompilerErrors"
-             label="Compiler Errors"
+             label="%markerGroupingEntry.category.CompilerErrors"
              markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
              priority="2">
        </markerGroupingEntry>
        <markerGroupingEntry
              id="org.eclipse.cdt.codan.core.categories.CodeStyle"
-             label="Coding Style"
+             label="%markerGroupingEntry.category.CodingStyle"
              markerGrouping="org.eclipse.cdt.codan.ui.markerGrouping"
              priority="80">
        </markerGroupingEntry>

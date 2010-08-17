@@ -12,6 +12,7 @@ package org.eclipse.cdt.codan.internal.ui.widgets;
 
 import java.io.File;
 
+import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.core.param.FileScopeProblemPreference;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.codan.core.param.ListProblemPreference;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.ListEditor;
@@ -31,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -38,6 +41,9 @@ import org.eclipse.swt.widgets.Label;
  * 
  */
 public class ParametersComposite extends Composite {
+	private static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$
+	private static final String PREF_SEVERITY = "severity"; //$NON-NLS-1$
+	private static final String PREF_MESSAGE = "message"; //$NON-NLS-1$
 	private FieldEditorPreferencePage page;
 	private IProblem problem;
 	private PreferenceStore prefStore;
@@ -54,12 +60,32 @@ public class ParametersComposite extends Composite {
 		this.setLayout(new GridLayout(2, false));
 		this.problem = problem;
 		this.prefStore = new PreferenceStore();
-		page = new FieldEditorPreferencePage() {
+		page = new FieldEditorPreferencePage(FieldEditorPreferencePage.GRID) {
 			@Override
 			protected void createFieldEditors() {
 				noDefaultAndApplyButton();
+				((GridLayout) getFieldEditorParent().getLayout()).numColumns = 2;
+				addField(new BooleanFieldEditor(PREF_ENABLED,
+						"This problem is enabled", getFieldEditorParent()));
+				String[][] entries = {
+						{ CodanSeverity.Error.toString(),
+								CodanSeverity.Error.toString() }, //
+						{ CodanSeverity.Warning.toString(),
+								CodanSeverity.Warning.toString() }, //
+						{ CodanSeverity.Info.toString(),
+								CodanSeverity.Info.toString() }, //
+				};
+				addField(new ComboFieldEditor(PREF_SEVERITY, "Severity",
+						entries, getFieldEditorParent()));
+				addField(new StringFieldEditor(PREF_MESSAGE, "Message Pattern",
+						getFieldEditorParent()));
 				IProblemPreference pref = problem.getPreference();
 				createFieldEditorsForParameters(pref);
+			}
+
+			@Override
+			protected Control createContents(Composite parent) {
+				return super.createContents(parent);
 			}
 
 			/**
@@ -161,6 +187,16 @@ public class ParametersComposite extends Composite {
 				}
 			}
 		};
+		load(problem);
+		page.setPreferenceStore(prefStore);
+		page.createControl(parent);
+		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+
+	/**
+	 * @param problem
+	 */
+	public void load(final IProblem problem) {
 		IProblemPreference info = problem.getPreference();
 		if (info == null) {
 			Label label = new Label(this, 0);
@@ -168,14 +204,18 @@ public class ParametersComposite extends Composite {
 		} else {
 			initPrefStore(info);
 		}
-		page.setPreferenceStore(prefStore);
-		page.createControl(parent);
-		page.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		prefStore.setValue(PREF_ENABLED, problem.isEnabled());
+		prefStore.setValue(PREF_SEVERITY, problem.getSeverity().toString());
+		prefStore.setValue(PREF_MESSAGE, problem.getMessagePattern());
 	}
 
 	public void save(IProblemWorkingCopy problem) {
 		page.performOk();
 		savePrefStore(problem.getPreference());
+		problem.setEnabled(prefStore.getBoolean(PREF_ENABLED));
+		problem.setSeverity(CodanSeverity.valueOf(prefStore
+				.getString(PREF_SEVERITY)));
+		problem.setMessagePattern(prefStore.getString(PREF_MESSAGE));
 	}
 
 	private void savePrefStore(IProblemPreference desc) {

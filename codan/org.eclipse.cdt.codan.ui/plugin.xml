@@ -191,4 +191,32 @@
              super="org.eclipse.ui.workbench.texteditor.info">
        </type>
     </extension>
+    <extension
+          point="org.eclipse.ui.popupMenus">
+                <objectContribution
+            adaptable="true"
+            id="org.eclipse.cdt.codan.ui.CodanProblemActions"
+            objectClass="org.eclipse.core.resources.IMarker">
+         <action
+               class="org.eclipse.cdt.codan.internal.ui.actions.OpenProblemPreferences"
+               id="org.eclipse.cdt.codan.ui.OpenProblemProperties"
+               label="Customize Problem..."
+               menubarPath="additions"/>  
+                             
+           <filter name="type"
+               value="org.eclipse.cdt.codan.core.codanProblem"/>
+         <!-- user: menubarPath="org.eclipse.cdt.codan.ui.configureMenu/configureProblemSep" --> 
+         <!-- <menu
+               id="org.eclipse.cdt.codan.ui.configureMenu"
+               label="Configure Problem"
+               path="additions">
+            <separator
+                  name="configureProblemSep">
+            </separator>
+                 
+         </menu>
+        -->
+
+      </objectContribution>
+    </extension>
 </plugin>

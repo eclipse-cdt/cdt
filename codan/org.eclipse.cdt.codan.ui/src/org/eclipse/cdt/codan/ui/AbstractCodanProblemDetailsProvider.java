@@ -111,13 +111,19 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	public String getStyledProblemMessage() {
 		String message = escapeForLink(getProblemMessage());
 		String href = getLocationHRef();
-		String link = href.replaceFirst("^file:", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		link = link.replaceFirst("#(\\d+)$", ":$1"); //$NON-NLS-1$//$NON-NLS-2$
-		return "<a href=\"" + href + "\">" + link + "</a> \n" + message; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		String link = getLocation();
+		return "<a href=\"" + href + "\">" + link + "</a> \n" + message + "\n"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	protected String getLocationHRef() {
 		return CodanEditorUtility.getLocationHRef(marker);
+	}
+
+	/**
+	 * @since 1.1
+	 */
+	protected String getLocation() {
+		return CodanEditorUtility.getLocation(marker);
 	}
 
 	/**

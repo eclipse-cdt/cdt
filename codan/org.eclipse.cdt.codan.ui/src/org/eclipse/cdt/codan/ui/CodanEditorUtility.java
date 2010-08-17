@@ -113,4 +113,19 @@ public class CodanEditorUtility {
 		String href = loc + "#" + line; //$NON-NLS-1$
 		return href;
 	}
+
+	/**
+	 * @param marker
+	 * @return
+	 * @since 1.1
+	 */
+	public static String getLocation(IMarker marker) {
+		String loc = marker.getResource().getFullPath().toPortableString();
+		String loc2 = marker.getAttribute(IMarker.LOCATION, ""); //$NON-NLS-1$
+		int line = marker.getAttribute(IMarker.LINE_NUMBER, 0);
+		if (loc2.length() > 0) {
+			loc = loc2.replaceAll("[^:]*: ", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+		}
+		return loc + ":" + line; //$NON-NLS-1$
+	}
 }

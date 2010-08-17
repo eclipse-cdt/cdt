@@ -18,6 +18,7 @@ import org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider;
 import org.eclipse.cdt.codan.ui.CodanEditorUtility;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -84,9 +85,11 @@ public class ProblemDetails extends ViewPart {
 				// link file format example "file:/tmp/file.c#42", 42 is the line number
 				if (link.startsWith("file:")) { //$NON-NLS-1$
 					try {
-						CodanEditorUtility.openInEditor(link, curProvider
+						CodanEditorUtility.openFileURL(link, curProvider
 								.getMarker().getResource());
 					} catch (PartInitException e1) {
+						CodanUIActivator.log(e1);
+					} catch (BadLocationException e1) {
 						CodanUIActivator.log(e1);
 					}
 					return;

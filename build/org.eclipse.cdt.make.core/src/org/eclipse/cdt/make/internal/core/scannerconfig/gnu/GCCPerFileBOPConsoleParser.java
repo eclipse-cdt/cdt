@@ -121,7 +121,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             
             IFile file= null;
             IPath baseDirectory= fUtil.getBaseDirectory();
-            if (baseDirectory.isPrefixOf(pFilePath)) {
+            if (baseDirectory.isPrefixOf(pFilePath) || baseDirectory.setDevice(null).isPrefixOf(pFilePath)) {
 				IPath relPath = pFilePath.removeFirstSegments(baseDirectory.segmentCount());
 				//Note: We add the scanner-config even if the resource doesn't actually
 				//exist below this project (which may happen when reading existing

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.ExternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuildRunner;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.InternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -73,12 +75,11 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Version;
 
-public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider, IRealBuildObjectAssociation  {
+public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider, IRealBuildObjectAssociation  {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
-	private IBuilder superClass;
 	private String superClassId;
 	//  Parent and children
 	private IToolChain parent;
@@ -159,6 +160,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 * @param managedBuildRevision 	The fileVersion of Managed Buid System                 
 	 */
 	public Builder(IToolChain parent, IManagedConfigElement element, String managedBuildRevision) {
+		super(true);
 		this.parent = parent;
 		isExtensionBuilder = true;
 		
@@ -185,6 +187,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
 	public Builder(ToolChain parent, IBuilder superClass, String Id, String name, boolean isExtensionElement) {
+		super(true);
 		this.parent = parent;
 		this.superClass = superClass;
 		setManagedBuildRevision(parent.getManagedBuildRevision());
@@ -214,6 +217,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 * @param managedBuildRevision 	The fileVersion of Managed Buid System
 	 */
 	public Builder(IToolChain parent, ICStorageElement element, String managedBuildRevision) {
+		super(true);
 		this.parent = parent;
 		isExtensionBuilder = false;
 		
@@ -233,6 +237,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 * @param builder The existing builder to clone.
 	 */
 	public Builder(IToolChain parent, String Id, String name, Builder builder) {
+		super(true);
 		this.parent = parent;
 		
 		superClass = builder.superClass;
@@ -433,7 +438,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
 	
-	/* (non-Javadoc)
+	/**
 	 * Loads the builder information from the ManagedConfigElement specified in the 
 	 * argument.
 	 * 
@@ -565,19 +570,23 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
         IManagedConfigElement[] children = element.getChildren();
         for(int i = 0; i < children.length; i++){
         	IManagedConfigElement child = children[i];
-        	String name = child.getName();
-        	if(OUTPUT_ENTRIES.equals(name)){
-        		ICSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(new ManagedConfigStorageElement(child));
-        		if(entries.length == 0){
-        			outputEntries = new ICOutputEntry[0];
-        		} else {
-	        		List list = new ArrayList(entries.length);
-	        		for(int k = 0; k < entries.length; k++){
-	        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
-	        				list.add(entries[k]);
+        	if (loadChild(child)) {
+        		// nothing
+        	} else {
+	        	String name = child.getName();
+	        	if(OUTPUT_ENTRIES.equals(name)){
+	        		ICSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(new ManagedConfigStorageElement(child));
+	        		if(entries.length == 0){
+	        			outputEntries = new ICOutputEntry[0];
+	        		} else {
+		        		List list = new ArrayList(entries.length);
+		        		for(int k = 0; k < entries.length; k++){
+		        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
+		        				list.add(entries[k]);
+		        		}
+		        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
 	        		}
-	        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
-        		}
+	        	}
         	}
         }
         
@@ -591,7 +600,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			fBuildRunnerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Initialize the builder information from the XML element 
 	 * specified in the argument
 	 * 
@@ -742,19 +751,23 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
         ICStorageElement[] children = element.getChildren();
         for(int i = 0; i < children.length; i++){
         	ICStorageElement child = children[i];
-        	String name = child.getName();
-        	if(OUTPUT_ENTRIES.equals(name)){
-        		ICSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(child);
-        		if(entries.length == 0){
-        			outputEntries = new ICOutputEntry[0];
-        		} else {
-	        		List list = new ArrayList(entries.length);
-	        		for(int k = 0; k < entries.length; k++){
-	        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
-	        				list.add(entries[k]);
+        	if (loadChild(child)) {
+        		// nothing
+        	} else {
+	        	String name = child.getName();
+	        	if(OUTPUT_ENTRIES.equals(name)){
+	        		ICSettingEntry entries[] = LanguageSettingEntriesSerializer.loadEntries(child);
+	        		if(entries.length == 0){
+	        			outputEntries = new ICOutputEntry[0];
+	        		} else {
+		        		List list = new ArrayList(entries.length);
+		        		for(int k = 0; k < entries.length; k++){
+		        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
+		        				list.add(entries[k]);
+		        		}
+		        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
 	        		}
-	        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
-        		}
+	        	}
         	}
         }
 
@@ -852,6 +865,13 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			//  TODO:  issue warning?
 		}
 		
+		// options
+		try {
+			super.serialize(element);
+		} catch (BuildException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		
 		if(outputEntries != null){
 			ICStorageElement outEl = element.createChild(OUTPUT_ENTRIES);
 			LanguageSettingEntriesSerializer.serializeEntries(outputEntries, outEl);
@@ -938,6 +958,13 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			//  TODO:  issue warning?
 		}
 		
+		// options
+		try {
+			super.serialize(element);
+		} catch (BuildException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+
 		if(outputEntries != null){
 			ICStorageElement outEl = element.createChild(OUTPUT_ENTRIES);
 			LanguageSettingEntriesSerializer.serializeEntries(outputEntries, outEl);
@@ -948,9 +975,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getParent()
-	 */
 	public IToolChain getParent() {
 		return parent;
 	}
@@ -959,24 +983,15 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getSuperClass()
-	 */
 	public IBuilder getSuperClass() {
-		return superClass;
+		return (IBuilder)superClass;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getName()
-	 */
 	@Override
 	public String getName() {
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#isAbstract()
-	 */
 	public boolean isAbstract() {
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
@@ -985,9 +1000,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getUnusedChildren()
-	 */
 	public String getUnusedChildren() {
 		if (unusedChildren != null) {
 			return unusedChildren;
@@ -995,14 +1007,11 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			return EMPTY_STRING;	// Note: no inheritance from superClass
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getCommand()
-	 */
 	public String getCommand() {
 		if (command == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getCommand();
+				return getSuperClass().getCommand();
 			} else {
 				return "make"; //$NON-NLS-1$
 			}
@@ -1010,9 +1019,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return command;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#getArguments()
-	 */
 	public String getArguments() {
 		String args = getArgumentsAttribute(); 
 		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
@@ -1159,23 +1165,17 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return args;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getErrorParserIds()
-	 */
 	public String getErrorParserIds() {
 		String ids = errorParserIds;
 		if (ids == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				ids = superClass.getErrorParserIds();
+				ids = getSuperClass().getErrorParserIds();
 			}
 		}
 		return ids;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getErrorParserList()
-	 */
 	public String[] getErrorParserList() {
 		String parserIDs = getErrorParserIds();
 		String[] errorParsers = null;
@@ -1198,9 +1198,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return errorParsers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder.setCommand(String)
-	 */
 	public void setCommand(String cmd) {
 		if(getCommand().equals(cmd)) return;
 		if (cmd == null && command == null) return;
@@ -1210,9 +1207,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuilder#setArguments(String)
-	 */
 	public void setArguments(String newArgs) {
 		if(getArguments().equals(newArgs))
 			return;
@@ -1235,9 +1229,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setErrorParserIds()
-	 */
 	public void setErrorParserIds(String ids) {
 		String currentIds = getErrorParserIds();
 		if (ids == null && currentIds == null) return;
@@ -1247,17 +1238,11 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * Sets the isAbstract attribute
-	 */
 	public void setIsAbstract(boolean b) {
 		isAbstract = new Boolean(b);
 		setDirty(true);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuildFileGeneratorElement()
-	 */
 	public IConfigurationElement getBuildFileGeneratorElement() {
 		if (buildFileGeneratorElement == null) {
 			if (superClass != null) {
@@ -1267,9 +1252,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return buildFileGeneratorElement;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuildFileGenerator()
-	 */
 	public IManagedBuilderMakefileGenerator getBuildFileGenerator(){
 		IConfigurationElement element = getBuildFileGeneratorElement();
 		if (element != null) {
@@ -1292,9 +1274,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setBuildFileGeneratorElement(String)
-	 */
 	public void setBuildFileGeneratorElement(IConfigurationElement element) {
 		buildFileGeneratorElement = element;
 		setDirty(true);
@@ -1304,32 +1283,20 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#isExtensionElement()
-	 */
 	public boolean isExtensionElement() {
 		return isExtensionBuilder;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#isDirty()
-	 */
 	public boolean isDirty() {
 		// This shouldn't be called for an extension Builder
  		if (isExtensionBuilder) return false;
 		return isDirty;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setDirty(boolean)
-	 */
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 	}
 	
-	/* (non-Javadoc)
-	 *  Resolve the element IDs to interface references
-	 */
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
@@ -1348,14 +1315,11 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getConvertToId()
-	 */
 	public String getConvertToId() {
 		if (convertToId == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getConvertToId();
+				return getSuperClass().getConvertToId();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -1363,9 +1327,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return convertToId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setConvertToId(String)
-	 */
 	public void setConvertToId(String convertToId) {
 		if (convertToId == null && this.convertToId == null) return;
 		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
@@ -1375,14 +1336,11 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getVersionsSupported()
-	 */
 	public String getVersionsSupported() {
 		if (versionsSupported == null) {
 			// If I have a superClass, ask it
 			if (superClass != null) {
-				return superClass.getVersionsSupported();
+				return getSuperClass().getVersionsSupported();
 			} else {
 				return EMPTY_STRING;
 			}
@@ -1390,10 +1348,6 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return versionsSupported;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setVersionsSupported(String)
-	 */
-	
 	public void setVersionsSupported(String versionsSupported) {
 		if (versionsSupported == null && this.versionsSupported == null) return;
 		if (versionsSupported == null || this.versionsSupported == null || !versionsSupported.equals(this.versionsSupported)) {
@@ -1403,48 +1357,33 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		return;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getFileContextBuildMacroValues()
-	 */
 	public IFileContextBuildMacroValues getFileContextBuildMacroValues(){
 		if(fileContextBuildMacroValues == null && superClass != null)
-			return superClass.getFileContextBuildMacroValues();
+			return getSuperClass().getFileContextBuildMacroValues();
 		return fileContextBuildMacroValues;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getBuilderVariablePattern()
-	 */
 	public String getBuilderVariablePattern(){
 		if(builderVariablePattern == null && superClass != null)
-			return superClass.getBuilderVariablePattern();
+			return getSuperClass().getBuilderVariablePattern();
 		return builderVariablePattern;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#isVariableCaseSensitive()
-	 */
 	public boolean isVariableCaseSensitive(){
 		if(isVariableCaseSensitive == null){
 			if(superClass != null)
-				return superClass.isVariableCaseSensitive();
+				return getSuperClass().isVariableCaseSensitive();
 			return true;
 		}
 		return isVariableCaseSensitive.booleanValue();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getReservedMacroNames()
-	 */
 	public String[] getReservedMacroNames(){
 		if(reservedMacroNames == null && superClass != null)
-			return superClass.getReservedMacroNames();
+			return getSuperClass().getReservedMacroNames();
 		return reservedMacroNames;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#getReservedMacroNameSupplier()
-	 */
 	public IReservedMacroNameSupplier getReservedMacroNameSupplier(){
 		if(reservedMacroNameSupplier == null && reservedMacroNameSupplierElement != null){
 			try{
@@ -1453,7 +1392,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			}
 		}
 		if(reservedMacroNameSupplier == null && superClass != null)
-			return superClass.getReservedMacroNameSupplier();
+			return getSuperClass().getReservedMacroNameSupplier();
 		return reservedMacroNameSupplier;
 	}
 	
@@ -1844,7 +1783,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isStopOnError() {
 		if(stopOnErr == null){
 			if(superClass != null){
-				return superClass.isStopOnError();
+				return getSuperClass().isStopOnError();
 			}
 			return true;
 		}
@@ -1984,7 +1923,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isAutoBuildEnable() {
 		if(autoBuildEnabled == null){
 			if(superClass != null)
-				return superClass.isAutoBuildEnable();
+				return getSuperClass().isAutoBuildEnable();
 			return false;
 		}
 		return autoBuildEnabled.booleanValue();
@@ -1993,7 +1932,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isCleanBuildEnabled() {
 		if(cleanBuildEnabled == null){
 			if(superClass != null)
-				return superClass.isCleanBuildEnabled();
+				return getSuperClass().isCleanBuildEnabled();
 			return true;
 		}
 		return cleanBuildEnabled.booleanValue();
@@ -2006,7 +1945,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isIncrementalBuildEnabled() {
 		if(incrementalBuildEnabled == null){
 			if(superClass != null)
-				return superClass.isIncrementalBuildEnabled();
+				return getSuperClass().isIncrementalBuildEnabled();
 			return true;
 		}
 		return incrementalBuildEnabled.booleanValue();
@@ -2047,7 +1986,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean appendEnvironment() {
 		if(appendEnvironment == null){
 			if(superClass != null){
-				return superClass.appendEnvironment();
+				return getSuperClass().appendEnvironment();
 			}
 			return true;
 		}
@@ -2339,7 +2278,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean keepEnvironmentVariablesInBuildfile() {
 		if(keepEnvVarInBuildfile == null){
 			if(superClass != null)
-				return superClass.keepEnvironmentVariablesInBuildfile();
+				return getSuperClass().keepEnvironmentVariablesInBuildfile();
 			return false;
 		}
 		return keepEnvVarInBuildfile.booleanValue();
@@ -2363,7 +2302,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean supportsBuild(boolean managed) {
 		if(supportsManagedBuild == null){
 			if(superClass != null)
-				return superClass.supportsBuild(managed);
+				return getSuperClass().supportsBuild(managed);
 			return managed || !isInternalBuilder();
 		}
 		return supportsManagedBuild.booleanValue();
@@ -2551,7 +2490,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isParallelBuildOn() {
 		if(parallelBuildOn == null){
 			if(superClass != null){
-				return superClass.isParallelBuildOn();
+				return getSuperClass().isParallelBuildOn();
 			}
 			return false;
 		}
@@ -2749,7 +2688,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 			}
 		}
 		if(fCommandLauncher == null && superClass != null)
-			return superClass.getCommandLauncher();
+			return getSuperClass().getCommandLauncher();
 		
 		else if(fCommandLauncher == null) // catch all for backwards compatibility
 			fCommandLauncher = new CommandLauncher();
@@ -2770,7 +2709,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		
 		// Check with superClass
 		if (superClass != null)
-			return superClass.getBuildRunner();
+			return getSuperClass().getBuildRunner();
 		
 		// Default internal or external builder
 		if (isInternalBuilder())
@@ -2778,5 +2717,10 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 		
 		return new ExternalBuildRunner();
 	}
-	
+
+	@Override
+	protected IResourceInfo getParentResourceInfo() {
+		// There are no resources associated with builders
+		return null;
+	}
 }

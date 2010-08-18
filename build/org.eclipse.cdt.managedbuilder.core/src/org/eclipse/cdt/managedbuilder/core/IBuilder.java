@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IBuilder extends IBuildObject, IMakeBuilderInfo {
+public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	public static final String ARGUMENTS = "arguments";	//$NON-NLS-1$
 	public static final String BUILDER_ELEMENT_NAME = "builder"; 	//$NON-NLS-1$
 	public static final String BUILDFILEGEN_ID ="buildfileGenerator"; //$NON-NLS-1$

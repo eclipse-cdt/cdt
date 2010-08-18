@@ -1484,6 +1484,9 @@ Additional special types exist to flag options of special relevance to the build
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>

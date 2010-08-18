@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@
  * Martin Oberhuber (Wind River) - [234026] Clarify IFileService#createFolder() Javadocs
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight   (IBM)        - [244041] [files] Renaming a file looses Encoding property
+ * David McKnight   (IBM)        - [320713] [dstore] xml file transfer error on zOS
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -86,6 +87,7 @@ import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.services.search.IHostSearchResultSet;
 import org.eclipse.rse.services.search.ISearchService;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -620,7 +622,8 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
 	{
-		return RemoteFileUtility.getSystemFileTransferModeRegistry().isBinary(remotePath);
+		ISystemFileTransferModeRegistry reg = RemoteFileUtility.getSystemFileTransferModeRegistry();
+		return reg.isBinary(remotePath) || reg.isXML(remotePath);
 	}
 
 	protected boolean isBinary(IRemoteFile source)

@@ -212,7 +212,8 @@ public class MIRunControlEventProcessor_7_0
 
     		    		fCommandControl.getSession().dispatchEvent(event, fCommandControl.getProperties());
     		    	}
-    			} else if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent) || //$NON-NLS-1$ //$NON-NLS-2$
+    					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     				
     				String groupId = null;
 
@@ -232,7 +233,7 @@ public class MIRunControlEventProcessor_7_0
     					IProcessDMContext procDmc = procService.createProcessContext(fControlDmc, groupId);
 
     					MIEvent<?> event = null;
-    					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
+    					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
     						event = new MIThreadGroupCreatedEvent(procDmc, exec.getToken(), groupId);
     					} else if ("thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     						event = new MIThreadGroupExitedEvent(procDmc, exec.getToken(), groupId);

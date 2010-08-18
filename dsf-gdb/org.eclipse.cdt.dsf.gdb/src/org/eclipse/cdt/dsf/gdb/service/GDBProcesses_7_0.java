@@ -1013,7 +1013,8 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     		    	} else {
     		    		fThreadToGroupMap.remove(threadId);
     		    	}
-    			} else if ("thread-group-created".equals(miEvent) || "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
+    			} else if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent) ||  //$NON-NLS-1$ //$NON-NLS-2$
+    					   "thread-group-exited".equals(miEvent)) { //$NON-NLS-1$
     				
     				String groupId = null;
 
@@ -1029,7 +1030,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				}
 
     				if (groupId != null) {
-    					if ("thread-group-created".equals(miEvent)) { //$NON-NLS-1$
+    					if ("thread-group-created".equals(miEvent) || "thread-group-started".equals(miEvent)) { //$NON-NLS-1$ //$NON-NLS-2$
     						fDebuggedProcessesAndNames.put(groupId, ""); //$NON-NLS-1$
     					
 							// GDB is debugging a new process. Let's fetch its

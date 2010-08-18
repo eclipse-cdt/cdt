@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
@@ -222,12 +223,14 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
             return;
         }
         IASTParameterDeclaration[] nps = fdtor.getParameters();
-    	for (int i = 0; i < nps.length; i++) {
+        
+    	// The lengths can be different, e.g.: f(void) and f().
+    	final int end= Math.min(params.length, nps.length);
+    	for (int i = 0; i < end; i++) {
     		final IParameter param = params[i];
 			if (param != null) {
     		    IASTDeclarator dtor = nps[i].getDeclarator();
-    		    while (dtor.getNestedDeclarator() != null)
-    		        dtor = dtor.getNestedDeclarator();
+    		    dtor= ASTQueries.findInnermostDeclarator(dtor);
     		    IASTName name = dtor.getName();
     			name.setBinding(param);
     			ASTInternal.addDeclaration(param, name);

@@ -40,7 +40,7 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 		CxxAstUtils utils = CxxAstUtils.getInstance();
 		try {
 			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker)
-					.getAST(null, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
+					.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTName astName = getASTNameFromMarker(marker, ast);
 			if (astName == null) {
 				return;

@@ -385,7 +385,7 @@ public final class CxxAstUtils {
 					for (IIndexName decl : declarations) {
 
 						ITranslationUnit tu = getTranslationUnitFromIndexName(decl);
-						IASTNode node = tu.getAST(null,
+						IASTNode node = tu.getAST(index,
 								ITranslationUnit.AST_SKIP_INDEXED_HEADERS)
 								.getNodeSelector(null).findEnclosingNode(
 										decl.getNodeOffset(),

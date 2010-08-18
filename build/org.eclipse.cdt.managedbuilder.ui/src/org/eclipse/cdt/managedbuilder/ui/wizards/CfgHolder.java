@@ -47,6 +47,14 @@ public class CfgHolder {
 		} else		
 			name = cfg.getName();
 	}
+	
+	/**
+	 * @since 8.0
+	 */
+	public void setConfiguration(IConfiguration cfg) {
+		this.cfg = cfg;
+	}
+	
 	public boolean isSystem() {
 		if (cfg == null) return false;
 		return (cfg.isSystemObject());

@@ -83,6 +83,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    for (int i=0; i<cfgs.length; i++) {
 	    	String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$
 	    	Configuration cfg = new Configuration(mProj, (ToolChain)cfgs[i].getToolChain(), ManagedBuildManager.calculateChildId(s, null), cfgs[i].getName());
+	    	cfgs[i].setConfiguration(cfg);
 	    	IBuilder bld = cfg.getEditableBuilder();
 	    	if (bld != null) {
 	    		if(bld.isInternalBuilder()){

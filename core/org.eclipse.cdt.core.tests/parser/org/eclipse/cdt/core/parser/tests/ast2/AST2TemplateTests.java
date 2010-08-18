@@ -4137,6 +4137,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
+	
+	//	template <typename T> class CT {
+	//		void init();
+	//	};
+	//	void CT<int>::init(void) {
+	//	}
+	public void testMethodSpecialization_322988() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 
 	//	template <typename T>
 	//	struct A {

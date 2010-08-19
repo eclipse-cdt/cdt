@@ -473,6 +473,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		if (isReadOnly)
 		{
 			setEditorAsReadOnly();
+			setFileAsReadOnly(); // added since setEditorAsReadOnly() no longer sets the file properties
 		}
 		else
 		{

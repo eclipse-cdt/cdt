@@ -1293,17 +1293,19 @@ public class SystemViewRemoteFileAdapter
 			if (date != null)
 			{
 				long t = date.getTime();
-				if (t == 0){
-					// no time available, we should leave this blank
-					return "";
-				}
 				
 				if (formatted)
 				{
-					ULocale locale = ULocale.getDefault();					
-					DateFormat  icufmt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);
-					String formattedDate = icufmt.format(date);
-					return formattedDate;
+					if (t == 0){
+						// no time available, we should leave this blank
+						return ""; //$NON-NLS-1$
+					}
+					else {
+						ULocale locale = ULocale.getDefault();					
+						DateFormat  icufmt = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);
+						String formattedDate = icufmt.format(date);
+						return formattedDate;
+					}
 				}
 				else
 				{

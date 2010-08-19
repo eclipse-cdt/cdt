@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [168197] Fix Terminal for CDC-1.1/Foundation-1.1
+ * Anton Leherbauer (Wind River) - [219589] Copy an entire line selection
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
 
@@ -281,7 +282,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	 * @return the currently selected text
 	 */
 	private String extractSelectedText() {
-		if(fSelectionStartLine<0 || fSelectionStartCoumn<0 || fSelectionEndColumn<0 || fSelectionSnapshot==null)
+		if(fSelectionStartLine<0 || fSelectionStartCoumn<0 || fSelectionSnapshot==null)
 			return ""; //$NON-NLS-1$
 		StringBuffer buffer=new StringBuffer();
 		for (int line = fSelectionStartLine; line <= fSeletionEndLine; line++) {
@@ -289,7 +290,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			char[] chars=fSelectionSnapshot.getChars(line);
 			if(chars!=null) {
 				text=new String(chars);
-				if(line==fSeletionEndLine)
+				if(line==fSeletionEndLine && fSelectionEndColumn >= 0)
 					text=text.substring(0, Math.min(fSelectionEndColumn+1,text.length()));
 				if(line==fSelectionStartLine)
 					text=text.substring(Math.min(fSelectionStartCoumn,text.length()));

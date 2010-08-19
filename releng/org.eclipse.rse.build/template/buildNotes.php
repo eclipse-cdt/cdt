@@ -29,22 +29,20 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF.</li>
 <!--
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/index.php">TM 3.2M6</a>:
+<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/index.php">TM 3.2</a>:
 <ul>
-  <li>Releng: TM now embeds repository information in released bundles. This allows PDE versions
-      newer than Eclipse 3.6M7 to import source from the Eclipse CVS Repository directly from
-      an installed binary TM bundle, and thus makes it much easier to contribute patches
+  <li>TBD
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=311447">311447</a>].</li>
 </ul>
 </li>
 -->
-<li>At least 35 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-06-09;chfield=resolution;query_format=advanced;chfieldfrom=2010-05-03;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3.2%20M[67];type0-0-0=regexp;value0-0-0=[23]\.[01].*;component=Core;component=RSE;component=Terminal;product=Target%20Management"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.2%20RC1;target_milestone=3.2%20RC2;target_milestone=3.2%20RC3;target_milestone=3.2%20RC4;target_milestone=3.2;product=Target%20Management">
+<li>At least 13 bugs were resolved: Use 
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;chfieldto=2010-09-24;chfield=resolution;query_format=advanced;chfieldfrom=2010-06-10;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;value0-0-1=3\.3;type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;classification=DSDP;query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;component=Core;component=RSE;component=Terminal;target_milestone=3.3;product=Target%20Management"> -->
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/">
-  TM 3.2M7</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.2M7-201005032039/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/">
+  TM 3.2</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-3.2-201006071030/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see
   <a href="http://dsdp.eclipse.org/dsdp/tm/searchcvs.php">TM SearchCVS</a>, the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
@@ -88,7 +86,7 @@ are the best places for you to get started.
 	</tr>
 </table>
 <table><tbody><tr><td>
-<p>For the upcoming TM 3.2 release, only backward compatible API changes
+<p>For the upcoming TM 3.3 release, only backward compatible API changes
 are planned, especially in order to support improved componentization
 and UI/Non-UI splitting.
 In the interest of improving the code base, though, please 
@@ -111,27 +109,14 @@ and may require changes in client code even though they are binary compatible.
 More information can be found in the associated bugzilla items.
 
 <ul>
-<li>TM 3.2M7 API Specification Updates
+<li>TM @buildId@ API Specification Updates
 <ul>
-  <li>The <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.dstore.doc.isv/reference/api/org/eclipse/dstore/core/server/IServerLogger.html">IServerLogger</a></code>
-      interface was marked as <b>@noimplement</b> in order to allow adding a new method. Clients must extend the 
-      default <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.dstore.doc.isv/reference/api/org/eclipse/dstore/core/server/ServerLogger.html">ServerLogger</a></code>
-      class in order to contribute a valid custom server logger. We believe that any useful server logger would have done that
-      already, so the API specification update seems acceptable
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=305272">305272</a>].</li>
-</ul></li>
-<li>TM 3.2M6 API Specification Updates
-<ul>
-  <li>The <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/ISystemFileTypes.html">ISystemFileTypes</a></code>,
-      <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/model/ISystemFileTransferModeMapping.html">ISystemFileTransferModeMapping</a></code>
-      and <code><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/model/ISystemFileTransferModeRegistry.html">ISystemFileTransferModeRegistry</a></code>
-      interfaces have been marked <b>@noimplement</b> in order to allow adding new methods.
-      These interfaces had not been documented at all so far, and have never been intended
-      to be implemented. The amendment adds a restriction which should have been there
-      from the start 
-      [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304170">304170</a>].</li>
+  <li>None.</li>
 </ul></li>
 </ul>
+</li>
+</ul>
+
 
 Use 
   <!-- 

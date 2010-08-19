@@ -41,7 +41,7 @@ fi
 
 # get newest plugins and features: to be done manually on real update site
 TPVERSION="Target Management"
-VERSION=3.2
+VERSION=3.3
 DO_STATS=0
 DO_CATEGORIES=0
 TYPE=none
@@ -88,16 +88,16 @@ if [ ${TYPE} = test ]; then
       if [ "${fold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${f}"
       fi
-      fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
-      fold=`grep "${fbase}\." f2.$$.txt`
-      if [ "${fold}" = "" ]; then
-        echo "PROBLEM: MAJOR or MINOR update : ${f}"
-      fi
-      #fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
-      #fold=`grep ${fbase} f2.$$.txt`
+      #fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      #fold=`grep "${fbase}\." f2.$$.txt`
       #if [ "${fold}" = "" ]; then
-      #  echo "PROBLEM: MAJOR update or NEW : ${f}"
+      #  echo "PROBLEM: MAJOR or MINOR update : ${f}"
       #fi
+      fbase=`echo $f | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
+      fold=`grep ${fbase} f2.$$.txt`
+      if [ "${fold}" = "" ]; then
+        echo "PROBLEM: MAJOR update or NEW : ${f}"
+      fi
     done
     echo "VERIFYING VERSION CORRECTNESS: Plugins against ../updates/3.2"
     ls plugins/*.jar | sed -e 's,^.*plugins/,,' | sort > p1.$$.txt
@@ -109,16 +109,16 @@ if [ ${TYPE} = test ]; then
       if [ "${pold}" != "" ]; then
         echo "PROBLEM: QUALIFIER update without MICRO: ${p}"
       fi
-      pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
-      pold=`grep "${pbase}\." p2.$$.txt`
-      if [ "${pold}" = "" ]; then
-        echo "PROBLEM: MAJOR or MINOR update : ${p}"
-      fi
-      #pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
-      #pold=`grep ${pbase} p2.$$.txt`
+      #pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\.[0-9][0-9]*\)\..*,\1,'`
+      #pold=`grep "${pbase}\." p2.$$.txt`
       #if [ "${pold}" = "" ]; then
-      #  echo "PROBLEM: MAJOR update or NEW : ${p}"
+      #  echo "PROBLEM: MAJOR or MINOR update : ${p}"
       #fi
+      pbase=`echo $p | sed -e 's,\(.*_[0-9][0-9]*\)\.[0-9][0-9]*\..*,\1,'`
+      pold=`grep ${pbase} p2.$$.txt`
+      if [ "${pold}" = "" ]; then
+        echo "PROBLEM: MAJOR update or NEW : ${p}"
+      fi
     done
     #rm f_new.txt p_new.txt
     mv -f f1.$$.txt fversions.txt
@@ -346,7 +346,7 @@ being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
     	-e '/<!-- BEGIN_3_0_4 -->/,/<!-- END_3_0_4 -->/d' \
-    	-e '/<!-- BEGIN_3_2 -->/,/<!-- END_3_2_1 -->/d' \
+    	-e '/<!-- BEGIN_3_2 -->/,/<!-- END_ALL -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -373,7 +373,7 @@ being contributed to the Galileo coordinated release train (Eclipse 3.5).' \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_4 -->/d' \
         -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0_3 -->/d' \
-        -e '/<!-- BEGIN_3_2 -->/,/<!-- END_3_2_1 -->/d' \
+        -e '/<!-- BEGIN_3_2 -->/,/<!-- END_ALL -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
@@ -415,7 +415,7 @@ else
         site.xml > site.xml.new1
     sed -e '/<!-- BEGIN_3_0_3 -->/,/<!-- END_3_0_3 -->/d' \
         site.xml.new1 > site.xml.new2
-    sed -e '/<!-- BEGIN_3_1 -->/,/<!-- END_3_2_1 -->/d' \
+    sed -e '/<!-- BEGIN_3_1 -->/,/<!-- END_ALL -->/d' \
         site.xml.new2 > site.xml.new
     mv -f site.xml.new site.xml
     rm site.xml.new1 site.xml.new2

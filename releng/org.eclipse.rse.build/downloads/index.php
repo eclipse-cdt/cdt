@@ -50,8 +50,8 @@ Software User Agreement</a> unless otherwise specified. </p>
 <b>Other eclipse.org project</b> downloads are available
 <a href="http://www.eclipse.org/downloads/index.php">here</a>.<br/>
 If you just want the latest drops (no dstore server), you can also get them from the 
-<a href="http://download.eclipse.org/dsdp/tm/updates/3.1">TM 3.1 update site</a> (latest release), or the
-<a href="http://download.eclipse.org/dsdp/tm/updates/3.2milestones">TM 3.2 milestone site</a> (stable milestones).</p>
+<a href="http://download.eclipse.org/dsdp/tm/updates/3.2">TM 3.2 update site</a> (latest release), or the
+<a href="http://download.eclipse.org/dsdp/tm/updates/3.2milestones">TM 3.2.x milestone site</a> (stable milestones).</p>
 
 <p>
 For information about different kinds of builds look

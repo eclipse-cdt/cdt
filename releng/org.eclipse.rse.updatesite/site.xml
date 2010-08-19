@@ -687,7 +687,7 @@
       </description>
    </category-def>
 <!-- END_3_2 -->
-<!-- BEGIN_3_2_1 -->
+<!-- BEGIN_3_3 -->
    <feature url="features/org.eclipse.rse.core_3.2.1.qualifier.jar" id="org.eclipse.rse.core" version="3.2.1.qualifier">
       <category name="TM and RSE Uncategorized 3.2.1"/>
    </feature>
@@ -744,5 +744,6 @@
          Features and add-ons of the 3.2 release of Target Management / RSE.
       </description>
    </category-def>
-<!-- END_3_2_1 -->
+<!-- END_3_3 -->
+<!-- END_ALL -->
 </site>

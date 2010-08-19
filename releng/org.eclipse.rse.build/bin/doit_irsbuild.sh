@@ -40,7 +40,8 @@ buildType=$1
 buildId=$2
 case x$buildType in
   xP|xN|xI|xS|xR) ok=1 ;;
-  xM|xJ) mapTag=R3_1_maintenance ; ok=1 ;;
+  xM) mapTag=R3_2_maintenance ; ok=1 ;;
+  xJ) mapTag=R3_1_maintenance ; ok=1 ;;
   xK|xL) mapTag=R3_0_maintenance ; ok=1 ;;
   *) ok=0 ;;
 esac
@@ -116,7 +117,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
   
   if [ "$DO_SIGN" = "1" ]; then
     #sign the zipfiles
-    ${mydir}/batch_sign.sh `pwd`
+    #${mydir}/batch_sign.sh `pwd`
   fi
 
   if [ ${buildType} = N -a -d ../N.latest ]; then

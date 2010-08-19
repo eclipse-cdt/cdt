@@ -100,7 +100,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	}
 
 	private short getAnnotation(ICPPFunction function) throws DOMException {
-		int annot= PDOMCPPAnnotation.encodeAnnotation(function);
+		int annot= PDOMCPPAnnotation.encodeAnnotation(function) & 0xff;
 		if (function.hasParameterPack()) {
 			annot |= (1<<ANNOT_PARAMETER_PACK);
 		}

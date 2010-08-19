@@ -137,9 +137,12 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 	}
 
 	private short getAnnotation(ICPPFunction astFunction) throws DOMException {
-		int annot= PDOMCPPAnnotation.encodeAnnotation(astFunction);
+		int annot= PDOMCPPAnnotation.encodeAnnotation(astFunction) & 0xff;
 		if (astFunction.hasParameterPack()) {
 			annot |= (1 << ANNOT_PARAMETER_PACK);
+		}
+		if (astFunction.isDeleted()) {
+			annot |= (1<<ANNOT_IS_DELETED);
 		}
 		return (short) annot;
 	}

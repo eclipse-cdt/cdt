@@ -56,6 +56,18 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	public void setVolatile(boolean value);
 
 	/**
+	 * When used as a lambda declarator, it can be mutable.
+	 * @since 5.3
+	 */
+	public boolean isMutable();
+
+	/**
+	 * When used as a lambda declarator, it can be mutable.
+	 * @since 5.3
+	 */
+	public void setMutable(boolean value);
+	
+	/**
 	 * Is the method pure virtual?
 	 */
 	public boolean isPureVirtual();

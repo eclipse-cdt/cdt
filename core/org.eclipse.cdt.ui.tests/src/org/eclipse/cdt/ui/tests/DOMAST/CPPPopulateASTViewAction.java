@@ -12,28 +12,15 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -41,29 +28,16 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 /**
  * @author dsteffle
  */
-public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulateDOMASTAction {
+public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopulateDOMASTAction {
 	private static final int INITIAL_PROBLEM_SIZE = 4;
-	{
-		shouldVisitNames          = true;
-		shouldVisitDeclarations   = true;
-		shouldVisitInitializers   = true;
-		shouldVisitParameterDeclarations = true;
-		shouldVisitDeclarators    = true;
-		shouldVisitDeclSpecifiers = true;
-		shouldVisitExpressions    = true;
-		shouldVisitStatements     = true;
-		shouldVisitTypeIds        = true;
-		shouldVisitEnumerators    = true;
-		shouldVisitBaseSpecifiers = true;
-		shouldVisitNamespaces     = true;
-		shouldVisitTemplateParameters= true;
-	}
 
 	DOMASTNodeParent root = null;
 	IProgressMonitor monitor = null;
 	IASTProblem[] astProblems = new IASTProblem[INITIAL_PROBLEM_SIZE];
 	
 	public CPPPopulateASTViewAction(IASTTranslationUnit tu, IProgressMonitor monitor) {
+		super(true);
+		shouldVisitTranslationUnit= false;
 		root = new DOMASTNodeParent(tu);
 		this.monitor = monitor;
 	}
@@ -131,199 +105,22 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 		return tree;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-	 */
 	@Override
-	public int visit(IASTDeclaration declaration) {
-		DOMASTNodeLeaf temp = addRoot(declaration);
-		if (temp == null)
+	public int genericVisit(IASTNode declaration) {
+		if (addRoot(declaration) == null)
 			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
+
+		return PROCESS_CONTINUE;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
-	 */
-	@Override
-	public int visit(IASTDeclarator declarator) {
-		DOMASTNodeLeaf temp =  addRoot(declarator);
-		
-		IASTPointerOperator[] ops = declarator.getPointerOperators();
-		for (IASTPointerOperator op : ops)
-			addRoot(op);
-				
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
-	 */
-	@Override
-	public int visit(ICPPASTBaseSpecifier specifier) {
-		DOMASTNodeLeaf temp = addRoot(specifier);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
-	 */
-	@Override
-	public int visit(IASTDeclSpecifier declSpec) {
-		DOMASTNodeLeaf temp = addRoot(declSpec);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
-	 */
-	@Override
-	public int visit(IASTEnumerator enumerator) {
-		DOMASTNodeLeaf temp = addRoot(enumerator);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-	 */
-	@Override
-	public int visit(IASTExpression expression) {
-		DOMASTNodeLeaf temp = addRoot(expression);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
-	 */
-	@Override
-	public int visit(IASTInitializer initializer) {
-		DOMASTNodeLeaf temp = addRoot(initializer);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	@Override
 	public int visit(IASTName name) {
-		DOMASTNodeLeaf temp = null;
-		if (name.toString() != null)
-			temp = addRoot(name);
-		else
-			return PROCESS_CONTINUE;
-		
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
+		if (name.toString() != null) {
+			return genericVisit(name);
+		}
+		return PROCESS_CONTINUE;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processNamespace(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
-	 */
-	@Override
-	public int visit(ICPPASTNamespaceDefinition namespace) {
-		DOMASTNodeLeaf temp = addRoot(namespace);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
-	 */
-	@Override
-	public int visit(
-			IASTParameterDeclaration parameterDeclaration) {
-		DOMASTNodeLeaf temp = addRoot(parameterDeclaration);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
-	 */
-	@Override
-	public int visit(IASTStatement statement) {
-		DOMASTNodeLeaf temp = addRoot(statement);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-	 */
-	@Override
-	public int visit(IASTTypeId typeId) {
-		DOMASTNodeLeaf temp = addRoot(typeId);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
-	
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
-     */
-	@Override
-	public int visit(ICPPASTTemplateParameter templateParameter) {
-    	DOMASTNodeLeaf temp = addRoot(templateParameter);
-		if (temp == null)
-			return PROCESS_ABORT;
-		else if (temp instanceof DOMASTNodeLeafContinue)
-			return PROCESS_CONTINUE;
-		else
-			return PROCESS_CONTINUE;
-	}
 
 	private DOMASTNodeLeaf mergeNode(ASTNode node) {
 		DOMASTNodeLeaf leaf = addRoot(node);

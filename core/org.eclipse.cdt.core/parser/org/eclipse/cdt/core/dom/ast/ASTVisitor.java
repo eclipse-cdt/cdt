@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,17 +14,17 @@
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 
 /**
  * Abstract base class for all visitors to traverse ast nodes.  <br>
  * visit() methods implement a top-down traversal, and <br>
  * leave() methods implement a bottom-up traversal. <br>
- * 
- * To visit c- or c++-specific nodes you need to implement {@link ICASTVisitor} 
- * and/or {@link ICPPASTVisitor} in addition to deriving from this class. 
  * 
  * <p> Clients may subclass. </p>
  */
@@ -103,27 +103,29 @@ public abstract class ASTVisitor {
 
 	/**
 	 * Set this flag to visit designators of initializers.
-	 * Your visitor needs to implement {@link ICASTVisitor} to make this work.
 	 */
 	public boolean shouldVisitDesignators = false;
 	
 	/**
 	 * Set this flag to visit base specifiers off composite types.
-	 * Your visitor needs to implement {@link ICPPASTVisitor} to make this work.
 	 */
 	public boolean shouldVisitBaseSpecifiers = false;
 
 	/**
 	 * Set this flag to visit to visit namespaces.
-	 * Your visitor needs to implement {@link ICPPASTVisitor} to make this work.
 	 */
 	public boolean shouldVisitNamespaces = false;
 
 	/**
 	 * Set this flag to visit template parameters.
-	 * Your visitor needs to implement {@link ICPPASTVisitor} to make this work.
 	 */
 	public boolean shouldVisitTemplateParameters = false;
+	
+	/**
+	 * Set this flag to visit captures
+	 * @since 5.3
+	 */
+	public boolean shouldVisitCaptures= false;
 	
 	/**
 	 * Per default inactive nodes are not visited. You can change that by setting
@@ -175,6 +177,7 @@ public abstract class ASTVisitor {
 	public ASTVisitor(boolean visitNodes) {
 		shouldVisitArrayModifiers= visitNodes;
 		shouldVisitBaseSpecifiers= visitNodes;
+		shouldVisitCaptures= visitNodes;
 		shouldVisitDeclarations= visitNodes;
 		shouldVisitDeclarators= visitNodes;
 		shouldVisitDeclSpecifiers= visitNodes;
@@ -256,6 +259,41 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	/**
+	 * @since 5.3
+	 */
+	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int visit(ICPPASTTemplateParameter templateParameter) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int visit(ICPPASTCapture capture) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int visit(ICASTDesignator designator) {
+		return PROCESS_CONTINUE;
+	}
+
 	// leave methods
 	public int leave(IASTTranslationUnit tu) {
 		return PROCESS_CONTINUE;
@@ -318,6 +356,41 @@ public abstract class ASTVisitor {
 		return PROCESS_CONTINUE;
 	}
 	
+	/**
+	 * @since 5.3
+	 */
+	public int leave(ICPPASTBaseSpecifier baseSpecifier) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int leave(ICPPASTTemplateParameter templateParameter) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int leave(ICPPASTCapture capture) {
+		return PROCESS_CONTINUE;
+	}
+
+	/**
+	 * @since 5.3
+	 */
+	public int leave(ICASTDesignator designator) {
+		return PROCESS_CONTINUE;
+	}
+
 	/**
 	 * @deprecated use {@link IASTTranslationUnit#getComments()}, instead.
 	 */

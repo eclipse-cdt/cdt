@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -73,6 +74,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -160,6 +162,10 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return new CPPASTBreakStatement();
 	}
 
+	public ICPPASTCapture newCapture() {
+		return new CPPASTCapture();
+	}
+
 	public IASTCaseStatement newCaseStatement(IASTExpression expr) {
 		return new CPPASTCaseStatement(expr);
 	}
@@ -209,19 +215,19 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public IASTContinueStatement newContinueStatement() {
 		return new CPPASTContinueStatement();
 	}
-
+	
 	public ICPPASTConversionName newConversionName(IASTTypeId typeId) {
 		return new CPPASTConversionName(typeId);
 	}
-	
+
 	public IASTDeclarationStatement newDeclarationStatement(IASTDeclaration declaration) {
 		return new CPPASTDeclarationStatement(declaration);
 	}
-
+	
 	public ICPPASTDeclarator newDeclarator(IASTName name) {
 		return new CPPASTDeclarator(name);
 	}
-	
+
 	public IASTDefaultStatement newDefaultStatement() {
 		return new CPPASTDefaultStatement();
 	}
@@ -263,7 +269,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration) {
 		return new GPPASTExplicitTemplateInstantiation(declaration);
 	}
-
+	
 	public ICPPASTExpressionList newExpressionList() {
 		return new CPPASTExpressionList();
 	}
@@ -271,15 +277,15 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public IASTExpressionStatement newExpressionStatement(IASTExpression expression) {
 		return new CPPASTExpressionStatement(expression);
 	}
-	
+
 	public ICPPASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
 		return new CPPASTFieldDeclarator(name, bitFieldSize);
 	}
-
+	
 	public ICPPASTFieldReference newFieldReference(IASTName name, IASTExpression owner) {
 		return new CPPASTFieldReference(name, owner);
 	}
-	
+
 	public ICPPASTForStatement newForStatement() {
 		return new CPPASTForStatement();
 	}
@@ -288,12 +294,12 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 			IASTExpression iterationExpression, IASTStatement body) {
 		return new CPPASTForStatement(init, condition, iterationExpression, body);
 	}
-
+	
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTExpression condition, 
 			IASTExpression iterationExpr, IASTStatement body) {
 		return new CPPASTForStatement(init, condition, iterationExpr, body);
 	}
-	
+
 	@Deprecated
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
 		CPPASTFunctionCallExpression result = new CPPASTFunctionCallExpression(idExpr, null);
@@ -318,7 +324,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 			IASTStatement bodyStatement) {
 		return new CPPASTFunctionWithTryBlock(declSpecifier, declarator, bodyStatement);
 	}
-
+	
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
 		return new CPPASTCompoundStatementExpression(compoundStatement);
 	}
@@ -326,7 +332,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public IASTGotoStatement newGotoStatement(IASTName name) {
 		return new CPPASTGotoStatement(name);
 	}
-	
+
 	public IASTIdExpression newIdExpression(IASTName name) {
 		return new CPPASTIdExpression(name);
 	}
@@ -351,9 +357,13 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTInitializerList newInitializerList() {
 		return new CPPASTInitializerList();
 	}
-
+	
 	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement) {
 		return new CPPASTLabelStatement(name, nestedStatement);
+	}
+
+	public ICPPASTLambdaExpression newLambdaExpression() {
+		return new CPPASTLambdaExpression();
 	}
 	
 	public ICPPASTLinkageSpecification newLinkageSpecification(String literal) {
@@ -363,7 +373,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep) {
 		return new CPPASTLiteralExpression(kind, rep.toCharArray());
 	}
-	
+
 	public IASTName newName() {
 		return new CPPASTName();
 	}
@@ -407,7 +417,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		return new CPPASTParameterDeclaration(declSpec, declarator);
 	}
-
+	
 	public IASTPointer newPointer() {
 		return new CPPASTPointer();
 	}
@@ -415,7 +425,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public IGPPASTPointer newPointerGPP() {
 		return new GPPASTPointer();
 	}
-	
+
 	public ICPPASTPointerToMember newPointerToMember(IASTName name) {
 		return new CPPASTPointerToMember(name);
 	}
@@ -455,7 +465,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTReferenceOperator newReferenceOperator(boolean isRValueReference) {
 		return new CPPASTReferenceOperator(isRValueReference);
 	}
-
+	
 	public IASTReturnStatement newReturnStatement(IASTExpression retValue) {
 		return new CPPASTReturnStatement(retValue);
 	}
@@ -463,11 +473,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public IASTReturnStatement newReturnStatement(IASTInitializerClause retValue) {
 		return new CPPASTReturnStatement(retValue);
 	}
-	
+
 	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
 		return new CPPASTSimpleDeclaration(declSpecifier);
 	}
-
+	
 	public ICPPASTSimpleDeclSpecifier newSimpleDeclSpecifier() {
 		return new CPPASTSimpleDeclSpecifier();
 	}
@@ -476,7 +486,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP() {
 		return new GPPASTSimpleDeclSpecifier();
 	}
-	
+
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(
 			ICPPASTDeclSpecifier declSpec, IASTInitializer initializer) {
 		return new CPPASTSimpleTypeConstructorExpression(declSpec, initializer);
@@ -506,7 +516,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTSwitchStatement newSwitchStatement(IASTDeclaration controller, IASTStatement body) {
 		return new CPPASTSwitchStatement(controller, body);
 	}
-
+	
 	public ICPPASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body) {
 		return new CPPASTSwitchStatement(controller, body);
 	}
@@ -514,7 +524,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTTemplateDeclaration newTemplateDeclaration(IASTDeclaration declaration) {
 		return new CPPASTTemplateDeclaration(declaration);
 	}
-	
+
 	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue) {
 		return new CPPASTTemplatedTypeTemplateParameter(name, defaultValue);
 	}
@@ -555,7 +565,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
 		return new CPPASTTypeId(declSpecifier, declarator);
 	}
-
+	
 	public ICPPASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
 		return new CPPASTTypeIdExpression(operator, typeId);
 	}
@@ -563,7 +573,7 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
 		return new CPPASTTypeIdInitializerExpression(typeId, initializer);
 	}
-	
+
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate) {
 		return new CPPASTTypenameExpression(qualifiedName, expr);

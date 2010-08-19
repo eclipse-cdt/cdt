@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -94,25 +93,23 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
     
     @Override
 	public boolean accept(ASTVisitor action) {
-    	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
-		    switch (((ICPPASTVisitor) action).visit(this)) {
+    	if (action.shouldVisitTemplateParameters) {
+		    switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
 	            case ASTVisitor.PROCESS_SKIP: return true;
 	            default : break;
 	        }
 		}
         
-        if (fName != null) if (!fName.accept(action)) return false;
-        if (fTypeId != null) if (!fTypeId.accept(action)) return false;
+		if (fName != null && !fName.accept(action))
+			return false;
+		if (fTypeId != null && !fTypeId.accept(action))
+			return false;
         
-    	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
-    		switch (((ICPPASTVisitor) action).leave(this)) {
-    		case ASTVisitor.PROCESS_ABORT: return false;
-    		case ASTVisitor.PROCESS_SKIP: return true;
-    		default : break;
-    		}
-    	}
-        return true;
+		if (action.shouldVisitTemplateParameters && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+
+    	return true;
     }
 
 	public int getRoleForName(IASTName n) {

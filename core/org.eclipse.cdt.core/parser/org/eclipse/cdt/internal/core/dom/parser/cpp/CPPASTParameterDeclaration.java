@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -79,23 +80,22 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 
     @Override
 	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitParameterDeclarations ){
-		    switch( action.visit( this ) ){
+		if (action.shouldVisitParameterDeclarations) {
+			switch (action.visit((IASTParameterDeclaration) this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
         
-        if( fDeclSpec != null ) if( !fDeclSpec.accept( action ) ) return false;
-        if( fDeclarator != null ) if( !fDeclarator.accept( action ) ) return false;   
+		if (fDeclSpec != null && !fDeclSpec.accept(action))
+			return false;
+		if (fDeclarator != null && !fDeclarator.accept(action))
+			return false;
         
-        if( action.shouldVisitParameterDeclarations ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
-	        }
+		if (action.shouldVisitParameterDeclarations &&
+				action.leave((IASTParameterDeclaration) this) == ASTVisitor.PROCESS_ABORT) {
+			return false;
 		}
         return true;
     }

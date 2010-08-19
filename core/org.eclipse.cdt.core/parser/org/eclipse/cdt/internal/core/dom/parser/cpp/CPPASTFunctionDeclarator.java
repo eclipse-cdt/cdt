@@ -38,6 +38,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     private boolean pureVirtual;
     private boolean isVolatile;
     private boolean isConst;
+    private boolean isMutable;
     
     private ICPPFunctionScope scope = null;
     
@@ -56,6 +57,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		copy.pureVirtual = pureVirtual;
 		copy.isVolatile = isVolatile;
 		copy.isConst = isConst;
+		copy.isMutable= isMutable;
 		
 		for(IASTParameterDeclaration param : getParameters())
 			copy.addParameterDeclaration(param == null ? null : param.copy());
@@ -108,6 +110,15 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     public void setVolatile(boolean value) {
         assertNotFrozen();
         this.isVolatile = value;
+    }
+
+    public boolean isMutable() {
+        return isMutable;
+    }
+
+    public void setMutable(boolean value) {
+        assertNotFrozen();
+        this.isMutable = value;
     }
 
     public IASTTypeId[] getExceptionSpecification() {

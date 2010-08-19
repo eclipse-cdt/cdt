@@ -8820,4 +8820,44 @@ public class AST2CPPTests extends AST2BaseTest {
 		IFunction f2= bh.assertNonProblem("f() {", 1);
 		assertSame(f1, f2);
 	}
+	
+	//	struct C {
+	//	    void test() {
+	//	      int a;
+	//	      []{};
+	//	      [=]{};
+	//	      [&]{};
+	//	      [this]{};
+	//	      [=, this]{};
+	//	      [&, this]{};
+	//	      [a]{};
+	//	      [=, a]{};
+	//	      [&, a]{};
+	//	      [a ...]{};
+	//        [](int p){};
+	//        [](int p) mutable {};
+	//        [](int p) mutable throw(int) {};
+	//        [](int p) mutable throw(int) -> char {};
+	//        [](int p) throw(int) {};
+	//        [](int p) -> char {};
+	//	    }
+	//	};
+	public void testLambdaExpression_316307a() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+
+	
+	//	template <typename T, typename C> void sort(T from, T to, C compare) {}
+	//	float abs(float f);
+	//
+	//	void abssort(float *x, unsigned N) {
+	//	  sort(x, x + N, [](float a, float b) {
+	//	        return abs(a) < abs(b);
+	//	  });
+	//	}
+	public void _testLambdaExpression_316307b() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
 }

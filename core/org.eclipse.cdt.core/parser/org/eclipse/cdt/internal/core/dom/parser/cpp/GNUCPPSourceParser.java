@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAmbiguousTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -82,6 +83,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -1414,6 +1417,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     + ((ASTNode) name).getLength() - ((ASTNode) name).getOffset());
             return idExpression;
         }
+        case IToken.tLBRACKET:
+        	return lambdaExpression();
+        
         default:
             IToken la = LA(1);
             int startingOffset = la.getOffset();
@@ -1435,11 +1441,87 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 		IToken t= consume();
 		ICPPASTLiteralExpression r= nodeFactory.newLiteralExpression(IASTLiteralExpression.lk_string_literal, t.getImage());
-		setRange(r, t.getOffset(), t.getEndOffset());
-		return r;
+		return setRange(r, t.getOffset(), t.getEndOffset());
 	}
 
-    protected IASTExpression specialCastExpression(int kind) throws EndOfFileException, BacktrackException {
+	private IASTExpression lambdaExpression() throws EndOfFileException, BacktrackException {
+		final int offset= LA().getOffset();
+
+		ICPPASTLambdaExpression lambdaExpr= nodeFactory.newLambdaExpression();
+		
+		// Lambda introducer
+		consume(IToken.tLBRACKET);
+		boolean needComma= false;
+		switch(LT(1)) {
+		case IToken.tASSIGN:
+			lambdaExpr.setCaptureDefault(CaptureDefault.BY_COPY);
+			consume();
+			needComma= true;
+			break;
+		case IToken.tAMPER:
+			final int lt2 = LT(2);
+			if (lt2 == IToken.tCOMMA || lt2 == IToken.tRBRACKET) {
+				lambdaExpr.setCaptureDefault(CaptureDefault.BY_REFERENCE);
+				consume();
+				needComma= true;
+			}
+			break;
+		}
+		loop: for(;;) {
+			switch (LT(1)) {
+			case IToken.tEOC: 
+				return setRange(lambdaExpr, offset, LA().getEndOffset());
+			case IToken.tRBRACKET: 
+				consume();
+				break loop;
+			}
+			
+			if (needComma) {
+				consume(IToken.tCOMMA);
+			}
+			
+			ICPPASTCapture cap= capture();
+			lambdaExpr.addCapture(cap);
+			needComma= true;
+		}
+		
+		if (LT(1) == IToken.tLPAREN) {
+			ICPPASTFunctionDeclarator dtor = functionDeclarator(true);
+			lambdaExpr.setDeclarator(dtor);
+			if (LT(1) == IToken.tEOC)
+				return setRange(lambdaExpr, offset, calculateEndOffset(dtor));
+		}
+		
+		IASTCompoundStatement body = functionBody();
+		lambdaExpr.setBody(body);
+		return setRange(lambdaExpr, offset, calculateEndOffset(body));
+	}
+
+	private ICPPASTCapture capture() throws EndOfFileException, BacktrackException {
+		final int offset= LA().getOffset();
+		final ICPPASTCapture result = nodeFactory.newCapture();
+		
+		switch (LT(1)) {
+		case IToken.t_this:
+			return setRange(result, offset, consume().getEndOffset());
+		case IToken.tAMPER:
+			consume();
+			result.setIsByReference(true);
+			break;
+		}
+		
+		final IASTName identifier= identifier();
+		result.setIdentifier(identifier);
+		
+		if (LT(1) == IToken.tELLIPSIS) {
+			result.setIsPackExpansion(true);
+			return setRange(result, offset, consume().getEndOffset());
+		} 
+		
+		return setRange(result, offset, calculateEndOffset(identifier));
+	}
+
+	protected IASTExpression specialCastExpression(int kind) throws EndOfFileException, BacktrackException {
         final int offset = LA(1).getOffset();
         final int optype= consume().getType();
         consume(IToken.tLT);
@@ -3342,7 +3424,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	switch (lt1) {
         	case IToken.tLPAREN:
         		if (option.fAllowFunctions && strategy == DtorStrategy.PREFER_FUNCTION) {
-        			result= functionDeclarator();
+        			result= functionDeclarator(false);
         			setDeclaratorID(result, hasEllipsis, declaratorName, nestedDeclarator);
         		}
         		break loop;
@@ -3413,9 +3495,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * Parse a function declarator starting with the left parenthesis.
 	 */
-	private ICPPASTDeclarator functionDeclarator() throws EndOfFileException, BacktrackException {
+	private ICPPASTFunctionDeclarator functionDeclarator(boolean isLambdaDeclarator) throws EndOfFileException, BacktrackException {
 		IToken last = consume(IToken.tLPAREN);
-		int startOffset= last.getOffset();
+		final int startOffset= last.getOffset();
 		int endOffset= last.getEndOffset();
 		
 		final ICPPASTFunctionDeclarator fc = nodeFactory.newFunctionDeclarator(null);
@@ -3462,18 +3544,25 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		__attribute_decl_seq(supportAttributeSpecifiers, false);
 
 		// cv-qualifiers
-		cvloop: while(true) {
-			switch (LT(1)) {
-			case IToken.t_const:
-			    fc.setConst(true);
+		if (isLambdaDeclarator) {
+			if (LT(1) == IToken.t_mutable) {
+				fc.setMutable(true);
 				endOffset= consume().getEndOffset();
-				break;
-			case IToken.t_volatile:
-			    fc.setVolatile(true);
-				endOffset= consume().getEndOffset();
-				break;
-			default:
-				break cvloop;
+			}
+		} else {
+			cvloop: while(true) {
+				switch (LT(1)) {
+				case IToken.t_const:
+					fc.setConst(true);
+					endOffset= consume().getEndOffset();
+					break;
+				case IToken.t_volatile:
+					fc.setVolatile(true);
+					endOffset= consume().getEndOffset();
+					break;
+				default:
+					break cvloop;
+				}
 			}
 		}
 
@@ -3524,10 +3613,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			IASTTypeId typeId= typeId(DeclarationOptions.TYPEID_TRAILING_RETURN_TYPE);
 			fc.setTrailingReturnType(typeId);
 			endOffset= calculateEndOffset(typeId);
-		}
+		} 
 
-        setRange(fc, startOffset, endOffset);
-        return fc;
+        return setRange(fc, startOffset, endOffset);
 	}
 
 	/**
@@ -4110,11 +4198,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     
     @Override
-	protected IASTStatement functionBody() throws EndOfFileException, BacktrackException {
+	protected IASTCompoundStatement functionBody() throws EndOfFileException, BacktrackException {
         ++functionBodyCount;
-        IASTStatement s = super.functionBody();
-        --functionBodyCount;
-        return s;
+        try {
+        	return super.functionBody();
+        } finally {
+        	--functionBodyCount;
+        }
     }
 
     protected IASTStatement parseSwitchStatement() throws EndOfFileException, BacktrackException {

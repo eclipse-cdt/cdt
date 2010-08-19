@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	public static final int FLAG_INCLUDE_STATEMENTS = 1<<2;
 	static {
 		ignoreInterfaces.addAll(Arrays.asList(new String[] {
-				"IASTCompletionContext", "IASTNode"
+				"IASTCompletionContext", "ICPPASTCompletionContext", "IASTNode"
 				}));
 	}
 	public DOMASTNodeLeaf(IASTNode node) {
@@ -332,8 +332,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		return name;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class key) {
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 		if (key == IPropertySource.class)
 			return new ASTPropertySource(getNode());
 		
@@ -424,18 +423,18 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			if (node instanceof IASTName) {
 				IPropertyDescriptor[] desc = getPropertyDescriptors(((IASTName)node).resolveBinding());
 				if (desc != null)
-					for(int i=0; i<desc.length; i++)
-						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, desc[i]);
+					for (IPropertyDescriptor element : desc)
+						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
 				desc = getPropertyDescriptors(node);
 				if (desc != null)
-					for(int i=0; i<desc.length; i++)
-						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, desc[i]);
+					for (IPropertyDescriptor element : desc)
+						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
 				
 			} else {
 				IPropertyDescriptor[] desc = getPropertyDescriptors(node);
 				if (desc != null)
-					for(int i=0; i<desc.length; i++)
-						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, desc[i]);
+					for (IPropertyDescriptor element : desc)
+						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
 			}
 			
 			return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, descriptors);
@@ -447,8 +446,8 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			Class<?> objClass = obj.getClass();
 			Class<?>[] interfaces = objClass.getInterfaces();
 			
-			for(int i=0; i<interfaces.length; i++) {
-				Method[] methods = interfaces[i].getMethods();
+			for (Class<?> interface1 : interfaces) {
+				Method[] methods = interface1.getMethods();
 				for(int j=0; j<methods.length; j++) {
 					// multiple interfaces can have the same method, so don't duplicate that method in the property view
 					// which causes an ArrayIndexOutOfBoundsException elsewhere
@@ -478,14 +477,14 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		
 		private boolean alreadyEncountered(Method method, IPropertyDescriptor[] desc) {
 			StringBuffer name = null;
-			for(int i=0; i<desc.length; i++) {
-				if (desc[i] == null) // reached the end of the array
+			for (IPropertyDescriptor element : desc) {
+				if (element == null) // reached the end of the array
 					break;
 				
 				name = new StringBuffer();
 				name.append(method.getName());
 				name.append(EMPTY_PARAMETER);
-				if (name.toString().equals(desc[i].getDisplayName()))
+				if (name.toString().equals(element.getDisplayName()))
 					return true;
 			}
 			

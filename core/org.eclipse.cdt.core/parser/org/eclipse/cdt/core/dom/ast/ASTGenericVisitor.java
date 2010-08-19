@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,11 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 
 /**
  * Generic visitor for ast-nodes. 
@@ -36,16 +37,24 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 		return PROCESS_CONTINUE;
 	}
 
+	@Override
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		return genericVisit(baseSpecifier);
 	}
 
+	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 		return genericVisit(namespaceDefinition);
 	}
 
+	@Override
 	public int visit(ICPPASTTemplateParameter templateParameter) {
 		return genericVisit(templateParameter);
+	}
+	
+	@Override
+	public int visit(ICPPASTCapture capture) {
+		return genericVisit(capture);
 	}
 
 	@Override
@@ -118,24 +127,34 @@ public abstract class ASTGenericVisitor extends ASTVisitor implements ICPPASTVis
 		return genericVisit(typeId);
 	}
 
+	@Override
 	public int visit(ICASTDesignator designator) {
 		return genericVisit(designator);
 	}
 
+	@Override
 	public int leave(ICASTDesignator designator) {
 		return genericLeave(designator);
 	}
 
+	@Override
 	public int leave(ICPPASTBaseSpecifier baseSpecifier) {
 		return genericLeave(baseSpecifier);
 	}
 
+	@Override
 	public int leave(ICPPASTNamespaceDefinition namespaceDefinition) {
 		return genericLeave(namespaceDefinition);
 	}
 
+	@Override
 	public int leave(ICPPASTTemplateParameter templateParameter) {
 		return genericLeave(templateParameter);
+	}
+
+	@Override
+	public int leave(ICPPASTCapture capture) {
+		return genericLeave(capture);
 	}
 
 	@Override

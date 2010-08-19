@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -112,8 +111,8 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 
     @Override
 	public boolean accept( ASTVisitor action ){
-    	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
-		    switch( ((ICPPASTVisitor)action).visit( this ) ){
+    	if (action.shouldVisitTemplateParameters) {
+			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -121,20 +120,19 @@ public class CPPASTTemplatedTypeTemplateParameter extends ASTNode implements
 		}
         
         ICPPASTTemplateParameter [] ps = getTemplateParameters();
-        for ( int i = 0; i < ps.length; i++ ) {
-            if( !ps[i].accept( action ) ) return false;
-        }
-        if( fName != null ) if( !fName.accept( action ) ) return false;
-        if( fDefaultValue != null ) if( !fDefaultValue.accept( action ) ) return false;
+		for (int i = 0; i < ps.length; i++) {
+			if (!ps[i].accept(action))
+				return false;
+		}
+		if (fName != null && !fName.accept(action))
+			return false;
+		if (fDefaultValue != null && !fDefaultValue.accept(action))
+			return false;
         
-    	if (action.shouldVisitTemplateParameters && action instanceof ICPPASTVisitor) {
-    		switch( ((ICPPASTVisitor)action).leave( this ) ){
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
-    		default : break;
-    		}
-    	}
-        return true;
+		if (action.shouldVisitTemplateParameters && action.leave(this) == ASTVisitor.PROCESS_ABORT)
+			return false;
+
+		return true;
     }
 
 	public int getRoleForName(IASTName n) {

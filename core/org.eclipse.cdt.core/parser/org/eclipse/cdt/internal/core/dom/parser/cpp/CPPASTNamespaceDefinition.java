@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -111,8 +110,8 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 
     @Override
 	public boolean accept(ASTVisitor action) {
-		if (action.shouldVisitNamespaces && action instanceof ICPPASTVisitor) {
-			switch (((ICPPASTVisitor) action).visit(this)) {
+		if (action.shouldVisitNamespaces) {
+			switch (action.visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
@@ -127,8 +126,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 			if (!decl.accept(action)) return false;
 		}
 
-		if (action.shouldVisitNamespaces && action instanceof ICPPASTVisitor && 
-				((ICPPASTVisitor) action).leave(this) == ASTVisitor.PROCESS_ABORT)
+		if (action.shouldVisitNamespaces && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
 
         return true;

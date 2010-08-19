@@ -1425,7 +1425,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IASTStatement functionBody() throws EndOfFileException, BacktrackException {
+    protected IASTCompoundStatement functionBody() throws EndOfFileException, BacktrackException {
         return compoundStatement();
     }
 

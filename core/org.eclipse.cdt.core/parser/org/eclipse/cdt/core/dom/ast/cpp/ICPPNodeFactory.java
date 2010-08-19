@@ -60,18 +60,23 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTInitializerClause expr2);
 
+	/**
+	 * @since 5.3
+	 */
+	public ICPPASTCapture newCapture();
+	
 	public ICPPASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand);
 	
 	public ICPPASTCatchHandler newCatchHandler(IASTDeclaration decl, IASTStatement body);
-	
-	public ICPPASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 
+	public ICPPASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
+	
 	/**
 	 * @deprecated Replaced by {@link #newConstructorChainInitializer(IASTName, IASTInitializer)}
 	 */
 	@Deprecated
 	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName memberInitializerId, IASTExpression initializerValue);
-	
+
 	/**
 	 * @since 5.2
 	 */
@@ -82,30 +87,30 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Deprecated
 	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp);
-
+	
 	/**
 	 * @since 5.2
 	 */
 	public ICPPASTConstructorInitializer newConstructorInitializer(IASTInitializerClause[] args);
-	
+
 	public ICPPASTConversionName newConversionName(IASTTypeId typeId);
 
 	/**
 	 * @since 5.2
 	 */
 	public ICPPASTDeclarator newDeclarator(IASTName name);
-
-	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 	
+	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
+
 	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 
 	/**
 	 * @since 5.2
 	 */
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name, ICPPASTDeclSpecifier baseType);
-
-	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
 	
+	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration);
+
 	/**
 	 * @deprecated Replaced by {@link #newExplicitTemplateInstantiation(IASTDeclaration)}.
 	 */
@@ -113,7 +118,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration);
 
 	public ICPPASTExpressionList newExpressionList();
-
+	
 	/**
 	 * @since 5.2
 	 */
@@ -122,10 +127,10 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTFieldReference newFieldReference(IASTName name, IASTExpression owner);
 	
 	public ICPPASTForStatement newForStatement();
-	
+
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTDeclaration condition,
 			IASTExpression iterationExpression, IASTStatement body);
-
+	
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
 			IASTExpression iterationExpression, IASTStatement body);
 	
@@ -151,22 +156,27 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTIfStatement newIfStatement();
 	
 	public ICPPASTIfStatement newIfStatement(IASTDeclaration condition, IASTStatement then, IASTStatement elseClause);
-	
+
 	public ICPPASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
 
 	/**
 	 * @since 5.2
 	 */
 	public ICPPASTInitializerList newInitializerList();
+	
+	/**
+	 * @since 5.3
+	 */
+	public ICPPASTLambdaExpression newLambdaExpression();
 
 	public ICPPASTLinkageSpecification newLinkageSpecification(String literal);
-	
+
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep);
-
-	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
-
-	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);
 	
+	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
+	
+	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name);
+
 	/**
 	 * @deprecated Replaced by {@link #newNewExpression(IASTInitializerClause[], IASTInitializer, IASTTypeId)}
 	 */
@@ -179,21 +189,21 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer, IASTTypeId typeId);
 
 	public ICPPASTOperatorName newOperatorName(char[] name);
-	
+
 	/**
 	 * Creates a new pack expansion expression for the given pattern.
 	 * @since 5.2
 	 */
 	public ICPPASTPackExpansionExpression newPackExpansionExpression(IASTExpression pattern);
-
+	
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 
 	public IGPPASTPointer newPointerGPP();
-	
+
 	public ICPPASTPointerToMember newPointerToMember(IASTName name);
-
+	
 	public IGPPASTPointerToMember newPointerToMemberGPP(IASTName name);
-
+	
 	public IASTProblemTypeId newProblemTypeId(IASTProblem problem);
 	
 	public ICPPASTQualifiedName newQualifiedName();
@@ -213,26 +223,26 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 5.2
 	 */
 	public IASTReturnStatement newReturnStatement(IASTInitializerClause retValue);
-	
+
 	public ICPPASTSimpleDeclSpecifier newSimpleDeclSpecifier();
-	
+
 	/**
 	 * @deprecated Replaced by {@link #newSimpleDeclSpecifier()}
 	 */
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP();
-
+	
+	/**
+	 * @since 5.2
+	 */
+	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec, IASTInitializer initializer);
+	
 	/**
 	 * @deprecated Replaced by {@link #newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier, IASTInitializer)}
      */
 	@Deprecated
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(int type, IASTExpression expression);
 
-	/**
-	 * @since 5.2
-	 */
-	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(ICPPASTDeclSpecifier declSpec, IASTInitializer initializer);
-	
 	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId);
 	
 	/**
@@ -242,19 +252,19 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition, ICPPASTLiteralExpression message);
 
 	public ICPPASTSwitchStatement newSwitchStatement();
-	
+
 	public ICPPASTSwitchStatement newSwitchStatement(IASTDeclaration controller, IASTStatement body);
 
 	public ICPPASTSwitchStatement newSwitchStatement(IASTExpression controlloer, IASTStatement body);
-
+	
 	public ICPPASTTemplateDeclaration newTemplateDeclaration(IASTDeclaration declaration);
-
+	
 	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue);
 	
 	public ICPPASTTemplateId newTemplateId(IASTName templateName);
-	
+
 	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration);
-	
+
 	/**
 	 * @deprecated Replaced by {@link #newTranslationUnit(IScanner)}.
 	 */
@@ -268,11 +278,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 5.2
 	 */
 	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner);
-
-	public ICPPASTTryBlockStatement newTryBlockStatement(IASTStatement body);
-
-	public ICPPASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name);
 	
+	public ICPPASTTryBlockStatement newTryBlockStatement(IASTStatement body);
+	
+	public ICPPASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name);
+
 	/**
 	 * @since 5.2
 	 */
@@ -285,7 +295,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	@Deprecated
 	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
-	
+
 	public ICPPASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand);
 
 	public ICPPASTUsingDeclaration newUsingDeclaration(IASTName name);
@@ -293,11 +303,10 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTUsingDirective newUsingDirective(IASTName name);
 
 	public ICPPASTVisibilityLabel newVisibilityLabel(int visibility);
-
+	
 	public ICPPASTWhileStatement newWhileStatement();
 
 	public ICPPASTWhileStatement newWhileStatement(IASTDeclaration condition, IASTStatement body);
 	
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
-
 }

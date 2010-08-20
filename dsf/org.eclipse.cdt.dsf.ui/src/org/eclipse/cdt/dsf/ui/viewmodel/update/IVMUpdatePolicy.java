@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,14 @@ public interface IVMUpdatePolicy {
      * @since 2.1
      */
     public static int FLUSH_PARTIAL_PROPERTIES = 0x8;
+
+    /**
+     * Flag indicating that the cache should flush all properties of 
+     * an element.
+     *  
+     * @since 2.2
+     */
+    public static int FLUSH_ALL_PROPERTIES = 0x10;
 
     /**
      * Returns unique ID of this update policy.

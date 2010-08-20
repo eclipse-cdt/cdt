@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems and others.
+ * Copyright (c) 2007, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -767,6 +767,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                     elementDataEntry.fChildren = null;
                     elementDataEntry.fAllChildrenKnown = false;
                     elementDataEntry.fDirty = false;
+                } else if ((updateFlags & IVMUpdatePolicy.FLUSH_ALL_PROPERTIES) != 0) {
+                	elementDataEntry.fProperties = null;
                 } else if ((updateFlags & IVMUpdatePolicy.FLUSH_PARTIAL_PROPERTIES) != 0) {
                     Collection<String> propertiesToFlush = flushKey.getPropertiesToFlush(elementDataKey, elementDataEntry.fDirty);
                     if (propertiesToFlush != null && elementDataEntry.fProperties != null) {

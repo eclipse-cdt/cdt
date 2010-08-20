@@ -978,7 +978,10 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		// 280631
    		try {
 			if (fBackend.getUpdateThreadListOnSuspend()) {
-				fThreadCommandCache.reset(e.getDMContext());
+				// We need to clear the cache for the context that we use to fill the cache,
+				// and it is the controDMC in this case.
+				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(e.getDMContext(), ICommandControlDMContext.class);
+				fThreadCommandCache.reset(controlDmc);
 			}
 		} catch (CoreException exc) {}
     }

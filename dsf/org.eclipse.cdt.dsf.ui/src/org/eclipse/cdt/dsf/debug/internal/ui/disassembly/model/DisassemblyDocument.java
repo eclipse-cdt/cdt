@@ -216,9 +216,10 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		while (left <= right) {
 			mid = (left + right) / 2;
 			AddressRangePosition range = positions.get(mid);
-			if (address.compareTo(range.fAddressOffset) < 0) {
+			int compareSign = address.compareTo(range.fAddressOffset);
+			if (compareSign < 0) {
 				right = mid - 1;
-			} else if (address.compareTo(range.fAddressOffset) == 0) {
+			} else if (compareSign == 0) {
 				break;
 			} else if (address.compareTo(range.fAddressOffset.add(range.fAddressLength)) >= 0) {
 				left = mid + 1;
@@ -228,9 +229,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		}
 		int idx = mid;
 		AddressRangePosition p = positions.get(idx);
-		if (address.compareTo(p.fAddressOffset.add(p.fAddressLength)) > 0) {
-			++idx;
-		} else if (address.compareTo(p.fAddressOffset) == 0) {
+		if (address.compareTo(p.fAddressOffset) == 0) {
 			do {
 				--idx;
 				if (idx < 0) {
@@ -238,6 +237,8 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 				}
 				p = positions.get(idx);
 			} while (address.compareTo(p.fAddressOffset) == 0);
+			++idx;
+		} else if (address.compareTo(p.fAddressOffset.add(p.fAddressLength)) >= 0) {
 			++idx;
 		}
 		return idx;

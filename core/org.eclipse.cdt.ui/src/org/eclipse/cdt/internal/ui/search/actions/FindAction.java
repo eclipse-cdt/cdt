@@ -82,7 +82,7 @@ public abstract class FindAction extends SelectionParseAction {
 
 	protected PDOMSearchQuery createQuery(ICElement element, ITextSelection selNode) {
 		return new PDOMSearchTextSelectionQuery(getScope(),
-				(ITranslationUnit)element, selNode, getLimitTo());
+				(ITranslationUnit) element, selNode, getLimitTo());
 	}
 	
     abstract protected String getScopeDescription(); 

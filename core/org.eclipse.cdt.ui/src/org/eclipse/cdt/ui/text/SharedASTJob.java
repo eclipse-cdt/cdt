@@ -62,7 +62,6 @@ public abstract class SharedASTJob extends Job {
 	 */
 	public abstract IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException;
 
-
 	@Override
 	protected final IStatus run(IProgressMonitor monitor) {
 		ASTProvider provider = CUIPlugin.getDefault().getASTProvider();

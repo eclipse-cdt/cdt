@@ -45,7 +45,6 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 	}
 
 	private final class ExpandSelectionJob extends SharedASTJob {
-		
 		public ISourceRange newSourceRange;
 		private SourceRange currentSourceRange;
 
@@ -69,7 +68,6 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 	
 	@Override
 	public void run() {
-
 		IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if (!(editorPart instanceof CEditor)) {
 			return;
@@ -108,13 +106,11 @@ public abstract class StructureSelectionAction extends TextEditorAction {
 
 	protected boolean nodeContains(IASTNode node, int position) {
 		IASTFileLocation fl = node.getFileLocation();
-		return (position >= fl.getNodeOffset() && position <= fl.getNodeOffset() + fl.getNodeLength());
+		return position >= fl.getNodeOffset() && position <= fl.getNodeOffset() + fl.getNodeLength();
 	}
 
 	protected boolean samePosition(IASTNode node, SourceRange current) {
 		IASTFileLocation fl = node.getFileLocation();
-		return (fl.getNodeOffset() == current.getStartPos() && fl.getNodeLength() == current.getLength());
+		return fl.getNodeOffset() == current.getStartPos() && fl.getNodeLength() == current.getLength();
 	}
-
-	
 }

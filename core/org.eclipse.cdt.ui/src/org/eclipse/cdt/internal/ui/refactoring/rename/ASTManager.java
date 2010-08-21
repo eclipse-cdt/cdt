@@ -158,7 +158,7 @@ public class ASTManager {
         if (name instanceof ICPPASTQualifiedName) {
             IASTName names[]= ((ICPPASTQualifiedName) name).getNames();
             if (names.length > 0) {
-                name= names[names.length-1];
+                name= names[names.length - 1];
             }
         }
         return name;
@@ -324,8 +324,6 @@ public class ASTManager {
             return TRUE;
         }
 
-        
-
         if (node1 instanceof IASTTranslationUnit &&
                 node2 instanceof IASTTranslationUnit) {
             return hasSameLocation(node1, node2, fileStatic);
@@ -473,7 +471,6 @@ public class ASTManager {
         
         return retval;
     }
-
 
     private static int isSameType(IType t1, IType t2) throws DOMException {
         if (t1 != null && t2 != null && t1.isSameType(t2)) {
@@ -803,8 +800,6 @@ public class ASTManager {
         return result;
     }
     
-
-
     public ASTManager(CRefactoringArgument arg) {
         fArgument= arg;
     }
@@ -832,7 +827,7 @@ public class ASTManager {
         	if (name != null) {
         		if (name instanceof ICPPASTQualifiedName) {
         			IASTName[] na= ((ICPPASTQualifiedName) name).getNames();
-        			name= na[na.length-1];
+        			name= na[na.length - 1];
         		}
         	} else {
         		IASTNode node= nodeSelector.findEnclosingNode(offset, length);
@@ -877,7 +872,7 @@ public class ASTManager {
 
 	private String extractIdentifier(String rawSignature, int offset, int length) {
 		char[] sig= rawSignature.toCharArray();
-		int end= offset+length;
+		int end= offset + length;
 		if (offset < 0 || end > sig.length)
 			return null;
 		
@@ -908,7 +903,7 @@ public class ASTManager {
             if (celem instanceof ITranslationUnit) {
             	ITranslationUnit tu= (ITranslationUnit) celem;
             	int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
-            	ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+            			ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
             	try {
             		ast= tu.getAST(index, options);
             	} catch (CoreException e) {
@@ -931,7 +926,7 @@ public class ASTManager {
         
         int count= store.getFileCount();
         String taskName= RenameMessages.ASTManager_task_generateAst;
-        monitor.beginTask(taskName, 2*count);
+        monitor.beginTask(taskName, 2 * count);
         monitor.setTaskName(taskName);
 
         List<IFile> files= store.getFileList();

@@ -65,7 +65,7 @@ public final class ASTProvider {
 
 	/**
 	 * Wait flag indicating that a client requesting an AST
-	 * wants to wait until an AST is ready. If the translation unit is not open no ast will
+	 * wants to wait until an AST is ready. If the translation unit is not open no AST will
 	 * be provided.
 	 * <p>
 	 * If not yet cached and if the translation unit is open, an AST will be created by 
@@ -77,7 +77,7 @@ public final class ASTProvider {
 	/**
 	 * Wait flag indicating that a client requesting an AST
 	 * only wants to wait for the shared AST of the active editor. 
-	 * If the translation unit is not open no ast will be provided.
+	 * If the translation unit is not open no AST will be provided.
 	 * <p>
 	 * No AST will be created by the AST provider.
 	 * </p>
@@ -201,7 +201,7 @@ public final class ASTProvider {
 		}
 
 		private boolean isActiveEditor(IWorkbenchPart part) {
-			return part != null && (part == fActiveEditor);
+			return part != null && part == fActiveEditor;
 		}
 
 		private boolean isCEditor(IWorkbenchPartReference ref) {
@@ -324,13 +324,13 @@ public final class ASTProvider {
 		if (cElement == null)
 			return;
 		Assert.isTrue(cElement instanceof ITranslationUnit);
-		fCache.reconciled(ast, (ITranslationUnit)cElement);
+		fCache.reconciled(ast, (ITranslationUnit) cElement);
 	}
 
 	public IStatus runOnAST(ICElement cElement, WAIT_FLAG waitFlag, IProgressMonitor monitor,
 			ASTCache.ASTRunnable astRunnable) {
 		Assert.isTrue(cElement instanceof ITranslationUnit);
-		final ITranslationUnit tu = (ITranslationUnit)cElement;
+		final ITranslationUnit tu = (ITranslationUnit) cElement;
 		if (!tu.isOpen())
 			return Status.CANCEL_STATUS;
 		

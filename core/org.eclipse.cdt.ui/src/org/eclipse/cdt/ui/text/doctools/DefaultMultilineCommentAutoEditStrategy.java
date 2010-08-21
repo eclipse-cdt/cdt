@@ -333,7 +333,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 		StringBuilder result= new StringBuilder();
 		BufferedReader br= new BufferedReader(new StringReader(buffer.toString()));
 		try {
-			for(String line= br.readLine(); line != null; line= br.readLine()) {
+			for (String line= br.readLine(); line != null; line= br.readLine()) {
 				result.append(indent).append(line).append(lineDelim);
 			}
 		} catch(IOException ioe) {

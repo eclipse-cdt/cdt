@@ -174,7 +174,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		Vector<String> myEnumeratedInputs = new Vector<String>();		// Complete list of individual inputs
 
 		IInputType[] inTypes = tool.getInputTypes();
-		if (inTypes != null) {
+		if (inTypes != null && inTypes.length > 0) {
 			for (IInputType type : inTypes) {
 				Vector<String> itCommandInputs = new Vector<String>();			// Inputs for the tool command line for this input-type
 				Vector<String> itCommandDependencies = new Vector<String>();	// Dependencies for the make rule for this input-type

@@ -97,7 +97,7 @@ public class CodanRuntime {
 	 * Get checkers registry.
 	 * 
 	 * @return
-	 * @since 1.1
+	 * @since 2.0
 	 */
 	public ICheckersRegistry getCheckersRegistry() {
 		return checkers;

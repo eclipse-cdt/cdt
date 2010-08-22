@@ -635,11 +635,11 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			}
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {
-				throw (CModelException)ce;
+				throw (CModelException) ce;
 			} else if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
 				Throwable e = ce.getStatus().getException();
 				if (e instanceof CModelException) {
-					throw (CModelException)e;
+					throw (CModelException) e;
 				}
 			}
 			throw new CModelException(ce);

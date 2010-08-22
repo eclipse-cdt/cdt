@@ -71,13 +71,13 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 						if (files.length > 0) {
 							IIndexInclude[] includes = index.findIncludes(files[0], IIndex.DEPTH_INFINITE);
 
-							List/*<IPath>*/ list = new ArrayList/*<IPath>*/();
-							for (int i = 0; i < includes.length; ++i) {
-								if (includes[i].isResolved()) {
-									list.add(IndexLocationFactory.getAbsolutePath(includes[i].getIncludesLocation()));
+							List<IPath> list = new ArrayList<IPath>();
+							for (IIndexInclude inc : includes) {
+								if (inc.isResolved()) {
+									list.add(IndexLocationFactory.getAbsolutePath(inc.getIncludesLocation()));
 								}
 							}
-							dependencies = (IPath[])list.toArray(new IPath[list.size()]);
+							dependencies = list.toArray(new IPath[list.size()]);
 						} else
 							dependencies = new IPath[0];
 					}

@@ -365,7 +365,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	private final HashMap<String, List<IPath>> buildOutVars = new HashMap<String, List<IPath>>();
 	//  Map of dependency file build variable names to a List of GnuDependencyGroupInfo objects
 	private final HashMap<String, GnuDependencyGroupInfo> buildDepVars = new HashMap<String, GnuDependencyGroupInfo>();
-	private final LinkedHashMap topBuildOutVars = new LinkedHashMap();
+	private final LinkedHashMap<String, String> topBuildOutVars = new LinkedHashMap<String, String>();
 	// Dependency file variables
 //	private Vector dependencyMakefiles;		//  IPath's - relative to the top build directory or absolute
 
@@ -4079,16 +4079,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 
 		return fileList;
-	}
-
-	/**
-	 * Returns the list of files associated with the build variable in the top makefile
-	 *
-	 * @param variable  the variable name
-	 * @return List
-	 */
-	public List getTopBuildVariableList(String variable) {
-		return (List)topBuildOutVars.get(variable);
 	}
 
 	/**

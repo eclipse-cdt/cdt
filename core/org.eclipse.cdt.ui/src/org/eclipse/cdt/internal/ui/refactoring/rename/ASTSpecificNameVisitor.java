@@ -37,8 +37,7 @@ public abstract class ASTSpecificNameVisitor extends ASTNameVisitor {
                 if (nameStr.equals(fSearchForName)) {
                     return visitName(name, false);
                 }
-            }
-            else if (len == searchForLen+1) {
+            } else if (len == searchForLen + 1) {
                 if (nameStr.charAt(0) == '~' && nameStr.endsWith(fSearchForName)) {
                     return visitName(name, true);
                 }

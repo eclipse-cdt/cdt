@@ -630,8 +630,8 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 				run(monitor);
 			} else {
 				// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
-				getCModel().getUnderlyingResource().getWorkspace()
-					.run(this, getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
+				getCModel().getUnderlyingResource().getWorkspace().run(
+						this, getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
 			}
 		} catch (CoreException ce) {
 			if (ce instanceof CModelException) {

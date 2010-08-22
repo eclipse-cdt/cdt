@@ -680,6 +680,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			fMonitor.subTask(name);
 		}
 	}
+
 	/**
 	 * Returns a status indicating if there is any known reason
 	 * this operation will fail.  Operations are verified before they

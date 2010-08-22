@@ -195,7 +195,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			element = element.getParent();
 		}
 		ICElement current = tu;
-		for (int i = children.size()-1; i >= 0; i--) {
+		for (int i = children.size(); --i >= 0;) {
 			ICElement child = children.get(i);
 			if (current instanceof IParent) {
 				try {
@@ -218,7 +218,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		return current;
 	}
 	
-
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()
 	 */
@@ -237,6 +236,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IProblemRequestor requestor) {
 		return this;		
 	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy()
 	 */	
@@ -306,7 +306,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
-
 		if (this.useCount == 0) throw newNotPresentException();
 	
 		// create buffer - working copies may use custom buffer factory
@@ -346,7 +345,6 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		return buffer;	
 	}
 	
-
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile()
 	 */
@@ -407,12 +405,10 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
 			throws CModelException {
-		
-		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
+		if (this.useCount == 0) throw newNotPresentException(); // was destroyed
 
         ReconcileWorkingCopyOperation op = new ReconcileWorkingCopyOperation(this, computeAST, forceProblemDetection);
         op.runOperation(monitor);
 		return op.fAST;
 	}
-	
 }

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -49,7 +47,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IWorkingCopy extends ITranslationUnit{
+public interface IWorkingCopy extends ITranslationUnit {
 	/**
 	 * Commits the contents of this working copy to its original element
 	 * and underlying resource, bringing the C model up-to-date with the current
@@ -67,6 +65,7 @@ public interface IWorkingCopy extends ITranslationUnit{
 	 * </ul>
 	 */
 	void commit(boolean force, IProgressMonitor monitor) throws CModelException;
+
 	/**
 	 * Destroys this working copy, closing its buffer and discarding
 	 * its structure. Subsequent attempts to access non-handle information

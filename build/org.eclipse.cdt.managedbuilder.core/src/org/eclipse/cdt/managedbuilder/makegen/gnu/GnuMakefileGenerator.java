@@ -182,7 +182,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 							if (!generator.isGeneratedResource(resource)) {
 								generator.appendDeletedSubdirectory((IContainer)resource);
 							}
-						default:
 							break;
 					}
 				}
@@ -3126,7 +3125,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 								optType == IOption.LIBRARY_PATHS ||
 								optType == IOption.LIBRARY_FILES ||
 								optType == IOption.MACRO_FILES) {
-							outputList = (List<String>)option.getValue();
+							@SuppressWarnings("unchecked")
+							List<String> value = (List<String>)option.getValue();
+							outputList = value;
 							((Tool)tool).filterValues(optType, outputList);
 							// Add outputPrefix to each if necessary
 							if (outputPrefix.length() > 0) {
@@ -3866,13 +3867,13 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/**
 	 * Write all macro addition entries in a map to the buffer
 	 */
-	protected StringBuffer writeTopAdditionMacros(List<String> varList, HashMap<String, ?> varMap) {
+	protected StringBuffer writeTopAdditionMacros(List<String> varList, HashMap<String, String> varMap) {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedMakeMessages.getResourceString(MOD_VARS) + NEWLINE);
 
 		for (int i=0; i<varList.size(); i++) {
-			String addition = (String) varMap.get(varList.get(i));
+			String addition = varMap.get(varList.get(i));
 			StringBuffer currentBuffer = new StringBuffer();
 			currentBuffer.append(addition);
 			currentBuffer.append(NEWLINE);
@@ -4104,7 +4105,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *
 	 * @return HashMap
 	 */
-	public LinkedHashMap getTopBuildOutputVars() {
+	public LinkedHashMap<String, String> getTopBuildOutputVars() {
 		return topBuildOutVars;
 	}
 

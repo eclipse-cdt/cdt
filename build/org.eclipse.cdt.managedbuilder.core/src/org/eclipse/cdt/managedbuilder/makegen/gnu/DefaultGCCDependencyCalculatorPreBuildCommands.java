@@ -212,7 +212,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		IManagedCommandLineInfo cmdLInfo = null;
 		
 		//  Set up the command line options that will generate the dependency file
-		Vector options = new Vector();
+		Vector<String> options = new Vector<String>();
 		// -w 
 		options.add("-w");						//$NON-NLS-1$
 		// -MM 
@@ -249,11 +249,11 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		// Save the -I, -D, -U options and discard the rest
 		try { 
 			String[] allFlags = tool.getToolCommandFlags(sourceLocation, outputLocation);
-			for (int i=0; i<allFlags.length; i++) {
-				if (allFlags[i].startsWith("-I") ||		//$NON-NLS-1$
-				    allFlags[i].startsWith("-D") ||		//$NON-NLS-1$
-				    allFlags[i].startsWith("-U")) {		//$NON-NLS-1$
-					options.add(allFlags[i]);
+			for (String flag : allFlags) {
+				if (flag.startsWith("-I") ||		//$NON-NLS-1$
+						flag.startsWith("-D") ||		//$NON-NLS-1$
+						flag.startsWith("-U")) {		//$NON-NLS-1$
+					options.add(flag);
 				}
 			}
 		} catch( BuildException ex ) {
@@ -261,7 +261,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 
 		// Call the command line generator
 		IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
-		String[] flags = (String[])options.toArray(new String[options.size()]);
+		String[] flags = options.toArray(new String[options.size()]);
 		String[] inputs = new String[1];
 		inputs[0] = IManagedBuilderMakefileGenerator.IN_MACRO;
 		cmdLInfo = cmdLGen.generateCommandLineInfo( 

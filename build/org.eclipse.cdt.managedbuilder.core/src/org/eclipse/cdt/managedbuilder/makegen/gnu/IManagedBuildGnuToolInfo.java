@@ -36,14 +36,14 @@ public interface IManagedBuildGnuToolInfo {
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getCommandInputs();
+	public Vector<String> getCommandInputs();
 	
 	/**
 	 * Returns the raw list of tool's input file names.
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getEnumeratedInputs();
+	public Vector<String> getEnumeratedInputs();
 	
 	/**
 	 * Returns <code>true</code> if the tool's outputs have been calculated, 
@@ -59,28 +59,28 @@ public interface IManagedBuildGnuToolInfo {
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getCommandOutputs();
+	public Vector<String> getCommandOutputs();
 	
 	/**
 	 * Returns the raw list of tool's primary output file names.
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getEnumeratedPrimaryOutputs();
+	public Vector<String> getEnumeratedPrimaryOutputs();
 	
 	/**
 	 * Returns the raw list of tool's secondary output file names.
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getEnumeratedSecondaryOutputs();
+	public Vector<String> getEnumeratedSecondaryOutputs();
 	
 	/**
 	 * Returns the raw list of tool's output variable names.
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getOutputVariables();
+	public Vector<String> getOutputVariables();
 	
 	/**
 	 * Returns <code>true</code> if the tool's dependencies have been calculated, 
@@ -97,7 +97,7 @@ public interface IManagedBuildGnuToolInfo {
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getCommandDependencies();
+	public Vector<String> getCommandDependencies();
 
 	/**
 	 * Returns the tool's additional targets as determined by the
@@ -106,14 +106,14 @@ public interface IManagedBuildGnuToolInfo {
 	 * 
 	 *  @return Vector
 	 */
-	public Vector getAdditionalTargets();
+	public Vector<String> getAdditionalTargets();
 	
 	/**
 	 * Returns the raw list of tool's input dependencies.
 	 * 
 	 *  @return Vector
 	 */
-	//public Vector getEnumeratedDependencies();  
+	//public Vector<String> getEnumeratedDependencies();  
 	
 	/**
 	 * Returns <code>true</code> if this is the target tool 

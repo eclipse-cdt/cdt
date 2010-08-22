@@ -100,14 +100,15 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 
 	/*
 	 * Whether the operation has modified resources, and thus whether resource
-	 * delta notifcation will happen.
+	 * delta notification will happen.
 	 */
 	protected boolean hasModifiedResource = false;
 
 	/*
 	 * A per thread stack of java model operations (PerThreadObject of ArrayList).
 	 */
-	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks = new ThreadLocal<ArrayList<CModelOperation>>();
+	protected final static ThreadLocal<ArrayList<CModelOperation>> operationStacks =
+			new ThreadLocal<ArrayList<CModelOperation>>();
 
 	protected CModelOperation() {
 	}
@@ -582,9 +583,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 */
 	protected boolean isTopLevelOperation() {
 		ArrayList<CModelOperation> stack;
-		return 
-			(stack = this.getCurrentOperationStack()).size() > 0
-			&& stack.get(0) == this;
+		return (stack = this.getCurrentOperationStack()).size() > 0 && stack.get(0) == this;
 	}
 
 	/**
@@ -604,7 +603,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		} finally {
 			try {
 				registerDeltas();
-				// Fire if we change somethings
+				// Fire if we change something
 				if (isTopLevelOperation()) {
 					if ((manager.fCModelDeltas.size() > previousDeltaCount || !manager.reconcileDeltas.isEmpty())
 							&& !this.hasModifiedResource()) {
@@ -630,7 +629,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			if (isReadOnly()) {
 				run(monitor);
 			} else {
-		// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
+				// use IWorkspace.run(...) to ensure that a build will be done in autobuild mode
 				getCModel().getUnderlyingResource().getWorkspace()
 					.run(this, getSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
 			}
@@ -646,7 +645,6 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			throw new CModelException(ce);
 		}
 	}
-
 
 	/**
 	 * @see IProgressMonitor

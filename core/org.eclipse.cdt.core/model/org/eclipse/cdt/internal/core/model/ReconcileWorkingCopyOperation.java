@@ -30,6 +30,7 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 	public ReconcileWorkingCopyOperation(ICElement workingCopy, boolean forceProblemDetection) {
 		this(workingCopy, false, forceProblemDetection);
 	}
+
 	public ReconcileWorkingCopyOperation(ICElement workingCopy, boolean computeAST, boolean forceProblemDetection) {
 		super(new ICElement[] {workingCopy});
 		fComputeAST= computeAST;
@@ -68,11 +69,8 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 						addReconcileDelta(workingCopy, deltaBuilder.delta);
 					}
 				}
-
 			}
-	
 			if (fMonitor != null) fMonitor.worked(2);
-			
 		} finally {
 			if (fMonitor != null) fMonitor.done();
 		}
@@ -84,6 +82,7 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 	protected WorkingCopy getWorkingCopy() {
 		return (WorkingCopy)getElementToProcess();
 	}
+
 	/**
 	 * @see CModelOperation#isReadOnly
 	 */
@@ -104,6 +103,4 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 		}
 		return status;
 	}
-
-
 }

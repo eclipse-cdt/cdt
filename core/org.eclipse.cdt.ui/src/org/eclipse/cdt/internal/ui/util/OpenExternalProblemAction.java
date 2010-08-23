@@ -12,6 +12,8 @@
 
 package org.eclipse.cdt.internal.ui.util;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -20,7 +22,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -54,7 +59,16 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 				if (attributeObject instanceof String)  {
 					String externalLocation = (String) attributeObject;
 					IPath externalPath = new Path(externalLocation);
-
+					
+					File file = externalPath.toFile() ;
+					if (!file.canRead()) {
+						MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
+						errorMsg.setText(Messages.OpenExternalProblemAction_ErrorOpeningFile);
+						errorMsg.setMessage(NLS.bind(Messages.OpenExternalProblemAction_CannotReadExternalLocation, externalPath));
+						errorMsg.open();
+						return;
+					}
+					
 					IEditorPart editor = EditorUtility.openInEditor(externalPath, getCProject(marker));
 					if (editor != null) {
 						IDE.gotoMarker(editor, marker);

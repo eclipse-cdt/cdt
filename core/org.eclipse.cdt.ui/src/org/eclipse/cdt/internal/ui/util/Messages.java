@@ -21,6 +21,10 @@ public class Messages extends NLS {
 	public static String EditorUtility_calculatingChangedRegions_message;
 	public static String EditorUtility_error_calculatingChangedRegions;
 
+	public static String OpenExternalProblemAction_CannotReadExternalLocation;
+
+	public static String OpenExternalProblemAction_ErrorOpeningFile;
+
 	public static String format(String pattern, Object... arguments) {
         return MessageFormat.format(pattern, arguments);
     }

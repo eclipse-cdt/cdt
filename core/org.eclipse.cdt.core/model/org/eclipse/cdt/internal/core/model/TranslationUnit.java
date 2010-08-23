@@ -527,7 +527,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				while (iterator.hasNext()) {
 					ICElement element = iterator.next();
 					if (element instanceof Openable) {
-						((Openable)element).closeBuffer();
+						((Openable) element).closeBuffer();
 					}
 				}
 				throw newNotPresentException();
@@ -541,8 +541,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		}
 		if (info instanceof ASTHolderTUInfo) {
-			final IASTTranslationUnit ast= ((ASTHolderTUInfo)info).fAST;
-			((ASTHolderTUInfo)info).fAST= null;
+			final IASTTranslationUnit ast= ((ASTHolderTUInfo) info).fAST;
+			((ASTHolderTUInfo) info).fAST= null;
 			return ast;
 		}
 		return null;
@@ -559,7 +559,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
-
 		// create buffer - translation units only use default buffer factory
 		BufferManager bufManager = getBufferManager();
 		IBuffer buffer = getBufferFactory().createBuffer(this);
@@ -626,7 +625,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			}
 		} catch (Exception e) {
 			// use the debug log for this exception.
-			Util.debugLog( "Exception in CModelBuilder", DebugLogConstants.MODEL);  //$NON-NLS-1$
+			Util.debugLog("Exception in CModelBuilder", DebugLogConstants.MODEL);  //$NON-NLS-1$
 		}
 	}
 
@@ -641,7 +640,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			mb.parse(quickParseMode);
 		} catch (Exception e) {
 			// use the debug log for this exception.
-			Util.debugLog( "Exception in contributed model builder", DebugLogConstants.MODEL);  //$NON-NLS-1$
+			Util.debugLog("Exception in contributed model builder", DebugLogConstants.MODEL);  //$NON-NLS-1$
 		}
 	}
 
@@ -650,36 +649,28 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public boolean isHeaderUnit() {
-		return (
-				CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
-				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)
-				);
+		return CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId);
 	}
 
 	public boolean isSourceUnit() {
 		if (isHeaderUnit())
 			return false;
 
-		return (
-				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
+		return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
 				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
 				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId)
-				|| LanguageManager.getInstance().isContributedContentType(contentTypeId)
-				);
+				|| LanguageManager.getInstance().isContributedContentType(contentTypeId);
 	}
 
 	public boolean isCLanguage() {
-		return (
-				CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
-				|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
-				);
+		return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId);
 	}
 
 	public boolean isCXXLanguage() {
-		return (
-				CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
-				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId)
-				);
+		return CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId);
 	}
 
 	public boolean isASMLanguage() {
@@ -773,7 +764,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IASTTranslationUnit getAST(IIndex index, int style, IProgressMonitor monitor) throws CoreException {
 		ITranslationUnit configureWith = getSourceContextTU(index, style);
 		
-		IScannerInfo scanInfo= configureWith.getScannerInfo( (style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		IScannerInfo scanInfo= configureWith.getScannerInfo((style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
 			return null;
 		}
@@ -883,7 +874,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
 		ITranslationUnit configureWith= getSourceContextTU(index, style);
 		
-		IScannerInfo scanInfo = configureWith.getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
+		IScannerInfo scanInfo = configureWith.getScannerInfo((style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
 		if (scanInfo == null) {
 			return null;
 		}
@@ -1039,32 +1030,32 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 				// search for matching function
 				for (ICElement element2 : children) {
-						if (elementType == element2.getElementType()
-								&& elementName.equals(element2.getElementName())) {
-							assert element2 instanceof IFunctionDeclaration;
-							String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
-							if (Arrays.equals(functionParams, mementoParams)) {
-								element= (CElement) element2;
-								break;
-							}
+					if (elementType == element2.getElementType()
+							&& elementName.equals(element2.getElementName())) {
+						assert element2 instanceof IFunctionDeclaration;
+						String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
+						if (Arrays.equals(functionParams, mementoParams)) {
+							element= (CElement) element2;
+							break;
 						}
 					}
+				}
 				break;
 			case ICElement.C_TEMPLATE_CLASS:
 			case ICElement.C_TEMPLATE_STRUCT:
 			case ICElement.C_TEMPLATE_UNION:
 				// search for matching template type
 				for (ICElement element2 : children) {
-						if (elementType == element2.getElementType()
-								&& elementName.equals(element2.getElementName())) {
-							assert element2 instanceof ITemplate;
-							String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
-							if (Arrays.equals(templateParams, mementoParams)) {
-								element= (CElement) element2;
-								break;
-							}
+					if (elementType == element2.getElementType()
+							&& elementName.equals(element2.getElementName())) {
+						assert element2 instanceof ITemplate;
+						String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
+						if (Arrays.equals(templateParams, mementoParams)) {
+							element= (CElement) element2;
+							break;
 						}
 					}
+				}
 				break;
 			default:
 				// search for matching element

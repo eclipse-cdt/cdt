@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.resources;
 
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -95,16 +95,12 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
 			}
 			if (externalLocation != null) {
-				try {
-					URI uri = new URI(externalLocation);
-					if (uri.getScheme()!=null) {
-						marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
-						String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
-								problemMarkerInfo.lineNumber, externalLocation);
-						marker.setAttribute(IMarker.LOCATION, locationText);
-					}
-				} catch (URISyntaxException e) {
-					// Just ignore those which cannot be open by editor
+				URI uri = URIUtil.toURI(externalLocation);
+				if (uri.getScheme()!=null) {
+					marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION, externalLocation);
+					String locationText = NLS.bind(CCorePlugin.getResourceString("ACBuilder.ProblemsView.Location"), //$NON-NLS-1$
+							problemMarkerInfo.lineNumber, externalLocation);
+					marker.setAttribute(IMarker.LOCATION, locationText);
 				}
 			} else if (problemMarkerInfo.lineNumber==0){
 				marker.setAttribute(IMarker.LOCATION, " "); //$NON-NLS-1$

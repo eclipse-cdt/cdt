@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-     <extension-point id="DiscoveryProfilePage" name="%discoveryProfilePage.name" schema="schema/DiscoveryProfilePage.exsd"/>
+     <extension-point id="DiscoveryProfilePage" name="%DiscoveryProfilePage.name" schema="schema/DiscoveryProfilePage.exsd"/>
 
    <extension
          point="org.eclipse.ui.popupMenus">

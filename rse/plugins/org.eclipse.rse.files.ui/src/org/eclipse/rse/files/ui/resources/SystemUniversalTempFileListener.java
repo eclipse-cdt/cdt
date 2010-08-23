@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [235221] Files truncated on exit of Eclipse
  * David McKnight   (IBM)        - [249544] Save conflict dialog appears when saving files in the editor
  * David McKnight   (IBM)        - [256048] Saving a member open in Remote LPEX editor while Working Offline doesn't set the dirty property
+ * David McKnight   (IBM)        - [191284] Confusing behaviour when editing a Readonly file.
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -199,8 +200,14 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					// If remote file is read-only make it writable as the local
 					// copy has changed to be writable
 					if (remoteFile.exists() && !remoteFile.canWrite() && !tempFile.isReadOnly()) {
-						remoteFile.getParentRemoteFileSubSystem().setReadOnly(
-								remoteFile, false, new NullProgressMonitor());
+						IRemoteFileSubSystem ss = remoteFile.getParentRemoteFileSubSystem();
+						ss.setReadOnly(remoteFile, false, monitor);
+						
+						// the remote file is still marked read-only, we need to requery the file (i.e. for SSH and FTP)
+						if (!remoteFile.canWrite()){
+							remoteFile.markStale(true);
+							remoteFile = ss.getRemoteFileObject(remoteFile.getAbsolutePath(), monitor);
+						}
 					}	
 					
 					boolean openEditorAfterUpload = false;

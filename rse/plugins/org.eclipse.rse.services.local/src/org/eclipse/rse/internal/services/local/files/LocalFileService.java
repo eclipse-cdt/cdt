@@ -46,6 +46,7 @@
  * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  * David McKnight   (IBM)        - [299140] Local Readonly file can't be copied/pasted twice
  * Martin Oberhuber (Wind River) - [314461] NPE deleting a folder w/o permission
+ * David McKnight   (IBM)        - [279829] [local] Save conflict dialog keeps popping up on mounted drive
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -676,7 +677,9 @@ public class LocalFileService extends AbstractFileService implements ILocalServi
 					throw new SystemOperationCancelledException();
 //					return false;
 				} else if (destinationFile!=null) {
-					destinationFile.setLastModified(localFile.lastModified());
+					// commented out as per the following bug:
+					//	[279829] [local] Save conflict dialog keeps popping up on mounted drive
+					// destinationFile.setLastModified(localFile.lastModified());
 					//TODO check if we want to preserve permissions
 					//if(!localFile.canWrite()) destinationFile.setReadOnly();
 

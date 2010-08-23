@@ -31,6 +31,7 @@
  *  David McKnight     (IBM)   [308246] [dstore] fix for Bug 287305 breaks on z/OS due to "su" usage
  *  David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  *  David McKnight   (IBM)     [318372] [dstore][shells] "export" shell command invalid for certain shells
+ *  David McKnight   (IBM)     [323262] [dstore] zos shell does not display [ ]  brackets properly
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -166,7 +167,11 @@ public class CommandMinerThread extends MinerThread
 		
 		if (isZ)
 		{
-		  System.setProperty("dstore.stdin.encoding","Cp037"); //$NON-NLS-1$ //$NON-NLS-2$
+			String inCoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+			if (inCoding == null || inCoding.length() == 0){				
+				// IBM-1047 works better on z/OS than cp037
+				System.setProperty("dstore.stdin.encoding","IBM-1047"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	    	
 		_isWindows = theOS.toLowerCase().startsWith("win"); //$NON-NLS-1$

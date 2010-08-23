@@ -67,6 +67,7 @@
  * David McKnight   (IBM)        - [309813] RSE permits opening of file after access removed
  * David McKnight   (IBM)        - [308221] Bidi3.6: Improper display of date in Properties and Table Views
  * David McKnight   (IBM)        - [317541] Show blank as the last modified for a file with no last modified
+ * David McKnight   (IBM)        - [323299] [files] remote file view adapter needs to use the latest version of IRemoteFile
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -168,6 +169,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEmpty;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileRoot;
+import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteSearchResultsContentsType;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
@@ -647,6 +649,14 @@ public class SystemViewRemoteFileAdapter
 			return ((RemoteFileRoot) file).getRootFiles();
 		}
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
+		
+		// make sure we have the lastest cached version otherwise could be working with a bad file that never got marked as stale
+		if (ss instanceof RemoteFileSubSystem){
+			IRemoteFile cachedFile = ((RemoteFileSubSystem)ss).getCachedRemoteFile(file.getAbsolutePath());
+			if (cachedFile != null){
+				file = cachedFile;
+			}
+		}
 
 
 		/*
@@ -746,65 +756,67 @@ public class SystemViewRemoteFileAdapter
 		    }
 		}
 
-		boolean hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
-
-		if (hasChildren && !file.isStale())
-		{
-			children = file.getContents(RemoteChildrenContentsType.getInstance(), filter);
-			children = filterChildren(children);
-		}
-		else
-		{
-			try
+		synchronized (file){
+			boolean hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
+	
+			if (hasChildren && !file.isStale())
 			{
-			    if (monitor != null)
-			    {
-
-			        children = ss.resolveFilterString(file, filter, monitor);
-			    }
-			    else
-			    {
-			        children = ss.resolveFilterString(file, filter, new NullProgressMonitor());
-			    }
-
-				if ((children == null) || (children.length == 0))
+				children = file.getContents(RemoteChildrenContentsType.getInstance(), filter);
+				children = filterChildren(children);
+			}
+			else
+			{
+				try
 				{
-					children = EMPTY_LIST;
-				}
-				else
-				{
-					if (children.length == 1 && children[0] instanceof SystemMessageObject)
+				    if (monitor != null)
+				    {
+	
+				        children = ss.resolveFilterString(file, filter, monitor);
+				    }
+				    else
+				    {
+				        children = ss.resolveFilterString(file, filter, new NullProgressMonitor());
+				    }
+	
+					if ((children == null) || (children.length == 0))
 					{
-						// don't filter children so that the message gets propagated
+						children = EMPTY_LIST;
 					}
 					else
 					{
-						children = filterChildren(children);
+						if (children.length == 1 && children[0] instanceof SystemMessageObject)
+						{
+							// don't filter children so that the message gets propagated
+						}
+						else
+						{
+							children = filterChildren(children);
+						}
 					}
+	
 				}
-
+				catch (InterruptedException exc)
+				{
+					children = new SystemMessageObject[1];
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+							ICommonMessageIds.MSG_EXPAND_CANCELLED,
+							IStatus.CANCEL, CommonMessages.MSG_EXPAND_CANCELLED);
+					children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
+				}
+				catch (Exception exc)
+				{
+					children = new SystemMessageObject[1];
+	
+					SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
+							ICommonMessageIds.MSG_EXPAND_FAILED,
+							IStatus.ERROR,
+							CommonMessages.MSG_EXPAND_FAILED);
+					children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
+					SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
+				} // message already issued
 			}
-			catch (InterruptedException exc)
-			{
-				children = new SystemMessageObject[1];
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-						ICommonMessageIds.MSG_EXPAND_CANCELLED,
-						IStatus.CANCEL, CommonMessages.MSG_EXPAND_CANCELLED);
-				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_CANCEL, element);
-			}
-			catch (Exception exc)
-			{
-				children = new SystemMessageObject[1];
-
-				SystemMessage msg = new SimpleSystemMessage(Activator.PLUGIN_ID,
-						ICommonMessageIds.MSG_EXPAND_FAILED,
-						IStatus.ERROR,
-						CommonMessages.MSG_EXPAND_FAILED);
-				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, element);
-				SystemBasePlugin.logError("Exception resolving file filter strings", exc); //$NON-NLS-1$
-			} // message already issued
+			file.markStale(false);
 		}
-		file.markStale(false);
 		return children;
 	}
 

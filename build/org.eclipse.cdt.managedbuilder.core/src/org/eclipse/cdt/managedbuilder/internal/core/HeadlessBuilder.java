@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
@@ -76,6 +78,10 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Add Include path to build :             -I          {include_path}
  *   - Add Include file to build :             -include    {include_file}
  *   - Add preprocessor define to build :      -D          {prepoc_define}
+ *   - Replace environment variable in build : -E          {var=value}
+ *   - Append environment variable to build :  -Ea         {var=value}
+ *   - Prepend environment variable to build : -Ep         {var=value}
+ *   - Remove environment variable in build :  -Er         {var}
  *
  * Build output is automatically sent to stdout.
  * @since 6.0
@@ -480,6 +486,10 @@ public class HeadlessBuilder implements IApplication {
 	 *   -I          {include_path} additional include_path to add to tools
 	 *   -include    {include_file} additional include_file to pass to tools
 	 *   -D          {prepoc_define} addition preprocessor defines to pass to the tools
+  	 *   -E			 {var=value} replace/add value to environment variable when running all tools
+	 *   -Ea		 {var=value} append value to environment variable when running all tools
+	 *   -Ep		 {var=value} prepend value to environment variable when running all tools
+	 *   -Er         {var} remove/unset the given environment variable
 	 *
 	 * Each argument may be specified more than once
 	 * @param args String[] of arguments to parse
@@ -510,6 +520,14 @@ public class HeadlessBuilder implements IApplication {
 					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CIncludePathEntry(args[++i], 0));
 				} else if ("-include".equals(args[i])) { //$NON-NLS-1$
 					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CIncludeFileEntry(args[++i], 0));
+				} else if ("-E".equals(args[i])) { //$NON-NLS-1$
+					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_REPLACE);
+				} else if ("-Ea".equals(args[i])) { //$NON-NLS-1$
+					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_APPEND);
+				} else if ("-Ep".equals(args[i])) { //$NON-NLS-1$
+					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_PREPEND);
+				} else if ("-Er".equals(args[i])) { //$NON-NLS-1$
+					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_REMOVE);
 				} else {
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_unknown_argument + args[i]);
 				}
@@ -526,6 +544,10 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_InlucdePath);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_IncludeFile);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_PreprocessorDefine);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Replace);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Append);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Prepend);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Remove);
 			return false;
 		}
 
@@ -544,6 +566,14 @@ public class HeadlessBuilder implements IApplication {
 		return true;
 	}
 
+	private void addEnvironmentVariable(String string, int op) throws Exception {
+		String[] parts = string.split("=", 2); //$NON-NLS-1$
+		String name = parts[0];
+		String value = ""; //$NON-NLS-1$
+		if (parts.length > 1)
+			value = parts[1];
+		EnvironmentVariableManager.fUserSupplier.createOverrideVariable(name, value, op, null);
+	}
 
 	public void stop() {
 	}

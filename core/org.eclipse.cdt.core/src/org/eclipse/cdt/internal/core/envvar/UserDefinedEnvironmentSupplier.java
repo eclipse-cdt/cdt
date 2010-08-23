@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Intel Corporation and others.
+ * Copyright (c) 2005, 2010 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -35,9 +37,18 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * This is the Environment Variable Supplier used to supply variables
- * defined by a user
- * 
+ * This is the Environment Variable Supplier used to supply and persist user 
+ * defined variables.  Variables are stored in the context of a CDT {@link ICConfigurationDescription},
+ * or, globally at the {@link IWorkspace} level.
+ *
+ * <p>
+ * This class is Singleton held by {@link EnvironmentVariableManager}.
+ *
+ * <p>
+ * It also allows temporary 'overriding' of variables. These are not persisted, but override
+ * the values of any existing user-defined variable. This functionality is used by HeadlessBuilder
+ * to temporarily override environment variables on the command line.
+ *
  * @since 3.0
  */
 public class UserDefinedEnvironmentSupplier extends 
@@ -56,8 +67,8 @@ public class UserDefinedEnvironmentSupplier extends
 		};
 */
 	private StorableEnvironment fWorkspaceVariables;
-	
-	
+	private StorableEnvironment fOverrideVariables = new StorableEnvironment(false);
+
 	static class VarKey {
 		private IEnvironmentVariable fVar;
 		private boolean fNameOnly;
@@ -375,10 +386,11 @@ public class UserDefinedEnvironmentSupplier extends
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if(getValidName(name) == null)
 			return null;
+		IEnvironmentVariable var = fOverrideVariables.getVariable(name);
 		StorableEnvironment env = getEnvironment(context);
-		if(env == null)
-			return null;
-		return env.getVariable(name);
+		if (env == null)
+			return var;
+		return EnvVarOperationProcessor.performOperation(env.getVariable(name), var);
 	}
 
 	/* (non-Javadoc)
@@ -388,9 +400,41 @@ public class UserDefinedEnvironmentSupplier extends
 		StorableEnvironment env = getEnvironment(context);
 		if(env == null)
 			return null;
-		return filterVariables(env.getVariables());
+		IEnvironmentVariable[] override = filterVariables(fOverrideVariables.getVariables());
+		IEnvironmentVariable[] normal = filterVariables(env.getVariables());
+		return combineVariables(normal, override);
 	}
-	
+
+	private IEnvironmentVariable[] combineVariables(IEnvironmentVariable[] oldVariables, IEnvironmentVariable[] newVariables) {
+		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>(oldVariables.length + newVariables.length);
+		for (IEnvironmentVariable variable : oldVariables)
+			vars.put(variable.getName(), variable);
+		for (IEnvironmentVariable variable : newVariables) {
+			if (!vars.containsKey(variable.getName()))
+				vars.put(variable.getName(), variable);
+			else
+				vars.put(variable.getName(), EnvVarOperationProcessor.performOperation(vars.get(variable.getName()), variable));
+		}
+		return vars.values().toArray(new IEnvironmentVariable[vars.size()]);
+	}
+
+	/**
+	 * Add an environment variable 'override'. This variable won't be persisted but will instead 
+	 * replace / remove / prepend / append any existing environment variable with the same name.
+	 * This change is not persisted and remains for the current eclipse session.
+	 *
+	 * @param name Environment variable name
+	 * @param value Environment variable value
+	 * @param op one of the IBuildEnvironmentVariable.ENVVAR_* operation types
+	 * @param delimiter delimiter to use or null for default
+	 * @return Overriding IEnvironmentVariable or null if name is not valid 
+	 */
+	public IEnvironmentVariable createOverrideVariable(String name, String value, int op, String delimiter) {
+		if (getValidName(name) == null)
+			return null;
+		return fOverrideVariables.createVariable(name,value,op,delimiter);
+	}
+
 	public IEnvironmentVariable createVariable(String name, String value, int op, String delimiter, Object context){
 		if(getValidName(name) == null)
 			return null;

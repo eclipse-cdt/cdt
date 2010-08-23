@@ -22,6 +22,10 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_cleaning_all_projects;
 	public static String HeadlessBuilder_CouldntLockWorkspace;
 	public static String HeadlessBuilder_Directory;
+	public static String HeadlessBuilder_EnvVar_Append;
+	public static String HeadlessBuilder_EnvVar_Prepend;
+	public static String HeadlessBuilder_EnvVar_Remove;
+	public static String HeadlessBuilder_EnvVar_Replace;
 	public static String HeadlessBuilder_Error;
 	public static String HeadlessBuilder_importAll;
 	public static String HeadlessBuilder_IncludeFile;

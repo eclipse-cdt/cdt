@@ -39,7 +39,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * can be calculated from the AST.
  */
 public class CRefactoringArgument {
-    private int fOffset=0;
+    private int fOffset= 0;
     private int fLength= 0;
     private String fText= ""; //$NON-NLS-1$
     private int fKind= CRefactory.ARGUMENT_UNKNOWN;

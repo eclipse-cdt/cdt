@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,14 +30,17 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
+import org.eclipse.ui.ide.dialogs.ImportTypeDialog;
 import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -98,6 +101,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 				IResource[] resources = null;
 				TransferData currentTransfer = dropAdapter.getCurrentTransfer();
+				final int dropOperation = dropAdapter.getCurrentOperation();
 				if (LocalSelectionTransfer.getTransfer().isSupportedType(
 						currentTransfer)) {
 					resources = getSelectedResources();
@@ -120,12 +124,11 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 						public void run() {
 							getShell().forceActive();
 							CopyFilesAndFoldersOperation op= new CopyFilesAndFoldersOperation(getShell());
-							op.copyFiles(names, destination);
+							op.copyOrLinkFiles(names, destination, dropOperation);
 						}
 					});
-				} else if (event.detail == DND.DROP_COPY) {
-					CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
-					operation.copyResources(resources, destination);
+				} else if (event.detail == DND.DROP_COPY || event.detail == DND.DROP_LINK) {
+					return performResourceCopy(dropAdapter, getShell(), resources);
 				} else {
 					ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
 						getShell(), 
@@ -186,7 +189,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 							return Status.CANCEL_STATUS;
 						}
 					}
-					if (operation == DND.DROP_COPY) {
+					if (operation == DND.DROP_COPY || operation == DND.DROP_LINK) {
 						CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(getShell());
 						if (op.validateDestination(destination, selectedResources) == null) {
 							return Status.OK_STATUS;
@@ -284,6 +287,67 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 		
 		}
 		return Status.CANCEL_STATUS;
+	}
+
+	/**
+	 * Performs a resource copy.
+	 * Cloned from ResourceDropAdapterAssistant to support linked resources (bug 319405).
+	 */
+	private IStatus performResourceCopy(CommonDropAdapter dropAdapter,
+			Shell shell, IResource[] sources) {
+		IContainer target = getDestination(dropAdapter.getCurrentTarget());
+		if (target == null) {
+			return Status.CANCEL_STATUS;
+		}
+		
+		boolean shouldLinkAutomatically = false;
+		if (target.isVirtual()) {
+			shouldLinkAutomatically = true;
+			for (int i = 0; i < sources.length; i++) {
+				if ((sources[i].getType() != IResource.FILE) && (sources[i].getLocation() != null)) {
+					// If the source is a folder, but the location is null (a
+					// broken link, for example),
+					// we still generate a link automatically (the best option).
+					shouldLinkAutomatically = false;
+					break;
+				}
+			}
+		}
+
+		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
+		// if the target is a virtual folder and all sources are files, then
+		// automatically create links
+		if (shouldLinkAutomatically) {
+			operation.setCreateLinks(true);
+			operation.copyResources(sources, target);
+		} else {
+			boolean allSourceAreLinksOrVirtualFolders = true;
+			for (int i = 0; i < sources.length; i++) {
+				if (!sources[i].isVirtual() && !sources[i].isLinked()) {
+					allSourceAreLinksOrVirtualFolders = false;
+					break;
+				}
+			}
+			// if all sources are either links or groups, copy then normally,
+			// don't show the dialog
+			if (!allSourceAreLinksOrVirtualFolders) {
+				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
+				dialog.setResource(target);
+				if (dialog.open() == Window.OK) {
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
+						operation.setVirtualFolders(true);
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
+						operation.setCreateLinks(true);
+					if (dialog.getVariable() != null)
+						operation.setRelativeVariable(dialog.getVariable());
+					operation.copyResources(sources, target);
+				} else
+					return Status.CANCEL_STATUS;
+			} else
+				operation.copyResources(sources, target);
+		}
+
+		return Status.OK_STATUS;
 	}
 
 	private IStatus handleDropCopy(final Object target, DropTargetEvent event) throws CModelException, InvocationTargetException, InterruptedException{

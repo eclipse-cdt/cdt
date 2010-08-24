@@ -651,10 +651,14 @@ public class SystemViewRemoteFileAdapter
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
 		
 		// make sure we have the lastest cached version otherwise could be working with a bad file that never got marked as stale
+		IRemoteFile originalFile = file;
 		if (ss instanceof RemoteFileSubSystem){
 			IRemoteFile cachedFile = ((RemoteFileSubSystem)ss).getCachedRemoteFile(file.getAbsolutePath());
 			if (cachedFile != null){
 				file = cachedFile;
+				if (originalFile.isStale()){ // the original file was marked stale, so the cached one should be too
+					file.markStale(true);
+				}
 			}
 		}
 

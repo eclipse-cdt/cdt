@@ -182,10 +182,24 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 
 	public List<String> translateRelativePaths(IFile file, String fileName, List<String> includes) {
 		List<String> translatedIncludes = new ArrayList<String>(includes.size());
-		for (Iterator<String> i = includes.iterator(); i.hasNext(); ) {
-			String include = i.next();
+		for (String include : includes) {
 			IPath includePath = new Path(include);
-			if (!includePath.isAbsolute() && !includePath.isUNC()) {	// do not translate UNC paths
+			if (includePath.isUNC()) {
+				// do not translate UNC paths
+			} else if (includePath.isAbsolute()) {
+				if (includePath.getDevice()==null) {
+					String device = getWorkingDirectory().getDevice();
+					IPath candidatePath = includePath.setDevice(device);
+					File dir = candidatePath.toFile();
+					if (dir.exists()) {
+						include = candidatePath.toString();
+					} else {
+						final String error = MakeMessages.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
+						TraceUtil.outputError(error, include);
+//						generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
+					}
+				}
+			} else {
 				// First try the current working directory
 				IPath cwd = getWorkingDirectory();
 				if (!cwd.isAbsolute()) {
@@ -193,7 +207,12 @@ public class ScannerInfoConsoleParserUtility extends AbstractGCCBOPConsoleParser
 				}
 				
 				IPath filePath = new Path(fileName);
-				if (!filePath.isAbsolute()) {
+				if (filePath.isAbsolute()) {
+					if (filePath.getDevice()==null) {
+						String device = getWorkingDirectory().getDevice();
+						filePath = filePath.setDevice(device);
+					}
+				} else {
 					// check if the cwd is the right one
 					// appending fileName to cwd should yield file path
 					filePath = cwd.append(fileName);

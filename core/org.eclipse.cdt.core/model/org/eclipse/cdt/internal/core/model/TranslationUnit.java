@@ -794,7 +794,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				} else {
 					log= ParserUtil.getParserLogService();
 				}
-				return ((AbstractLanguage)language).getASTTranslationUnit(fileContent, scanInfo, crf, index, options, log);
+				return ((AbstractLanguage) language).getASTTranslationUnit(fileContent, scanInfo, crf, index, options, log);
 			}
 		}
 		return null;

@@ -187,7 +187,7 @@ final public class Lexer implements ITokenSequence {
 	public final int consumeLine(int origin) throws OffsetLimitReachedException {
 		Token t= fToken;
 		Token lt= null;
-		while(true) {
+		while (true) {
 			switch(t.getType()) {
 			case IToken.tCOMPLETION:
 				if (lt != null) {
@@ -222,7 +222,7 @@ final public class Lexer implements ITokenSequence {
 		fInsideIncludeDirective= false;
 		final Token t= fToken;
 		boolean haveNL= t==null || t.getType() == tNEWLINE;
-		while(true) {
+		while (true) {
 			final boolean hadNL= haveNL;
 			haveNL= false;
 			final int start= fOffset;
@@ -337,7 +337,7 @@ final public class Lexer implements ITokenSequence {
 	 * Computes the next token.
 	 */
 	private Token fetchToken() throws OffsetLimitReachedException {
-		while(true) {
+		while (true) {
 			final int start= fOffset;
 			final int c= fCharPhase3;
 			final int d= nextCharPhase3();
@@ -367,12 +367,12 @@ final public class Lexer implements ITokenSequence {
 
 			case 'u': 	
 			case 'U':
-				if(fOptions.fSupportUTFLiterals) {
-					if(d == '"') {
+				if (fOptions.fSupportUTFLiterals) {
+					if (d == '"') {
 						nextCharPhase3();
 						return stringLiteral(start, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
 					}
-					if(d == '\'') {
+					if (d == '\'') {
 						nextCharPhase3();
 						return charLiteral(start, c == 'u' ? IToken.tUTF16CHAR : IToken.tUTF32CHAR);
 					}
@@ -730,7 +730,7 @@ final public class Lexer implements ITokenSequence {
 	private void blockComment(final int start, final char trigger) {
 		// we can ignore line-splices, trigraphs and windows newlines when searching for the '*'
 		int pos= fEndOffset;
-		while(isValidOffset(pos)) {
+		while (isValidOffset(pos)) {
 			if (fInput.get(pos++) == trigger) {
 				fEndOffset= pos;
 				if (nextCharPhase3() == '/') {
@@ -747,7 +747,7 @@ final public class Lexer implements ITokenSequence {
 
 	private void lineComment(final int start) {
 		int c= fCharPhase3;
-		while(true) {
+		while (true) {
 			switch (c) {
 			case END_OF_INPUT:
 			case '\n':
@@ -1073,7 +1073,7 @@ final public class Lexer implements ITokenSequence {
 				return c;
 			}
 		}
-		while(true);
+		while (true);
 	}
 	
 	/**
@@ -1103,7 +1103,7 @@ final public class Lexer implements ITokenSequence {
 	private int findEndOfLineSpliceSequence(int pos) {
 		boolean haveBackslash= true;
 		int result= -1;
-		loop: while(isValidOffset(pos)) {
+		loop: while (isValidOffset(pos)) {
 			switch(fInput.get(pos++)) {
 			case '\n':	
 				if (haveBackslash) {

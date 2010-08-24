@@ -100,7 +100,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		int chunkOffset= offset >> CHUNK_BITS;
 		int loffset= offset & (CHUNK_SIZE - 1);
 		char[] data= getChunkData(chunkOffset);
-		final int canCopy = data.length-loffset;
+		final int canCopy = data.length - loffset;
 		if (length <= canCopy) {
 			System.arraycopy(data, loffset, destination, destinationPos, length);
 			return;

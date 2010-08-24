@@ -182,4 +182,12 @@ public class InternalFileContent extends FileContent {
 	public void setFoundOnPath(IncludeSearchPathElement isp) {
 		fFoundOnPath= isp;
 	}
+
+	/**
+	 * This method is slow. Use only for debugging.
+	 */
+	@Override
+	public String toString() {
+		return getSource().toString();
+	}
 }

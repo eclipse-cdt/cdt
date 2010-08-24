@@ -53,4 +53,16 @@ public abstract class AbstractCharArray {
 	 * range checks.
 	 */
 	public abstract void arraycopy(int offset, char[] destination, int destinationPos, int length);
+
+	/**
+	 * This method is slow. Use only for debugging.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		for (int pos = 0; isValidOffset(pos); pos++) {
+			buf.append(get(pos));
+		}
+		return buf.toString();
+	}
 }

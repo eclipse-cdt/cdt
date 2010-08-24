@@ -869,7 +869,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		foo/*i*/(23489);                        // IASTLiteralExpression
 	//		foo/*j*/(sizeof(C));/*9*/               // IASTTypeIdExpression
 	//		foo/*k*/(*cp);/*10*/                    // IASTUnaryExpression
-	//		foo/*l*/(delete cp);/*11*/              // ICPPASTDeleteExpression
 	//		foo/*m*/(new C());/*12*/                // ICPPASTNewExpression
 	//		// ?? foo/*n*/();                       // ICPPASTSimpleTypeConstructorExpression
 	//		// ?? foo/*o*/();                       // ICPPASTTypenameExprssion
@@ -915,9 +914,6 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 		IBinding b10 = getBindingFromASTName("foo/*k*/", 3);
 		IBinding b10a = getBindingFromASTName("cp);/*10*/", 2);
-
-		IBinding b11 = getBindingFromASTName("foo/*l*/", 3);
-		IBinding b11a = getBindingFromASTName("cp);/*11*/", 2);
 
 		IBinding b12 = getBindingFromASTName("foo/*m*/", 3);
 		IBinding b12a = getBindingFromASTName("C());/*12*/", 1);

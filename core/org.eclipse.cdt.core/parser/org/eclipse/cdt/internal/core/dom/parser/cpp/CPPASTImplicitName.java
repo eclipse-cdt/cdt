@@ -25,6 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 	private boolean alternate;
 	private boolean isOperator;
+	private boolean isDefinition= false;
 
 	public CPPASTImplicitName(char[] name, IASTNode parent) {
 		super(name);
@@ -74,12 +75,16 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 
 	@Override
 	public boolean isDefinition() {
-		return false;
+		return isDefinition;
 	}
 
 	@Override
 	public boolean isReference() {
-		return true;
+		return !isDefinition;
+	}
+	
+	public void setIsDefinition(boolean val) {
+		isDefinition= val;
 	}
 
 	/**

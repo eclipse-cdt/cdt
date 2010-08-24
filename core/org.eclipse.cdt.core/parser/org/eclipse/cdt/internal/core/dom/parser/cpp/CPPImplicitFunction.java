@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,9 @@ public class CPPImplicitFunction extends CPPFunction {
 	private ICPPParameter[] parms=null;
 	private IScope scope=null;
     private ICPPFunctionType functionType=null;
-	private boolean takesVarArgs=false;
-	private char[] name=null;
+	private final boolean takesVarArgs;
+	private boolean isDeleted;
+	private final char[] name;
 	
 	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] parms, boolean takesVarArgs) {
         super( null );
@@ -83,7 +84,16 @@ public class CPPImplicitFunction extends CPPFunction {
     }
     
     @Override
+	public boolean isDeleted() {
+    	return isDeleted;
+    }
+    
+    @Override
 	public IBinding getOwner() {
     	return null;
     }
+    
+    public void setDeleted(boolean val) {
+    	isDeleted= val;
+    }	
 }

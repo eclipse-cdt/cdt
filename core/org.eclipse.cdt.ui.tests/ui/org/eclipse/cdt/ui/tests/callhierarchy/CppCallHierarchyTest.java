@@ -465,4 +465,41 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(tree, 0, 0, "testchar()");
 		checkTreeNode(tree, 0, 1, null);
 	}
+	
+	//	void a() {}
+	//	auto b= [] {a();};
+	//	void c() {
+	//	  b();
+	//	}
+	//	void d() {
+	//	  []{c();}();
+	//	}
+	public void testClosures_316307() throws Exception {
+		StringBuffer[] content= getContentsForTest(1);
+		String source = content[0].toString();
+		IFile file= createFile(getProject(), "testClosures.cpp", source);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, npm());
+		
+		CEditor editor= openEditor(file);
+		int pos= source.indexOf("a(");
+		editor.selectAndReveal(pos, 1);
+		openCallHierarchy(editor, true);
+		Tree tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "a()");
+		TreeItem node = checkTreeNode(tree, 0, 0, "(anonymous)::operator ()()");
+		expandTreeItem(node);
+		node= checkTreeNode(node, 0, "c()");
+		checkTreeNode(node, 1, null);
+		expandTreeItem(node);
+		node= checkTreeNode(node, 0, "(anonymous)::operator ()()");
+		checkTreeNode(node, 1, null);
+		expandTreeItem(node);
+		node= checkTreeNode(node, 0, "d()");
+		checkTreeNode(node, 1, null);
+		expandTreeItem(node);
+		checkTreeNode(node, 0, null);
+	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
@@ -28,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -156,17 +156,12 @@ public class SemanticUtil {
 	 * @return true if the specified method is a conversion operator
 	 */
 	public static final boolean isConversionOperator(ICPPMethod method) {
-		boolean result= false;
-		if (!method.isImplicit()) {
-			final char[] name= method.getNameCharArray();
-			if (name.length > OPERATOR_CHARS.length + 1 &&
-					CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
-				if (name[OPERATOR_CHARS.length] == ' ') {
-					result= !cas.containsKey(name, OPERATOR_CHARS.length + 1, name.length - (OPERATOR_CHARS.length+1));
-				}
-			}
+		final char[] name= method.getNameCharArray();
+		if (name.length > OPERATOR_CHARS.length + 1 && name[OPERATOR_CHARS.length] == ' ' &&
+				CharArrayUtils.equals(name, 0, OPERATOR_CHARS.length, OPERATOR_CHARS)) {
+			return !cas.containsKey(name, OPERATOR_CHARS.length + 1, name.length - (OPERATOR_CHARS.length+1));
 		}
-		return result;
+		return false;
 	}
 	
 	/** 

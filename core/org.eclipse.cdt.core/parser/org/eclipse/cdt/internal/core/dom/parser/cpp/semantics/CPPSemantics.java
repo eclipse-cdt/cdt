@@ -96,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -1322,7 +1323,12 @@ public class CPPSemantics {
 		    if (p instanceof IASTFunctionDefinition) {
 		        ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ((IASTFunctionDefinition) p).getDeclarator();
 		        nodes = dtor.getParameters();
-		    } 
+		    } else if (p instanceof ICPPASTLambdaExpression) {
+		        ICPPASTFunctionDeclarator dtor = ((ICPPASTLambdaExpression) p).getDeclarator();
+		        if (dtor != null) {
+		        	nodes = dtor.getParameters();
+		        }
+		    }
 		    if (p instanceof ICPPASTCatchHandler) {
 		    	parent = p;
 		    } else if (nodes == null || nodes.length == 0) {

@@ -405,6 +405,9 @@ public class SemanticHighlightings {
 		@Override
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
+			if (node instanceof IASTImplicitName)
+				return false;
+
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName)node;
 				if (!name.isReference()) {
@@ -659,6 +662,9 @@ public class SemanticHighlightings {
 		@Override
 		public boolean consumes(SemanticToken token) {
 			IASTNode node= token.getNode();
+			if (node instanceof IASTImplicitName)
+				return false;
+
 			if (node instanceof IASTName) {
 				IASTName name= (IASTName)node;
 				if (name.isDeclaration()) {
@@ -1989,17 +1995,21 @@ public class SemanticHighlightings {
 		public boolean consumes(SemanticToken token) {
 			IASTNode node = token.getNode();
 			// so far we only have implicit names for overloaded operators and destructors, so this works
-			if(node instanceof IASTImplicitName) {
+			if (node instanceof IASTImplicitName) {
 				IASTImplicitName name = (IASTImplicitName) node;
-				IBinding binding = name.resolveBinding();
-				if(binding instanceof ICPPMethod  && !(binding instanceof IProblemBinding) && ((ICPPMethod)binding).isImplicit()) {
-					return false;
+				if (name.isReference() && name.isOperator()) {
+					IBinding binding = name.resolveBinding();
+					if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)
+							&& ((ICPPMethod) binding).isImplicit()) {
+						return false;
+					}
+					char[] chars = name.toCharArray();
+					if (chars[0] == '~' || OverloadableOperator.isNew(chars)
+							|| OverloadableOperator.isDelete(chars)) {
+						return false;
+					}
+					return true;
 				}
-				char[] chars = name.toCharArray();
-				if(chars[0] == '~' || OverloadableOperator.isNew(chars) || OverloadableOperator.isDelete(chars)) {
-					return false;
-				}
-				return true;
 			}
 			return false;
 		}

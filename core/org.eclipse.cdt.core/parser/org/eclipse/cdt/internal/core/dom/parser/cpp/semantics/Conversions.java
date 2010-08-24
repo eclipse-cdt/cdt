@@ -989,7 +989,9 @@ public class Conversions {
 			// 4.8 floating point conversion
 			// 4.9 floating-integral conversion
 			if (s instanceof IBasicType) {
-				// 4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
+				if (((IBasicType) s).getKind() == Kind.eVoid) 
+					return false;
+				
 				cost.setRank(Rank.CONVERSION);
 				cost.setCouldNarrow();
 				return true;
@@ -1086,5 +1088,42 @@ public class Conversions {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 4.1
+	 */
+	public static IType lvalue_to_rvalue(IType type) {
+		IType nested= SemanticUtil.getNestedType(type, TDEF | REF);
+		if (nested == null || nested == type || nested instanceof IArrayType || nested instanceof ICPPFunctionType) {
+			return type;
+		}
+		IType unqualified= SemanticUtil.getNestedType(nested, TDEF | ALLCVQ);
+		if (unqualified instanceof ICPPClassType)
+			return nested;
+		
+		return unqualified;
+	}
+
+	/**
+	 * 4.2
+	 */
+	public static IType array_to_pointer(IType type) {
+		IType nested= SemanticUtil.getNestedType(type, TDEF);
+		if (nested instanceof IArrayType) {
+			return new CPPPointerType(((IArrayType) nested).getType());
+		}
+		return type;
+	}
+
+	/**
+	 * 4.3
+	 */
+	public static IType function_to_pointer(IType type) {
+		IType nested= SemanticUtil.getNestedType(type, TDEF);
+		if (nested instanceof IFunctionType) {
+			return new CPPPointerType(nested);
+		}
+		return type;
 	}
 }

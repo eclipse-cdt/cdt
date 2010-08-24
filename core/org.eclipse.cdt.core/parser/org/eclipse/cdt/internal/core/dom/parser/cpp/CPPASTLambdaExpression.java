@@ -13,10 +13,11 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -29,7 +30,12 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	private CaptureDefault fCaptureDefault;
 	private ICPPASTCapture[] fCaptures;
 	private ICPPASTFunctionDeclarator fDeclarator;
+
 	private IASTCompoundStatement fBody;
+	
+	private CPPClosureType fClosureType;
+	private IASTImplicitName fClosureTypeName;
+	private IASTImplicitName fImplicitFunctionCallName;
 
 	public CPPASTLambdaExpression() {
 		fCaptureDefault= CaptureDefault.UNSPECIFIED;
@@ -59,6 +65,41 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		return result;
 	}
 
+    public IASTImplicitName[] getImplicitNames() {
+    	return new IASTImplicitName[] {getFunctionCallOperatorName()};
+    }
+
+	public IASTImplicitName getClosureTypeName() {
+		if (fClosureTypeName == null) {
+    		final CPPClosureType closureType = getExpressionType();
+			CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
+			name.setBinding(closureType);
+			name.setIsDefinition(true);
+
+			name.setOffsetAndLength(getOffset(), 1);
+			fClosureTypeName= name;
+    	}
+		return fClosureTypeName;
+	}
+
+	public IASTImplicitName getFunctionCallOperatorName() {
+		if (fImplicitFunctionCallName == null) {
+    		final CPPClosureType closureType = getExpressionType();
+			ICPPFunction callOperator= closureType.getFunctionCallOperator();
+			
+			CPPASTImplicitName name = new CPPASTImplicitName(closureType.getNameCharArray(), this);
+			name.setBinding(callOperator);
+			name.setIsDefinition(true);
+
+			if (fBody instanceof ASTNode) {
+				ASTNode bodyNode= (ASTNode) fBody;
+				name.setOffsetAndLength(bodyNode.getOffset(), 1);
+			}		
+			fImplicitFunctionCallName= name;
+    	}
+		return fImplicitFunctionCallName;
+	}
+
 	@Override
 	public boolean accept(ASTVisitor visitor) {
         if (visitor.shouldVisitExpressions) {
@@ -69,6 +110,9 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	        }
 		}
 
+		if (visitor.shouldVisitImplicitNames && !getClosureTypeName().accept(visitor))
+			return false;
+
 		if (fCaptures != null) {
 			for (ICPPASTCapture cap : fCaptures) {
 				if (cap != null && !cap.accept(visitor))
@@ -77,6 +121,10 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		}
 		if (fDeclarator != null && !fDeclarator.accept(visitor))
 			return false;
+		
+		if (visitor.shouldVisitImplicitNames && !getFunctionCallOperatorName().accept(visitor))
+			return false;
+		
 		if (fBody != null && !fBody.accept(visitor))
 			return false;
 
@@ -133,9 +181,11 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 		fDeclarator= dtor;
 	}
 
-	public IType getExpressionType() {
-		// mstodo type for lambda expressions
-		return null;
+	public CPPClosureType getExpressionType() {
+		if (fClosureType == null)
+			fClosureType= new CPPClosureType(this);
+
+		return fClosureType;
 	}
 
 	public boolean isLValue() {

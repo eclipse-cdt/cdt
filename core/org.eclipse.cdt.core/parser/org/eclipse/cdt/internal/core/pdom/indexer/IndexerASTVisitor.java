@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -25,7 +27,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
@@ -51,6 +56,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 		shouldVisitInitializers= true;
 		shouldVisitDeclSpecifiers= true;
 		shouldVisitProblems= true;
+		shouldVisitExpressions= true;
 	}
 	
 	public List<IASTProblem> getProblems() {
@@ -112,13 +118,11 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 			IASTName name= getLastInQualified(nestedDeclarator.getName());
 			visit(name, fDefinitionName);
 			push(name, decl);
-		}
-		else if (decl instanceof IASTSimpleDeclaration) {
+		} else if (decl instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) decl;
 			if (sdecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 				IASTDeclarator[] declarators= sdecl.getDeclarators();
-				for (int i = 0; i < declarators.length; i++) {
-					IASTDeclarator declarator = declarators[i];
+				for (IASTDeclarator declarator : declarators) {
 					if (declarator.getPointerOperators().length == 0 &&
 							declarator.getNestedDeclarator() == null) {
 						IASTName name= getLastInQualified(declarator.getName());
@@ -127,7 +131,7 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 					}
 				}
 			}
-		}
+		} 
 		return PROCESS_CONTINUE;
 	}
 
@@ -184,5 +188,41 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	public int leave(IASTInitializer initializer) {
 		pop(initializer);
 		return PROCESS_CONTINUE;
+	}
+	
+	// Lambda expressions
+	@Override
+	public int visit(IASTExpression expr) {
+		if (expr instanceof ICPPASTLambdaExpression) {
+			return visit((ICPPASTLambdaExpression) expr);
+		}
+		return PROCESS_CONTINUE;
+	}
+
+	private int visit(final ICPPASTLambdaExpression lambdaExpr) {
+		// Captures 
+		for (ICPPASTCapture cap : lambdaExpr.getCaptures()) {
+			if (!cap.accept(this))
+				return PROCESS_ABORT;
+		}
+		// Definition of closure type
+		final IASTName closureName = lambdaExpr.getClosureTypeName();
+		visit(closureName, fDefinitionName);
+
+		// Definition of call operator
+		IASTName callOp= lambdaExpr.getFunctionCallOperatorName();
+		visit(callOp, closureName);
+		push(callOp, lambdaExpr);
+
+		ICPPASTFunctionDeclarator dtor = lambdaExpr.getDeclarator();
+		if (dtor != null && !dtor.accept(this))
+			return PROCESS_ABORT;
+		
+		IASTCompoundStatement body = lambdaExpr.getBody();
+		if (body != null && !body.accept(this))
+			return PROCESS_ABORT;
+		
+		pop(lambdaExpr);
+		return PROCESS_SKIP;
 	}
 }

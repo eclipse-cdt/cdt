@@ -8856,7 +8856,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	        return abs(a) < abs(b);
 	//	  });
 	//	}
-	public void _testLambdaExpression_316307b() throws Exception {
+	public void testLambdaExpression_316307b() throws Exception {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}

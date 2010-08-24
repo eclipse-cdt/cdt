@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -109,8 +110,11 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
     		ICPPFunction overload = getOperator();
-			if (overload == null || overload instanceof CPPImplicitFunction)
-				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			if (overload == null || overload instanceof CPPImplicitFunction) {
+				if (!(overload instanceof ICPPMethod) || ((ICPPMethod) overload).isImplicit()) {
+					return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+				}
+			}
 			
 			// create separate implicit names for the two brackets
 			CPPASTImplicitName n1 = new CPPASTImplicitName(OverloadableOperator.PAREN, this);

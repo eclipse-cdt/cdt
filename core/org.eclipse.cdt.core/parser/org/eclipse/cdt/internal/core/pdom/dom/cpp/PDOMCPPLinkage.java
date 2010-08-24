@@ -71,6 +71,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameterPackType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
@@ -273,6 +274,9 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					pdomBinding = createBinding(parent, binding, fileLocalRec[0]);
 					if (pdomBinding != null) {
 						getPDOM().putCachedResult(inputBinding, pdomBinding);
+						if (inputBinding instanceof CPPClosureType) {
+							addImplicitMethods(pdomBinding, (ICPPClassType) binding);
+						}
 					}
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
@@ -395,7 +399,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (parent2 != null) {
 				parent2.addChild(pdomBinding);
 			}
-			if (parent2 != this) {
+			if (parent != this && parent2 != this) {
 				insertIntoNestedBindingsIndex(pdomBinding);
 			}
 		}

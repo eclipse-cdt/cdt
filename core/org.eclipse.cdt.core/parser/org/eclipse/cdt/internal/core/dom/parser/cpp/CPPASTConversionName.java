@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -91,23 +92,29 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 
 	public char[] toCharArray() {
 		if (fName == null) {
-			StringBuilder buf= new StringBuilder();
-			buf.append(Keywords.cOPERATOR);
-			buf.append(' ');
+			IType t= null;
 			if (typeId != null) {
-				IType t= CPPVisitor.createType(typeId);
-				if (t != null) {
-					buf.append(ASTTypeUtil.getType(t, true));
-				} else {
-					buf.append(typeId.getRawSignature());
-					WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
-				}
+				t= CPPVisitor.createType(typeId);
 			}
-	    	final int len= buf.length();
-	    	fName= new char[len];
-	    	buf.getChars(0, len, fName, 0);
+			fName= createName(t, typeId);
 		}
 		return fName;
+	}
+
+	public static char[] createName(IType t, IASTNode typeId) {
+		StringBuilder buf= new StringBuilder();
+		buf.append(Keywords.cOPERATOR);
+		buf.append(' ');
+		if (t != null) {
+			buf.append(ASTTypeUtil.getType(t, true));
+		} else {
+			buf.append(typeId.getRawSignature());
+			WHITESPACE_SEQ.matcher(buf).replaceAll(" "); //$NON-NLS-1$
+		}
+		final int len= buf.length();
+		char[] name= new char[len];
+		buf.getChars(0, len, name, 0);
+		return name;
 	}
 
 	public char[] getSimpleID() {

@@ -15,11 +15,15 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -80,7 +84,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -97,6 +100,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -161,6 +165,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLabel;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPLambdaExpressionParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethodTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
@@ -603,16 +608,24 @@ public class CPPVisitor extends ASTQueries {
 			if (parent instanceof IASTStandardFunctionDeclarator) {
 				IASTStandardFunctionDeclarator fdtor = (IASTStandardFunctionDeclarator) param.getParent();
 				// Create parameter bindings only if the declarator declares a function 
-				if (!(findOutermostDeclarator(fdtor).getParent() instanceof IASTDeclaration) ||
-						findTypeRelevantDeclarator(fdtor) != fdtor)
+				if (findTypeRelevantDeclarator(fdtor) != fdtor)
 					return null;
-				IASTParameterDeclaration[] params = fdtor.getParameters();
-				int i= 0;
-				for (; i < params.length; i++) {
-					if (params[i] == param)
-						break;
+
+				final IASTNode dtorParent= findOutermostDeclarator(fdtor).getParent();
+				if (dtorParent instanceof ICPPASTLambdaExpression) {
+					return new CPPLambdaExpressionParameter(name);
 				}
-				return new CPPParameter(name, i);
+				
+				if (dtorParent instanceof IASTDeclaration) {
+					IASTParameterDeclaration[] params = fdtor.getParameters();
+					int i= 0;
+					for (; i < params.length; i++) {
+						if (params[i] == param)
+							break;
+					}
+					return new CPPParameter(name, i);
+				}
+				return null;
 			} else if (parent instanceof ICPPASTTemplateDeclaration) {
 				return CPPTemplates.createBinding(param);
 			}
@@ -894,14 +907,21 @@ public class CPPVisitor extends ASTQueries {
 						while (parent.getParent() instanceof IASTDeclarator)
 						    parent = parent.getParent();
 						ASTNodeProperty prop = parent.getPropertyInParent();
-						if (prop == IASTSimpleDeclaration.DECLARATOR)
+						if (prop == IASTSimpleDeclaration.DECLARATOR) {
 						    return dtor.getFunctionScope();
-						else if (prop == IASTFunctionDefinition.DECLARATOR) {
+						}
+						if (prop == IASTFunctionDefinition.DECLARATOR) {
 						    final IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition) parent.getParent()).getBody();
 						    if (body != null)
 						    	return body.getScope();
 						    return dtor.getFunctionScope();
-						}
+						} 
+						if (prop == ICPPASTLambdaExpression.DECLARATOR) {
+						    final IASTCompoundStatement body = ((ICPPASTLambdaExpression) parent.getParent()).getBody();
+						    if (body != null)
+						    	return body.getScope();
+						    return dtor.getFunctionScope();
+						}							
 					}
 			    } else if (parent instanceof ICPPASTTemplateDeclaration) {
 			    	return CPPTemplates.getContainingScope(node);
@@ -1222,95 +1242,37 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 
-	public static class CollectProblemsAction extends CPPASTVisitor {
-		{
-			shouldVisitDeclarations = true;
-			shouldVisitExpressions = true;
-			shouldVisitStatements = true;
-			shouldVisitTypeIds = true;
-		}
+	private static class CollectProblemsAction extends ASTGenericVisitor {
+		private List<IASTProblem> fProblems = null;
 		
-		private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
-		private IASTProblem[] problems = null;
-		int numFound = 0;
+		CollectProblemsAction() {
+			super(true);
+		}
 
-		public CollectProblemsAction() {
-			problems = new IASTProblem[DEFAULT_CHILDREN_LIST_SIZE];
-		}
-		
 		private void addProblem(IASTProblem problem) {
-			if (problems.length == numFound) { // if the found array is full, then double the array
-	            IASTProblem[] old = problems;
-	            problems = new IASTProblem[old.length * 2];
-	            for (int j = 0; j < old.length; ++j)
-	                problems[j] = old[j];
-	        }
-			problems[numFound++] = problem;
-		}
-		
-	    private IASTProblem[] removeNullFromProblems() {
-	    	if (problems[problems.length-1] != null) { // if the last element in the list is not null then return the list
-				return problems;			
-			} else if (problems[0] == null) { // if the first element in the list is null, then return empty list
-				return new IASTProblem[0];
+			if (fProblems == null) {
+				fProblems= new ArrayList<IASTProblem>();
 			}
-			
-			IASTProblem[] results = new IASTProblem[numFound];
-			for (int i=0; i<results.length; i++)
-				results[i] = problems[i];
+			fProblems.add(problem);
+		}
 				
-			return results;
-	    }
-		
 		public IASTProblem[] getProblems() {
-			return removeNullFromProblems();
+			if (fProblems == null)
+				return new IASTProblem[0];
+			
+			return fProblems.toArray(new IASTProblem[fProblems.size()]);
 		}
 	    
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-		 */
 		@Override
-		public int visit(IASTDeclaration declaration) {
-			if (declaration instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder) declaration).getProblem());
-
-			return PROCESS_CONTINUE;
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-		 */
-		@Override
-		public int visit(IASTExpression expression) {
-			if (expression instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder) expression).getProblem());
-
-			return PROCESS_CONTINUE;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
-		 */
-		@Override
-		public int visit(IASTStatement statement) {
-			if (statement instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder) statement).getProblem());
-
-			return PROCESS_CONTINUE;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-		 */
-		@Override
-		public int visit(IASTTypeId typeId) {
-			if (typeId instanceof IASTProblemHolder)
-				addProblem(((IASTProblemHolder) typeId).getProblem());
+		public int genericVisit(IASTNode node) {
+			if (node instanceof IASTProblemHolder)
+				addProblem(((IASTProblemHolder) node).getProblem());
 
 			return PROCESS_CONTINUE;
 		}
 	}
 	
-	public static class CollectDeclarationsAction extends CPPASTVisitor {
+	public static class CollectDeclarationsAction extends ASTVisitor {
 	    private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName[] decls;
 		private IBinding[] bindings;
@@ -1484,7 +1446,7 @@ public class CPPVisitor extends ASTQueries {
 		return binding;
 	}
 
-	public static class CollectReferencesAction extends CPPASTVisitor {
+	public static class CollectReferencesAction extends ASTVisitor {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName[] refs;
 		private IBinding[] bindings;
@@ -1664,11 +1626,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 	
 	private static IType createType(IType returnType, ICPPASTFunctionDeclarator fnDtor) {
-	    ICPPASTParameterDeclaration[] params = fnDtor.getParameters();
-	    IType[] pTypes = new IType[params.length];
-	    for (int i = 0; i < params.length; i++) {
-	        pTypes[i]= createParameterType(params[i], true);
-	    }
+	    IType[] pTypes = createParameterTypes(fnDtor);
 	     
 	    IASTName name = fnDtor.getName();
 		if (name instanceof ICPPASTQualifiedName) {
@@ -1688,6 +1646,15 @@ public class CPPVisitor extends ASTQueries {
 	    	return createType(type, nested);
 	    }
 	    return type;
+	}
+
+	public static IType[] createParameterTypes(ICPPASTFunctionDeclarator fnDtor) {
+		ICPPASTParameterDeclaration[] params = fnDtor.getParameters();
+	    IType[] pTypes = new IType[params.length];
+	    for (int i = 0; i < params.length; i++) {
+	        pTypes[i]= createParameterType(params[i], true);
+	    }
+		return pTypes;
 	}
 
 	/**

@@ -417,6 +417,9 @@ public class IndexUI {
 				if (ast != null) {
 					final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
 					IASTName name= nodeSelector.findEnclosingName(offset, length);
+					if (name == null) {
+						name= nodeSelector.findImplicitName(offset, length);
+					}
 					if (name != null && name.getParent() instanceof IASTPreprocessorMacroExpansion) {
 						IASTFileLocation floc= name.getParent().getFileLocation();
 						IASTNode node= nodeSelector.findEnclosingNodeInExpansion(floc.getNodeOffset(), floc.getNodeLength());

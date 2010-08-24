@@ -124,7 +124,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	
 	//  Miscellaneous
 	private boolean isExtensionBuilder = false;
-	private boolean isDirty = false;
 	private boolean resolved = true;
 
 	private IConfigurationElement previousMbsVersionConversionElement = null;
@@ -250,7 +249,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		setId(Id);
 		setName(name);
 		
-		boolean copyIds = Id.equals(builder.getId());
 		// Set the managedBuildRevision & the version
 		setManagedBuildRevision(builder.getManagedBuildRevision());
 		setVersion(getVersionFromId());
@@ -329,12 +327,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			outputEntries = builder.outputEntries.clone();
 		}
 
-		if(copyIds){
-			isDirty = builder.isDirty;
-		} else {
-			setDirty(true);
-		}
-		
+		super.copyChildren(builder);
+
 		fCommandLauncher = builder.fCommandLauncher;
 		fCommandLauncherElement = builder.fCommandLauncherElement;
 		
@@ -773,6 +767,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	}
 
+	@Override
 	public void serialize(ICStorageElement element) {
 		serialize(element, true);
 	}
@@ -879,7 +874,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		
 		if(resetDirtyState){
 			// I am clean now
-			isDirty = false;
+			setDirty(false);
 		}
 	}
 	
@@ -1234,7 +1229,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (ids == null && currentIds == null) return;
 		if (currentIds == null || ids == null || !(currentIds.equals(ids))) {
 			errorParserIds = ids;
-			isDirty = true;
+			setDirty(true);
 		}
 	}
 
@@ -1283,20 +1278,24 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
 	
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionBuilder;
 	}
 
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension Builder
  		if (isExtensionBuilder) return false;
-		return isDirty;
+		return super.isDirty();
 	}
 
+	@Override
 	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
+		super.setDirty(isDirty);
 	}
 	
+	@Override
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;

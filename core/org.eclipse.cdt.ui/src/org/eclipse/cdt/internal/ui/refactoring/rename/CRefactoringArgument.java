@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-
 /**
  * Represents the input to a refactoring. Important is file and offset the rest
  * can be calculated from the AST.
@@ -109,15 +108,12 @@ public class CRefactoringArgument {
             IVariable var= (IVariable) binding;
             if (binding instanceof IField) {
                 fKind= CRefactory.ARGUMENT_FIELD;
-            }
-            else if (binding instanceof IParameter) {
+            } else if (binding instanceof IParameter) {
                 fKind= CRefactory.ARGUMENT_PARAMETER;
-            }
-            else {
+            } else {
                 if (ASTManager.isLocalVariable(var, scope)) {
                     fKind= CRefactory.ARGUMENT_LOCAL_VAR;
-                }
-                else {
+                } else {
                     boolean isStatic= false;
                     try {
                         isStatic= var.isStatic();
@@ -125,17 +121,14 @@ public class CRefactoringArgument {
                     }
                     if (isStatic) {
                         fKind= CRefactory.ARGUMENT_FILE_LOCAL_VAR;
-                    }
-                    else {
+                    } else {
                         fKind= CRefactory.ARGUMENT_GLOBAL_VAR;
                     }
                 }
             }
-        }
-        else if (binding instanceof IEnumerator) {
+        } else if (binding instanceof IEnumerator) {
             fKind= CRefactory.ARGUMENT_ENUMERATOR;
-        }
-        else if (binding instanceof IFunction) {
+        } else if (binding instanceof IFunction) {
             fKind= CRefactory.ARGUMENT_NON_VIRTUAL_METHOD;
             IFunction func= (IFunction) binding;
             if (binding instanceof ICPPMethod) {
@@ -148,8 +141,7 @@ public class CRefactoringArgument {
                 if (isVirtual == ASTManager.TRUE) {
                     fKind= CRefactory.ARGUMENT_VIRTUAL_METHOD;
                 }
-            }
-            else {
+            } else {
                 boolean isStatic= false;
                 try {
                     isStatic= func.isStatic();
@@ -157,22 +149,17 @@ public class CRefactoringArgument {
                 }
                 if (isStatic) {
                     fKind= CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION;
-                }
-                else {
+                } else {
                     fKind= CRefactory.ARGUMENT_GLOBAL_FUNCTION;
                 }
             }
-        }
-        else if (binding instanceof ICompositeType) {
+        } else if (binding instanceof ICompositeType) {
             fKind= CRefactory.ARGUMENT_CLASS_TYPE;
-        }
-        else if (binding instanceof IEnumeration || binding instanceof ITypedef) {
+        } else if (binding instanceof IEnumeration || binding instanceof ITypedef) {
             fKind= CRefactory.ARGUMENT_TYPE;
-        }
-        else if (binding instanceof ICPPNamespace) {
+        } else if (binding instanceof ICPPNamespace) {
             fKind= CRefactory.ARGUMENT_NAMESPACE;
-        }
-        else if (binding instanceof IMacroBinding) {
+        } else if (binding instanceof IMacroBinding) {
             fKind= CRefactory.ARGUMENT_MACRO;
         }
     }

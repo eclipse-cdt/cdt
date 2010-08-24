@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.IAnnotationImageProvider;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * @author Tomasz Wesolowski
@@ -23,9 +24,9 @@ import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 public class OverrideIndicatorImageProvider implements
 		IAnnotationImageProvider {
 
-	private static final String OVERRIDE_IMG_DESC_ID = "CPluginImages.DESC_OBJS_OVERRIDES";
-	private static final String IMPLEMENT_IMG_DESC_ID = "CPluginImages.DESC_OBJS_IMPLEMENTS";
-	private static final String SHADOW_IMG_DESC_ID = "CPluginImages.DESC_OBJS_SHADOWS";
+	private static final String OVERRIDE_IMG_DESC_ID = "CPluginImages.DESC_OBJS_OVERRIDES"; //$NON-NLS-1$
+	private static final String IMPLEMENT_IMG_DESC_ID = "CPluginImages.DESC_OBJS_IMPLEMENTS"; //$NON-NLS-1$
+	private static final String SHADOW_IMG_DESC_ID = "CPluginImages.DESC_OBJS_SHADOWS"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)

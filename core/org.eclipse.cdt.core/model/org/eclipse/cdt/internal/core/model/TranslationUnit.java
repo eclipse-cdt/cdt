@@ -603,7 +603,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * Parse the buffer contents of this element.
 	 */
 	private void parse(Map<ICElement, CElementInfo> newElements, IProgressMonitor monitor) {
-		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
+		boolean quickParseMode = !(CCorePlugin.getDefault().useStructuralParseMode());
 		IContributedModelBuilder mb = LanguageManager.getInstance().getContributedModelBuilderFor((ITranslationUnit) this);
 		if (mb == null) {
 			parseUsingCModelBuilder(newElements, quickParseMode, monitor);

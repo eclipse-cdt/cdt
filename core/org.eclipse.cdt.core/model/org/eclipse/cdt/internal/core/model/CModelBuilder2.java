@@ -92,7 +92,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 4.0
  */
 public class CModelBuilder2 implements IContributedModelBuilder {
-
 	private final static boolean DEBUG= Util.isActive(DebugLogConstants.MODEL);
 
 	private final TranslationUnit fTranslationUnit;
@@ -145,11 +144,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			final IASTTranslationUnit ast;
 			try {
 				ast= fTranslationUnit.getAST(index, parseFlags, fProgressMonitor);
-				if (DEBUG) Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
-						+ fTranslationUnit.getElementName()
-						+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
-						DebugLogConstants.MODEL, false);
+				if (DEBUG) {
+					Util.debugLog("CModelBuilder2: parsing " //$NON-NLS-1$
+							+ fTranslationUnit.getElementName()
+							+ " mode="+ (quickParseMode ? "skip all " : "skip indexed ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ " time="+ ( System.currentTimeMillis() - startTime ) + "ms", //$NON-NLS-1$ //$NON-NLS-2$
+							DebugLogConstants.MODEL, false);
+				}
 			} catch (ParseError e) {
 				checkCanceled();
 				throw e;
@@ -315,7 +316,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			createSimpleDeclarations(parent, (IASTSimpleDeclaration)declaration, false);
 		} else if (declaration instanceof ICPPASTVisibilityLabel) {
 			handleVisibilityLabel((ICPPASTVisibilityLabel)declaration);
-		} else if(declaration instanceof ICPPASTNamespaceDefinition) {
+		} else if (declaration instanceof ICPPASTNamespaceDefinition) {
 			createNamespace(parent, (ICPPASTNamespaceDefinition) declaration);
 		} else if (declaration instanceof ICPPASTNamespaceAlias) {
 			// TODO [cmodel] namespace alias?
@@ -612,7 +613,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		element.setActive(enumDef.isActive());
 
 		IASTExpression initialValue= enumDef.getValue();
-		if(initialValue != null){
+		if (initialValue != null){
 			element.setConstantExpression(ASTSignatureUtil.getExpressionString(initialValue));
 		}
 		// add to parent
@@ -695,7 +696,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// add to parent
 		parent.addChild(element);
 		// set positions
-		if(!isTemplate){
+		if (!isTemplate){
 			setBodyPosition(info, compositeTypeSpecifier);
 		}
 		if (className.length() > 0) {

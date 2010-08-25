@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight   (IBM)        - [264607] Unable to delete a broken symlink
+ * David McKnight   (IBM)        - [321026][dstore] Broken symbolic link can't be removed
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -177,11 +178,24 @@ public class DeleteThread extends SecuredThread implements ICancellableHandler {
 						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 					}
 				} else {
-					UniversalServerUtilities
-							.logError(
-									CLASSNAME,
-									"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
-									null, _dataStore);
+					// try to treat this as a file
+					if (deleteObj.delete() == false) {
+						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$												
+						UniversalServerUtilities
+								.logError(
+										CLASSNAME,
+										"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
+										null, _dataStore);
+					} else {
+						// delete was successful and delete the object from the
+						// datastore
+						deObj = _dataStore.find(subject, DE.A_NAME, subject
+								.getName(), 1);
+						_dataStore.deleteObject(subject, deObj);
+						thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
+					}
+					_dataStore.refresh(subject);
+
 				}
 			} catch (Exception e) {
 				thisStatus.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$

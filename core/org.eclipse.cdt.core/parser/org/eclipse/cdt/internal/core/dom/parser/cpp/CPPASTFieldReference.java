@@ -205,17 +205,7 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 							e1= ((IPointerType) e1).getType();
 						}
 					}
-					CVQualifier cvq1 = SemanticUtil.getCVQualifier(e1);
-					if (((ICPPField) binding).isMutable()) {
-						// Remove const, add union of volatile.
-						CVQualifier cvq2 = SemanticUtil.getCVQualifier(e2);
-						if (cvq2.isConst()) {
-							e2= SemanticUtil.getNestedType(e2, ALLCVQ | TDEF | REF);
-						}
-						e2= SemanticUtil.addQualifiers(e2, false, cvq1.isVolatile() || cvq2.isVolatile());
-					} else {
-						e2= SemanticUtil.addQualifiers(e2, cvq1.isConst(), cvq1.isVolatile());
-					}
+					e2 = addQualifiersForAccess((ICPPField) binding, e2, e1);
 				}
                 return SemanticUtil.mapToAST(e2, this);
 			} else if (binding instanceof IEnumerator) {
@@ -232,6 +222,21 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
         }
 	    return null;
     }
+
+	public static IType addQualifiersForAccess(ICPPField field, IType fieldType, IType ownerType) throws DOMException {
+		CVQualifier cvq1 = SemanticUtil.getCVQualifier(ownerType);
+		if (field.isMutable()) {
+			// Remove const, add union of volatile.
+			CVQualifier cvq2 = SemanticUtil.getCVQualifier(fieldType);
+			if (cvq2.isConst()) {
+				fieldType= SemanticUtil.getNestedType(fieldType, ALLCVQ | TDEF | REF);
+			}
+			fieldType= SemanticUtil.addQualifiers(fieldType, false, cvq1.isVolatile() || cvq2.isVolatile());
+		} else {
+			fieldType= SemanticUtil.addQualifiers(fieldType, cvq1.isConst(), cvq1.isVolatile());
+		}
+		return fieldType;
+	}
 
     
 	public boolean isLValue() {

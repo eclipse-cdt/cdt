@@ -8623,4 +8623,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals("MyType &", ASTTypeUtil.getType(g.getType().getParameterTypes()[0], false));
 		assertEquals("int &", ASTTypeUtil.getType(g.getType().getParameterTypes()[0], true));
 	}
+	
+	//	class container {
+	//	public:
+	//		void constBegin() const;
+	//	    void begin();
+	//	};
+	//	struct test {
+	//		void test_func() const {
+	//			cnt.constBegin(); //ref
+	//			cnt.begin(); //ref
+	//		}
+	//		container cnt;
+	//	};
+	public void testConstMember_323599() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f= bh.assertNonProblem("constBegin(); //ref", 10);
+		bh.assertProblem("begin(); //ref", 5);
+	}
+
 }

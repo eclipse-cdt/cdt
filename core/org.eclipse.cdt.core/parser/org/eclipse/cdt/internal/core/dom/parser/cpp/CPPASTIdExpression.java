@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -21,10 +25,12 @@ import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -92,7 +98,19 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
         IBinding binding = name.resolvePreBinding();
         try {
 			if (binding instanceof IVariable) {
-				return SemanticUtil.mapToAST(((IVariable) binding).getType(), this);
+				final IVariable var = (IVariable) binding;
+				IType type= SemanticUtil.mapToAST(var.getType(), this);
+				if (var instanceof ICPPField && !var.isStatic()) {
+					IScope scope= CPPVisitor.getContainingScope(name);
+					if (scope != null) {
+						IType thisType= CPPVisitor.getThisType(scope);
+						if (thisType != null) {
+							thisType= SemanticUtil.getNestedType(thisType, TDEF|REF|PTR);
+							type= CPPASTFieldReference.addQualifiersForAccess((ICPPField) var, type, thisType);
+						}
+					}
+				}
+				return type;
 			} else if (binding instanceof IEnumerator) {
 				IType type= ((IEnumerator) binding).getType();
 				if (type instanceof ICPPEnumeration) {

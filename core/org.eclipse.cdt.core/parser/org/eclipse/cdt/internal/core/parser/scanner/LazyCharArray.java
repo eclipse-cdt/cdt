@@ -18,32 +18,37 @@ import java.util.List;
 /**
  * Implementation of char array for a file referencing content via 
  * soft references.
+ * Because of bug 320157 we need to deal with chunks of different length.
  */
 public abstract class LazyCharArray extends AbstractCharArray {
 	private final static int CHUNK_BITS= 16;  // 2^16 == 64K
-	protected final static int CHUNK_SIZE= 1 << CHUNK_BITS;
+	public final static int CHUNK_SIZE= 1 << CHUNK_BITS;
 
 	protected static class Chunk {
-		final int fDataLength;
-		final long fFileOffset;
-		final long fFileEndOffset;
-		private SoftReference<char[]> fData;
+		final int fCharOffset;
+		final int fCharEndOffset;
+		final long fSourceOffset;
+		final long fSourceEndOffset;
+		private SoftReference<char[]> fCharsReference;
 
-		private Chunk(long fileOffset, long fileEndOffset, char[] data) {
-			fDataLength= data.length;
-			fFileOffset= fileOffset;
-			fFileEndOffset= fileEndOffset;
-			fData= new SoftReference<char[]>(data);
+		private Chunk(long sourceOffset, long sourceEndOffset, int charOffset, char[] chars) {
+			fCharOffset= charOffset;
+			fCharEndOffset= charOffset+ chars.length;
+			fSourceOffset= sourceOffset;
+			fSourceEndOffset= sourceEndOffset;
+			fCharsReference= new SoftReference<char[]>(chars);
 		}
 	}
 
 	private int fLength= -1;
 	private List<Chunk> fChunks= new ArrayList<Chunk>();
-	private StreamHasher hasher;
-	private long hash64;
+	private StreamHasher fHasher;
+	private long fHash64;
+	// Make a reference to the currently used char[], such that it is not collected.
+	private char[] fCurrentChars;
 
 	protected LazyCharArray() {
-		hasher = new StreamHasher();
+		fHasher = new StreamHasher();
 	}
 
 	@Override
@@ -53,7 +58,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 
 	@Override
 	public final int getLength() {
-		readUpTo(Integer.MAX_VALUE);
+		readAllChunks();
 		return fLength;
 	}
 
@@ -62,131 +67,138 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		if (offset < 0)
 			return false;
 
-		readUpTo(offset);
 		if (fLength >= 0)
 			return offset < fLength;
 
-		assert offset < fChunks.size() << CHUNK_BITS;
-		return true;
+		return getChunkForOffset(offset) != null;
 	}
 
 	@Override
 	public long getContentsHash() {
-		if (hasher != null) {
-			readUpTo(Integer.MAX_VALUE);
-			hash64 = hasher.computeHash();
-			hasher = null;
+		if (fHasher != null) {
+			readAllChunks();
+			fHash64 = fHasher.computeHash();
+			fHasher = null;
 		}
-		return hash64;
-	}
-
-	private void readUpTo(int offset) {
-		if (fLength >= 0)
-			return;
-
-		final int chunkOffset= offset >> CHUNK_BITS;
-		getChunkData(chunkOffset);
+		return fHash64;
 	}
 
 	@Override
 	public final char get(int offset) {
-		int chunkOffset= offset >> CHUNK_BITS;
-		char[] data= getChunkData(chunkOffset);
-		return data[offset & (CHUNK_SIZE - 1)];
+		Chunk chunk= getChunkForOffset(offset);
+		if (chunk != null) {
+			return getChunkData(chunk)[offset - chunk.fCharOffset];
+		}
+		return 0;
 	}
 
 	@Override
 	public final void arraycopy(int offset, char[] destination, int destinationPos, int length) {
-		int chunkOffset= offset >> CHUNK_BITS;
-		int loffset= offset & (CHUNK_SIZE - 1);
-		char[] data= getChunkData(chunkOffset);
-		final int canCopy = data.length-loffset;
-		if (length <= canCopy) {
-			System.arraycopy(data, loffset, destination, destinationPos, length);
-			return;
+		final Chunk chunk= getChunkForOffset(offset);
+		final int offsetInChunk= offset-chunk.fCharOffset;
+		final char[] data= getChunkData(chunk);
+		final int maxLenInChunk = data.length - offsetInChunk;
+		if (length <= maxLenInChunk) {
+			System.arraycopy(data, offsetInChunk, destination, destinationPos, length);
+		} else {
+			System.arraycopy(data, offsetInChunk, destination, destinationPos, maxLenInChunk);
+			arraycopy(offset+maxLenInChunk, destination, destinationPos+maxLenInChunk, length-maxLenInChunk);
 		}
-		System.arraycopy(data, loffset, destination, destinationPos, canCopy);
-		arraycopy(offset+canCopy, destination, destinationPos+canCopy, length-canCopy);
 	}
 
-	private char[] getChunkData(int chunkOffset) {
-		Chunk chunk= getChunk(chunkOffset);
-		if (chunk != null) {
-			char[] data= chunk.fData.get();
-			if (data != null)
-				return data;
-
-			return loadChunkData(chunk);
+	private void readAllChunks() {
+		if (fLength < 0) {
+			getChunkForOffset(Integer.MAX_VALUE);
 		}
-		return null;
 	}
 
-	private Chunk getChunk(int chunkOffset) {
+	private Chunk getChunkForOffset(int offset) {
+		int minChunkNumber= offset >> CHUNK_BITS;
+		for(;;) {
+			Chunk chunk= getChunkByNumber(minChunkNumber);
+			if (chunk == null) 
+				return null;
+			
+			if (offset < chunk.fCharEndOffset) {
+				return chunk;
+			}
+			minChunkNumber++;
+		}
+	}
+
+	private Chunk getChunkByNumber(int chunkNumber) {
 		final int chunkCount = fChunks.size();
-		if (chunkOffset < chunkCount)
-			return fChunks.get(chunkOffset);
+		if (chunkNumber < chunkCount)
+			return fChunks.get(chunkNumber);
 
 		if (fLength >=0)
 			return null;
 
-		return createChunk(chunkOffset);
+		return createChunk(chunkNumber);
 	}
 
 	/**
 	 * Called when a chunk is requested for the first time. There is no
 	 * need to override this method.
 	 */
-	protected Chunk createChunk(int chunkOffset) {
-		final int chunkCount = fChunks.size();
-		long fileOffset= chunkCount == 0 ? 0 : fChunks.get(chunkCount - 1).fFileEndOffset;
-		try {
-			for (int i = chunkCount; i <= chunkOffset; i++) {
-				long[] fileEndOffset= {0};
-				char[] data= readChunkData(fileOffset, fileEndOffset);
-				final int charCount= data.length;
-				if (charCount == 0) {
-					fLength= fChunks.size() * CHUNK_SIZE;
-					break;
-				}
-				if (hasher != null) {
-					hasher.addChunk(data);
-				}
-				// New chunk
-				Chunk chunk= new Chunk(fileOffset, fileEndOffset[0], data);
-				fChunks.add(chunk);
-				if (charCount < CHUNK_SIZE) {
-					fLength= (fChunks.size() - 1) * CHUNK_SIZE + charCount;
-					break;
-				} 
-				fileOffset= fileEndOffset[0];
+	protected Chunk createChunk(int chunkNumber) {
+		for (int i = fChunks.size(); i <= chunkNumber; i++) {
+			Chunk chunk= nextChunk();
+			if (chunk == null) {
+				final int chunkCount= fChunks.size();
+				fLength= chunkCount == 0 ? 0 : fChunks.get(chunkCount-1).fCharEndOffset;
+				break;
 			}
-		} catch (Exception e) {
-			// File cannot be read
-			return null;
-		} 
-		
-		if (chunkOffset < fChunks.size())
-			return fChunks.get(chunkOffset);
+			if (fHasher != null) {
+				final char[] chunkData = getChunkData(chunk);
+				fHasher.addChunk(chunkData);
+			}
+			fChunks.add(chunk);
+		}
+
+		if (chunkNumber < fChunks.size())
+			return fChunks.get(chunkNumber);
 
 		return null;
 	}
 	
-	private char[] loadChunkData(Chunk chunk) {
-		char[] result= new char[chunk.fDataLength];
-		rereadChunkData(chunk.fFileOffset, chunk.fFileEndOffset, result);
-		chunk.fData= new SoftReference<char[]>(result);
-		return result;
+	/**
+	 * Creates a new chunk.
+	 */
+	protected Chunk newChunk(long sourceOffset, long sourceEndOffset, int charOffset, char[] chars) {
+		fCurrentChars= chars;
+		return new Chunk(sourceOffset, sourceEndOffset, charOffset, chars);
 	}
 
 	/**
-	 * Read the chunk data at the given source offset and provide the end-offset in
-	 * the source.
+	 * Read the next chunk from the input.
 	 */
-	protected abstract char[] readChunkData(long sourceOffset, long[] sourceEndOffsetHolder) throws Exception;
+	protected abstract Chunk nextChunk();
+
+	private char[] getChunkData(Chunk chunk) {
+		char[] data= chunk.fCharsReference.get();
+		if (data == null) {
+			data= new char[chunk.fCharEndOffset - chunk.fCharOffset];
+			rereadChunkData(chunk, data);
+			chunk.fCharsReference= new SoftReference<char[]>(data);
+		}
+		return fCurrentChars= data;
+	}
 
 	/**
-	 * Read the chunk data at the given source range. In case the source range no longer (fully) exists,
+	 * Reread the data for the chunk. In case the source range no longer (fully) exists,
 	 * read as much as possible.
 	 */
-	protected abstract void rereadChunkData(long fileOffset, long fileEndOffset, char[] dest);
+	protected abstract void rereadChunkData(Chunk chunk, char[] data);
+
+	/** 
+	 * For testing purposes: Simulates that all the data gets collected.
+	 */
+	public void testClearData() {
+		for (Chunk chunk : fChunks) {
+			chunk.fCharsReference= new SoftReference<char[]>(null);
+		}
+		if (fCurrentChars != null)
+			fCurrentChars= null;
+	}
 }

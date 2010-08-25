@@ -116,7 +116,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         	i++;
         }
         if (isTracepoint) {
-            i ++;
+            i++;
         }
         String[] opts = new String[i];
 
@@ -147,14 +147,15 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
             opts[i] = "-p"; //$NON-NLS-1$
             i++;
             opts[i] = Integer.toString(tid);
+            i++;
         }
         if (disabled) {
             opts[i] = "-d"; //$NON-NLS-1$
-            i ++;
+            i++;
         }
         if (isTracepoint) {
             opts[i] = "-a"; //$NON-NLS-1$
-            i ++;
+            i++;
         }
 
         if (opts.length > 0) {

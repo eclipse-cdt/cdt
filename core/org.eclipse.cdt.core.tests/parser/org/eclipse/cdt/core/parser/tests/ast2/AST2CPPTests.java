@@ -8860,4 +8860,20 @@ public class AST2CPPTests extends AST2BaseTest {
 		String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
+	
+	//	typedef int MyType;
+	//
+	//	void f(const MyType& val);
+	//	void g(MyType& val);
+	public void testTypeString_323596() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f= bh.assertNonProblem("f(", 1);
+		assertEquals("const MyType &", ASTTypeUtil.getType(f.getType().getParameterTypes()[0], false));
+		assertEquals("const int &", ASTTypeUtil.getType(f.getType().getParameterTypes()[0], true));
+
+		IFunction g= bh.assertNonProblem("g(", 1);
+		assertEquals("MyType &", ASTTypeUtil.getType(g.getType().getParameterTypes()[0], false));
+		assertEquals("int &", ASTTypeUtil.getType(g.getType().getParameterTypes()[0], true));
+	}
 }

@@ -473,7 +473,15 @@ public class ASTTypeUtil {
 				if (normalize || type instanceof ICPPSpecialization) {
 					// Skip the typedef and proceed with its target type.
 				} else {
-					// Use the typedef and stop
+					// Output reference, qualifier and typedef, then stop.
+					if (ref != null) {
+						types = (IType[]) ArrayUtil.append(IType.class, types, ref);
+						ref= null;
+					}
+					if (cvq != null) {
+						types = (IType[]) ArrayUtil.append(IType.class, types, cvq);
+						cvq= null;
+					}
 					types = (IType[]) ArrayUtil.append(IType.class, types, type);
 					type= null; 
 				}

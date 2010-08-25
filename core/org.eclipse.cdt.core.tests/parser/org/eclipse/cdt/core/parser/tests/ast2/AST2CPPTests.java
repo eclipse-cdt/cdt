@@ -8563,19 +8563,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings(code);
 	}
 	
-	
-	
-	
-//		  struct X {};
-//		  struct Y : X {};
-//		  struct A {
-//		      virtual X* m();//0
-//		      virtual X* m(X*);//1
-//		  };
-//		  struct B : A {
-//		      Y* m();//2
-//		      Y* m(Y*);//3
-//		  };
+	//	struct X {};
+	//	struct Y : X {};
+	//	struct A {
+	//		virtual X* m();//0
+	//		virtual X* m(X*);//1
+	//	};
+	//	struct B : A {
+	//		Y* m();//2
+	//		Y* m(Y*);//3
+	//	};
 	public void testOverrideSimpleCovariance_Bug321617() throws Exception {
 		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
 		ICPPMethod m0= helper.assertNonProblem("m();//0", 1, ICPPMethod.class);
@@ -8609,5 +8606,21 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(ors[0], m0);
 		ors= ClassTypeHelper.findOverridden(m3);
 		assertEquals(0, ors.length);
+	}
+
+	//	typedef int MyType;
+	//
+	//	void f(const MyType& val);
+	//	void g(MyType& val);
+	public void testTypeString_323596() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction f= bh.assertNonProblem("f(", 1);
+		assertEquals("const MyType &", ASTTypeUtil.getType(f.getType().getParameterTypes()[0], false));
+		assertEquals("const int &", ASTTypeUtil.getType(f.getType().getParameterTypes()[0], true));
+
+		IFunction g= bh.assertNonProblem("g(", 1);
+		assertEquals("MyType &", ASTTypeUtil.getType(g.getType().getParameterTypes()[0], false));
+		assertEquals("int &", ASTTypeUtil.getType(g.getType().getParameterTypes()[0], true));
 	}
 }

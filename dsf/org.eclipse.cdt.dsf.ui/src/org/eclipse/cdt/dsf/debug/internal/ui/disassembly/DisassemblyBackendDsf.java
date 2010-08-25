@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
+ *     Patrick Chuong (Texas Instruments) - Bug 323279
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -271,7 +272,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 					if (DEBUG) System.out.println("retrieveFrameAddress done "+ DisassemblyUtils.getAddressText(addressValue)); //$NON-NLS-1$
 					fCallback.asyncExec(new Runnable() {
 						public void run() {
-							if (address.getSize() * 8 > fCallback.getAddressSize()) {
+							if (address.getSize() * 8 != fCallback.getAddressSize()) {
 								fCallback.addressSizeChanged(address.getSize() * 8);
 							}
 							if (frame == 0) {

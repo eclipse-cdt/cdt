@@ -19,7 +19,10 @@ import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+
+import org.eclipse.cdt.core.CCorePlugin;
 
 /**
  * Implementation of char array for a file referencing content via 
@@ -81,6 +84,10 @@ public class FileCharArray extends LazyCharArray {
 	private String fFileName;
 	private String fCharSet;
 	private FileChannel fChannel;
+	private long fNextFileOffset= 0;
+	private int fNextCharOffset= 0;
+	private boolean fReachedEOF= false;
+	
 
 	private FileCharArray(String fileName, String charSet) {
 		fFileName= fileName;
@@ -88,7 +95,7 @@ public class FileCharArray extends LazyCharArray {
 	}
 
 	@Override
-	protected Chunk createChunk(int chunkOffset) {
+	protected Chunk createChunk(int chunkNumber) {
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(fFileName);
@@ -98,7 +105,7 @@ public class FileCharArray extends LazyCharArray {
 		}
 		fChannel= fis.getChannel();
 		try {
-			return super.createChunk(chunkOffset);
+			return super.createChunk(chunkNumber);
 		} finally {
 			fChannel= null;
 			try {
@@ -109,40 +116,60 @@ public class FileCharArray extends LazyCharArray {
 	}
 	
 	@Override
-	protected char[] readChunkData(long fileOffset, long[] fileEndOffsetHolder) throws IOException {
-		assert fChannel != null;
-		final Charset charset = Charset.forName(fCharSet);
-		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
-				.onUnmappableCharacter(CodingErrorAction.REPLACE);
+	protected Chunk nextChunk() {
+		if (fReachedEOF)
+			return null;
+		
+		try {
+			assert fChannel != null;
+			final Charset charset = Charset.forName(fCharSet);
+			final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
+			.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
-		int needBytes = 3 + (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
-		final ByteBuffer in = ByteBuffer.allocate(needBytes);
-		final CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
+			int needBytes = 3 + (int) (CHUNK_SIZE * (double) decoder.averageCharsPerByte()); // avoid rounding errors.
+			final ByteBuffer in = ByteBuffer.allocate(needBytes);
+			final CharBuffer dest= CharBuffer.allocate(CHUNK_SIZE);
 
-		boolean endOfInput= false;
-		while (dest.position() < CHUNK_SIZE && !endOfInput) {
-			fChannel.position(fileOffset);
-			in.clear();
-			int count= fChannel.read(in);
-			if (count == -1) {
-				break;
+			boolean eof;
+			CoderResult result;
+			long fileOffset= fNextFileOffset;
+			do {
+				in.clear();
+				fChannel.position(fileOffset);
+				fChannel.read(in);
+				eof= in.remaining() > 0;
+				in.flip();
+				if (fileOffset == 0) {
+					skipUTF8ByteOrderMark(in, fCharSet);
+				}
+				result = decoder.decode(in, dest, eof);
+				fileOffset+= in.position();
+			} while (result == CoderResult.UNDERFLOW && !eof);
+
+			dest.flip();
+			if (dest.remaining() == 0) {
+				fReachedEOF= true;
+				return null;
 			}
-			
-			endOfInput= count < in.capacity();
-			in.flip();
-			if (fileOffset == 0) {
-				skipUTF8ByteOrderMark(in, fCharSet);
+			if (eof && result == CoderResult.UNDERFLOW) {
+				fReachedEOF= true;
 			}
-			decoder.decode(in, dest, endOfInput);
-			fileOffset+= in.position();
+			final char[] chars = extractChars(dest);
+			Chunk chunk = newChunk(fNextFileOffset, fileOffset, fNextCharOffset, chars);
+			fNextFileOffset= fileOffset;
+			fNextCharOffset+= chars.length;
+
+			return chunk;
+		} catch (Exception e) {
+			// The file cannot be read
+			CCorePlugin.log(e);
+			fReachedEOF= true;
+			return null;
 		}
-		fileEndOffsetHolder[0]= fileOffset;
-		dest.flip();
-		return extractChars(dest);
 	}
 
 	@Override
-	protected void rereadChunkData(long fileOffset, long fileEndOffset, char[] dest) {
+	protected void rereadChunkData(Chunk chunk, char[] dest) {
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(fFileName);
@@ -152,7 +179,7 @@ public class FileCharArray extends LazyCharArray {
 		}
 		try {
 			FileChannel channel = fis.getChannel();
-			decode(channel, fileOffset, fileEndOffset, CharBuffer.wrap(dest));
+			decode(channel, chunk.fSourceOffset, chunk.fSourceEndOffset, CharBuffer.wrap(dest));
 		} catch (IOException e) {
 			// File cannot be read
 		} finally {
@@ -168,11 +195,10 @@ public class FileCharArray extends LazyCharArray {
 		final CharsetDecoder decoder = charset.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
 				.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
-		int needBytes = (int) (fileEndOffset - fileOffset);
-		final ByteBuffer in = ByteBuffer.allocate(needBytes);
-
-		channel.position(fileOffset);
+		final ByteBuffer in = ByteBuffer.allocate((int) (fileEndOffset - fileOffset));
+		
 		in.clear();
+		channel.position(fileOffset);
 		channel.read(in);
 		in.flip();
 		if (fileOffset == 0) {

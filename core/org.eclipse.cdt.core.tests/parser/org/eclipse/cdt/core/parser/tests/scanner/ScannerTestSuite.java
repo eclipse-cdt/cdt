@@ -26,6 +26,7 @@ public class ScannerTestSuite extends TestSuite {
 		suite.addTest(ExpansionExplorerTests.suite());
 		suite.addTest(InactiveCodeTests.suite());
 		suite.addTest(StreamHasherTests.suite());
+		suite.addTest(FileCharArrayTests.suite());
 		return suite;
 	}	
 }

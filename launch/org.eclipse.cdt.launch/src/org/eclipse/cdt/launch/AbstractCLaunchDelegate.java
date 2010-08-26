@@ -10,6 +10,7 @@
  *     Andrew Ferguson (andrew.ferguson@arm.com) - bug 123997
  *     Ken Ryall (Nokia) - bug 178731
  *     Anton Leherbauer (Wind River Systems) - bug 224187
+ *     Alex Collins (Broadcom Corp.) - choose build config automatically
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -126,6 +127,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
         }
     }
 
+	private static final String EMPTY_STR = ""; //$NON-NLS-1$
     
     public AbstractCLaunchDelegate() {
 		super();
@@ -619,18 +621,29 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	}
 
 	/**
-	 * Sets up a project for building by making sure the active configuration is the one used
-	 * when the launch was created.
-	 * @param configuration
-	 * @param buildProject
+	 * Sets up a project for building by making sure the active configuration is set to the configuration chosen to
+	 * be built before the launch.
+	 * 
+	 * If the configuration to be built before launch was set to be automatically discovered, it is set to the unique
+	 * build configuration for the project that outputs to the directory containing the program to be launched.
+	 * 
+	 * @param configuration The launch configuration being launched.
+	 * @param buildProject The project to be build before the launch configuration is launched.
 	 */
 	private void setBuildConfiguration(ILaunchConfiguration configuration, IProject buildProject) {
-		
 		try {
-			String buildConfigID = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
 			ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(buildProject);
+			String buildConfigID = null;
+
+			if (configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, false)) {
+				String programPath = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, EMPTY_STR);
+				ICConfigurationDescription buildConfig = LaunchUtils.getBuildConfigByProgramPath(buildProject, programPath);
+				if (buildConfig != null)
+					buildConfigID = buildConfig.getId();
+			} else
+				buildConfigID = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STR);
 			
-			if (buildConfigID.length() > 0 && projDes != null)
+			if (buildConfigID != null && buildConfigID.length() > 0 && projDes != null)
 			{
 				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(buildConfigID);
 				if (buildConfiguration != null) {

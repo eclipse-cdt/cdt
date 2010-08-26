@@ -535,6 +535,10 @@ public class CMainTab extends CAbstractMainTab {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, EMPTY_STRING);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_COREFILE_PATH, EMPTY_STRING);
 
+		// Set the auto choose build configuration to true for new configurations.
+		// Existing configurations created before this setting was introduced will have this disabled.
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, true);
+
 		ICElement cElement = null;
 		cElement = getContext(config, getPlatform(config));
 		if (cElement != null) {

@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     Ken Ryall (Nokia) - bug 118894
  *     Ken Ryall (Nokia) - bug 178731
+ *     Alex Collins (Broadcom Corp.) - choose build config automatically
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -119,6 +120,13 @@ public interface ICDTLaunchConfigurationConstants {
 	 * build configuration that should be used when a build is required before launch.
 	 */
 	public static final String ATTR_PROJECT_BUILD_CONFIG_ID = CDT_LAUNCH_ID + ".PROJECT_BUILD_CONFIG_ID_ATTR"; //$NON-NLS-1$
+
+	/**
+	 * Automatically choose build configuration for launch key. The value indicates whether the ID of the build configuration
+	 * to be built before launch should be calculated based on the path to the application being launched.
+	 * @since 7.1
+	 */
+	public static final String ATTR_PROJECT_BUILD_CONFIG_AUTO = CDT_LAUNCH_ID + ".PROJECT_BUILD_CONFIG_AUTO_ATTR"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying

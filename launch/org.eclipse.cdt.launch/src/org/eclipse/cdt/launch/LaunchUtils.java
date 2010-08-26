@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Alex Collins (Broadcom Corp.) - choose build config automatically
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -18,8 +19,17 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -141,4 +151,63 @@ public class LaunchUtils {
 
 	}
 
+	/**
+	 * Get the build configuration that most likely builds the given program path.
+	 * The build configuration is chosen as the one that outputs to a directory that contains
+	 * the given program.
+	 * 
+	 * @param projectDesc The description for the project in which to search for the configuration.
+	 * @param programPath The path to the program to search the build configurations for
+	 * @return The build configuration that builds programName; or null if none or more than one were found.
+	 * @since 6.2
+	 */
+	public static ICConfigurationDescription getBuildConfigByProgramPath(IProject project, String programPath) {
+		if (project == null || programPath == null)
+			return null;
+		ICProjectDescription projectDesc = CoreModel.getDefault().getProjectDescription(project, false);
+		if (projectDesc == null)
+			return null;
+
+		// If the program path is relative, it must be relative to the projects root
+		IPath path = new Path(programPath);
+		if (!path.isAbsolute()) {
+			IPath projLocation = project.getLocation();
+			if (projLocation == null)
+				return null;
+			path = projLocation.append(path);
+		}
+
+		// Get all possible files that the program path could refer to
+		IFile[] files = ResourceLookup.findFilesForLocation(path);
+
+		// Find the build config whose output directory matches one of the possible files
+		ICConfigurationDescription buildConfig = null;
+		findCfg: for (ICConfigurationDescription cfgDes : projectDesc.getConfigurations()) {
+			CConfigurationData cfgData = cfgDes.getConfigurationData();
+			if (cfgData == null)
+				continue;
+			CBuildData buildData = cfgData.getBuildData();
+			if (buildData == null)
+				continue;
+			for (ICOutputEntry dir : buildData.getOutputDirectories()) {
+				ICOutputEntry absoluteDir = CDataUtil.makeAbsolute(project, dir);
+				if (absoluteDir == null)
+					continue;
+				IPath dirLocation = absoluteDir.getLocation();
+				if (dirLocation == null)
+					continue;
+				for (IFile file : files) {
+					if (dirLocation.isPrefixOf(file.getLocation())) {
+						if (buildConfig != null && buildConfig != cfgDes) {
+							// Matched more than one, so use the active configuration
+							buildConfig = null;
+							break findCfg;
+						}
+						buildConfig = cfgDes;
+					}
+				}
+			}
+		}
+		return buildConfig;
+	}
 }

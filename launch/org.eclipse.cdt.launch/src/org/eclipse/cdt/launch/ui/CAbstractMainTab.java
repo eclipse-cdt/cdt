@@ -8,6 +8,7 @@
  * Contributors:
  *     Ken Ryall (Nokia) - initial API and implementation
  *     IBM Corporation
+ *     Alex Collins (Broadcom Corp.) - choose build config automatically
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -16,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -72,6 +73,12 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 * @since 6.0
 	 */
 	protected Combo fBuildConfigCombo;
+	/** @since 6.2 */
+	protected Button fBuildConfigAuto;
+	/** Indicates whether the user has clicked on the build config auto button
+	 * Prevents causing a delta to the underlying launch configuration if the user hasn't touched this setting.
+	 * @since 6.2 */
+	protected boolean fBuildConfigAutoChanged;
 	/** @since 6.1 */
 	protected Button fDisableBuildButton;
 	/** @since 6.1 */
@@ -262,6 +269,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	protected void updateBuildConfigCombo(String selectedConfigID) {
 		if (fBuildConfigCombo != null)
 		{
+			fBuildConfigCombo.setEnabled(!fBuildConfigAuto.getSelection());
 			fBuildConfigCombo.removeAll();
 			fBuildConfigCombo.add(LaunchMessages.getString("CMainTab.Use_Active")); //$NON-NLS-1$
 			fBuildConfigCombo.setData("0", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -272,6 +280,14 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 				ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(cproject.getProject());
 				if (projDes != null)
 				{
+					// Find the config that should be automatically selected
+					String autoConfigId = null;
+					if (fBuildConfigAuto.getSelection()) {
+						ICConfigurationDescription autoConfig = LaunchUtils.getBuildConfigByProgramPath(cproject.getProject(), fProgText.getText());
+						if (autoConfig != null)
+							autoConfigId = autoConfig.getId();
+					}
+
 					int selIndex = 0;
 					ICConfigurationDescription[] configurations = projDes.getConfigurations();
 					ICConfigurationDescription selectedConfig = projDes.getConfigurationById(selectedConfigID);
@@ -279,8 +295,10 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 						String configName = configurations[i].getName();
 						fBuildConfigCombo.add(configName);
 						fBuildConfigCombo.setData(Integer.toString(i + 1), configurations[i].getId());
-						if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()))
+						if (selectedConfig != null && selectedConfigID.equals(configurations[i].getId()) ||
+							fBuildConfigAuto.getSelection() && configurations[i].getId().equals(autoConfigId)) {
 							selIndex = i + 1;
+						}
 					}
 					fBuildConfigCombo.select(selIndex);
 				}
@@ -310,6 +328,26 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		    }
 	
 		    public void widgetDefaultSelected(SelectionEvent e) {
+		    	updateLaunchConfigurationDialog();
+		    }
+		});
+
+		new Label(comboComp, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fBuildConfigAuto = new Button(comboComp, SWT.CHECK);
+		fBuildConfigAuto.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fBuildConfigAuto.setText(LaunchMessages.getString("CMainTab.Build_Config_Auto")); //$NON-NLS-1$
+		fBuildConfigAuto.addSelectionListener(new SelectionListener() {
+		    public void widgetSelected(SelectionEvent e) {
+		    	fBuildConfigAutoChanged = true;
+		    	fBuildConfigCombo.setEnabled(false);
+		    	updateBuildConfigCombo(""); //$NON-NLS-1$
+		    	updateLaunchConfigurationDialog();
+		    }
+		    public void widgetDefaultSelected(SelectionEvent e) {
+		    	fBuildConfigAutoChanged = true;
+		    	fBuildConfigCombo.setEnabled(true);
+				updateBuildConfigCombo(""); //$NON-NLS-1$
 		    	updateLaunchConfigurationDialog();
 		    }
 		});
@@ -377,13 +415,20 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 
 	/** @since 6.1 */
 	protected void updateBuildOptionFromConfig(ILaunchConfiguration config) {
+		boolean configAuto = false;
 		int buildBeforeLaunchValue = ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING;
 		try {
 			buildBeforeLaunchValue = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH, buildBeforeLaunchValue);
+			configAuto = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, false);
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(e);
 		}
 	
+		if (fBuildConfigAuto != null) {
+			fBuildConfigAuto.setSelection(configAuto);
+			if (configAuto)
+				updateBuildConfigCombo(""); //$NON-NLS-1$
+		}
 		if (fDisableBuildButton != null)
 			fDisableBuildButton.setSelection(buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED);
 		if (fEnableBuildButton != null)
@@ -501,6 +546,10 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));
 		}
 
+		if (fBuildConfigAutoChanged && fBuildConfigAuto != null) {
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, fBuildConfigAuto.getSelection());
+		}
+
 		if (fDisableBuildButton != null) {
 			int buildBeforeLaunchValue = ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING;
 			if (fDisableBuildButton.getSelection()) {
@@ -545,6 +594,8 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 */
 	@Override
 	protected void updateLaunchConfigurationDialog() {
+		if (fBuildConfigAuto.getSelection())
+			updateBuildConfigCombo(""); //$NON-NLS-1$
 		super.updateLaunchConfigurationDialog();
 	}
 

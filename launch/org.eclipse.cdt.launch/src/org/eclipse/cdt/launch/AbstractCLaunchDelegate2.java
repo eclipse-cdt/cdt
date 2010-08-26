@@ -242,11 +242,23 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 			if (buildBeforeLaunchValue == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED) {
 				return false;
 			}
-	
+
+			String buildConfigID = null;
+
+			// If automatic configuration detection then discover the build config corresponding to the executable
+			if (configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_AUTO, false)) {
+				String programPath = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
+				ICConfigurationDescription buildConfig = LaunchUtils.getBuildConfigByProgramPath(project, programPath);
+				if (buildConfig != null)
+					buildConfigID = buildConfig.getId();
+			}
+
 			// The attribute value will be "" if 'Use Active' is selected
-			String buildConfigID = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
-			if (buildConfigID.length() == 0) {
-				buildConfigID = null;
+			if (buildConfigID == null) {
+				buildConfigID = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
+				if (buildConfigID.length() == 0) {
+					buildConfigID = null;
+				}
 			}
 
 			// There's no guarantee the ID stored in the launch config is valid.

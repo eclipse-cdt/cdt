@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -209,8 +210,10 @@ public class LaunchUtils {
     public static IPath getGDBPath(ILaunchConfiguration configuration) {
         IPath retVal = new Path(IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
         try {
-            retVal = new Path(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
-            		                                     IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT));
+        	String gdb = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
+        			IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+        	gdb = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(gdb, false);        	
+        	retVal = new Path(gdb);
         } catch (CoreException e) {
         }
         return retVal;

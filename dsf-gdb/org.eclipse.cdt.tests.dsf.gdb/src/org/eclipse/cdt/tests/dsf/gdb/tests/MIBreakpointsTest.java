@@ -88,58 +88,57 @@ public class MIBreakpointsTest extends BaseTestCase {
     public static final String SOURCE_FILE    = "BreakpointTestApp.cc"; //$NON-NLS-1$
 
     // Asynchronous Completion
-    private final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
+    protected final AsyncCompletionWaitor fWait = new AsyncCompletionWaitor();
 
     // Services references
-    private DsfSession          fSession;
-	private IBreakpointsTargetDMContext fBreakpointsDmc;
-    private DsfServicesTracker  fServicesTracker;
-    private MIRunControl        fRunControl;
-    private IBreakpoints        fBreakpointService;
+    protected DsfSession          fSession;
+    protected IBreakpointsTargetDMContext fBreakpointsDmc;
+    protected DsfServicesTracker  fServicesTracker;
+    protected MIRunControl        fRunControl;
+    protected IBreakpoints        fBreakpointService;
 
     // Event Management
-    private static Boolean lock = true;
-    enum Events { BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT, WP_HIT, WP_OOS }
-    final int BP_ADDED   = Events.BP_ADDED.ordinal();
-    final int BP_UPDATED = Events.BP_UPDATED.ordinal();
-    final int BP_REMOVED = Events.BP_REMOVED.ordinal();
-    final int BP_HIT     = Events.BP_HIT.ordinal();
-    final int WP_HIT     = Events.WP_HIT.ordinal();
-    final int WP_OOS     = Events.WP_OOS.ordinal();
-    private int[]   fBreakpointEvents = new int[Events.values().length];
-    private int     fBreakpointEventCount;
-    private int     fBreakpointRef;
+    protected static Boolean lock = true;
+    protected enum Events { BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT, WP_HIT, WP_OOS }
+    protected final int BP_ADDED   = Events.BP_ADDED.ordinal();
+    protected final int BP_UPDATED = Events.BP_UPDATED.ordinal();
+    protected final int BP_REMOVED = Events.BP_REMOVED.ordinal();
+    protected final int BP_HIT     = Events.BP_HIT.ordinal();
+    protected final int WP_HIT     = Events.WP_HIT.ordinal();
+    protected final int WP_OOS     = Events.WP_OOS.ordinal();
+    protected int[]   fBreakpointEvents = new int[Events.values().length];
+    protected int     fBreakpointEventCount;
+    protected int     fBreakpointRef;
 
     // Some useful constants
-	final String BREAKPOINT_TYPE_TAG = MIBreakpoints.BREAKPOINT_TYPE;
-	final String BREAKPOINT_TAG = MIBreakpoints.BREAKPOINT;
-	final String WATCHPOINT_TAG = MIBreakpoints.WATCHPOINT;
+	protected final String BREAKPOINT_TYPE_TAG = MIBreakpoints.BREAKPOINT_TYPE;
+	protected final String BREAKPOINT_TAG = MIBreakpoints.BREAKPOINT;
+	protected final String WATCHPOINT_TAG = MIBreakpoints.WATCHPOINT;
 
-	final String FILE_NAME_TAG    = MIBreakpoints.FILE_NAME;
-    final String LINE_NUMBER_TAG  = MIBreakpoints.LINE_NUMBER;
-    final String FUNCTION_TAG     = MIBreakpoints.FUNCTION;
-    final String ADDRESS_TAG      = MIBreakpoints.ADDRESS;
-    final String CONDITION_TAG    = MIBreakpoints.CONDITION;
-    final String IGNORE_COUNT_TAG = MIBreakpoints.IGNORE_COUNT;
-    final String IS_ENABLED_TAG   = MIBreakpoints.IS_ENABLED;
-	final String THREAD_ID_TAG    = MIBreakpointDMData.THREAD_ID;
-	final String NUMBER_TAG       = MIBreakpointDMData.NUMBER;
+	protected final String FILE_NAME_TAG    = MIBreakpoints.FILE_NAME;
+	protected final String LINE_NUMBER_TAG  = MIBreakpoints.LINE_NUMBER;
+	protected final String FUNCTION_TAG     = MIBreakpoints.FUNCTION;
+	protected final String ADDRESS_TAG      = MIBreakpoints.ADDRESS;
+	protected final String CONDITION_TAG    = MIBreakpoints.CONDITION;
+	protected final String IGNORE_COUNT_TAG = MIBreakpoints.IGNORE_COUNT;
+	protected final String IS_ENABLED_TAG   = MIBreakpoints.IS_ENABLED;
+	protected final String THREAD_ID_TAG    = MIBreakpointDMData.THREAD_ID;
+	protected final String NUMBER_TAG       = MIBreakpointDMData.NUMBER;
 
-    final String EXPRESSION_TAG  = MIBreakpoints.EXPRESSION;
-    final String READ_TAG        = MIBreakpoints.READ;
-    final String WRITE_TAG       = MIBreakpoints.WRITE;
+	protected final String EXPRESSION_TAG  = MIBreakpoints.EXPRESSION;
+	protected final String READ_TAG        = MIBreakpoints.READ;
+	protected final String WRITE_TAG       = MIBreakpoints.WRITE;
 
     // Target application 'special' locations
-    private final int    LINE_NUMBER_1   = 20;
-    private final int    LINE_NUMBER_2   = 21;
-    @SuppressWarnings("unused")
-	private final int    LINE_NUMBER_3   = 27;
-    private final int    LINE_NUMBER_4   = 36;
-    private final int    LINE_NUMBER_5   = 49;
-    private final int    LINE_NUMBER_6   = 50;
-    private final String FUNCTION        = "zeroBlocks";
-    private final String SIGNED_FUNCTION = "zeroBlocks(int)";
-    private final String NO_CONDITION    = "";
+	protected  final int    LINE_NUMBER_1   = 20;
+	protected  final int    LINE_NUMBER_2   = 21;
+	protected  final int    LINE_NUMBER_3   = 27;
+    protected  final int    LINE_NUMBER_4   = 36;
+    protected  final int    LINE_NUMBER_5   = 49;
+    protected  final int    LINE_NUMBER_6   = 50;
+    protected  final String FUNCTION        = "zeroBlocks";
+    protected  final String SIGNED_FUNCTION = "zeroBlocks(int)";
+    protected  final String NO_CONDITION    = "";
 
     // NOTE: The back-end can reformat the condition. In order for the
     // comparison to work, better specify the condition as the back-end
@@ -157,10 +156,10 @@ public class MIBreakpointsTest extends BaseTestCase {
     private final String EXPRESSION_3 = "a";
 
     // Error messages
-    final String UNKNOWN_EXECUTION_CONTEXT    = "Unknown execution context";
-    final String INVALID_BREAKPOINT_LOCATION  = "Invalid breakpoint location";
-    final String BREAKPOINT_INSERTION_FAILURE = "Breakpoint insertion failure";
-    final String UNKNOWN_BREAKPOINT           = "Unknown breakpoint";
+    protected final String UNKNOWN_EXECUTION_CONTEXT    = "Unknown execution context";
+    protected final String INVALID_BREAKPOINT_LOCATION  = "Invalid breakpoint location";
+    protected final String BREAKPOINT_INSERTION_FAILURE = "Breakpoint insertion failure";
+    protected final String UNKNOWN_BREAKPOINT           = "Unknown breakpoint";
     
     // ========================================================================
     // Housekeeping stuff
@@ -292,7 +291,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	}
 
 	// Clears the counters
-	private void clearEventCounters() {
+	protected void clearEventCounters() {
 		synchronized (lock) {
 			for (int i = 0; i < fBreakpointEvents.length; i++) {
 				fBreakpointEvents[i] = 0;
@@ -302,7 +301,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	}
 
 	// Get the breakpoint hit count
-	private int getBreakpointEventCount(int event) {
+	protected int getBreakpointEventCount(int event) {
 		int count = 0;
   		synchronized (lock) {
   			count = fBreakpointEvents[event];
@@ -340,7 +339,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 	/**
 	 * Simplified variant that just waits up to two seconds
 	 */
-	private void waitForBreakpointEvent(int count) throws Exception {
+	protected void waitForBreakpointEvent(int count) throws Exception {
 		waitForBreakpointEvent(count, TestsPlugin.massageTimeout(2000));
 	}
 
@@ -413,7 +412,7 @@ public class MIBreakpointsTest extends BaseTestCase {
      * @param context       the execution context
      * ------------------------------------------------------------------------
      */
-    private IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context) throws InterruptedException
+    protected IBreakpointDMContext[] getBreakpoints(final IBreakpointsTargetDMContext context) throws InterruptedException
     {
     	// Clear the completion waiter
 		fWait.waitReset();
@@ -455,7 +454,7 @@ public class MIBreakpointsTest extends BaseTestCase {
      * @param breakpoint    the breakpoint to retrieve
      * ------------------------------------------------------------------------
      */
-    private IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException
+    protected IBreakpointDMData getBreakpoint(final IBreakpointDMContext breakpoint) throws InterruptedException
     {
     	// Clear the completion waiter
 		fWait.waitReset();
@@ -534,7 +533,7 @@ public class MIBreakpointsTest extends BaseTestCase {
      * @param attributes    the breakpoint attributes
      * ------------------------------------------------------------------------
      */
-    private IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
+    protected IBreakpointDMContext insertBreakpoint(final IBreakpointsTargetDMContext context,
     		final Map<String,Object> attributes) throws InterruptedException
     {
     	// Clear the completion waiter
@@ -821,6 +820,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getIgnoreCount() == 0);
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
 				breakpoint1.isEnabled());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -869,6 +870,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getIgnoreCount() == 0);
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
 				breakpoint1.isEnabled());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -918,6 +921,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getIgnoreCount() == 0);
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong state)",
 				!breakpoint1.isEnabled());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -964,6 +969,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint1.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -1011,6 +1018,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getCondition().equals(CONDITION_1));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint1.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -1058,6 +1067,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint1.getIgnoreCount() == IGNORE_COUNT_1);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -1104,6 +1115,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint1.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Create a function breakpoint
 		breakpoint = new HashMap<String, Object>();
@@ -1133,6 +1146,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint2.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint2.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint2.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -1190,6 +1205,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint1.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint1.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 
 		// Create a second line breakpoint, same attributes...
 		ref = insertBreakpoint(fBreakpointsDmc, breakpoint);
@@ -1213,6 +1230,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				breakpoint2.getCondition().equals(NO_CONDITION));
 		assertTrue("BreakpointService problem: breakpoint mismatch (wrong ignore count)",
 				breakpoint2.getIgnoreCount() == 0);
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint2.isPending());
 
 		// Ensure the BreakpointService holds only the right breakpoints
 		IBreakpointDMContext[] breakpoints = getBreakpoints(fBreakpointsDmc);
@@ -1276,6 +1295,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 		
 		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
@@ -1334,6 +1355,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 		
 		assertTrue("Did not stop because of breakpoint, but stopped because of: " +
@@ -1382,6 +1405,9 @@ public class MIBreakpointsTest extends BaseTestCase {
 				watchpoint1.isWriteWatchpoint());
 		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
 				!watchpoint1.isAccessWatchpoint());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
+
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
@@ -1428,6 +1454,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				!watchpoint1.isWriteWatchpoint());
 		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
 				!watchpoint1.isAccessWatchpoint());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
@@ -1475,6 +1503,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				!watchpoint1.isWriteWatchpoint());
 		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
 				watchpoint1.isAccessWatchpoint());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
@@ -1538,6 +1568,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				watchpoint1.isWriteWatchpoint());
 		assertTrue("BreakpointService problem: watchpoint mismatch (wrong access state)",
 				!watchpoint1.isAccessWatchpoint());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 
 		// Ensure the BreakpointService holds only the right watchpoints
 		IBreakpointDMContext[] watchpoints = getBreakpoints(fBreakpointsDmc);
@@ -2792,6 +2824,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 	}
 
@@ -2832,6 +2866,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 	}
 
@@ -2876,6 +2912,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -2937,6 +2975,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -2985,6 +3025,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3046,6 +3088,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(BP_HIT), getBreakpointEventCount(BP_HIT) == 1);
 		assertTrue("BreakpointService problem: breakpoint mismatch",
 				fBreakpointRef == breakpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!breakpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3092,6 +3136,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
 		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3138,6 +3184,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
 		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3185,6 +3233,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
 		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3247,6 +3297,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
 		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3310,6 +3362,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(WP_HIT), getBreakpointEventCount(WP_HIT) == 1);
 		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 		clearEventCounters();
 
 		// Verify that the condition is met
@@ -3362,6 +3416,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 				+ getBreakpointEventCount(WP_OOS), getBreakpointEventCount(WP_OOS) == 1);
 		assertTrue("BreakpointService problem: watchpoint mismatch",
 				fBreakpointRef == watchpoint1.getNumber());
+		assertTrue("BreakpointService problem: breakpoint mismatch (pending)",
+				!watchpoint1.isPending());
 		clearEventCounters();
 
 		// Ensure the watchpoint is gone

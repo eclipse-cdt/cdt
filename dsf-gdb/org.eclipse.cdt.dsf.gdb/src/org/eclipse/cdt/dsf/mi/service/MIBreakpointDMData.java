@@ -353,4 +353,10 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.isAccessWatchpoint();
 	}
 
+	/**
+	 * @since 4.0
+	 */
+	public boolean isPending() {
+		return fBreakpoint.isPending();
+	}
 }

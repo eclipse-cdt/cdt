@@ -49,7 +49,14 @@ import java.util.StringTokenizer;
  * bkpt={number="5",type="tracepoint",disp="keep",enabled="y",addr="0x0804846b",func="main",file="hello.c",line="4",thread="0",thread="0",times="0"}
  * bkpt={number="1",type="tracepoint",disp="keep",enabled="y",addr="0x0041bca0",func="main",file="hello.c",line="4",times="0",pass="4",original-location="hello.c:4"},
  * bkpt={number="5",type="fast tracepoint",disp="keep",enabled="y",addr="0x0804852d",func="testTracepoints()",file="TracepointTestApp.cc",fullname="/local/src/TracepointTestApp.cc",line="84",times="0",original-location="TracepointTestApp.cc:84"}
- * */
+ * 
+ * Pending breakpoint
+ * -break-insert -f NotLoadedLibrary.c:26
+ * &"No source file named NotLoadedLibrary.c.\n"
+ * ^done,bkpt={number="9",type="breakpoint",disp="keep",enabled="y",addr="<PENDING>",pending="NotLoadedLibrary.c:26",times="0",original-location="NotLoadedLibrary.c:26"}
+ * 
+ * Note that any breakpoint that fails to install will be marked as pending when the -f option is used.
+ */
 public class MIBreakpoint  {
 
     int     number   = -1;
@@ -87,6 +94,14 @@ public class MIBreakpoint  {
 	/** See {@link #getCatchpointType()} */
 	private String catchpointType;
 	
+	/** 
+	 * A pending breakpoint is a breakpoint that did not install properly,
+	 * but that will be kept in the hopes that it installs later, triggered by
+	 * the loading of a library.
+	 * This concept is only supported starting with GDB 6.8
+	 */
+	private boolean pending;
+	
     public MIBreakpoint() {
 	}
 
@@ -115,6 +130,7 @@ public class MIBreakpoint  {
         isTpt    = other.isTpt;
         isCatchpoint = other.isCatchpoint;
         catchpointType = other.catchpointType;
+        pending = other.pending;
 	}
 
     public MIBreakpoint(MITuple tuple) {
@@ -382,6 +398,15 @@ public class MIBreakpoint  {
         commands = cmds;
     }
     
+    /**
+     * Returns wether this breakpoint is pending
+     * 
+     * @since 4.0
+     */
+    public boolean isPending() {
+    	return pending;
+    }
+    
     // Parse the result string
     void parse(MITuple tuple) {
         MIResult[] results = tuple.getMIResults();
@@ -468,6 +493,9 @@ public class MIBreakpoint  {
                 }
             } else if (var.equals("cond")) { //$NON-NLS-1$
                 cond = str;
+            } else if (var.equals("pending")) { //$NON-NLS-1$
+            	// Only supported starting with GDB 6.8
+                pending = true;
             }
         }
     }

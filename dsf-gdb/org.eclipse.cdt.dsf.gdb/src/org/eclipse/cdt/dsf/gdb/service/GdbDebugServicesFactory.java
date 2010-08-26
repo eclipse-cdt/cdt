@@ -24,6 +24,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
+import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
@@ -42,6 +43,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 
+	private static final String GDB_6_8_VERSION = "6.8"; //$NON-NLS-1$
 	// This should eventually be "7.0" once GDB 7.0 is released
 	private static final String GDB_7_0_VERSION = "6.8.50.20090218"; //$NON-NLS-1$	
 	private static final String GDB_7_1_VERSION = "7.1"; //$NON-NLS-1$	
@@ -99,7 +101,10 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
 		if (GDB_7_0_VERSION.compareTo(fVersion) <= 0) {
-			return new GDBControl_7_0(session, config, new CommandFactory());
+			return new GDBControl_7_0(session, config, new CommandFactory_6_8());
+		}
+		if (GDB_6_8_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBControl(session, config, new CommandFactory_6_8());
 		}
 		return new GDBControl(session, config, new CommandFactory());
 	}

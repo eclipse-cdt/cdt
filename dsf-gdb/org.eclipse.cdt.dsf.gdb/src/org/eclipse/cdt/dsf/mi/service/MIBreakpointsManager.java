@@ -44,6 +44,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMData;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -588,12 +589,27 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                         // Remove breakpoint problem marker (if any)
                         removeBreakpointProblemMarker(breakpoint);
 
-                        // Finally, update the platform breakpoint
-                        try {
-							breakpoint.incrementInstallCount();
-						} catch (CoreException e) {
-						}
-                        installRM.done();
+                        // Check for a pending breakpoint before showing that it was properly installed
+                        fBreakpoints.getBreakpointDMData(targetBP, new DataRequestMonitor<IBreakpointDMData>(getExecutor(), null) {
+                        	@Override
+                        	protected void handleCompleted() {
+                        		boolean pending = false;
+                        		if (isSuccess()) {
+                        			IBreakpointDMData data = getData();
+                        			if (data instanceof MIBreakpointDMData) {
+                        				pending = ((MIBreakpointDMData)data).isPending();
+                        			}
+                        		}
+                        		// Finally, update the platform breakpoint to show it was installed, unless we have a pending breakpoint
+                        		if (!pending) {
+                        			try {
+                        				breakpoint.incrementInstallCount();
+                        			} catch (CoreException e) {
+                        			}
+                        		}
+                        		installRM.done();                        		
+                        	}
+                        });
                     }
 
                     @Override
@@ -712,7 +728,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
         // Remove completion monitor
         // Upon completion, update the mappings
-        CountingRequestMonitor removeRM = new CountingRequestMonitor(getExecutor(), rm) {
+        final CountingRequestMonitor removeRM = new CountingRequestMonitor(getExecutor(), rm) {
             @Override
             protected void handleSuccess() {
                 // Update the mappings
@@ -738,18 +754,44 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
         Vector<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
         int count = 0;
         if (list != null) {
-            for (IBreakpointDMContext bp : list) {
-                fBreakpoints.removeBreakpoint(bp, removeRM);
-                try {
-					breakpoint.decrementInstallCount();
-				} catch (CoreException e) {
-				}
+            for (final IBreakpointDMContext bp : list) {
+            	decrementInstallCount(bp, breakpoint, new RequestMonitor(getExecutor(), removeRM) {
+                	@Override
+                	protected void handleCompleted() {
+                		fBreakpoints.removeBreakpoint(bp, removeRM); 
+                	}
+                });
             }
             count = list.size();
         }
         removeRM.setDoneCount(count);
     }
 
+    
+    private void decrementInstallCount(IBreakpointDMContext targetDmc, final ICBreakpoint breakpoint, final RequestMonitor rm) {
+        fBreakpoints.getBreakpointDMData(targetDmc, new DataRequestMonitor<IBreakpointDMData>(getExecutor(), rm) {
+        	@Override
+        	protected void handleCompleted() {
+        		boolean pending = false;
+        		if (isSuccess()) {
+        			IBreakpointDMData data = getData();
+        			if (data instanceof MIBreakpointDMData) {
+        				pending = ((MIBreakpointDMData)data).isPending();
+        			}
+        		}
+        		// Finally, update the platform breakpoint to show it was un-installed.
+        		// But we don't do this for pending breakpoints since they were
+        		// not marked as installed.
+        		if (!pending) {
+        			try {
+        				breakpoint.decrementInstallCount();
+        			} catch (CoreException e) {
+        			}
+        		}
+        		rm.done();
+        	}
+        });
+    }
     //-------------------------------------------------------------------------
     // modifyBreakpoint
     //-------------------------------------------------------------------------
@@ -911,12 +953,14 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     // Get the list of new back-end breakpoints contexts
                     newTargetBPs.addAll(getData());
                     threadsIDs.put(breakpoint, newThreads);
-                    for (IBreakpointDMContext ref : oldTargetBPs) {
-                        fBreakpoints.removeBreakpoint(ref, removeRM);
-                        try {
-							breakpoint.decrementInstallCount();  // A tad early but it should work...
-						} catch (CoreException e) {
-						}
+                    for (final IBreakpointDMContext ref : oldTargetBPs) {
+                    	decrementInstallCount(ref, breakpoint, // A tad early but it should work...
+                    			              new RequestMonitor(getExecutor(), removeRM) {
+                    		@Override
+                    		protected void handleCompleted() {
+                    			fBreakpoints.removeBreakpoint(ref, removeRM);
+                    		}
+                        }); 
                     }
                     removeRM.setDoneCount(oldTargetBPs.size());
                 }
@@ -991,11 +1035,28 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     protected void handleSuccess() {
                         // Add the new back-end breakpoint context to the list
                         breakpointList.add(getData());
-                        try {
-							breakpoint.incrementInstallCount();
-						} catch (CoreException e) {
-						}
-                        installRM.done();
+                        
+                        // Check for a pending breakpoint before showing that it was properly installed
+                        fBreakpoints.getBreakpointDMData(getData(), new DataRequestMonitor<IBreakpointDMData>(getExecutor(), null) {
+                        	@Override
+                        	protected void handleCompleted() {
+                        		boolean pending = false;
+                        		if (isSuccess()) {
+                        			IBreakpointDMData data = getData();
+                        			if (data instanceof MIBreakpointDMData) {
+                        				pending = ((MIBreakpointDMData)data).isPending();
+                        			}
+                        		}
+                        		// Finally, update the platform breakpoint to show it was installed, unless we have a pending breakpoint
+                        		if (!pending) {
+                        			try {
+                        				breakpoint.incrementInstallCount();
+                        			} catch (CoreException e) {
+                        			}
+                        		}
+                        		installRM.done();                        		
+                        	}
+                        });
                     }
 
                     @Override
@@ -1341,8 +1402,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                     	Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpoints = fBreakpointIDs.get(ctx);
                     	for (ICBreakpoint breakpoint : breakpoints.keySet()) {
                     		Vector<IBreakpointDMContext> targetBps = breakpoints.get(breakpoint);
-                    		for (int i=0; i<targetBps.size(); i++) {
-                    			breakpoint.decrementInstallCount();
+                    		for (IBreakpointDMContext targetBp : targetBps) {
+                                decrementInstallCount(targetBp, breakpoint, new RequestMonitor(getExecutor(), null));
                     		}
                         }
                     }

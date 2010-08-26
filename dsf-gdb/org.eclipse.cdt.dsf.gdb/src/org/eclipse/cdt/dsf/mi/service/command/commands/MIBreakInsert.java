@@ -64,23 +64,26 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  */
 public class MIBreakInsert extends MICommand<MIBreakInsertInfo> 
 {
-	public MIBreakInsert(IBreakpointsTargetDMContext ctx, String func) {
-		this(ctx, false, false, null, 0, func, 0);
+	/** @since 4.0 */
+	public MIBreakInsert(IBreakpointsTargetDMContext ctx, String func, boolean allowPending) {
+		this(ctx, false, false, null, 0, func, 0, allowPending);
 	}
-
+	
+	/** @since 4.0 */
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
-			String condition, int ignoreCount, String line, int tid) {
-		this(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, false, false);
+			String condition, int ignoreCount, String line, int tid, boolean allowPending) {
+		this(ctx, isTemporary, isHardware, condition, ignoreCount, line, tid, false, false, allowPending);
 	}
 	
 	/**
 	 * This constructor allows to specify if the breakpoint should actually be
 	 * a tracepoint (this will only work starting with GDB 7.1)
 	 * It also includes if a breakpoint should be created disabled (starting GDB 7.0)
-	 * @since 3.0
+	 * @since 4.0
 	 */
 	public MIBreakInsert(IBreakpointsTargetDMContext ctx, boolean isTemporary, boolean isHardware,
-			String condition, int ignoreCount, String location, int tid, boolean disabled, boolean isTracepoint) {
+			String condition, int ignoreCount, String location, int tid, boolean disabled, boolean isTracepoint,
+			boolean allowPending) {
 		super(ctx, "-break-insert"); //$NON-NLS-1$
 
 		// For a tracepoint, force certain parameters to what is allowed
@@ -118,6 +121,10 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (isTracepoint) {
             i++;
         }
+        if (allowPending) {
+        	i ++;
+        }
+
         String[] opts = new String[i];
 
         // Fill in the optional parameters  
@@ -156,6 +163,10 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo>
         if (isTracepoint) {
             opts[i] = "-a"; //$NON-NLS-1$
             i++;
+        }
+        if (allowPending) {
+        	opts[i] = "-f"; //$NON-NLS-1$
+        	i ++;
         }
 
         if (opts.length > 0) {

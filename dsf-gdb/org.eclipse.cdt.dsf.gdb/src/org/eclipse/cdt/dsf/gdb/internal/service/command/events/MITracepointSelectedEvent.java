@@ -47,8 +47,8 @@ public class MITracepointSelectedEvent extends MIBreakpointHitEvent {
 	 * Returns a text to display for the reason why we show the debug view as stopped.
 	 */
 	public String getReason() {
-		return Messages.Tracepoint + " " + getNumber() + //$NON-NLS-1$
-		       ", " + Messages.Record + " " + fRecNo; //$NON-NLS-1$ //$NON-NLS-2$
+		return EventMessages.Tracepoint + " " + getNumber() + //$NON-NLS-1$
+		       ", " + EventMessages.Record + " " + fRecNo; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
     @ConfinedToDsfExecutor("")    

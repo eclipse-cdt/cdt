@@ -16,15 +16,15 @@ import org.eclipse.osgi.util.NLS;
 /**
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class Messages extends NLS {
+public class EventMessages extends NLS {
     public static String Tracepoint;
     public static String Record;
 
     static {
         // initialize resource bundle
-        NLS.initializeMessages(Messages.class.getName(), Messages.class);
+        NLS.initializeMessages(EventMessages.class.getName(), EventMessages.class);
     }
 
-    private Messages() {
+    private EventMessages() {
     }
 }

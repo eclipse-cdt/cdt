@@ -710,7 +710,7 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 							p.fValid = false;
 							fCallback.getDocument().addInvalidAddressRange(p);
 						} else {
-							return insertedStartAddress;
+							continue;
 						}
 					}
 					boolean hasSource= false;

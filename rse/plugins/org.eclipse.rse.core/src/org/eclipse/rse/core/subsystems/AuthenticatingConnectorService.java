@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2010 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [210474] Deny save password function missing
  * David Dykstal (IBM) - [225089][ssh][shells][api] Canceling connection leads to exception
+ * David McKnight (IBM)  [323648] SSH Terminals subsystem should re-use user id and password for the Files subsystem
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -186,6 +187,12 @@ public abstract class AuthenticatingConnectorService extends AbstractConnectorSe
 	 */
 	public final void acquireCredentials(boolean reacquire) throws OperationCanceledException {
 		credentialsProvider.acquireCredentials(reacquire);
+		ICredentials credentials = credentialsProvider.getCredentials();
+		IHost host = getHost();
+		String userId = credentials.getUserId();
+		String password = credentials.getPassword();		
+		boolean persist = PasswordPersistenceManager.getInstance().find(host.getSystemType(), host.getHostName(), userId) != null;		
+		setPassword(userId, password, persist, true);
 	}
 
 	/* (non-Javadoc)

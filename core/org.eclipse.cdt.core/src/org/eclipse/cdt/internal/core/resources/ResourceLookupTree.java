@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -355,7 +355,21 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 			final IContentTypeManager ctm= Platform.getContentTypeManager();
 			final IContentType[] ctts= ctm.getAllContentTypes();
-			Set<String> result= new HashSet<String>();
+
+			Set<String> cdtExtensions= new HashSet<String>();
+			for (IContentType ctt : ctts) {
+				IContentType basedOn= ctt;
+				while (basedOn != null) {
+					if (cdtContentTypes.contains(basedOn.getId())) {
+						addFileSpecs(ctt, cdtExtensions);
+						break;
+					}
+					basedOn= basedOn.getBaseType();
+				}
+			}
+			fDefaultExtensions= new Extensions(cdtExtensions, false);
+
+			Set<String> nonCDTExtensions= new HashSet<String>();
 			outer: for (IContentType ctt : ctts) {
 				IContentType basedOn= ctt;
 				while (basedOn != null) {
@@ -364,22 +378,12 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 					basedOn= basedOn.getBaseType();
 				}
 				// this is a non-cdt content type
-				addFileSpecs(ctt, result);
+				addFileSpecs(ctt, nonCDTExtensions);
 			}
-			fCDTProjectExtensions= new Extensions(result, true);
-
-			result= new HashSet<String>();
-			for (IContentType ctt : ctts) {
-				IContentType basedOn= ctt;
-				while (basedOn != null) {
-					if (cdtContentTypes.contains(basedOn.getId())) {
-						addFileSpecs(ctt, result);
-						break;
-					}
-					basedOn= basedOn.getBaseType();
-				}
-			}
-			fDefaultExtensions= new Extensions(result, false);
+			// Bug 323659: In case there is another content type for a cdt file-extension we need 
+			// to remove it.
+			nonCDTExtensions.removeAll(cdtExtensions);
+			fCDTProjectExtensions= new Extensions(nonCDTExtensions, true);
 		}
 	}
 
@@ -831,10 +835,9 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	public void dump() {
 		List<String> lines= new ArrayList<String>();
 		synchronized (fLock) {
-			for (Iterator<Object> iterator = fNodeMap.values().iterator(); iterator.hasNext();) {
-				Node[] nodes= convert(iterator.next());	
-				for (int i = 0; i < nodes.length; i++) {
-					final Node node = nodes[i];
+			for (Object object : fNodeMap.values()) {
+				Node[] nodes= convert(object);	
+				for (final Node node : nodes) {
 					if (node == null) {
 						break;
 					}
@@ -844,8 +847,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		}
 		Collections.sort(lines);
 		System.out.println("Dumping files:");
-		for (Iterator<String> iterator = lines.iterator(); iterator.hasNext();) {
-			String line = iterator.next();
+		for (String line : lines) {
 			System.out.println(line);
 		}
 		System.out.flush();

@@ -3511,8 +3511,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		
 		addReconcileListener(fOverrideIndicatorManager);
 
-		if (provideAST) {
-			ASTProvider.getASTProvider().runOnAST(getInputCElement(), ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
+		ICElement inputCElement = getInputCElement();
+		if (provideAST && inputCElement instanceof ITranslationUnit) {
+			ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					if (ast != null)
 						fOverrideIndicatorManager.reconciled(ast, true, getProgressMonitor());

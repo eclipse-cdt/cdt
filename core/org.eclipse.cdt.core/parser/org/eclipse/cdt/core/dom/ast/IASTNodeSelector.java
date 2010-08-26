@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,9 +72,17 @@ public interface IASTNodeSelector {
 	 * <p>
 	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion}) are preferred
 	 * over c/c++-nodes nodes and children are preferred over their parents.
-	 * Prefers children over parents.
 	 */
 	IASTNode findEnclosingNode(int offset, int length);
+	
+	/**
+	 * Returns the smallest node strictly enclosing the given range, or <code>null</code> if there is no such node.
+	 * <p>
+	 * For nodes with the same location, macro-expansions ({@link IASTPreprocessorMacroExpansion}) are preferred
+	 * over c/c++-nodes nodes and children are preferred over their parents.
+	 * @since 5.3
+	 */
+	IASTNode findStrictlyEnclosingNode(int offset, int length);
 
 	/**
 	 * Returns the first node contained in the given range, or <code>null</code> if there is no such node.

@@ -108,7 +108,7 @@ public class ASTNodeSelector implements IASTNodeSelector {
     		expansion= nodeSpec.findTrailingMacroExpansion(this);
     		if (expansion != null) {
     			IASTFileLocation floc= expansion.getFileLocation();
-    			seqend= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, floc.getNodeOffset() + floc.getNodeLength())-1;
+    			seqend= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, floc.getNodeOffset() + floc.getNodeLength());
     		}
     		nodeSpec.setRangeInSequence(seqbegin, seqend-seqbegin);
     		
@@ -129,6 +129,10 @@ public class ASTNodeSelector implements IASTNodeSelector {
 
 	public IASTNode findEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class);
+	}
+	
+	public IASTNode findStrictlyEnclosingNode(int offset, int length) {
+		return findNode(offset, length, Relation.STRICTLY_ENCLOSING, IASTNode.class);
 	}
 
 	public IASTNode findFirstContainedNodeInExpansion(int offset, int length) {

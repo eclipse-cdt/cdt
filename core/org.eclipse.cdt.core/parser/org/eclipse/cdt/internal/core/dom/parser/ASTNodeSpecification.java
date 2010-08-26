@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroExpansion;
  * @since 5.0
  */
 public class ASTNodeSpecification<T extends IASTNode> {
-	public enum Relation {FIRST_CONTAINED, EXACT_MATCH, ENCLOSING}
+	public enum Relation {FIRST_CONTAINED, EXACT_MATCH, ENCLOSING, STRICTLY_ENCLOSING}
 
 	private final Class<T> fClass;
 	private final Relation fRelation;
@@ -105,10 +105,14 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			return selOffset <= offset && endOffset <= selEndOffset;
 		case ENCLOSING:
 			return offset <= selOffset && selEndOffset <= endOffset;
-		default:
-			assert false;
-			return false;
+		case STRICTLY_ENCLOSING:
+			if (offset <= selOffset && selEndOffset <= endOffset) {
+				return offset != selOffset || selEndOffset != endOffset;
+			}
+			return false; 
 		}
+		assert false;
+		return false;
 	}
 
 	public boolean isAcceptableNode(IASTNode astNode) {
@@ -134,12 +138,16 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		case EXACT_MATCH:
 		case ENCLOSING:
 			return offset <= fSeqNumber && fSeqEndNumber <= endOffset;
+		case STRICTLY_ENCLOSING:
+			if (offset <= fSeqNumber && fSeqEndNumber <= endOffset) {
+				return offset != fSeqNumber || fSeqEndNumber != endOffset;
+			}
+			return false; 
 		case FIRST_CONTAINED:
 			return offset <= fSeqEndNumber && fSeqNumber <= endOffset;
-		default:
-			assert false;
-		return false;
 		}
+		assert false;
+		return false;
 	}
 
 	private void storeIfBest(IASTFileLocation loc, T astNode) {
@@ -179,6 +187,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 			}
 			return false;
 		case ENCLOSING: 
+		case STRICTLY_ENCLOSING: 
 			final int bestLength= fBestEndOffset-fBestOffset;
 			if (length < bestLength) {
 				return true;
@@ -202,7 +211,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 
 	public IASTPreprocessorMacroExpansion findLeadingMacroExpansion(ASTNodeSelector nodeSelector) {
 		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fZeroToLeft ? fFileOffset-1 : fFileOffset, 1);
-		if (fRelation == Relation.ENCLOSING)
+		if (fRelation == Relation.ENCLOSING || fRelation == Relation.STRICTLY_ENCLOSING)
 			return exp;
 		
 		if (exp != null) {
@@ -219,7 +228,7 @@ public class ASTNodeSpecification<T extends IASTNode> {
 
 	public IASTPreprocessorMacroExpansion findTrailingMacroExpansion(ASTNodeSelector nodeSelector) {
 		IASTPreprocessorMacroExpansion exp= nodeSelector.findEnclosingMacroExpansion(fFileEndOffset==fFileOffset && !fZeroToLeft ? fFileEndOffset : fFileEndOffset-1, 1);
-		if (fRelation == Relation.ENCLOSING)
+		if (fRelation == Relation.ENCLOSING || fRelation == Relation.STRICTLY_ENCLOSING)
 			return exp;
 		
 		if (exp != null) {

@@ -14,7 +14,9 @@ import java.util.ResourceBundle;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ISourceRange;
 
@@ -44,29 +46,12 @@ public class StructureSelectEnclosingAction extends StructureSelectionAction {
 	 * Made public to serve as fallback for other expansions
 	 */
 	public static ISourceRange expandToEnclosing(IASTTranslationUnit ast, SourceRange current) {
-		IASTNode enclosingNode = ast.getNodeSelector(null).findEnclosingNode(current.getStartPos(),
-				current.getLength());
-
-		int newOffset = enclosingNode.getFileLocation().getNodeOffset();
-		int newLength = enclosingNode.getFileLocation().getNodeLength();
-
-		// we can have some nested nodes with same position, so traverse until we have a new position.
-		while (newOffset == current.getStartPos() && newLength == current.getLength()) {
-			IASTNode toBeSelected = enclosingNode.getParent();
-			// if we can't traverse further, give up
-			if (toBeSelected == null
-					|| toBeSelected.getFileLocation().getFileName() != enclosingNode.getFileLocation()
-							.getFileName()) {
-				return null;
-			}
-			newOffset = toBeSelected.getFileLocation().getNodeOffset();
-			newLength = toBeSelected.getFileLocation().getNodeLength();
-
-			enclosingNode = toBeSelected;
-		}
-
-		return new SourceRange(newOffset, newLength);
+		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+		IASTNode node = nodeSelector.findStrictlyEnclosingNode(current.getStartPos(), current.getLength());
+		if (node == null)
+			return null;
+		
+		final IASTFileLocation fileLocation = node.getFileLocation();
+		return new SourceRange(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
 	}
-	
-
 }

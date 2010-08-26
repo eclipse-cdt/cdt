@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
@@ -184,11 +183,16 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 			
 			if(sdec.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
 				return result;
-			} else if(sdec.getDeclSpecifier() instanceof ICPPASTDeclSpecifier) {
+			} else {
 				IASTDeclarator[] dcs= sdec.getDeclarators();
-				if(dcs.length == 1 && dcs[0] instanceof ICPPASTFunctionDeclarator) {
-					ICPPASTFunctionDeclarator fdecl= (ICPPASTFunctionDeclarator) dcs[0];
-					boolean shouldDocument= documentDeclarations || (documentPureVirtuals && fdecl.isPureVirtual());
+				if(dcs.length == 1 && dcs[0] instanceof IASTFunctionDeclarator) {
+					IASTFunctionDeclarator fdecl = (IASTFunctionDeclarator)dcs[0];
+					boolean shouldDocument= documentDeclarations;
+					if(documentPureVirtuals && dcs[0] instanceof ICPPASTFunctionDeclarator) {
+						ICPPASTFunctionDeclarator cppfdecl= (ICPPASTFunctionDeclarator) dcs[0];
+						shouldDocument = shouldDocument || cppfdecl.isPureVirtual();
+					}
+					
 					if(shouldDocument) {
 						return documentFunction(fdecl, sdec.getDeclSpecifier());
 					}

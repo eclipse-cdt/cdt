@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -37,11 +36,7 @@ public class C99Field extends C99Variable implements IC99Binding, IField, ITypea
 
 	@Override
 	public IScope getScope() {
-		try {
-			return compositeTypeOwner.getCompositeScope();
-		} catch (DOMException e) {
-			return null; // should never happen
-		}
+		return compositeTypeOwner.getCompositeScope();
 	}
 
 

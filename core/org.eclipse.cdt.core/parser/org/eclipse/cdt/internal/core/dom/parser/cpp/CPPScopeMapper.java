@@ -88,19 +88,19 @@ public class CPPScopeMapper {
 			return fScope.getKind();
 		}
 
-		public IBinding[] find(String name) throws DOMException {
+		public IBinding[] find(String name) {
 			return fScope.find(name);
 		}
-		public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		public IBinding getBinding(IASTName name, boolean resolve) {
 			return fScope.getBinding(name, resolve);
 		}
-		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) throws DOMException {
+		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
 			return fScope.getBinding(name, resolve, acceptLocalBindings);
 		}
-		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 			return fScope.getBindings(name, resolve, prefixLookup);
 		}
-		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet acceptLocalBindings) throws DOMException {
+		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,	IIndexFileSet acceptLocalBindings) {
 			return fScope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
 		}
 		public IScope getParent() throws DOMException {
@@ -111,7 +111,7 @@ public class CPPScopeMapper {
 			return fTu.getScope();
 		}
 
-		public IName getScopeName() throws DOMException {
+		public IName getScopeName() {
 			return fScope.getScopeName();
 		}
 

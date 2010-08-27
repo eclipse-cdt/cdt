@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -23,7 +22,7 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 		super(cf, alias);
 	}
 	
-	public IBinding[] getMemberBindings() throws DOMException {
+	public IBinding[] getMemberBindings() {
 		IBinding[] result= ((ICPPNamespaceAlias)rbinding).getMemberBindings();
 		for(int i=0; i<result.length; i++) {
 			result[i]= cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
@@ -31,7 +30,7 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 		return result;
 	}
 
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+	public ICPPNamespaceScope getNamespaceScope() {
 		return (ICPPNamespaceScope) cf.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias)rbinding).getNamespaceScope());
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -24,16 +23,16 @@ class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
 		super(cf, rbinding);
 	}
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		IIndexFragmentBinding rowner = (IIndexFragmentBinding) ((ICPPField)rbinding).getClassOwner();
 		return (ICPPClassType) cf.getCompositeBinding(rowner);
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return ((ICPPField)rbinding).getVisibility();
 	}
 	
-	public ICompositeType getCompositeTypeOwner() throws DOMException {
+	public ICompositeType getCompositeTypeOwner() {
 		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
 		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}

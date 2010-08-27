@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -24,7 +24,7 @@ public interface ICompositeType extends IBinding, IType {
 	/**
 	 *  what kind of composite type is this?
 	 */
-	public int getKey() throws DOMException;
+	public int getKey();
 	
 	/**
 	 * Returns whether the type is anonymous or not. A type for which objects or 
@@ -36,14 +36,14 @@ public interface ICompositeType extends IBinding, IType {
 	 * </pre>
 	 * @since 5.1
 	 */
-	boolean isAnonymous() throws DOMException;
+	boolean isAnonymous();
 	
 	/**
 	 * Returns the fields for this type.
 	 * 
 	 * @return List of IField
 	 */
-	public IField[] getFields() throws DOMException;
+	public IField[] getFields();
 	
 	/**
 	 * returns the field that matches name,
@@ -51,11 +51,10 @@ public interface ICompositeType extends IBinding, IType {
 	 * 
 	 * @param name
 	 */
-	public IField findField( String name ) throws DOMException;
+	public IField findField(String name);
 	
 	/**
 	 * get the IScope object that is associated with this composite type
-	 * @throws DOMException
 	 */
-	public IScope getCompositeScope() throws DOMException;
+	public IScope getCompositeScope();
 }

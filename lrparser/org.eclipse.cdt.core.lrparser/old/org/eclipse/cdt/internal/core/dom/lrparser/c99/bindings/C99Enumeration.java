@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -107,7 +106,7 @@ public class C99Enumeration extends PlatformObject implements IC99Binding, IEnum
 		this.scope = scope;
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (scope != null) {
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
 		}

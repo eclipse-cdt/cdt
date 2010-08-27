@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
@@ -23,16 +22,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 public interface ICPPNamespace extends ICPPBinding {
 	/**
 	 * get the scope object associated with this namespace
-	 * 
-	 * @throws DOMException
 	 */
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
+	public ICPPNamespaceScope getNamespaceScope();
 	
 	/**
 	 * get an array of the all the bindings declared in this namespace.
-	 * @throws DOMException
 	 */
-	public IBinding[] getMemberBindings() throws DOMException;
+	public IBinding[] getMemberBindings();
 
 	/**
 	 * Returns whether this is an inline namespace.

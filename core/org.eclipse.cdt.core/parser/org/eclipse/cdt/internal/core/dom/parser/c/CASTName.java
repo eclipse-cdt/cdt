@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -223,22 +221,17 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 			if (bindings[i] instanceof ICompositeType) {
 				ICompositeType type = (ICompositeType) bindings[i];
 				
-				try {
-					switch (type.getKey()) { 
-					case ICompositeType.k_struct:
-						if (kind != IASTElaboratedTypeSpecifier.k_struct) {
-							bindings[i] = null;
-						}
-						break;
-					case ICompositeType.k_union:
-						if (kind != IASTElaboratedTypeSpecifier.k_union) {
-							bindings[i] = null;
-						}
-						break;
+				switch (type.getKey()) { 
+				case ICompositeType.k_struct:
+					if (kind != IASTElaboratedTypeSpecifier.k_struct) {
+						bindings[i] = null;
 					}
-				} catch (DOMException e) {
-					bindings[i] = null;
-					CCorePlugin.log(e);
+					break;
+				case ICompositeType.k_union:
+					if (kind != IASTElaboratedTypeSpecifier.k_union) {
+						bindings[i] = null;
+					}
+					break;
 				}
 			} else {
 				bindings[i]= null;

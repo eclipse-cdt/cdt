@@ -99,7 +99,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	private short getAnnotation(ICPPFunction function) throws DOMException {
+	private short getAnnotation(ICPPFunction function) {
 		int annot= PDOMCPPAnnotation.encodeAnnotation(function) & 0xff;
 		if (function.hasParameterPack()) {
 			annot |= (1<<ANNOT_PARAMETER_PACK);
@@ -190,12 +190,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			// don't store the exception specification, compute it on demand.
 			exceptionSpec= null;
 		} else {
-			try{
-				exceptionSpec= binding.getExceptionSpecification();
-			} catch (DOMException e) {
-				// ignore problems in the exception specification.
-				exceptionSpec= null;
-			}
+			exceptionSpec= binding.getExceptionSpecification();
 		}
 		return exceptionSpec;
 	}
@@ -271,11 +266,11 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return fAnnotation;
 	}
 
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		return getBit(getAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		throw new PDOMNotImplementedError();
 	}
 
@@ -340,7 +335,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return getBit(getAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		return getBit(getAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
@@ -375,7 +370,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return 0;
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);

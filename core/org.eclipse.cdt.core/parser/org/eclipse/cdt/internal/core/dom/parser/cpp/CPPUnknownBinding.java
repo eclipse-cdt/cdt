@@ -92,7 +92,7 @@ public class CPPUnknownBinding extends PlatformObject
     	return null;
     }
 
-    public ICPPScope asScope() throws DOMException {
+    public ICPPScope asScope() {
         if (unknownScope == null) {
             unknownScope = new CPPUnknownScope(this, name);
         }

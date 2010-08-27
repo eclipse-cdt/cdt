@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -97,8 +96,7 @@ class THGraph {
 		while (!stack.isEmpty()) {
 			THGraphNode node= stack.remove(stack.size()-1);
 			List<THGraphEdge> out= node.getOutgoing();
-			for (Iterator<THGraphEdge> iterator = out.iterator(); iterator.hasNext();) {
-				THGraphEdge	edge= iterator.next();
+			for (THGraphEdge edge : out) {
 				node= edge.getEndNode();
 				if (node == from) {
 					return true;
@@ -110,8 +108,7 @@ class THGraph {
 		}
 		// check if edge is already there.
 		List<THGraphEdge> out= from.getOutgoing();
-		for (Iterator<THGraphEdge> iterator = out.iterator(); iterator.hasNext();) {
-			THGraphEdge edge = iterator.next();
+		for (THGraphEdge edge : out) {
 			if (edge.getEndNode() == to) {
 				return true;
 			}
@@ -163,16 +160,14 @@ class THGraph {
 				if (binding instanceof ICPPClassType) {
 					ICPPClassType ct= (ICPPClassType) binding;
 					ICPPBase[] bases= ct.getBases();
-					for (int i = 0; i < bases.length; i++) {
+					for (ICPPBase base : bases) {
 						if (monitor.isCanceled()) {
 							return;
 						}
-						ICPPBase base= bases[i];
 						IName name= base.getBaseClassSpecifierName();
 						IBinding basecl= name != null ? index.findBinding(name) : base.getBaseClass();
 						ICElementHandle[] baseElems= IndexUI.findRepresentative(index, basecl);
-						for (int j = 0; j < baseElems.length; j++) {
-							ICElementHandle baseElem = baseElems[j];
+						for (ICElementHandle baseElem : baseElems) {
 							THGraphNode baseGraphNode= addNode(baseElem);
 							addMembers(index, baseGraphNode, basecl);							
 							addEdge(graphNode, baseGraphNode);
@@ -199,9 +194,6 @@ class THGraph {
 						}
 					}
 				}
-			} catch (DOMException e) {
-				// index bindings should not throw this kind of exception, might as well log it.
-				CUIPlugin.log(e);
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
 			}
@@ -227,11 +219,10 @@ class THGraph {
 				IBinding binding = IndexUI.elementToBinding(index, elem);
 				if (binding != null) {
 					IIndexName[] names= index.findNames(binding, IIndex.FIND_REFERENCES | IIndex.FIND_DEFINITIONS);
-					for (int i = 0; i < names.length; i++) {
+					for (IIndexName indexName : names) {
 						if (monitor.isCanceled()) {
 							return;
 						}
-						IIndexName indexName = names[i];
 						if (indexName.isBaseSpecifier()) {
 							IIndexName subClassDef= indexName.getEnclosingDefinition();
 							if (subClassDef != null) {
@@ -291,8 +282,7 @@ class THGraph {
 	
 	private void addMemberElements(IIndex index, IBinding[] members, List<ICElement> memberList) 
 			throws CoreException {
-		for (int i = 0; i < members.length; i++) {
-			IBinding binding = members[i];
+		for (IBinding binding : members) {
 			ICElement[] elems= IndexUI.findRepresentative(index, binding);
 			if (elems.length > 0) {
 				memberList.add(elems[0]);

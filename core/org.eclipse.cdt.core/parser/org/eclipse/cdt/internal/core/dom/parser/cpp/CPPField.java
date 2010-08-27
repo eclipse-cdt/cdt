@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -34,26 +33,19 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
  */
 public class CPPField extends CPPVariable implements ICPPField {
     public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
-        /**
-         * @param id
-         * @param arg
-         */
-        public CPPFieldProblem( IASTNode node, int id, char[] arg ) {
+        private ICPPClassType fOwner;
+
+		public CPPFieldProblem(ICPPClassType owner, IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
+            fOwner= owner;
         }
-
-        public int getVisibility() throws DOMException {
-            throw new DOMException( this );
+        public int getVisibility() {
+            return v_private;
         }
-        public ICPPClassType getClassOwner() throws DOMException {
-            throw new DOMException( this );
+        public ICPPClassType getClassOwner() {
+            return fOwner;
         }
-        @Override
-        public boolean isStatic() throws DOMException {
-            throw new DOMException( this );
-        }
-
-		public ICompositeType getCompositeTypeOwner() throws DOMException {
+		public ICompositeType getCompositeTypeOwner() {
 			return getClassOwner();
 		}
     }
@@ -62,7 +54,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		super( name );
 	}
 
-	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
+	public IASTDeclaration getPrimaryDeclaration() {
 		//first check if we already know it
 		IASTDeclaration decl= findDeclaration(getDefinition());
 		if (decl != null) {
@@ -108,7 +100,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return null;
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		ICPPASTVisibilityLabel vis = null;
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl != null ) {
@@ -131,7 +123,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return ICPPASTVisibilityLabel.v_public;
 	}
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
 	}
@@ -151,7 +143,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 
     @Override
 	public boolean isMutable() {
-        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable);
+        return hasStorageClass( IASTDeclSpecifier.sc_mutable);
     }
     
     @Override
@@ -160,7 +152,7 @@ public class CPPField extends CPPVariable implements ICPPField {
         return false;
     }
     
-	public ICompositeType getCompositeTypeOwner() throws DOMException {
+	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}
 }

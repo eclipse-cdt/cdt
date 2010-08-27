@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,8 +177,7 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 				}
 			}
 			int pos= newParamLength;
-			for (int j = 0; j < allParams.length; j++) {
-				IPDOMCPPTemplateParameter unused = allParams[j];
+			for (IPDOMCPPTemplateParameter unused : allParams) {
 				if (unused != null)
 					newAllParams[pos++]= unused;
 			}
@@ -250,21 +249,17 @@ public class PDOMCPPClassTemplate extends PDOMCPPClassType
 				type instanceof ICPPClassSpecialization)
 			return false;
 				
-		try {
-			ICPPClassType ctype= (ICPPClassType) type;
-			if (ctype.getKey() != getKey())
-				return false;
-			char[] nchars = ctype.getNameCharArray();
-			if (nchars.length == 0) {
-				nchars= ASTTypeUtil.createNameForAnonymous(ctype);
-			}
-			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
-				return false;
-
-			return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
-		} catch (DOMException e) {
+		ICPPClassType ctype= (ICPPClassType) type;
+		if (ctype.getKey() != getKey())
 			return false;
+		char[] nchars = ctype.getNameCharArray();
+		if (nchars.length == 0) {
+			nchars= ASTTypeUtil.createNameForAnonymous(ctype);
 		}
+		if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
+			return false;
+
+		return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
 	}
 
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {

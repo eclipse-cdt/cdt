@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Google, Inc and others.
+ * Copyright (c) 2008, 2010 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
@@ -82,11 +80,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 	}
 
 	private void setKind(ICPPClassType ct) throws CoreException {
-		try {
-			getDB().putByte(record + KEY, (byte) ct.getKey());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		getDB().putByte(record + KEY, (byte) ct.getKey());
 	}
 	
 	@Override
@@ -116,7 +110,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
-	public IScope getCompositeScope() throws DOMException {
+	public IScope getCompositeScope() {
 		return this;
 	}
 
@@ -137,17 +131,16 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 	}
 
 	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		return null;
 	}
 	
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
-			throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 	
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
 	
@@ -155,7 +148,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 
 	@Override
 	public Object clone() { fail(); return null; }
-	public IField findField(String name) throws DOMException { fail(); return null; }
+	public IField findField(String name) { fail(); return null; }
 
 	@Override
 	public boolean mayHaveChildren() {
@@ -247,13 +240,10 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 				&& type instanceof ICPPDeferredClassInstance == false) {
 			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
-				try {
-					final IBinding lhsContainer = getOwner();
-					final IBinding rhsContainer = rhs.getOwner();
-					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-						return ((IType)lhsContainer).isSameType((IType) rhsContainer);
-					}
-				} catch (DOMException e) {
+				final IBinding lhsContainer = getOwner();
+				final IBinding rhsContainer = rhs.getOwner();
+				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+					return ((IType)lhsContainer).isSameType((IType) rhsContainer);
 				}
 			}
 		}

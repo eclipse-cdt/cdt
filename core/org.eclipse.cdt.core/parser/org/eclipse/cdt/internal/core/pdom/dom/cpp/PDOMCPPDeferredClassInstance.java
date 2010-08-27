@@ -85,7 +85,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 		return false;
 	}
 
-	public IScope getCompositeScope() throws DOMException {
+	public IScope getCompositeScope() {
 		return asScope();
 	}
 		
@@ -169,14 +169,14 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization implements ICPP
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
-    public int getKey() throws DOMException{
+    public int getKey(){
         return getClassTemplate().getKey();
     }
 
 	@Override
 	public Object clone() {fail();return null;}
 
-	public ICPPScope asScope() throws DOMException {
+	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
 		}

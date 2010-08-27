@@ -693,36 +693,32 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 * @throws CoreException
 	 */
  	private final PDOMNode adaptOrAddParent(boolean add, IBinding binding) throws CoreException {
- 		try {
- 			IBinding owner= binding.getOwner();
- 			if (owner instanceof IFunction && !(binding instanceof ICPPTemplateParameter)) {
- 				return null;
- 			}
+ 		IBinding owner= binding.getOwner();
+		if (owner instanceof IFunction && !(binding instanceof ICPPTemplateParameter)) {
+			return null;
+		}
 
- 			if (binding instanceof IIndexBinding) {
- 				IIndexBinding ib= (IIndexBinding) binding;
- 				// don't adapt file local bindings from other fragments to this one.
- 				if (ib.isFileLocal()) {
- 					return null;
- 				}
- 			} else {
- 				// skip unnamed namespaces
- 				while (owner instanceof ICPPNamespace) {
- 					char[] name= owner.getNameCharArray();
- 					if (name.length > 0) {
- 						break;
- 					}
- 					owner= owner.getOwner();
- 				}
- 			}
- 			
- 			if (owner == null)
- 				return this;
+		if (binding instanceof IIndexBinding) {
+			IIndexBinding ib= (IIndexBinding) binding;
+			// don't adapt file local bindings from other fragments to this one.
+			if (ib.isFileLocal()) {
+				return null;
+			}
+		} else {
+			// skip unnamed namespaces
+			while (owner instanceof ICPPNamespace) {
+				char[] name= owner.getNameCharArray();
+				if (name.length > 0) {
+					break;
+				}
+				owner= owner.getOwner();
+			}
+		}
+		
+		if (owner == null)
+			return this;
 
- 			return adaptOrAddBinding(add, owner);
- 		} catch (DOMException e) {
- 			throw new CoreException(Util.createStatus(e));
- 		}
+		return adaptOrAddBinding(add, owner);
  	}
 
 	private PDOMBinding adaptOrAddBinding(boolean add, IBinding binding) throws CoreException {
@@ -864,33 +860,29 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				name = (IASTName) parent;
 			}
 			IScope container= CPPVisitor.getContainingScope(name);
-			try {
-				boolean doit= false;
-				PDOMCPPNamespace containerNS= null;
-				
-				IASTNode node= ASTInternal.getPhysicalNodeOfScope(container);
-				if (node instanceof IASTTranslationUnit) {
-					doit= true;
-				}
-				else if (node instanceof ICPPASTNamespaceDefinition) {
-					ICPPASTNamespaceDefinition nsDef= (ICPPASTNamespaceDefinition) node;
-					IASTName nsContainerName= nsDef.getName();
-					if (nsContainerName != null) {
-						PDOMBinding binding= adaptBinding(nsContainerName.resolveBinding());
-						if (binding instanceof PDOMCPPNamespace) {
-							containerNS= (PDOMCPPNamespace) binding;
-							doit= true;
-						}
+			boolean doit= false;
+			PDOMCPPNamespace containerNS= null;
+			
+			IASTNode node= ASTInternal.getPhysicalNodeOfScope(container);
+			if (node instanceof IASTTranslationUnit) {
+				doit= true;
+			}
+			else if (node instanceof ICPPASTNamespaceDefinition) {
+				ICPPASTNamespaceDefinition nsDef= (ICPPASTNamespaceDefinition) node;
+				IASTName nsContainerName= nsDef.getName();
+				if (nsContainerName != null) {
+					PDOMBinding binding= adaptBinding(nsContainerName.resolveBinding());
+					if (binding instanceof PDOMCPPNamespace) {
+						containerNS= (PDOMCPPNamespace) binding;
+						doit= true;
 					}
 				}
-				if (doit) {
-					long rec= file.getLastUsingDirectiveRec();
-					PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
-							pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
-					file.setFirstUsingDirectiveRec(ud.getRecord());
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
+			}
+			if (doit) {
+				long rec= file.getLastUsingDirectiveRec();
+				PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
+						pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
+				file.setFirstUsingDirectiveRec(ud.getRecord());
 			}
 		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;
@@ -994,17 +986,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				}
 			}
 			if (file == null && !(binding instanceof IIndexBinding)) {
-				try {
-					IBinding owner= binding.getOwner();
-					if (owner instanceof ICPPNamespace) {
-						if (owner.getNameCharArray().length == 0) {
-							String path= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
-							if (path != null) {
-								file= wpdom.getFileForASTPath(getLinkageID(), path);
-							}
+				IBinding owner= binding.getOwner();
+				if (owner instanceof ICPPNamespace) {
+					if (owner.getNameCharArray().length == 0) {
+						String path= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
+						if (path != null) {
+							file= wpdom.getFileForASTPath(getLinkageID(), path);
 						}
 					}
-				} catch (DOMException e) {
 				}
 			}
 			if (file != null) {

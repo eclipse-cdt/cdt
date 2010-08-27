@@ -63,7 +63,6 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -81,11 +80,9 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				try {
-					ICPPClassType backup= getBackupDefinition(host);
-					if (backup != null)
-						return backup.getFriends();
-				} catch (DOMException e) {}
+				ICPPClassType backup= getBackupDefinition(host);
+				if (backup != null)
+					return backup.getFriends();
 				IASTNode[] declarations= host.getDeclarations();
 				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
 				return new IBinding[] { new ProblemBinding(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
@@ -163,7 +160,7 @@ public class ClassTypeHelper {
 	 * A host maybe backed up with a definition from the index.
 	 * @throws DOMException 
 	 */
-	private static ICPPClassType getBackupDefinition(ICPPInternalClassTypeMixinHost host) throws DOMException {
+	private static ICPPClassType getBackupDefinition(ICPPInternalClassTypeMixinHost host) {
 		ICPPClassScope scope = host.getCompositeScope();
 		if (scope != null) {
 			ICPPClassType b = scope.getClassType();
@@ -177,15 +174,11 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				try {
-					ICPPClassType backup= getBackupDefinition(host);
-					if (backup != null)
-						return backup.getBases();
-				} catch (DOMException e) {}
+				ICPPClassType backup= getBackupDefinition(host);
+				if (backup != null)
+					return backup.getBases();
 				
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPBase[] { new CPPBaseClause.CPPBaseProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
+				return ICPPBase.EMPTY_BASE_ARRAY;
 			}
 		}
 		ICPPASTBaseSpecifier[] bases = host.getCompositeTypeSpecifier().getBaseSpecifiers();
@@ -200,19 +193,15 @@ public class ClassTypeHelper {
 		return bindings; 
 	}
 
-	public static ICPPField[] getDeclaredFields(ICPPInternalClassTypeMixinHost host) throws DOMException {
+	public static ICPPField[] getDeclaredFields(ICPPInternalClassTypeMixinHost host) {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				try {
-					ICPPClassType backup= getBackupDefinition(host);
-					if (backup != null)
-						return backup.getDeclaredFields();
-				} catch (DOMException e) {}
+				ICPPClassType backup= getBackupDefinition(host);
+				if (backup != null)
+					return backup.getDeclaredFields();
 				
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPField[] { new CPPField.CPPFieldProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
+				return ICPPField.EMPTY_CPPFIELD_ARRAY;
 			}
 		}
 		IBinding binding = null;
@@ -248,9 +237,8 @@ public class ClassTypeHelper {
 	 * Returns all direct and indirect base classes that have at least a given visibility level. 
 	 * @param classType a class
 	 * @return An array of visible base classes in arbitrary order.
-	 * @throws DOMException
 	 */
-	public static ICPPClassType[] getAllBases(ICPPClassType classType) throws DOMException {
+	public static ICPPClassType[] getAllBases(ICPPClassType classType) {
 		HashSet<ICPPClassType> result= new HashSet<ICPPClassType>();
 		result.add(classType);
 		getAllBases(classType, result);
@@ -258,7 +246,7 @@ public class ClassTypeHelper {
 		return result.toArray(new ICPPClassType[result.size()]);
 	}
 	
-	private static void getAllBases(ICPPClassType classType, HashSet<ICPPClassType> result) throws DOMException {
+	private static void getAllBases(ICPPClassType classType, HashSet<ICPPClassType> result) {
 		ICPPBase[] bases= classType.getBases();
 		for (ICPPBase base : bases) {
 			IBinding b= base.getBaseClass();
@@ -271,7 +259,7 @@ public class ClassTypeHelper {
 		}
 	}
 	
-	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) throws DOMException {
+	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) {
 		ICPPMethod[] methods= ct.getDeclaredMethods();
 		ICPPClassType[] bases= getAllBases(ct);
 		for (ICPPClassType base : bases) {
@@ -280,7 +268,7 @@ public class ClassTypeHelper {
 		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, methods);
 	}
 	
-	public static ICPPMethod[] getMethods(ICPPClassType ct) throws DOMException {
+	public static ICPPMethod[] getMethods(ICPPClassType ct) {
 		ObjectSet<ICPPMethod> set= new ObjectSet<ICPPMethod>(4);
 		set.addAll(ct.getDeclaredMethods());
 		ICPPClassScope scope= (ICPPClassScope) ct.getCompositeScope();
@@ -297,7 +285,7 @@ public class ClassTypeHelper {
 		return set.keyArray(ICPPMethod.class);
 	}
 	
-	public static ICPPMethod[] getDeclaredMethods(ICPPInternalClassTypeMixinHost host) throws DOMException {
+	public static ICPPMethod[] getDeclaredMethods(ICPPInternalClassTypeMixinHost host) {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
@@ -305,9 +293,7 @@ public class ClassTypeHelper {
 				if (backup != null)
 					return backup.getDeclaredMethods();
 
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPMethod[] { new CPPMethod.CPPMethodProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
+				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 			}
 		}
 		IBinding binding = null;
@@ -357,12 +343,10 @@ public class ClassTypeHelper {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
-	public static ICPPConstructor[] getConstructors(ICPPInternalClassTypeMixinHost host) throws DOMException {
+	public static ICPPConstructor[] getConstructors(ICPPInternalClassTypeMixinHost host) {
 		ICPPClassScope scope = host.getCompositeScope();
 		if (scope == null) {
-			IASTNode[] declarations= host.getDeclarations();
-			IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-			return new ICPPConstructor[] { new CPPConstructor.CPPConstructorProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
+			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		}
 		return scope.getConstructors();
 	}
@@ -371,15 +355,11 @@ public class ClassTypeHelper {
 		if (host.getDefinition() == null) {
 			host.checkForDefinition();
 			if (host.getDefinition() == null) {
-				try {
-					ICPPClassType backup= getBackupDefinition(host);
-					if (backup != null)
-						return backup.getNestedClasses();
-				} catch (DOMException e) {}
+				ICPPClassType backup= getBackupDefinition(host);
+				if (backup != null)
+					return backup.getNestedClasses();
 				
-				IASTNode[] declarations= host.getDeclarations();
-				IASTNode node = (declarations != null && declarations.length > 0) ? declarations[0] : null;
-				return new ICPPClassType[] { new CPPClassTypeProblem(node, IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, host.getNameCharArray()) };
+				return ICPPClassType.EMPTY_CLASS_ARRAY;
 			}
 		}
 
@@ -405,7 +385,7 @@ public class ClassTypeHelper {
 		return (ICPPClassType[]) ArrayUtil.trim(ICPPClassType.class, result);
 	}
 
-	public static IField[] getFields(ICPPClassType ct) throws DOMException {
+	public static IField[] getFields(ICPPClassType ct) {
 		IField[] fields = ct.getDeclaredFields();
 		ICPPClassType[] bases = getAllBases(ct);
 		for (ICPPClassType base : bases) {
@@ -414,7 +394,7 @@ public class ClassTypeHelper {
 		return (IField[]) ArrayUtil.trim(IField.class, fields);
 	}
 
-	public static IField findField(ICPPClassType ct, String name) throws DOMException {
+	public static IField findField(ICPPClassType ct, String name) {
 		IBinding[] bindings = CPPSemantics.findBindings(ct.getCompositeScope(), name, true);
 		IField field = null;
 		for (IBinding binding : bindings) {
@@ -424,7 +404,7 @@ public class ClassTypeHelper {
 				} else {
 					IASTNode[] decls= ASTInternal.getDeclarationsOfBinding(ct);
 					IASTNode node= (decls != null && decls.length > 0) ? decls[0] : null;
-					return new CPPField.CPPFieldProblem(node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray());
+					return new CPPField.CPPFieldProblem(ct, node, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, name.toCharArray());
 				}
 			}
 		}
@@ -659,9 +639,8 @@ public class ClassTypeHelper {
 	
 	/**
 	 * For implicit methods the exception specification is inherited, search it
-	 * @throws DOMException 
 	 */
-	public static IType[] getInheritedExceptionSpecification(ICPPMethod implicitMethod) throws DOMException {
+	public static IType[] getInheritedExceptionSpecification(ICPPMethod implicitMethod) {
 		// See 15.4.13
 		ICPPClassType owner= implicitMethod.getClassOwner();
 		if (owner == null || owner.getBases().length == 0) 
@@ -690,40 +669,43 @@ public class ClassTypeHelper {
 		return inheritedTypeids.toArray(new IType[inheritedTypeids.size()]);
 	}
 
-	private static int getImplicitMethodKind(ICPPClassType ct, ICPPMethod method) throws DOMException {
-		if (method instanceof ICPPConstructor) {
-			final IFunctionType type= method.getType();
-			final IType[] params= type.getParameterTypes();
-			if (params.length == 0)
-				return KIND_DEFAULT_CTOR;
-			if (params.length == 1) {
-				IType t= SemanticUtil.getNestedType(params[0], SemanticUtil.TDEF);
-				if (SemanticUtil.isVoidType(t))
+	private static int getImplicitMethodKind(ICPPClassType ct, ICPPMethod method) {
+		try {
+			if (method instanceof ICPPConstructor) {
+				final IFunctionType type= method.getType();
+				final IType[] params= type.getParameterTypes();
+				if (params.length == 0)
 					return KIND_DEFAULT_CTOR;
+				if (params.length == 1) {
+					IType t= SemanticUtil.getNestedType(params[0], SemanticUtil.TDEF);
+					if (SemanticUtil.isVoidType(t))
+						return KIND_DEFAULT_CTOR;
 
-				if (isRefToConstClass(ct, t))
-					return KIND_COPY_CTOR;
+					if (isRefToConstClass(ct, t))
+						return KIND_COPY_CTOR;
+				}
+				return KIND_OTHER;
 			}
-			return KIND_OTHER;
-		}
-		
-		if (method.isDestructor())
-			return KIND_DTOR;
-		
-		if (CharArrayUtils.equals(method.getNameCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
-			final IFunctionType type= method.getType();
-			final IType[] params= type.getParameterTypes();
-			if (params.length == 1) {
-				IType t= params[0];
-				if (isRefToConstClass(ct, t))
-					return KIND_ASSIGNMENT_OP;
+
+			if (method.isDestructor())
+				return KIND_DTOR;
+
+			if (CharArrayUtils.equals(method.getNameCharArray(), OverloadableOperator.ASSIGN.toCharArray())) {
+				final IFunctionType type= method.getType();
+				final IType[] params= type.getParameterTypes();
+				if (params.length == 1) {
+					IType t= params[0];
+					if (isRefToConstClass(ct, t))
+						return KIND_ASSIGNMENT_OP;
+				}
+				return KIND_OTHER;
 			}
-			return KIND_OTHER;
+		} catch (DOMException e) {
 		}
 		return KIND_OTHER;	
 	}
 
-	private static boolean isRefToConstClass(ICPPClassType ct, IType t) throws DOMException {
+	private static boolean isRefToConstClass(ICPPClassType ct, IType t) {
 		while (t instanceof ITypedef)
 			t= ((ITypedef) t).getType();
 		
@@ -739,7 +721,7 @@ public class ClassTypeHelper {
 		return false;
 	}
 
-	private static ICPPMethod getMethodInClass(ICPPClassType ct, int kind) throws DOMException {
+	private static ICPPMethod getMethodInClass(ICPPClassType ct, int kind) {
 		switch(kind) {
 		case KIND_DEFAULT_CTOR:
 		case KIND_COPY_CTOR:
@@ -772,7 +754,7 @@ public class ClassTypeHelper {
 	 * no private or protected non-static data members (Clause 11), 
 	 * no base classes (Clause 10), and no virtual functions (10.3).
 	 */
-	public static boolean isAggregateClass(ICPPClassType classTarget) throws DOMException {
+	public static boolean isAggregateClass(ICPPClassType classTarget) {
 		if (classTarget.getBases().length > 0)
 			return false;
 		ICPPMethod[] methods = classTarget.getDeclaredMethods();

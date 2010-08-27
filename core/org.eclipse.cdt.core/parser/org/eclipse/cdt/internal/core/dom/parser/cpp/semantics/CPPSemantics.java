@@ -1070,15 +1070,12 @@ public class CPPSemantics {
 				}
 				if (b instanceof ICPPMember) {
 					ICPPMember mem= (ICPPMember) b;
-					try {
-						if (!mem.isStatic()) {
-							ICPPClassType owner= mem.getClassOwner();
-							if (owner instanceof ICPPUnknownBinding || owner instanceof ICPPTemplateDefinition) {
-								result[0]= true;
-								return PROCESS_ABORT;
-							}
+					if (!mem.isStatic()) {
+						ICPPClassType owner= mem.getClassOwner();
+						if (owner instanceof ICPPUnknownBinding || owner instanceof ICPPTemplateDefinition) {
+							result[0]= true;
+							return PROCESS_ABORT;
 						}
-					} catch (DOMException e) {
 					}
 				}
 				if (b instanceof IVariable) {
@@ -1308,12 +1305,7 @@ public class CPPSemantics {
 
 	public static void populateCache(ICPPASTInternalScope scope) {
 		IASTNode[] nodes = null;
-		IASTNode parent;
-		try {
-			parent = ASTInternal.getPhysicalNodeOfScope(scope);
-		} catch (DOMException e) {
-			return;
-		}
+		IASTNode parent= ASTInternal.getPhysicalNodeOfScope(scope);
 		
 		IASTName[] namespaceDefs = null;
 		int namespaceIdx = -1;
@@ -2991,12 +2983,7 @@ public class CPPSemantics {
     	if (cls == null)
     		return null;
 
-    	IScope scope = null;
-		try {
-			scope = cls.getCompositeScope();
-		} catch (DOMException e) {
-			return null;
-		}
+    	IScope scope = cls.getCompositeScope();
 		if (scope == null)
 			return null;
 
@@ -3275,15 +3262,15 @@ public class CPPSemantics {
     	return type instanceof ICPPClassType || type instanceof IEnumeration;
     }
     
-    public static IBinding[] findBindings(IScope scope, String name, boolean qualified) throws DOMException {
+    public static IBinding[] findBindings(IScope scope, String name, boolean qualified) {
 		return findBindings(scope, name.toCharArray(), qualified, null);
 	}
 
-	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified) throws DOMException {
+	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified) {
 		return findBindings(scope, name, qualified, null);
 	}
 
-	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified, IASTNode beforeNode) throws DOMException {
+	public static IBinding[] findBindings(IScope scope, char[] name, boolean qualified, IASTNode beforeNode) {
 	    CPPASTName astName = new CPPASTName();
 	    astName.setName(name);
 	    astName.setParent(ASTInternal.getPhysicalNodeOfScope(scope));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -94,14 +93,13 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 	}
 
 	public IBinding getBinding(IASTName name, boolean resolve,
-			IIndexFileSet acceptLocalBindings) throws DOMException {
+			IIndexFileSet acceptLocalBindings) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public IBinding[] getBindings(IASTName name, boolean resolve,
-			boolean prefixLookup, IIndexFileSet acceptLocalBindings)
-			throws DOMException {
+			boolean prefixLookup, IIndexFileSet acceptLocalBindings) {
 		// TODO Auto-generated method stub
 		return null;
 	}

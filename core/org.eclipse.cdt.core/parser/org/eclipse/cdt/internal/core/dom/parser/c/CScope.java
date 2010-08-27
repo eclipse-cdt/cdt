@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -44,8 +45,6 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
@@ -129,7 +128,7 @@ public class CScope implements ICScope, IASTInternalScope {
         return CVisitor.getContainingScope( physicalNode );
     }
 
-    protected static class CollectNamesAction extends CASTVisitor {
+    protected static class CollectNamesAction extends ASTVisitor {
         private char [] name;
         private IASTName [] result = null;
         CollectNamesAction( char [] n ){
@@ -163,7 +162,7 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		return CVisitor.findBindings(this, name);
 	}
 
@@ -235,7 +234,7 @@ public class CScope implements ICScope, IASTInternalScope {
     	return getBinding(name, resolve, IIndexFileSet.EMPTY);
     }
     
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 

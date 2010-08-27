@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -40,21 +40,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
 	public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
-		public CPPMethodProblem(IASTNode node, int id, char[] arg) {
+		private ICPPClassType fOwner;
+		public CPPMethodProblem(ICPPClassType owner, IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
+			fOwner= owner;
 		}
-
-		public int getVisibility() throws DOMException {
-			throw new DOMException(this);
-		}
-		public ICPPClassType getClassOwner() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isVirtual() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isPureVirtual() throws DOMException {
-			throw new DOMException(this);
+		public ICPPClassType getClassOwner() {
+			return fOwner;
 		}
 		public boolean isDestructor() {
 			char[] name = getNameCharArray();
@@ -63,8 +55,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 
 			return false;
 		}
-		public boolean isImplicit() {
-			return false;
+		public int getVisibility() {
+			return ICPPMember.v_private;
 		}
 	}
     
@@ -72,7 +64,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		super(declarator);
 	}
 	
-	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
+	public IASTDeclaration getPrimaryDeclaration() {
 		//first check if we already know it
 		if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
@@ -120,7 +112,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl == null ){
 			IScope scope = getScope();
@@ -149,7 +141,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return ICPPASTVisibilityLabel.v_public;
 	}
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope)getScope();
 		return scope.getClassType();
 	}
@@ -174,7 +166,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */
-    public boolean isVirtual() throws DOMException {
+    public boolean isVirtual() {
     	IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl != null ){
 			ICPPASTDeclSpecifier declSpec = getDeclSpec(decl);
@@ -198,7 +190,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
      */
     @Override
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
         IASTDeclaration decl = getPrimaryDeclaration();
         if( decl instanceof IASTFunctionDefinition )
             return true;
@@ -214,7 +206,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
      */
     @Override
 	public boolean isMutable() {
-        return hasStorageClass( this, ICPPASTDeclSpecifier.sc_mutable );
+        return hasStorageClass( this, IASTDeclSpecifier.sc_mutable );
     }
 
 	/* (non-Javadoc)
@@ -235,7 +227,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isPureVirtual()
      */
-    public boolean isPureVirtual() throws DOMException {
+    public boolean isPureVirtual() {
     	if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
 				if (dtor == null) 

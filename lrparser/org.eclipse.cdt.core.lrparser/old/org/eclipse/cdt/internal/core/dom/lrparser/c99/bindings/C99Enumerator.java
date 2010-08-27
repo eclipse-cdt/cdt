@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -68,7 +67,7 @@ public class C99Enumerator extends PlatformObject implements IC99Binding, IEnume
 		this.scope = scope;
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (type instanceof IBinding)
 			return (IBinding) type;
 		return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,12 +74,12 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return fType;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
 		return hasFlag(flag, true);
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, false);
 	}
@@ -170,12 +170,8 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	protected byte encodeFlags(IParameter param) {
 		// C99 ISO/IEC 9899: 6.7.5.3.2
 		byte flags= 0;
-		try {
-			flags |= (param.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
-			flags |= (param.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
-		} catch (DOMException e) {
-			// ignore and miss out on some flags
-		}
+		flags |= (param.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
+		flags |= (param.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
 		return flags;
 	}
 
@@ -190,11 +186,11 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	}
 	
 	
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return false;
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return false;
 	}
 }

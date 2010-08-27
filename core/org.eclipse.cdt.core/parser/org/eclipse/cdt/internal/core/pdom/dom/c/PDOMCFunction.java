@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,11 +152,11 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		}
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
@@ -184,21 +184,21 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		}
 	}
 	
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 9899:TC1 6.9.1.4
 		return false;
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 9899:TC1 6.9.1.4
 		return false;
 	}
 
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 	

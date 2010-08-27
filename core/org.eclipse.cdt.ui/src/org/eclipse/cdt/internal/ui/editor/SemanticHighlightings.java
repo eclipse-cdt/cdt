@@ -260,13 +260,7 @@ public class SemanticHighlightings {
 				}
 				IBinding binding= token.getBinding();
 				if (binding instanceof IField && !(binding instanceof IProblemBinding)) {
-					try {
-						return ((IField)binding).isStatic();
-					} catch (DOMException exc) {
-						CUIPlugin.log(exc);
-					} catch (Error e) /* PDOMNotImplementedError */ {
-						// ignore
-					}
+					return ((IField)binding).isStatic();
 				}
 			}
 			return false;
@@ -514,13 +508,7 @@ public class SemanticHighlightings {
 				}
 				IBinding binding= token.getBinding();
 				if (binding instanceof ICPPMethod && !(binding instanceof IProblemBinding)) {
-					try {
-						return ((ICPPMethod)binding).isStatic();
-					} catch (DOMException exc) {
-						CUIPlugin.log(exc);
-					} catch (Error e) /* PDOMNotImplementedError */ {
-						// ignore
-					}
+					return ((ICPPMethod)binding).isStatic();
 				}
 			}
 			return false;

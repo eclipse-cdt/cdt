@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2005, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -69,12 +69,7 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
         RefactoringStatus result= new RefactoringStatus();
         IScope scope= argument.getScope();
         if (scope != null) {
-            IASTNode node= null;
-            try {
-                node = ASTInternal.getPhysicalNodeOfScope(scope);
-            } catch (DOMException e) {
-                getAstManager().handleDOMException(argument.getTranslationUnit(), e, result);
-            }
+            IASTNode node= ASTInternal.getPhysicalNodeOfScope(scope);
             if (node instanceof IASTCompositeTypeSpecifier) {
                 IASTCompositeTypeSpecifier se= (IASTCompositeTypeSpecifier) node;
                 IASTName name= ASTManager.getSimpleName(se.getName());

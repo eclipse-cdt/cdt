@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,21 +122,17 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
-		try {
-			long typelist= 0;
-			if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
-				// don't store the exception specification, computed it on demand.
-			} else {
-				typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
-			}
-			db.putRecPtr(record + EXCEPTION_SPEC, typelist);
-		} catch (DOMException e) {
-			// ignore problems in the exception specification
+		long typelist= 0;
+		if (astFunction instanceof ICPPMethod && ((ICPPMethod) astFunction).isImplicit()) {
+			// don't store the exception specification, computed it on demand.
+		} else {
+			typelist = PDOMCPPTypeList.putTypes(this, astFunction.getExceptionSpecification());
 		}
+		db.putRecPtr(record + EXCEPTION_SPEC, typelist);
 
 	}
 
-	private short getAnnotation(ICPPFunction astFunction) throws DOMException {
+	private short getAnnotation(ICPPFunction astFunction) {
 		int annot= PDOMCPPAnnotation.encodeAnnotation(astFunction) & 0xff;
 		if (astFunction.hasParameterPack()) {
 			annot |= (1 << ANNOT_PARAMETER_PACK);
@@ -161,7 +157,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return IIndexCPPBindingConstants.CPP_FUNCTION_SPECIALIZATION;
 	}
 
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		return getBit(readAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
@@ -176,7 +172,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return fAnnotation;
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return false;
 	}
 
@@ -219,29 +215,29 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return fType;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return getBit(readAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		return getBit(readAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return getBit(readAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		return getBit(readAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
@@ -283,7 +279,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);

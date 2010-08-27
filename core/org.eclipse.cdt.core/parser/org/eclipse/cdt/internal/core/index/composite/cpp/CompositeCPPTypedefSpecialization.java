@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -30,12 +29,9 @@ class CompositeCPPTypedefSpecialization extends CompositeCPPTypedef implements I
 	}	
 	
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		try {
-			IBinding owner= getOwner();
-			if (owner instanceof ICPPSpecialization) {
-				return ((ICPPSpecialization) owner).getTemplateParameterMap();
-			}
-		} catch (DOMException e) {
+		IBinding owner= getOwner();
+		if (owner instanceof ICPPSpecialization) {
+			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
 		return CPPTemplateParameterMap.EMPTY;
 	}

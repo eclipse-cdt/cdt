@@ -1637,23 +1637,19 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 			int friends,
 			int constructors,
 			int nestedClasses) {
-		try {
-			assertTrue(type instanceof ICPPClassType);
-			ICPPClassType classType = (ICPPClassType) type;
-			assertQNEquals(qn, classType);
-			assertEquals(key, classType.getKey());
-			assertEquals(bases, classType.getBases().length);
-			assertEquals(fields, classType.getFields().length);
-			assertEquals(declaredFields, classType.getDeclaredFields().length);
-			assertEquals(methods, classType.getMethods().length);
-			assertEquals(declaredMethods, classType.getDeclaredMethods().length);
-			assertEquals(allDeclaredMethods, classType.getAllDeclaredMethods().length);
-			// assertEquals(friends, classType.getFriends().length); (PDOMNotImplementedError)
-			assertEquals(constructors, classType.getConstructors().length);
-			assertEquals(nestedClasses, classType.getNestedClasses().length);
-		} catch (DOMException de) {
-			fail(de.getMessage());
-		}
+		assertTrue(type instanceof ICPPClassType);
+		ICPPClassType classType = (ICPPClassType) type;
+		assertQNEquals(qn, classType);
+		assertEquals(key, classType.getKey());
+		assertEquals(bases, classType.getBases().length);
+		assertEquals(fields, classType.getFields().length);
+		assertEquals(declaredFields, classType.getDeclaredFields().length);
+		assertEquals(methods, classType.getMethods().length);
+		assertEquals(declaredMethods, classType.getDeclaredMethods().length);
+		assertEquals(allDeclaredMethods, classType.getAllDeclaredMethods().length);
+		// assertEquals(friends, classType.getFriends().length); (PDOMNotImplementedError)
+		assertEquals(constructors, classType.getConstructors().length);
+		assertEquals(nestedClasses, classType.getNestedClasses().length);
 	}
 
 	public void assertEnumeration(IBinding binding, String name, String[] enumerators) throws DOMException {

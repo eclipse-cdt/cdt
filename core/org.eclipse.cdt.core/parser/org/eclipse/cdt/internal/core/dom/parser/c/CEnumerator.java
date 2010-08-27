@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -35,9 +34,6 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
     public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
         public CEnumeratorProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
-        }
-        public IType getType() throws DOMException {
-            throw new DOMException(this);
         }
 		public IValue getValue() {
 			return Value.UNKNOWN;

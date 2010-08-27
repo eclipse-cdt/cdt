@@ -113,7 +113,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return false;
 	}
 
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		if (getDefinition() != null) {
 			IASTNode def = getDefinition();
 			while (!(def instanceof IASTFunctionDefinition))
@@ -123,7 +123,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return getFunction().isInline();
 	}
 	
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		if (CPPVisitor.isExternC(getDefinition())) {
 			return true;
 		}
@@ -139,35 +139,33 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		if (f instanceof ICPPInternalFunction)
 			return ((ICPPInternalFunction)f).isStatic(resolveAll);
 		if (f instanceof IIndexBinding && f instanceof ICPPFunction) {
-			try {
-				return ((ICPPFunction) f).isStatic();
-			} catch(DOMException de) { /* cannot occur as we query the index */}
+			return ((ICPPFunction) f).isStatic();
 		}
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_static);
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
 			return f.isExtern();
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_extern);
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
 			return f.isAuto();
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_auto);
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
 			return f.isRegister();
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_register);
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
 			return f.takesVarArgs();
@@ -295,7 +293,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return result.toString();
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		if (specializedExceptionSpec == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
 			IType[] types = function.getExceptionSpecification();

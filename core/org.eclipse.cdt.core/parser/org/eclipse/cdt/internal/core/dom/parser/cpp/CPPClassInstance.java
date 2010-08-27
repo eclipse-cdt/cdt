@@ -15,7 +15,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -47,11 +46,7 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 	}
 
 	public boolean isExplicitSpecialization() {
-		try {
-			return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
-		} catch (DOMException e) {
-			return false;
-		}
+		return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
 	}
 
 	@Deprecated

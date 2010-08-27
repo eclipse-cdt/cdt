@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		super(name);
 	}
 
-	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
+	public IASTDeclaration getPrimaryDeclaration() {
 		//first check if we already know it
 		if (declarations != null) {
 			for (IASTName declaration : declarations) {
@@ -65,8 +65,13 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		
 		final char[] myName = getTemplateName().getLookupKey();
 		IScope scope = getScope();
-		if (scope instanceof ICPPTemplateScope)
-			scope = scope.getParent();
+		if (scope instanceof ICPPTemplateScope) {
+			try {
+				scope = scope.getParent();
+			} catch (DOMException e) {
+				return null;
+			}
+		}
 		ICPPClassScope clsScope = (ICPPClassScope) scope;
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) ASTInternal.getPhysicalNodeOfScope(clsScope);
 		IASTDeclaration[] members = compSpec.getMembers();
@@ -92,7 +97,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return null;
 	}
 	
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl == null ){
 			ICPPClassType cls = getClassOwner();
@@ -118,10 +123,14 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return ICPPASTVisibilityLabel.v_public;
 	}
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		IScope scope= getScope();
 		if (scope instanceof ICPPTemplateScope) {
-			scope= scope.getParent();
+			try {
+				scope= scope.getParent();
+			} catch (DOMException e) {
+				return null;
+			}
 		}
 		if( scope instanceof ICPPClassScope ){
 			return ((ICPPClassScope)scope).getClassType();
@@ -135,7 +144,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
     }
 
     @Override
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
         IASTDeclaration decl = getPrimaryDeclaration();
         if( decl instanceof ICPPASTTemplateDeclaration && ((ICPPASTTemplateDeclaration)decl).getDeclaration() instanceof IASTFunctionDefinition )
             return true;
@@ -155,7 +164,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return false;
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		return false;
 	}
 

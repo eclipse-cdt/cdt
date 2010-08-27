@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -48,12 +47,8 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		final Database db = getDB();
 		db.putRecPtr(record+ARGUMENTS, argListRec);
 		
-		try {
-			long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
-			db.putRecPtr(record+EXCEPTION_SPEC, exceptSpecRec);
-		} catch (DOMException e) {
-			// ignore problems in the exception specification
-		}
+		long exceptSpecRec = PDOMCPPTypeList.putTypes(this, function.getExceptionSpecification());
+		db.putRecPtr(record+EXCEPTION_SPEC, exceptSpecRec);
 	}
 
 	public PDOMCPPFunctionInstance(PDOMLinkage linkage, long bindingRecord) {
@@ -93,7 +88,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 	}
 	
 	@Override
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);
 			return PDOMCPPTypeList.getTypes(this, rec);

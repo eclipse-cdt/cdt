@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -78,7 +78,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
     	return fDeclarations;
     }
 
-    private class FindDefinitionAction extends CPPASTVisitor {
+    private class FindDefinitionAction extends ASTVisitor {
 		private char[] nameArray = CPPEnumeration.this.getNameCharArray();
 		public IASTName result = null;
 
@@ -197,7 +197,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		return Linkage.CPP_LINKAGE;
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(getADeclaration(), true);
 	}
 

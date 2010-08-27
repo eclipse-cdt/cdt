@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -46,45 +45,6 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
         public CPPParameterProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
-        public IType getType() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isStatic() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isExtern() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isAuto() throws DOMException {
-            throw new DOMException(this);        
-        }
-        public boolean isRegister() throws DOMException {
-            throw new DOMException(this);
-        }
-		public boolean hasDefaultValue() {
-            return false;
-		}
-		public boolean isMutable() throws DOMException {
-            throw new DOMException(this);
-		}
-		public String[] getQualifiedName() throws DOMException {
-            throw new DOMException(this);
-		}
-		public char[][] getQualifiedNameCharArray() throws DOMException {
-            throw new DOMException(this);
-		}
-		public boolean isGloballyQualified() throws DOMException {
-            throw new DOMException(this);
-		}
-		public boolean isExternC() {
-			return false;
-		}
-		public IValue getInitialValue() {
-			return null;
-		}
-		public boolean isParameterPack() {
-			return false;
-		}
     }
 
 	private IType fType = null;
@@ -315,7 +275,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
 	}
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return CPPVisitor.findEnclosingFunction(fDeclarations[0]);
 	}
 

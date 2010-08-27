@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -31,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -82,19 +80,11 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 
 	private void setKind(ICompositeType ct) throws CoreException {
-		try {
-			getDB().putByte(record + KEY, (byte) ct.getKey());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		getDB().putByte(record + KEY, (byte) ct.getKey());
 	}
 	
 	private void setAnonymous(ICompositeType ct) throws CoreException {
-		try {
-			getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
 	}
 
 
@@ -114,7 +104,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		throw new UnsupportedOperationException();
 	}
 	
-	public int getKey() throws DOMException {
+	public int getKey() {
 		try {
 			return getDB().getByte(record + KEY);
 		} catch (CoreException e) {
@@ -123,7 +113,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		}
 	}
 	
-	public boolean isAnonymous() throws DOMException {
+	public boolean isAnonymous() {
 		try {
 			return getDB().getByte(record + ANONYMOUS) != 0;
 		} catch (CoreException e) {
@@ -141,11 +131,8 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 					fields.add(node);
 				}
 			} else if (node instanceof ICompositeType) {
-				try {
-					if (((ICompositeType) node).isAnonymous()) {
-						return true; // visit children
-					}
-				} catch (DOMException e) {
+				if (((ICompositeType) node).isAnonymous()) {
+					return true; // visit children
 				}
 			}
 			return false;
@@ -156,7 +143,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 			return fields.toArray(new IField[fields.size()]);
 		}
 	}
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		try {
 			GetFields fields = new GetFields();
 			accept(fields);
@@ -183,11 +170,8 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 					}
 				}
 			} else if (node instanceof ICompositeType) {
-				try {
-					if (((ICompositeType) node).isAnonymous()) {
-						return true; // visit children
-					}
-				} catch (DOMException e) {
+				if (((ICompositeType) node).isAnonymous()) {
+					return true; // visit children
 				}
 			}
 			return false;
@@ -197,7 +181,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		public IField getField() { return field; }
 	}
 	
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		final PDOM pdom = getPDOM();
 		final String key= pdom.createKeyForCache(record, name.toCharArray());
 		IField result= (IField) pdom.getCachedResult(key);
@@ -272,25 +256,25 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		return this;
 	}
 
-	public IBinding getBinding(char[] name) throws DOMException {
+	public IBinding getBinding(char[] name) {
 		return findField(new String(name));
 	}
 
 	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		return getBinding(name.toCharArray());
 	}
 	
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(name.toCharArray());
 	}
 	
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		return getBindings(name.toCharArray());
 	}
 
-	private IBinding[] getBindings(char[] name) throws DOMException {
+	private IBinding[] getBindings(char[] name) {
 		IBinding b= getBinding(name);
 		if (b == null)
 			return IBinding.EMPTY_BINDING_ARRAY;

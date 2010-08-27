@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -1295,39 +1294,36 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (c == null) {
 			return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 		}
-		try {
-			if (binding instanceof ICPPFunction) {
-				ICPPFunction func = (ICPPFunction) binding;
-				if (func.isExternC()) {
-					result = FindBinding.findBinding(c.getIndex(), c,
-							func.getNameCharArray(), new int[] { IIndexCBindingConstants.CFUNCTION }, 0);
+		if (binding instanceof ICPPFunction) {
+			ICPPFunction func = (ICPPFunction) binding;
+			if (func.isExternC()) {
+				result = FindBinding.findBinding(c.getIndex(), c,
+						func.getNameCharArray(), new int[] { IIndexCBindingConstants.CFUNCTION }, 0);
+			}
+		} else if (binding instanceof ICPPVariable) {
+			ICPPVariable var = (ICPPVariable) binding;
+			if (var.isExternC()) {
+				result = FindBinding.findBinding(c.getIndex(), c,
+						var.getNameCharArray(), new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
+			}
+		} else if (binding instanceof IEnumeration) {
+			result= FindBinding.findBinding(c.getIndex(), c, 
+					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATION }, 0);
+		} else if (binding instanceof IEnumerator) {
+			result= FindBinding.findBinding(c.getIndex(), c, 
+					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATOR }, 0);
+		} else if (binding instanceof ITypedef) {
+			result= FindBinding.findBinding(c.getIndex(), c, 
+					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CTYPEDEF }, 0);
+		} else if (binding instanceof ICompositeType) {
+			final int key= ((ICompositeType) binding).getKey();
+			if (key == ICompositeType.k_struct || key == ICompositeType.k_union) {
+				result= FindBinding.findBinding(c.getIndex(), c,
+					binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CSTRUCTURE }, 0);
+				if (result instanceof ICompositeType && ((ICompositeType) result).getKey() != key) {
+					result= null;
 				}
-			} else if (binding instanceof ICPPVariable) {
-				ICPPVariable var = (ICPPVariable) binding;
-				if (var.isExternC()) {
-					result = FindBinding.findBinding(c.getIndex(), c,
-							var.getNameCharArray(), new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
-				}
-			} else if (binding instanceof IEnumeration) {
-				result= FindBinding.findBinding(c.getIndex(), c, 
-						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATION }, 0);
-			} else if (binding instanceof IEnumerator) {
-				result= FindBinding.findBinding(c.getIndex(), c, 
-						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CENUMERATOR }, 0);
-			} else if (binding instanceof ITypedef) {
-				result= FindBinding.findBinding(c.getIndex(), c, 
-						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CTYPEDEF }, 0);
-			} else if (binding instanceof ICompositeType) {
-				final int key= ((ICompositeType) binding).getKey();
-				if (key == ICompositeType.k_struct || key == ICompositeType.k_union) {
-					result= FindBinding.findBinding(c.getIndex(), c,
-						binding.getNameCharArray(), new int[] {IIndexCBindingConstants.CSTRUCTURE }, 0);
-					if (result instanceof ICompositeType && ((ICompositeType) result).getKey() != key) {
-						result= null;
-					}
-				}
-			} 
-		} catch (DOMException e) {
+			}
 		}
 		return result == null ? PDOMBinding.EMPTY_PDOMBINDING_ARRAY : new PDOMBinding[] {result};
 	}
@@ -1342,11 +1338,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			filter= new IndexFilter() {
 				@Override
 				public boolean acceptBinding(IBinding binding) {
-					try {
-						if (binding instanceof ICPPFunction) {
-							return ((ICPPFunction) binding).isExternC();
-						}
-					} catch (DOMException e) {
+					if (binding instanceof ICPPFunction) {
+						return ((ICPPFunction) binding).isExternC();
 					}
 					return false;
 				}
@@ -1356,11 +1349,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 				filter= new IndexFilter() {
 					@Override
 					public boolean acceptBinding(IBinding binding) {
-						try {
-							if (binding instanceof ICPPVariable) {
-								return ((ICPPVariable) binding).isExternC();
-							}
-						} catch (DOMException e) {
+						if (binding instanceof ICPPVariable) {
+							return ((ICPPVariable) binding).isExternC();
 						}
 						return false;
 					}
@@ -1388,22 +1378,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			};
 		} else if (binding instanceof ICompositeType) {
-			try {
-				final int key = ((ICompositeType) binding).getKey();
-				filter= new IndexFilter() {
-					@Override
-					public boolean acceptBinding(IBinding binding) {
-						try {
-							if (binding instanceof ICompositeType) {
-								return ((ICompositeType) binding).getKey() == key;
-							}
-						} catch (DOMException e) {
-						}
-						return false;
+			final int key = ((ICompositeType) binding).getKey();
+			filter= new IndexFilter() {
+				@Override
+				public boolean acceptBinding(IBinding binding) {
+					if (binding instanceof ICompositeType) {
+						return ((ICompositeType) binding).getKey() == key;
 					}
-				};
-			} catch (DOMException e) {
-			}
+					return false;
+				}
+			};
 		}
 		if (filter != null) {
 			BindingCollector collector= new BindingCollector(cpp, binding.getNameCharArray(), filter, false, true);

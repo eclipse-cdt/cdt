@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Google, Inc and others.
+ * Copyright (c) 2009, 2010 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,11 +111,7 @@ public class AccessContext {
 				return false;
 			}
 		}
-		try {
-			namingClass = getNamingClass(accessOwner);
-		} catch (DOMException e) {
-			return false;
-		}
+		namingClass = getNamingClass(accessOwner);
 		return true;
 	}
 
@@ -222,7 +218,7 @@ public class AccessContext {
 	}
 
 	
-	private ICPPClassType getNamingClass(ICPPClassType accessOwner) throws DOMException {
+	private ICPPClassType getNamingClass(ICPPClassType accessOwner) {
 		ICPPClassType classType = firstCandidateForNamingClass;
 		if (classType != null && isUnqualifiedLookup) {
 			IBinding owner = classType.getOwner();
@@ -239,28 +235,22 @@ public class AccessContext {
 			return true;
 		}
 		if (maxdepth > 0) {
-			try {
-				for (ICPPBase cppBase : derived.getBases()) {
-					try {
-						IBinding base= cppBase.getBaseClass();
-						if (base instanceof ICPPClassType) {
-							ICPPClassType tbase= (ICPPClassType) base;
-							if (tbase.isSameType(target)) {
-								return true;
-							}
-							if (derivesFrom(tbase, target, maxdepth - 1))
-								return true;
-						}
-					} catch (DOMException e) {
+			for (ICPPBase cppBase : derived.getBases()) {
+				IBinding base= cppBase.getBaseClass();
+				if (base instanceof ICPPClassType) {
+					ICPPClassType tbase= (ICPPClassType) base;
+					if (tbase.isSameType(target)) {
+						return true;
 					}
+					if (derivesFrom(tbase, target, maxdepth - 1))
+						return true;
 				}
-			} catch (DOMException e) {
 			}
 		}
 		return false;
 	}
 
-	private static IBinding[] getContext(IASTName name) throws DOMException {
+	private static IBinding[] getContext(IASTName name) {
 		IBinding[] accessibilityContext = IBinding.EMPTY_BINDING_ARRAY;
 		for (IBinding binding = CPPVisitor.findEnclosingFunctionOrClass(name);
 				binding != null; binding = binding.getOwner()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation.
+ * Copyright (c) 2006, 2010 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -44,9 +43,8 @@ public class PDOMCAnnotation {
 	 * 
 	 * @param binding the IBinding whose annotation will be encoded.
 	 * @return a bit vector of the annotation.
-	 * @throws DOMException
 	 */
-	public static byte encodeAnnotation(IBinding binding) throws DOMException {
+	public static byte encodeAnnotation(IBinding binding) {
 		byte modifiers = 0;
 		if (binding instanceof IVariable) {
 			IVariable variable = (IVariable) binding;

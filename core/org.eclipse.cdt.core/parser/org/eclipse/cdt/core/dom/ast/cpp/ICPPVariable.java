@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
@@ -22,12 +21,11 @@ public interface ICPPVariable extends IVariable, ICPPBinding {
 	
     /**
      * does this variable have the mutable storage class specifier
-     * @throws DOMException
      */
-    public boolean isMutable() throws DOMException;
+    public boolean isMutable();
 
     /**
      * Returns whether this variable is declared as extern "C".
      */
-    public boolean isExternC() throws DOMException;
+    public boolean isExternC();
 }

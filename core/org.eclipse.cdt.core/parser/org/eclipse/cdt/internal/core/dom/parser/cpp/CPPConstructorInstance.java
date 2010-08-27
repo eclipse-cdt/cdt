@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -26,7 +25,7 @@ public class CPPConstructorInstance extends CPPMethodInstance implements ICPPCon
 		super(orig, owner, tpmap, args);
 	}
 	
-	public boolean isExplicit() throws DOMException {
+	public boolean isExplicit() {
 		return ((ICPPConstructor) getTemplateDefinition()).isExplicit();
 	}
 }

@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -106,27 +104,22 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 			if (bindings[i] instanceof ICPPNamespace) {
 			} else if (bindings[i] instanceof ICPPClassType) {
 				ICPPClassType type = (ICPPClassType) bindings[i];
-				try {
-					switch (type.getKey()) {
-					case ICompositeType.k_struct:
-						if (kind != ICompositeType.k_struct) {
-							bindings[i] = null;
-						}
-						break;
-					case ICompositeType.k_union:
-						if (kind != ICompositeType.k_union) {
-							bindings[i] = null;
-						}
-						break;
-					case ICPPClassType.k_class:
-						if (kind != ICPPASTElaboratedTypeSpecifier.k_class) {
-							bindings[i] = null;
-						}
-						break;
+				switch (type.getKey()) {
+				case ICompositeType.k_struct:
+					if (kind != ICompositeType.k_struct) {
+						bindings[i] = null;
 					}
-				} catch (DOMException e) {
-					bindings[i] = null;
-					CCorePlugin.log(e);
+					break;
+				case ICompositeType.k_union:
+					if (kind != ICompositeType.k_union) {
+						bindings[i] = null;
+					}
+					break;
+				case ICPPClassType.k_class:
+					if (kind != ICPPASTElaboratedTypeSpecifier.k_class) {
+						bindings[i] = null;
+					}
+					break;
 				}
 			} else {
 				bindings[i]= null;

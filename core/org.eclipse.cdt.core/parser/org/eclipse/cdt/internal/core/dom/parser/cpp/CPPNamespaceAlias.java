@@ -36,7 +36,7 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
         this.alias = aliasName;
     }
 
-    public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+    public ICPPNamespaceScope getNamespaceScope() {
         return namespace.getNamespaceScope();
     }
 
@@ -88,7 +88,7 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
 	public void addDeclaration(IASTNode node) {
 	}
 
-	public IBinding[] getMemberBindings() throws DOMException {
+	public IBinding[] getMemberBindings() {
 		return namespace.getMemberBindings();
 	}
 	
@@ -96,7 +96,7 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
 		return Linkage.CPP_LINKAGE;
 	}
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(alias, false);
 	}
 

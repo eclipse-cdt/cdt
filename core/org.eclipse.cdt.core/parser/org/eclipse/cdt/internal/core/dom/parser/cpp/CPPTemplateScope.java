@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -21,9 +21,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-/**
- * @author aniefer
- */
 public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 
 	public CPPTemplateScope(IASTNode physicalNode) {

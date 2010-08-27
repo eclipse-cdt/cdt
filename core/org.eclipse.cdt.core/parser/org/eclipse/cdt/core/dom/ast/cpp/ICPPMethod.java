@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 
 /**
  * Base interface for methods, also used for constructors.
@@ -25,7 +24,7 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * Returns whether this method is declared to be virtual. Does not detect whether
 	 * the method is virtual because of overriding a virtual method from a base class.
 	 */
-	public boolean isVirtual() throws DOMException;
+	public boolean isVirtual();
 	
 	/**
 	 * is this a destructor
@@ -44,5 +43,5 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	 * Returns whether this is a pure abstract method
 	 * @since 5.1
 	 */
-	public boolean isPureVirtual() throws DOMException;
+	public boolean isPureVirtual();
 }

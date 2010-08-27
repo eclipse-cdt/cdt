@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -35,14 +34,14 @@ public class ASTInternal {
 		return IASTNode.EMPTY_NODE_ARRAY;
 	}
 
-	public static IASTNode getPhysicalNodeOfScope(IScope scope) throws DOMException {
+	public static IASTNode getPhysicalNodeOfScope(IScope scope) {
 		if (scope instanceof IASTInternalScope) {
 			return ((IASTInternalScope) scope).getPhysicalNode();
 		}
 		return null;
 	}
 
-	public static void addBinding(IScope scope, IBinding binding) throws DOMException {
+	public static void addBinding(IScope scope, IBinding binding) {
 		if (scope instanceof IASTInternalScope) {
 			((IASTInternalScope) scope).addBinding(binding);
 		}		
@@ -50,15 +49,11 @@ public class ASTInternal {
 
 	public static void addName(IScope scope, IASTName name) {
 		if (scope instanceof IASTInternalScope) {
-			try {
-				((IASTInternalScope) scope).addName(name);
-			} catch (DOMException e) {
-				// name is not cached in scope
-			}
+			((IASTInternalScope) scope).addName(name);
 		}		
 	}		
 	
-	public static boolean isStatic(IFunction func, boolean resolveAll) throws DOMException {
+	public static boolean isStatic(IFunction func, boolean resolveAll) {
 		if (func instanceof ICPPInternalFunction) {
 			return ((ICPPInternalFunction)func).isStatic(resolveAll);
 		}
@@ -100,8 +95,7 @@ public class ASTInternal {
 			}
 		}
 		if (decls != null) {
-			for (int i = 0; i < decls.length; i++) {
-				final IASTNode node= decls[i];
+			for (final IASTNode node : decls) {
 				if (node != null) {
 					if ( (filePath= isPartOfSource(filePath, node)) == null) {
 						return null;
@@ -153,8 +147,7 @@ public class ASTInternal {
 			filePath= def.getContainingFilename();
 		}
 		if (decls != null) {
-			for (int i = 0; i < decls.length; i++) {
-				final IASTNode node= decls[i];
+			for (final IASTNode node : decls) {
 				if (node != null) {
 					final String fn = node.getContainingFilename();
 					if (filePath == null) {

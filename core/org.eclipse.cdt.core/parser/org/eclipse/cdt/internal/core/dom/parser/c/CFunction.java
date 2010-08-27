@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -472,7 +471,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 		return definition;
 	}
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return null;
 	}
 }

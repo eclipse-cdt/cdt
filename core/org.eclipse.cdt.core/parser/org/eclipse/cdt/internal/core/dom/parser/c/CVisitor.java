@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -69,7 +70,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -99,7 +99,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  * Collection of methods to find information in an AST.
  */
 public class CVisitor extends ASTQueries {
-	public static class CollectProblemsAction extends CASTVisitor {
+	public static class CollectProblemsAction extends ASTVisitor {
 		{
 			shouldVisitDeclarations = true;
 			shouldVisitExpressions = true;
@@ -188,7 +188,7 @@ public class CVisitor extends ASTQueries {
 		}
 	}
 
-	public static class CollectDeclarationsAction extends CASTVisitor {
+	public static class CollectDeclarationsAction extends ASTVisitor {
 		{
 			shouldVisitDeclarators = true;
 			shouldVisitDeclSpecifiers = true;
@@ -341,7 +341,7 @@ public class CVisitor extends ASTQueries {
 		}
 	}
 
-	public static class CollectReferencesAction extends CASTVisitor {
+	public static class CollectReferencesAction extends ASTVisitor {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName[] refs;
 		private IBinding binding;
@@ -476,10 +476,7 @@ public class CVisitor extends ASTQueries {
 	    IScope scope =  getContainingScope(enumeration);
 	    IBinding binding= null;
 	    if (scope != null) {
-	    	try {
-	    		binding = scope.getBinding(name, false);
-	    	} catch (DOMException e) {
-	    	}
+	    	binding = scope.getBinding(name, false);
 	    }
         if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
         	if (binding instanceof IEnumeration) {
@@ -516,7 +513,7 @@ public class CVisitor extends ASTQueries {
 	                }
 	            }
 	            //label not found
-	            return new CLabel.CLabelProblem(((IASTGotoStatement)statement).getName(), IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName);
+	            return new ProblemBinding(((IASTGotoStatement)statement).getName(), IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName);
 	        }
 	    } else if (statement instanceof IASTLabelStatement) {
 	        IASTName name = ((IASTLabelStatement)statement).getName();
@@ -558,16 +555,13 @@ public class CVisitor extends ASTQueries {
 				binding= resolveBinding(elabTypeSpec);
 				if (binding == null) {
 					insertIntoScope= elabTypeSpec.getTranslationUnit().getScope();
-					try {
-						binding= insertIntoScope.getBinding(name, false);
-						if (binding != null && name.isActive()) {
-							if (binding instanceof CEnumeration) {
-						        ((CEnumeration)binding).addDeclaration(name);
-						    } else if (binding instanceof CStructure) {
-						    	((CStructure) binding).addDeclaration(name);
-						    }
-						}
-					} catch (DOMException e) {
+					binding= insertIntoScope.getBinding(name, false);
+					if (binding != null && name.isActive()) {
+						if (binding instanceof CEnumeration) {
+					        ((CEnumeration)binding).addDeclaration(name);
+					    } else if (binding instanceof CStructure) {
+					    	((CStructure) binding).addDeclaration(name);
+					    }
 					}
 				}
 			}
@@ -612,41 +606,30 @@ public class CVisitor extends ASTQueries {
 			}
 		    if (prefix) {
 		        IBinding[] result = null;
-		        try {
-		            char[] p = fieldReference.getFieldName().toCharArray();
-                    IField[] fields = ((ICompositeType) type).getFields();
-                    for (IField field : fields) {
-                        if (CharArrayUtils.equals(field.getNameCharArray(), 0, p.length, p, true)) {
-                            result = (IBinding[]) ArrayUtil.append(IBinding.class, result, field);
-                        }
-                    }
-                    return ArrayUtil.trim(IBinding.class, result);
-                } catch (DOMException e) {
-                    return new IBinding[] { e.getProblem() };
-                }
+		        char[] p = fieldReference.getFieldName().toCharArray();
+				IField[] fields = ((ICompositeType) type).getFields();
+				for (IField field : fields) {
+				    if (CharArrayUtils.equals(field.getNameCharArray(), 0, p.length, p, true)) {
+				        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, field);
+				    }
+				}
+				return ArrayUtil.trim(IBinding.class, result);
 		    } 
-			try {
-                return ((ICompositeType) type).findField(fieldReference.getFieldName().toString());
-            } catch (DOMException e) {
-                return e.getProblem();
-            }
+			return ((ICompositeType) type).findField(fieldReference.getFieldName().toString());
 		}
 		return null;
 	}
 	
 	static IType getPtrDiffType(IASTBinaryExpression expr) {
 		IScope scope = getContainingScope(expr);
-		try {
-			IBinding[] bs = scope.find(PTRDIFF_T);
-			for (IBinding b : bs) {
-				if (b instanceof IType) {
-					if (b instanceof ICInternalBinding == false || 
-							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
-						return (IType) b;
-					}
+		IBinding[] bs = scope.find(PTRDIFF_T);
+		for (IBinding b : bs) {
+			if (b instanceof IType) {
+				if (b instanceof ICInternalBinding == false || 
+						CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
+					return (IType) b;
 				}
 			}
-		} catch (DOMException e) {
 		}
 
 		return new CBasicType(Kind.eInt, 0, expr);
@@ -654,17 +637,14 @@ public class CVisitor extends ASTQueries {
     
 	static IType getSize_T(IASTExpression expr) {
 		IScope scope = getContainingScope(expr);
-		try {
-			IBinding[] bs = scope.find(SIZE_T);
-			for (IBinding b : bs) {
-				if (b instanceof IType) {
-					if (b instanceof ICInternalBinding == false || 
-							CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
-						return (IType) b;
-					}
+		IBinding[] bs = scope.find(SIZE_T);
+		for (IBinding b : bs) {
+			if (b instanceof IType) {
+				if (b instanceof ICInternalBinding == false || 
+						CVisitor.declaredBefore(((ICInternalBinding) b).getPhysicalNode(), expr)) {
+					return (IType) b;
 				}
 			}
-		} catch (DOMException e) {
 		}
 		return new CBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 	}
@@ -685,10 +665,7 @@ public class CVisitor extends ASTQueries {
 		if (declarator instanceof ICASTKnRFunctionDeclarator) {
 			if (CharArrayUtils.equals(declarator.getName().toCharArray(), name.toCharArray())) {
 				IScope scope= CVisitor.getContainingScope(declarator);
-				try {
-					binding = scope.getBinding(name, false);
-				} catch (DOMException e) {
-				}
+				binding = scope.getBinding(name, false);
 				if (binding != null && !(binding instanceof IIndexBinding) && name.isActive()) {
 				    if (binding instanceof ICInternalFunction)
 				        ((ICInternalFunction)binding).addDeclarator(declarator);
@@ -725,11 +702,7 @@ public class CVisitor extends ASTQueries {
 		
 		IASTName name = declarator.getName();
 		
-		IBinding binding = null;
-		try {
-            binding = (scope != null) ? scope.getBinding(name, false) : null;
-        } catch (DOMException e1) {
-        }  
+		IBinding binding = (scope != null) ? scope.getBinding(name, false) : null;  
         
         boolean isFunction= false;
         if (parent instanceof IASTParameterDeclaration || parent.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER) {
@@ -830,51 +803,31 @@ public class CVisitor extends ASTQueries {
 			IASTFunctionDeclarator functionDeclartor = functionDef.getDeclarator();
 			IASTName name = findInnermostDeclarator(functionDeclartor).getName();
 			IScope scope = getContainingScope(node);
-			try {
-                return lookup(scope, name);
-            } catch (DOMException e) {
-                return null;
-            }
+			return lookup(scope, name);
 		} else if (node instanceof IASTIdExpression) {
 			IScope scope = getContainingScope(node);
-			try {
-				IBinding binding = lookup(scope, ((IASTIdExpression) node).getName());
-				if (binding instanceof IType && !(binding instanceof IProblemBinding) ) {
-					return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE,
-							binding.getNameCharArray(), new IBinding[] { binding });
-				}
-                return binding; 
-            } catch (DOMException e) {
-                return null;
-            }
+			IBinding binding = lookup(scope, ((IASTIdExpression) node).getName());
+			if (binding instanceof IType && !(binding instanceof IProblemBinding) ) {
+				return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE,
+						binding.getNameCharArray(), new IBinding[] { binding });
+			}
+			return binding;
 		} else if (node instanceof ICASTTypedefNameSpecifier) {
 			IScope scope = getContainingScope(node);
-			try {
-				IASTName name= ((ICASTTypedefNameSpecifier) node).getName();
-				IBinding binding = lookup(scope, name);
-                if (binding == null)
-                	return new ProblemBinding(node, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
-				if (binding instanceof IType)
-					return binding;
-				return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray(),
-						new IBinding[] { binding });
-            } catch (DOMException e) {
-                return null;
-            }
+			IASTName name= ((ICASTTypedefNameSpecifier) node).getName();
+			IBinding binding = lookup(scope, name);
+			if (binding == null)
+				return new ProblemBinding(node, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
+			if (binding instanceof IType)
+				return binding;
+			return new ProblemBinding(node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray(),
+					new IBinding[] { binding });
 		} else if (node instanceof ICASTElaboratedTypeSpecifier) {
 			IScope scope = getContainingScope(node);
-			try {
-                return lookup(scope, ((ICASTElaboratedTypeSpecifier) node).getName());
-            } catch (DOMException e) {
-                return null;
-            }
+			return lookup(scope, ((ICASTElaboratedTypeSpecifier) node).getName());
 		} else if (node instanceof ICASTCompositeTypeSpecifier) {
 			IScope scope = getContainingScope(node);
-			try {
-                return lookup(scope, ((ICASTCompositeTypeSpecifier)node).getName());
-            } catch (DOMException e) {
-                return null;
-            }
+			return lookup(scope, ((ICASTCompositeTypeSpecifier)node).getName());
 		} else if (node instanceof IASTTypeId) {
 			IASTTypeId typeId = (IASTTypeId) node;
 			IASTDeclSpecifier declSpec = typeId.getDeclSpecifier();
@@ -919,11 +872,7 @@ public class CVisitor extends ASTQueries {
 						struct = ((IASTCompositeTypeSpecifier)simpleDecl.getDeclSpecifier()).getName().resolveBinding();
 					
 					if (struct instanceof CStructure) {
-						try {
-                            return ((CStructure)struct).findField(((ICASTFieldDesignator)node).getName().toString());
-                        } catch (DOMException e) {
-                            return e.getProblem();
-                        }
+						return ((CStructure)struct).findField(((ICASTFieldDesignator)node).getName().toString());
 					} else if (struct instanceof ITypeContainer) {
 						IType type;
                         type = ((ITypeContainer)struct).getType();
@@ -933,11 +882,7 @@ public class CVisitor extends ASTQueries {
                         
 						
 						if (type instanceof CStructure)
-                            try {
-                                return ((CStructure)type).findField(((ICASTFieldDesignator)node).getName().toString());
-                            } catch (DOMException e1) {
-                                return e1.getProblem();
-                            }
+							return ((CStructure)type).findField(((ICASTFieldDesignator)node).getName().toString());
 					}
 				}
 			}
@@ -1069,7 +1014,7 @@ public class CVisitor extends ASTQueries {
 	/**
 	 * Lookup for a name starting from the given scope.
 	 */
-	protected static IBinding lookup(IScope scope, IASTName name) throws DOMException{
+	protected static IBinding lookup(IScope scope, IASTName name) {
 		if (scope == null)
 			return null;
 		
@@ -1086,15 +1031,16 @@ public class CVisitor extends ASTQueries {
 		}
 		
 		while (scope != null) {
-			try {
-				if (!(scope instanceof ICCompositeTypeScope)) {
-					IBinding binding = scope.getBinding(name, true, fileSet);
-					if (binding != null)
-						return binding;
-				} 
-			} catch (DOMException e) {
+			if (!(scope instanceof ICCompositeTypeScope)) {
+				IBinding binding = scope.getBinding(name, true, fileSet);
+				if (binding != null)
+					return binding;
 			}
-			scope= scope.getParent();
+			try {
+				scope= scope.getParent();
+			} catch (DOMException e) {
+				scope= null;
+			}
 		}
 		
 		return externalBinding(tu, name);
@@ -1123,23 +1069,20 @@ public class CVisitor extends ASTQueries {
 		IBinding[] result = null;
 		CharArraySet handled= new CharArraySet(1);
 		while (scope != null) {
-			try {
-				if (!(scope instanceof ICCompositeTypeScope)) {
-					IBinding[] bindings= scope.getBindings(name, true, true, fileSet);
-					for (IBinding b : bindings) {
-						final char[] n= b.getNameCharArray();
-						// consider binding only if no binding with the same name was found in another scope.
-						if (!handled.containsKey(n)) {
-							result= (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
-						}
-					}
-					// store names of bindings
-					for (IBinding b : bindings) {
-						final char[] n= b.getNameCharArray();
-						handled.put(n);
+			if (!(scope instanceof ICCompositeTypeScope)) {
+				IBinding[] bindings= scope.getBindings(name, true, true, fileSet);
+				for (IBinding b : bindings) {
+					final char[] n= b.getNameCharArray();
+					// consider binding only if no binding with the same name was found in another scope.
+					if (!handled.containsKey(n)) {
+						result= (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
 					}
 				}
-			} catch (DOMException e) {
+				// store names of bindings
+				for (IBinding b : bindings) {
+					final char[] n= b.getNameCharArray();
+					handled.put(n);
+				}
 			}
 			scope= scope.getParent();
 		}
@@ -1534,7 +1477,7 @@ public class CVisitor extends ASTQueries {
         return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
     }
     
-    public static IBinding[] findBindings(IScope scope, String name) throws DOMException {
+    public static IBinding[] findBindings(IScope scope, String name) {
         CASTName astName = new CASTName(name.toCharArray());
 	    
 	    //normal names
@@ -1573,7 +1516,11 @@ public class CVisitor extends ASTQueries {
 	            }
                 break;
             }
-            scope = scope.getParent();
+            try {
+				scope = scope.getParent();
+			} catch (DOMException e) {
+				scope= null;
+			}
         } while (scope != null);
         
         int c = (b1 == null ? 0 : b1.length) + (b2 == null ? 0 : b2.length) + b3.size();

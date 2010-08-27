@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,15 +116,15 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return getType() instanceof ICPPParameterPackType;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return getParameter().isAuto();
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return getParameter().isRegister();
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return false;
 	}
 
@@ -132,11 +132,11 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return false;
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return false;
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return false;
 	}
 

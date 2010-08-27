@@ -51,11 +51,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	
 	@Override
 	public IBinding getOwner() {
-		try {
-			return fClassTemplate.getOwner();
-		} catch (DOMException e) {
-			return e.getProblem();
-		}
+		return fClassTemplate.getOwner();
 	}
 
 	public ICPPClassTemplate getClassTemplate() {
@@ -93,7 +89,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 
     @Override
-	public int getKey() throws DOMException {
+	public int getKey() {
     	return getClassTemplate().getKey();
     }
     
@@ -138,7 +134,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	}
 	
 	@Override
-	public ICPPScope asScope() throws DOMException {
+	public ICPPScope asScope() {
 		if (fLookupScope != null)
 			return fLookupScope;
 		

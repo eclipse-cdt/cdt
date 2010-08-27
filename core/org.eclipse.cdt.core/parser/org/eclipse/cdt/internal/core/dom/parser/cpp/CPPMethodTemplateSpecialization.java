@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -33,14 +32,14 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		IBinding m = getSpecializedBinding();
 		if( m instanceof ICPPMethod )
 			return ((ICPPMethod)m).getVisibility();
 		return 0;
 	}
 	
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
@@ -56,7 +55,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		return false;
 	}
 

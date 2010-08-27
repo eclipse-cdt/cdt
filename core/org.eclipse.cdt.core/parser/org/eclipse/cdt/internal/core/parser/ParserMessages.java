@@ -1,22 +1,20 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *  IBM Rational Software - Initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * @author aniefer
- */
+import com.ibm.icu.text.MessageFormat;
+
 public class ParserMessages {
 	private static final String BUNDLE_NAME = ParserMessages.class.getName();
 	private static ResourceBundle resourceBundle;

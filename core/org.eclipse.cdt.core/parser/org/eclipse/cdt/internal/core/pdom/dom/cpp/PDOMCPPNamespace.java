@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -162,7 +161,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 
 	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
 			IBinding[] bindings= getBindingsViaCache(name.getLookupKey());
 			if (fileSet != null) {
@@ -176,8 +175,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 	}
 	
 	@Override
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
-			throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IBinding[] result = null;
 		try {
 			if (!prefixLookup) {
@@ -217,7 +215,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return true;
 	}
 
-	public IBinding[] getMemberBindings() throws DOMException {
+	public IBinding[] getMemberBindings() {
 		IBinding[] result = null;
 		final List<PDOMNode> preresult = new ArrayList<PDOMNode>();
 		try {

@@ -51,15 +51,15 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		return functionType;
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return false;
 	}
 
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		return false;
 	}
 
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		return false;
 	}
 
@@ -67,8 +67,8 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		return false;
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
-		return IType.EMPTY_TYPE_ARRAY;
+	public IType[] getExceptionSpecification() {
+		return null;
 	}
 
 	public ICPPParameter[] getParameters() throws DOMException {
@@ -87,23 +87,23 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return false;
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return false;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return false;
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return false;
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		return false;
 	}
 
@@ -119,7 +119,7 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 

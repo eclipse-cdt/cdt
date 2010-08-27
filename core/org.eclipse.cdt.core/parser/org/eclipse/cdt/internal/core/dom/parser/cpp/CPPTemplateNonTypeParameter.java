@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -115,16 +114,16 @@ public class CPPTemplateNonTypeParameter extends CPPTemplateParameter implements
 		return getType() instanceof ICPPParameterPackType;
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return false;
 	}
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return false;
 	}
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return false;
 	}
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return false;
 	}
 	public IValue getInitialValue() {

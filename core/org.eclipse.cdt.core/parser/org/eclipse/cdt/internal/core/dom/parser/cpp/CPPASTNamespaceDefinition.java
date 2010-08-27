@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -101,11 +100,7 @@ public class CPPASTNamespaceDefinition extends ASTNode implements
 	}
 
     public IScope getScope() {
-	    try {
-            return ((ICPPNamespace) fName.resolveBinding()).getNamespaceScope();
-        } catch ( DOMException e ) {
-            return e.getProblem();
-        }
+	    return ((ICPPNamespace) fName.resolveBinding()).getNamespaceScope();
 	}
 
     @Override

@@ -257,14 +257,11 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 				List<IBinding> filtered = filterClassScopeBindings(classType, bindings, isDeclaration);
 				if (isDeclaration && nameMatches(classType.getNameCharArray(),
 						n.getLookupKey(), isPrefix)) {
-					try {
-						ICPPConstructor[] constructors = classType.getConstructors();
-						for (int i = 0; i < constructors.length; i++) {
-							if (!constructors[i].isImplicit()) {
-								filtered.add(constructors[i]);
-							}
+					ICPPConstructor[] constructors = classType.getConstructors();
+					for (int i = 0; i < constructors.length; i++) {
+						if (!constructors[i].isImplicit()) {
+							filtered.add(constructors[i]);
 						}
-					} catch (DOMException e) {
 					}
 				}
 				return filtered.toArray(new IBinding[filtered.size()]);
@@ -302,32 +299,29 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		List<IBinding> filtered = new ArrayList<IBinding>();
 		final boolean canBeFieldAccess= canBeFieldAccess(classType);
 
-		try {
-			for (final IBinding binding : bindings) {
-				if (binding instanceof IField) {
-					IField field = (IField) binding;
-					if (!canBeFieldAccess && !field.isStatic()) 
+		for (final IBinding binding : bindings) {
+			if (binding instanceof IField) {
+				IField field = (IField) binding;
+				if (!canBeFieldAccess && !field.isStatic()) 
+					continue;
+			} else if (binding instanceof ICPPMethod) {
+				ICPPMethod method = (ICPPMethod) binding;
+				if (method.isImplicit()) 
+					continue;
+				if (!isDeclaration) {
+					if (method.isDestructor() || method instanceof ICPPConstructor
+							|| (!canBeFieldAccess && !method.isStatic()))
 						continue;
-				} else if (binding instanceof ICPPMethod) {
-					ICPPMethod method = (ICPPMethod) binding;
-					if (method.isImplicit()) 
-						continue;
-					if (!isDeclaration) {
-						if (method.isDestructor() || method instanceof ICPPConstructor
-								|| (!canBeFieldAccess && !method.isStatic()))
-							continue;
-					}
-				} else if (binding instanceof IEnumerator || binding instanceof IEnumeration) {
-					if (isDeclaration)
-						continue;
-				} else if (binding instanceof IType) {
-					IType type = (IType) binding;
-					if (type.isSameType(classType)) 
-						continue;
-				} 
-				filtered.add(binding);
-			}
-		} catch (DOMException e) {
+				}
+			} else if (binding instanceof IEnumerator || binding instanceof IEnumeration) {
+				if (isDeclaration)
+					continue;
+			} else if (binding instanceof IType) {
+				IType type = (IType) binding;
+				if (type.isSameType(classType)) 
+					continue;
+			} 
+			filtered.add(binding);
 		}
 		
 		return filtered;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,15 +93,15 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getAnnotation());
 	}
 

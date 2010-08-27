@@ -6,13 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -32,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -43,31 +43,24 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
-/**
- * @author aniefer
- */
 public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPInternalBinding {
-	public static class CPPNamespaceProblem extends ProblemBinding implements ICPPNamespace{
+	public static class CPPNamespaceProblem extends ProblemBinding implements ICPPNamespace, ICPPNamespaceScope{
         public CPPNamespaceProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
-		public ICPPNamespaceScope getNamespaceScope() throws DOMException {
-			throw new DOMException(this);
+		public ICPPNamespaceScope getNamespaceScope() {
+			return this;
 		}
-		public IBinding[] getMemberBindings() throws DOMException {
-			throw new DOMException(this);
+		public IBinding[] getMemberBindings() {
+			return IBinding.EMPTY_BINDING_ARRAY;
 		}
-		public String[] getQualifiedName() throws DOMException {
-			throw new DOMException(this);
+		public void addUsingDirective(ICPPUsingDirective usingDirective) {
 		}
-		public char[][] getQualifiedNameCharArray() throws DOMException {
-			throw new DOMException(this);
+		public ICPPUsingDirective[] getUsingDirectives() {
+			return ICPPUsingDirective.EMPTY_ARRAY;
 		}
-		public boolean isGloballyQualified() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isInline() {
-			return false;
+		public ICPPNamespaceScope[] getInlineNamespaces() {
+			return ICPPNamespaceScope.EMPTY_NAMESPACE_SCOPE_ARRAY;
 		}
     }
 
@@ -98,7 +91,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
         return (tu != null) ? tu : (IASTNode) namespaceDefinitions[0];
     }
 
-	static private class NamespaceCollector extends CPPASTVisitor {
+	static private class NamespaceCollector extends ASTVisitor {
 	    private ICPPASTNamespaceDefinition namespaceDef = null;
 	    private IASTName[] namespaces = null;
 	    
@@ -142,7 +135,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
 	    }
 	}
 	
-	static private class NamespaceMemberCollector extends CPPASTVisitor {
+	static private class NamespaceMemberCollector extends ASTVisitor {
 		public ObjectSet<IBinding> members = new ObjectSet<IBinding>(8);
 		public NamespaceMemberCollector() {
 			shouldVisitNamespaces = true;
@@ -365,7 +358,7 @@ public class CPPNamespace extends PlatformObject implements ICPPNamespace, ICPPI
     	return ASTStringUtil.join(names, String.valueOf(Keywords.cpCOLONCOLON));
 	}
     
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (namespaceDefinitions != null && namespaceDefinitions.length > 0) {
 			return CPPVisitor.findDeclarationOwner(namespaceDefinitions[0], false);
 		}

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Markus Schorn (Wind River Systems)
- *     Ed Swartz (Nokia)
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *    Markus Schorn (Wind River Systems)
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -47,49 +47,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.PlatformObject;
 
-/**
- * @author aniefer
- */
 public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding, IInternalVariable {
     public static class CPPVariableProblem extends ProblemBinding implements ICPPVariable {
         public CPPVariableProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
-
-        public IType getType() throws DOMException {
-            throw new DOMException(this);
-        }
-
-        public boolean isStatic() throws DOMException {
-            throw new DOMException(this);
-        }
-        public String[] getQualifiedName() throws DOMException {
-            throw new DOMException(this);
-        }
-        public char[][] getQualifiedNameCharArray() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isGloballyQualified() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isMutable() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isExtern() throws DOMException {
-             throw new DOMException(this);
-        }
-        public boolean isExternC() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isAuto() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isRegister() throws DOMException {
-            throw new DOMException(this);
-        }
-		public IValue getInitialValue() {
-			return null;
-		}
     }
 
 	private IASTName fDefinition = null;
@@ -362,7 +324,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		return Linkage.CPP_LINKAGE;
 	}
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		IASTName node = fDefinition != null ? fDefinition : fDeclarations[0];
 		return CPPVisitor.findNameOwner(node, !hasStorageClass(IASTDeclSpecifier.sc_extern)); 
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,16 +86,16 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
 	}
 
 	@Override
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
 		return false;
 	}
@@ -105,11 +105,11 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return false;
 	}
 
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION_OFFSET));
 	}
 	
@@ -124,7 +124,7 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 	}
 	
 	@Override
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		if (isImplicit()) {
 			return ClassTypeHelper.getInheritedExceptionSpecification(this);
 		}

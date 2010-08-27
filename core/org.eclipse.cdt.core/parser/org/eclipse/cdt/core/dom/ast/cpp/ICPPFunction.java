@@ -25,27 +25,26 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 
 	/**
      * does this function have the mutable storage class specifier
-     * @throws DOMException
      */
-    public boolean isMutable() throws DOMException;
+    public boolean isMutable();
     
     /**
      * is this an inline function
      */
-    public boolean isInline() throws DOMException;
+    public boolean isInline();
     
     /**
      * Returns whether this function is declared as extern "C".
      * @since 5.0
      */
-    public boolean isExternC() throws DOMException;
+    public boolean isExternC();
     
     /**
      * Returns the exception specification for this function or <code>null</code> if there
      * is no exception specification.
      * @since 5.1
      */
-    public IType[] getExceptionSpecification() throws DOMException;
+    public IType[] getExceptionSpecification();
     
     /**
      * {@inheritDoc}

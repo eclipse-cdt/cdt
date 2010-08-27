@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,9 +33,8 @@ public interface IScope {
 	/**
      * Get the IName for this scope, may be null 
      * @return The name of this scope.
-     * @throws DOMException
      */
-    public IName getScopeName() throws DOMException;
+    public IName getScopeName();
     
 	/**
 	 * The method returns the first enclosing non-template scope, or <code>null</code> if this
@@ -55,7 +54,7 @@ public interface IScope {
 	 * @param name
 	 * @return An array of bindings.
 	 */
-	public IBinding[] find(String name) throws DOMException;
+	public IBinding[] find(String name);
 	
 	/**
 	 * Get the binding in this scope that the given name would resolve to. Could
@@ -68,9 +67,8 @@ public interface IScope {
 	 *            whether or not to resolve the matching binding if it has not
 	 *            been so already.
 	 * @return : the binding in this scope that matches the name, or null
-	 * @throws DOMException
 	 */
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException;
+	public IBinding getBinding(IASTName name, boolean resolve);
 	
 	/**
 	 * Get the binding in this scope that the given name would resolve to. Could
@@ -85,9 +83,8 @@ public interface IScope {
 	 *            been so already.
 	 * @param acceptLocalBindings a set of files for which to accept local bindings.
 	 * @return : the binding in this scope that matches the name, or null
-	 * @throws DOMException
 	 */
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) throws DOMException;
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings);
 
 	/**
 	 * Get the bindings in this scope that the given name or prefix could resolve to. Could
@@ -101,9 +98,8 @@ public interface IScope {
 	 *            been so already.
 	 * @param prefixLookup whether the lookup is for a full name or a prefix
 	 * @return : the bindings in this scope that match the name or prefix, or null
-	 * @throws DOMException
 	 */
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException;
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup);
 
 	/**
 	 * Get the bindings in this scope that the given name or prefix could resolve to. Could
@@ -118,8 +114,7 @@ public interface IScope {
 	 * @param prefixLookup whether the lookup is for a full name or a prefix
 	 * @param acceptLocalBindings a set of files for which to accept local bindings.
 	 * @return : the bindings in this scope that match the name or prefix, or null
-	 * @throws DOMException
 	 */
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings) throws DOMException;
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings);
 
 }

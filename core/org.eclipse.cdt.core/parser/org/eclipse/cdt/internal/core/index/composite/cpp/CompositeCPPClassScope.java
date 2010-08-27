@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -40,44 +38,34 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 	}
 
 	public ICPPMethod[] getImplicitMethods() {
-		try {
-			ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
-			ICPPMethod[] result = rscope.getImplicitMethods();
-			for(int i=0; i<result.length; i++) {
-				result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
-			}
-			return result;
-		} catch (DOMException de) {
-			CCorePlugin.log(de);
+		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
+		ICPPMethod[] result = rscope.getImplicitMethods();
+		for(int i=0; i<result.length; i++) {
+			result[i] = (ICPPMethod) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
-		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+		return result;
 	}
 
 	public ICPPConstructor[] getConstructors() {
-		try {
-			ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
-			ICPPConstructor[] result = rscope.getConstructors();
-			for(int i=0; i<result.length; i++) {
-				result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
-			}
-			return result;
-		} catch (DOMException de) {
-			CCorePlugin.log(de);
+		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
+		ICPPConstructor[] result = rscope.getConstructors();
+		for(int i=0; i<result.length; i++) {
+			result[i] = (ICPPConstructor) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		}
-		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
+		return result;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding binding = ((ICPPClassType)rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IBinding[] bindings = ((ICPPClassType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup, fileSet);
 		return processUncertainBindings(bindings);
 	}
 	
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	
 	}

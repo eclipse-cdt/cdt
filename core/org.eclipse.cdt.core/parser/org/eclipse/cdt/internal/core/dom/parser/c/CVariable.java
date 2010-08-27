@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -40,39 +39,22 @@ import org.eclipse.core.runtime.PlatformObject;
  * Binding for a global or a local variable, serves as base class for fields.
  */
 public class CVariable extends PlatformObject implements IInternalVariable, ICInternalBinding {
-    public static class CVariableProblem extends ProblemBinding implements IVariable {
-        public CVariableProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-        }
-
-        public IType getType() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isStatic() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isExtern() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isAuto() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isRegister() throws DOMException {
-            throw new DOMException(this);
-        }
-		public IValue getInitialValue() {
-			return null;
+	public static class CVariableProblem extends ProblemBinding implements IVariable {
+		public CVariableProblem(IASTNode node, int id, char[] arg) {
+			super(node, id, arg);
 		}
-    }
+	}
+
 	private IASTName[] declarations = null;
 	private IType type = null;
-	
+
 	public CVariable(IASTName name) {
 		declarations = new IASTName[] { name };
 	}
-    public IASTNode getPhysicalNode() {
-        return declarations[0];
-    }	
+
+	public IASTNode getPhysicalNode() {
+		return declarations[0];
+	}
 
 	public void addDeclaration(IASTName name) {
 		if (name != null && name.isActive()) {
@@ -80,16 +62,20 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
 		if (type == null && declarations[0].getParent() instanceof IASTDeclarator)
-			type = CVisitor.createType((IASTDeclarator)declarations[0].getParent());
+			type = CVisitor.createType((IASTDeclarator) declarations[0].getParent());
 		return type;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
@@ -97,10 +83,12 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 	}
 
 	public char[] getNameCharArray() {
-	    return declarations[0].toCharArray();
+		return declarations[0].toCharArray();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
@@ -108,109 +96,116 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		return CVisitor.getContainingScope(declarator.getParent());
 	}
 
-    public boolean isStatic() {
+	public boolean isStatic() {
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
 
-    public boolean hasStorageClass(int storage) {
-        if (declarations == null)
-            return false;
-        
-        for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
-            final IASTName name = declarations[i];
+	public boolean hasStorageClass(int storage) {
+		if (declarations == null)
+			return false;
+
+		for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
+			final IASTName name = declarations[i];
 
 			IASTNode parent = name.getParent();
-            while (!(parent instanceof IASTDeclaration))
-                parent = parent.getParent();
-            
-            if (parent instanceof IASTSimpleDeclaration) {
-                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-                if (declSpec.getStorageClass() == storage) {
-                	return true;
-                }
-            }
-        }
-        return false;
+			while (!(parent instanceof IASTDeclaration))
+				parent = parent.getParent();
+
+			if (parent instanceof IASTSimpleDeclaration) {
+				IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+				if (declSpec.getStorageClass() == storage) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
-    public boolean isExtern() {
-        return hasStorageClass(IASTDeclSpecifier.sc_extern);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+	 */
+	public boolean isExtern() {
+		return hasStorageClass(IASTDeclSpecifier.sc_extern);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-     */
-    public boolean isAuto() {
-        return hasStorageClass(IASTDeclSpecifier.sc_auto);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-     */
-    public boolean isRegister() {
-        return hasStorageClass(IASTDeclSpecifier.sc_register);
-    }
-	
-    public ILinkage getLinkage() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
+	 */
+	public boolean isAuto() {
+		return hasStorageClass(IASTDeclSpecifier.sc_auto);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
+	 */
+	public boolean isRegister() {
+		return hasStorageClass(IASTDeclSpecifier.sc_register);
+	}
+
+	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
-    public IASTNode[] getDeclarations() {
+	public IASTNode[] getDeclarations() {
 		return declarations;
 	}
 
-    public IASTNode getDefinition() {
+	public IASTNode getDefinition() {
 		return getPhysicalNode();
 	}
 
-    public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (declarations == null || declarations.length == 0)
 			return null;
-		
+
 		return CVisitor.findDeclarationOwner(declarations[0], true);
 	}
-	
+
 	public IValue getInitialValue() {
 		return getInitialValue(Value.MAX_RECURSION_DEPTH);
 	}
-	
+
 	public IValue getInitialValue(int maxDepth) {
 		if (declarations != null) {
 			for (IASTName decl : declarations) {
 				if (decl == null)
 					break;
-				final IValue val= getInitialValue(decl, maxDepth);
+				final IValue val = getInitialValue(decl, maxDepth);
 				if (val != null)
 					return val;
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	private IValue getInitialValue(IASTName name, int maxDepth) {
-		IASTDeclarator dtor= findDeclarator(name);
+		IASTDeclarator dtor = findDeclarator(name);
 		if (dtor != null) {
-			IASTInitializer init= dtor.getInitializer();
+			IASTInitializer init = dtor.getInitializer();
 			if (init instanceof IASTEqualsInitializer) {
-				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init).getInitializerClause();
+				final IASTInitializerClause initClause = ((IASTEqualsInitializer) init)
+						.getInitializerClause();
 				if (initClause instanceof IASTExpression) {
 					return Value.create((IASTExpression) initClause, maxDepth);
 				}
-			} 
+			}
 			if (init != null)
 				return Value.UNKNOWN;
 		}
 		return null;
 	}
-	
-	private IASTDeclarator findDeclarator(IASTName name) {
-	    IASTNode node = name.getParent();
-	    if (!(node instanceof IASTDeclarator))
-	        return null;
 
-	    return ASTQueries.findOutermostDeclarator((IASTDeclarator) node);
-	}		
+	private IASTDeclarator findDeclarator(IASTName name) {
+		IASTNode node = name.getParent();
+		if (!(node instanceof IASTDeclarator))
+			return null;
+
+		return ASTQueries.findOutermostDeclarator((IASTDeclarator) node);
+	}
 }

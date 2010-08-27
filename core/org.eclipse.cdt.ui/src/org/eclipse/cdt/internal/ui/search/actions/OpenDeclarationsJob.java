@@ -257,13 +257,9 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			// Bug 86829, handle implicit methods.
 			ICPPMethod method= (ICPPMethod) binding;
 			if (method.isImplicit()) {
-				try {
-					IBinding clsBinding= method.getClassOwner();
-					if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
-						declNames= findNames(fIndex, ast, NameKind.REFERENCE, clsBinding);
-					}
-				} catch (DOMException e) {
-					// Don't log problem bindings.
+				IBinding clsBinding= method.getClassOwner();
+				if (clsBinding != null && !(clsBinding instanceof IProblemBinding)) {
+					declNames= findNames(fIndex, ast, NameKind.REFERENCE, clsBinding);
 				}
 			}
 		}

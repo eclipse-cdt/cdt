@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.index.composite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -54,13 +53,10 @@ public abstract class CompositeScope implements IIndexScope {
 	}
 
 	public IIndexName getScopeName() {
-		try {
-			if(rbinding instanceof IIndexScope)
-				return ((IIndexScope) rbinding).getScopeName();
-			if(rbinding instanceof ICPPClassType) 
-				return (IIndexName) ((ICPPClassType) rbinding).getCompositeScope().getScopeName();
-		} catch (DOMException e) {
-		}
+		if(rbinding instanceof IIndexScope)
+			return ((IIndexScope) rbinding).getScopeName();
+		if(rbinding instanceof ICPPClassType) 
+			return (IIndexName) ((ICPPClassType) rbinding).getCompositeScope().getScopeName();
 		return null;
 	}
 
@@ -116,11 +112,11 @@ public abstract class CompositeScope implements IIndexScope {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 	

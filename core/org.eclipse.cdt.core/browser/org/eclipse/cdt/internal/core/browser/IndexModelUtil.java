@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -49,48 +48,44 @@ public class IndexModelUtil {
 	 * @return whether the binding is of any of the specified CElement type constants
 	 */
 	public static boolean bindingHasCElementType(IBinding binding, int[] kinds) {
-		try {
-			for (int kind : kinds) {
-				switch(kind) {
-				case ICElement.C_STRUCT:
-					if (binding instanceof ICompositeType
-							&& ((ICompositeType)binding).getKey() == ICompositeType.k_struct)
-						return true;
-					break;
-				case ICElement.C_UNION:
-					if (binding instanceof ICompositeType
-							&& ((ICompositeType)binding).getKey() == ICompositeType.k_union)
-						return true;
-					break;
-				case ICElement.C_CLASS:
-					if (binding instanceof ICompositeType
-							&& ((ICompositeType)binding).getKey() == ICPPClassType.k_class)
-						return true;
-					break;
-				case ICElement.C_NAMESPACE:
-					if (binding instanceof ICPPNamespace || binding instanceof ICPPNamespaceAlias)
-						return true;
-					break;
-				case ICElement.C_ENUMERATION:
-					if (binding instanceof IEnumeration)
-						return true;
-					break;
-				case ICElement.C_TYPEDEF:
-					if(binding instanceof ITypedef)
-						return true;
-					break;
-				case ICElement.C_FUNCTION:
-					if(binding instanceof IFunction)
-						return true;
-					break;
-				case ICElement.C_VARIABLE:
-					if(binding instanceof IVariable)
-						return true;
-					break;
-				}
+		for (int kind : kinds) {
+			switch(kind) {
+			case ICElement.C_STRUCT:
+				if (binding instanceof ICompositeType
+						&& ((ICompositeType)binding).getKey() == ICompositeType.k_struct)
+					return true;
+				break;
+			case ICElement.C_UNION:
+				if (binding instanceof ICompositeType
+						&& ((ICompositeType)binding).getKey() == ICompositeType.k_union)
+					return true;
+				break;
+			case ICElement.C_CLASS:
+				if (binding instanceof ICompositeType
+						&& ((ICompositeType)binding).getKey() == ICPPClassType.k_class)
+					return true;
+				break;
+			case ICElement.C_NAMESPACE:
+				if (binding instanceof ICPPNamespace || binding instanceof ICPPNamespaceAlias)
+					return true;
+				break;
+			case ICElement.C_ENUMERATION:
+				if (binding instanceof IEnumeration)
+					return true;
+				break;
+			case ICElement.C_TYPEDEF:
+				if(binding instanceof ITypedef)
+					return true;
+				break;
+			case ICElement.C_FUNCTION:
+				if(binding instanceof IFunction)
+					return true;
+				break;
+			case ICElement.C_VARIABLE:
+				if(binding instanceof IVariable)
+					return true;
+				break;
 			}
-		} catch(DOMException de) {
-			CCorePlugin.log(de);
 		}
 		return false;
 	}
@@ -105,20 +100,16 @@ public class IndexModelUtil {
 
 		if (binding instanceof ICompositeType) {
 			ICompositeType classType = (ICompositeType) binding;
-			try {
-				switch(classType.getKey()) {
-				case ICPPClassType.k_class:
-					elementType = ICElement.C_CLASS;
-					break;
-				case ICompositeType.k_struct:
-					elementType = ICElement.C_STRUCT;
-					break;
-				case ICompositeType.k_union:
-					elementType = ICElement.C_UNION;
-					break;
-				}
-			} catch(DOMException de) {
-				CCorePlugin.log(de);
+			switch(classType.getKey()) {
+			case ICPPClassType.k_class:
+				elementType = ICElement.C_CLASS;
+				break;
+			case ICompositeType.k_struct:
+				elementType = ICElement.C_STRUCT;
+				break;
+			case ICompositeType.k_union:
+				elementType = ICElement.C_UNION;
+				break;
 			}
 		}
 

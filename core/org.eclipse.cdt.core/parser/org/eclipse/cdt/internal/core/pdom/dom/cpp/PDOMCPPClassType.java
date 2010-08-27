@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -98,19 +96,11 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	}
 
 	private void setKind(ICPPClassType ct) throws CoreException {
-		try {
-			getDB().putByte(record + KEY, (byte) ct.getKey());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		getDB().putByte(record + KEY, (byte) ct.getKey());
 	}
 
 	private void setAnonymous(ICPPClassType ct) throws CoreException {
-		try {
-			getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		getDB().putByte(record + ANONYMOUS, (byte) (ct.isAnonymous() ? 1 : 0));
 	}
 
 	@Override
@@ -220,14 +210,14 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public ICPPClassScope getCompositeScope() throws DOMException {
+	public ICPPClassScope getCompositeScope() {
 		if (fScope == null) {
 			fScope= new PDOMCPPClassScope(this);
 		}
 		return fScope;
 	}
 
-	public int getKey() throws DOMException {
+	public int getKey() {
 		try {
 			return getDB().getByte(record + KEY);
 		} catch (CoreException e) {
@@ -236,7 +226,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public boolean isAnonymous() throws DOMException {
+	public boolean isAnonymous() {
 		try {
 			return getDB().getByte(record + ANONYMOUS) != 0;
 		} catch (CoreException e) {
@@ -259,25 +249,21 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		
 		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
 			ICPPClassType ctype= (ICPPClassType) type;
-			try {
-				if (ctype.getKey() != getKey())
-					return false;
-				char[] nchars = ctype.getNameCharArray();
-				if (nchars.length == 0) {
-					nchars= ASTTypeUtil.createNameForAnonymous(ctype);
-				}
-				if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
-					return false;
-
-				return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
+			if (ctype.getKey() != getKey())
+				return false;
+			char[] nchars = ctype.getNameCharArray();
+			if (nchars.length == 0) {
+				nchars= ASTTypeUtil.createNameForAnonymous(ctype);
 			}
+			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
+				return false;
+
+			return SemanticUtil.isSameOwner(getOwner(), ctype.getOwner());
 		}
 		return false;
 	}
 
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
 		if (bases != null) 
@@ -297,7 +283,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 		try {
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -308,7 +294,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
 			PDOMCPPClassScope.acceptViaCache(this, methods, false);
@@ -319,7 +305,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -330,7 +316,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		try {
 			PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
 			PDOMCPPClassScope.acceptViaCache(this, visitor, false);
@@ -341,7 +327,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		try {
 			final List<IBinding> list = new ArrayList<IBinding>();
 			for (PDOMCPPFriend friend = getFirstFriend();
@@ -355,19 +341,19 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException { 
+	public ICPPMethod[] getMethods() { 
 		return ClassTypeHelper.getMethods(this);
 	}
 
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 	
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 	
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 

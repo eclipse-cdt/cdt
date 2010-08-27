@@ -3419,7 +3419,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		IProblemBinding B = (IProblemBinding) col.getName(2).resolveBinding();
 		assertEquals(B.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 		IProblemBinding C = (IProblemBinding) col.getName(3).resolveBinding();
-		assertEquals(C.getID(), IProblemBinding.SEMANTIC_BAD_SCOPE);
+		assertEquals(C.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 	}
 	
 	public void testBug88459() throws Exception {

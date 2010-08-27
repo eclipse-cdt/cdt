@@ -385,19 +385,15 @@ public class ASTManager {
 
     public static String getName(IScope s1) {
         String name= null;
-        try {
-        	if (s1 instanceof IIndexScope) {
-        		IIndexScope indexScope= (IIndexScope) s1;
-        		final IIndexName scopeName = indexScope.getScopeName();
-        		if (scopeName != null) {
-        			name= scopeName.toString();
-        		}
-        	} else {
-        		name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(s1));
-        	}
-        }
-        catch (DOMException e) {
-        }
+        if (s1 instanceof IIndexScope) {
+			IIndexScope indexScope= (IIndexScope) s1;
+			final IIndexName scopeName = indexScope.getScopeName();
+			if (scopeName != null) {
+				name= scopeName.toString();
+			}
+		} else {
+			name= getNameOrNull(ASTInternal.getPhysicalNodeOfScope(s1));
+		}
         return name == null ? s1.toString() : name;
     }
 
@@ -587,7 +583,7 @@ public class ASTManager {
         return UNKNOWN;
     }
 
-    private static boolean getSigned(IBasicType a2) throws DOMException {
+    private static boolean getSigned(IBasicType a2) {
         if (a2.isSigned()) {
             return true;
         }
@@ -630,7 +626,7 @@ public class ASTManager {
         return null;
     }
 
-    private static int hasSameLocation(IASTNode node1, IASTNode node2, boolean fileStatic) throws DOMException {
+    private static int hasSameLocation(IASTNode node1, IASTNode node2, boolean fileStatic) {
         if (node1 == null || node2 == null) {
             return UNKNOWN;
         }
@@ -1341,12 +1337,9 @@ public class ASTManager {
                             }
                             what= RenameMessages.CRenameLocalProcessor_localVariable;
                         } else {
-                            try {
-                                if (conflictingVar.isStatic()) {
-                                    what= RenameMessages.CRenameProcessorDelegate_fileStaticVariable;
-                                }
-                            } catch (DOMException e) {
-                            }
+                            if (conflictingVar.isStatic()) {
+							    what= RenameMessages.CRenameProcessorDelegate_fileStaticVariable;
+							}
                         }
                     }
                 } else if (conflict instanceof ICPPConstructor) {
@@ -1396,11 +1389,7 @@ public class ASTManager {
                                 }
                             }
 
-                            boolean isStatic= false;
-                            try {
-                                isStatic= conflictingFunction.isStatic();
-                            } catch (DOMException e) {
-                            }
+                            boolean isStatic= conflictingFunction.isStatic();
                             if (isStatic) {
                                 what= RenameMessages.CRenameProcessorDelegate_fileStaticFunction;
                             } else {

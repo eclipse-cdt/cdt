@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -72,7 +71,7 @@ public class CBuiltinVariable extends CVariable {
         
 
 	@Override
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -114,7 +113,7 @@ public class C99Variable extends PlatformObject implements IC99Binding, IVariabl
 		this.scope = scope;
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (scope == null)
 			return null;
 		

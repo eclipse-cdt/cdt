@@ -1,27 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *******************************************************************************/
-
-/*
- * cloned from CharArrayMap & CharArrayObjectMap
- * Created on Jul 14, 2004
- */
 package org.eclipse.cdt.core.parser.util;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author aniefer
- */
 public class ObjectMap extends ObjectTable<Object> {
     public static final ObjectMap EMPTY_MAP = new ObjectMap(0) {
         @Override

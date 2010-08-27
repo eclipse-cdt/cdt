@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -54,16 +53,13 @@ class PDOMClassUtil {
 			if (node instanceof ICPPConstructor) {
 				ICPPConstructor cons= (ICPPConstructor) node;
 				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(cons)) {
-					try {
-						if (cons instanceof ICPPTemplateInstance) {
-							ICPPClassType owner = cons.getClassOwner();
-							if (owner == null || owner.equals(((ICPPTemplateInstance) cons).getSpecializedBinding().getOwner())) {
-								return false;
-							}
+					if (cons instanceof ICPPTemplateInstance) {
+						ICPPClassType owner = cons.getClassOwner();
+						if (owner == null || owner.equals(((ICPPTemplateInstance) cons).getSpecializedBinding().getOwner())) {
+							return false;
 						}
-						fConstructors.add(cons);
-					} catch (DOMException e) {
 					}
+					fConstructors.add(cons);
 				}
 			}
 			return false;

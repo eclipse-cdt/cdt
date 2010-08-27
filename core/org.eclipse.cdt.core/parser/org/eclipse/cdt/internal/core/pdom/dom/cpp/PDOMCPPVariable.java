@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 QNX Software Systems and others.
+ * Copyright (c) 2005, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		linkage.storeType(record+TYPE_OFFSET, newType);
 	}
 
-	protected byte encodeFlags(IVariable variable) throws DOMException {
+	protected byte encodeFlags(IVariable variable) {
 		return PDOMCPPAnnotation.encodeAnnotation(variable);
 	}
 	
@@ -104,7 +104,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		return IIndexCPPBindingConstants.CPPVARIABLE;
 	}
 	
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		// ISO/IEC 14882:2003 7.1.1.8
 		return false; 
 	}
@@ -129,23 +129,23 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		}
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,20 +34,20 @@ public interface IVariable extends IBinding {
 	/**
 	 * Returns whether this variable is declared static.
 	 */
-	public boolean isStatic() throws DOMException;
+	public boolean isStatic();
 
 	/**
 	 * Returns whether this variable is declared extern.
 	 */
-	public boolean isExtern() throws DOMException;
+	public boolean isExtern();
 	
 	/**
 	 * Returns whether this variable is an automatic variable.
 	 */
-	public boolean isAuto() throws DOMException;
+	public boolean isAuto();
 	
 	/**
 	 * Returns whether this variable is declared register.
 	 */
-	public boolean isRegister() throws DOMException;
+	public boolean isRegister();
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Google, Inc and others.
+ * Copyright (c) 2007, 2010 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -74,30 +73,24 @@ public class LinkedNamesFinder {
 				return;
 			}
 
-			try {
-				if (target instanceof ICPPConstructor ||
-						target instanceof ICPPMethod && ((ICPPMethod) target).isDestructor()) {
-					target = ((ICPPMethod) target).getClassOwner();
-				}
-			} catch (DOMException e1) {
+			if (target instanceof ICPPConstructor ||
+					target instanceof ICPPMethod && ((ICPPMethod) target).isDestructor()) {
+				target = ((ICPPMethod) target).getClassOwner();
 			}
 
 			findBinding(target);
 			if (target instanceof ICPPClassType) {
-				try {
-					ICPPConstructor[] constructors = ((ICPPClassType) target).getConstructors();
-					for (ICPPConstructor ctor : constructors) {
-						if (!ctor.isImplicit()) {
-							findBinding(ctor);
-						}
+				ICPPConstructor[] constructors = ((ICPPClassType) target).getConstructors();
+				for (ICPPConstructor ctor : constructors) {
+					if (!ctor.isImplicit()) {
+						findBinding(ctor);
 					}
-					ICPPMethod[] methods = ((ICPPClassType) target).getDeclaredMethods();
-					for (ICPPMethod method : methods) {
-						if (method.isDestructor()) {
-							findBinding(method);
-						}
+				}
+				ICPPMethod[] methods = ((ICPPClassType) target).getDeclaredMethods();
+				for (ICPPMethod method : methods) {
+					if (method.isDestructor()) {
+						findBinding(method);
 					}
-				} catch (DOMException e) {
 				}
 			}
 		}
@@ -111,15 +104,13 @@ public class LinkedNamesFinder {
 
 		private void findBinding(IBinding target) {
 			IASTName[] names= root.getDeclarationsInAST(target);
-			for (int i= 0; i < names.length; i++) {
-				IASTName candidate= names[i];
+			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addLocation(candidate);
 				}
 			}
 			names= root.getReferences(target);
-			for (int i= 0; i < names.length; i++) {
-				IASTName candidate= names[i];
+			for (IASTName candidate : names) {
 				if (candidate.isPartOfTranslationUnitFile()) {
 					addLocation(candidate);
 				}

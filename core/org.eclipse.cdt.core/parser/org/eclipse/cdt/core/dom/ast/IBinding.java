@@ -65,7 +65,7 @@ public interface IBinding extends IAdaptable {
 	 * <br> <code>null</code>: for types, functions, variables, namespaces and using declarations;
 	 * @since 5.1
 	 */
-	public IBinding getOwner() throws DOMException;
+	public IBinding getOwner();
 	
 	/**
 	 * Returns the parent scope for this binding. A binding may have declarations in multiple scopes,

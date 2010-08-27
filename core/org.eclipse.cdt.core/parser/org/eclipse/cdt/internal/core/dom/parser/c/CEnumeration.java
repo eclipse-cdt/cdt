@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
@@ -176,7 +175,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return definition;
 	}
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		IASTNode node= definition;
 		if (node == null && declarations != null && declarations.length > 0) {
 			node= declarations[0];

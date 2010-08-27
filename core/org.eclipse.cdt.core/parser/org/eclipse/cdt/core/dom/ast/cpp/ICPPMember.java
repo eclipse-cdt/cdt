@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,19 +29,19 @@ public interface ICPPMember extends ICPPBinding {
 	/**
 	 * Returns the accessibility of the member.
 	 */ 
-	public int getVisibility() throws DOMException;
+	public int getVisibility();
 
 
 	/**
 	 * Same as {@link #getOwner()}.
 	 */
-	public ICPPClassType getClassOwner() throws DOMException;
+	public ICPPClassType getClassOwner();
 	
 	/**
 	 * Returns whether this is a static member or not.
 	 * @since 5.1
 	 */
-	public boolean isStatic() throws DOMException;
+	public boolean isStatic();
 
 	/**
 	 * Returns the type of the member (function type or type of field)

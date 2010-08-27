@@ -126,39 +126,39 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return IField.EMPTY_FIELD_ARRAY;
 	}
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return null;
 	}
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
-	public ICPPMethod[] getMethods() throws DOMException {
+	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
-	public int getKey() throws DOMException {
+	public int getKey() {
 		return 0;
 	}
 
-	public IScope getCompositeScope() throws DOMException {
+	public IScope getCompositeScope() {
 		return null;
 	}
 

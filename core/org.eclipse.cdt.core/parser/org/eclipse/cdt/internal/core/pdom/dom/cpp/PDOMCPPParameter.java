@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,12 +67,8 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 	}
 
 	private void storeAnnotations(Database db, ICPPParameter param) throws CoreException {
-		try {
-			byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
-			db.putByte(record + ANNOTATIONS, annotations);
-		} catch (DOMException e) {
-			// ignore and miss out on some properties of the parameter
-		}
+		byte annotations = PDOMCPPAnnotation.encodeAnnotation(param);
+		db.putByte(record + ANNOTATIONS, annotations);
 	}
 
 	public void update(ICPPParameter newPar) throws CoreException {
@@ -113,7 +109,7 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return false;
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		// ISO/IEC 14882:2003 7.1.1.8
 		return false; 
 	}
@@ -122,13 +118,13 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return fType;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
 		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		// ISO/IEC 14882:2003 7.1.1.5
 		return false; 
 	}
@@ -137,13 +133,13 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return false;
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		// ISO/IEC 14882:2003 7.1.1.4
 		return false; 
 	}

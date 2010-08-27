@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -135,20 +134,16 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 			}
 		}
 		
-		try {
-			if (type instanceof IEnumeration) {
-				IEnumeration etype= (IEnumeration) type;
-				char[] nchars = etype.getNameCharArray();
-				if (nchars.length == 0) {
-					nchars= ASTTypeUtil.createNameForAnonymous(etype);
-				}
-				if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
-					return false;
-
-				return SemanticUtil.isSameOwner(getOwner(), etype.getOwner());
+		if (type instanceof IEnumeration) {
+			IEnumeration etype= (IEnumeration) type;
+			char[] nchars = etype.getNameCharArray();
+			if (nchars.length == 0) {
+				nchars= ASTTypeUtil.createNameForAnonymous(etype);
 			}
-		} catch (DOMException e) {
-			CCorePlugin.log(e);
+			if (nchars == null || !CharArrayUtils.equals(nchars, getNameCharArray()))
+				return false;
+
+			return SemanticUtil.isSameOwner(getOwner(), etype.getOwner());
 		}
 		return false;
 	}

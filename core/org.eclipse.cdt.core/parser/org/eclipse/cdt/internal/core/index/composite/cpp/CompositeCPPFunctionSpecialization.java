@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,9 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 	}
 
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		try {
-			IBinding owner= getOwner();
-			if (owner instanceof ICPPSpecialization) {
-				return ((ICPPSpecialization) owner).getTemplateParameterMap();
-			}
-		} catch (DOMException e) {
+		IBinding owner= getOwner();
+		if (owner instanceof ICPPSpecialization) {
+			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
 		return CPPTemplateParameterMap.EMPTY;
 	}
@@ -55,7 +52,7 @@ public class CompositeCPPFunctionSpecialization extends CompositeCPPFunction imp
 	}
 
 	@Override
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
 		if (es == null || es.length == 0)
 			return es;

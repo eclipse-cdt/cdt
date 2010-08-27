@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -28,19 +27,13 @@ public interface IASTInternalScope extends IScope {
 	/**
 	 * This adds an IBinding to the scope.  It is primarily used by the parser to add
 	 * implicit IBindings to the scope (such as GCC built-in functions).
-	 * 
-	 * @param binding
-	 * @throws DOMException
 	 */
-	public void addBinding(IBinding binding) throws DOMException;
+	public void addBinding(IBinding binding);
 
 	/**
 	 * Add an IASTName to be cached in this scope
-	 * 
-	 * @param name
-	 * @throws DOMException
 	 */
-	public void addName(IASTName name) throws DOMException;
+	public void addName(IASTName name);
 	
 	/**
 	 * Can be called during ambiguity resolution to populate a scope without considering

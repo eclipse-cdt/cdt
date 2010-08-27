@@ -218,7 +218,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return getName();
 	}	
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (declarations == null || declarations.length == 0)
 			return null;
 		

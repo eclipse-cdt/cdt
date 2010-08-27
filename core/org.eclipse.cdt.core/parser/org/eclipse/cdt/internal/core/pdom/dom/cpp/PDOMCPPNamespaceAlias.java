@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -69,7 +68,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		return IIndexCPPBindingConstants.CPPNAMESPACEALIAS;
 	}
 	
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+	public ICPPNamespaceScope getNamespaceScope() {
 		return getNamespaceScope(this, 20);	// avoid an infinite loop.
 	}
 	
@@ -88,7 +87,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		return null;
 	}
 
-	public IBinding[] getMemberBindings() throws DOMException {
+	public IBinding[] getMemberBindings() {
 		throw new PDOMNotImplementedError();
 	}
 

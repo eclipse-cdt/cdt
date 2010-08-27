@@ -61,62 +61,18 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         public CPPFunctionProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
-
+        @Override
+		public ICPPFunctionType getType() throws DOMException {
+            throw new DOMException(this);
+        }
         public ICPPParameter[] getParameters() throws DOMException {
             throw new DOMException(this);
         }
-
         public IScope getFunctionScope() throws DOMException {
             throw new DOMException(this);
         }
-
-        public ICPPFunctionType getType() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isStatic() throws DOMException {
-            throw new DOMException(this);
-        }
-        public String[] getQualifiedName() throws DOMException {
-            throw new DOMException(this);
-        }
-        public char[][] getQualifiedNameCharArray() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isGloballyQualified() throws DOMException {
-            throw new DOMException(this);
-        }
-		public boolean isDeleted() {
-			return false;
-		}
-		public boolean isMutable() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isInline() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isExternC() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isExtern() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isAuto() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean isRegister() throws DOMException {
-            throw new DOMException(this);
-        }
-        public boolean takesVarArgs() throws DOMException {
-            throw new DOMException(this);
-        }
-		public IType[] getExceptionSpecification() throws DOMException {
-            throw new DOMException(this);
-		}
 		public int getRequiredArgumentCount() throws DOMException {
 			throw new DOMException(this);
-		}
-		public boolean hasParameterPack() {
-			return false;
 		}
 		public boolean hasSameFunctionParameterTypeList(ICPPFunction function) {
 			return false;
@@ -158,13 +114,10 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	        } else {
 	            //implicit binding
 	            IScope scope = getScope();
-                try {
-                    IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
-                    if (node != null) {
-                    	tu = node.getTranslationUnit();
-                    }
-                } catch (DOMException e) {
-                }
+                IASTNode node = ASTInternal.getPhysicalNodeOfScope(scope);
+				if (node != null) {
+					tu = node.getTranslationUnit();
+				}
 	        }
 	        if (tu != null) {
 	            CPPVisitor.getDeclarations(tu, this);
@@ -493,7 +446,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
     }
 
-    public boolean isInline() throws DOMException {
+    public boolean isInline() {
     	IASTDeclarator dtor = getDefinition();
         IASTDeclarator[] ds = getDeclarations();
         int i = -1;
@@ -520,7 +473,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
     }
 
-    public boolean isExternC() throws DOMException {
+    public boolean isExternC() {
 	    if (CPPVisitor.isExternC(getDefinition())) {
 	    	return true;
 	    }
@@ -565,11 +518,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return result.toString();
 	}
 	
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return CPPVisitor.findNameOwner(getASTName(), false);
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		ICPPASTFunctionDeclarator declarator = getPreferredDtor();
 		if (declarator != null) {
 			IASTTypeId[] astTypeIds= declarator.getExceptionSpecification();

@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -49,15 +48,15 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		return EScopeKind.eEnumeration;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, null);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)	throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 		return getBindings(name, resolve, prefixLookup, null);
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
 			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
 			return map.get(name.toCharArray());
@@ -67,7 +66,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		}
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		try {
 			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
 			if (prefixLookup) {
@@ -90,7 +89,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
 	

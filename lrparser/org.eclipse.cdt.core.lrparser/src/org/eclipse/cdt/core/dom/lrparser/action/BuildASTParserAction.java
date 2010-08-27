@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.lrparser.action;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
 
 import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
@@ -67,11 +69,9 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
-import org.eclipse.cdt.core.dom.lrparser.LRParserPlugin;
 import org.eclipse.cdt.core.dom.lrparser.LRParserProperties;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
@@ -136,12 +136,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 		if (builtinBindingsProvider != null) {
 			IScope tuScope = tu.getScope();
 			IBinding[] bindings = builtinBindingsProvider.getBuiltinBindings(tuScope);
-			try {
-				for (IBinding binding : bindings) {
-					ASTInternal.addBinding(tuScope, binding);
-				}
-			} catch (DOMException e) {
-				LRParserPlugin.logError(e);
+			for (IBinding binding : bindings) {
+				ASTInternal.addBinding(tuScope, binding);
 			}
 		}
 		
@@ -914,8 +910,8 @@ public abstract class BuildASTParserAction extends AbstractParserAction {
 			declarator.setName(name);
 			
 			IASTPointerOperator[] pointers = decl.getPointerOperators();
-			for(int i = 0; i < pointers.length; i++) {
-				declarator.addPointerOperator(pointers[i]);
+			for (IASTPointerOperator pointer : pointers) {
+				declarator.addPointerOperator(pointer);
 			}
 			
 			int offset = offset(name); // TODO

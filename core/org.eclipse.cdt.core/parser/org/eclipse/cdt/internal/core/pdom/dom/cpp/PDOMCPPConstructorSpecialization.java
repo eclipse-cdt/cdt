@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -49,7 +48,7 @@ class PDOMCPPConstructorSpecialization extends
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_SPECIALIZATION;
 	}
 	
-	public boolean isExplicit() throws DOMException {
+	public boolean isExplicit() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
 	}
 }

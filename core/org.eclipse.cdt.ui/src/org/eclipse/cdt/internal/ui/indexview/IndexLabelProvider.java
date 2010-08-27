@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,20 +169,16 @@ public class IndexLabelProvider extends LabelProvider {
 		else if (element instanceof IFunction)
 			desc = CElementImageProvider.getFunctionImageDescriptor();
 		else if (element instanceof ICPPClassType) {
-			try {
-				switch (((ICPPClassType)element).getKey()) {
-				case ICPPClassType.k_class:
-					desc = CElementImageProvider.getClassImageDescriptor();
-					break;
-				case ICompositeType.k_struct:
-					desc = CElementImageProvider.getStructImageDescriptor();
-					break;
-				case ICompositeType.k_union:
-					desc = CElementImageProvider.getUnionImageDescriptor();
-					break;
-				}
-			} catch (DOMException e) {
-				CUIPlugin.log(e);
+			switch (((ICPPClassType)element).getKey()) {
+			case ICPPClassType.k_class:
+				desc = CElementImageProvider.getClassImageDescriptor();
+				break;
+			case ICompositeType.k_struct:
+				desc = CElementImageProvider.getStructImageDescriptor();
+				break;
+			case ICompositeType.k_union:
+				desc = CElementImageProvider.getUnionImageDescriptor();
+				break;
 			}
 		}
 		else if (element instanceof ICompositeType)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -39,25 +38,25 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	/**
 	 * Computes the bases via the original class.
 	 */
-	ICPPBase[] getBases() throws DOMException;
+	ICPPBase[] getBases();
 
 	/**
 	 * Computes the methods via the original class.
 	 */
-	ICPPMethod[] getDeclaredMethods() throws DOMException;
+	ICPPMethod[] getDeclaredMethods();
 
 	/**
 	 * Computes the fields via the original class.
 	 */
-	ICPPField[] getDeclaredFields() throws DOMException;
+	ICPPField[] getDeclaredFields();
 
 	/**
 	 * Computes the friends via the original class.
 	 */
-	IBinding[] getFriends() throws DOMException;
+	IBinding[] getFriends();
 
 	/**
 	 * Computes the nested classes via the original class.
 	 */
-	ICPPClassType[] getNestedClasses() throws DOMException;
+	ICPPClassType[] getNestedClasses();
 }

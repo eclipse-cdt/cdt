@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -65,60 +65,48 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		public CPPClassTypeProblem(IASTNode node, int id, char[] arg) {
 			super(node, id, arg);
 		}
-		public ICPPBase[] getBases() throws DOMException {
-			throw new DOMException(this);
+		public ICPPBase[] getBases() {
+			return ICPPBase.EMPTY_BASE_ARRAY;
 		}
-		public IField[] getFields() throws DOMException {
-			throw new DOMException(this);
+		public IField[] getFields() {
+			return IField.EMPTY_FIELD_ARRAY;
 		}
-		public ICPPField[] getDeclaredFields() throws DOMException {
-			throw new DOMException(this);
+		public ICPPField[] getDeclaredFields() {
+			return ICPPField.EMPTY_CPPFIELD_ARRAY;
 		}
-		public ICPPMethod[] getMethods() throws DOMException {
-			throw new DOMException(this);
+		public ICPPMethod[] getMethods() {
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
-		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-			throw new DOMException(this);
+		public ICPPMethod[] getAllDeclaredMethods() {
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
-		public ICPPMethod[] getDeclaredMethods() throws DOMException {
-			throw new DOMException(this);
+		public ICPPMethod[] getDeclaredMethods() {
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
-		public ICPPConstructor[] getConstructors() throws DOMException {
-			throw new DOMException(this);
+		public ICPPConstructor[] getConstructors() {
+			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 		}
 		public ICPPMethod[] getDeclaredConversionOperators() throws DOMException {
 			throw new DOMException(this);
 		}
-		public int getKey() throws DOMException {
-			throw new DOMException(this);
+		public int getKey() {
+			return k_class;
 		}
-		public IField findField(String name) throws DOMException {
-			throw new DOMException(this);
+		public IField findField(String name) {
+			return null;
 		}
-		public IScope getCompositeScope() throws DOMException {
-			throw new DOMException(this);
+		public IScope getCompositeScope() {
+			return this;
 		}
-		public IBinding[] getFriends() throws DOMException {
-			throw new DOMException(this);
+		public IBinding[] getFriends() {
+			return IBinding.EMPTY_BINDING_ARRAY;
 		}
-		public String[] getQualifiedName() throws DOMException {
-			throw new DOMException(this);
-		}
-		public char[][] getQualifiedNameCharArray() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isGloballyQualified() throws DOMException {
-			throw new DOMException(this);
-		}
-		public ICPPClassType[] getNestedClasses() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isAnonymous() throws DOMException {
-			throw new DOMException(this);
+		public ICPPClassType[] getNestedClasses() {
+			return ICPPClassType.EMPTY_CLASS_ARRAY;
 		}
 	}
 
-	private class FindDefinitionAction extends CPPASTVisitor {
+	private class FindDefinitionAction extends ASTVisitor {
 		private char[] nameArray = CPPClassType.this.getNameCharArray();
 		public IASTName result = null;
 
@@ -287,13 +275,9 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 		// fwd-declarations must be backed up from the index
 		if (typeInIndex != null) {
-			try {
-				IScope scope = typeInIndex.getCompositeScope();
-				if (scope instanceof ICPPClassScope)
-					return (ICPPClassScope) scope;
-			} catch (DOMException e) {
-				// index bindings don't throw DOMExeptions.
-			}
+			IScope scope = typeInIndex.getCompositeScope();
+			if (scope instanceof ICPPClassScope)
+				return (ICPPClassScope) scope;
 		}
 		return null;
 	}
@@ -367,27 +351,27 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return ClassTypeHelper.getBases(this);
 	}
 
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		return ClassTypeHelper.getDeclaredFields(this);
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException {
+	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		return ClassTypeHelper.getDeclaredMethods(this);
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		return ClassTypeHelper.getConstructors(this);
 	}
 
@@ -399,7 +383,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return ClassTypeHelper.getNestedClasses(this);
 	}
 
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 	
@@ -420,14 +404,14 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		return getName(); 
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		if (definition != null) {
 			return CPPVisitor.findNameOwner(definition, true);
 		}
 		return CPPVisitor.findDeclarationOwner(declarations[0], true);
 	}
 	
-	public boolean isAnonymous() throws DOMException {
+	public boolean isAnonymous() {
 		if (getNameCharArray().length > 0) 
 			return false;
 		

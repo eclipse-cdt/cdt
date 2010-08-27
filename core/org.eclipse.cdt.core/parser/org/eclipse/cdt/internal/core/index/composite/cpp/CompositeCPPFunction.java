@@ -27,15 +27,15 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		super(cf, rbinding);
 	}
 
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		return ((ICPPFunction)rbinding).isExternC();
 	}
 
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		return ((ICPPFunction)rbinding).isInline();
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return ((ICPPFunction)rbinding).isMutable();
 	}
 
@@ -60,23 +60,23 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return ((ICPPFunction)rbinding).isDeleted();
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return ((ICPPFunction)rbinding).isAuto();
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return ((ICPPFunction)rbinding).isExtern();
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return ((ICPPFunction)rbinding).isRegister();
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return ((ICPPFunction)rbinding).isStatic();
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		return ((ICPPFunction)rbinding).takesVarArgs();
 	}
 	
@@ -104,7 +104,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return result.toString();
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
 		if (es == null || es.length == 0)
 			return es;

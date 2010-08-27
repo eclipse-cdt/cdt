@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
@@ -149,7 +148,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
 		}
-		public IBinding getBaseClass() throws DOMException {
+		public IBinding getBaseClass() {
 			if (baseClass == null) {
 				return base.getBaseClass();
 			}
@@ -158,10 +157,10 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		public IName getBaseClassSpecifierName() {
 			return base.getBaseClassSpecifierName();
 		}
-		public int getVisibility() throws DOMException {
+		public int getVisibility() {
 			return base.getVisibility();
 		}
-		public boolean isVirtual() throws DOMException {
+		public boolean isVirtual() {
 			return base.isVirtual();
 		}
 		public void setBaseClass(IBinding binding) {

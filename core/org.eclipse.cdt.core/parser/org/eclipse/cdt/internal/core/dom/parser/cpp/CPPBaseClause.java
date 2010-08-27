@@ -6,64 +6,23 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Corporation - initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - initial API and implementation
  *	  Bryan Wilkinson (QNX)
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
-/**
- * @author aniefer
- */
 public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
-    static public class CPPBaseProblem extends ProblemBinding implements ICPPBase, ICPPInternalBase {
-    	private ICPPClassType classProblem;
-
-        public CPPBaseProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
-        }
-
-        public IBinding getBaseClass() {
-        	if (classProblem == null) {
-        		classProblem = new CPPClassType.CPPClassTypeProblem(node, id, arg);
-        	}
-        	return classProblem;
-        }
-
-        public int getVisibility() throws DOMException {
-            throw new DOMException(this);
-        }
-
-        public boolean isVirtual() throws DOMException {
-            throw new DOMException(this);
-        }
-
-		public IName getBaseClassSpecifierName() {
-			return (IName) node;
-		}
-
-		public void setBaseClass(IBinding binding) {
-		}
-		
-		@Override
-		public ICPPBase clone() {
-			return this;
-		}
-    }
-
     private ICPPASTBaseSpecifier base;
 	private IBinding baseClass;
     
@@ -74,7 +33,7 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
      */
-    public IBinding getBaseClass() throws DOMException {
+    public IBinding getBaseClass() {
 		if (baseClass == null) {
 	    	IBinding b = base.getName().resolveBinding();
 	    	while (b instanceof ITypedef && ((ITypedef) b).getType() instanceof IBinding) {

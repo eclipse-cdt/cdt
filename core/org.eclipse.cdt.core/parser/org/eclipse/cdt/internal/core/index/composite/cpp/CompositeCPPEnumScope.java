@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -31,17 +30,17 @@ class CompositeCPPEnumScope extends CompositeScope implements ICPPScope {
 		return EScopeKind.eEnumeration;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding binding = ((ICPPEnumeration)rbinding).asScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IBinding[] bindings = ((ICPPEnumeration)rbinding).asScope().getBindings(name, resolve, prefixLookup, fileSet);
 		return processUncertainBindings(bindings);
 	}
 	
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPEnumeration)rbinding).asScope().find(name);
 		return processUncertainBindings(preresult);	
 	}

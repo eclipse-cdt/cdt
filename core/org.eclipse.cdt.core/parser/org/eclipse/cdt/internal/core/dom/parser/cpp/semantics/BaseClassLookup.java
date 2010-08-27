@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,12 +124,8 @@ class BaseClassLookup {
 			if (binding == null)
 				return false;
 			if (binding instanceof ICPPMember) {
-				try {
-					if (!((ICPPMember) binding).isStatic()) 
-						return true;
-				} catch (DOMException e) {
-					// treat as non-static
-				}
+				if (!((ICPPMember) binding).isStatic()) 
+					return true;
 			}
 		}
 		return false;
@@ -158,11 +154,7 @@ class BaseClassLookup {
 		IBinding[] matches= IBinding.EMPTY_BINDING_ARRAY;
 		if (baseClassScope == null) {
 			result= new BaseClassLookup(root);
-			try {
-				infoMap.put(root.getCompositeScope(), result);
-			} catch (DOMException e) {
-				// ignore
-			}
+			infoMap.put(root.getCompositeScope(), result);
 		} else {
 			result= new BaseClassLookup(baseClassScope.getClassType());
 			infoMap.put(baseClassScope, result);
@@ -186,11 +178,7 @@ class BaseClassLookup {
 		ICPPClassType baseClass= result.getClassType();
 		if (baseClass != null) { 
 			ICPPBase[] grandBases= null;
-			try {
-				grandBases= baseClass.getBases();
-			} catch (DOMException e) {
-				// assume that there are no bases
-			}
+			grandBases= baseClass.getBases();
 			if (grandBases != null && grandBases.length > 0) {
 				HashSet<IBinding> grandBaseBindings= null;
 				BitSet selectedBases= null;
@@ -207,38 +195,34 @@ class BaseClassLookup {
 					if (selectedBases != null && !selectedBases.get(i))
 						continue;
 	
-					try {
-						IBinding grandBaseBinding = grandBase.getBaseClass();
-						if (!(grandBaseBinding instanceof ICPPClassType)) {
-							// 14.6.2.3 scope is not examined 
-							if (grandBaseBinding instanceof ICPPUnknownBinding) {
-								if (data.skippedScope == null)
-									data.skippedScope= root;
-							}
-							continue;
-						}
-	
-						final ICPPClassType grandBaseClass = (ICPPClassType) grandBaseBinding;
-						if (grandBaseBindings != null && !grandBaseBindings.add(grandBaseClass))
-							continue;
-	
-						final IScope grandBaseScope= grandBaseClass.getCompositeScope();
-						if (grandBaseScope == null || grandBaseScope instanceof ICPPInternalUnknownScope) {
-							// 14.6.2.3 scope is not examined 
+					IBinding grandBaseBinding = grandBase.getBaseClass();
+					if (!(grandBaseBinding instanceof ICPPClassType)) {
+						// 14.6.2.3 scope is not examined 
+						if (grandBaseBinding instanceof ICPPUnknownBinding) {
 							if (data.skippedScope == null)
 								data.skippedScope= root;
-							continue;
 						}
-						if (!(grandBaseScope instanceof ICPPClassScope))
-							continue;
-						
-						BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope,
-								grandBase.isVirtual(), root, fileSet, infoMap, depth);
-						if (baseInfo != null)
-							result.addBase(grandBase.isVirtual(), baseInfo);
-					} catch (DOMException e) {
-						// move on to next base
+						continue;
 					}
+
+					final ICPPClassType grandBaseClass = (ICPPClassType) grandBaseBinding;
+					if (grandBaseBindings != null && !grandBaseBindings.add(grandBaseClass))
+						continue;
+
+					final IScope grandBaseScope= grandBaseClass.getCompositeScope();
+					if (grandBaseScope == null || grandBaseScope instanceof ICPPInternalUnknownScope) {
+						// 14.6.2.3 scope is not examined 
+						if (data.skippedScope == null)
+							data.skippedScope= root;
+						continue;
+					}
+					if (!(grandBaseScope instanceof ICPPClassScope))
+						continue;
+					
+					BaseClassLookup baseInfo= lookupInBaseClass(data, (ICPPClassScope) grandBaseScope,
+							grandBase.isVirtual(), root, fileSet, infoMap, depth);
+					if (baseInfo != null)
+						result.addBase(grandBase.isVirtual(), baseInfo);
 				}
 			}
 		}
@@ -295,41 +279,33 @@ class BaseClassLookup {
 		
 		if (fClassType != null) { 
 			ICPPBase[] bases= null;
-			try {
-				bases= fClassType.getBases();
-			} catch (DOMException e) {
-				// assume that there are no bases
-			}
+			bases= fClassType.getBases();
 			if (bases != null && bases.length > 0) {
 				for (ICPPBase base : bases) {
 					if (base instanceof IProblemBinding)
 						continue;
 	
-					try {
-						IBinding baseBinding = base.getBaseClass();
-						if (!(baseBinding instanceof ICPPClassType)) {
-							continue;
+					IBinding baseBinding = base.getBaseClass();
+					if (!(baseBinding instanceof ICPPClassType)) {
+						continue;
+					}
+
+					final ICPPClassType baseClass = (ICPPClassType) baseBinding;
+					final IScope baseScope= baseClass.getCompositeScope();
+					if (!(baseScope instanceof ICPPClassScope))
+						continue;
+					
+					BaseClassLookup baseInfo= infoMap.get(baseScope);
+					if (baseInfo != null) {
+						if (base.isVirtual()) {
+							baseInfo.setHiddenAsVirtualBase();
 						}
-	
-						final ICPPClassType baseClass = (ICPPClassType) baseBinding;
-						final IScope baseScope= baseClass.getCompositeScope();
-						if (!(baseScope instanceof ICPPClassScope))
-							continue;
-						
-						BaseClassLookup baseInfo= infoMap.get(baseScope);
-						if (baseInfo != null) {
-							if (base.isVirtual()) {
-								baseInfo.setHiddenAsVirtualBase();
-							}
-							baseInfo.propagateHiddenAsVirtual();
-						} else {
-							// mark to catch recursions
-							baseInfo= new BaseClassLookup(baseClass);
-							infoMap.put(baseScope, baseInfo);
-							baseInfo.hideVirtualBases(infoMap, depth);
-						}
-					} catch (DOMException e) {
-						// move on to next base
+						baseInfo.propagateHiddenAsVirtual();
+					} else {
+						// mark to catch recursions
+						baseInfo= new BaseClassLookup(baseClass);
+						infoMap.put(baseScope, baseInfo);
+						baseInfo.hideVirtualBases(infoMap, depth);
 					}
 				}
 			}
@@ -381,20 +357,16 @@ class BaseClassLookup {
 			ICPPClassType uniqueOwner= null;
 			for (IBinding b : bindings) {
 				if (!(b instanceof IType)) {
-					try {
-						IBinding owner= b.getOwner();
-						if (owner instanceof ICPPClassType) {
-							final ICPPClassType classOwner = (ICPPClassType) owner;
-							if (uniqueOwner == null) {
-								uniqueOwner= classOwner;
-							} else if (!uniqueOwner.isSameType(classOwner)) {
-								data.problem= new ProblemBinding(data.astName,
-										IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, bindings);
-								return;
-							}
+					IBinding owner= b.getOwner();
+					if (owner instanceof ICPPClassType) {
+						final ICPPClassType classOwner = (ICPPClassType) owner;
+						if (uniqueOwner == null) {
+							uniqueOwner= classOwner;
+						} else if (!uniqueOwner.isSameType(classOwner)) {
+							data.problem= new ProblemBinding(data.astName,
+									IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP, bindings);
+							return;
 						}
-					} catch (DOMException e) {
-						// ignore
 					}
 				}
 			}

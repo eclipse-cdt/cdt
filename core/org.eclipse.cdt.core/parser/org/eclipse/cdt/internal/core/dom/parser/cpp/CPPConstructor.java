@@ -1,38 +1,32 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Andrew Niefer (IBM Corporation) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 21, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
-/**
- * @author aniefer
- */
 public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 
     static public class CPPConstructorProblem extends CPPMethod.CPPMethodProblem implements ICPPConstructor {
-        public CPPConstructorProblem(IASTNode node, int id, char[] arg) {
-            super(node, id, arg);
+        public CPPConstructorProblem(ICPPClassType owner, IASTNode node, int id, char[] arg) {
+            super(owner, node, id, arg);
         }
 
-        public boolean isExplicit() throws DOMException{
-            throw new DOMException( this );
+        public boolean isExplicit() {
+            return false;
         }
     }
 
@@ -46,7 +40,7 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
      */
-    public boolean isExplicit() throws DOMException {
+    public boolean isExplicit() {
     	IASTDeclaration decl= getPrimaryDeclaration();
     	if (decl != null) {
     		ICPPASTDeclSpecifier declspec= getDeclSpec(decl);

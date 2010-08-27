@@ -346,12 +346,8 @@ public class ASTTypeUtil {
 		} else if (type instanceof ICompositeType) {
 //			101114 fix, do not display class, and for consistency don't display struct/union as well
 			if (type instanceof ICPPClassType) {
-				try {
-					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type, normalize));
-					result.append(qn);
-				} catch (DOMException e) {
-					result.append(getNameForAnonymous((ICompositeType) type));
-				}
+				String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType) type, normalize));
+				result.append(qn);
 			} else {
 				result.append(getNameForAnonymous((ICompositeType) type));
 			}
@@ -695,7 +691,7 @@ public class ASTTypeUtil {
 		}
 	}
 
-	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding, boolean normalize) throws DOMException {
+	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding, boolean normalize) {
 		LinkedList<String> result= new LinkedList<String>();
 		result.addFirst(getNameForAnonymous(binding));
 		

@@ -269,7 +269,7 @@ public class PDOMASTAdapter {
 			return fDelegate.isSameType(type);
 		}
 
-		public IBinding getOwner() throws DOMException {
+		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
 		
@@ -296,7 +296,7 @@ public class PDOMASTAdapter {
 			throw new PDOMNotImplementedError();
 		}
 
-		public IField findField(String name) throws DOMException {
+		public IField findField(String name) {
 			return fDelegate.findField(name);
 		}
 
@@ -305,15 +305,15 @@ public class PDOMASTAdapter {
 			return fDelegate.getAdapter(adapter);
 		}
 
-		public IScope getCompositeScope() throws DOMException {
+		public IScope getCompositeScope() {
 			return fDelegate.getCompositeScope();
 		}
 
-		public IField[] getFields() throws DOMException {
+		public IField[] getFields() {
 			return fDelegate.getFields();
 		}
 
-		public int getKey() throws DOMException {
+		public int getKey() {
 			return fDelegate.getKey();
 		}
 
@@ -337,11 +337,11 @@ public class PDOMASTAdapter {
 			return fDelegate.isSameType(type);
 		}
 		
-		public IBinding getOwner() throws DOMException {
+		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
 
-		public boolean isAnonymous() throws DOMException {
+		public boolean isAnonymous() {
 			return fDelegate.isAnonymous();
 		}
 	}
@@ -403,7 +403,7 @@ public class PDOMASTAdapter {
 			return fDelegate.isGloballyQualified();
 		}
 
-		public IBinding getOwner() throws DOMException {
+		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
 	}
@@ -447,51 +447,51 @@ public class PDOMASTAdapter {
 			super(name, delegate);
 		}
 		
-		public IField findField(String name) throws DOMException {
+		public IField findField(String name) {
 			return ((ICPPClassType) fDelegate).findField(name);
 		}
 
-		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+		public ICPPMethod[] getAllDeclaredMethods() {
 			return ((ICPPClassType) fDelegate).getAllDeclaredMethods();
 		}
 
-		public ICPPBase[] getBases() throws DOMException {
+		public ICPPBase[] getBases() {
 			return ((ICPPClassType) fDelegate).getBases();
 		}
 
-		public IScope getCompositeScope() throws DOMException {
+		public IScope getCompositeScope() {
 			return ((ICPPClassType) fDelegate).getCompositeScope();
 		}
 
-		public ICPPConstructor[] getConstructors() throws DOMException {
+		public ICPPConstructor[] getConstructors() {
 			return ((ICPPClassType) fDelegate).getConstructors();
 		}
 
-		public ICPPField[] getDeclaredFields() throws DOMException {
+		public ICPPField[] getDeclaredFields() {
 			return ((ICPPClassType) fDelegate).getDeclaredFields();
 		}
 
-		public ICPPMethod[] getDeclaredMethods() throws DOMException {
+		public ICPPMethod[] getDeclaredMethods() {
 			return ((ICPPClassType) fDelegate).getDeclaredMethods();
 		}
 
-		public IField[] getFields() throws DOMException {
+		public IField[] getFields() {
 			return ((ICPPClassType) fDelegate).getFields();
 		}
 
-		public IBinding[] getFriends() throws DOMException {
+		public IBinding[] getFriends() {
 			return ((ICPPClassType) fDelegate).getFriends();
 		}
 
-		public int getKey() throws DOMException {
+		public int getKey() {
 			return ((ICPPClassType) fDelegate).getKey();
 		}
 
-		public ICPPMethod[] getMethods() throws DOMException {
+		public ICPPMethod[] getMethods() {
 			return ((ICPPClassType) fDelegate).getMethods();
 		}
 
-		public ICPPClassType[] getNestedClasses() throws DOMException {
+		public ICPPClassType[] getNestedClasses() {
 			return ((ICPPClassType) fDelegate).getNestedClasses();
 		}
 
@@ -499,7 +499,7 @@ public class PDOMASTAdapter {
 			return ((ICPPClassType) fDelegate).isSameType(type);
 		}
 
-		public boolean isAnonymous() throws DOMException {
+		public boolean isAnonymous() {
 			return ((ICPPClassType) fDelegate).isAnonymous();
 		}
 	}

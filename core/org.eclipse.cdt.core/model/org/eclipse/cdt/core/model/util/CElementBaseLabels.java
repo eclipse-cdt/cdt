@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corp. - Rational Software - initial implementation
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *     Markus Schorn (Wind River Systems)
  *     Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Creates labels for ICElement objects.
- * @author aniefer
  */
 public class CElementBaseLabels {
 

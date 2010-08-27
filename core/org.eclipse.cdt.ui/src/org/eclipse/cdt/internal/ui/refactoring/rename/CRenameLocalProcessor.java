@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -16,7 +16,6 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -55,18 +54,13 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
     	super.analyzeTextMatches(matches, monitor, status);
         if (fScope != null) {
             CRefactoringArgument argument = getArgument();
-            ASTManager r = getAstManager();
             int[] result= new int[] {0, Integer.MAX_VALUE};
             IScope scope= argument.getScope();
             IASTNode node= null;
-            try {
-                node = ASTInternal.getPhysicalNodeOfScope(scope);
-                if (argument.getBinding() instanceof IParameter) {
-                    node= node.getParent();
-                }
-            } catch (DOMException e) {
-                r.handleDOMException(argument.getTranslationUnit(), e, status);
-            }
+            node = ASTInternal.getPhysicalNodeOfScope(scope);
+			if (argument.getBinding() instanceof IParameter) {
+			    node= node.getParent();
+			}
             if (node != null) {
                 IASTFileLocation loc= ASTManager.getLocationInTranslationUnit(node);
                 if (loc != null) {

@@ -57,59 +57,18 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
 			throw new DOMException(this);		
 		}
-		public String[] getQualifiedName() throws DOMException {
-			throw new DOMException(this);		
-		}
-		public char[][] getQualifiedNameCharArray() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isGloballyQualified() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isDeleted() {
-			return false;
-		}
-		public boolean isMutable() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isInline() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isExternC() throws DOMException {
-			throw new DOMException(this);
-		}
 		public ICPPParameter[] getParameters() throws DOMException {
 			throw new DOMException(this);
 		}
 		public IScope getFunctionScope() throws DOMException {
 			throw new DOMException(this);
 		}
+		@Override
 		public ICPPFunctionType getType() throws DOMException {
 			throw new DOMException(this);
 		}
-		public boolean isStatic() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isExtern() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isAuto() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isRegister() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean takesVarArgs() throws DOMException {
-			throw new DOMException(this);
-		}
-		public IType[] getExceptionSpecification() throws DOMException {
-			throw new DOMException( this );
-		}
 		public int getRequiredArgumentCount() throws DOMException {
 			throw new DOMException( this );
-		}
-		public boolean hasParameterPack() {
-			return false;
 		}
 	}
 	
@@ -316,7 +275,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         return hasStorageClass(IASTDeclSpecifier.sc_mutable);
     }
 
-    public boolean isInline() throws DOMException {
+    public boolean isInline() {
         IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
         int i = -1;
@@ -344,7 +303,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         return false;
     }
 
-    public boolean isExternC() throws DOMException {
+    public boolean isExternC() {
 	    if (CPPVisitor.isExternC(getDefinition())) {
 	    	return true;
 	    }
@@ -407,7 +366,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		return result.toString();
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
     	ICPPASTFunctionDeclarator declarator = getFirstFunctionDtor();
 		if (declarator != null) {
 			IASTTypeId[] astTypeIds = declarator.getExceptionSpecification();

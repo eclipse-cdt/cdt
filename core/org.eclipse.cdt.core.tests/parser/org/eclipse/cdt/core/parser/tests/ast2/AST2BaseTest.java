@@ -23,7 +23,6 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -470,7 +469,7 @@ public class AST2BaseTest extends BaseTestCase {
 		return clazz.cast(o);
 	}
 	
-	protected static void assertField(IBinding binding, String fieldName, String ownerName) throws DOMException {
+	protected static void assertField(IBinding binding, String fieldName, String ownerName) {
     	assertInstance(binding, IField.class);
     	assertEquals(fieldName, binding.getName());
     	ICompositeType struct = ((IField) binding).getCompositeTypeOwner();

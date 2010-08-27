@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    Andrew Niefer (IBM Rational Software) - Initial API and implementation 
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -20,14 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
-/**
- * Created on Nov 8, 2004
- * @author aniefer
- */
 public class CFunctionScope extends CScope implements ICFunctionScope {
 	public CFunctionScope( IASTFunctionDefinition function ){
 	    super( function, EScopeKind.eLocal);
@@ -67,7 +62,7 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
 	    return (ILabel[]) ArrayUtil.trim( ILabel.class, result );
 	}
 	
-	static private class FindLabelsAction extends CASTVisitor {
+	static private class FindLabelsAction extends ASTVisitor {
         public IASTLabelStatement [] labels = null;
         
         public FindLabelsAction(){

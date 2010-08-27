@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -32,7 +31,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		super(orig, owner, argMap );
 	}
 
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
 		if( f != null )
 			return f.isVirtual();
@@ -55,14 +54,14 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return false;
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
 		if( f != null )
 			return f.getVisibility();
 		return 0;
 	}
 
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 	
@@ -78,7 +77,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return ((ICPPMethod) getSpecializedBinding()).isImplicit();
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
 		if (f != null)
 			return f.isPureVirtual();
@@ -87,7 +86,7 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 	}
 
 	@Override
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		if (isImplicit()) {
 			return ClassTypeHelper.getInheritedExceptionSpecification(this);
 		}

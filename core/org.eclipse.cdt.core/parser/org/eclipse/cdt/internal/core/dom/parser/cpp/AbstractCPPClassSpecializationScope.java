@@ -54,15 +54,15 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		return specialClass.getSpecializedBinding();
 	}
 		
-	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 
-	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) {
 		char[] c = name.getLookupKey();
 		
 		if (CharArrayUtils.equals(c, specialClass.getNameCharArray())
@@ -86,12 +86,12 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	}
 
 	final public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
-			IIndexFileSet fileSet) throws DOMException {
+			IIndexFileSet fileSet) {
 		return getBindings(name, forceResolve, prefixLookup, fileSet, true);
 	}
 
 	public IBinding[] getBindings(IASTName name, boolean forceResolve, boolean prefixLookup,
-			IIndexFileSet fileSet, boolean checkPointOfDecl) throws DOMException {
+			IIndexFileSet fileSet, boolean checkPointOfDecl) {
 		ICPPClassType specialized = specialClass.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
 		if (classScope == null)
@@ -119,7 +119,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		return specialClass;
 	}
 	
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		if (fBases == null) {
 			ICPPBase[] result = null;
 			ICPPBase[] bases = specialClass.getSpecializedBinding().getBases();
@@ -175,22 +175,18 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		return newArray;
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		ICPPField[] fields= specialClass.getSpecializedBinding().getDeclaredFields();
 		return specializeMembers(fields);
 	}
 	
 	public ICPPMethod[] getImplicitMethods() {
-		try {
-			ICPPClassScope origClassScope= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
-			if (origClassScope == null) {
-				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
-			}
-			ICPPMethod[] methods= origClassScope.getImplicitMethods();
-			return specializeMembers(methods);
-		} catch (DOMException e) {
+		ICPPClassScope origClassScope= (ICPPClassScope) specialClass.getSpecializedBinding().getCompositeScope();
+		if (origClassScope == null) {
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		}
+		ICPPMethod[] methods= origClassScope.getImplicitMethods();
+		return specializeMembers(methods);
 	}
 
 	public IName getScopeName() {
@@ -199,22 +195,22 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		return null;
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		ICPPConstructor[] ctors= specialClass.getSpecializedBinding().getConstructors();
 		return specializeMembers(ctors);
 	}
 		
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		ICPPMethod[] bindings = specialClass.getSpecializedBinding().getDeclaredMethods();
 		return specializeMembers(bindings);
 	}
 
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		ICPPClassType[] bindings = specialClass.getSpecializedBinding().getNestedClasses();
 		return specializeMembers(bindings);
 	}
 
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		// not yet supported
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
@@ -230,7 +226,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 		return getOriginalClassType().getScope();
 	}
 
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
 

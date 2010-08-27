@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,19 +136,19 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		}
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
 	}
 

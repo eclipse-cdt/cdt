@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -73,11 +72,8 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 					fResult.put(nchars, list);
 				}
 				list.add(binding);
-				try {
-					if (binding instanceof ICompositeType && ((ICompositeType) binding).isAnonymous()) {
-						return true; // visit children
-					}
-				} catch (DOMException e) {
+				if (binding instanceof ICompositeType && ((ICompositeType) binding).isAnonymous()) {
+					return true; // visit children
 				}
 			}
 			return false;
@@ -109,15 +105,15 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return fBinding;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, null);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)	throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 		return getBindings(name, resolve, prefixLookup, null);
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
 		    final char[] nameChars = name.getSimpleID();
 			if (CharArrayUtils.equals(fBinding.getNameCharArray(), nameChars)) {
@@ -133,7 +129,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return null;
 	}
 
-	private IBinding getClassNameBinding() throws DOMException {
+	private IBinding getClassNameBinding() {
 		if (fBinding instanceof ICPPClassTemplatePartialSpecialization)
 			return ((ICPPClassTemplatePartialSpecialization) fBinding).getPrimaryClassTemplate();
 		if (fBinding instanceof ICPPSpecialization)
@@ -141,7 +137,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return fBinding;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		try {
 			if (name instanceof ICPPASTConversionName) {
 				BindingCollector visitor = new BindingCollector(fBinding.getLinkage(), Keywords.cOPERATOR, CONVERSION_FILTER, true, true);
@@ -244,7 +240,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return map;
 	}
 
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings( this, name, false );
 	}
 	
@@ -262,7 +258,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		}
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		return fBinding.getConstructors();
 	}
 

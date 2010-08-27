@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
@@ -22,13 +21,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -86,7 +85,7 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
     public void addName(IASTName name) {
     }
 
-	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
@@ -157,7 +156,7 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
         return result;
     }
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 
@@ -168,15 +167,11 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
     public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet acceptLocalBindings, boolean checkPointOfDecl) {
     	if (prefixLookup) {
     		if (binding instanceof ICPPDeferredClassInstance) {
-	    		try {
-	    			ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) binding;
-	    			IScope scope = instance.getClassTemplate().getCompositeScope();
-	    			if (scope != null) {
-	    				return scope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
-	    			}
-	    		} catch (DOMException exc) {
-	    			CCorePlugin.log(exc);
-	    		}
+	    		ICPPDeferredClassInstance instance = (ICPPDeferredClassInstance) binding;
+				IScope scope = instance.getClassTemplate().getCompositeScope();
+				if (scope != null) {
+					return scope.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
+				}
     		}
     		return IBinding.EMPTY_BINDING_ARRAY;
     	}

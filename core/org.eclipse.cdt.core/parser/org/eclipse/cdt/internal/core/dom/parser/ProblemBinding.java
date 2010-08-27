@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -26,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -33,6 +32,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.PlatformObject;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of problem bindings
@@ -172,8 +173,8 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find(String name) throws DOMException {
-        throw new DOMException(this);
+    public IBinding[] find(String name) {
+        return IBinding.EMPTY_BINDING_ARRAY;
     }
 
 	/* (non-Javadoc)
@@ -186,34 +187,32 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public void addName(IASTName name) throws DOMException {
-        throw new DOMException(this);
+    public void addName(IASTName name) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
-        throw new DOMException(this);
+    public IBinding getBinding(IASTName name, boolean resolve) {
+        return null;
     }
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix)
-			throws DOMException {
-        throw new DOMException(this);
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
+        return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
-        throw new DOMException(this);
+    public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
+        return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
-        throw new DOMException(this);
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+        return IBinding.EMPTY_BINDING_ARRAY;
     }
 
     /* (non-Javadoc)
@@ -239,8 +238,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return -1;
 	}
 
-	public void addBinding(IBinding binding) throws DOMException {
-		throw new DOMException(this);
+	public void addBinding(IBinding binding) {
 	}
 
 	public ILinkage getLinkage() {
@@ -252,7 +250,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return getMessage();
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return node instanceof IASTName ? CPPVisitor.findNameOwner((IASTName) node, true) : null;
 	}
 
@@ -264,5 +262,74 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	}
 
 	public void populateCache() {
+	}
+	
+	
+	// Dummy methods for derived classes
+    public IType getType() throws DOMException {
+        throw new DOMException(this);
+    }
+    public boolean isStatic() {
+    	return false;
+    }
+    public String[] getQualifiedName() throws DOMException {
+        throw new DOMException(this);
+    }
+    public char[][] getQualifiedNameCharArray() throws DOMException {
+        throw new DOMException(this);
+    }
+    public boolean isGloballyQualified() throws DOMException {
+        throw new DOMException(this);
+    }
+    public boolean isMutable() {
+    	return false;
+    }
+    public boolean isExtern() {
+    	return false;
+    }
+    public boolean isExternC() {
+    	return false;
+    }
+    public boolean isAuto() {
+    	return false;
+    }
+    public boolean isRegister() {
+    	return false;
+    }
+	public IValue getInitialValue() {
+		return null;
+	}
+	public boolean isAnonymous() {
+		return false;
+	}
+	public boolean isDeleted() {
+		return false;
+	}
+    public boolean isInline() {
+    	return false;
+    }
+    public boolean takesVarArgs() {
+    	return false;
+    }
+	public IType[] getExceptionSpecification() {
+        return null;
+	}
+	public boolean hasParameterPack() {
+		return false;
+	}
+	public boolean isVirtual() {
+		return false;
+	}
+	public boolean isPureVirtual() {
+		return false;
+	}
+	public boolean isImplicit() {
+		return false;
+	}
+	public boolean hasDefaultValue() {
+        return false;
+	}
+	public boolean isParameterPack() {
+		return false;
 	}
 }

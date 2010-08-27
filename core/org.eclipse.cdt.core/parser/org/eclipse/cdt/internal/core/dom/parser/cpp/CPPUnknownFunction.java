@@ -39,7 +39,7 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		super(owner, name);
 	}
 
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		return null;
 	}
 
@@ -47,15 +47,15 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		return false;
 	}
 
-	public boolean isExternC() throws DOMException {
+	public boolean isExternC() {
 		return false;
 	}
 
-	public boolean isInline() throws DOMException {
+	public boolean isInline() {
 		return false;
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return false;
 	}
 
@@ -63,38 +63,38 @@ public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunctio
 		return asScope();
 	}
 
-	public ICPPParameter[] getParameters() throws DOMException {
+	public ICPPParameter[] getParameters() {
 		return ICPPParameter.EMPTY_CPPPARAMETER_ARRAY;
 	}
 
-	public ICPPFunctionType getType() throws DOMException {
+	public ICPPFunctionType getType() {
 		if (fType == null) {
 			fType= new CPPUnknownFunctionType();
 		}
 		return fType;
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return false;
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return false;
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return false;
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return false;
 	}
 
-	public boolean takesVarArgs() throws DOMException {
+	public boolean takesVarArgs() {
 		return false;
 	}
 
-	public int getRequiredArgumentCount() throws DOMException {
+	public int getRequiredArgumentCount() {
 		return 0;
 	}
 

@@ -806,70 +806,66 @@ public class CPPTemplates {
 	}
 
 	private static int determinePackSize(IType type, ICPPTemplateParameterMap tpMap) {
-		try {
-			if (type instanceof ICPPFunctionType) {
-				final ICPPFunctionType ft = (ICPPFunctionType) type;
-				final IType rt = ft.getReturnType();
-				int r = determinePackSize(rt, tpMap);
-				if (r < 0) 
-					return r;
-				IType[] ps = ft.getParameterTypes();
-				for (IType pt : ps) {
-					r= combine(r, determinePackSize(pt, tpMap));
-					if (r < 0)
-						return r;
-				}
+		if (type instanceof ICPPFunctionType) {
+			final ICPPFunctionType ft = (ICPPFunctionType) type;
+			final IType rt = ft.getReturnType();
+			int r = determinePackSize(rt, tpMap);
+			if (r < 0) 
 				return r;
-			} 
-
-			if (type instanceof ICPPTemplateParameter) {
-				final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
-				if (tpar.isParameterPack()) {
-					ICPPTemplateArgument[] args= tpMap.getPackExpansion(tpar);
-					if (args != null)
-						return args.length;
-					return PACK_SIZE_DEFER;
-				}
-				return PACK_SIZE_NOT_FOUND;
-			} 
-
-			int r= PACK_SIZE_NOT_FOUND;
-			if (type instanceof ICPPUnknownBinding) {
-				if (type instanceof ICPPDeferredClassInstance) {
-					ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) type;
-					ICPPTemplateArgument[] args = dcl.getTemplateArguments();
-					for (ICPPTemplateArgument arg : args) {
-						r= combine(r, determinePackSize(arg, tpMap));
-						if (r < 0)
-							return r;
-					}
-				}
-				IBinding binding= ((ICPPUnknownBinding) type).getOwner();
-				if (binding instanceof IType)
-					r= combine(r, determinePackSize((IType) binding, tpMap));
-
-				return r;
-			}
-
-			if (type instanceof ICPPParameterPackType)
-				return PACK_SIZE_NOT_FOUND;
-			
-			if (type instanceof IArrayType) {
-				IArrayType at= (IArrayType) type;
-				IValue asize= at.getSize();
-				r= determinePackSize(asize, tpMap);
+			IType[] ps = ft.getParameterTypes();
+			for (IType pt : ps) {
+				r= combine(r, determinePackSize(pt, tpMap));
 				if (r < 0)
 					return r;
 			}
-
-			if (type instanceof ITypeContainer) {
-				final ITypeContainer typeContainer = (ITypeContainer) type;
-				r= combine(r, determinePackSize(typeContainer.getType(), tpMap));
-			} 
 			return r;
-		} catch (DOMException e) {
-			return PACK_SIZE_FAIL;
+		} 
+
+		if (type instanceof ICPPTemplateParameter) {
+			final ICPPTemplateParameter tpar = (ICPPTemplateParameter) type;
+			if (tpar.isParameterPack()) {
+				ICPPTemplateArgument[] args= tpMap.getPackExpansion(tpar);
+				if (args != null)
+					return args.length;
+				return PACK_SIZE_DEFER;
+			}
+			return PACK_SIZE_NOT_FOUND;
+		} 
+
+		int r= PACK_SIZE_NOT_FOUND;
+		if (type instanceof ICPPUnknownBinding) {
+			if (type instanceof ICPPDeferredClassInstance) {
+				ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) type;
+				ICPPTemplateArgument[] args = dcl.getTemplateArguments();
+				for (ICPPTemplateArgument arg : args) {
+					r= combine(r, determinePackSize(arg, tpMap));
+					if (r < 0)
+						return r;
+				}
+			}
+			IBinding binding= ((ICPPUnknownBinding) type).getOwner();
+			if (binding instanceof IType)
+				r= combine(r, determinePackSize((IType) binding, tpMap));
+
+			return r;
 		}
+
+		if (type instanceof ICPPParameterPackType)
+			return PACK_SIZE_NOT_FOUND;
+		
+		if (type instanceof IArrayType) {
+			IArrayType at= (IArrayType) type;
+			IValue asize= at.getSize();
+			r= determinePackSize(asize, tpMap);
+			if (r < 0)
+				return r;
+		}
+
+		if (type instanceof ITypeContainer) {
+			final ITypeContainer typeContainer = (ITypeContainer) type;
+			r= combine(r, determinePackSize(typeContainer.getType(), tpMap));
+		} 
+		return r;
 	}
 
 	private static int combine(int ps1, int ps2) {

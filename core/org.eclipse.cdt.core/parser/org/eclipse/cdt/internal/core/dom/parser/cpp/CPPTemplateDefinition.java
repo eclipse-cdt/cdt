@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
+ *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
@@ -43,9 +43,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.runtime.PlatformObject;
 
-/**
- * @author aniefer
- */
 public abstract class CPPTemplateDefinition extends PlatformObject implements ICPPTemplateDefinition, ICPPInternalTemplate {
 	public static final class CPPTemplateProblem extends ProblemBinding implements ICPPTemplateDefinition {
 		public CPPTemplateProblem(IASTNode node, int id, char[] arg) {
@@ -55,15 +52,6 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			throw new DOMException(this);
 		}
 		public ICPPClassTemplatePartialSpecialization[] getTemplateSpecializations() throws DOMException {
-			throw new DOMException(this);
-		}
-		public String[] getQualifiedName() throws DOMException {
-			throw new DOMException(this);
-		}
-		public char[][] getQualifiedNameCharArray() throws DOMException {
-			throw new DOMException(this);
-		}
-		public boolean isGloballyQualified() throws DOMException {
 			throw new DOMException(this);
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -1327,21 +1326,19 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 	 * eg) x.a; computes the type of a
 	 */
 	private C99Field computeFieldBinding(IType identType, String memberName, boolean isPointerDereference) {
-		try {
-			IType type = identType;
-			if(isPointerDereference) {
-				if(type instanceof IPointerType)
-					type = ((ITypeContainer)type).getType(); // do the dereference
-				else
-					return null;
-			}
-		
-			type = rawType(type);
-			if(type instanceof ICompositeType) {
-				ICompositeType struct = (ICompositeType) type;
-				return (C99Field) struct.findField(memberName);
-			}
-		} catch(DOMException _) {}
+		IType type = identType;
+		if(isPointerDereference) {
+			if(type instanceof IPointerType)
+				type = ((ITypeContainer)type).getType(); // do the dereference
+			else
+				return null;
+		}
+
+		type = rawType(type);
+		if(type instanceof ICompositeType) {
+			ICompositeType struct = (ICompositeType) type;
+			return (C99Field) struct.findField(memberName);
+		}
 		
 		return null;
 	}

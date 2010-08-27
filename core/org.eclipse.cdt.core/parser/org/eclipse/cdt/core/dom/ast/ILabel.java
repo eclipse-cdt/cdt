@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,6 @@ public interface ILabel extends IBinding {
 	 * Returns the label statement for this label.
 	 * 
 	 */
-	public IASTLabelStatement getLabelStatement() throws DOMException;
+	public IASTLabelStatement getLabelStatement();
 	
 }

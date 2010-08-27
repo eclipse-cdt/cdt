@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.c;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -25,23 +24,23 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 		super(cf, rbinding);
 	}
 
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		IField preresult = ((ICompositeType)rbinding).findField(name);
 		return (IField) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 
-	public IScope getCompositeScope() throws DOMException {
+	public IScope getCompositeScope() {
 		return new CompositeCCompositeScope(cf, rbinding); 
 	}
 
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		IField[] result = ((ICompositeType)rbinding).getFields();
 		for(int i=0; i<result.length; i++)
 			result[i] = (IField) cf.getCompositeBinding((IIndexFragmentBinding)result[i]);
 		return result;
 	}
 
-	public int getKey() throws DOMException {
+	public int getKey() {
 		return ((ICompositeType)rbinding).getKey();
 	}
 
@@ -52,7 +51,7 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 	@Override
 	public Object clone() {fail(); return null;}
 
-	public boolean isAnonymous() throws DOMException {
+	public boolean isAnonymous() {
 		return ((ICompositeType)rbinding).isAnonymous();
 	}
 }

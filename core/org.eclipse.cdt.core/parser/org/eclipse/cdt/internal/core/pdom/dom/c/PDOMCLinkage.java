@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
-import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.c.CArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.c.CBasicType;
@@ -206,30 +205,26 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	 * @throws CoreException
 	 */
 	final private PDOMNode getAdaptedParent(IBinding binding) throws CoreException {
-		try {
-			if (binding instanceof IIndexBinding) {
-				IIndexBinding ib= (IIndexBinding) binding;
-				if (ib.isFileLocal()) {
-					return null;
-				}
-			} 
-			
-			IBinding owner= binding.getOwner();
-			// For plain c the enumeration type is not the parent of the enumeration item.
-			if (owner instanceof IEnumeration) {
-				owner= owner.getOwner();
-			}
-			if (owner == null) {
-				return this;
-			}
-			if (owner instanceof IFunction) {
+		if (binding instanceof IIndexBinding) {
+			IIndexBinding ib= (IIndexBinding) binding;
+			if (ib.isFileLocal()) {
 				return null;
 			}
-
-			return adaptBinding(owner);
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
+		} 
+		
+		IBinding owner= binding.getOwner();
+		// For plain c the enumeration type is not the parent of the enumeration item.
+		if (owner instanceof IEnumeration) {
+			owner= owner.getOwner();
 		}
+		if (owner == null) {
+			return this;
+		}
+		if (owner instanceof IFunction) {
+			return null;
+		}
+
+		return adaptBinding(owner);
 	}
 
 	@Override

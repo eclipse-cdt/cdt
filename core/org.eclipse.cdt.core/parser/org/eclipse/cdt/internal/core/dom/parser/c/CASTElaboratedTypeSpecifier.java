@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -122,19 +121,15 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 			IBinding b= result[i];
 			if (b instanceof ICompositeType) {
 				ICompositeType ct= (ICompositeType) b;
-				try {
-					switch (ct.getKey()) {
-					case ICompositeType.k_struct:
-						if (getKind() != k_struct) 
-							b= null;
-						break;
-					case ICompositeType.k_union:
-						if (getKind() != k_union) 
-							b= null;
-						break;
-					}
-				} catch (DOMException e) {
-					// ignore and propose binding
+				switch (ct.getKey()) {
+				case ICompositeType.k_struct:
+					if (getKind() != k_struct) 
+						b= null;
+					break;
+				case ICompositeType.k_union:
+					if (getKind() != k_union) 
+						b= null;
+					break;
 				}
 			} else if (b instanceof IEnumeration) {
 				if (getKind() != k_enum)

@@ -26,7 +26,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.TextEditGroup;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -46,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
@@ -237,7 +236,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	private NodeContainer findAllExpressions() {
 		final NodeContainer container = new NodeContainer();
 
-		unit.accept(new CPPASTVisitor() {
+		unit.accept(new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
 			}
@@ -358,7 +357,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		}
 
 		if (target != null) {
-			target.accept(new CPPASTVisitor() {
+			target.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;
 					shouldVisitExpressions = true;
@@ -437,13 +436,9 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 				info.getUsedNames().contains(name)) {
 			return false;
 		}
-		try {
-			if (scope != null) {
-				IBinding[] bindings = scope.find(name);
-				return bindings == null || bindings.length == 0;
-			}
-		} catch (DOMException e) {
-			// fall-through
+		if (scope != null) {
+			IBinding[] bindings = scope.find(name);
+			return bindings == null || bindings.length == 0;
 		}
 		return true; // no name references found
 	}

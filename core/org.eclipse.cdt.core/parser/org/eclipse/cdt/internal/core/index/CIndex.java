@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -650,23 +649,18 @@ public class CIndex implements IIndex {
 		} 
 
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[fPrimaryFragmentCount][];
-		try {
-			for (int i = 0; i < fPrimaryFragmentCount; i++) {
-				IIndexScope[] raw = fFragments[i].getInlineNamespaces();
-				IIndexFragmentBinding[] arr = preresult[i] = new IIndexFragmentBinding[raw.length];
-				for (int j=0; j<raw.length; j++) {
-					arr[j]= (IIndexFragmentBinding) raw[j].getScopeBinding();
-				} 
-			}
-			IIndexBinding[] compBinding = getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
-			IIndexScope[] result = new IIndexScope[compBinding.length];
-			for(int i=0; i<result.length; i++) {
-				result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();
-			}
-			return result;
-		} catch (DOMException e) {
-			// Index bindings don't throw DOMExceptions.
-			return new IIndexScope[0];
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexScope[] raw = fFragments[i].getInlineNamespaces();
+			IIndexFragmentBinding[] arr = preresult[i] = new IIndexFragmentBinding[raw.length];
+			for (int j=0; j<raw.length; j++) {
+				arr[j]= (IIndexFragmentBinding) raw[j].getScopeBinding();
+			} 
 		}
+		IIndexBinding[] compBinding = getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
+		IIndexScope[] result = new IIndexScope[compBinding.length];
+		for(int i=0; i<result.length; i++) {
+			result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();
+		}
+		return result;
 	}
 }

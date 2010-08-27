@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -332,28 +332,22 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext,
 			CContentAssistInvocationContext context, int baseRelevance, List<ICompletionProposal> proposals) {
 		if (context.isContextInformationStyle()) {
-			try {
-				ICPPConstructor[] constructors = classType.getConstructors();
-				for (ICPPConstructor constructor : constructors) {
-					handleFunction(constructor, context, baseRelevance, proposals);
-				}
-			} catch (DOMException e) {
+			ICPPConstructor[] constructors = classType.getConstructors();
+			for (ICPPConstructor constructor : constructors) {
+				handleFunction(constructor, context, baseRelevance, proposals);
 			}
 		} else {
 			int relevance= 0;
-			try {
-				switch (classType.getKey()) {
-				case ICPPClassType.k_class:
-					relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
-					break;
-				case ICompositeType.k_struct:
-					relevance= RelevanceConstants.STRUCT_TYPE_RELEVANCE;
-					break;
-				case ICompositeType.k_union:
-					relevance= RelevanceConstants.UNION_TYPE_RELEVANCE;
-					break;
-				}
-			} catch (DOMException exc) {
+			switch (classType.getKey()) {
+			case ICPPClassType.k_class:
+				relevance= RelevanceConstants.CLASS_TYPE_RELEVANCE;
+				break;
+			case ICompositeType.k_struct:
+				relevance= RelevanceConstants.STRUCT_TYPE_RELEVANCE;
+				break;
+			case ICompositeType.k_union:
+				relevance= RelevanceConstants.UNION_TYPE_RELEVANCE;
+				break;
 			}
 			if (astContext instanceof IASTName && !(astContext instanceof ICPPASTQualifiedName)) {
 				IASTName name= (IASTName)astContext;
@@ -582,60 +576,57 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	private Image getImage(IBinding binding) {
 		ImageDescriptor imageDescriptor = null;
 		
-		try {
-			if (binding instanceof ITypedef) {
-				imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
-			} else if (binding instanceof ICompositeType) {
-				if (((ICompositeType)binding).getKey() == ICPPClassType.k_class || binding instanceof ICPPClassTemplate)
-					imageDescriptor = CElementImageProvider.getClassImageDescriptor();
-				else if (((ICompositeType)binding).getKey() == ICompositeType.k_struct)
-					imageDescriptor = CElementImageProvider.getStructImageDescriptor();
-				else if (((ICompositeType)binding).getKey() == ICompositeType.k_union)
-					imageDescriptor = CElementImageProvider.getUnionImageDescriptor();
-			} else if (binding instanceof ICPPMethod) {
-				switch (((ICPPMethod)binding).getVisibility()) {
-				case ICPPMember.v_private:
-					imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PRIVATE);
-					break;
-				case ICPPMember.v_protected:
-					imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PROTECTED);
-					break;
-				default:
-					imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC);
-					break;
-				}
-			} else if (binding instanceof IFunction) {
-				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
-			} else if (binding instanceof ICPPField) {
-				switch (((ICPPField)binding).getVisibility()) {
-				case ICPPMember.v_private:
-					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PRIVATE);
-					break;
-				case ICPPMember.v_protected:
-					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PROTECTED);
-					break;
-				default:
-					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PUBLIC);
-					break;
-				}
-			} else if (binding instanceof IField) {
-				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PUBLIC);
-			} else if (binding instanceof IVariable) {
-				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
-			} else if (binding instanceof IEnumeration) {
-				imageDescriptor = CElementImageProvider.getEnumerationImageDescriptor();
-            } else if (binding instanceof IEnumerator) {
-                imageDescriptor = CElementImageProvider.getEnumeratorImageDescriptor();
-            } else if (binding instanceof ICPPNamespace) {
-				imageDescriptor = CElementImageProvider.getNamespaceImageDescriptor();
-			} else if (binding instanceof ICPPFunctionTemplate) {
-				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
-			} else if (binding instanceof ICPPUsingDeclaration) {
-				IBinding[] delegates = ((ICPPUsingDeclaration) binding).getDelegates();
-				if (delegates.length > 0)
-					return getImage(delegates[0]);
+		if (binding instanceof ITypedef) {
+			imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
+		} else if (binding instanceof ICompositeType) {
+			if (((ICompositeType)binding).getKey() == ICPPClassType.k_class || binding instanceof ICPPClassTemplate)
+				imageDescriptor = CElementImageProvider.getClassImageDescriptor();
+			else if (((ICompositeType)binding).getKey() == ICompositeType.k_struct)
+				imageDescriptor = CElementImageProvider.getStructImageDescriptor();
+			else if (((ICompositeType)binding).getKey() == ICompositeType.k_union)
+				imageDescriptor = CElementImageProvider.getUnionImageDescriptor();
+		} else if (binding instanceof ICPPMethod) {
+			switch (((ICPPMethod)binding).getVisibility()) {
+			case ICPPMember.v_private:
+				imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PRIVATE);
+				break;
+			case ICPPMember.v_protected:
+				imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PROTECTED);
+				break;
+			default:
+				imageDescriptor = CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC);
+				break;
 			}
-		} catch (DOMException e) {
+		} else if (binding instanceof IFunction) {
+			imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
+		} else if (binding instanceof ICPPField) {
+			switch (((ICPPField)binding).getVisibility()) {
+			case ICPPMember.v_private:
+				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PRIVATE);
+				break;
+			case ICPPMember.v_protected:
+				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PROTECTED);
+				break;
+			default:
+				imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PUBLIC);
+				break;
+			}
+		} else if (binding instanceof IField) {
+			imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PUBLIC);
+		} else if (binding instanceof IVariable) {
+			imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
+		} else if (binding instanceof IEnumeration) {
+			imageDescriptor = CElementImageProvider.getEnumerationImageDescriptor();
+		} else if (binding instanceof IEnumerator) {
+		    imageDescriptor = CElementImageProvider.getEnumeratorImageDescriptor();
+		} else if (binding instanceof ICPPNamespace) {
+			imageDescriptor = CElementImageProvider.getNamespaceImageDescriptor();
+		} else if (binding instanceof ICPPFunctionTemplate) {
+			imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
+		} else if (binding instanceof ICPPUsingDeclaration) {
+			IBinding[] delegates = ((ICPPUsingDeclaration) binding).getDelegates();
+			if (delegates.length > 0)
+				return getImage(delegates[0]);
 		}
 		
 		return imageDescriptor != null

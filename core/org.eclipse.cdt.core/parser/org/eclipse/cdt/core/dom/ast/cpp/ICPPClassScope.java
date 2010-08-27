@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 
 /**
  * Interface for class scopes.
@@ -39,5 +38,5 @@ public interface ICPPClassScope extends ICPPScope {
 	 * Returns the array of constructors, including implicit ones.
 	 * @since 5.1
 	 */
-	public ICPPConstructor[] getConstructors() throws DOMException;
+	public ICPPConstructor[] getConstructors();
 }

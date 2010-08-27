@@ -31,11 +31,11 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -161,7 +161,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	}
 
 	@Override
-	public void addName(IASTName name) throws DOMException {
+	public void addName(IASTName name) {
 		// don't add names from inactive code branches
 		if (!name.isActive())
 			return;
@@ -213,7 +213,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
 	@Override
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 	    char[] c = name.getLookupKey();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -230,7 +230,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet, 
-			boolean checkPointOfDecl) throws DOMException {
+			boolean checkPointOfDecl) {
 	    char[] c = name.getLookupKey();
 
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -314,7 +314,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	@Override
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 	    char[] n = name.toCharArray();
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 	    IASTName compName = compType.getName().getLastName();
@@ -374,7 +374,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 */
 	public ICPPMethod[] getImplicitMethods() {
 		if (implicits == null)
-			implicits = new ICPPMethod[] { new CPPMethod.CPPMethodProblem(null, IProblemBinding.SEMANTIC_INVALID_TYPE, CharArrayUtils.EMPTY) };
+			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+
 		return implicits;
 	}
 

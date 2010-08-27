@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -27,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -60,7 +60,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	private boolean checkedIndex= false;
 	private boolean checkedDefinition= false;
 	
-	private class FindDefinitionAction extends CPPASTVisitor {
+	private class FindDefinitionAction extends ASTVisitor {
 		private char[] nameArray = CPPClassTemplate.this.getNameCharArray();
 		public IASTName result = null;
 
@@ -170,13 +170,9 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		// Forward declarations must be backed up from the index.
 		checkForIndexBinding();
 		if (fIndexBinding != null) {
-			try {
-				IScope scope = fIndexBinding.getCompositeScope();
-				if (scope instanceof ICPPClassScope)
-					return (ICPPClassScope) scope;
-			} catch (DOMException e) {
-				// index bindings don't throw DOMExeptions.
-			}
+			IScope scope = fIndexBinding.getCompositeScope();
+			if (scope instanceof ICPPClassScope)
+				return (ICPPClassScope) scope;
 		}
 		return null;
 	}
@@ -220,27 +216,27 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return ClassTypeHelper.getBases(this);
 	}
 
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		return ClassTypeHelper.getDeclaredFields(this);
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException {
+	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		return ClassTypeHelper.getDeclaredMethods(this);
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		return ClassTypeHelper.getConstructors(this);
 	}
 
@@ -252,7 +248,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return ClassTypeHelper.getNestedClasses(this);
 	}
 
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 	

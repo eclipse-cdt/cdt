@@ -432,20 +432,19 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return 0;
 	}
 	
-	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, null);
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		return null;
 	}
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, null);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet)
-			throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet) {
 		return null;
 	}
 }

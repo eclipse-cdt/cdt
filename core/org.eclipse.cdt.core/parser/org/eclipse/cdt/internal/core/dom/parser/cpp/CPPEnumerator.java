@@ -131,7 +131,7 @@ public class CPPEnumerator extends PlatformObject implements IEnumerator, ICPPIn
 		return Linkage.CPP_LINKAGE;
 	}
 
-	public IBinding getOwner() throws DOMException {
+	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(enumName, true);
 	}
 

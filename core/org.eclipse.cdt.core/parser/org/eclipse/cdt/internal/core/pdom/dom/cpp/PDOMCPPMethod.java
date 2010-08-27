@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		return IIndexCPPBindingConstants.CPPMETHOD;
 	}
 
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
@@ -113,7 +113,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		return annotation1;
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
 	}
 
@@ -122,7 +122,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		throw new PDOMNotImplementedError();
 	}
 
@@ -158,11 +158,11 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		return false;
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getAnnotation());
 	}
 
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
@@ -210,7 +210,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 	
 	@Override
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		if (isImplicit()) {
 			return ClassTypeHelper.getInheritedExceptionSpecification(this);
 		}

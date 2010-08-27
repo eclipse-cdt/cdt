@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -46,7 +45,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		super(name, scope, type, params, false);
 	}
    
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		IASTDeclaration decl= getPrimaryDeclaration();
 		if (decl == null) {
 			// 12.1-5, 12.8-10 Implicit constructors and assignment operators are public
@@ -82,7 +81,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return scope.getClassType();
 	}
 	
-	public IASTDeclaration getPrimaryDeclaration() throws DOMException {
+	public IASTDeclaration getPrimaryDeclaration() {
 		// first check if we already know it
 		if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
@@ -170,11 +169,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	}
 
 	public boolean isImplicit() {
-		try {
-			return getPrimaryDeclaration() == null;
-		} catch (DOMException e) {
-		}
-		return true;
+		return getPrimaryDeclaration() == null;
 	}
 	
 	public boolean isPureVirtual() {
@@ -187,7 +182,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 	}
 
 	@Override
-	public IType[] getExceptionSpecification() throws DOMException {
+	public IType[] getExceptionSpecification() {
 		return ClassTypeHelper.getInheritedExceptionSpecification(this);
 	}
 }

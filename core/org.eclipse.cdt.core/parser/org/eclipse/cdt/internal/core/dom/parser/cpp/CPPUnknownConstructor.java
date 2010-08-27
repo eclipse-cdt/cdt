@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
@@ -24,7 +23,7 @@ public class CPPUnknownConstructor extends CPPUnknownFunction implements ICPPCon
 		super(owner, owner.getNameCharArray());
 	}
 
-	public boolean isExplicit() throws DOMException {
+	public boolean isExplicit() {
 		return false;
 	}
 
@@ -36,19 +35,19 @@ public class CPPUnknownConstructor extends CPPUnknownFunction implements ICPPCon
 		return false;
 	}
 
-	public boolean isPureVirtual() throws DOMException {
+	public boolean isPureVirtual() {
 		return false;
 	}
 
-	public boolean isVirtual() throws DOMException {
+	public boolean isVirtual() {
 		return false;
 	}
 
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return v_public;
 	}
 }

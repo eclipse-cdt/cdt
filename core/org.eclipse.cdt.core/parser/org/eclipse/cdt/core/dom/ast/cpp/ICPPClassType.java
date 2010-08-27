@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -31,13 +30,13 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * 
 	 * @return List of ICPPBase
 	 */
-	public ICPPBase[] getBases() throws DOMException;
+	public ICPPBase[] getBases();
 
 	/**
 	 * Get fields is restated here just to point out that this method returns a
 	 * list of ICPPField objects representing all fields, declared or inherited.
 	 */
-	public IField[] getFields() throws DOMException;
+	public IField[] getFields();
 
 	/**
 	 * findField is restated here to point out that this method looks through
@@ -47,7 +46,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * 
 	 * @param name
 	 */
-	public IField findField(String name) throws DOMException;
+	public IField findField(String name);
 
 	/**
 	 * Returns a list of ICPPField objects representing fields declared in this
@@ -55,7 +54,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * 
 	 * @return List of ICPPField
 	 */
-	public ICPPField[] getDeclaredFields() throws DOMException;
+	public ICPPField[] getDeclaredFields();
 
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods defined for
@@ -64,7 +63,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public ICPPMethod[] getMethods() throws DOMException;
+	public ICPPMethod[] getMethods();
 
 	/**
 	 * Returns a list of ICPPMethod objects representing all method explicitly
@@ -73,7 +72,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException;
+	public ICPPMethod[] getAllDeclaredMethods();
 
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods explicitly
@@ -82,7 +81,7 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public ICPPMethod[] getDeclaredMethods() throws DOMException;
+	public ICPPMethod[] getDeclaredMethods();
 
 	/**
 	 * Returns an array of ICPPConstructor objects representing the constructors
@@ -90,19 +89,16 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	 * constructors.
 	 * 
 	 */
-	public ICPPConstructor[] getConstructors() throws DOMException;
+	public ICPPConstructor[] getConstructors();
 
 	/**
 	 * return an array of bindings for those classes/functions declared as
 	 * friends of this class.
-	 * 
-	 * @throws DOMException
 	 */
-	public IBinding[] getFriends() throws DOMException;
+	public IBinding[] getFriends();
 	
 	/**
 	 * return an array of nested classes/structures
-	 * @throws DOMException
 	 */
-	public ICPPClassType[] getNestedClasses() throws DOMException;
+	public ICPPClassType[] getNestedClasses();
 }

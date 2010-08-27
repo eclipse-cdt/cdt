@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2010 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
@@ -69,11 +68,7 @@ public class MethodContext {
 		ICPPASTVisibilityLabel label = new CPPASTVisibilityLabel();
 		ICPPMember member = ((ICPPMember)qname.resolveBinding());			
 
-		try {
-			label.setVisibility(member.getVisibility());
-		} catch (DOMException e) {
-			CUIPlugin.log(e);
-		}
+		label.setVisibility(member.getVisibility());
 		return label;
 	}
 	
@@ -108,11 +103,7 @@ public class MethodContext {
 		if (subclassBind instanceof ICPPClassType) {
 			ICPPClassType classType = (ICPPClassType) subclassBind;
 			ICPPBase[] bases;
-			try {
-				bases = classType.getBases();
-			} catch (DOMException e) {
-				return false;
-			}
+			bases = classType.getBases();
 			for (ICPPBase base : bases) {
 				if(isSameClass(base,bind1)){
 					return true;

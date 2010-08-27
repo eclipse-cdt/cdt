@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Google, Inc and others.
+ * Copyright (c) 2008, 2010 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -35,7 +34,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 		super(cf, rbinding);
 	}
 
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		IField preResult = ((ICPPClassType) rbinding).findField(name);
 		return (IField) cf.getCompositeBinding((IIndexFragmentBinding)preResult);
 	}
@@ -96,7 +95,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		ICPPClassType[] result = ((ICPPClassType) rbinding).getNestedClasses();
 		for (int i = 0; i < result.length; i++) {
 			result[i] = (ICPPClassType) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
@@ -104,11 +103,11 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 		return result;
 	}
 
-	public IScope getCompositeScope() throws DOMException {
+	public IScope getCompositeScope() {
 		return new CompositeCPPClassScope(cf, rbinding);
 	}
 
-	public int getKey() throws DOMException {
+	public int getKey() {
 		return ((ICPPClassType) rbinding).getKey();
 	}
 

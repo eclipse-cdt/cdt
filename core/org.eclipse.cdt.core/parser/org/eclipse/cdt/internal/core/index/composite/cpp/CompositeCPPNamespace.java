@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -25,7 +24,7 @@ class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace
 		this.namespaces = namespaces;
 	}
 
-	public IBinding[] getMemberBindings() throws DOMException {
+	public IBinding[] getMemberBindings() {
 		IIndexFragmentBinding[][] memberBindings = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {
 			IBinding[] bindings = namespaces[i].getMemberBindings();
@@ -35,7 +34,7 @@ class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace
 		return cf.getCompositeBindings(memberBindings);
 	}
 
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
+	public ICPPNamespaceScope getNamespaceScope() {
 		return new CompositeCPPNamespaceScope(cf, namespaces);
 	}
 

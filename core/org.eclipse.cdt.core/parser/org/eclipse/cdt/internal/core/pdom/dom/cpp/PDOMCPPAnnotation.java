@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation.
+ * Copyright (c) 2006, 2010 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,9 +47,8 @@ class PDOMCPPAnnotation {
 	 * 
 	 * @param binding the IBinding whose annotation will be encoded.
 	 * @return a bit vector of the annotation.
-	 * @throws DOMException
 	 */	
-	public static byte encodeAnnotation(IBinding binding) throws DOMException {
+	public static byte encodeAnnotation(IBinding binding) {
 		byte modifiers = PDOMCAnnotation.encodeAnnotation(binding);
 		if (binding instanceof ICPPMember) {
 			ICPPMember member = (ICPPMember) binding;

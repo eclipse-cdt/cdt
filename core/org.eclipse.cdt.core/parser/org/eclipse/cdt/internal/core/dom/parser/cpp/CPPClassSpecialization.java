@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -84,7 +83,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 	}
 	
-	private class FindDefinitionAction extends CPPASTVisitor {
+	private class FindDefinitionAction extends ASTVisitor {
 		private char [] nameArray = CPPClassSpecialization.this.getNameCharArray();
 		public IASTName result = null;
 
@@ -177,7 +176,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return null;
 	}
 	
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getBases(this);
@@ -185,7 +184,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getBases();
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredFields(this);
@@ -193,7 +192,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getDeclaredFields();
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getDeclaredMethods(this);
@@ -201,7 +200,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getDeclaredMethods();
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getConstructors(this);
@@ -209,7 +208,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getConstructors();
 	}
 
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getFriends(this);
@@ -217,7 +216,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getFriends();
 	}
 	
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
 			return ClassTypeHelper.getNestedClasses(this);
@@ -226,19 +225,19 @@ public class CPPClassSpecialization extends CPPSpecialization
 	}
 
 
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException {
+	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
@@ -246,7 +245,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
-	public int getKey() throws DOMException {
+	public int getKey() {
 		if (getDefinition() != null)
 			return getCompositeTypeSpecifier().getKey();
 		
@@ -256,7 +255,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
-	public ICPPClassScope getCompositeScope() throws DOMException {
+	public ICPPClassScope getCompositeScope() {
 		final ICPPClassScope specScope= getSpecializationScope();
 		if (specScope != null)
 			return specScope;
@@ -297,7 +296,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return this;
 	}
 
-	public boolean isAnonymous() throws DOMException {
+	public boolean isAnonymous() {
 		if (getNameCharArray().length > 0) 
 			return false;
 		
@@ -322,26 +321,22 @@ public class CPPClassSpecialization extends CPPSpecialization
 				t2 instanceof IProblemBinding)
 			return false;
 		
-		try {
-			if (t1.getKey() != t2.getKey()) 
-				return false;
-			
-			if (!CharArrayUtils.equals(t1.getNameCharArray(), t2.getNameCharArray()))
-				return false;
-			
-			// the argument map is not significant for comparing specializations, the map is
-			// determined by the owner of the specialization. This is different for instances,
-			// which have a separate implementation for isSameType().
-			final IBinding owner1= t1.getOwner();
-			final IBinding owner2= t2.getOwner();
-			
-			// for a specialization that is not an instance the owner has to be a class-type
-			if (owner1 instanceof ICPPClassType == false || owner2 instanceof ICPPClassType == false)
-				return false;
-
-			return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
-		} catch (DOMException e) {
+		if (t1.getKey() != t2.getKey()) 
 			return false;
-		}
+		
+		if (!CharArrayUtils.equals(t1.getNameCharArray(), t2.getNameCharArray()))
+			return false;
+		
+		// the argument map is not significant for comparing specializations, the map is
+		// determined by the owner of the specialization. This is different for instances,
+		// which have a separate implementation for isSameType().
+		final IBinding owner1= t1.getOwner();
+		final IBinding owner2= t2.getOwner();
+		
+		// for a specialization that is not an instance the owner has to be a class-type
+		if (owner1 instanceof ICPPClassType == false || owner2 instanceof ICPPClassType == false)
+			return false;
+
+		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
 	}
 }

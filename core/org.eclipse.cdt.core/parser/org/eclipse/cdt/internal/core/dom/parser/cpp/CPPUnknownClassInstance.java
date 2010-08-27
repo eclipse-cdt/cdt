@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Google, Inc and others.
+ * Copyright (c) 2008, 2010 Google, Inc and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -67,13 +66,10 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 							return false;
 					}
 				}
-				try {
-					final IBinding lhsContainer = getOwner();
-					final IBinding rhsContainer = rhs.getOwner();
-					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-						 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
-					}
-				} catch (DOMException e) {
+				final IBinding lhsContainer = getOwner();
+				final IBinding rhsContainer = rhs.getOwner();
+				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+					 return (((IType)lhsContainer).isSameType((IType) rhsContainer));
 				}
 			}
 		}

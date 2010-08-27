@@ -18,13 +18,13 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -106,7 +106,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     public IScope findNamespaceScope(IIndexScope scope) {
     	final String[] qname= scope.getScopeBinding().getQualifiedName();
     	final IScope[] result= {null};
-    	final CPPASTVisitor visitor= new CPPASTVisitor () {
+    	final ASTVisitor visitor= new ASTVisitor () {
     		private int depth= 0;
     		{
     			shouldVisitNamespaces= shouldVisitDeclarations= true;
@@ -242,7 +242,6 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 					} else if (getKind() == EScopeKind.eGlobal) {
 						inlineScopes= index.getInlineNamespaces();
 					}
-				} catch (DOMException e) {
 				} catch (CoreException e) {
 				}
 				if (inlineScopes != null) {

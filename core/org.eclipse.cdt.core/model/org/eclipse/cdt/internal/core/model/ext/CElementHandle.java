@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,17 +281,13 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	protected ASTAccessVisibility getVisibility(IBinding binding) {
 		if (binding instanceof ICPPMember) {
 			ICPPMember member= (ICPPMember) binding;
-			try {
-				switch (member.getVisibility()) {
-				case ICPPMember.v_private:
-					return ASTAccessVisibility.PRIVATE;
-				case ICPPMember.v_protected:
-					return ASTAccessVisibility.PROTECTED;
-				case ICPPMember.v_public:
-					return ASTAccessVisibility.PUBLIC;
-				}
-			} catch (DOMException e) {
-				CCorePlugin.log(e);
+			switch (member.getVisibility()) {
+			case ICPPMember.v_private:
+				return ASTAccessVisibility.PRIVATE;
+			case ICPPMember.v_protected:
+				return ASTAccessVisibility.PROTECTED;
+			case ICPPMember.v_public:
+				return ASTAccessVisibility.PUBLIC;
 			}
 		}
 		return ASTAccessVisibility.PUBLIC;

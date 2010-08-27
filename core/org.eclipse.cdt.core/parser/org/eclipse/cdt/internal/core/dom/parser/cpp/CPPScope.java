@@ -82,7 +82,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public void addName(IASTName name) throws DOMException {
+	public void addName(IASTName name) {
 		// don't add inactive names to the scope
 		if (!name.isActive())
 			return;
@@ -141,7 +141,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		}
 	}
 
-	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) {
 		IBinding binding= getBindingInAST(name, forceResolve);
 		if (binding == null && forceResolve) {
 			final IASTTranslationUnit tu = name.getTranslationUnit();
@@ -190,17 +190,17 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return fIndexNamespace;
 	}
 
-	public IBinding getBindingInAST(IASTName name, boolean forceResolve) throws DOMException {
+	public IBinding getBindingInAST(IASTName name, boolean forceResolve) {
 		IBinding[] bs= getBindingsInAST(name, forceResolve, false, false, true);
 		return CPPSemantics.resolveAmbiguities(name, bs);
 	}
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(name, resolve, prefixLookup, fileSet, true);
 	}
 	
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet,
-			boolean checkPointOfDecl) throws DOMException {
+			boolean checkPointOfDecl) {
 		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup, checkPointOfDecl, true);
 		final IASTTranslationUnit tu = name.getTranslationUnit();
 		if (tu != null) {
@@ -243,7 +243,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	}
 
 	public IBinding[] getBindingsInAST(IASTName name, boolean forceResolve, boolean prefixLookup, 
-			boolean checkPointOfDecl, boolean expandUsingDirectives) throws DOMException {
+			boolean checkPointOfDecl, boolean expandUsingDirectives) {
 		populateCache();
 	    final char[] c = name.getLookupKey();
 	    IBinding[] result = null;
@@ -327,7 +327,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 	    return CPPSemantics.findBindings(this, name, false);
 	}
 
@@ -354,26 +354,21 @@ abstract public class CPPScope implements ICPPASTInternalScope {
         }
     }
 
-	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
-	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY, true);
 	}
 
-	public IName getScopeName() throws DOMException {
+	public IName getScopeName() {
 		return null;
 	}
 
 	@Override
 	public String toString() {
-		IName name = null;
-		try {
-			name = getScopeName();
-		} catch (DOMException e) {
-		}
-		
+		IName name = getScopeName();
 		final String n= name != null ? name.toString() : "<unnamed scope>"; //$NON-NLS-1$
 		return getKind().toString() + ' ' + n + ' ' + '(' + super.toString() + ')';
 	}

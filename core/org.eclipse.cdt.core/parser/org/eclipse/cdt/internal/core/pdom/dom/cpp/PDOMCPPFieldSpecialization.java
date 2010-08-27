@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 QNX Software Systems and others.
+ * Copyright (c) 2007, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		return (ICPPField) getSpecializedBinding();
 	}
 	
-	public ICompositeType getCompositeTypeOwner() throws DOMException {
+	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}
 
@@ -95,11 +95,11 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		}
 	}
 
-	public boolean isAuto() throws DOMException {
+	public boolean isAuto() {
 		return getField().isAuto();
 	}
 
-	public boolean isExtern() throws DOMException {
+	public boolean isExtern() {
 		return getField().isExtern();
 	}
 
@@ -107,23 +107,23 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		return false;
 	}
 
-	public boolean isRegister() throws DOMException {
+	public boolean isRegister() {
 		return getField().isRegister();
 	}
 
-	public boolean isStatic() throws DOMException {
+	public boolean isStatic() {
 		return getField().isStatic();
 	}
 
-	public ICPPClassType getClassOwner() throws DOMException {
+	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
-	public int getVisibility() throws DOMException {
+	public int getVisibility() {
 		return getField().getVisibility();
 	}
 
-	public boolean isMutable() throws DOMException {
+	public boolean isMutable() {
 		return getField().isMutable();
 	}
 }

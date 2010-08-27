@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,14 +68,14 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
-    public boolean isAuto() throws DOMException {
+    public boolean isAuto() {
         return getParameter().isAuto();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
-    public boolean isRegister() throws DOMException {
+    public boolean isRegister() {
         return getParameter().isRegister();
     }
 

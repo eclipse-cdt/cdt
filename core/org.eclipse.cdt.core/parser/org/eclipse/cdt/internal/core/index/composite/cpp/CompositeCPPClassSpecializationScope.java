@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Symbian Software Systems and others.
+ * Copyright (c) 2008, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -67,49 +66,48 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		return fDelegate.getImplicitMethods();
 	}
 
-	public IBinding[] find(String name) throws DOMException {
+	public IBinding[] find(String name) {
 		createDelegate();
 		return fDelegate.find(name);
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings)
-			throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
 		createDelegate();
 		return fDelegate.getBinding(name, resolve, acceptLocalBindings);
 	}
 
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
-			IIndexFileSet acceptLocalBindings) throws DOMException {
+			IIndexFileSet acceptLocalBindings) {
 		createDelegate();
 		return fDelegate.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
 	}
 
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		createDelegate();
 		return fDelegate.getConstructors();
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		createDelegate();
 		return fDelegate.getDeclaredMethods();
 	}
 
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		createDelegate();
 		return fDelegate.getBases();
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		createDelegate();
 		return fDelegate.getDeclaredFields();
 	}
 
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		createDelegate();
 		return fDelegate.getFriends();
 	}
 
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		createDelegate();
 		return fDelegate.getNestedClasses();
 	}

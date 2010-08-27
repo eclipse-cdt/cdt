@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
@@ -129,13 +128,10 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		for (IBinding binding : bindings) {
 			if (binding instanceof ICPPClassType) {
 				ICPPClassType base = (ICPPClassType) binding;
-				try {
-					int key = base.getKey();
-					if (key == ICPPClassType.k_class &&
-							(classType == null || !base.isSameType(classType))) {
-						filtered.add(base);
-					}
-				} catch (DOMException e) {
+				int key = base.getKey();
+				if (key == ICPPClassType.k_class &&
+						(classType == null || !base.isSameType(classType))) {
+					filtered.add(base);
 				}
 			}
 		}

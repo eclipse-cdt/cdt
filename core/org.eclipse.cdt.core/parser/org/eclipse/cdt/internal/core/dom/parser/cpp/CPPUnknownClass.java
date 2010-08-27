@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -73,11 +72,11 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
-    public int getKey() throws DOMException{
+    public int getKey(){
         return 0;
     }
 
-    public final IScope getCompositeScope() throws DOMException {
+    public final IScope getCompositeScope() {
         return asScope();
     }
 
@@ -93,13 +92,10 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 				&& !(type instanceof ICPPDeferredClassInstance)) {
 			ICPPUnknownClassType rhs= (ICPPUnknownClassType) type;
 			if (CharArrayUtils.equals(getNameCharArray(), rhs.getNameCharArray())) {
-				try {
-					final IBinding lhsContainer = getOwner();
-					final IBinding rhsContainer = rhs.getOwner();
-					if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
-						return ((IType) lhsContainer).isSameType((IType) rhsContainer);
-					}
-				} catch (DOMException e) {
+				final IBinding lhsContainer = getOwner();
+				final IBinding rhsContainer = rhs.getOwner();
+				if (lhsContainer instanceof IType && rhsContainer instanceof IType) {
+					return ((IType) lhsContainer).isSameType((IType) rhsContainer);
 				}
 			}
 		}

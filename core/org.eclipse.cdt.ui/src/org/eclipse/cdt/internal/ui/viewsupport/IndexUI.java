@@ -33,7 +33,6 @@ import org.eclipse.ui.IEditorInput;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -124,57 +123,53 @@ public class IndexUI {
 	}
 
 	private static boolean checkBinding(IIndexBinding binding, ICElement element) {
-		try {
-			switch(element.getElementType()) {
-			case ICElement.C_ENUMERATION:
-				return binding instanceof IEnumeration;
-			case ICElement.C_NAMESPACE:
-				return binding instanceof ICPPNamespace;
-			case ICElement.C_STRUCT_DECLARATION:
-			case ICElement.C_STRUCT:
-				return binding instanceof ICompositeType && 
-					((ICompositeType) binding).getKey() == ICompositeType.k_struct;
-			case ICElement.C_CLASS:
-			case ICElement.C_CLASS_DECLARATION:
-				return binding instanceof ICPPClassType && 
-					((ICompositeType) binding).getKey() == ICPPClassType.k_class;
-			case ICElement.C_UNION:
-			case ICElement.C_UNION_DECLARATION:
-				return binding instanceof ICompositeType && 
-					((ICompositeType) binding).getKey() == ICompositeType.k_union;
-			case ICElement.C_TYPEDEF:
-				return binding instanceof ITypedef;
-			case ICElement.C_METHOD:	
-			case ICElement.C_METHOD_DECLARATION:
-				return binding instanceof ICPPMethod;
-			case ICElement.C_FIELD:
-				return binding instanceof IField;
-			case ICElement.C_FUNCTION:	
-			case ICElement.C_FUNCTION_DECLARATION:
-				return binding instanceof ICPPFunction && !(binding instanceof ICPPMethod);
-			case ICElement.C_VARIABLE:
-			case ICElement.C_VARIABLE_DECLARATION:
-				return binding instanceof IVariable;
-			case ICElement.C_ENUMERATOR:
-				return binding instanceof IEnumerator;
-			case ICElement.C_TEMPLATE_CLASS:
-			case ICElement.C_TEMPLATE_CLASS_DECLARATION:
-			case ICElement.C_TEMPLATE_STRUCT:
-			case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
-			case ICElement.C_TEMPLATE_UNION:
-			case ICElement.C_TEMPLATE_UNION_DECLARATION:
-				return binding instanceof ICPPClassTemplate;
-			case ICElement.C_TEMPLATE_FUNCTION:
-			case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
-				return binding instanceof ICPPFunctionTemplate && !(binding instanceof ICPPMethod);
-			case ICElement.C_TEMPLATE_METHOD_DECLARATION:
-			case ICElement.C_TEMPLATE_METHOD:
-				return binding instanceof ICPPFunctionTemplate && binding instanceof ICPPMethod;
-			case ICElement.C_TEMPLATE_VARIABLE:
-				return binding instanceof ICPPTemplateParameter;
-			}
-		} catch (DOMException e) {
-			// index bindings don't throw the DOMException.
+		switch(element.getElementType()) {
+		case ICElement.C_ENUMERATION:
+			return binding instanceof IEnumeration;
+		case ICElement.C_NAMESPACE:
+			return binding instanceof ICPPNamespace;
+		case ICElement.C_STRUCT_DECLARATION:
+		case ICElement.C_STRUCT:
+			return binding instanceof ICompositeType && 
+				((ICompositeType) binding).getKey() == ICompositeType.k_struct;
+		case ICElement.C_CLASS:
+		case ICElement.C_CLASS_DECLARATION:
+			return binding instanceof ICPPClassType && 
+				((ICompositeType) binding).getKey() == ICPPClassType.k_class;
+		case ICElement.C_UNION:
+		case ICElement.C_UNION_DECLARATION:
+			return binding instanceof ICompositeType && 
+				((ICompositeType) binding).getKey() == ICompositeType.k_union;
+		case ICElement.C_TYPEDEF:
+			return binding instanceof ITypedef;
+		case ICElement.C_METHOD:	
+		case ICElement.C_METHOD_DECLARATION:
+			return binding instanceof ICPPMethod;
+		case ICElement.C_FIELD:
+			return binding instanceof IField;
+		case ICElement.C_FUNCTION:	
+		case ICElement.C_FUNCTION_DECLARATION:
+			return binding instanceof ICPPFunction && !(binding instanceof ICPPMethod);
+		case ICElement.C_VARIABLE:
+		case ICElement.C_VARIABLE_DECLARATION:
+			return binding instanceof IVariable;
+		case ICElement.C_ENUMERATOR:
+			return binding instanceof IEnumerator;
+		case ICElement.C_TEMPLATE_CLASS:
+		case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+		case ICElement.C_TEMPLATE_STRUCT:
+		case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
+		case ICElement.C_TEMPLATE_UNION:
+		case ICElement.C_TEMPLATE_UNION_DECLARATION:
+			return binding instanceof ICPPClassTemplate;
+		case ICElement.C_TEMPLATE_FUNCTION:
+		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+			return binding instanceof ICPPFunctionTemplate && !(binding instanceof ICPPMethod);
+		case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+		case ICElement.C_TEMPLATE_METHOD:
+			return binding instanceof ICPPFunctionTemplate && binding instanceof ICPPMethod;
+		case ICElement.C_TEMPLATE_VARIABLE:
+			return binding instanceof ICPPTemplateParameter;
 		}
 		return false;
 	}
@@ -495,42 +490,39 @@ public class IndexUI {
 	 * Searches for all specializations that depend on the definition of the given binding.
 	 */
 	public static List<? extends IBinding> findSpecializations(IBinding binding) throws CoreException {
-		try {
-			List<IBinding> result= null;
+		List<IBinding> result= null;
 
-			IBinding owner = binding.getOwner();
-			if (owner != null) {
-				List<? extends IBinding> specializedOwners= findSpecializations(owner);
-				if (!specializedOwners.isEmpty()) {
-					result= new ArrayList<IBinding>(specializedOwners.size());
+		IBinding owner = binding.getOwner();
+		if (owner != null) {
+			List<? extends IBinding> specializedOwners= findSpecializations(owner);
+			if (!specializedOwners.isEmpty()) {
+				result= new ArrayList<IBinding>(specializedOwners.size());
 
-					for (IBinding specOwner : specializedOwners) {
-						if (specOwner instanceof ICPPClassSpecialization) {
-							result.add(((ICPPClassSpecialization) specOwner).specializeMember(binding));
-						}
+				for (IBinding specOwner : specializedOwners) {
+					if (specOwner instanceof ICPPClassSpecialization) {
+						result.add(((ICPPClassSpecialization) specOwner).specializeMember(binding));
 					}
 				}
 			}
-			
-			if (binding instanceof ICPPInstanceCache) {
-				final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) binding).getAllInstances());
-				if (!instances.isEmpty()) {
-					if (result == null)
-						result= new ArrayList<IBinding>(instances.size());
+		}
+		
+		if (binding instanceof ICPPInstanceCache) {
+			final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) binding).getAllInstances());
+			if (!instances.isEmpty()) {
+				if (result == null)
+					result= new ArrayList<IBinding>(instances.size());
 
 
-					for (ICPPTemplateInstance inst : instances) {
-						if (!IndexFilter.ALL_DECLARED.acceptBinding(inst)) {
-							result.add(inst);
-						}
+				for (ICPPTemplateInstance inst : instances) {
+					if (!IndexFilter.ALL_DECLARED.acceptBinding(inst)) {
+						result.add(inst);
 					}
 				}
 			}
-			
-			if (result != null) {
-				return result;
-			}
-		} catch (DOMException e) {
+		}
+		
+		if (result != null) {
+			return result;
 		}
 		return Collections.emptyList();
 	}

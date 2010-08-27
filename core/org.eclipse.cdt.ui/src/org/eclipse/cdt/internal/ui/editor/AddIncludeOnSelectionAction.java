@@ -256,11 +256,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		for (IIndexBinding indexBinding : bindings) {
 			// Replace ctor with the class itself.
 			if (indexBinding instanceof ICPPConstructor) {
-				try {
-					indexBinding = indexBinding.getOwner();
-				} catch (DOMException e) {
-					continue;
-				}
+				indexBinding = indexBinding.getOwner();
 			}
 			IIndexName[] definitions= null;
 			// class, struct, union, enum-type, enum-item
@@ -418,20 +414,16 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	 */
 	private ArrayList<String> getUsingChain(IBinding binding) {
 		ArrayList<String> chain = new ArrayList<String>(4);
-		try {
-			for (; binding != null; binding = binding.getOwner()) {
-				String name = binding.getName();
-				if (binding instanceof ICPPNamespace) {
-					if (name.length() == 0) {
-						continue;
-					}
-				} else {
-					chain.clear();
+		for (; binding != null; binding = binding.getOwner()) {
+			String name = binding.getName();
+			if (binding instanceof ICPPNamespace) {
+				if (name.length() == 0) {
+					continue;
 				}
-				chain.add(name);
+			} else {
+				chain.clear();
 			}
-		} catch (DOMException e) {
-			CUIPlugin.log(e);
+			chain.add(name);
 		}
 		return chain;
 	}

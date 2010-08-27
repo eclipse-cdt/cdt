@@ -17,7 +17,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -238,31 +237,28 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	protected PDOMFile getLocalToFile(IBinding binding, PDOMBinding glob) throws CoreException {
 		if (fPDOM instanceof WritablePDOM) {
 			final WritablePDOM wpdom= (WritablePDOM) fPDOM;
-			try {
-				if (binding instanceof IField) {
-					return null;
+			if (binding instanceof IField) {
+				return null;
+			}
+			boolean checkIfInSourceOnly= false;
+			boolean requireDefinition= false;
+			if (binding instanceof IVariable) {
+				if (!(binding instanceof IField)) {
+					checkIfInSourceOnly= ((IVariable) binding).isStatic();
 				}
-				boolean checkIfInSourceOnly= false;
-				boolean requireDefinition= false;
-				if (binding instanceof IVariable) {
-					if (!(binding instanceof IField)) {
-						checkIfInSourceOnly= ((IVariable) binding).isStatic();
-					}
-				} else if (binding instanceof IFunction) {
-					IFunction f= (IFunction) binding;
-					checkIfInSourceOnly= ASTInternal.isStatic(f, false);
-				} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
-					checkIfInSourceOnly= true;
-					requireDefinition= true;
-				}
+			} else if (binding instanceof IFunction) {
+				IFunction f= (IFunction) binding;
+				checkIfInSourceOnly= ASTInternal.isStatic(f, false);
+			} else if (binding instanceof ITypedef || binding instanceof ICompositeType || binding instanceof IEnumeration) {
+				checkIfInSourceOnly= true;
+				requireDefinition= true;
+			}
 
-				if (checkIfInSourceOnly) {
-					String path= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition, glob);
-					if (path != null) {
-						return wpdom.getFileForASTPath(getLinkageID(), path);
-					}
+			if (checkIfInSourceOnly) {
+				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition, glob);
+				if (path != null) {
+					return wpdom.getFileForASTPath(getLinkageID(), path);
 				}
-			} catch (DOMException e) {
 			}
 		}
 		return null;

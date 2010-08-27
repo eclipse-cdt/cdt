@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -182,7 +181,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 	
 	// implementation of class type
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getBases();
@@ -208,7 +207,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 	
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getConstructors();
@@ -223,7 +222,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
@@ -238,7 +237,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
@@ -253,7 +252,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 	
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
@@ -268,28 +267,28 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		}
 	}
 
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		// not yet supported.
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
-	public ICPPMethod[] getMethods() throws DOMException { 
+	public ICPPMethod[] getMethods() { 
 		return ClassTypeHelper.getMethods(this);
 	}
 
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 	
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 	
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 
-	public int getKey() throws DOMException {
+	public int getKey() {
 		return (getSpecializedBinding()).getKey();
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2010 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -44,7 +42,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPClassScope getCompositeScope() throws DOMException {
+	public ICPPClassScope getCompositeScope() {
 		return (ICPPClassScope) cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
 	}
 
@@ -53,12 +51,9 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 	
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
-		try {
-			IBinding owner= getOwner();
-			if (owner instanceof ICPPSpecialization) {
-				return ((ICPPSpecialization) owner).getTemplateParameterMap();
-			}
-		} catch (DOMException e) {
+		IBinding owner= getOwner();
+		if (owner instanceof ICPPSpecialization) {
+			return ((ICPPSpecialization) owner).getTemplateParameterMap();
 		}
 		return CPPTemplateParameterMap.EMPTY;
 	}
@@ -72,27 +67,23 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 				specializationMap= (ObjectMap) cached;
 			} else {
 				final ObjectMap newMap= new ObjectMap(2);
-				try {
-					// in any fragment explicit specializations may be defined.
-					IIndexFragmentBinding[] frags= cf.findEquivalentBindings(rbinding);
-					for (IIndexFragmentBinding fb : frags) {
-						if (fb instanceof ICPPClassType) {
-							final ICPPClassType[] nested = ((ICPPClassType)fb).getNestedClasses();
-							if (nested.length > 0) {
-								for (ICPPClassType ct : nested) {
-									if (ct instanceof ICPPClassSpecialization && 
-											!(ct.getCompositeScope() instanceof ICPPClassSpecializationScope)) {
-										ICPPClassSpecialization cspec= (ICPPClassSpecialization) cf.getCompositeBinding((IIndexFragmentBinding) ct);
-										newMap.put(cspec.getSpecializedBinding(), cspec);
-									}
+				// in any fragment explicit specializations may be defined.
+				IIndexFragmentBinding[] frags= cf.findEquivalentBindings(rbinding);
+				for (IIndexFragmentBinding fb : frags) {
+					if (fb instanceof ICPPClassType) {
+						final ICPPClassType[] nested = ((ICPPClassType)fb).getNestedClasses();
+						if (nested.length > 0) {
+							for (ICPPClassType ct : nested) {
+								if (ct instanceof ICPPClassSpecialization && 
+										!(ct.getCompositeScope() instanceof ICPPClassSpecializationScope)) {
+									ICPPClassSpecialization cspec= (ICPPClassSpecialization) cf.getCompositeBinding((IIndexFragmentBinding) ct);
+									newMap.put(cspec.getSpecializedBinding(), cspec);
 								}
-								if (!newMap.isEmpty())
-									break;
 							}
+							if (!newMap.isEmpty())
+								break;
 						}
 					}
-				} catch (DOMException e) {
-					CCorePlugin.log(e);
 				}
 				specializationMap= (ObjectMap) frag.putCachedResult(key, newMap, false);
 			}
@@ -114,7 +105,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPBase[] getBases() throws DOMException {
+	public ICPPBase[] getBases() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getBases();
@@ -123,7 +114,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 	
 	@Override
-	public ICPPConstructor[] getConstructors() throws DOMException {
+	public ICPPConstructor[] getConstructors() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getConstructors();
@@ -132,7 +123,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPMethod[] getDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getDeclaredMethods() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredMethods();
@@ -141,7 +132,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPField[] getDeclaredFields() throws DOMException {
+	public ICPPField[] getDeclaredFields() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getDeclaredFields();
@@ -150,7 +141,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public IBinding[] getFriends() throws DOMException {
+	public IBinding[] getFriends() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getFriends();
@@ -159,7 +150,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 
 	@Override
-	public ICPPClassType[] getNestedClasses() throws DOMException {
+	public ICPPClassType[] getNestedClasses() {
 		IScope scope= getCompositeScope();
 		if (scope instanceof ICPPClassSpecializationScope) {
 			return ((ICPPClassSpecializationScope) scope).getNestedClasses();
@@ -168,22 +159,22 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	}
 	
 	@Override
-	public IField findField(String name) throws DOMException {
+	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 	
 	@Override
-	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
 	@Override
-	public IField[] getFields() throws DOMException {
+	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
 	@Override
-	public ICPPMethod[] getMethods() throws DOMException {
+	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 	

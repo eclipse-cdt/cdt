@@ -29,24 +29,26 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CLabel extends PlatformObject implements ILabel {
     
     public static class CLabelProblem extends ProblemBinding implements ILabel {
-        public CLabelProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CLabelProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
 
-        public IASTLabelStatement getLabelStatement() throws DOMException{
-            throw new DOMException( this );
+        public IASTLabelStatement getLabelStatement() throws DOMException {
+            throw new DOMException(this);
         }
     }
     
     private final IASTName labelStatement;
     
-    public CLabel( IASTName statement ){
+    public CLabel(IASTName statement) {
         labelStatement = statement;
-        statement.setBinding( this );
+        statement.setBinding(this);
     }
-    public IASTNode getPhysicalNode(){
+
+    public IASTNode getPhysicalNode() {
         return labelStatement;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ILabel#getLabelStatement()
      */
@@ -60,7 +62,8 @@ public class CLabel extends PlatformObject implements ILabel {
     public String getName() {
         return labelStatement.toString();
     }
-    public char[] getNameCharArray(){
+
+    public char[] getNameCharArray() {
         return labelStatement.toCharArray();
     }
 
@@ -68,7 +71,7 @@ public class CLabel extends PlatformObject implements ILabel {
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return CVisitor.getContainingScope( labelStatement.getParent() );
+        return CVisitor.getContainingScope(labelStatement.getParent());
     }
 
     public ILinkage getLinkage() {

@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CEnumerator extends PlatformObject implements IEnumerator {
     public static class CEnumeratorProblem extends ProblemBinding implements IEnumerator {
-        public CEnumeratorProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CEnumeratorProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
         public IType getType() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
 		public IValue getValue() {
 			return Value.UNKNOWN;
@@ -46,21 +46,23 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
 
     private final IASTName enumeratorName;
 
-    public CEnumerator( IASTEnumerator enumtor ){
+    public CEnumerator(IASTEnumerator enumtor) {
 		this.enumeratorName = enumtor.getName();
-		enumeratorName.setBinding( this );
+		enumeratorName.setBinding(this);
 	}
     
-    public IASTNode getPhysicalNode(){
+    public IASTNode getPhysicalNode() {
         return enumeratorName;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
         return enumeratorName.toString();
     }
-    public char[] getNameCharArray(){
+
+    public char[] getNameCharArray() {
         return enumeratorName.toCharArray();
     }
 
@@ -68,7 +70,7 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return CVisitor.getContainingScope( enumeratorName.getParent() );
+        return CVisitor.getContainingScope(enumeratorName.getParent());
     }
 
 	/* (non-Javadoc)

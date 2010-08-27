@@ -41,36 +41,36 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CVariable extends PlatformObject implements IInternalVariable, ICInternalBinding {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
-        public CVariableProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CVariableProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
 
         public IType getType() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isStatic() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isExtern() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isAuto() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isRegister() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
 		public IValue getInitialValue() {
 			return null;
 		}
     }
-	private IASTName [] declarations = null;
+	private IASTName[] declarations = null;
 	private IType type = null;
 	
-	public CVariable( IASTName name ){
-		declarations = new IASTName [] { name };
+	public CVariable(IASTName name) {
+		declarations = new IASTName[] { name };
 	}
-    public IASTNode getPhysicalNode(){
+    public IASTNode getPhysicalNode() {
         return declarations[0];
     }	
 
@@ -95,7 +95,8 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 	public String getName() {
 		return declarations[0].toString();
 	}
-	public char[]getNameCharArray(){
+
+	public char[] getNameCharArray() {
 	    return declarations[0].toCharArray();
 	}
 
@@ -104,62 +105,68 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 	 */
 	public IScope getScope() {
 		IASTDeclarator declarator = (IASTDeclarator) declarations[0].getParent();
-		return CVisitor.getContainingScope( declarator.getParent() );
+		return CVisitor.getContainingScope(declarator.getParent());
 	}
 
     public boolean isStatic() {
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
 
-    public boolean hasStorageClass( int storage){
-        if( declarations == null )
+    public boolean hasStorageClass(int storage) {
+        if (declarations == null)
             return false;
         
-        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+        for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
             final IASTName name = declarations[i];
 
 			IASTNode parent = name.getParent();
-            while( !(parent instanceof IASTDeclaration) )
+            while (!(parent instanceof IASTDeclaration))
                 parent = parent.getParent();
             
-            if( parent instanceof IASTSimpleDeclaration ){
-                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-                if( declSpec.getStorageClass() == storage ) {
+            if (parent instanceof IASTSimpleDeclaration) {
+                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+                if (declSpec.getStorageClass() == storage) {
                 	return true;
                 }
             }
         }
         return false;
 	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern);
+        return hasStorageClass(IASTDeclSpecifier.sc_extern);
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto);
+        return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register);
+        return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
 	
     public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
-	public IASTNode[] getDeclarations() {
+
+    public IASTNode[] getDeclarations() {
 		return declarations;
 	}
-	public IASTNode getDefinition() {
+
+    public IASTNode getDefinition() {
 		return getPhysicalNode();
 	}
-	public IBinding getOwner() throws DOMException {
+
+    public IBinding getOwner() throws DOMException {
 		if (declarations == null || declarations.length == 0)
 			return null;
 		

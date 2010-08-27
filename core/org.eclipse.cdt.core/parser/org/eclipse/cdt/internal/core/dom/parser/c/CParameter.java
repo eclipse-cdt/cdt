@@ -39,34 +39,34 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class CParameter extends PlatformObject implements IParameter {
     public static class CParameterProblem extends ProblemBinding implements IParameter {
-        public CParameterProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CParameterProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
         public IType getType() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isStatic() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isExtern() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
         public boolean isAuto() throws DOMException {
-            throw new DOMException( this );        
+            throw new DOMException(this);        
         }
         public boolean isRegister() throws DOMException {
-            throw new DOMException( this );
+            throw new DOMException(this);
         }
 		public IValue getInitialValue() {
 			return null;
 		}
     }
     
-	private IASTName [] declarations;
+	private IASTName[] declarations;
 	private IType type = null;
 	
-	public CParameter( IASTName parameterName ){
-		this.declarations = new IASTName [] { parameterName };
+	public CParameter(IASTName parameterName) {
+		this.declarations = new IASTName[] { parameterName };
 	}
 
 	/* (non-Javadoc)
@@ -74,22 +74,21 @@ public class CParameter extends PlatformObject implements IParameter {
 	 */
 	
     public IType getType() {
-		if ( type == null && declarations[0].getParent() instanceof IASTDeclarator)
-			type = CVisitor.createType( (IASTDeclarator)declarations[0].getParent() );
+		if (type == null && declarations[0].getParent() instanceof IASTDeclarator)
+			type = CVisitor.createType((IASTDeclarator)declarations[0].getParent());
 		
 		return type;
 	}
 
-    private IASTName getPrimaryDeclaration(){
-	    if( declarations != null ){
-	        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+    private IASTName getPrimaryDeclaration() {
+	    if (declarations != null) {
+	        for (int i = 0; i < declarations.length && declarations[i] != null; i++) {
 	            IASTNode node = declarations[i].getParent();
-	            while( !(node instanceof IASTDeclaration) )
+	            while (!(node instanceof IASTDeclaration))
 	                node = node.getParent();
 	            
-	            if( node.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ||
-	                node instanceof IASTFunctionDefinition )
-	            {
+	            if (node.getPropertyInParent() == ICASTKnRFunctionDeclarator.FUNCTION_PARAMETER ||
+	            		node instanceof IASTFunctionDefinition) {
 	                return declarations[i];
 	            }
 	        }
@@ -103,13 +102,14 @@ public class CParameter extends PlatformObject implements IParameter {
 	 */
 	public String getName() {
 	    IASTName name = getPrimaryDeclaration();
-	    if( name != null )
+	    if (name != null)
 	        return name.toString();
 	    return CVisitor.EMPTY_STRING;
 	}
-	public char[] getNameCharArray(){
+
+	public char[] getNameCharArray() {
 	    IASTName name = getPrimaryDeclaration();
-	    if( name != null )
+	    if (name != null)
 	        return name.toCharArray();
 	    return CVisitor.EMPTY_CHAR_ARRAY;
 	}
@@ -119,19 +119,19 @@ public class CParameter extends PlatformObject implements IParameter {
 	 */
 	public IScope getScope() {
 	    //IASTParameterDeclaration or IASTSimpleDeclaration
-	    for( int i = 0; i < declarations.length; i++ ){
+	    for (int i = 0; i < declarations.length; i++) {
 	        IASTNode parent = declarations[i].getParent();
-	        if( parent instanceof ICASTKnRFunctionDeclarator ){
+	        if (parent instanceof ICASTKnRFunctionDeclarator) {
 	            parent = parent.getParent();
-	            return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+	            return ((IASTCompoundStatement)((IASTFunctionDefinition) parent).getBody()).getScope();
 	        }
 	        
 	        IASTNode fdtorNode =  parent.getParent().getParent();
 	        if (fdtorNode instanceof IASTFunctionDeclarator) {
-		        IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator)fdtorNode;
+		        IASTFunctionDeclarator fdtor = (IASTFunctionDeclarator) fdtorNode;
 				parent = fdtor.getParent();
-				if( parent instanceof IASTFunctionDefinition ) {
-					return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+				if (parent instanceof IASTFunctionDefinition) {
+					return ((IASTCompoundStatement)((IASTFunctionDefinition) parent).getBody()).getScope();
 				}
 	        }
 	    }
@@ -150,7 +150,7 @@ public class CParameter extends PlatformObject implements IParameter {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
      */
-    public boolean isStatic(){
+    public boolean isStatic() {
         return false;
     }
 
@@ -165,14 +165,14 @@ public class CParameter extends PlatformObject implements IParameter {
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register );
+        return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
 
     public boolean hasStorageClass(int storage) {

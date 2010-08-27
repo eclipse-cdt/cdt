@@ -24,14 +24,15 @@ import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
  */
 public class CField extends CVariable implements IField {
     public static class CFieldProblem extends CVariable.CVariableProblem implements IField {
-        public CFieldProblem( IASTNode node, int id, char[] arg ) {
-            super( node, id, arg );
+        public CFieldProblem(IASTNode node, int id, char[] arg) {
+            super(node, id, arg);
         }
 
 		public ICompositeType getCompositeTypeOwner() throws DOMException {
 			throw new DOMException(this);
 		}
     }
+
 	/**
 	 * @param name
 	 */
@@ -43,5 +44,4 @@ public class CField extends CVariable implements IField {
 		ICCompositeTypeScope scope = (ICCompositeTypeScope) getScope();
 		return scope.getCompositeType();
 	}
-
 }

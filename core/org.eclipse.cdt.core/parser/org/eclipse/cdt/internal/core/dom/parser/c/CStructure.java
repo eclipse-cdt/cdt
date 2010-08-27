@@ -51,38 +51,38 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 			super(node, id, arg);
 		}
 		public IField findField(String name) throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public IScope getCompositeScope() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public IField[] getFields() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public int getKey() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 		public boolean isAnonymous() throws DOMException {
-			throw new DOMException( this );
+			throw new DOMException(this);
 		}
 	}
 
-	private IASTName [] declarations = null;
+	private IASTName[] declarations = null;
 	private IASTName definition;
 	private boolean checked;
 	private ICompositeType typeInIndex;
 	
-	public CStructure( IASTName name ){
-	    if( name.getPropertyInParent() == IASTCompositeTypeSpecifier.TYPE_NAME )
+	public CStructure(IASTName name) {
+	    if (name.getPropertyInParent() == IASTCompositeTypeSpecifier.TYPE_NAME) {
 	        definition = name;
-	    else {
+	    } else {
 	        declarations = new IASTName[] { name };
 	    }
-	    name.setBinding( this );
+	    name.setBinding(this);
 	}
 	
-    public IASTNode getPhysicalNode(){
-        return ( definition != null ) ? (IASTNode)definition : (IASTNode)declarations[0];
+    public IASTNode getPhysicalNode() {
+        return (definition != null) ? (IASTNode)definition : (IASTNode)declarations[0];
     }
     
 	private void checkForDefinition() {
@@ -112,13 +112,13 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		if( definition != null )
+		if (definition != null)
 			return definition.toString();
 
 		return declarations[0].toString();
 	}
 	public char[] getNameCharArray() {
-		if( definition != null )
+		if (definition != null)
 			return definition.toCharArray();
 
 		return declarations[0].toCharArray();
@@ -128,9 +128,9 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() throws DOMException {
-	    IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ( ( definition != null ) ? (IASTNode)definition.getParent() : declarations[0].getParent() );
-		IScope scope = CVisitor.getContainingScope( declSpec );
-		while( scope instanceof ICCompositeTypeScope ){
+	    IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ((definition != null) ? (IASTNode)definition.getParent() : declarations[0].getParent());
+		IScope scope = CVisitor.getContainingScope(declSpec);
+		while(scope instanceof ICCompositeTypeScope) {
 			scope = scope.getParent();
 		}
 		return scope;
@@ -148,7 +148,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 		}
 	    ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) definition.getParent();
 		IField[] fields = collectFields(compSpec, null);
-		return (IField[]) ArrayUtil.trim( IField.class, fields );
+		return (IField[]) ArrayUtil.trim(IField.class, fields);
 	}
 
 	private IField[] collectFields(ICASTCompositeTypeSpecifier compSpec, IField[] fields) {
@@ -197,7 +197,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() {
-		return ( definition != null ) ? ((IASTCompositeTypeSpecifier)definition.getParent()).getKey() 
+		return (definition != null) ? ((IASTCompositeTypeSpecifier)definition.getParent()).getKey() 
 		        					  : ((IASTElaboratedTypeSpecifier)declarations[0].getParent()).getKind();
 	}
 
@@ -223,11 +223,11 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 	}
 	
     @Override
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;

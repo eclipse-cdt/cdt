@@ -9,12 +9,15 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
  *     Ericsson           - New version for 7_0
+ *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -61,6 +64,7 @@ import org.eclipse.cdt.dsf.mi.service.command.MIRunControlEventProcessor_7_0;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakpoint;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
@@ -116,6 +120,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     private MIInferiorProcess fInferiorProcess = null;
     
     private PTY fPty;
+    private List<String> fFeatures = new ArrayList<String>();
 
     /**
      * @since 3.0
@@ -150,6 +155,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.INITIALIZING),
+                new ListFeaturesStep(InitializationShutdownStep.Direction.INITIALIZING),
                 new RegisterStep(InitializationShutdownStep.Direction.INITIALIZING),
             };
 
@@ -163,6 +169,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     public void shutdown(final RequestMonitor requestMonitor) {
         final Sequence.Step[] shutdownSteps = new Sequence.Step[] {
                 new RegisterStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
+                new ListFeaturesStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandProcessorsStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new InferiorInputOutputInitStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
                 new CommandMonitoringStep(InitializationShutdownStep.Direction.SHUTTING_DOWN),
@@ -238,6 +245,18 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         );
     }
     
+    private void listFeatures(final RequestMonitor requestMonitor) {
+    	queueCommand(
+    			getCommandFactory().createMIListFeatures(fControlDmc), 
+    			new DataRequestMonitor<MIListFeaturesInfo>(getExecutor(), requestMonitor) {
+    				@Override
+    				public void handleSuccess() {
+    					fFeatures = getData().getFeatures();					
+    					super.handleSuccess();
+    				}
+    			});
+    }
+
     /*
      * This method does the necessary work to setup the input/output streams for the
      * inferior process, by either preparing the PTY to be used, to simply leaving
@@ -572,6 +591,11 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 		countingRm.setDoneCount(count);		
 	}
 	
+	/**@since 4.0 */
+	public List<String> getFeatures() {
+		return fFeatures;
+	}
+	
     @DsfServiceEventHandler 
     public void eventDispatched(ICommandControlShutdownDMEvent e) {
         // Handle our "GDB Exited" event and stop processing commands.
@@ -723,6 +747,21 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
         }
     }
     
+    /** @since 4.0 */
+    protected class ListFeaturesStep extends InitializationShutdownStep {
+    	ListFeaturesStep(Direction direction) { super(direction); }
+
+    	@Override
+    	protected void initialize(final RequestMonitor requestMonitor) {
+    		listFeatures(requestMonitor);
+    	}
+
+    	@Override
+    	protected void shutdown(RequestMonitor requestMonitor) {            
+    		requestMonitor.done();
+    	}
+    }
+
     protected class RegisterStep extends InitializationShutdownStep {
         RegisterStep(Direction direction) { super(direction); }
         @Override

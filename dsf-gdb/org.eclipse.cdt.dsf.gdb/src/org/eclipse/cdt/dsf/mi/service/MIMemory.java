@@ -10,6 +10,7 @@
  *     Ericsson AB - expanded from initial stub
  *     Ericsson AB - added support for event handling
  *     Ericsson AB - added memory cache
+ *     Vladimir Prus (CodeSourcery) - support for -data-read-memory-bytes (bug 322658)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -29,9 +30,9 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IMemory;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
@@ -39,10 +40,11 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.command.BufferedCommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
-import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.MIExpressions.ExpressionChangedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -59,6 +61,8 @@ import org.osgi.framework.BundleContext;
  */
 public class MIMemory extends AbstractDsfService implements IMemory, ICachingService {
 
+	private static final String READ_MEMORY_BYTES_FEATURE = "data-read-memory-bytes"; //$NON-NLS-1$
+	
     public class MemoryChangedEvent extends AbstractDMEvent<IMemoryDMContext> 
         implements IMemoryChangedEvent 
     {
@@ -90,6 +94,10 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     	}
     	return cache;
     }
+    
+    // Whether the -data-read-memory-bytes should be used
+    // instead of -data-read-memory
+    private boolean fDataReadMemoryBytes;
     
 	/**
 	 *  Constructor 
@@ -128,9 +136,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
      */
     private void doInitialize(final RequestMonitor requestMonitor) {
     	// Create the command cache
-        ICommandControlService commandControl = getServicesTracker().getService(ICommandControlService.class);
+        IGDBControl commandControl = getServicesTracker().getService(IGDBControl.class);
         BufferedCommandControl bufferedCommandControl = new BufferedCommandControl(commandControl, getExecutor(), 2);
 		
+    	fDataReadMemoryBytes = commandControl.getFeatures().contains(READ_MEMORY_BYTES_FEATURE);
+    	
         fCommandFactory = getServicesTracker().getService(IMICommandControl.class).getCommandFactory();
 
 		// This cache stores the result of a command when received; also, this cache
@@ -319,15 +329,32 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     protected void readMemoryBlock(IDMContext dmc, IAddress address, final long offset,
     		final int word_size, final int count, final DataRequestMonitor<MemoryByte[]> drm)
     {
-    	/* To simplify the parsing of the MI result, we request the output to
-    	 * be on 1 row of [count] columns, no char interpretation.
-    	 */
-    	int mode = MIFormat.HEXADECIMAL;
-    	int nb_rows = 1;
-    	int nb_cols = count;
-    	Character asChar = null;
+    	if (fDataReadMemoryBytes) {
+    		fCommandCache.execute(
+    			fCommandFactory.createMIDataReadMemoryBytes(dmc, address.toString(), offset*word_size, count*word_size),
+    			new DataRequestMonitor<MIDataReadMemoryBytesInfo>(getExecutor(), drm) {
+    				@Override
+    				protected void handleSuccess() {
+    					// Retrieve the memory block
+    					drm.setData(getData().getMIMemoryBlock());
+    					drm.done();
+    				}
+    				@Override
+    				protected void handleFailure() {
+    					drm.setData(createInvalidBlock(word_size * count));
+    					drm.done();
+    				}    					
+    			});
+    	} else {
+    		/* To simplify the parsing of the MI result, we request the output to
+    		 * be on 1 row of [count] columns, no char interpretation.
+    		 */
+    		int mode = MIFormat.HEXADECIMAL;
+    		int nb_rows = 1;
+    		int nb_cols = count;
+    		Character asChar = null;
 
-    	fCommandCache.execute(
+    		fCommandCache.execute(
     			fCommandFactory.createMIDataReadMemory(dmc, offset, address.toString(), mode, word_size, nb_rows, nb_cols, asChar),
     			new DataRequestMonitor<MIDataReadMemoryInfo>(getExecutor(), drm) {
     				@Override
@@ -338,16 +365,21 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
     				}
     				@Override
     				protected void handleFailure() {
-    					// Bug234289: If memory read fails, return a block marked as invalid
-    					MemoryByte[] block = new MemoryByte[word_size * count];
-    					for (int i = 0; i < block.length; i++)
-    						block[i] = new MemoryByte((byte) 0, (byte) 0);
-    					drm.setData(block);
+    					drm.setData(createInvalidBlock(word_size * count));
     					drm.done();
     				}
     			}
-    	);
+    		);
+    	}
     }
+    
+	private MemoryByte[] createInvalidBlock(int size) {
+		// Bug234289: If memory read fails, return a block marked as invalid
+		MemoryByte[] block = new MemoryByte[size];
+		for (int i = 0; i < block.length; i++)
+			block[i] = new MemoryByte((byte) 0, (byte) 0);
+		return block;
+	}
 
     /**
      * @param memoryDMC

@@ -8,13 +8,16 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
+ *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)      
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
@@ -597,4 +600,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
             requestMonitor.done();
         }
     }
+
+    /**
+     * GDBControl is only used for GDB earlier that 7.0. Although -list-features
+     * is available in 6.8, it does not report anything we care about, so
+     * return empty list.
+     */
+	private final List<String> fFeatures = new ArrayList<String>();
+	/** @since 4.0 */
+	public List<String> getFeatures() {
+		return fFeatures;
+	}
 }

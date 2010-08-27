@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Ericsson and others.
+ * Copyright (c) 2008, 2010 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse  License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)     
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -53,4 +55,15 @@ public interface IGDBControl extends IMICommandControl {
 	 * @since 3.0 
 	 */
 	void setEnvironment(Properties props, boolean clear, RequestMonitor requestMonitor);
+	
+	/**
+	 * Returns a list of all the target-independent MI features
+	 * supported by the GDB that is being used. Consult the GDB MI documentation
+	 * for the MI -list-features command for the possible names of features.
+	 * 
+	 * The return value is never null but may be an empty list. 
+	 * 
+	 * @since 4.0
+	 */
+	List<String> getFeatures();
 }

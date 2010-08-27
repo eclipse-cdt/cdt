@@ -10,6 +10,7 @@
  *     ENEA Software AB - CLI command extension - fix for bug 190277
  *     Ericsson - Implementation for DSF-GDB
  *     Anna Dushistova (Mentor Graphics) - [318322] Add set solib-absolute-prefix
+ *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -57,6 +58,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataEvaluateExpression;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterNames;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataListRegisterValues;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemory;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataReadMemoryBytes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIDataWriteMemory;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentCD;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIEnvironmentDirectory;
@@ -94,6 +96,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBShowExitCode;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInferiorTTYSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExec;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIInterpreterExecConsole;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIListFeatures;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIListThreadGroups;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIRemoveInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIStackInfoDepth;
@@ -145,10 +148,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataDisassembleInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryBytesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataReadMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIListFeaturesInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListArgumentsInfo;
@@ -356,6 +361,12 @@ public class CommandFactory {
 			int word_format, int word_size, int rows, int cols,
 			Character asChar) {
 		return new MIDataReadMemory(ctx, offset, address, word_format, word_size, rows, cols, asChar);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIDataReadMemoryBytesInfo> createMIDataReadMemoryBytes(IDMContext ctx, String address, 
+			long offset, int num_bytes) {
+		return new MIDataReadMemoryBytes(ctx, address, offset, num_bytes);
 	}
 
 	public ICommand<MIDataWriteMemoryInfo> createMIDataWriteMemory(IDMContext ctx, long offset, String address, 
@@ -586,6 +597,11 @@ public class CommandFactory {
 	
 	public ICommand<MIInfo> createMIInterpreterExecConsole(IDMContext ctx, String cmd) {
 		return new MIInterpreterExecConsole<MIInfo>(ctx, cmd);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIListFeaturesInfo> createMIListFeatures(ICommandControlDMContext ctx) {
+		return new MIListFeatures(ctx);
 	}
 
 	public ICommand<MIListThreadGroupsInfo> createMIListThreadGroups(ICommandControlDMContext ctx) {

@@ -11,7 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.internal.checkers;
 
+import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.test.CheckerTestCase;
+import org.eclipse.cdt.codan.internal.checkers.ReturnChecker;
 
 /**
  * Test for {@see ReturnCheckerTest} class
@@ -104,5 +106,36 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	public void testInnerFunction_Bug316154() {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(5);
+	}
+
+	//	class c {
+	//		c() {
+	//			return 0;
+	//		}
+	//
+	//		~c() {
+	//			return;
+	//		}
+	//	};
+	public void testContructorRetValue() {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(3, ReturnChecker.RET_ERR_VALUE_ID);
+	}
+
+	//	class c {
+	//		c() {
+	//			return;
+	//		}
+	//
+	//		~c() {
+	//			return;
+	//		}
+	//	};
+	public void testContructor_Bug323602() {
+		IProblemPreference macro = getPreference(ReturnChecker.RET_NO_VALUE_ID,
+				ReturnChecker.PARAM_IMPLICIT);
+		macro.setValue(Boolean.TRUE);
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
 	}
 }

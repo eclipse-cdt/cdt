@@ -34,6 +34,9 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 /**
  * The checker suppose to find issue related to mismatched return value/function
@@ -44,10 +47,10 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
  * flow graph)
  */
 public class ReturnChecker extends AbstractAstFunctionChecker  {
-	private static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
-	public final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
-	public final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$
-	public final String RET_NORET_ID = "org.eclipse.cdt.codan.checkers.errnoreturn"; //$NON-NLS-1$
+	public static final String PARAM_IMPLICIT = "implicit"; //$NON-NLS-1$
+	public static final String RET_NO_VALUE_ID = "org.eclipse.cdt.codan.checkers.noreturn"; //$NON-NLS-1$
+	public static final String RET_ERR_VALUE_ID = "org.eclipse.cdt.codan.checkers.errreturnvalue"; //$NON-NLS-1$
+	public static final String RET_NORET_ID = "org.eclipse.cdt.codan.checkers.errnoreturn"; //$NON-NLS-1$
 
 	class ReturnStmpVisitor extends ASTVisitor {
 		private IASTFunctionDefinition func;
@@ -68,9 +71,10 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 			if (stmt instanceof IASTReturnStatement) {
 				hasret = true;
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
-				if (!isVoid(func)) {
+				if (!isVoid(func) && !isConstructorDestructor()) {
 					if (checkImplicitReturn(RET_NO_VALUE_ID)
 							|| isExplicitReturn(func)) {
+						
 						if (ret.getReturnValue() == null)
 							reportProblem(RET_NO_VALUE_ID, ret);
 					}
@@ -86,6 +90,19 @@ public class ReturnChecker extends AbstractAstFunctionChecker  {
 				return PROCESS_SKIP;
 			}
 			return PROCESS_CONTINUE;
+		}
+		/**
+		 * @return 
+		 * 
+		 */
+		public boolean isConstructorDestructor() {
+			if (func instanceof ICPPASTFunctionDefinition) {
+				IBinding method = func.getDeclarator().getName().resolveBinding();
+				if (method instanceof ICPPConstructor || method instanceof ICPPMethod && ((ICPPMethod)method).isDestructor()) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 	}

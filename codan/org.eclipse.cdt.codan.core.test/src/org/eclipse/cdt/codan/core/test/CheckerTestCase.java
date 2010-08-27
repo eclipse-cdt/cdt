@@ -20,6 +20,7 @@ import org.eclipse.cdt.codan.core.model.IProblemReporter;
 import org.eclipse.cdt.codan.core.param.IProblemPreference;
 import org.eclipse.cdt.codan.core.param.MapProblemPreference;
 import org.eclipse.cdt.codan.internal.core.model.CodanProblem;
+import org.eclipse.cdt.codan.internal.core.model.CodanProblemMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,12 +36,20 @@ public class CheckerTestCase extends CodanTestCase {
 		return checkErrorLine(currentFile, i);
 	}
 
+	public IMarker checkErrorLine(int i, String problemId) {
+		return checkErrorLine(currentFile, i, problemId);
+	}
+
+	public IMarker checkErrorLine(File file, int expectedLine) {
+		return checkErrorLine(file, expectedLine, null);
+	}
+
 	/**
 	 * @param expectedLine
 	 *        - line
 	 * @return
 	 */
-	public IMarker checkErrorLine(File file, int expectedLine) {
+	public IMarker checkErrorLine(File file, int expectedLine, String problemId) {
 		assertTrue(markers != null);
 		assertTrue("No problems found but should", markers.length > 0); //$NON-NLS-1$
 		boolean found = false;
@@ -62,7 +71,9 @@ public class CheckerTestCase extends CodanTestCase {
 				fail(e.getMessage());
 			}
 			mfile = m.getResource().getName();
-			if (line.equals(expectedLine)) {
+			if (line.equals(expectedLine)
+					&& (problemId == null || problemId
+							.equals(CodanProblemMarker.getProblemId(m)))) {
 				found = true;
 				if (file != null && !file.getName().equals(mfile))
 					found = false;

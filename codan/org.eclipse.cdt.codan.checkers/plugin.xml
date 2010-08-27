@@ -129,6 +129,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Symbol &apos;&apos;{0}&apos;&apos; could not be resolved"
                       name="Symbol is not resolved">
                 </problem>
@@ -138,6 +139,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.OverloadProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Invalid overload of {0}"
                       name="Invalid overload">
                 </problem>
@@ -147,6 +149,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.AmbiguousProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="{0} is ambiguous {1}"
                       name="Ambiguous problem">
                 </problem>
@@ -156,6 +159,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.CircularReferenceProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Circular inheritance encountered in {0}"
                       name="Circular inheritance">
                 </problem>
@@ -165,6 +169,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.RedeclarationProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Invalid redeclaration of {0}"
                       name="Invalid redeclaration">
                 </problem>
@@ -174,6 +179,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.RedefinitionProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Invalid redefinition of {0}"
                       name="Invalid redefinition">
                 </problem>
@@ -183,6 +189,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.MemberDeclarationNotFoundProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Member declaration not found"
                       name="Member declaration not found">
                 </problem>
@@ -192,6 +199,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.LabelStatementNotFoundProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="{0} : label not found"
                       name="Label statement not found">
                 </problem>
@@ -201,6 +209,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.InvalidTemplateArgumentsProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Invalid template arguments"
                       name="Invalid template argument">
                 </problem>
@@ -210,6 +219,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.TypeResolutionProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="{0} type could not be resolved"
                       name="Type cannot be resolved">
                 </problem>
@@ -219,6 +229,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.FunctionResolutionProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="{0} : function could not be resolved"
                       name="Function cannot be resolved">
                 </problem>
@@ -228,6 +239,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.InvalidArguments"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="Invalid arguments {0}"
                       name="Invalid arguments">
                 </problem>
@@ -237,6 +249,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.MethodResolutionProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="{0} : method could not be resolved"
                       name="Method cannot be resolved">
                 </problem>
@@ -246,6 +259,7 @@
                       defaultSeverity="Error"
                       description="Name resolution problem found by the indexer"
                       id="org.eclipse.cdt.codan.internal.checkers.FieldResolutionProblem"
+                      markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
                       messagePattern="{0} : field could not be resolved"
                       name="Field cannot be resolved">
                 </problem>

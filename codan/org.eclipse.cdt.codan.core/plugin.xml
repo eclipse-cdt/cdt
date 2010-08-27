@@ -48,6 +48,18 @@
             name="args">
       </attribute>
    </extension>
+      <extension
+         id="codanSemanticProblem"
+         name="Semantic Error"
+         point="org.eclipse.core.resources.markers">
+
+      <super type="org.eclipse.cdt.codan.core.codanProblem"/> 
+
+      <persistent
+            value="false">
+      </persistent>
+   
+   </extension>
    
    <extension
          point="org.eclipse.core.runtime.preferences">

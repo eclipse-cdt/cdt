@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 /**
  * Base for all c++ declaration specifiers
@@ -113,8 +113,11 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     	other.setOffsetAndLength(this);
     }
     
-    @Override
+	/**
+	 * Provided for debugging purposes, only.
+	 */
+	@Override
 	public String toString() {
-    	return ASTSignatureUtil.getSignature(this);
+    	return ASTStringUtil.getSignatureString(this, null);
     }
 }

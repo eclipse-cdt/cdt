@@ -29,10 +29,6 @@ class PDOMCPPConstructor extends PDOMCPPMethod implements ICPPConstructor {
 		super(linkage, record);
 	}
 
-	public boolean isExplicit() {
-		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
-	}
-	
 	@Override
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR;

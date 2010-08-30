@@ -29,6 +29,10 @@ public class CompositeCPPMethodInstance extends CompositeCPPFunctionInstance imp
 		return ((ICPPMethod)rbinding).isImplicit();
 	}
 
+	public boolean isExplicit() {
+		return ((ICPPMethod)rbinding).isExplicit();
+	}
+
 	public boolean isVirtual() {
 		return ((ICPPMethod)rbinding).isDestructor();
 	}

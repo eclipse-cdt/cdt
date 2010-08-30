@@ -73,6 +73,10 @@ public class CPPMethodSpecialization extends CPPFunctionSpecialization
 		return false;
 	}
 
+	public boolean isExplicit() {
+		return ((ICPPMethod)getSpecializedBinding()).isExplicit();
+	}
+
 	public boolean isImplicit() {
 		return ((ICPPMethod) getSpecializedBinding()).isImplicit();
 	}

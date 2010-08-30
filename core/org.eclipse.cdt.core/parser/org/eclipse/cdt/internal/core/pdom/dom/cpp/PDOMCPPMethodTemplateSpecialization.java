@@ -57,6 +57,14 @@ class PDOMCPPMethodTemplateSpecialization extends
 		}
 		return false;
 	}
+	
+	public boolean isExplicit() {
+		IBinding spec = getSpecializedBinding();
+		if (spec instanceof ICPPMethod) {
+			((ICPPMethod)spec).isExplicit();
+		}
+		return false;
+	}
 
 	public boolean isVirtual() {
 		IBinding spec = getSpecializedBinding();

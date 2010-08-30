@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
@@ -37,7 +36,7 @@ class PDOMCPPAnnotation {
 	public static final int VIRTUAL_OFFSET = 0;
 	public static final int DESTRUCTOR_OFFSET = 1;
 	public static final int IMPLICIT_METHOD_OFFSET = 2;
-	public static final int EXPLICIT_CONSTRUCTOR_OFFSET = 3;
+	public static final int EXPLICIT_METHOD_OFFSET = 3;
 	public static final int PURE_VIRTUAL_OFFSET = 4;
 	public static final int MAX_EXTRA_OFFSET= PURE_VIRTUAL_OFFSET;
 	
@@ -92,12 +91,7 @@ class PDOMCPPAnnotation {
 			modifiers |= (method.isDestructor() ? 1 : 0) << DESTRUCTOR_OFFSET;
 			modifiers |= (method.isImplicit() ? 1 : 0) << IMPLICIT_METHOD_OFFSET;
 			modifiers |= (method.isPureVirtual() ? 1 : 0) << PURE_VIRTUAL_OFFSET;
-		}
-		if (binding instanceof ICPPConstructor) {
-			ICPPConstructor constructor= (ICPPConstructor) binding;
-			if (constructor.isExplicit()) {
-				modifiers |= (1 << EXPLICIT_CONSTRUCTOR_OFFSET);
-			}
+			modifiers |= (method.isExplicit() ? 1 : 0) << EXPLICIT_METHOD_OFFSET;
 		}
 		return modifiers;
 	}

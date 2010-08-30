@@ -17,9 +17,4 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  */
 public interface ICPPConstructor extends ICPPMethod {
 	public static final ICPPConstructor [] EMPTY_CONSTRUCTOR_ARRAY = new ICPPConstructor[0];
-	/**
-	 * Whether or not this constructor was declared as explicit
-	 */
-	boolean isExplicit();
-
 }

@@ -18,14 +18,4 @@ public class CPPConstructorTemplate extends CPPMethodTemplate implements ICPPCon
 	public CPPConstructorTemplate(IASTName name) {
 		super(name);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
-	 */
-	public boolean isExplicit() {
-		// mstodo fix that
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

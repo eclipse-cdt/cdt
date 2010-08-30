@@ -32,10 +32,6 @@ class PDOMCPPConstructorTemplate extends PDOMCPPMethodTemplate implements
 	public PDOMCPPConstructorTemplate(PDOMLinkage linkage, long record) {
 		super(linkage, record);
 	}
-
-	public boolean isExplicit() {
-		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
-	}
 	
 	@Override
 	public int getNodeType() {

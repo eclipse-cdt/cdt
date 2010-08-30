@@ -47,8 +47,4 @@ class PDOMCPPConstructorSpecialization extends
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_SPECIALIZATION;
 	}
-	
-	public boolean isExplicit() {
-		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_CONSTRUCTOR_OFFSET);
-	}
 }

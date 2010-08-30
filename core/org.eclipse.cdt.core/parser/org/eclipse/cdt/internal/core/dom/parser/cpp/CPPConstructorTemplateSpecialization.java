@@ -25,11 +25,4 @@ public class CPPConstructorTemplateSpecialization extends CPPMethodTemplateSpeci
 			ICPPClassType owner, ICPPTemplateParameterMap tpmap) {
 		super(original, owner, tpmap);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
-	 */
-	public boolean isExplicit() {
-		return ((ICPPConstructor)getSpecializedBinding()).isExplicit();
-	}
 }

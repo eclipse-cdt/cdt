@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
@@ -348,14 +349,11 @@ class BuiltinOperators {
 				IType t2= SemanticUtil.getNestedType(memPtr.getMemberOfClass(), TDEF);
 				if (t2 instanceof ICPPClassType) {
 					ICPPClassType c2= (ICPPClassType) t2;
-					try {
-						if (SemanticUtil.calculateInheritanceDepth(c1, c2) >= 0) {
-							IType cvt= SemanticUtil.getNestedType(memPtr.getType(), TDEF);
-							IType rt= new CPPReferenceType(
-									SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile()), false);
-							addFunction(rt, clsPtr, memPtr);
-						}
-					} catch (DOMException e) {
+					if (SemanticUtil.calculateInheritanceDepth(c1, c2) >= 0) {
+						IType cvt= SemanticUtil.getNestedType(memPtr.getType(), TDEF);
+						IType rt= new CPPReferenceType(
+								SemanticUtil.addQualifiers(cvt, cv1.isConst(), cv1.isVolatile()), false);
+						addFunction(rt, clsPtr, memPtr);
 					}
 				}
 			}
@@ -646,12 +644,19 @@ class BuiltinOperators {
 					try {
 						ICPPMethod[] ops = SemanticUtil.getConversionOperators((ICPPClassType) type);
 						result= new IType[ops.length];
-						for (int i = 0; i < result.length; i++) {
-							final ICPPFunctionType functionType = ops[i].getType();
+						int j= -1;
+						for (ICPPMethod op : ops) {
+							if (op.isExplicit())
+								continue;
+							final ICPPFunctionType functionType = op.getType();
 							if (functionType != null) {
-								result[i]= functionType.getReturnType();
+								IType retType= functionType.getReturnType();
+								if (retType != null) {
+									result[++j]= retType;
+								}
 							}
 						}
+						result= ArrayUtil.trimAt(IType.class, result, j);
 					} catch (DOMException e) {
 					}
 				}

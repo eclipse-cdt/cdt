@@ -126,8 +126,8 @@ public class Conversions {
 					} 
 				}
 				// ... or has a class type (i.e., T2 is a class type), where T1 is not reference-related to T2, and can be
-				// implicitly converted to an lvalue of type �cv3 T3,� where �cv1 T1� is reference-compatible with 
-				// �cv3 T3� (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
+				// implicitly converted to an lvalue of type 'cv3 T3', where 'cv1 T1' is reference-compatible with 
+				// 'cv3 T3' (this conversion is selected by enumerating the applicable conversion functions (13.3.1.6)
 				// and choosing the best one through overload resolution (13.3)),
 				if (T2 instanceof ICPPClassType && udc != UDCMode.noUDC && isReferenceRelated(T1, T2) < 0) {
 					Cost cost= conversionFuncForDirectReference(cv1T1, cv2T2, T2, true);
@@ -340,7 +340,7 @@ public class Conversions {
 		return Cost.NO_CONVERSION;
 	}
 
-	static IType getInitListType(IType target) throws DOMException {
+	static IType getInitListType(IType target) {
 		if (target instanceof ICPPClassType && target instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) target;
 			if (CharArrayUtils.equals(INITIALIZER_LIST_NAME, inst.getNameCharArray())) {
@@ -372,9 +372,8 @@ public class Conversions {
 	 * <li>EQ 0 if cv1 == cv2
 	 * <li>LT -1 if cv1 is less qualified than cv2 or not comparable
 	 * </ul>
-	 * @throws DOMException
 	 */
-	private static final int compareQualifications(IType t1, IType t2) throws DOMException {
+	private static final int compareQualifications(IType t1, IType t2) {
 		CVQualifier cv1= getCVQualifier(t1);
 		CVQualifier cv2= getCVQualifier(t2);
 		
@@ -407,7 +406,7 @@ public class Conversions {
 	 * Note this is not a symmetric relation.
 	 * @return inheritance distance, or -1, if <code>cv1t1</code> is not reference-related to <code>cv2t2</code>
 	 */
-	private static final int isReferenceRelated(IType cv1Target, IType cv2Source) throws DOMException {
+	private static final int isReferenceRelated(IType cv1Target, IType cv2Source) {
 		IType t= SemanticUtil.getNestedType(cv1Target, TDEF | REF);
 		IType s= SemanticUtil.getNestedType(cv2Source, TDEF | REF);
 		
@@ -458,7 +457,7 @@ public class Conversions {
 	 * @return The cost for converting or <code>null</code> if <code>cv1t1</code> is not
 	 * reference-compatible with <code>cv2t2</code>
 	 */
-	private static final Cost isReferenceCompatible(IType cv1Target, IType cv2Source, boolean isImpliedObject) throws DOMException {
+	private static final Cost isReferenceCompatible(IType cv1Target, IType cv2Source, boolean isImpliedObject) {
 		int inheritanceDist= isReferenceRelated(cv1Target, cv2Source);
 		if (inheritanceDist < 0)
 			return null;
@@ -483,10 +482,9 @@ public class Conversions {
 	 * @param isImplicitThis handles the special case when members of different
 	 *    classes are nominated via using-declarations. In such a situation the derived to
 	 *    base conversion does not cause any costs.
-	 * @throws DOMException
 	 */
 	private static final Cost checkStandardConversionSequence(IType source, boolean isLValue, IType target,
-			boolean isImplicitThis) throws DOMException {
+			boolean isImplicitThis) {
 		final Cost cost= new Cost(source, target, Rank.IDENTITY);
 		if (lvalue_to_rvalue(cost, isLValue))
 			return cost;
@@ -533,7 +531,7 @@ public class Conversions {
 		
 		if (s instanceof ICPPClassType) {
 			// 13.3.1.5 Initialization by conversion function
-			return initializationByConversion(source, (ICPPClassType) s, target);
+			return initializationByConversion(source, (ICPPClassType) s, target, isDirect);
 		}
 		return Cost.NO_CONVERSION;
 	}
@@ -669,6 +667,8 @@ public class Conversions {
 			CPPTemplates.instantiateConversionTemplates(ops, target);
 			for (final ICPPMethod op : ops) {
 				if (op != null && !(op instanceof IProblemBinding)) {
+					if (op.isExplicit())
+						continue;
 					final IType returnType = op.getType().getReturnType();
 					final IType uqReturnType= getNestedType(returnType, REF | TDEF | CVTYPE);
 					final int dist = SemanticUtil.calculateInheritanceDepth(uqReturnType, t);
@@ -705,19 +705,25 @@ public class Conversions {
 	/**
 	 * 13.3.1.5 Initialization by conversion function [over.match.conv]
 	 */
-	private static Cost initializationByConversion(IType source, ICPPClassType s, IType target) throws DOMException {
+	private static Cost initializationByConversion(IType source, ICPPClassType s, IType target, boolean direct) throws DOMException {
 		ICPPMethod[] ops = SemanticUtil.getConversionOperators(s); 
 		CPPTemplates.instantiateConversionTemplates(ops, target);
 		FunctionCost cost1= null;
 		Cost cost2= null;
 		for (final ICPPMethod op : ops) {
 			if (op != null && !(op instanceof IProblemBinding)) {
+				final boolean isExplicitConversion= op.isExplicit();
+				if (isExplicitConversion && !direct)
+					continue;
+				
 				final IType returnType = op.getType().getReturnType();
 				IType uqReturnType= getNestedType(returnType, TDEF | ALLCVQ);
 				boolean isLValue = uqReturnType instanceof ICPPReferenceType
 						&& !((ICPPReferenceType) uqReturnType).isRValueReference();
 				Cost c2= checkImplicitConversionSequence(target, uqReturnType, isLValue, UDCMode.noUDC, false);
 				if (c2.converts()) {
+					if (isExplicitConversion && c2.getRank() != Rank.IDENTITY)
+						continue;
 					ICPPFunctionType ftype = op.getType();
 					IType implicitType= CPPSemantics.getImplicitType(op, ftype.isConst(), ftype.isVolatile());
 					final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
@@ -749,7 +755,7 @@ public class Conversions {
 	 * [4.2] array-to-ptr
 	 * [4.3] function-to-ptr
 	 */
-	private static final boolean lvalue_to_rvalue(final Cost cost, boolean isLValue) throws DOMException {
+	private static final boolean lvalue_to_rvalue(final Cost cost, boolean isLValue) {
 		// target should not be a reference here.
 		boolean isConverted= false;
 		IType target = getNestedType(cost.target, REF | TDEF);
@@ -824,9 +830,8 @@ public class Conversions {
 	/**
 	 * [4.4] Qualifications 
 	 * @param cost
-	 * @throws DOMException
 	 */
-	private static final boolean qualificationConversion(Cost cost) throws DOMException{
+	private static final boolean qualificationConversion(Cost cost) {
 		IType s = cost.source;
 		IType t = cost.target;
 		boolean constInEveryCV2k = true;
@@ -894,9 +899,8 @@ public class Conversions {
 	 * following that can hold it: int, unsigned int, long unsigned long.
 	 * 4.5-4 bool can be promoted to int 
 	 * 4.6 float can be promoted to double
-	 * @throws DOMException
 	 */
-	private static final boolean promotion(Cost cost) throws DOMException{
+	private static final boolean promotion(Cost cost) {
 		IType src = cost.source;
 		IType trg = cost.target;
 
@@ -980,7 +984,7 @@ public class Conversions {
 	 * [4.10] Pointer conversions
 	 * [4.11] Pointer to member conversions
 	 */
-	private static final boolean conversion(Cost cost, boolean forImplicitThis) throws DOMException{
+	private static final boolean conversion(Cost cost, boolean forImplicitThis){
 		final IType s = cost.source;
 		final IType t = cost.target;
 

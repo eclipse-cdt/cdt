@@ -13,15 +13,10 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-public class CompositeCPPConstructorSpecialization extends
-CompositeCPPMethodSpecialization implements ICPPConstructor {
+public class CompositeCPPConstructorSpecialization extends CompositeCPPMethodSpecialization implements
+		ICPPConstructor {
 
 	public CompositeCPPConstructorSpecialization(ICompositesFactory cf, ICPPConstructor cons) {
 		super(cf, cons);
-	}
-	
-	public boolean isExplicit() {
-		return ((ICPPConstructor)rbinding).isExplicit();
-	}
-
+	}	
 }

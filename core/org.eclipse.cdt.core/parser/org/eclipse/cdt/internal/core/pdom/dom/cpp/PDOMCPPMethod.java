@@ -130,6 +130,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 	
+	public boolean isExplicit() {
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_METHOD_OFFSET);
+	}
+
 	@Override
 	public IScope getFunctionScope() throws DOMException {
 		throw new PDOMNotImplementedError();

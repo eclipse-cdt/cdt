@@ -71,6 +71,10 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 		return ((ICPPMethod)getTemplateDefinition()).isPureVirtual();		
 	}
 
+	public boolean isExplicit() {
+		return ((ICPPMethod)getTemplateDefinition()).isExplicit();
+	}
+	
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}

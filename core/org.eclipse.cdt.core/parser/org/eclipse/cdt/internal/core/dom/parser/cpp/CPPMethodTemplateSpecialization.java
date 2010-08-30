@@ -28,14 +28,16 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	}
 
 	public boolean isVirtual() {
-		// TODO Auto-generated method stub
+		IBinding m = getSpecializedBinding();
+		if (m instanceof ICPPMethod)
+			return ((ICPPMethod) m).isVirtual();
 		return false;
 	}
 
 	public int getVisibility() {
 		IBinding m = getSpecializedBinding();
-		if( m instanceof ICPPMethod )
-			return ((ICPPMethod)m).getVisibility();
+		if (m instanceof ICPPMethod)
+			return ((ICPPMethod) m).getVisibility();
 		return 0;
 	}
 	
@@ -52,10 +54,23 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 	}
 
 	public boolean isImplicit() {
+		IBinding m = getSpecializedBinding();
+		if (m instanceof ICPPMethod)
+			return ((ICPPMethod) m).isImplicit();
+		return false;
+	}
+	
+	public boolean isExplicit() {
+		IBinding m = getSpecializedBinding();
+		if (m instanceof ICPPMethod)
+			return ((ICPPMethod) m).isExplicit();
 		return false;
 	}
 
 	public boolean isPureVirtual() {
+		IBinding m = getSpecializedBinding();
+		if (m instanceof ICPPMethod)
+			return ((ICPPMethod) m).isPureVirtual();
 		return false;
 	}
 

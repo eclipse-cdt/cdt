@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -139,18 +141,25 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	}
 
     public boolean isVirtual() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if (decl instanceof ICPPASTTemplateDeclaration) {
+			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			if (declSpec != null) {
+				return declSpec.isVirtual();
+			}
+		}
+		return false;
+	}
 
     @Override
 	public boolean isInline() {
-        IASTDeclaration decl = getPrimaryDeclaration();
-        if( decl instanceof ICPPASTTemplateDeclaration && ((ICPPASTTemplateDeclaration)decl).getDeclaration() instanceof IASTFunctionDefinition )
-            return true;
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if (decl instanceof ICPPASTTemplateDeclaration
+				&& ((ICPPASTTemplateDeclaration) decl).getDeclaration() instanceof IASTFunctionDefinition)
+			return true;
 
-        return super.isInline();
-    }
+		return super.isInline();
+	}
 
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
@@ -163,9 +172,34 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 	public boolean isImplicit() {
 		return false;
 	}
-
-	public boolean isPureVirtual() {
+	
+	public boolean isExplicit() {
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if (decl instanceof ICPPASTTemplateDeclaration) {
+			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			if (declSpec != null) {
+				return declSpec.isExplicit();
+			}
+		}
 		return false;
 	}
 
+	public boolean isPureVirtual() {
+		if (declarations != null && declarations.length > 0) {
+			IASTName decl= declarations[0];
+			if (decl != null) {
+				IASTNode parent = decl.getParent();
+				while (!(parent instanceof IASTDeclarator) && parent != null)
+					parent = parent.getParent();
+				
+				if (parent instanceof IASTDeclarator) {
+					IASTDeclarator dtor= ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) parent);
+					if (dtor instanceof ICPPASTFunctionDeclarator) {
+						return ((ICPPASTFunctionDeclarator) dtor).isPureVirtual();
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

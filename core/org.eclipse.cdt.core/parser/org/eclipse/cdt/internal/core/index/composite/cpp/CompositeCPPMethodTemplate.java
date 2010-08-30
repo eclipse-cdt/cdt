@@ -29,6 +29,10 @@ public class CompositeCPPMethodTemplate extends CompositeCPPFunctionTemplate imp
 		return ((ICPPMethod)rbinding).isImplicit();
 	}
 
+	public boolean isExplicit() {
+		return ((ICPPMethod)rbinding).isExplicit();
+	}
+
 	public boolean isVirtual() {
 		return ((ICPPMethod)rbinding).isVirtual();
 	}

@@ -18,8 +18,4 @@ class CompositeCPPConstructor extends CompositeCPPMethod implements ICPPConstruc
 	public CompositeCPPConstructor(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
 	}
-
-	public boolean isExplicit() {
-		return ((ICPPConstructor)rbinding).isExplicit();
-	}
 }

@@ -25,11 +25,4 @@ public class CPPConstructorSpecialization extends CPPMethodSpecialization
 			ICPPTemplateParameterMap argMap) {
 		super(orig, owner, argMap);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
-	 */
-	public boolean isExplicit() {
-		return ((ICPPConstructor)getSpecializedBinding()).isExplicit();
-	}
 }

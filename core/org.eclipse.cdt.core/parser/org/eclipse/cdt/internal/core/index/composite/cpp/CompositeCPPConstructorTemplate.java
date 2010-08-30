@@ -18,9 +18,4 @@ public class CompositeCPPConstructorTemplate extends CompositeCPPMethodTemplate 
 	public CompositeCPPConstructorTemplate(ICompositesFactory cf, ICPPConstructor rbinding) {
 		super(cf, rbinding);
 	}
-
-	public boolean isExplicit() {
-		return ((ICPPConstructor)rbinding).isExplicit();
-	}
-
 }

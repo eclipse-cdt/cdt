@@ -40,6 +40,12 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 	public boolean isImplicit();
 	
 	/**
+	 * Returns whether this is an explicit constructor or an explicit conversion operator.
+	 * @since 5.3
+	 */
+	boolean isExplicit();
+
+	/**
 	 * Returns whether this is a pure abstract method
 	 * @since 5.1
 	 */

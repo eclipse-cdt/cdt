@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -24,30 +22,10 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
         public CPPConstructorProblem(ICPPClassType owner, IASTNode node, int id, char[] arg) {
             super(owner, node, id, arg);
         }
-
-        public boolean isExplicit() {
-            return false;
-        }
     }
 
-	/**
-	 * @param declarator
-	 */
 	public CPPConstructor(ICPPASTFunctionDeclarator declarator) {
 		super(declarator);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
-     */
-    public boolean isExplicit() {
-    	IASTDeclaration decl= getPrimaryDeclaration();
-    	if (decl != null) {
-    		ICPPASTDeclSpecifier declspec= getDeclSpec(decl);
-    		if (declspec != null) {
-    			return declspec.isExplicit();
-    		}
-    	}
-        return false;
-    }
 }

@@ -49,8 +49,4 @@ public class PDOMCPPConstructorInstance extends PDOMCPPMethodInstance implements
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_INSTANCE;
 	}
-	
-	public boolean isExplicit() {
-		return ((ICPPConstructor)getTemplateDefinition()).isExplicit();
-	}
 }

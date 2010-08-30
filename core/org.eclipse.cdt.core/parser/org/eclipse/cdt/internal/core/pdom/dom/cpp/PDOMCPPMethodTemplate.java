@@ -93,6 +93,10 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
+	public boolean isExplicit() {
+		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_METHOD_OFFSET);
+	}
+
 	public boolean isVirtual() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}

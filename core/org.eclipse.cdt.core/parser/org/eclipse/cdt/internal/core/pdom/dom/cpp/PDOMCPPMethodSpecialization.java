@@ -86,6 +86,10 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
+	public boolean isExplicit() {
+		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_METHOD_OFFSET);
+	}
+
 	public boolean isVirtual() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}

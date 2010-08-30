@@ -44,7 +44,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ * @deprecated The class is provided for testing purposes, only. It should not be used by clients.
+ * Within CDT it is recommended to use {@link ASTSignatureUtil}, instead.
  */
+@Deprecated
 public class ASTSignatureUtil {
 
 	private static final String COMMA_SPACE = ", "; //$NON-NLS-1$

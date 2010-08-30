@@ -8895,5 +8895,24 @@ public class AST2CPPTests extends AST2BaseTest {
 		IFunction f= bh.assertNonProblem("constBegin(); //ref", 10);
 		bh.assertProblem("begin(); //ref", 5);
 	}
-
+	
+	//	template <class T> class PE {
+	//	    explicit operator bool() const;
+	//	};
+	//	template <class T> class P {
+	//	    operator bool() const;
+	//	};
+	//	void fint(int);
+	//	void test() {
+	//	  PE<int> pe;
+	//	  P<int> p;
+	//	  fint(pe + pe); // problem
+	//	  fint(p + p);   // converted to boolean and then int.
+	//	};
+	public void testExplicitConversionOperators() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		bh.assertProblem("fint(pe + pe);", 4);
+		bh.assertNonProblem("fint(p + p);", 4);
+	}
 }

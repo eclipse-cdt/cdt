@@ -246,4 +246,14 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     	return false;
     }
 
+    public boolean isExplicit() {
+    	IASTDeclaration decl= getPrimaryDeclaration();
+    	if (decl != null) {
+    		ICPPASTDeclSpecifier declspec= getDeclSpec(decl);
+    		if (declspec != null) {
+    			return declspec.isExplicit();
+    		}
+    	}
+        return false;
+    }
 }

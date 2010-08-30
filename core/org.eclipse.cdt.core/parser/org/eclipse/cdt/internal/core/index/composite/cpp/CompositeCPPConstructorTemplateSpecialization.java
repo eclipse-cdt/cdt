@@ -22,8 +22,4 @@ public class CompositeCPPConstructorTemplateSpecialization
 			ICPPFunction ft) {
 		super(cf, ft);
 	}
-
-	public boolean isExplicit() {
-		return ((ICPPConstructor)rbinding).isExplicit();
-	}
 }

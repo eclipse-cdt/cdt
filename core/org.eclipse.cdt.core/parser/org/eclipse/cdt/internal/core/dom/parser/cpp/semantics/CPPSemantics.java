@@ -2950,6 +2950,32 @@ public class CPPSemantics {
 			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
+	    	
+	    	// Copy initialization
+	    	if (initializer instanceof IASTEqualsInitializer) {
+	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
+	    		IASTInitializerClause initClause = eqInit.getInitializerClause();
+	    		IType sourceType= null;
+	    		boolean isLValue= false;
+	    		if (initClause instanceof IASTExpression) {
+	    			final IASTExpression expr = (IASTExpression) initClause;
+					isLValue= expr.isLValue();
+	    			sourceType= SemanticUtil.getSimplifiedType(expr.getExpressionType());
+	    		} else if (initClause instanceof ICPPASTInitializerList) {
+	    			sourceType= new InitializerListType((ICPPASTInitializerList) initClause);
+	    		}
+	    		if (sourceType != null) {
+	    			Cost c= Conversions.checkUserDefinedConversionSequence(isLValue, sourceType, type, false, false);
+	    			if (c.converts()) {
+	    				IFunction f= c.getUserDefinedConversion();
+	    				if (f instanceof ICPPConstructor)
+	    					return (ICPPConstructor) f;
+	    			}
+	    			return null;
+	    		}
+	    	}
+	    			
+	    	// Direct Initialization
 	    	ICPPClassType classType = (ICPPClassType) type;
 			CPPASTName astName = new CPPASTName();
 		    astName.setName(classType.getNameCharArray());
@@ -2961,9 +2987,7 @@ public class CPPSemantics {
 		    LookupData data = new LookupData(astName);
 			if (initializer == null) {
 				data.setFunctionArguments(IASTExpression.EMPTY_EXPRESSION_ARRAY);
-		    } else if (initializer instanceof IASTEqualsInitializer) {
-		    	data.setFunctionArguments(((IASTEqualsInitializer) initializer).getInitializerClause());
-			} else if (initializer instanceof ICPPASTConstructorInitializer) {
+		    } else if (initializer instanceof ICPPASTConstructorInitializer) {
 				data.setFunctionArguments(((ICPPASTConstructorInitializer) initializer).getArguments());
 			} else {
 				return null;
@@ -3195,6 +3219,8 @@ public class CPPSemantics {
 					// 13.3.1.1.2 call to object of class type
 					ICPPMethod[] ops = SemanticUtil.getConversionOperators(callToObjectOfClassType);
 					for (ICPPMethod op : ops) {
+						if (op.isExplicit())
+							continue;
 						IFunctionType ft= op.getType();
 						if (ft != null) {
 							IType rt= SemanticUtil.getNestedType(ft.getReturnType(), SemanticUtil.TDEF);

@@ -537,14 +537,12 @@ public class SemanticUtil {
 	 * @param baseClass the class to find in the inheritance graph
 	 * @return the number of edges in the inheritance graph, or -1 if the specified classes have
 	 * no inheritance relation
-	 * @throws DOMException
 	 */
-	public static final int calculateInheritanceDepth(IType type, IType baseClass) throws DOMException {
+	public static final int calculateInheritanceDepth(IType type, IType baseClass) {
 		return calculateInheritanceDepth(CPPSemantics.MAX_INHERITANCE_DEPTH, type, baseClass);
 	}
 	
-	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType baseClass)
-			throws DOMException {
+	private static final int calculateInheritanceDepth(int maxdepth, IType type, IType baseClass) {
 		if (type == baseClass || type.isSameType(baseClass)) {
 			return 0;
 		}

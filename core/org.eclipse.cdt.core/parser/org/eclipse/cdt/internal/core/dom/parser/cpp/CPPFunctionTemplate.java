@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -178,15 +179,10 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         do {
             if (name != null) {
                 IASTNode parent = name.getParent();
-	            while(!(parent instanceof IASTDeclaration))
+	            while (parent != null && !(parent instanceof IASTDeclaration))
 	                parent = parent.getParent();
 	            
-	            IASTDeclSpecifier declSpec = null;
-	            if (parent instanceof IASTSimpleDeclaration) {
-	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-	            } else if (parent instanceof IASTFunctionDefinition) {
-	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
-	            }
+	            IASTDeclSpecifier declSpec = getDeclSpecifier((IASTDeclaration) parent);
 	            if (declSpec != null && declSpec.getStorageClass() == storage) {
 	            	return true;
 	            }
@@ -197,6 +193,16 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
                 break;
         } while (name != null);
         return false;
+	}
+
+	protected ICPPASTDeclSpecifier getDeclSpecifier(IASTDeclaration decl) {
+		if (decl instanceof IASTSimpleDeclaration) {
+		    return (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+		} 
+		if (decl instanceof IASTFunctionDefinition) {
+		    return (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
+		}
+		return null;
 	}
 
     public IBinding resolveParameter(CPPParameter param) {
@@ -282,15 +288,10 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
         do {
             if (name != null) {
                 IASTNode parent = name.getParent();
-	            while(!(parent instanceof IASTDeclaration))
-	                parent = parent.getParent();
+				while (parent != null && !(parent instanceof IASTDeclaration))
+					parent = parent.getParent();
 	            
-	            IASTDeclSpecifier declSpec = null;
-	            if (parent instanceof IASTSimpleDeclaration) {
-	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-	            } else if (parent instanceof IASTFunctionDefinition) {
-	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
-	            }
+	            IASTDeclSpecifier declSpec = getDeclSpecifier((IASTDeclaration) parent);
 	            
 	            if (declSpec != null && declSpec.isInline())
                     return true;

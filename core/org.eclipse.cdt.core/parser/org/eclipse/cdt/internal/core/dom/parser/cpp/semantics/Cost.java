@@ -15,8 +15,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -258,5 +258,9 @@ class Cost {
 
 	public void setCouldNarrow() {
 		fCouldNarrow= true;
+	}
+
+	public ICPPFunction getUserDefinedConversion() {
+		return fUserDefinedConversion;
 	}
 }

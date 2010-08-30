@@ -326,6 +326,9 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 	public boolean isImplicit() {
 		return false;
 	}
+    public boolean isExplicit() {
+        return false;
+    }
 	public boolean hasDefaultValue() {
         return false;
 	}

@@ -24,8 +24,4 @@ public class CPPConstructorInstance extends CPPMethodInstance implements ICPPCon
 			CPPTemplateParameterMap tpmap, ICPPTemplateArgument[] args) {
 		super(orig, owner, tpmap, args);
 	}
-	
-	public boolean isExplicit() {
-		return ((ICPPConstructor) getTemplateDefinition()).isExplicit();
-	}
 }

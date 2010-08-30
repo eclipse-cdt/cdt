@@ -172,6 +172,10 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return getPrimaryDeclaration() == null;
 	}
 	
+    public boolean isExplicit() {
+        return false;
+    }
+	
 	public boolean isPureVirtual() {
 		return false;
 	}

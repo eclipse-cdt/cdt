@@ -48,6 +48,10 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	public boolean isPureVirtual() {
         return ((ICPPMethod)getTemplateDefinition()).isPureVirtual();
 	}
+	
+	public boolean isExplicit() {
+		return ((ICPPMethod) getTemplateDefinition()).isExplicit();
+	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()

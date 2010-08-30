@@ -16,20 +16,20 @@ import java.net.URI;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -121,7 +121,7 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 		}
 		else if (element instanceof ProblemSearchElement) {
 			ProblemSearchElement pse= (ProblemSearchElement) element;
-			return ASTSignatureUtil.getProblemMessage(pse.getProblemID(), pse.getDetail()); 
+			return ASTProblem.getMessage(pse.getProblemID(), pse.getDetail()); 
 		}
 		
 		if (element instanceof IPath) {

@@ -48,8 +48,4 @@ class PDOMCPPConstructorTemplateSpecialization extends
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPP_CONSTRUCTOR_TEMPLATE_SPECIALIZATION;
 	}
-	
-	public boolean isExplicit() {
-		return ((ICPPConstructor)getSpecializedBinding()).isExplicit();
-	}
 }

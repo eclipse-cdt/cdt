@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
@@ -56,12 +55,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 
 /**
- * The baseclass for all other refactorings, provides some common implementations for
+ * The base class for all other refactorings, provides some common implementations for
  * condition checking, change generating, selection handling and translation unit loading.
  *
  */
 public abstract class CRefactoring extends Refactoring {
-
 	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 
 	protected String name = Messages.Refactoring_name; 
@@ -88,8 +86,7 @@ public abstract class CRefactoring extends Refactoring {
 			} catch (CModelException e) {
 				CUIPlugin.log(e);
 			}
-		}
-		else {
+		} else {
 			this.file = file;
 			this.region = SelectionHelper.getRegion(selection);
 		}
@@ -100,12 +97,11 @@ public abstract class CRefactoring extends Refactoring {
 		}
 	}
 
-	private class ProblemFinder extends ASTVisitor{
-		
+	private class ProblemFinder extends ASTVisitor {
 		private boolean problemFound = false;
 		private final RefactoringStatus status;
 		
-		public ProblemFinder(RefactoringStatus status){
+		public ProblemFinder(RefactoringStatus status) {
 			this.status = status;
 		}
 		
@@ -160,12 +156,11 @@ public abstract class CRefactoring extends Refactoring {
 		}
 		
 		private void addWarningToState() {
-			if(!problemFound){
+			if (!problemFound) {
 				status.addWarning(Messages.Refactoring_CompileErrorInTU); 
 				problemFound = true;
 			}
 		}
-		
 	}
 	
 	@Override
@@ -180,19 +175,19 @@ public abstract class CRefactoring extends Refactoring {
 			throws CoreException, OperationCanceledException {
 		SubMonitor sm = SubMonitor.convert(pm, 10);
 		sm.subTask(Messages.Refactoring_PM_LoadTU); 
-		if(isProgressMonitorCanceld(sm, initStatus)) {
+		if (isProgressMonitorCanceld(sm, initStatus)) {
 			return initStatus;
 		}
-		if(!loadTranslationUnit(initStatus, sm.newChild(8))){
+		if (!loadTranslationUnit(initStatus, sm.newChild(8))) {
 			initStatus.addError(Messages.Refactoring_CantLoadTU);  
 			return initStatus;
 		}
-		if(isProgressMonitorCanceld(sm, initStatus)) {
+		if (isProgressMonitorCanceld(sm, initStatus)) {
 			return initStatus;
 		}
 		sm.subTask(Messages.Refactoring_PM_CheckTU); 
 		translationUnitHasProblem();
-		if(translationUnitIsAmbiguous()) {
+		if (translationUnitIsAmbiguous()) {
 			initStatus.addError(Messages.Refactoring_Ambiguity); 
 		}
 		sm.worked(2);
@@ -203,7 +198,7 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected boolean isProgressMonitorCanceld(IProgressMonitor sm,
 			RefactoringStatus initStatus2) {
-		if(sm.isCanceled()) {
+		if (sm.isCanceled()) {
 			initStatus2.addFatalError(Messages.Refactoring_CanceledByUser); 
 			return true;
 		}
@@ -236,12 +231,12 @@ public abstract class CRefactoring extends Refactoring {
 			try {
 				subMonitor.subTask(Messages.Refactoring_PM_ParseTU);
 				unit = loadTranslationUnit(file);
-				if(unit == null) {
+				if (unit == null) {
 					subMonitor.done();
 					return false;
 				}
 				subMonitor.worked(2);
-				if(isProgressMonitorCanceld(subMonitor, initStatus)) {
+				if (isProgressMonitorCanceld(subMonitor, initStatus)) {
 					return true;
 				}
 				subMonitor.subTask(Messages.Refactoring_PM_MergeComments); 
@@ -264,7 +259,7 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected IASTTranslationUnit loadTranslationUnit(IFile file) throws CoreException {
 		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
-		if(tu == null){
+		if (tu == null) {
 			initStatus.addFatalError(NLS.bind(Messages.CRefactoring_FileNotFound, file.getName()));
 			return null;
 		}
@@ -301,8 +296,6 @@ public abstract class CRefactoring extends Refactoring {
 		return fIndex;
 	}
 	
-	
-	
 	public IASTTranslationUnit getUnit() {
 		return unit;
 	}
@@ -310,8 +303,7 @@ public abstract class CRefactoring extends Refactoring {
 	protected ArrayList<IASTName> findAllMarkedNames() {
 		final ArrayList<IASTName> namesVector = new ArrayList<IASTName>();
 
-		unit.accept(new CPPASTVisitor() {
-
+		unit.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;
 			}

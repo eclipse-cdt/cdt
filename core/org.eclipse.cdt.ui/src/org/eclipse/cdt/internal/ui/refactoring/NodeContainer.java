@@ -185,12 +185,10 @@ public class NodeContainer {
 			}
 			IASTDeclarator sourceDeclarator = (IASTDeclarator) node;
 			if (sourceDeclarator.getParent() instanceof IASTSimpleDeclaration) {
-				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) sourceDeclarator
-						.getParent();
+				IASTSimpleDeclaration decl = (IASTSimpleDeclaration) sourceDeclarator.getParent();
 				declSpec = decl.getDeclSpecifier();
 			} else if (sourceDeclarator.getParent() instanceof IASTParameterDeclaration) {
-				IASTParameterDeclaration decl = (IASTParameterDeclaration) sourceDeclarator
-						.getParent();
+				IASTParameterDeclaration decl = (IASTParameterDeclaration) sourceDeclarator.getParent();
 				declSpec = decl.getDeclSpecifier();
 			}
 

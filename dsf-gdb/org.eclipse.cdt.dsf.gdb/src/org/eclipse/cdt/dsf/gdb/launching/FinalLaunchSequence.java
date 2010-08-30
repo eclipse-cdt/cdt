@@ -84,6 +84,8 @@ public class FinalLaunchSequence extends Sequence {
             fCommandControl = fTracker.getService(IGDBControl.class);
             if (fCommandControl == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain control service", null)); //$NON-NLS-1$
+                requestMonitor.done();
+                return;
             }
 
             fCommandFactory = fCommandControl.getCommandFactory();

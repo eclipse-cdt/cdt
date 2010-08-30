@@ -355,7 +355,6 @@ public class NodeContainer {
 
 		for (NameInformation nameInf : names) {
 			if (!declarations.contains(nameInf.getDeclaration())) {
-
 				declarations.add(nameInf.getDeclaration());
 				if (nameInf.isUsedAfterReferences()) {
 					usedAfter.add(nameInf);
@@ -375,8 +374,7 @@ public class NodeContainer {
 			if (!declarations.contains(nameInf.getDeclaration())) {
 
 				declarations.add(nameInf.getDeclaration());
-				if (nameInf.isUserSetIsReference()
-						|| nameInf.isUserSetIsReturnValue()) {
+				if (nameInf.isUserSetIsReference() || nameInf.isUserSetIsReturnValue()) {
 					usedAfter.add(nameInf);
 				}
 			}

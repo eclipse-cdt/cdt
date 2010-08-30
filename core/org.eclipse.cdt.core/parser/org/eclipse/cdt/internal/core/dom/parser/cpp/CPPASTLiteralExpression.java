@@ -121,8 +121,26 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	private IValue getStringLiteralSize() {
 		char[] value= getValue();
 		int length= value.length-1;
-		if (value[0] != '"') {
-			length--;
+		boolean isRaw= false;
+		for (int i = 0; i < length; i++) {
+			final char c = value[i];
+			if (c == '"') {
+				if (isRaw) {
+					for (int j=i+1; j<length; j++) {
+						final char d= value[j];
+						if (d == '(') {
+							length -= 2*(j-i);
+							break;
+						}
+					}
+				}
+				length -= i;
+				if (length < 0)
+					length= 0;
+				break;
+			} else if (c == 'R') {
+				isRaw = true;
+			}
 		}
 		return Value.create(length);
 	}

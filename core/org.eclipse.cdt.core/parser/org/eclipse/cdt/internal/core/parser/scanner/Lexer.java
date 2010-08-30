@@ -183,7 +183,6 @@ final public class Lexer implements ITokenSequence {
 	 * @param origin parameter for the {@link OffsetLimitReachedException} when it has to be thrown.
 	 * @since 5.0
 	 */
-	@SuppressWarnings("fallthrough")
 	public final int consumeLine(int origin) throws OffsetLimitReachedException {
 		Token t= fToken;
 		Token lt= null;
@@ -200,7 +199,7 @@ final public class Lexer implements ITokenSequence {
 					t.setType(IToken.tCOMPLETION);
 					throw new OffsetLimitReachedException(origin, t);
 				}
-				// no break;
+				//$FALL-THROUGH$
 			case Lexer.tNEWLINE:
 				fToken= t;
 				if (lt != null) {
@@ -233,8 +232,7 @@ final public class Lexer implements ITokenSequence {
 			final int pos= fEndOffset;
 			if (!isValidOffset(pos+1)) {
 				d= nextCharPhase3();
-			}
-			else {
+			} else {
 				d= fInput.get(pos);
 				switch(d) {
 				case '\\': 
@@ -272,8 +270,15 @@ final public class Lexer implements ITokenSequence {
 				haveNL= hadNL;
 				continue;
 				
+			case 'R':
+				if (d == '"') {
+					nextCharPhase3();
+					rawStringLiteral(start, 2, IToken.tSTRING);
+				}
+				continue;
+				
 			case '"':
-				stringLiteral(start, IToken.tSTRING);
+				stringLiteral(start, 1, IToken.tSTRING);
 				continue;
 
 			case '\'':
@@ -356,9 +361,17 @@ final public class Lexer implements ITokenSequence {
 
 			case 'L':
 				switch(d) {
+				case 'R':
+					markPhase3();
+					if (nextCharPhase3() == '"') {
+						nextCharPhase3();
+						return rawStringLiteral(start, 3, IToken.tLSTRING);
+					}
+					restorePhase3();
+					break;
 				case '"':
 					nextCharPhase3();
-					return stringLiteral(start, IToken.tLSTRING);
+					return stringLiteral(start, 2, IToken.tLSTRING);
 				case '\'':
 					nextCharPhase3();
 					return charLiteral(start, IToken.tLCHAR);
@@ -368,14 +381,46 @@ final public class Lexer implements ITokenSequence {
 			case 'u': 	
 			case 'U':
 				if (fOptions.fSupportUTFLiterals) {
-					if (d == '"') {
+					switch(d) {
+					case 'R':
+						markPhase3();
+						if (nextCharPhase3() == '"') {
+							nextCharPhase3();
+							return rawStringLiteral(start, 3, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
+						}
+						restorePhase3();
+						break;
+					case '"':
 						nextCharPhase3();
-						return stringLiteral(start, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
-					}
-					if (d == '\'') {
+						return stringLiteral(start, 2, c == 'u' ? IToken.tUTF16STRING : IToken.tUTF32STRING);
+					case '\'':
 						nextCharPhase3();
 						return charLiteral(start, c == 'u' ? IToken.tUTF16CHAR : IToken.tUTF32CHAR);
+					case '8':
+						if (c == 'u') {
+							markPhase3();
+							switch (nextCharPhase3()) {
+							case 'R':
+								if (nextCharPhase3() == '"') {
+									nextCharPhase3();
+									return rawStringLiteral(start, 4, IToken.tSTRING);
+								}
+								break;
+							case '"':
+								nextCharPhase3();
+								return stringLiteral(start, 3, IToken.tSTRING);
+							}
+							restorePhase3();
+						}
+						break;
 					}
+				}
+				return identifier(start, 1);
+				
+			case 'R':
+				if (d == '"') {
+					nextCharPhase3();
+					return rawStringLiteral(start, 2, IToken.tSTRING);
 				}
 				return identifier(start, 1);
 				
@@ -383,7 +428,7 @@ final public class Lexer implements ITokenSequence {
 				if (fInsideIncludeDirective) {
 					return headerName(start, true);
 				}
-				return stringLiteral(start, IToken.tSTRING);
+				return stringLiteral(start, 1, IToken.tSTRING);
 
 			case '\'':
 				return charLiteral(start, IToken.tCHAR);
@@ -392,7 +437,7 @@ final public class Lexer implements ITokenSequence {
 			case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': 
 			case 's': case 't':           case 'v': case 'w': case 'x': case 'y': case 'z':
 			case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I':
-			case 'J': case 'K':           case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': 
+			case 'J': case 'K':           case 'M': case 'N': case 'O': case 'P': case 'Q':  
 			case 'S': case 'T':           case 'V': case 'W': case 'X': case 'Y': case 'Z':
 			case '_':
 				return identifier(start, 1);
@@ -697,7 +742,6 @@ final public class Lexer implements ITokenSequence {
     	fLog.handleProblem(problemID, arg, offset, fOffset);
     }
 
-    @SuppressWarnings("fallthrough")
 	private Token headerName(final int start, final boolean expectQuotes) throws OffsetLimitReachedException {
     	int length= 1;
 		boolean done = false;
@@ -709,7 +753,7 @@ final public class Lexer implements ITokenSequence {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, 
 							newToken((expectQuotes ? tQUOTE_HEADER_NAME : tSYSTEM_HEADER_NAME), start, length));
 				}
-				// no break;
+				//$FALL-THROUGH$
 			case '\n':
 				handleProblem(IProblem.SCANNER_UNBOUNDED_STRING, getInputChars(start, fOffset), start);
 				break loop;
@@ -758,12 +802,10 @@ final public class Lexer implements ITokenSequence {
 		}
 	}
 
-	@SuppressWarnings("fallthrough")
-	private Token stringLiteral(final int start, final int tokenType) throws OffsetLimitReachedException {
+	private Token stringLiteral(final int start, int length, final int tokenType) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
 		
-		int length = tokenType == IToken.tSTRING ? 1 : 2;
 		int c= fCharPhase3;
 		
 		loop: while (!done) {
@@ -772,7 +814,7 @@ final public class Lexer implements ITokenSequence {
 				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(tokenType, start, length));
 				}
-				// no break;
+				//$FALL-THROUGH$
 			case '\n':
 				handleProblem(IProblem.SCANNER_UNBOUNDED_STRING, getInputChars(start, fOffset), start);
 				break loop;
@@ -795,8 +837,54 @@ final public class Lexer implements ITokenSequence {
 		}
 		return newToken(tokenType, start, length);
 	}
-	
-	@SuppressWarnings("fallthrough")
+
+	private Token rawStringLiteral(final int start, int length, final int tokenType) throws OffsetLimitReachedException {
+		final int delimOffset= fOffset;
+		int delimEndOffset = delimOffset;
+		int offset;
+		for(;; delimEndOffset++) {
+			if (!fInput.isValidOffset(delimEndOffset)) {
+				offset= delimEndOffset;
+				break;
+			}
+			if (fInput.get(delimEndOffset) == '(') {
+				offset= delimEndOffset+1;
+				break;
+			}
+		}
+		
+		final int delimLength= delimEndOffset-delimOffset;
+		for(;; offset++) {
+			if (!fInput.isValidOffset(offset)) {
+				handleProblem(IProblem.SCANNER_UNBOUNDED_STRING, getInputChars(start, offset), start);
+				break;
+			} 
+				
+			final char c= fInput.get(offset);
+			if (c == ')') {
+				final int endingDoubleQuoteOffset= offset+delimLength+1;
+				if (fInput.isValidOffset(endingDoubleQuoteOffset) && fInput.get(endingDoubleQuoteOffset) == '"') {
+					boolean prefixMatches= true;
+					for (int i = 0; i < delimLength; i++) {
+						if (fInput.get(offset + i + 1) != fInput.get(delimOffset+i)) {
+							prefixMatches= false;
+							break;
+						}
+					}
+					if (prefixMatches) {
+						offset= endingDoubleQuoteOffset+1;
+						break;
+					}
+				}
+			}
+		}
+		fOffset= offset-1;
+		fEndOffset= offset;
+		fCharPhase3=  0;
+		nextCharPhase3();
+		return newToken(tokenType, start, offset-start);
+	}
+
 	private Token charLiteral(final int start, final int tokenType) throws OffsetLimitReachedException {
 		boolean escaped = false;
 		boolean done = false;
@@ -809,7 +897,7 @@ final public class Lexer implements ITokenSequence {
 				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(tokenType, start, length));
 				}
-				// no break;
+				//$FALL-THROUGH$
 			case '\n':
 				handleProblem(IProblem.SCANNER_BAD_CHARACTER, getInputChars(start, fOffset), start);
 				break loop;
@@ -990,7 +1078,8 @@ final public class Lexer implements ITokenSequence {
 	
 	
 	/**
-	 * Saves the current state of phase3, necessary for '...', '%:%:' and UNCs.
+	 * Saves the current state of phase3, necessary for '...', '%:%:', UNCs and string literals
+	 * with a long prefix.
 	 */
 	private void markPhase3() {
 		fMarkOffset= fOffset;
@@ -1009,9 +1098,8 @@ final public class Lexer implements ITokenSequence {
 	
 	/**
 	 * Perform phase 1-3: Replace \r\n with \n, handle trigraphs, detect line-splicing.
-	 * Changes fOffset, fEndOffset and fCharPhase3, stateless otherwise.
+	 * Changes fOffset, fEndOffset and fCharPhase3, state-less otherwise.
 	 */
-	@SuppressWarnings("fallthrough")
 	private int nextCharPhase3() {
 		int pos= fEndOffset;
 		do {
@@ -1057,7 +1145,7 @@ final public class Lexer implements ITokenSequence {
 					return trigraph;
 				}
 				pos+= 2;
-				// no break, handle backslash
+				// $FALL-THROUGH$, handle backslash
 
 			case '\\':
 				final int lsPos= findEndOfLineSpliceSequence(pos);
@@ -1097,9 +1185,8 @@ final public class Lexer implements ITokenSequence {
 	}
 
 	/**
-	 * Returns the endoffset for a line-splice sequence, or -1 if there is none.
+	 * Returns the end-offset for a line-splice sequence, or -1 if there is none.
 	 */
-	@SuppressWarnings("fallthrough")
 	private int findEndOfLineSpliceSequence(int pos) {
 		boolean haveBackslash= true;
 		int result= -1;
@@ -1123,7 +1210,7 @@ final public class Lexer implements ITokenSequence {
 				if (!isValidOffset(pos+1) || fInput.get(pos) != '?' || fInput.get(++pos) != '/') {
 					return result;
 				}
-				// fall through to backslash handling
+				// $FALL-THROUGH$ to backslash handling
 					
 			case '\\':
 				if (!haveBackslash) {

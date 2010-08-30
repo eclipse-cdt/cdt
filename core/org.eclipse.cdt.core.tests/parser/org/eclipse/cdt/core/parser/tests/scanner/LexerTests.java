@@ -18,8 +18,8 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.tests.ast2.TestLexerLog;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
-import org.eclipse.cdt.internal.core.parser.scanner.Token;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.parser.scanner.Token;
 
 
 public class LexerTests extends BaseTestCase {
@@ -64,6 +64,12 @@ public class LexerTests extends BaseTestCase {
 		fLastEndOffset= 0;
 	}
 
+	private void nextDirective() throws Exception {
+		IToken t= fLexer.nextDirective();
+		assertNotNull(t);
+		fLastEndOffset= t.getOffset();
+	}
+	
 	private void token(int tokenType) throws Exception {
 		token(tokenType, null);
 	}
@@ -102,11 +108,35 @@ public class LexerTests extends BaseTestCase {
 	private void utf16str(String expectedImage) throws Exception {
 		token(IToken.tUTF16STRING, "u\"" + expectedImage + "\"");
 	}
-	
+
+	private void utf8str(String expectedImage) throws Exception {
+		token(IToken.tSTRING, "u8\"" + expectedImage + "\"");
+	}
+
 	private void utf32str(String expectedImage) throws Exception {
 		token(IToken.tUTF32STRING, "U\"" + expectedImage + "\"");
 	}
-	
+
+	private void rstr(String marker, String expectedImage) throws Exception {
+		token(IToken.tSTRING, "R\"" + marker + '(' + expectedImage + ')' + marker + "\"");
+	}
+
+	private void wrstr(String marker, String expectedImage) throws Exception {
+		token(IToken.tLSTRING, "LR\"" + marker + '(' + expectedImage + ')' + marker + "\"");
+	}
+
+	private void utf16rstr(String marker, String expectedImage) throws Exception {
+		token(IToken.tUTF16STRING, "uR\"" + marker + '(' + expectedImage + ')' + marker + "\"");
+	}
+
+	private void utf8rstr(String marker, String expectedImage) throws Exception {
+		token(IToken.tSTRING, "u8R\"" + marker + '(' + expectedImage + ')' + marker + "\"");
+	}
+
+	private void utf32rstr(String marker, String expectedImage) throws Exception {
+		token(IToken.tUTF32STRING, "UR\"" + marker + '(' + expectedImage + ')' + marker + "\"");
+	}
+
 	private void ch(String expectedImage) throws Exception {
 		token(IToken.tCHAR, expectedImage);
 	}
@@ -481,7 +511,11 @@ public class LexerTests extends BaseTestCase {
 		init("L\"" + lit + '"');
 		wstr(lit);
 		eof();
-		
+
+		init("u8\"" + lit + '"');
+		utf8str(lit);
+		eof();
+
 		init("u\"" + lit + '"');
 		utf16str(lit);
 		eof();
@@ -540,6 +574,78 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	public void testRawStringLiteral() throws Exception {
+		String lit= "abc0123\\\"'.:; \\\\ \n\"(";
+		init("R\"(" + lit + ")\"");
+		rstr("", lit);
+		eof();
+
+		init("LR\"(" + lit + ")\"");
+		wrstr("", lit);
+		eof();
+
+		init("u8R\"(" + lit + ")\"");
+		utf8rstr("", lit);
+		eof();
+
+		init("uR\"(" + lit + ")\"");
+		utf16rstr("", lit);
+		eof();
+		
+		init("UR\"(" + lit + ")\"");
+		utf32rstr("", lit);
+		eof();
+
+		init("R\"ut");
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, "R\"ut");
+		token(IToken.tSTRING, "R\"ut");
+		eof();
+
+		init("LR\"(ut");
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, "LR\"(ut");
+		token(IToken.tLSTRING, "LR\"(ut");
+		eof();
+		
+		init("uR\"p()");
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, "uR\"p()");
+		token(IToken.tUTF16STRING, "uR\"p()");
+		eof();
+		
+		init("UR\"(ut");
+		problem(IProblem.SCANNER_UNBOUNDED_STRING, "UR\"(ut");
+		token(IToken.tUTF32STRING, "UR\"(ut");
+		eof();
+		
+		init("R\"+=(Text)=+\"Text)+=\"");
+		rstr("+=", "Text)=+\"Text");
+		eof();
+		
+		init("UR uR LR u8R U8R\"\"");
+		id("UR"); ws();
+		id("uR"); ws();
+		id("LR"); ws();
+		id("u8R"); ws();
+		id("U8R"); str(""); 
+		eof();
+	}
+		
+	public void testRawStringLiteralInInactiveCode() throws Exception {
+		init("start\n" + "inactive: Rbla\n" + "#end");
+		id("start");
+		nextDirective();
+		token(IToken.tPOUND);
+		id("end");
+		eof();
+
+		// raw string containing a directive
+		init("start\n" + "inactive: uR\"(\n#endif\n)\"\n" + "#end");
+		id("start");
+		nextDirective();
+		token(IToken.tPOUND);
+		id("end");
+		eof();
+	}
+
 	public void testOperatorAndPunctuators() throws Exception {
 		final String ops= "{}[]###()<::><%%>%:%:%:;:...?.::..*+-*/%^&|~=!<>+=-=*=/=%=" +
 		"^=&=|=<<>><<=>>===!=<=>=&&||++--,->*-><?>?\\";
@@ -563,17 +669,17 @@ public class LexerTests extends BaseTestCase {
 				StringBuffer buf= new StringBuffer();
 				String input= useTrigraphs(ops.toCharArray(), trigraphs);
 				init(instertLineSplices(input, splices)); 
-				for (int i = 0; i < tokens.length; i++) {
+				for (int token2 : tokens) {
 					Token token= fLexer.currentToken();
 					buf.append(token.getCharImage());
-					token(tokens[i]);
+					token(token2);
 				}
 				eof();
 				assertEquals(ops, buf.toString()); // check token image
 
 				init(input, NO_MINMAX); 
-				for (int i = 0; i < tokens.length; i++) {
-					switch (tokens[i]) {
+				for (int token : tokens) {
+					switch (token) {
 					case IGCCToken.tMIN:
 						token(IToken.tLT);
 						token(IToken.tQUESTION);
@@ -583,7 +689,7 @@ public class LexerTests extends BaseTestCase {
 						token(IToken.tQUESTION);
 						break;
 					default:
-						token(tokens[i]);
+						token(token);
 					break;
 					}
 				}
@@ -630,8 +736,7 @@ public class LexerTests extends BaseTestCase {
 
 		boolean yes= mode > 1;
 		StringBuffer result= new StringBuffer();
-		for (int i = 0; i < input.length; i++) {
-			char c = input[i];
+		for (char c : input) {
 			int idx= TRIGRAPH_REPLACES_CHARS.indexOf(c);
 			if (idx > 0) {
 				if (yes) {

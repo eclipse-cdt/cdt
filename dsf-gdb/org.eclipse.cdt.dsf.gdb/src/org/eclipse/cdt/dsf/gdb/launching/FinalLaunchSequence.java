@@ -65,39 +65,31 @@ public class FinalLaunchSequence extends Sequence {
         }},
 
         /*
-         * Fetch the GDBBackend service for later use
+         * Fetch the GDBBackend, CommandControl and Process services for later use
          */
         new Step() { @Override
         public void execute(RequestMonitor requestMonitor) {
             fGDBBackend = fTracker.getService(IGDBBackend.class);
             if (fGDBBackend == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain GDBBackend service", null)); //$NON-NLS-1$
+                requestMonitor.done();
+                return;
             }
 
-            requestMonitor.done();
-        }},
-        /*
-         * Fetch the control service for later use
-         */
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
             fCommandControl = fTracker.getService(IGDBControl.class);
             if (fCommandControl == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain control service", null)); //$NON-NLS-1$
+                requestMonitor.done();
+                return;
             }
 
             fCommandFactory = fCommandControl.getCommandFactory();
             
-            requestMonitor.done();
-        }},
-        /*
-         * Fetch the process service for later use
-         */
-        new Step() { @Override
-        public void execute(RequestMonitor requestMonitor) {
             fProcService = fTracker.getService(IMIProcesses.class);
             if (fProcService == null) {
         		requestMonitor.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, -1, "Cannot obtain process service", null)); //$NON-NLS-1$
+                requestMonitor.done();
+                return;
             }
 
             requestMonitor.done();

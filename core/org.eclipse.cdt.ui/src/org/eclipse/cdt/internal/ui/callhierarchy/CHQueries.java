@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -129,15 +130,22 @@ public class CHQueries {
 			for (IIndexName name : refs) {
 				IBinding binding= index.findBinding(name);
 				if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
-					ICElement[] defs= null;
-					if (binding instanceof ICPPMethod) {
-						defs = findOverriders(index, (ICPPMethod) binding);
-					}
-					if (defs == null) {
-						defs= IndexUI.findRepresentative(index, binding);
-					}
-					if (defs != null && defs.length > 0) {
-						result.add(defs, name);
+					for(;;) {
+						ICElement[] defs= null;
+						if (binding instanceof ICPPMethod) {
+							defs = findOverriders(index, (ICPPMethod) binding);
+						}
+						if (defs == null) {
+							defs= IndexUI.findRepresentative(index, binding);
+						}
+						if (defs != null && defs.length > 0) {
+							result.add(defs, name);
+						} else if (binding instanceof ICPPSpecialization) {
+							binding= ((ICPPSpecialization) binding).getSpecializedBinding();
+							if (binding != null)
+								continue;
+						}
+						break;
 					}
 				}
 			}

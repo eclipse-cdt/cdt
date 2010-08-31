@@ -5057,4 +5057,41 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertSame(ft, inst.getTemplateDefinition());
 		assertSame(M, inst.getOwner());
 	}
+	
+	//	template <class T> struct A {
+	//		friend void f(A, T){}
+	//	};
+	//	template <class T> void g(T t) {
+	//		A<T> at;
+	//		f(at, t);
+	//	}
+	//	int main() {
+	//		class X {} x;
+	//		g(x);
+	//	}
+	public void testUnnamedTypesAsTemplateArgument_316317a() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+	
+	//	template <class T> class X { };
+	//	template <class T> void f(T t) { }
+	//	struct {} unnamed_obj;
+	//	void f() {
+	//		struct A { };
+	//		enum { e1 };
+	//		typedef struct {} B;
+	//		B b;
+	//		X<A>  x1; // OK
+	//		X<A*> x2; // OK
+	//		X<B>  x3; // OK
+	//		f(e1); // OK
+	//		f(unnamed_obj); // OK
+	//		f(b); // OK
+	//	}
+	public void testUnnamedTypesAsTemplateArgument_316317b() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
+
 }

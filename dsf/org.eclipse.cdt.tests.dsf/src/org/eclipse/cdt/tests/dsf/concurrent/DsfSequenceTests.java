@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.Assert;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
@@ -93,6 +94,55 @@ public class DsfSequenceTests {
         Assert.assertTrue(sequence.isDone());
         Assert.assertTrue(!sequence.isCancelled());
     }
+
+
+    public class SimpleReflectionSequence extends ReflectionSequence {
+
+        public int fStepCounter;
+        
+        public SimpleReflectionSequence() {
+            super(fExecutor);
+        }
+        
+        @Override
+        protected String[] getExecutionOrder(String groupName) {
+            return new String[] { "step1", "step2"};
+        }
+        
+        @Execute()
+        public void step1(RequestMonitor rm) {
+            fStepCounter++;
+            rm.done(); 
+        }
+
+        @Execute()
+        public void step2(RequestMonitor rm) {
+            fStepCounter++;
+            rm.done(); 
+        }
+    }
+
+    @Test 
+    public void simpleReflectionTest() throws InterruptedException, ExecutionException {
+
+        // Create, start, and wait for the sequence.
+        SimpleReflectionSequence sequence = new SimpleReflectionSequence();
+
+        //Sequence sequence = new SimpleReflectionSequence();
+        Assert.assertTrue(!sequence.isDone());
+        Assert.assertTrue(!sequence.isCancelled());
+        
+        fExecutor.execute(sequence);
+        sequence.get();
+
+        // Check the count
+        Assert.assertTrue(sequence.fStepCounter == 2);
+        
+        // Check post conditions
+        Assert.assertTrue(sequence.isDone());
+        Assert.assertTrue(!sequence.isCancelled());
+    }
+
     
     @Test (expected = ExecutionException.class)
     public void rollbackTest() throws InterruptedException, ExecutionException {
@@ -149,6 +199,133 @@ public class DsfSequenceTests {
         Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
     }
 
+    
+    public class RollBackReflectionSequence extends ReflectionSequence {
+
+        public int fStepCounter;
+        public int fRollBackCounter;
+        
+        public RollBackReflectionSequence() {
+            super(fExecutor);
+        }
+
+        @Override
+        protected String[] getExecutionOrder(String groupName) {
+            return new String[] { "step1", "step2"};
+        }
+        
+        @Execute()
+        public void step1(RequestMonitor rm) {
+            fStepCounter++;
+            rm.done(); 
+        }
+
+        @RollBack("step1")
+        public void rollBack1(RequestMonitor rm) {
+            fRollBackCounter++;
+            rm.done(); 
+        }
+
+        @Execute()
+        public void step2(RequestMonitor rm) {
+            fStepCounter++;
+            rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, -1, "", null));  //$NON-NLS-1$
+            rm.done(); 
+        }
+
+        @RollBack("step2")
+        public void rollBack2(RequestMonitor rm) {
+            fRollBackCounter++;
+            rm.done(); 
+        }
+    }
+
+    @Test (expected = ExecutionException.class)
+    public void rollbackReflectionTest() throws InterruptedException, ExecutionException {
+        // Create and start.
+        RollBackReflectionSequence sequence = new RollBackReflectionSequence();
+        fExecutor.execute(sequence);
+     
+        // Block and wait for sequence to complete.
+        try {
+            sequence.get();
+        } finally {
+            // Both steps should be performed
+            Assert.assertEquals(2, sequence.fStepCounter);
+            // Only one step is rolled back, the first one.
+            Assert.assertEquals(1, sequence.fRollBackCounter);
+            
+            // Check state from Future interface
+            Assert.assertTrue(sequence.isDone());
+            Assert.assertTrue(!sequence.isCancelled());            
+        }
+        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+    }
+    
+    public class RollBackReflectionSequence2 extends ReflectionSequence {
+
+        public int fStepCounter;
+        public int fRollBackCounter;
+        
+        public RollBackReflectionSequence2() {
+            super(fExecutor);
+        }
+
+        @Override
+        protected String[] getExecutionOrder(String groupName) {
+            return new String[] { "step1", "step2", "step3" };
+        }
+        
+        @Execute()
+        public void step1(RequestMonitor rm) {
+            fStepCounter++;
+            rm.done(); 
+        }
+
+        @RollBack("step1")
+        public void rollBack1(RequestMonitor rm) {
+        	fRollBackCounter++;
+        	rm.done(); 
+        }
+        @Execute()
+
+        public void step2(RequestMonitor rm) {
+            fStepCounter++;
+            rm.done(); 
+        }
+        
+        @Execute()
+        public void step3(RequestMonitor rm) {
+            fStepCounter++;
+            rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, -1, "", null));  //$NON-NLS-1$
+            rm.done(); 
+        }
+    }
+    
+    @Test (expected = ExecutionException.class)
+    public void rollbackReflectionWithoutRollBackMethodTest() throws InterruptedException, ExecutionException {
+        // Create and start.
+    	RollBackReflectionSequence2 sequence = new RollBackReflectionSequence2();
+        fExecutor.execute(sequence);
+     
+        // Block and wait for sequence to complete.
+        try {
+            sequence.get();
+        } finally {
+            // All three steps should be performed
+            Assert.assertEquals(3, sequence.fStepCounter);
+            // Two steps are rolled back, but only the first one has
+            // a rollback method.
+            Assert.assertEquals(1, sequence.fRollBackCounter);
+            
+            // Check state from Future interface
+            Assert.assertTrue(sequence.isDone());
+            Assert.assertTrue(!sequence.isCancelled());                        
+        }
+        Assert.assertTrue("Exception should have been thrown", false); //$NON-NLS-1$
+    }
+
+    
     /**
      * The goal of this test it to check that if an exception is thrown within
      * the Step.execute(), the step will return from the Future.get() method.

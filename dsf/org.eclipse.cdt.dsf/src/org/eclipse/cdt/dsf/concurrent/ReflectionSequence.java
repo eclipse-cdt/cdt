@@ -62,8 +62,8 @@ import org.eclipse.core.runtime.Status;
  *               return new String[] { "step1", "step2" };
  *           }
  *           
- *           // An invalid group was requested
- *           return null;
+ *           // Let the base class handle its own groups.
+ *		     return super.getExecutionOrder(group);
  *        }
  *
  *        {@code @Execute}

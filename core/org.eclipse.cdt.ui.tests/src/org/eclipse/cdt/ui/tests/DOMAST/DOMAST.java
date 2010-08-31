@@ -62,13 +62,13 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.properties.PropertySheet;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -87,9 +87,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -101,6 +101,7 @@ import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -278,15 +279,15 @@ public class DOMAST extends ViewPart {
 					}
 					
 					private void expandTreeIfNecessary(TreeItem[] tree, Object[] theExpanded) {
-			     		for( int i=0; i<tree.length; i++) {
-			     			for( int j=0; j<theExpanded.length; j++) {
-				     			if (theExpanded[j] instanceof DOMASTNodeLeaf &&
-				     					tree[i].getData() instanceof DOMASTNodeLeaf &&
-				     					((DOMASTNodeLeaf)theExpanded[j]).toString().equals(((DOMASTNodeLeaf)tree[i].getData()).toString()) && 
-				     					((DOMASTNodeLeaf)theExpanded[j]).getOffset() == (((DOMASTNodeLeaf)tree[i].getData()).getOffset())) {
-				     				tree[i].setExpanded(true);
+			     		for (TreeItem element : tree) {
+			     			for (Object element2 : theExpanded) {
+				     			if (element2 instanceof DOMASTNodeLeaf &&
+				     					element.getData() instanceof DOMASTNodeLeaf &&
+				     					((DOMASTNodeLeaf)element2).toString().equals(((DOMASTNodeLeaf)element.getData()).toString()) && 
+				     					((DOMASTNodeLeaf)element2).getOffset() == (((DOMASTNodeLeaf)element.getData()).getOffset())) {
+				     				element.setExpanded(true);
 				     				viewer.refresh();
-				     				expandTreeIfNecessary(tree[i].getItems(), theExpanded);
+				     				expandTreeIfNecessary(element.getItems(), theExpanded);
 				     			}
 			     			}
 			     		}
@@ -486,25 +487,25 @@ public class DOMAST extends ViewPart {
 		}
 		
 		private TreeItem expandTreeToTreeObject(TreeItem[] treeItems, DOMASTNodeLeaf treeObj) {
-			for (int i=0; i<treeItems.length; i++) {
-				if (treeItems[i].getData() == treeObj) {
-	 				return treeItems[i];
+			for (TreeItem treeItem : treeItems) {
+				if (treeItem.getData() == treeObj) {
+	 				return treeItem;
 	 			}
 	 			
 	 			DOMASTNodeParent parent = treeObj.getParent();
 	 			
 	 			if (parent == null) return null; 
 
-	 			while (parent != treeItems[i].getData()) {
+	 			while (parent != treeItem.getData()) {
 	 				parent = parent.getParent();
 	 				if (parent == null) break;
 	 			}
 	 			
-	 			if (parent == treeItems[i].getData()) {
-	 				treeItems[i].setExpanded(true);
+	 			if (parent == treeItem.getData()) {
+	 				treeItem.setExpanded(true);
 	 				viewer.refresh();
 
-	 				return expandTreeToTreeObject(treeItems[i].getItems(), treeObj);
+	 				return expandTreeToTreeObject(treeItem.getItems(), treeObj);
 	 			}
 	 		}
 	 		
@@ -700,13 +701,13 @@ public void createPartControl(Composite parent) {
 		  private void hideMenuItems(IMenuManager manager) {
 			  IContributionItem[] items = manager.getItems();
 			  
-			  for (int i = 0; i < items.length; i++) {
-				  if (items[i] instanceof IMenuManager) {
-					  hideMenuItems((IMenuManager)items[i]);
+			  for (IContributionItem item : items) {
+				  if (item instanceof IMenuManager) {
+					  hideMenuItems((IMenuManager)item);
 				  }
 				  
-				  if (items[i] instanceof ActionContributionItem) {
-					  String text = ((ActionContributionItem) items[i]).getAction().getText();
+				  if (item instanceof ActionContributionItem) {
+					  String text = ((ActionContributionItem) item).getAction().getText();
 					  IASTNode selectedNode = null;
 					  if (viewer.getSelection() instanceof StructuredSelection
 							  && ((StructuredSelection) viewer.getSelection())
@@ -717,9 +718,9 @@ public void createPartControl(Composite parent) {
 					  
 					  if (text.equals(OPEN_REFERENCES) || text.equals(OPEN_DECLARATIONS)) {
 						  if (selectedNode instanceof IASTName) {
-							  items[i].setVisible(true);
+							  item.setVisible(true);
 						  } else {
-							  items[i].setVisible(false);
+							  item.setVisible(false);
 						  }
 					  }
 					  
@@ -727,9 +728,9 @@ public void createPartControl(Composite parent) {
 						  if (selectedNode instanceof IASTDeclarator || 
 								  selectedNode instanceof IASTDeclSpecifier ||
 								  selectedNode instanceof IASTTypeId) {
-							  items[i].setVisible(true);
+							  item.setVisible(true);
 						  } else {
-							  items[i].setVisible(false);
+							  item.setVisible(false);
 						  }
 					  } else if (text.equals(DISPLAY_TYPE)) {
 						  if (selectedNode instanceof IASTDeclarator ||
@@ -738,21 +739,21 @@ public void createPartControl(Composite parent) {
 										  ((IASTName)selectedNode).resolveBinding() instanceof IVariable ||
 										  ((IASTName)selectedNode).resolveBinding() instanceof IFunction ||
 										  ((IASTName)selectedNode).resolveBinding() instanceof IType))) {
-							  items[i].setVisible(true);
+							  item.setVisible(true);
 						  } else {
-							  items[i].setVisible(false);
+							  item.setVisible(false);
 						  }
 					  } else if (text.equals(DISPLAY_EXPRESSION)) {
 						  if (selectedNode instanceof IASTExpression) {
-							  items[i].setVisible(true);
+							  item.setVisible(true);
 						  } else {
-							  items[i].setVisible(false);
+							  item.setVisible(false);
 						  }
 					  } else if (text.equals(DISPLAY_INITIALIZER)) {
 						  if (selectedNode instanceof IASTInitializer) {
-							  items[i].setVisible(true);
+							  item.setVisible(true);
 						  } else {
-							  items[i].setVisible(false);
+							  item.setVisible(false);
 						  }
 					  }
 				  }
@@ -909,7 +910,7 @@ public void createPartControl(Composite parent) {
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
 					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
-				   showMessage("ASTSignatureUtil#getNodeSignature(IASTNode): \"" + ASTSignatureUtil.getNodeSignature(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				   showMessage("Node Signature: \"" + getNodeSignature(((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			   }
 		   } };
 	   displayNodeSignatureAction.setText(DISPLAY_SIGNATURE);
@@ -923,7 +924,7 @@ public void createPartControl(Composite parent) {
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
 					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTExpression) {
-				   showMessage("ASTSignatureUtil#getExpressionString(IASTExpression): \"" + ASTSignatureUtil.getExpressionString((IASTExpression)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				   showMessage("Expression String: \"" + ASTStringUtil.getExpressionString((IASTExpression)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			   }
 		   } };
 	   displayExpressionAction.setText(DISPLAY_EXPRESSION);
@@ -937,7 +938,7 @@ public void createPartControl(Composite parent) {
 			   if (selection instanceof IStructuredSelection &&
 					   ((IStructuredSelection)selection).getFirstElement() instanceof DOMASTNodeLeaf &&
 					   ((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTInitializer) {
-				   showMessage("ASTSignatureUtil#getInitializerString(IASTInitializer): \"" + ASTSignatureUtil.getInitializerString((IASTInitializer)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				   showMessage("Initializer String: \"" + ASTStringUtil.getInitializerString((IASTInitializer)((DOMASTNodeLeaf)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			   }
 		   } };
 	   displayInitializerAction.setText(DISPLAY_INITIALIZER);
@@ -947,18 +948,49 @@ public void createPartControl(Composite parent) {
 	   singleClickAction = new ASTHighlighterAction(part);
    }
 
-   protected IEditorPart getActiveEditor() {
-   	IEditorPart editor = null;
-   	
-   	if (getSite().getPage().isEditorAreaVisible() &&
-	   	getSite().getPage().getActiveEditor() != null &&
-	   	getSite().getPage().getActiveEditor() instanceof CEditor) {
-	   	editor = getSite().getPage().getActiveEditor();
-	    part = editor;
-   	}
+	protected static String getNodeSignature(IASTNode node) {
+		if (node instanceof IASTDeclarator)
+			return ASTStringUtil.getSignatureString(null, (IASTDeclarator) node);
+		if (node instanceof IASTDeclSpecifier)
+			return ASTStringUtil.getSignatureString((IASTDeclSpecifier) node, null);
+		if (node instanceof IASTTypeId) {
+			final IASTTypeId typeId = (IASTTypeId) node;
+			return ASTStringUtil.getSignatureString(typeId.getDeclSpecifier(), typeId.getAbstractDeclarator());
+		}
+		if (node instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration decl = (IASTSimpleDeclaration) node;
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(getNodeSignature(decl.getDeclSpecifier()));
+			IASTDeclarator[] declarators = decl.getDeclarators();
+			for (int i = 0; i < declarators.length; ++i) {
+				buffer.append(" ");
+				buffer.append(getNodeSignature(declarators[i]));
+				if (declarators[i].getInitializer() != null
+						&& declarators[i].getInitializer() instanceof ICPPASTConstructorInitializer) {
+					buffer.append(ASTStringUtil.getInitializerString(declarators[i].getInitializer()));
+				}
+			}
+			buffer.append(";"); //$NON-NLS-1$
+			return buffer.toString();
+		}
+		if (node instanceof IASTExpression) {
+			return ASTStringUtil.getExpressionString((IASTExpression) node);
+		}
+		return "";
+	}
 
-   	return editor;
-   }
+	protected IEditorPart getActiveEditor() {
+		IEditorPart editor = null;
+
+		if (getSite().getPage().isEditorAreaVisible()
+				&& getSite().getPage().getActiveEditor() != null
+				&& getSite().getPage().getActiveEditor() instanceof CEditor) {
+			editor = getSite().getPage().getActiveEditor();
+			part = editor;
+		}
+
+		return editor;
+	}
       
    private class ASTHighlighterAction extends Action {
        private static final String A_PART_INSTANCEOF = "aPart instanceof "; //$NON-NLS-1$

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -22,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 
 /**
@@ -55,7 +55,7 @@ public class AST2UtilTests extends AST2BaseTest {
 		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[1]).getDeclarators()[0].getInitializer()).getInitializerClause(), "l ? m : n"); //$NON-NLS-1$
 		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getInitializer()).getInitializerClause(), "l ^ m"); //$NON-NLS-1$
 		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[3]).getDeclarators()[0].getInitializer()).getInitializerClause(), "i <<= j"); //$NON-NLS-1$
-		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[4]).getDeclarators()[0].getInitializer()).getInitializerClause(), "sizeof (int)"); //$NON-NLS-1$
+		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[4]).getDeclarators()[0].getInitializer()).getInitializerClause(), "sizeof(int)"); //$NON-NLS-1$
 		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[5]).getDeclarators()[0].getInitializer()).getInitializerClause(), "~f"); //$NON-NLS-1$
 		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getInitializerClause(), "++e"); //$NON-NLS-1$
 		isExpressionStringEqual(((IASTEqualsInitializer)((IASTSimpleDeclaration)d[7]).getDeclarators()[0].getInitializer()).getInitializerClause(), "d++"); //$NON-NLS-1$
@@ -76,20 +76,20 @@ public class AST2UtilTests extends AST2BaseTest {
 		
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "(int)"); //$NON-NLS-1$
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "(char, int)"); //$NON-NLS-1$
-		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int *, float * *)"); //$NON-NLS-1$
-		isParameterSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "(int [restrict])"); //$NON-NLS-1$
-        isParameterSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "(const char * const)"); //$NON-NLS-1$
+		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int*, float**)"); //$NON-NLS-1$
+		isParameterSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "(int[])"); //$NON-NLS-1$
+        isParameterSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "(const char* const)"); //$NON-NLS-1$
 		
-		isSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "int (int)"); //$NON-NLS-1$
-		isSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "int *(char, int)"); //$NON-NLS-1$
-		isSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "void (int *, float * *)"); //$NON-NLS-1$
-		isSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "static int (int [restrict])"); //$NON-NLS-1$
-        isSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "void (const char * const)"); //$NON-NLS-1$
+		isSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "int(int)"); //$NON-NLS-1$
+		isSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "int*(char, int)"); //$NON-NLS-1$
+		isSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "void(int*, float**)"); //$NON-NLS-1$
+		isSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "int(int[])"); //$NON-NLS-1$
+        isSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclarators()[0], "void(const char* const)"); //$NON-NLS-1$
 		
 		isSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclSpecifier(), "int"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclSpecifier(), "int"); //$NON-NLS-1$
 		isSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclSpecifier(), "void"); //$NON-NLS-1$
-		isSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclSpecifier(), "static int"); //$NON-NLS-1$
+		isSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclSpecifier(), "int"); //$NON-NLS-1$
         isSignatureEqual(((IASTSimpleDeclaration)d[4]).getDeclSpecifier(), "void"); //$NON-NLS-1$
 		
 		isTypeEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "int (int)"); //$NON-NLS-1$
@@ -123,8 +123,8 @@ public class AST2UtilTests extends AST2BaseTest {
 		
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[0]).getDeclarators()[0], "(int)"); //$NON-NLS-1$
 		isParameterSignatureEqual(((IASTSimpleDeclaration)d[1]).getDeclarators()[0], "(char, int)"); //$NON-NLS-1$
-		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int *, float * *)"); //$NON-NLS-1$
-		isParameterSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "(int [restrict])"); //$NON-NLS-1$
+		isParameterSignatureEqual(((IASTSimpleDeclaration)d[2]).getDeclarators()[0], "(int*, float**)"); //$NON-NLS-1$
+		isParameterSignatureEqual(((IASTSimpleDeclaration)d[3]).getDeclarators()[0], "(int[])"); //$NON-NLS-1$
 	}
 	
 	public void testSimpleTypeId() throws Exception {
@@ -142,7 +142,7 @@ public class AST2UtilTests extends AST2BaseTest {
 		
 		// verify signatures
 		isSignatureEqual( ((IASTTypeIdExpression)((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause()).getTypeId(), "int"); //$NON-NLS-1$
-		isSignatureEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "Squaw"); //$NON-NLS-1$
+		isSignatureEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "union Squaw"); //$NON-NLS-1$
 		isSignatureEqual( ((IASTCastExpression)((IASTEqualsInitializer)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getInitializerClause()).getTypeId() , "jc"); //$NON-NLS-1$
 		
 		// verify types
@@ -159,8 +159,8 @@ public class AST2UtilTests extends AST2BaseTest {
 		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C, true);
 		IASTDeclaration[] d = tu.getDeclarations();
 		
-		String fooSignature = ASTSignatureUtil.getSignature(((IASTFunctionDefinition)d[0]).getDeclarator());
-		String foo2Signature = ASTSignatureUtil.getSignature(((IASTFunctionDefinition)d[1]).getDeclarator());
+		String fooSignature = ASTStringUtil.getSignatureString(((IASTFunctionDefinition)d[0]).getDeclarator());
+		String foo2Signature = ASTStringUtil.getSignatureString(((IASTFunctionDefinition)d[1]).getDeclarator());
 		
 		assertEquals(fooSignature, foo2Signature);
 	}

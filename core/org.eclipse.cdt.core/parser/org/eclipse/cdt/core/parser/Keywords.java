@@ -117,6 +117,8 @@ public class Keywords {
 	public static final char[] c_BOOL = "_Bool".toCharArray(); 
 	public static final char[] c_COMPLEX = "_Complex".toCharArray(); 
 	public static final char[] c_IMAGINARY = "_Imaginary".toCharArray(); 
+	/** @since 5.3 */
+	public static final char[] cALIGNOF = "alignof".toCharArray(); 
 	public static final char[] cAND = "and".toCharArray(); 
 	public static final char[] cAND_EQ = "and_eq".toCharArray(); 
 	public static final char[] cASM = "asm".toCharArray(); 
@@ -176,6 +178,8 @@ public class Keywords {
 	public static final char[] cSHORT = "short".toCharArray(); 
 	public static final char[] cSIGNED = "signed".toCharArray(); 
 	public static final char[] cSIZEOF = "sizeof".toCharArray(); 
+	/** @since 5.3 */
+	public static final char[] cSIZEOFPACK= "sizeof...".toCharArray(); 
 	public static final char[] cSTATIC = "static".toCharArray(); 
 	/** @since 5.2 */
 	public static final char[] cSTATIC_ASSERT = STATIC_ASSERT.toCharArray(); 

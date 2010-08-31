@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to the AST element's
@@ -45,7 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @deprecated The class is provided for testing purposes, only. It should not be used by clients.
- * Within CDT it is recommended to use {@link ASTSignatureUtil}, instead.
+ * Within CDT it is recommended to use {@link ASTStringUtil}, instead.
  */
 @Deprecated
 public class ASTSignatureUtil {

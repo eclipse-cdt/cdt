@@ -146,7 +146,7 @@ public class AST2UtilOldTests extends AST2BaseTest {
 	public void testPostfixDynamicCast() throws Exception{
 		IASTTranslationUnit tu = parse("int x = foo( dynamic_cast<B*>(a) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
-		isExpressionStringEqual( ((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause(), "foo(dynamic_cast<B *>(a))" ); //$NON-NLS-1$
+		isExpressionStringEqual( ((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause(), "foo(dynamic_cast<B*>(a))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_REINTERPRET_CAST
 	public void testPostfixReinterpretCast() throws Exception{
@@ -183,7 +183,7 @@ public class AST2UtilOldTests extends AST2BaseTest {
 	public void testPostfixTypeIdTypeId2() throws Exception{
 		IASTTranslationUnit tu = parse("class A { }; int foo( int ); int x = foo( typeid(const A) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
-		isExpressionStringEqual( ((IASTEqualsInitializer)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getInitializer()).getInitializerClause(), "foo(typeid (const A))" ); //$NON-NLS-1$
+		isExpressionStringEqual( ((IASTEqualsInitializer)((IASTSimpleDeclaration)d[2]).getDeclarators()[0].getInitializer()).getInitializerClause(), "foo(typeid(const A))" ); //$NON-NLS-1$
 	}	
 	// Kind UNARY_INCREMENT : LHS             
 	public void testUnaryIncrement() throws Exception
@@ -261,7 +261,7 @@ public class AST2UtilOldTests extends AST2BaseTest {
 	public void testCastExpression() throws Exception{
 		IASTTranslationUnit tu = parse("int x = foo( (A*)b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
-		isExpressionStringEqual( ((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause(), "foo((A *)b)" ); //$NON-NLS-1$
+		isExpressionStringEqual( ((IASTEqualsInitializer)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getInitializerClause(), "foo((A*)b)" ); //$NON-NLS-1$
 	}
 	         
 	// Kind MULTIPLICATIVE_MULTIPLY : usual arithmetic conversions

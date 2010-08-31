@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -179,7 +178,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testBug75340() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings( "void f(int i = 0, int * p = 0);"); //$NON-NLS-1$
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-		assertEquals( ASTSignatureUtil.getParameterSignature( sd.getDeclarators()[0] ), "(int, int *)" ); //$NON-NLS-1$
+		isParameterSignatureEqual( sd.getDeclarators()[0], "(int=0, int*=0)" ); //$NON-NLS-1$
 	}
 	
 	// #define REF_WRAP(e) class A { public: A (){ } A& foo2(e& v) { return *this; } }

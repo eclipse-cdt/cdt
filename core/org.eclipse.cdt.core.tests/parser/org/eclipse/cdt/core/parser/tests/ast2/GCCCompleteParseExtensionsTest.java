@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -90,12 +90,12 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
     public void testBug39698A() throws Exception
     {
         IASTDeclaration[] decls = parseGPP("int a=0; \n int b=1; \n int c = a <? b;").getDeclarations(); //$NON-NLS-1$
-        assertEquals( ASTSignatureUtil.getExpressionString( (IASTExpression) ((IASTEqualsInitializer)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getInitializerClause() ), "a <? b" ); //$NON-NLS-1$
+        assertEquals( ASTStringUtil.getExpressionString( (IASTExpression) ((IASTEqualsInitializer)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getInitializerClause() ), "a <? b" ); //$NON-NLS-1$
     }
     public void testBug39698B() throws Exception
     {
     	IASTDeclaration[] decls = parseGPP("int a=0; \n int b=1; \n int c = a >? b;").getDeclarations(); //$NON-NLS-1$
-        assertEquals( ASTSignatureUtil.getExpressionString( (IASTExpression) ((IASTEqualsInitializer)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getInitializerClause() ), "a >? b" ); //$NON-NLS-1$
+        assertEquals( ASTStringUtil.getExpressionString( (IASTExpression) ((IASTEqualsInitializer)((IASTSimpleDeclaration)decls[2]).getDeclarators()[0].getInitializer()).getInitializerClause() ), "a >? b" ); //$NON-NLS-1$
     }
 
 	public void testPredefinedSymbol_bug69791() throws Exception {

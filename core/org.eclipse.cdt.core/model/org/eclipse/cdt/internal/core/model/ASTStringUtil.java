@@ -11,10 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -23,6 +26,8 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -40,14 +45,21 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -58,21 +70,25 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 
 /**
  * This is a utility class to help convert AST elements to Strings.
  * 
- * @see org.eclipse.cdt.core.dom.ast.ASTSignatureUtil
  * @see org.eclipse.cdt.core.dom.ast.ASTTypeUtil
  */
 
 public class ASTStringUtil {
-	
+	private static final String SPACE= " "; //$NON-NLS-1$
 	private static final String COMMA_SPACE= ", "; //$NON-NLS-1$
 	private static final String[] EMPTY_STRING_ARRAY= new String[0];
 
@@ -99,10 +115,6 @@ public class ASTStringUtil {
 
 	/**
 	 * Compute a signature string with parameters, without initializers.
-	 * 
-	 * @param declarator
-	 * @return the type string
-	 * @see ASTSignatureUtil#getSignature(IASTDeclarator)
 	 */
 	public static String getSignatureString(IASTDeclarator declarator) {
 		return trimRight(appendSignatureString(new StringBuilder(), declarator)).toString();
@@ -140,8 +152,6 @@ public class ASTStringUtil {
 	 * 
 	 * @param functionDeclarator
 	 * @return the parameter signature array
-	 * 
-	 * @see ASTSignatureUtil#getParameterSignatureArray(IASTDeclarator)
 	 */
 	public static String[] getParameterSignatureArray(IASTFunctionDeclarator functionDeclarator) {
 		if (functionDeclarator instanceof IASTStandardFunctionDeclarator) {
@@ -191,6 +201,19 @@ public class ASTStringUtil {
 			parameterTypes[i]= trimRight(paramType).toString();
 		}
 		return parameterTypes;		
+	}
+
+	/**
+	 * Returns a string representation for the given expression
+	 */
+	public static String getExpressionString(IASTExpression expression) {
+		StringBuilder buf= new StringBuilder();
+		return appendExpressionString(buf, expression).toString();
+	}
+
+	public static String getInitializerString(IASTInitializer init) {
+		StringBuilder buf= new StringBuilder();
+		return appendInitializerString(buf, init).toString();
 	}
 
 	/**
@@ -364,12 +387,14 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static void appendInitClauseString(StringBuilder buffer, IASTInitializerClause initializerClause) {
+	private static StringBuilder appendInitClauseString(StringBuilder buffer, IASTInitializerClause initializerClause) {
 		if (initializerClause instanceof IASTExpression) {
-			appendExpressionString(buffer, (IASTExpression) initializerClause);
-		} else if (initializerClause instanceof IASTInitializer) {
-			appendInitializerString(buffer, (IASTInitializer) initializerClause);
+			return appendExpressionString(buffer, (IASTExpression) initializerClause);
+		} 
+		if (initializerClause instanceof IASTInitializer) {
+			return appendInitializerString(buffer, (IASTInitializer) initializerClause);
 		}
+		return buffer;
 	}
 
 	private static StringBuilder appendTypeIdString(StringBuilder buffer, IASTTypeId typeId) {
@@ -452,6 +477,7 @@ public class ASTStringUtil {
 			trimRight(buffer);
 			buffer.append(Keywords.cpRPAREN);
 		} else if (functionDeclarator instanceof ICASTKnRFunctionDeclarator) {
+			buffer.append(Keywords.cpLPAREN);
 			final ICASTKnRFunctionDeclarator knrDeclarator= (ICASTKnRFunctionDeclarator)functionDeclarator;
 			final IASTName[] names= knrDeclarator.getParameterNames();
 			for (int i = 0; i < names.length; i++) {
@@ -465,6 +491,8 @@ public class ASTStringUtil {
                     }
 				}
 			}
+			trimRight(buffer);
+			buffer.append(Keywords.cpRPAREN);
 		}
 		return buffer;
 	}
@@ -487,9 +515,9 @@ public class ASTStringUtil {
 		if (declSpecifier.isConst()) {
 			buffer.append(Keywords.CONST).append(' ');
 		}
-//		if (declSpecifier.isVolatile()) {
-//			buffer.append(Keywords.VOLATILE).append(' ');
-//		}
+		if (declSpecifier.isVolatile()) {
+			buffer.append(Keywords.VOLATILE).append(' ');
+		}
 //		if (declSpecifier.isInline()) {
 //			buffer.append(Keywords.INLINE).append(' ');
 //		}
@@ -688,34 +716,6 @@ public class ASTStringUtil {
 		return buffer;
 	}
 
-	private static StringBuilder appendExpressionString(StringBuilder buffer, IASTExpression expression) {
-		if (expression instanceof IASTIdExpression) {
-			final IASTIdExpression idExpression= (IASTIdExpression)expression;
-			appendQualifiedNameString(buffer, idExpression.getName());
-		} else if (expression instanceof IASTExpressionList) {
-			final IASTExpressionList expressionList= (IASTExpressionList)expression;
-			final IASTExpression[] expressions= expressionList.getExpressions();
-			for (int i = 0; i < expressions.length; i++) {
-				if (i > 0) {
-					buffer.append(COMMA_SPACE);
-				}
-				appendExpressionString(buffer, expressions[i]);
-			}
-		} else if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
-			final ICPPASTSimpleTypeConstructorExpression typeCast= (ICPPASTSimpleTypeConstructorExpression)expression;
-			appendDeclSpecifierString(buffer, typeCast.getDeclSpecifier());
-			final IASTInitializer init= typeCast.getInitializer();
-			if (init != null) {
-				appendInitializerString(buffer, init);
-			}
-		} else if (expression instanceof IASTLiteralExpression) {
-			buffer.append(ASTSignatureUtil.getExpressionString(expression));
-		} else if (expression != null) {
-			buffer.append(ASTSignatureUtil.getExpressionString(expression));
-		}
-		return buffer;
-	}
-
 	private static StringBuilder appendTemplateParameterString(StringBuilder buffer, ICPPASTTemplateParameter parameter) {
 		if (parameter instanceof ICPPASTParameterDeclaration) {
 			appendParameterDeclarationString(buffer, (ICPPASTParameterDeclaration)parameter);
@@ -751,4 +751,383 @@ public class ASTStringUtil {
 		}
 		return buffer;
 	}	
+
+	private static StringBuilder appendExpressionString(StringBuilder buffer, IASTExpression expression) {
+		if (expression instanceof IASTIdExpression) {
+			final IASTIdExpression idExpression= (IASTIdExpression)expression;
+			return appendQualifiedNameString(buffer, idExpression.getName());
+		} 
+		if (expression instanceof IASTExpressionList) {
+			final IASTExpressionList expressionList= (IASTExpressionList)expression;
+			final IASTExpression[] expressions= expressionList.getExpressions();
+			for (int i = 0; i < expressions.length; i++) {
+				if (i > 0) {
+					buffer.append(COMMA_SPACE);
+				}
+				appendExpressionString(buffer, expressions[i]);
+			}
+			return buffer;
+		} 
+		if (expression instanceof ICPPASTSimpleTypeConstructorExpression) {
+			final ICPPASTSimpleTypeConstructorExpression typeCast= (ICPPASTSimpleTypeConstructorExpression)expression;
+			appendDeclSpecifierString(buffer, typeCast.getDeclSpecifier());
+			trimRight(buffer);
+			return appendInitializerString(buffer, typeCast.getInitializer());
+		} 
+		if (expression instanceof IASTArraySubscriptExpression)
+			return appendArraySubscriptExpression(buffer, (IASTArraySubscriptExpression) expression);
+		if (expression instanceof IASTBinaryExpression)
+			return appendBinaryExpression(buffer, (IASTBinaryExpression) expression);
+		if (expression instanceof IASTCastExpression)
+			return appendCastExpression(buffer, (IASTCastExpression) expression);
+		if (expression instanceof IASTConditionalExpression)
+			return appendConditionalExpression(buffer, (IASTConditionalExpression) expression);
+		if (expression instanceof IASTExpressionList)
+			return appendExpressionList(buffer, (IASTExpressionList) expression);
+		if (expression instanceof IASTFieldReference)
+			return appendFieldReference(buffer, (IASTFieldReference) expression);
+		if (expression instanceof IASTFunctionCallExpression)
+			return appendFunctionCallExpression(buffer, (IASTFunctionCallExpression) expression);
+		if (expression instanceof IASTLiteralExpression)
+			return appendLiteralExpression(buffer, (IASTLiteralExpression) expression);
+		if (expression instanceof IASTTypeIdExpression)
+			return appendTypeIdExpression(buffer, (IASTTypeIdExpression) expression);
+		if (expression instanceof IASTUnaryExpression)
+			return appendUnaryExpression(buffer, (IASTUnaryExpression) expression);
+		if (expression instanceof ICASTTypeIdInitializerExpression)
+			return appendTypeIdInitializerExpression(buffer, (ICASTTypeIdInitializerExpression) expression);
+		if (expression instanceof ICPPASTDeleteExpression)
+			return appendDeleteExpression(buffer, (ICPPASTDeleteExpression) expression);
+		if (expression instanceof ICPPASTNewExpression)
+			return appendNewExpression(buffer, (ICPPASTNewExpression) expression);
+		if (expression instanceof IGNUASTCompoundStatementExpression)
+			return appendCompoundStatementExpression(buffer, (IGNUASTCompoundStatementExpression) expression);
+		if (expression instanceof ICPPASTPackExpansionExpression)
+			return appendPackExpansionExpression(buffer, (ICPPASTPackExpansionExpression) expression);
+
+		return buffer;
+	}
+	
+	private static StringBuilder appendArraySubscriptExpression(StringBuilder buffer, IASTArraySubscriptExpression expression) {
+		appendExpressionString(buffer, expression.getArrayExpression());
+		buffer.append(Keywords.cpLBRACKET);
+		appendInitClauseString(buffer, expression.getArgument());
+		return buffer.append(Keywords.cpRBRACKET);
+	}
+
+	private static StringBuilder appendCastExpression(StringBuilder buffer, IASTCastExpression expression) {
+		if ((expression.getOperator() == IASTCastExpression.op_cast)) {
+			buffer.append(Keywords.cpLPAREN);
+			appendTypeIdString(buffer, expression.getTypeId());
+			buffer.append(Keywords.cpRPAREN);
+			return appendExpressionString(buffer, expression.getOperand());
+		} 
+
+		buffer.append(getCastOperatorString(expression));
+		buffer.append(Keywords.cpLT);
+		appendTypeIdString(buffer, expression.getTypeId());
+		trimRight(buffer);
+		buffer.append(Keywords.cpGT);
+		buffer.append(Keywords.cpLPAREN);
+		appendExpressionString(buffer, expression.getOperand());
+		return buffer.append(Keywords.cpRPAREN);
+	}
+
+	private static StringBuilder appendFieldReference(StringBuilder buffer, IASTFieldReference expression) {
+		appendExpressionString(buffer, expression.getFieldOwner());
+		buffer.append(expression.isPointerDereference() ? Keywords.cpARROW : Keywords.cpDOT);
+
+		return appendNameString(buffer, expression.getFieldName(), true);
+	}
+
+	private static StringBuilder appendFunctionCallExpression(StringBuilder buffer, IASTFunctionCallExpression expression) {
+		appendExpressionString(buffer, expression.getFunctionNameExpression());
+		buffer.append(Keywords.cpLPAREN);
+		IASTInitializerClause[] clauses = expression.getArguments();
+		for (int i= 0; i < clauses.length; i++) {
+			if (i > 0) {
+				buffer.append(COMMA_SPACE);
+			}
+			appendInitClauseString(buffer, (clauses[i]));
+		}
+		return buffer.append(Keywords.cpRPAREN);
+	}
+
+	private static StringBuilder appendTypeIdInitializerExpression(StringBuilder buffer, ICASTTypeIdInitializerExpression expression) {
+		buffer.append(Keywords.cpLPAREN);
+		appendTypeIdString(buffer, expression.getTypeId());
+		buffer.append(Keywords.cpRPAREN);
+		return appendInitializerString(buffer, expression.getInitializer());
+	}
+
+	private static StringBuilder appendDeleteExpression(StringBuilder buffer, ICPPASTDeleteExpression expression) {
+		buffer.append(Keywords.DELETE);
+		buffer.append(SPACE);
+		return appendExpressionString(buffer, expression.getOperand());
+	}
+
+	private static StringBuilder appendCompoundStatementExpression(StringBuilder buffer, IGNUASTCompoundStatementExpression expression) {
+		buffer.append(Keywords.cpLPAREN).append(Keywords.cpLBRACE);
+		buffer.append(Keywords.cpELLIPSIS);
+		return buffer.append(Keywords.cpRBRACE).append(Keywords.cpRPAREN);
+	}
+
+	private static StringBuilder appendTypeIdExpression(StringBuilder buffer, IASTTypeIdExpression expression) {
+		buffer.append(getTypeIdExpressionOperator(expression));
+		buffer.append(Keywords.cpLPAREN);
+		appendTypeIdString(buffer, expression.getTypeId());
+		trimRight(buffer);
+		return buffer.append(Keywords.cpRPAREN);
+	}
+
+	private static StringBuilder appendExpressionList(StringBuilder buffer, IASTExpressionList expression) {
+		IASTExpression[] exps = expression.getExpressions();
+		if (exps != null) {
+			for (int i = 0; i < exps.length; i++) {
+				if (i > 0) {
+					buffer.append(COMMA_SPACE);
+				}
+				appendExpressionString(buffer, exps[i]);
+			}
+		}
+		return buffer;
+	}
+
+	private static StringBuilder appendLiteralExpression(StringBuilder buffer, IASTLiteralExpression expression) {
+		return buffer.append(expression.toString());
+	}
+
+	private static StringBuilder appendConditionalExpression(StringBuilder buffer, IASTConditionalExpression expression) {
+		appendExpressionString(buffer, expression.getLogicalConditionExpression());
+		buffer.append(SPACE);
+		buffer.append(Keywords.cpQUESTION);
+		buffer.append(SPACE);
+		appendExpressionString(buffer, expression.getPositiveResultExpression());
+		buffer.append(SPACE);
+		buffer.append(Keywords.cpCOLON);
+		buffer.append(SPACE);
+		return appendExpressionString(buffer, expression.getNegativeResultExpression());
+	}
+
+	private static StringBuilder appendNewExpression(StringBuilder buffer, ICPPASTNewExpression expression) {
+		buffer.append(Keywords.NEW);
+		buffer.append(SPACE);
+		final IASTInitializerClause[] args = expression.getPlacementArguments();
+		if (args != null) {
+			buffer.append(Keywords.cpLPAREN); 
+			for (int i = 0; i < args.length; i++) {
+				if (i != 0) {
+					buffer.append(COMMA_SPACE);
+				}
+				appendInitClauseString(buffer, args[i]);
+			}
+			buffer.append(Keywords.cpRPAREN); 
+		}
+		appendTypeIdString(buffer, expression.getTypeId());
+		return appendInitializerString(buffer, expression.getInitializer());
+	}
+
+	private static StringBuilder appendBinaryExpression(StringBuilder buffer, IASTBinaryExpression expression) {
+		appendExpressionString(buffer, expression.getOperand1());
+		buffer.append(SPACE);
+		buffer.append(getBinaryOperatorString(expression));
+		buffer.append(SPACE);
+		return appendExpressionString(buffer, expression.getOperand2());
+	}
+
+	private static StringBuilder appendUnaryExpression(StringBuilder buffer, IASTUnaryExpression expression) {
+		boolean postOperator = false;
+		boolean primaryBracketed = false;
+
+		switch (expression.getOperator()) {
+		case IASTUnaryExpression.op_postFixDecr:
+		case IASTUnaryExpression.op_postFixIncr:
+			postOperator = true;
+			break;
+		case IASTUnaryExpression.op_bracketedPrimary:
+			primaryBracketed = true;
+			break;
+		default:
+			postOperator = false;
+			break;
+		}
+
+		if (!postOperator && !primaryBracketed)
+			buffer.append(getUnaryOperatorString(expression));
+
+		// need to add a space to the unary expression if it is a specific operator
+		switch (expression.getOperator()) {
+		case IASTUnaryExpression.op_sizeof:
+		case ICPPASTUnaryExpression.op_throw:
+		case ICPPASTUnaryExpression.op_typeid:
+			buffer.append(SPACE);
+			break;
+		}
+
+		if (primaryBracketed)
+			buffer.append(Keywords.cpLPAREN);
+		buffer.append(getExpressionString(expression.getOperand()));
+		if (primaryBracketed)
+			buffer.append(Keywords.cpRPAREN);
+		if (postOperator && !primaryBracketed)
+			buffer.append(getUnaryOperatorString(expression));
+
+		return buffer;
+	}
+
+	public static String getCastOperatorString(IASTCastExpression expression) {
+		int op = expression.getOperator();
+		switch (op) {
+		case ICPPASTCastExpression.op_const_cast:
+			return Keywords.CONST_CAST;
+		case ICPPASTCastExpression.op_dynamic_cast:
+			return Keywords.DYNAMIC_CAST;
+		case ICPPASTCastExpression.op_reinterpret_cast:
+			return Keywords.REINTERPRET_CAST;
+		case ICPPASTCastExpression.op_static_cast:
+			return Keywords.STATIC_CAST;
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the String representation of the IASTUnaryExpression's operator.
+	 * 
+	 * @param ue
+	 * @return the String representation of the IASTUnaryExpression's operator
+	 */
+	public static char[] getUnaryOperatorString(IASTUnaryExpression ue) {
+		int op = ue.getOperator();
+		switch (op) {
+		case IASTUnaryExpression.op_throw:
+			return Keywords.cTHROW;
+		case IASTUnaryExpression.op_typeid:
+			return Keywords.cTYPEID;
+		case IASTUnaryExpression.op_alignOf:
+			return Keywords.cALIGNOF;
+		case IASTUnaryExpression.op_amper:
+			return Keywords.cpAMPER;
+		case IASTUnaryExpression.op_minus:
+			return Keywords.cpMINUS;
+		case IASTUnaryExpression.op_not:
+			return Keywords.cpNOT;
+		case IASTUnaryExpression.op_plus:
+			return Keywords.cpPLUS;
+		case IASTUnaryExpression.op_postFixDecr:
+		case IASTUnaryExpression.op_prefixDecr:
+			return Keywords.cpDECR;
+		case IASTUnaryExpression.op_postFixIncr:
+		case IASTUnaryExpression.op_prefixIncr:
+			return Keywords.cpINCR;
+		case IASTUnaryExpression.op_sizeof:
+			return Keywords.cSIZEOF;
+		case IASTUnaryExpression.op_sizeofParameterPack:
+			return Keywords.cSIZEOFPACK;
+		case IASTUnaryExpression.op_star:
+			return Keywords.cpSTAR;
+		case IASTUnaryExpression.op_tilde:
+			return Keywords.cpCOMPL;
+		}
+
+		return CharArrayUtils.EMPTY;
+	}
+
+	/**
+	 * Returns the char[] representation of the IASTBinaryExpression's operator.
+	 */
+	public static char[] getBinaryOperatorString(IASTBinaryExpression be) {
+		switch (be.getOperator()) {
+		case IASTBinaryExpression.op_multiply:
+			return Keywords.cpSTAR;
+		case IASTBinaryExpression.op_divide:
+			return Keywords.cpDIV;
+		case IASTBinaryExpression.op_modulo:
+			return Keywords.cpMOD;
+		case IASTBinaryExpression.op_plus:
+			return Keywords.cpPLUS;
+		case IASTBinaryExpression.op_minus:
+			return Keywords.cpMINUS;
+		case IASTBinaryExpression.op_shiftLeft:
+			return Keywords.cpSHIFTL;
+		case IASTBinaryExpression.op_shiftRight:
+			return Keywords.cpSHIFTR;
+		case IASTBinaryExpression.op_lessThan:
+			return Keywords.cpLT;
+		case IASTBinaryExpression.op_greaterThan:
+			return Keywords.cpGT;
+		case IASTBinaryExpression.op_lessEqual:
+			return Keywords.cpLTEQUAL;
+		case IASTBinaryExpression.op_greaterEqual:
+			return Keywords.cpGTEQUAL;
+		case IASTBinaryExpression.op_binaryAnd:
+			return Keywords.cpAMPER;
+		case IASTBinaryExpression.op_binaryXor:
+			return Keywords.cpXOR;
+		case IASTBinaryExpression.op_binaryOr:
+			return Keywords.cpBITOR;
+		case IASTBinaryExpression.op_logicalAnd:
+			return Keywords.cpAND;
+		case IASTBinaryExpression.op_logicalOr:
+			return Keywords.cpOR;
+		case IASTBinaryExpression.op_assign:
+			return Keywords.cpASSIGN;
+		case IASTBinaryExpression.op_multiplyAssign:
+			return Keywords.cpSTARASSIGN;
+		case IASTBinaryExpression.op_divideAssign:
+			return Keywords.cpDIVASSIGN;
+		case IASTBinaryExpression.op_moduloAssign:
+			return Keywords.cpMODASSIGN;
+		case IASTBinaryExpression.op_plusAssign:
+			return Keywords.cpPLUSASSIGN;
+		case IASTBinaryExpression.op_minusAssign:
+			return Keywords.cpMINUSASSIGN;
+		case IASTBinaryExpression.op_shiftLeftAssign:
+			return Keywords.cpSHIFTLASSIGN;
+		case IASTBinaryExpression.op_shiftRightAssign:
+			return Keywords.cpSHIFTRASSIGN;
+		case IASTBinaryExpression.op_binaryAndAssign:
+			return Keywords.cpAMPERASSIGN;
+		case IASTBinaryExpression.op_binaryXorAssign:
+			return Keywords.cpXORASSIGN;
+		case IASTBinaryExpression.op_binaryOrAssign:
+			return Keywords.cpBITORASSIGN;
+		case IASTBinaryExpression.op_equals:
+			return Keywords.cpEQUAL;
+		case IASTBinaryExpression.op_notequals:
+			return Keywords.cpNOTEQUAL;
+		case IASTBinaryExpression.op_max:
+			return Keywords.cpMAX;
+		case IASTBinaryExpression.op_min:
+			return Keywords.cpMIN;
+		case IASTBinaryExpression.op_pmarrow:
+			return Keywords.cpARROW;
+		case IASTBinaryExpression.op_pmdot:
+			return Keywords.cpDOT;
+		}
+
+		return CharArrayUtils.EMPTY;
+	}
+
+	private static String getTypeIdExpressionOperator(IASTTypeIdExpression expression) {
+		switch (expression.getOperator()) {
+		case IGNUASTTypeIdExpression.op_alignof:
+			return Keywords.ALIGNOF;
+		case IGNUASTTypeIdExpression.op_typeof:
+			return Keywords.TYPEOF;
+		case ICPPASTTypeIdExpression.op_typeid:
+			return Keywords.TYPEID;
+		case IASTTypeIdExpression.op_sizeof:
+			return Keywords.SIZEOF;
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns the String representation of the pack expansion expression.
+	 * @param buffer 
+	 */
+	private static StringBuilder appendPackExpansionExpression(StringBuilder buffer, ICPPASTPackExpansionExpression expression) {
+		appendExpressionString(buffer, expression.getPattern());
+		return buffer.append(Keywords.cpELLIPSIS);
+	}
 }

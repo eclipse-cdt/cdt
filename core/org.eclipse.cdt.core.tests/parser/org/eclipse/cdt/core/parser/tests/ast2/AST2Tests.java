@@ -16,7 +16,6 @@ import java.io.IOException;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
@@ -117,6 +116,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -150,7 +150,7 @@ public class AST2Tests extends AST2BaseTest {
 	public void testBug75340() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings("void f(int i = 0, int * p = 0);", ParserLanguage.CPP); //$NON-NLS-1$
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
-		assertEquals(ASTSignatureUtil.getParameterSignature(sd.getDeclarators()[0]), "(int, int *)"); //$NON-NLS-1$
+		isParameterSignatureEqual(sd.getDeclarators()[0], "(int=0, int*=0)"); //$NON-NLS-1$
 	}
 	
 	// int *p1; int *p2;
@@ -5444,7 +5444,7 @@ public class AST2Tests extends AST2BaseTest {
 			buf.append(',');
 			polnishNotation(bexpr.getOperand2(), buf);
 			buf.append(',');
-			buf.append(ASTSignatureUtil.getBinaryOperatorString(bexpr));
+			buf.append(ASTStringUtil.getBinaryOperatorString(bexpr));
 		} else if (expr instanceof IASTCastExpression) {
 			IASTCastExpression castExpr= (IASTCastExpression) expr;
 			buf.append(castExpr.getTypeId().getRawSignature());
@@ -5479,13 +5479,13 @@ public class AST2Tests extends AST2BaseTest {
 			case IASTUnaryExpression.op_minus:
 			case IASTUnaryExpression.op_star:
 				buf.append(",unary");
-				buf.append(ASTSignatureUtil.getUnaryOperatorString(unaryExpr));
+				buf.append(ASTStringUtil.getUnaryOperatorString(unaryExpr));
 				break;
 			case IASTUnaryExpression.op_bracketedPrimary:
 				break;
 			default:
 				buf.append(',');
-				buf.append(ASTSignatureUtil.getUnaryOperatorString(unaryExpr));
+				buf.append(ASTStringUtil.getUnaryOperatorString(unaryExpr));
 				break;
 			}
 		} else {

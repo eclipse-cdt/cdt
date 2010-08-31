@@ -24,7 +24,6 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -62,6 +61,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 
 /**
  * @author dsteffle
@@ -218,13 +218,13 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			buffer.append(node.toString());
 		} else if ( node instanceof IASTCastExpression ) {
 			buffer.append(START_OF_LIST);
-			buffer.append( ASTSignatureUtil.getCastOperatorString( (IASTCastExpression)node ) );
+			buffer.append( ASTStringUtil.getCastOperatorString( (IASTCastExpression)node ) );
 		} else if ( node instanceof IASTUnaryExpression ) {
 			buffer.append(START_OF_LIST);
-			buffer.append( ASTSignatureUtil.getUnaryOperatorString( (IASTUnaryExpression)node ) );
+			buffer.append( ASTStringUtil.getUnaryOperatorString( (IASTUnaryExpression)node ) );
 		} else if ( node instanceof IASTBinaryExpression ) {
 			buffer.append(START_OF_LIST);
-			buffer.append( ASTSignatureUtil.getBinaryOperatorString( (IASTBinaryExpression)node ) );
+			buffer.append( ASTStringUtil.getBinaryOperatorString( (IASTBinaryExpression)node ) );
 		} else if ( node instanceof ICASTDesignator ) {
 			if ( node instanceof ICASTArrayDesignator && ((ICASTArrayDesignator)node).getSubscriptExpression() != null ) {
 				buffer.append(START_OF_LIST);
@@ -572,9 +572,9 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				buffer.append(COLON_SEPARATOR);
 				buffer.append(getType(obj));
 			} else if (obj instanceof IASTExpression) {
-				buffer.append(ASTSignatureUtil.getExpressionString((IASTExpression)obj));
+				buffer.append(ASTStringUtil.getExpressionString((IASTExpression)obj));
 			} else if (obj instanceof IASTNode) {
-				String utilString = ASTSignatureUtil.getNodeSignature((IASTNode)obj);
+				String utilString = DOMAST.getNodeSignature((IASTNode)obj);
 				if (utilString != null && !utilString.equals(BLANK_STRING)) {
 					buffer.append(trimObjectToString(obj.toString()));
 					buffer.append(COLON_SEPARATOR);

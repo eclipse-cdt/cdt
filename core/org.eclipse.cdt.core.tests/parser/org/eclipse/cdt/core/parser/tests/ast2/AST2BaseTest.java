@@ -21,7 +21,6 @@ import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
-import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -33,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -86,6 +86,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
@@ -357,29 +358,32 @@ public class AST2BaseTest extends BaseTestCase {
     }
 
 	protected void isExpressionStringEqual(IASTInitializerClause exp, String str) {
-		String expressionString = ASTSignatureUtil.getExpressionString((IASTExpression) exp);
+		String expressionString = ASTStringUtil.getExpressionString((IASTExpression) exp);
 		assertEquals(str, expressionString);
 	}
 
 	protected void isExpressionStringEqual(IASTExpression exp, String str) {
-		String expressionString = ASTSignatureUtil.getExpressionString(exp);
+		String expressionString = ASTStringUtil.getExpressionString(exp);
 		assertEquals(str, expressionString);
 	}
 	
 	protected void isParameterSignatureEqual(IASTDeclarator decltor, String str) {
-		assertEquals(str, ASTSignatureUtil.getParameterSignature(decltor));
+		assertTrue(decltor instanceof IASTFunctionDeclarator);
+		final String[] sigArray = ASTStringUtil.getParameterSignatureArray((IASTFunctionDeclarator) decltor);
+		assertEquals(str, "(" + ASTStringUtil.join(sigArray, ", ") + ")");
 	}
 	
-	protected void isSignatureEqual(IASTDeclarator decltor, String str) {
-		assertEquals(str, ASTSignatureUtil.getSignature(decltor));
+	protected void isSignatureEqual(IASTDeclarator declarator, String expected) {
+		String signature= ASTStringUtil.getSignatureString(declarator);
+		assertEquals(expected, signature);
 	}
 	
 	protected void isSignatureEqual(IASTDeclSpecifier declSpec, String str) {
-		assertEquals(str, ASTSignatureUtil.getSignature(declSpec));
+		assertEquals(str, ASTStringUtil.getSignatureString(declSpec, null));
 	}
 	
 	protected void isSignatureEqual(IASTTypeId typeId, String str) {
-		assertEquals(str, ASTSignatureUtil.getSignature(typeId));
+		assertEquals(str, ASTStringUtil.getSignatureString(typeId.getDeclSpecifier(), typeId.getAbstractDeclarator()));
 	}
 	
 	protected void isTypeEqual(IASTDeclarator decltor, String str) {

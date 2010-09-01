@@ -245,7 +245,7 @@ public class Conversions {
 				IType convertedType= ft.getReturnType();
 				final boolean isLValue = CPPVisitor.isLValueReference(convertedType);
 				if (isLValue == forLValue) { // require an lvalue or rvalue
-					IType implicitObjectType= CPPSemantics.getImplicitType(op, ft.isConst(), ft.isVolatile());
+					IType implicitObjectType= CPPSemantics.getImplicitParameterType(op, ft.isConst(), ft.isVolatile());
 					Cost udcCost= isReferenceCompatible(getNestedType(implicitObjectType, TDEF | REF), cv2T2, true); // expression type to implicit object type
 					if (udcCost != null) {
 						FunctionCost udcFuncCost= new FunctionCost(op, udcCost);
@@ -585,7 +585,7 @@ public class Conversions {
 		name.setParent(initializerList);
 	    name.setPropertyInParent(CPPSemantics.STRING_LOOKUP_PROPERTY);
     	final IASTInitializerClause[] expandedArgs = initializerList.getClauses();
-		data.setFunctionArguments(expandedArgs);
+		data.setFunctionArguments(false, expandedArgs);
 		data.fNoNarrowing= true;
 
 		// 13.3.3.1.4
@@ -628,7 +628,7 @@ public class Conversions {
 		FunctionCost cost1= null;
 		Cost cost2= null;
 		ICPPConstructor[] ctors= t.getConstructors();
-		CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source}, sourceIsLValue ? LVBITSET : RVBITSET, null);
+		CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source}, sourceIsLValue ? LVBITSET : RVBITSET, null, false);
 
 		for (ICPPConstructor ctor : ctors) {
 			if (ctor != null && !(ctor instanceof IProblemBinding) && !ctor.isExplicit()) {
@@ -674,7 +674,7 @@ public class Conversions {
 					final int dist = SemanticUtil.calculateInheritanceDepth(uqReturnType, t);
 					if (dist >= 0) {
 						final ICPPFunctionType ft = op.getType();
-						IType implicitType= CPPSemantics.getImplicitType(op, ft.isConst(), ft.isVolatile());
+						IType implicitType= CPPSemantics.getImplicitParameterType(op, ft.isConst(), ft.isVolatile());
 						final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
 						if (udcCost != null) {
 							FunctionCost c1= new FunctionCost(op, udcCost);
@@ -725,7 +725,7 @@ public class Conversions {
 					if (isExplicitConversion && c2.getRank() != Rank.IDENTITY)
 						continue;
 					ICPPFunctionType ftype = op.getType();
-					IType implicitType= CPPSemantics.getImplicitType(op, ftype.isConst(), ftype.isVolatile());
+					IType implicitType= CPPSemantics.getImplicitParameterType(op, ftype.isConst(), ftype.isVolatile());
 					final Cost udcCost = isReferenceCompatible(getNestedType(implicitType, TDEF | REF), source, true);
 					if (udcCost != null) {
 						FunctionCost c1= new FunctionCost(op, udcCost);

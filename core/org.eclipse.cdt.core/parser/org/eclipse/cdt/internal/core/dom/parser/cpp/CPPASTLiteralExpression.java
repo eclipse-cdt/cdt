@@ -95,7 +95,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     	switch (getKind()) {
     		case lk_this: {
     			IScope scope = CPPVisitor.getContainingScope(this);
-    			return CPPVisitor.getThisType(scope);
+    			IType type= CPPVisitor.getImpliedObjectType(scope);
+    			if (type == null) {
+    				// mstodo problem type
+    				return null;
+    			}
+    			return new CPPPointerType(type);
     		}
     		case lk_true:
     		case lk_false:

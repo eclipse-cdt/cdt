@@ -12,10 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -103,10 +99,9 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 				if (var instanceof ICPPField && !var.isStatic()) {
 					IScope scope= CPPVisitor.getContainingScope(name);
 					if (scope != null) {
-						IType thisType= CPPVisitor.getThisType(scope);
-						if (thisType != null) {
-							thisType= SemanticUtil.getNestedType(thisType, TDEF|REF|PTR);
-							type= CPPASTFieldReference.addQualifiersForAccess((ICPPField) var, type, thisType);
+		    			IType containerType= CPPVisitor.getImpliedObjectType(scope);
+						if (containerType != null) {
+							type= CPPASTFieldReference.addQualifiersForAccess((ICPPField) var, type, containerType);
 						}
 					}
 				}

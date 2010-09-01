@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM - Initial API and implementation
+ *     Andrew Niefer (IBM) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
  *     Andrew Ferguson (Symbian)
@@ -85,9 +85,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 
-/**
- * @author aniefer
- */
 public class AST2TemplateTests extends AST2BaseTest {
 	
 	public AST2TemplateTests() {
@@ -5093,5 +5090,21 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}
-
+	
+	//	struct S {
+	//		int s;
+	//	};
+	//	struct X {
+	//		template<typename T> S* operator+(T t) const {return 0;}
+	//	};
+	//	int* operator+(const X&, int *) {return 0;}
+	//
+	//	void test() {
+	//		X x;
+	//		(x + 1)->s;
+	//	}
+	public void testOverloadResolutionBetweenMethodTemplateAndFunction() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}		
 }

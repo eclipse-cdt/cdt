@@ -125,7 +125,7 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
     		// collect the function bindings
 			List<ICPPFunction> functionBindings = new ArrayList<ICPPFunction>();
 			try {
-				CPPSemantics.getChainedMemberAccessOperatorReturnType(this, functionBindings);
+				CPPSemantics.getFieldOwnerType(this, functionBindings);
 			} catch (DOMException e) {
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			}

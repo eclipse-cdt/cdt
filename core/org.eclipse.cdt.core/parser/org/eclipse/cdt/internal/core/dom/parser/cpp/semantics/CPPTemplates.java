@@ -1538,7 +1538,8 @@ public class CPPTemplates {
 		return result;
 	}
 	
-	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] fnArgs, BitSet argIsLValue, IASTName name) {
+	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] allFnArgs, 
+			BitSet allArgIsLValue, IASTName name, boolean argsContainImpliedObject) {
 		boolean requireTemplate= false;
 		if (name != null) {
 			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
@@ -1549,12 +1550,34 @@ public class CPPTemplates {
 			} 
 		}
 
+		IType[] reducedFnArgs= null;
+		BitSet reducedIsLValue= null;
 		ICPPTemplateArgument[] tmplArgs= null;
 		for (int i = 0; i < functions.length; i++) {
 			IFunction func = functions[i];
 			if (func instanceof ICPPFunctionTemplate) {
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
 				functions[i]= null;
+				
+				final IType[] fnArgs;
+				final BitSet argIsLValue;
+				if (argsContainImpliedObject && template instanceof ICPPMethod) {
+					if (reducedIsLValue == null) {
+						if (allFnArgs != null && allFnArgs.length > 0) {
+							reducedFnArgs= ArrayUtil.removeFirst(allFnArgs);
+						}
+						if (allArgIsLValue == null || allArgIsLValue.length() == 0) {
+							reducedIsLValue= ALL_RVALUES;
+						} else {
+							reducedIsLValue= allArgIsLValue.get(1, allArgIsLValue.length());
+						}
+					}
+					fnArgs= reducedFnArgs;
+					argIsLValue= reducedIsLValue;
+				} else {
+					fnArgs= allFnArgs;
+					argIsLValue= allArgIsLValue;
+				}
 				
 				// extract template arguments and parameter types.
 				if (tmplArgs == null || fnArgs == null) {

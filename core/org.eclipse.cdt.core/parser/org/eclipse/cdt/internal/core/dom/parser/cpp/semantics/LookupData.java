@@ -21,8 +21,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -46,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
@@ -57,7 +54,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -98,8 +94,8 @@ public class LookupData {
 	public boolean checkPointOfDecl= true;
     /** For field references or qualified names, enclosing template declarations are ignored. */
 	public boolean usesEnclosingScope= true;
-    /** When computing the cost of a method call, treat the first argument as the implied method argument. */
-	public boolean firstArgIsImpliedMethodArg = false;
+    /** When computing the cost of a method call, treat the first argument as the implied object. */
+	public boolean argsContainImpliedObject = false;
 	public boolean ignoreMembers = false;
 	/** In list-initialization **/
 	public boolean fNoNarrowing= false;
@@ -347,57 +343,27 @@ public class LookupData {
     }
     
     /**
-     * an IType[] of function arguments, including the implied object argument
+     * Returns the implied object type, or <code>null</code>.
      */
-    public IType getImpliedObjectArgument() {
+    public IType getImpliedObjectType() {
         if (astName == null) 
         	return null;
         
-        IASTName tempName= astName;
-        IASTNode tempNameParent= tempName.getParent();
-        while (tempNameParent instanceof IASTName) {
-        	tempName= (IASTName) tempNameParent;
-        	tempNameParent= tempName.getParent();
+        IASTName name= astName;
+        IASTNode nameParent= name.getParent();
+        while (nameParent instanceof IASTName) {
+        	name= (IASTName) nameParent;
+        	nameParent= name.getParent();
         }
 
         try {
-        	final ASTNodeProperty prop = tempName.getPropertyInParent();
+        	final ASTNodeProperty prop = name.getPropertyInParent();
         	if (prop == CPPSemantics.STRING_LOOKUP_PROPERTY) {
-        		if (tempNameParent instanceof ICPPASTUnaryExpression) {
-        			ICPPASTUnaryExpression unaryExp = (ICPPASTUnaryExpression) tempNameParent;
-        			IASTExpression oprd= unaryExp.getOperand();
-        			return oprd.getExpressionType();
-        		}
-        		if (tempNameParent instanceof ICPPASTFieldReference) {
-        			ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
-        			IType implied = fieldRef.getFieldOwner().getExpressionType();
-        			if (fieldRef.isPointerDereference() && implied instanceof IPointerType) {
-        				return ((IPointerType) implied).getType();
-        			}
-        			return implied;
-        		}
-        		if (tempNameParent instanceof IASTArraySubscriptExpression) {
-             		IASTExpression exp = ((IASTArraySubscriptExpression) tempNameParent).getArrayExpression();
-             		return exp.getExpressionType();
-             	} 
-        		if (tempNameParent instanceof IASTFunctionCallExpression) {
-        			return ((IASTFunctionCallExpression) tempNameParent).getFunctionNameExpression().getExpressionType();
-        		}
-        		if (tempNameParent instanceof IASTBinaryExpression) {
-        			return ((IASTBinaryExpression) tempNameParent).getOperand1().getExpressionType();
-        		}
-        		if (tempNameParent instanceof ICPPASTDeleteExpression) {
-        			IType implied = ((ICPPASTDeleteExpression) tempNameParent).getOperand().getExpressionType();
-        			if(implied instanceof IPointerType) {
-        				return ((IPointerType) implied).getType();
-        			}
-        			return implied;
-        		}
         		return null;
-        	} 
+        	}
         	if (prop == IASTFieldReference.FIELD_NAME) {
-        		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempNameParent;
-        		IType implied= CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldRef);
+        		ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) nameParent;
+        		IType implied= CPPSemantics.getFieldOwnerType(fieldRef);
         		if (fieldRef.isPointerDereference()) {
             		implied= SemanticUtil.getUltimateTypeUptoPointers(implied);
             		if (implied instanceof IPointerType)
@@ -406,16 +372,12 @@ public class LookupData {
         		return implied;
         	}
         	if (prop == IASTIdExpression.ID_NAME) {
-        		IScope scope = CPPVisitor.getContainingScope(tempName);
+        		IScope scope = CPPVisitor.getContainingScope(name);
         		if (scope instanceof ICPPClassScope) {
         			return ((ICPPClassScope) scope).getClassType();
         		} 
 
-        		IType implied = CPPVisitor.getThisType(scope);
-        		if (implied instanceof IPointerType) {
-        			return ((IPointerType) implied).getType();
-        		}
-        		return implied;
+        		return CPPVisitor.getImpliedObjectType(scope);
         	}
         	if (prop == IASTDeclarator.DECLARATOR_NAME) {
         		if (forExplicitFunctionInstantiation()) {
@@ -513,7 +475,8 @@ public class LookupData {
 		return false;
 	}
 	
-	public void setFunctionArguments(IASTInitializerClause... exprs) {
+	public void setFunctionArguments(boolean containsImpliedObject, IASTInitializerClause... exprs) {
+		argsContainImpliedObject= containsImpliedObject;
 		functionArgs= exprs;
 		if (exprs.length != 0) {
 			IASTNode node= exprs[0];

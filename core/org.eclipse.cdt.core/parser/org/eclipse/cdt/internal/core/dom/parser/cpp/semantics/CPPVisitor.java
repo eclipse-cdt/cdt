@@ -1090,7 +1090,7 @@ public class CPPVisitor extends ASTQueries {
 					data.usesEnclosingScope= false;
 				}
 				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference) parent;
-				IType type = CPPSemantics.getChainedMemberAccessOperatorReturnType(fieldReference);
+				IType type = CPPSemantics.getFieldOwnerType(fieldReference);
 				if (fieldReference.isPointerDereference()) {
 					type= getUltimateType(type, false);
 				} else {
@@ -1973,7 +1973,7 @@ public class CPPVisitor extends ASTQueries {
 		return type;
 	}
 
-	public static IType getThisType(IScope scope) {
+	public static IType getImpliedObjectType(IScope scope) {
 	    try {
 			IASTNode node = null;
 			while (scope != null) {
@@ -2008,9 +2008,7 @@ public class CPPVisitor extends ASTQueries {
 						if (type instanceof ICPPClassTemplate) {
 					    	type= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) type);
 						}
-						type = SemanticUtil.addQualifiers(type, dtor.isConst(), dtor.isVolatile());
-						type = new CPPPointerType(type);
-						return type;
+						return SemanticUtil.addQualifiers(type, dtor.isConst(), dtor.isVolatile());
 					}
 				}
 			}

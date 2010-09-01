@@ -19,6 +19,7 @@
  * David McKnight  (IBM)   [246826][dstore] KeepAlive does not work correctly
  * David McKnight  (IBM)   [305218][dstore] problem reading double-byte characters through data socket layer
  * David McKnight  (IBM)   [307541][dstore] fix for Bug 305218 breaks RDz connections
+ * David McKnight  (IBM)   [322407][dstore] Connection dropped automatically when idle
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -328,20 +329,30 @@ public class XMLparser
 						_initialKart.start();
 						continue;
 					}
-					else if (_initialKart != null && !_initialKart.isAlive())
+					else if (_initialKart != null)
 					{
-						if (!_initialKart.failed())
-						{
-							_isKeepAliveCompatible = true;
-							if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible."); //$NON-NLS-1$
-							_initialKart = null;
-						}			
-						else
-						{
-							_isKeepAliveCompatible = false;
-							if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible."); //$NON-NLS-1$
-							_initialKart = null;
+						if (_initialKart.isAlive()){							
+							int currentTimeout = socket.getSoTimeout();
+							if (currentTimeout != IO_SOCKET_READ_TIMEOUT){
+								if (VERBOSE_KEEPALIVE) System.out.println("Resetting timeout from " + currentTimeout + " to " + IO_SOCKET_READ_TIMEOUT); //$NON-NLS-1$ //$NON-NLS-2$
+								socket.setSoTimeout(IO_SOCKET_READ_TIMEOUT);
+							}
 						}
+						
+						if (!_initialKart.isAlive()){
+							if (!_initialKart.failed())
+							{
+								_isKeepAliveCompatible = true;
+								if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive compatible."); //$NON-NLS-1$
+								_initialKart = null;
+							}			
+							else
+							{
+								_isKeepAliveCompatible = false;
+								if (VERBOSE_KEEPALIVE) System.out.println("KeepAlive incompatible."); //$NON-NLS-1$
+								_initialKart = null;
+							}
+						}				
 					}
 				}
 				
@@ -383,7 +394,7 @@ public class XMLparser
 						}
 					}
 				}
-				else
+				else // no keepalive
 				{
 					in = reader.read();
 				}

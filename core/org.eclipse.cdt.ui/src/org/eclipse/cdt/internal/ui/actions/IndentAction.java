@@ -214,6 +214,9 @@ public class IndentAction extends TextEditorAction {
 				indent= computeCommentIndent(document, line, scanner, startingPartition);
 			} else if (startingPartition.getType().equals(ICPartitions.C_PREPROCESSOR)) {
 				indent= computePreprocessorIndent(document, line, startingPartition);
+			} else if (startingPartition.getType().equals(ICPartitions.C_STRING) && offset > startingPartition.getOffset()) {
+				// don't indent inside (raw-)string
+				indent = ""; //$NON-NLS-1$
 			} else if (!fIsTabAction && startingPartition.getOffset() == offset && startingPartition.getType().equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				// line comment starting at position 0 -> indent inside
 				if (indentInsideLineComments()) {

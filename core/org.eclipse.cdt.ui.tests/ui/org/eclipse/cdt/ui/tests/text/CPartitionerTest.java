@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -1157,6 +1157,244 @@ public class CPartitionerTest extends TestCase {
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
 				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_PREPROCESSOR)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testString1() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "\"[string]\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "\"string1\" \"string2\"");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  9,  ICPartitions.C_STRING),
+				new TypedRegion(9,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(10,  9,  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testRawString1() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "R\"(line 1\n/*line 2*/\nline 3\n)\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(1,  fDocument.getLength() - 1,  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "R\"()\"//comment");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(1,  fDocument.getLength() - 10,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 9,  9,  ICPartitions.C_SINGLE_LINE_COMMENT),
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "R\"delimiter(line 1\n()delimitex\nline 3\n)delimiter\"");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(1,  fDocument.getLength() - 1,  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testRawString2() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 6,  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "#define X x\nR\"delimiter(line 1\n()delimitex\nline 3\n)delimiter\"");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  12,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(12,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(13,  fDocument.getLength() - 13,  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testRawString3() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "#define X x\nR\"delimiter(line 1\n()delimitex\nline 3\n)del)delimiter\" \"str\"");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  12,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(12,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(13,  fDocument.getLength() - 19,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testEditingRawString1() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+			// insert line
+			fDocument.replace(8, 0, "line 0\n");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+			// delete text
+			fDocument.replace(12, 8, "");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testEditingRawString2() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+			// insert opening delimiter
+			fDocument.replace(7, 0, "***");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,   5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 6,  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+			// insert closing delimiter
+			fDocument.replace(fDocument.getLength() - 7, 0, "***");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+			// invalidate closing delimiter
+			fDocument.replace(fDocument.getLength() - 7, 1, "");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 6,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testEditingRawString3() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "/***/R\"(line 1\nline 2\nline 3\n)\" \"str\"");
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 12,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 6, 1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
+			};
+			checkPartitioning(expectation, result);
+
+			// insert text after closing quote
+			fDocument.replace(fDocument.getLength() - 6, 0, " ");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  5,  ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(5,  1,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(6,  fDocument.getLength() - 13,  ICPartitions.C_STRING),
+				new TypedRegion(fDocument.getLength() - 7, 2,  IDocument.DEFAULT_CONTENT_TYPE),
+				new TypedRegion(fDocument.getLength() - 5, 5,  ICPartitions.C_STRING),
 			};
 			checkPartitioning(expectation, result);
 

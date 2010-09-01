@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -95,7 +96,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.c.ICASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -128,6 +129,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -152,7 +154,7 @@ import org.eclipse.text.edits.TextEdit;
  * 
  * @since 4.0
  */
-public class CodeFormatterVisitor extends CPPASTVisitor {
+public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, ICASTVisitor {
 
 	private static boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.core/debug/formatter")); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -2201,11 +2203,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final int line= scribe.line;
 			boolean indented= false;
 			try {
-				int[] stringLiterals = { Token.tSTRING, Token.tLSTRING };
+				int[] stringLiterals = { Token.tSTRING, Token.tLSTRING, Token.tRSTRING };
 				while (true) {
 					scribe.printNextToken(stringLiterals, needSpace);
 					token= peekNextToken();
-					if (token != Token.tSTRING && token != Token.tLSTRING) {
+					if (token != Token.tSTRING && token != Token.tLSTRING && token != Token.tRSTRING) {
 						break;
 					}
 					scribe.printCommentPreservingNewLines();

@@ -37,11 +37,21 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int MULTI_LINE_COMMENT= 2;
 	private static final int CHARACTER= 3;
 	private static final int STRING= 4;
-	private static final int PREPROCESSOR= 5;
-	private static final int PREPROCESSOR_MULTI_LINE_COMMENT= 6;
-	private static final int PREPROCESSOR_STRING= 7;
-	private static final int SINGLE_LINE_DOC_COMMENT= 8;
-	private static final int MULTI_LINE_DOC_COMMENT= 9;
+	private static final int RAW_STRING= 5;
+	private static final int PREPROCESSOR= 6;
+	private static final int PREPROCESSOR_MULTI_LINE_COMMENT= 7;
+	private static final int PREPROCESSOR_STRING= 8;
+	private static final int SINGLE_LINE_DOC_COMMENT= 9;
+	private static final int MULTI_LINE_DOC_COMMENT= 10;
+	
+	/**
+	 * Sub state for raw strings.
+	 */
+	private enum RawStringState {
+		OPEN_DELIMITER,
+		CONTENT,
+		CLOSE_DELIMITER
+	}
 	
 	// beginning of prefixes and postfixes
 	private static final int NONE= 0;
@@ -52,6 +62,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int CARRIAGE_RETURN=5; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	private static final int BACKSLASH_CR= 6; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	private static final int BACKSLASH_BACKSLASH= 7; // postfix for STRING, CHARACTER
+	private static final int RAW_STRING_R= 8; // prefix for RAW_STRING
 	
 	/** The scanner. */
 	private final BufferedDocumentScanner fScanner= new BufferedDocumentScanner(1000);	// faster implementation
@@ -69,13 +80,9 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private int fPrefixLength;
 	/** Indicate whether current char is first non-whitespace char on the line*/
 	private boolean fFirstCharOnLine= true;
-	/** An optional (possibly null) comment owner for detecting documentation-comments **/
-	private IDocCommentOwner fOwner;
+	/** An optional (possibly null) comment owner for detecting documentation-comments */
+	private final IDocCommentOwner fOwner;
 	
-	// emulate CPartitionScanner
-	private final boolean fEmulate;
-	private int fCCodeOffset;
-	private int fCCodeLength;
 	private IDocument fDocument;
 	
 	private final IToken[] fTokens= new IToken[] {
@@ -84,24 +91,22 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		new Token(C_MULTI_LINE_COMMENT),
 		new Token(C_CHARACTER),
 		new Token(C_STRING),
+		new Token(C_STRING),
 		new Token(C_PREPROCESSOR),
 		new Token(C_MULTI_LINE_COMMENT),
 		new Token(C_PREPROCESSOR),
 		new Token(C_SINGLE_LINE_DOC_COMMENT),
 		new Token(C_MULTI_LINE_DOC_COMMENT)
 	};
-
-	public FastCPartitionScanner(boolean emulate, IDocCommentOwner owner) {
-	    fEmulate= emulate;
-	    fOwner= owner;
-	}
+	
+	private final StringBuilder fRawStringDelimiter = new StringBuilder(12);
 
 	public FastCPartitionScanner(IDocCommentOwner owner) {
-	    this(false, owner);
+	   fOwner = owner;
 	}
 	
 	public FastCPartitionScanner() {
-	    this(false, null);
+	    this(null);
 	}
 
 	/*
@@ -109,52 +114,43 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 */
 	public IToken nextToken() {
 
-		// emulate CPartitionScanner
-		if (fEmulate) {
-			if (fCCodeOffset != -1 && fTokenOffset + fTokenLength != fCCodeOffset + fCCodeLength) {
-				fTokenOffset += fTokenLength;
-				return fTokens[CCODE];
-			} else {
-				fCCodeOffset= -1;
-				fCCodeLength= 0;
-			}
-		}
-
 		fTokenOffset += fTokenLength;
 		fTokenLength= fPrefixLength;
 
+		RawStringState rawStringState = RawStringState.OPEN_DELIMITER;
+		int rawStringDelimiterIdx = 0;
+		
 		while (true) {
 			final int ch= fScanner.read();
 			
 			final boolean isFirstCharOnLine= fFirstCharOnLine;
-			if (fFirstCharOnLine && ch != ' ' && ch != '\t') {
+			if (isFirstCharOnLine && ch != ' ' && ch != '\t') {
 				fFirstCharOnLine= false;
 			}
 			// characters
 	 		switch (ch) {
 	 		case ICharacterScanner.EOF:
+	 			fLast= NONE; // ignore last
 		 		if (fTokenLength > 0) {
-		 			fLast= NONE; // ignore last
 		 			return preFix(fState, CCODE, NONE, 0);
 
 		 		} else {
-		 			fLast= NONE;
 		 			fPrefixLength= 0;
 					return Token.EOF;
 		 		}
 
 	 		case '\r':
 	 			fFirstCharOnLine= true;
-	 			if (!fEmulate && fLast == BACKSLASH || fLast == BACKSLASH_BACKSLASH) {
+	 			if (fLast == BACKSLASH || fLast == BACKSLASH_BACKSLASH) {
 	 				fLast= BACKSLASH_CR;
 					fTokenLength++;
  					continue;
-	 			} else if (!fEmulate && fLast != CARRIAGE_RETURN) {
-						fLast= CARRIAGE_RETURN;
-						fTokenLength++;
-	 					continue;
+	 			} else if (fLast != CARRIAGE_RETURN) {
+	 				fLast= CARRIAGE_RETURN;
+	 				fTokenLength++;
+	 				continue;
 	 			} else {
-	 				// fEmulate || fLast == CARRIAGE_RETURN
+	 				// fLast == CARRIAGE_RETURN
 					switch (fState) {
 					case SINGLE_LINE_COMMENT:
 					case CHARACTER:
@@ -162,16 +158,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					case PREPROCESSOR:
 						if (fTokenLength > 0) {
 							IToken token= fTokens[fState];
-
-				 			// emulate CPartitionScanner
-							if (fEmulate) {
-								fTokenLength++;
-								fLast= NONE;
-								fPrefixLength= 0;
-							} else {
-								fLast= CARRIAGE_RETURN;
-								fPrefixLength= 1;
-							}
+							fLast= CARRIAGE_RETURN;
+							fPrefixLength= 1;
 
 							fState= CCODE;
 							return token;
@@ -222,8 +210,15 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					continue;
 				}
 
+	 		case 'R':
+	 			if (fState == CCODE) {
+	 				fLast = RAW_STRING_R;
+	 			}
+	 			fTokenLength++;
+	 			continue;
+
 			default:
-				if (!fEmulate && fLast == CARRIAGE_RETURN) {
+				if (fLast == CARRIAGE_RETURN) {
 					switch (fState) {
 					case SINGLE_LINE_COMMENT:
 					case CHARACTER:
@@ -349,18 +344,24 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					}
 
 				case '"':
+					int newState = STRING;
+					if (fLast == RAW_STRING_R) {
+						newState = RAW_STRING;
+						rawStringState = RawStringState.OPEN_DELIMITER;
+						fRawStringDelimiter.setLength(0);
+					}
 					fLast= NONE; // ignore fLast
 					if (fTokenLength > 0 ) {
-						return preFix(CCODE, STRING, NONE, 1);
+						return preFix(CCODE, newState, NONE, 1);
 					} else {
-						preFix(CCODE, STRING, NONE, 1);
+						preFix(CCODE, newState, NONE, 1);
 						fTokenOffset += fTokenLength;
 						fTokenLength= fPrefixLength;
 						break;
 					}
 					
 				case '#':
-					if (!fEmulate && isFirstCharOnLine) {
+					if (isFirstCharOnLine) {
 						int column= fScanner.getColumn() - 1;
 						fTokenLength -= column;
 						if (fTokenLength > 0) {
@@ -372,7 +373,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 							break;
 						}
 					}
-					// fallthrough
 					consume();
 					break;
 				default:
@@ -398,7 +398,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 							break;
 						}
 					} else {
-						consume();
+						fTokenLength++;
 						fLast= SLASH;
 					}
 					break;
@@ -493,7 +493,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				case '\"':
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(STRING);
-
 		 			} else {
 		 				consume();
 		 				break;
@@ -504,13 +503,48 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 				break;
 	 			}
 	 			break;
-	
+
+	 		case RAW_STRING:
+	 			switch (rawStringState) {
+	 			case OPEN_DELIMITER:
+	 				if (ch == '(') {
+	 					rawStringState = RawStringState.CONTENT;
+	 				} else {
+	 					fRawStringDelimiter.append((char) ch);
+	 				}
+		 			consume();
+	 				break;
+	 			case CONTENT:
+	 				if (ch == ')') {
+	 					rawStringState = RawStringState.CLOSE_DELIMITER;
+	 					rawStringDelimiterIdx = 0;
+	 				}
+		 			consume();
+	 				break;
+	 			case CLOSE_DELIMITER:
+	 				if (ch == ')') {
+	 					rawStringDelimiterIdx = 0;
+	 				} else if (rawStringDelimiterIdx < fRawStringDelimiter.length()) {
+	 					if (fRawStringDelimiter.charAt(rawStringDelimiterIdx) != ch) {
+	 						rawStringState = RawStringState.CONTENT;
+	 					} else {
+	 						++rawStringDelimiterIdx;
+	 					}
+	 				} else if (ch == '"') {
+	 					return postFix(RAW_STRING);
+	 				} else {
+	 					rawStringState = RawStringState.CONTENT;
+	 				}
+ 					consume();
+	 				break;
+	 			}
+	 			break;
+
 	 		case CHARACTER:
 	 			switch (ch) {
 	 			case '\'':
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(CHARACTER);
-	
 	 				} else {
 		 				consume();
 		 				break;
@@ -537,6 +571,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		case BACKSLASH:
 		case SLASH:
 		case STAR:
+		case RAW_STRING_R:
 			return 1;
 
 		case SLASH_STAR:
@@ -566,24 +601,11 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 
 
 	private final IToken preFix(int state, int newState, int last, int prefixLength) {
-		// emulate CPartitionScanner
-		if (fEmulate && state == CCODE && (fTokenLength - getLastLength(fLast) > 0)) {
-			fTokenLength -= getLastLength(fLast);
-			fCCodeOffset= fTokenOffset;
-			fCCodeLength= fTokenLength;
-			fTokenLength= 1;
-			fState= newState;
-			fPrefixLength= prefixLength;
-			fLast= last;
-			return fTokens[interceptTokenState(state)];
-
-		} else {
-			fTokenLength -= getLastLength(fLast);
-			fLast= last;
-			fPrefixLength= prefixLength;
-			fState= newState;
-			return fTokens[interceptTokenState(state)];
-		}
+		fTokenLength -= getLastLength(fLast);
+		fLast= last;
+		fPrefixLength= prefixLength;
+		fState= newState;
+		return fTokens[interceptTokenState(state)];
 	}
 
 	private static int getState(String contentType) {
@@ -627,11 +649,26 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		fPrefixLength= offset - partitionOffset;
 		fLast= NONE;
 		
+		fState= getState(contentType);
+		if (fState == STRING) {
+			// raw string is a special case: need to restart from partition offset
+			try {
+				if (partitionOffset > 0 && fDocument.getChar(partitionOffset - 1) == 'R') {
+					fState = RAW_STRING;
+					int endOffset = offset + length;
+					offset = partitionOffset + 1;
+					length = endOffset - offset;
+					fScanner.setRange(document, offset, length);
+					fPrefixLength = offset - partitionOffset;
+					fRawStringDelimiter.setLength(0);
+				}
+			} catch (BadLocationException exc) {
+				// cannot happen
+			}
+		}
 		if (offset == partitionOffset) {
 			// restart at beginning of partition
 			fState= CCODE;
-		} else {
-			fState= getState(contentType);
 		}
 
 		try {
@@ -639,12 +676,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 			fFirstCharOnLine= column == 0 || document.get(offset-column, column).trim().length() == 0;
 		} catch (BadLocationException exc) {
 			fFirstCharOnLine= true;
-		}
-		
-		// emulate CPartitionScanner
-		if (fEmulate) {
-			fCCodeOffset= -1;
-			fCCodeLength= 0;
 		}
 	}
 
@@ -665,12 +696,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 			fFirstCharOnLine= column == 0 || document.get(offset-column, column).trim().length() == 0;
 		} catch (BadLocationException exc) {
 			fFirstCharOnLine= true;
-		}
-		
-		// emulate CPartitionScanner
-		if (fEmulate) {
-			fCCodeOffset= -1;
-			fCCodeLength= 0;
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,27 +243,42 @@ public class SimpleScanner {
 	            } while ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n'));
 	            ungetChar(c);
 	            return newToken(Token.tWHITESPACE);
-	        } else if (c == '"' || (c == 'L' && !madeMistake)) {
-	
-	            boolean wideString = false;
-	            if (c == 'L') {
-	                int oldChar = c;
-	                c = getChar();
-	                if (c != '"') {
-	                    // we have made a mistake
-	                    ungetChar(c);
-	                    c = oldChar;
-	                    madeMistake = true;
-	                    continue;
-	                } else {
-	                    wideString = true;
-	                }
-	            }
+	            
+	        } else if (c == '"') {
 	
 	            matchStringLiteral();
-	            int type = wideString ? Token.tLSTRING : Token.tSTRING;
-	            return newToken(type);
+	            return newToken(Token.tSTRING);
+
+	        } else if (c == 'L' && !madeMistake) {
+	        	
+                int oldChar = c;
+                c = getChar();
+                if (c != '"') {
+                    // we have made a mistake
+                    ungetChar(c);
+                    c = oldChar;
+                    madeMistake = true;
+                    continue;
+                }
 	
+	            matchStringLiteral();
+	            return newToken(Token.tLSTRING);
+
+	        } else if (c == 'R' && !madeMistake) {
+	        	
+                int oldChar = c;
+                c = getChar();
+                if (c != '"') {
+                    // we have made a mistake
+                    ungetChar(c);
+                    c = oldChar;
+                    madeMistake = true;
+                    continue;
+                }
+	
+	            matchRawStringLiteral();
+	            return newToken(Token.tRSTRING);
+
 	        } else if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_') || (c > 255 && Character.isUnicodeIdentifierStart(c))) {
 	
 	            madeMistake = false;
@@ -666,6 +681,40 @@ public class SimpleScanner {
 	            }
 	            c = getChar(true);
 	        }
+	    }
+	}
+
+	private void matchRawStringLiteral() {
+	    // raw-string R"<delim-opt>(string)<delim-opt>";
+	    int c = getChar(false);
+		StringBuilder delim = new StringBuilder(12);
+	    while (c != '(') {
+	    	if (c == EOFCHAR) {
+	    		return;
+	    	}
+	    	delim.append((char) c);
+	    	c = getChar(false);
+	    }
+	    int delimLen = delim.length();
+    	c = getChar(false);
+	    LOOP:
+	    for (;;) {
+	        if (c == EOFCHAR)
+	            break;
+	        if (c == ')') {
+		        c = getChar(false);
+		        int idx = 0;
+		        while (idx < delimLen) {
+		        	if (c != delim.charAt(idx)) {
+		        		continue LOOP;
+		        	}
+		        	++idx;
+			        c = getChar(false);
+		        }
+		        if (c == '"')
+		        	break;
+	        }
+	        c = getChar(false);
 	    }
 	}
 

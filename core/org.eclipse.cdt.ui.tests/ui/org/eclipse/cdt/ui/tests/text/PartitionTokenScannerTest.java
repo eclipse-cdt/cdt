@@ -40,9 +40,10 @@ public class PartitionTokenScannerTest extends TestCase {
 		super(name);	
 	}
 
+	@Override
 	protected void setUp() {
 		fReference= new CPartitionScanner();
-		fTestee= new FastCPartitionScanner(true, null);
+		fTestee= new FastCPartitionScanner();
 	}
 
 	// read sample C file
@@ -51,7 +52,7 @@ public class PartitionTokenScannerTest extends TestCase {
 			InputStream stream= getClass().getResourceAsStream(name);
 			BufferedReader reader= new BufferedReader(new InputStreamReader(stream));
 			
-			StringBuffer buffer= new StringBuffer();
+			StringBuilder buffer= new StringBuilder();
 			String line= reader.readLine();
 			while (line != null) {
 				buffer.append(line);
@@ -67,7 +68,7 @@ public class PartitionTokenScannerTest extends TestCase {
 	
 	private static IDocument getRandomDocument(int size) {
 		final char[] characters= {'/', '*', '\'', '"', '\r', '\n', '\\'};
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 		
 		for (int i= 0; i < size; i++) {
 			final int randomIndex= (int) (Math.random() * characters.length);
@@ -142,7 +143,7 @@ public class PartitionTokenScannerTest extends TestCase {
 	}
 	
 	private void testConformance(final IDocument document) {
-		final StringBuffer message= new StringBuffer();
+		final StringBuilder message= new StringBuilder();
 		
 		fReference.setRange(document, 0, document.getLength());
 		fTestee.setRange(document, 0, document.getLength());
@@ -201,7 +202,7 @@ public class PartitionTokenScannerTest extends TestCase {
 	}
 		
 	private static String extractString(IDocument document, int offset) {
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 
 		try {
 			IRegion region= document.getLineInformationOfOffset(offset);
@@ -229,7 +230,7 @@ public class PartitionTokenScannerTest extends TestCase {
 	 * Escapes CR, LF and TAB in a string.
 	 */
 	private static String escape(String string) {
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 		
 		final int length= string.length();
 		for (int i= 0; i < length; i++) {

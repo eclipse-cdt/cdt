@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -487,6 +487,7 @@ public class Token {
     static public final int tFLOATINGPT = 130;
     static public final int tLSTRING = 131;
     static public final int tCHAR = 132;
+    static public final int tRSTRING = 133;
     static public final int t_restrict = 136;
     static public final int t_interface = 200;
     static public final int t_import = 201;

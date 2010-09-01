@@ -933,4 +933,39 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationOfCaseWithSignedConstant_Bug304150() throws Exception {
 		assertIndenterResult();
 	}
+
+	//typedef struct
+	//{
+	//int i;
+	//};
+	//typedef enum
+	//{
+	//e;
+	//};
+
+	//typedef struct
+	//{
+	//	int i;
+	//};
+	//typedef enum
+	//{
+	//	e;
+	//};
+	public void testIndentationOfTypedefedCompositeType_Bug324031() throws Exception {
+		fOptions.putAll(DefaultCodeFormatterOptions.getAllmanSettings().getMap());
+		assertIndenterResult();
+	}
+
+	//enum {
+	//a=1,
+	//b
+	//}
+
+	//enum {
+	//	a=1,
+	//	b
+	//}
+	public void testIndentationAfterEnumValueAssignment_Bug324031() throws Exception {
+		assertIndenterResult();
+	}
 }

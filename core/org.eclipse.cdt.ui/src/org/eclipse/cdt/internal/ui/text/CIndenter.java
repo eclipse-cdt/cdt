@@ -1260,18 +1260,15 @@ public final class CIndenter {
 	private boolean looksLikeEnumDeclaration() {
 		int pos = fPosition;
 		nextToken();
-		switch (fToken) {
-		case Symbols.TokenIDENT:
+		if (fToken == Symbols.TokenIDENT) {
 			nextToken();
 			while (skipQualifiers()) {
 				nextToken();
 			}
-			switch (fToken) {
-			case Symbols.TokenENUM:
-				fPosition = pos;
-				return true;
-			}
-			break;
+		}
+		if (fToken == Symbols.TokenENUM) {
+			fPosition = pos;
+			return true;
 		}
 		fPosition = pos;
 		return false;
@@ -1617,6 +1614,7 @@ public final class CIndenter {
 				fToken == Symbols.TokenEQUAL || fToken == Symbols.TokenSHIFTLEFT ||
 				fToken == Symbols.TokenRPAREN;
 		while (true) {
+			int previous = fToken;
 			nextToken();
 
 			// If any line item comes with its own indentation, adapt to it
@@ -1674,9 +1672,20 @@ public final class CIndenter {
 				break;
 
 			case Symbols.TokenRETURN:
-			case Symbols.TokenTYPEDEF:
 			case Symbols.TokenUSING:
 				fIndent = fPrefs.prefContinuationIndent;
+				return fPosition;
+
+			case Symbols.TokenTYPEDEF:
+				switch (previous) {
+				case Symbols.TokenSTRUCT:
+				case Symbols.TokenUNION:
+				case Symbols.TokenCLASS:
+				case Symbols.TokenENUM:
+					break;
+				default:
+					fIndent = fPrefs.prefContinuationIndent;
+				}
 				return fPosition;
 
 			case Symbols.TokenEOF:

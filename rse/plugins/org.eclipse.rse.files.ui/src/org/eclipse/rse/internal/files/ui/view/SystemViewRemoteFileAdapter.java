@@ -68,6 +68,7 @@
  * David McKnight   (IBM)        - [308221] Bidi3.6: Improper display of date in Properties and Table Views
  * David McKnight   (IBM)        - [317541] Show blank as the last modified for a file with no last modified
  * David McKnight   (IBM)        - [323299] [files] remote file view adapter needs to use the latest version of IRemoteFile
+ * David McKnight   (IBM)        - [324192] Cannot open a renamed file
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2949,13 +2950,12 @@ public class SystemViewRemoteFileAdapter
 				if (editableObj != null)
 				{
 					SystemEditableRemoteFile editable = (SystemEditableRemoteFile)editableObj;
-					
-					// is this open?
-					if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN){					
-						// there's an in-memory editable, so change the associated remote file
-						IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath, new NullProgressMonitor());
-						editable.setRemoteFile(newRemoteFile);
-					}
+			
+					// change the remote file regardless of whether it's open in an editor or not
+					// there's an in-memory editable, so change the associated remote file
+					IRemoteFile newRemoteFile = ss.getRemoteFileObject(remotePath, new NullProgressMonitor());
+					editable.setRemoteFile(newRemoteFile);
+
 				}
 			}
 			catch (Exception e)

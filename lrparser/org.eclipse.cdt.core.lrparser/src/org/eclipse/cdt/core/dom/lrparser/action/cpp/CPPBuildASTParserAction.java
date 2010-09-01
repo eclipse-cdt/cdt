@@ -15,6 +15,7 @@ import static org.eclipse.cdt.core.parser.util.CollectionUtils.findFirstAndRemov
 import static org.eclipse.cdt.core.parser.util.CollectionUtils.reverseIterable;
 import static org.eclipse.cdt.internal.core.dom.lrparser.cpp.CPPParsersym.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -1176,7 +1177,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *     ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ';'
 	 */
 	public void consumeDeclarationSimple(boolean hasDeclaratorList) {
-		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : Collections.emptyList();
+		List<Object> declarators = hasDeclaratorList ? astStack.closeScope() : new ArrayList<Object>();
 		ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) astStack.pop(); // may be null
 		
 		List<IToken> ruleTokens = stream.getRuleTokens();
@@ -1194,7 +1195,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			IASTName name = createName(stream.getLeftIToken());
 			declSpec = nodeFactory.newTypedefNameSpecifier(name);
 			ParserUtil.setOffsetAndLength(declSpec, offset(name), length(name));
-			declarators = Collections.emptyList(); // throw away the bogus declarator
+			declarators = new ArrayList<Object>(); // throw away the bogus declarator
 		}
 		
 		// can happen if implicit int is used
@@ -1211,8 +1212,9 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		
 		// bug 80171, check for situation similar to: static var;
 		// this will get parsed wrong, the following is a hack to rebuild the AST as it should have been parsed
+		// exclude syntax "friend xxx"
 		else if(declarators.isEmpty() && 
-		   declSpec instanceof ICPPASTNamedTypeSpecifier &&
+		   declSpec instanceof ICPPASTNamedTypeSpecifier && ! declSpec.isFriend() &&
 		   ruleTokens.size() >= 2 &&
 		   baseKind(nameToken = ruleTokens.get(ruleTokens.size() - 2)) == TK_identifier) {
 			

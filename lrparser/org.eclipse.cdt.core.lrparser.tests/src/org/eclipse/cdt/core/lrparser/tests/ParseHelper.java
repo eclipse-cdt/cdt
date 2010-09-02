@@ -257,7 +257,11 @@ public class ParseHelper {
 	}
 	
 	public static IASTCompletionNode getCompletionNode(String code, ILanguage lang) {
-		return getCompletionNode(code, lang, code.length());
+		int offset = code.length();
+		if(offset > 0 && '\n' == code.charAt(offset-1)){
+			offset--;
+		}
+		return getCompletionNode(code, lang, offset);
 	}
 	
 	

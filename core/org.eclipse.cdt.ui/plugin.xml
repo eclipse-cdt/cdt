@@ -1808,12 +1808,6 @@
             contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.open.include.browser"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <!--removed, see bug 167162
-     <key
-            sequence="M1+F3"
-            contextId="org.eclipse.cdt.ui.cEditorScope"
-            commandId="org.eclipse.cdt.ui.edit.opendef"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/-->
      <key
             sequence="F3"
             contextId="org.eclipse.cdt.ui.cEditorScope"
@@ -2054,7 +2048,7 @@
 	    <!-- MSVS Edit.GoToDefinition -->
 		<key
 			sequence="F12"
-			commandId="org.eclipse.cdt.ui.edit.opendef"
+			commandId="org.eclipse.cdt.ui.edit.opendecl"
 			contextId="org.eclipse.cdt.ui.cEditorScope"
 			schemeId="org.eclipse.cdt.ui.visualstudio"/>
 	   
@@ -2262,12 +2256,6 @@
             description="%ActionDefinition.indent.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.indent">
-      </command>
-      <command
-            name="%ActionDefinition.opendef.name"
-            categoryId="org.eclipse.cdt.ui.category.source"
-            description="%ActionDefinition.opendef.description"
-            id="org.eclipse.cdt.ui.edit.opendef">
       </command>
       <command
             name="%ActionDefinition.opendecl.name"
@@ -2624,7 +2612,7 @@
 	  </specification>
 	  <specification
             annotationType="org.eclipse.cdt.ui.overrideIndicator"
-            label="C/C++ Override indicators"
+            label="%overrideAnnotation.label"
 			annotationImageProvider ="org.eclipse.cdt.internal.ui.editor.OverrideIndicatorImageProvider"
             textPreferenceKey="overrideIndicator"
             textPreferenceValue="false"

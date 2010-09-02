@@ -30,6 +30,8 @@ public class UPCTests extends LRTests {
 	}
 	
 	//TODO ??? overwrite some failed test cases
+	//some test cases which are not applicable to UPC are bypassed here.
+	//UPC extends from C99, which doesn't include some GNU extending features such as "typeof".
 	@Override
 	public void testCompositeTypes() throws Exception {}
 	@Override
@@ -64,6 +66,10 @@ public class UPCTests extends LRTests {
 	public void testThreadLocalVariables_Bug260387() throws Exception {}
 	@Override
 	public void testVaArgWithFunctionPtr_311030() throws Exception {}
+	@Override
+	public void testRecursiveFunctionType_321856() throws Exception {}
+	@Override
+	public void testPtrDiffRecursion_317004() throws Exception {}
 	
 
 	@Override

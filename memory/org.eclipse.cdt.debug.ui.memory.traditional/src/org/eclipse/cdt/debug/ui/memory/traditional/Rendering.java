@@ -1235,7 +1235,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
             boolean changed = false;
             
-            if(fStartHigh == null || !high.equals(fStartHigh))
+            if(fStartHigh == null || !fStartHigh.equals(high))
             {
                 fStartHigh = high;
                 changed = true;
@@ -1267,7 +1267,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
             boolean changed = false;
             
-            if(fEndHigh == null || !high.equals(fEndHigh))
+            if(fEndHigh == null || !fEndHigh.equals(high))
             {
                 fEndHigh = high;
                 changed = true;

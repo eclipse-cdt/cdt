@@ -416,7 +416,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				} catch (DebugException e1) {
 					fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
 							Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1)); //$NON-NLS-1$
-					item.dispose();
+					if (item != null) {
+						item.dispose();
+					}
 					return;
 				} 
 			} else {

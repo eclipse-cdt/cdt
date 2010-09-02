@@ -99,7 +99,9 @@ public class ExportMemoryAction implements IViewActionDelegate {
 					}
 				}
 				else {
-					initialStartAddr = BigInteger.valueOf(memBlock.getStartAddress());
+					if (memBlock != null) {
+						initialStartAddr = BigInteger.valueOf(memBlock.getStartAddress());
+					}
 				}
 			}
 		}

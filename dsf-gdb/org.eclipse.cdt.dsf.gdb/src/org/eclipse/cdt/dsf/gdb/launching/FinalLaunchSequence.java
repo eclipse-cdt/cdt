@@ -75,6 +75,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			return new String[] {
 					"stepInitializeFinalLaunchSequence",   //$NON-NLS-1$
 					"stepSetEnvironmentDirectory",   //$NON-NLS-1$
+					"stepSetBreakpointPending",    //$NON-NLS-1$
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
 					"stepSetEnvironmentVariables",   //$NON-NLS-1$
 					"stepSetExecutable",   //$NON-NLS-1$
@@ -158,6 +159,22 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		if (dir != null) {
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIEnvironmentCD(fCommandControl.getContext(), dir.toPortableString()), 
+					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+		} else {
+			requestMonitor.done();
+		}
+	}
+	
+    /**
+     * Allow breakpoints/tracepoints to be set as pending when using the gdb console 
+     * or a CLI command to create them.
+     * @since 4.0
+     */
+	@Execute
+	public void stepSetBreakpointPending(final RequestMonitor requestMonitor) {
+		if (fSessionType != SessionType.CORE) {
+			fCommandControl.queueCommand(
+					fCommandFactory.createMIGDBSetBreakpointPending(fCommandControl.getContext(), true),
 					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
 		} else {
 			requestMonitor.done();

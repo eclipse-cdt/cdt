@@ -86,6 +86,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBExit;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSet;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetArgs;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetAutoSolib;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetBreakpointPending;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
@@ -552,6 +553,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIGDBSetAutoSolib(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetAutoSolib(ctx, isSet);
+	}
+
+	/** @since 4.0 */
+	public ICommand<MIInfo> createMIGDBSetBreakpointPending(ICommandControlDMContext ctx, boolean enable) {
+		return new MIGDBSetBreakpointPending(ctx, enable);
 	}
 
 	public ICommand<MIInfo> createMIGDBSetEnv(ICommandControlDMContext dmc, String name) {

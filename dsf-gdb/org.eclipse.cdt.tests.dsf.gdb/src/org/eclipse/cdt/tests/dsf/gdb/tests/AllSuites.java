@@ -29,11 +29,11 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	Suite_6_6.class,
-	Suite_6_7.class,
-	Suite_6_8.class,
-	Suite_7_0.class,
 	Suite_7_1.class,
+	Suite_7_0.class,
+	Suite_6_8.class,
+	Suite_6_7.class,
+	Suite_6_6.class,
 	/* Add your suite class here */
 })
 

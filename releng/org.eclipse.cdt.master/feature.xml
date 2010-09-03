@@ -121,4 +121,8 @@
          id="org.eclipse.cdt.testing"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.cdt.msw"
+         version="0.0.0"/>
+
 </feature>

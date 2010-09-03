@@ -67,9 +67,8 @@ plugin@org.eclipse.cdt.sdk=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.ecli
 feature@org.eclipse.cdt.sdk=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.sdk-feature
 
 ! Windows Feature
-plugin@org.eclipse.cdt.windows.build=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows.build
-plugin@org.eclipse.cdt.windows=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows
-feature@org.eclipse.cdt.windows=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.windows-feature
+plugin@org.eclipse.cdt.msw.build=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.msw.build
+feature@org.eclipse.cdt.msw=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/windows/org.eclipse.cdt.msw-feature
 
 ! GDB Hardware Debugging Feature
 plugin@org.eclipse.cdt.debug.gdbjtag=@cdtTag@,/cvsroot/tools,,org.eclipse.cdt/jtag/org.eclipse.cdt.debug.gdbjtag

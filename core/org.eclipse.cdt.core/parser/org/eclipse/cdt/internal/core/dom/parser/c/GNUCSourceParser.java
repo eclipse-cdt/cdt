@@ -71,7 +71,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
@@ -1115,7 +1114,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     				simpleType= IASTSimpleDeclSpecifier.t_typeof;
     				consume(IGCCToken.t_typeof);
     				typeofExpression = parseTypeidInParenthesisOrUnaryExpression(false, LA(1).getOffset(), 
-    						IGNUASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
+    						IASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
 
     				encounteredTypename= true;
     				endOffset= calculateEndOffset(typeofExpression);
@@ -1895,7 +1894,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // look ahead for the start of the function body, if end of file is
             // found then return 0 parameters found (implies not KnR C)
             int previous=-1;
-            int next=LA(1).hashCode();
             while (LT(1) != IToken.tLBRACE) {
             	// fix for 100104: check if the parameter declaration is a valid one
             	try {
@@ -1905,7 +1903,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 					return 0;
 				}            	
             	
-               	next = LA(1).hashCode();
+               	final IToken t = LA(1);
+               	if (t.getType() == IToken.tEOC)
+               		break;
+               	
+               	final int next = t.hashCode();
                	if (next == previous) { // infinite loop detected
                		break;
                	}

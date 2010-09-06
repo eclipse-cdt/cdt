@@ -1935,7 +1935,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IToken next=null;
         while (LT(1) != IToken.tLBRACE) {
            	next = consume();
-           	if (next == previous) { // infinite loop detected
+           	if (next == previous || next.getType() == IToken.tEOC) { // infinite loop detected
            		break;
            	}
            	previous = next;

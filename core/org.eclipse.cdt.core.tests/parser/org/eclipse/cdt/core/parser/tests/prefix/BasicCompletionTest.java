@@ -267,4 +267,12 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expected= {"tint"};
 		checkCompletion(code, false, expected);
 	}
+	
+	//	void f(x) int y(
+	public void testIncompleteKnrFunction_Bug324384b() throws Exception {
+		// Content assist won't work here, just verify that we don't run out of memory
+		String code = getAboveComment();
+		String[] expected= {};
+		checkCompletion(code, false, expected);
+	}
 }

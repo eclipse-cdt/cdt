@@ -137,4 +137,8 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 	public boolean isLValue() {
 		return true;
 	}
+	
+	public final ValueCategory getValueCategory() {
+		return ValueCategory.LVALUE;
+	}
 }

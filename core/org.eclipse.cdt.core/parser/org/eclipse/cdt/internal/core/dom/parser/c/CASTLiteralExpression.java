@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,8 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -102,6 +102,10 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 	
 	public boolean isLValue() {
 		return getKind() == IASTLiteralExpression.lk_string_literal;
+	}
+
+	public final ValueCategory getValueCategory() {
+		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}
 
 	private IType classifyTypeOfFloatLiteral() {

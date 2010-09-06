@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+
 /**
  * This is the root class of expressions.
  * 
@@ -18,6 +19,37 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTExpression extends IASTInitializerClause {
+	/**
+	 * @since 5.3
+	 */
+	public enum ValueCategory {
+		/**
+		 * Traditional lvalue
+		 */
+		LVALUE,
+		/**
+		 * Expiring value as introduced by c++ 0x.
+		 */
+		XVALUE,
+		/**
+		 * Pure rvalue.
+		 */
+		PRVALUE;
+		
+		/**
+		 * Both prvalues and xvalues are rvalues.
+		 */
+		public boolean isRValue() {
+			return this != LVALUE;
+		}
+		/**
+		 * A generalized lvalue is either an lvalue or an xvalue.
+		 */
+		public boolean isGLValue() {
+			return this != PRVALUE;
+		}
+	}
+
 	/**
 	 * Empty expression array.
 	 */
@@ -32,6 +64,12 @@ public interface IASTExpression extends IASTInitializerClause {
 	 */
 	public boolean isLValue();
 	
+	/**
+	 * Returns the value category of this expression.
+	 * @since 5.3
+	 */
+	ValueCategory getValueCategory();
+
 	/**
 	 * @since 5.1
 	 */

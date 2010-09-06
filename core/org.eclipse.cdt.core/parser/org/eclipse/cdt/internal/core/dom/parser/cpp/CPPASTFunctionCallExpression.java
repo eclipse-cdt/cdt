@@ -12,8 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -21,12 +26,10 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -38,7 +41,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
@@ -49,7 +51,6 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     private IASTInitializerClause[] fArguments;
 
     private IASTImplicitName[] implicitNames;
-    private IType type; // cached type of expression
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
     
     
@@ -203,67 +204,79 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     public ICPPFunction getOperator() {
     	if (overload == UNINITIALIZED_FUNCTION) {
     		overload= null;
-    		// as a side effect this computes the overload
-    		getExpressionType();
-    	}
+    		IType t= functionName.getExpressionType();
+    		t= SemanticUtil.getNestedType(t, TDEF | REF | CVTYPE);
+    		if (t instanceof ICPPClassType) {
+    			overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+    		}
+		}
     	return overload;
     }
     
     public IType getExpressionType() {
-    	if (type == null) {
-    		type= computeExpressionType();
-    	}
-    	return type;
+    	if (functionName instanceof IASTIdExpression) {
+			// Handle misused id-expression in functional type conversions or simple type initializers.
+			final IBinding binding= ((IASTIdExpression) functionName).getName().resolvePreBinding();
+			if (binding instanceof ICPPConstructor) {
+				IBinding owner= binding.getOwner();
+				if (owner instanceof ICPPClassType) {
+					return (ICPPClassType) owner;
+				} 
+				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE, binding.getNameCharArray());
+			} 
+			if (binding instanceof IProblemBinding) {
+				return (IProblemBinding) binding;
+			}
+			if (binding instanceof IType) {
+				return prvalueType((IType) binding);
+			} 
+		} 
+		
+		IType t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF|REF|CVTYPE);
+		if (t instanceof ICPPClassType) {
+			if (overload == UNINITIALIZED_FUNCTION) {
+				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+			}
+			if (overload != null) {
+				return typeFromFunctionCall(overload);
+			} 
+			// mstodo problem type
+			return null;
+		}
+		
+		if (t instanceof IPointerType) {
+			t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
+		}
+		if (t instanceof IFunctionType) {
+			return typeFromReturnType(((IFunctionType) t).getReturnType());
+		}
+
+		// mstodo problem type
+		return null;
     }
     
     public boolean isLValue() {
-    	return CPPVisitor.isLValueReference(getExpressionType());
+    	return getValueCategory() == LVALUE;
 	}
-
-	private IType computeExpressionType() {
-    	overload= null;
-    	try {
-    		IType t= null;
-    		if (functionName instanceof IASTIdExpression) {
-    			final IBinding binding= ((IASTIdExpression) functionName).getName().resolvePreBinding();
-    			if (binding instanceof ICPPConstructor) {
-    				IBinding owner= binding.getOwner();
-    				if (owner instanceof ICPPClassType) {
-    					return (ICPPClassType) owner;
-    				}
-    				return new ProblemBinding(this, IProblemBinding.SEMANTIC_BAD_SCOPE,
-    						binding.getName().toCharArray());
-    			} else if (binding instanceof IFunction) {
-    				t = SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
-    			} else if (binding instanceof IVariable) {
-    				t = SemanticUtil.mapToAST(((IVariable) binding).getType(), this);
-    			} else if (binding instanceof IType) {
-    				return (IType) binding;  // constructor or simple type initializer
-    			} else if (binding instanceof IProblemBinding) {
-    				return (IProblemBinding) binding;
-    			}
-    		} else {
-    			t= functionName.getExpressionType();
-    		}
-
-    		t= SemanticUtil.getUltimateTypeUptoPointers(t);
-    		if (t instanceof IFunctionType) {
-    			return ((IFunctionType) t).getReturnType();
-    		} else if (t instanceof ICPPClassType) {
-    			overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
-    			if (overload != null) {
-    				return overload.getType().getReturnType();
-    			}
-    		} else if (t instanceof IPointerType) {
-    			t= SemanticUtil.getUltimateTypeUptoPointers(((IPointerType) t).getType());
-    			if (t instanceof IFunctionType) {
-    				return ((IFunctionType) t).getReturnType();
-    			}
-    		}
-		} catch (DOMException e) {
-			return e.getProblem();
-		} 
-		return null;
+    
+	public ValueCategory getValueCategory() {
+		IType t= functionName.getExpressionType();
+		if (t instanceof ICPPClassType) {
+			if (overload == UNINITIALIZED_FUNCTION) {
+				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+			}
+			if (overload != null) {
+				return valueCategoryFromFunctionCall(overload);
+			} 
+		} else {
+			if (t instanceof IPointerType) {
+				t= SemanticUtil.getNestedType(((IPointerType) t).getType(), TDEF | REF | CVTYPE);
+			}
+			if (t instanceof IFunctionType) {
+				return valueCategoryFromReturnType(((IFunctionType) t).getReturnType());
+			}
+		}
+		return ValueCategory.PRVALUE;
     }
 	
 	@Deprecated

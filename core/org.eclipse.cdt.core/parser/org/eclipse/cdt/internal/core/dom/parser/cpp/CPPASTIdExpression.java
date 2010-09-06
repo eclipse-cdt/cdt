@@ -12,22 +12,35 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICPPASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -35,7 +48,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICPPASTCompletionContext {
 
+	private static final ICPPASTFieldReference NOT_INITIALIZED = new CPPASTFieldReference();
+	
 	private IASTName name;
+	private ICPPASTFieldReference fTransformedExpression= NOT_INITIALIZED;
 
     public CPPASTIdExpression() {
 	}
@@ -92,21 +108,18 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 
 	public IType getExpressionType() {
         IBinding binding = name.resolvePreBinding();
+        if (checkForTransformation(binding)) {
+        	return fTransformedExpression.getExpressionType();
+        }
         try {
-			if (binding instanceof IVariable) {
-				final IVariable var = (IVariable) binding;
-				IType type= SemanticUtil.mapToAST(var.getType(), this);
-				if (var instanceof ICPPField && !var.isStatic()) {
-					IScope scope= CPPVisitor.getContainingScope(name);
-					if (scope != null) {
-		    			IType containerType= CPPVisitor.getImpliedObjectType(scope);
-						if (containerType != null) {
-							type= CPPASTFieldReference.addQualifiersForAccess((ICPPField) var, type, containerType);
-						}
-					}
-				}
-				return type;
-			} else if (binding instanceof IEnumerator) {
+			if (binding instanceof IProblemBinding) {
+				return (IProblemBinding) binding;
+			}
+			if (binding instanceof IType || binding instanceof ICPPConstructor) {
+				// mstodo return problem type
+				return null;
+			} 
+			if (binding instanceof IEnumerator) {
 				IType type= ((IEnumerator) binding).getType();
 				if (type instanceof ICPPEnumeration) {
 					ICPPEnumeration enumType= (ICPPEnumeration) type;
@@ -122,29 +135,84 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 					}
 				}
 				return type;
-			} else if (binding instanceof IProblemBinding) {
-				return (IType) binding;
-			} else if (binding instanceof IFunction) {
+			} 
+			if (binding instanceof IVariable) {
+				final IType t = glvalueType(((IVariable) binding).getType());
+				return SemanticUtil.mapToAST(t, this);
+			}
+			if (binding instanceof IFunction) {
 				return SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
-			} else if (binding instanceof ICPPTemplateNonTypeParameter) {
-				return ((ICPPTemplateNonTypeParameter) binding).getType();
-			} else if (binding instanceof ICPPClassType) {
-				return ((ICPPClassType) binding);
-			} else if (binding instanceof ICPPUnknownBinding) {
+			} 
+			if (binding instanceof ICPPTemplateNonTypeParameter) {
+				return prvalueType(((ICPPTemplateNonTypeParameter) binding).getType());
+			} 
+			if (binding instanceof ICPPUnknownBinding) {
+				// mstodo typeof unknown binding
 				return CPPUnknownClass.createUnnamedInstance();
 			}
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
+		// mstodo return problem type
 		return null;
 	}
 
-	public boolean isLValue() {
-		IBinding b= getName().resolveBinding();
-		if (b instanceof IVariable || b instanceof IFunction) {
-			return true;
+	/**
+	 * 9.3.1-3 Transformation to class member access within the definition of a non-static 
+	 * member function. 
+	 */
+	public boolean checkForTransformation(IBinding binding) {
+		if (fTransformedExpression == NOT_INITIALIZED) {
+			fTransformedExpression= null;
+			if (name instanceof ICPPASTQualifiedName) {
+				IASTNode parent= name.getParent();
+				if (parent instanceof ICPPASTUnaryExpression) {
+					if (((ICPPASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_amper) {
+						return false;
+					}
+				}
+			}
+			if (binding instanceof ICPPMember && !(binding instanceof IType) && !(binding instanceof ICPPConstructor)
+					&&!((ICPPMember) binding).isStatic()) {
+				IASTNode parent= getParent();
+				while (parent != null && !(parent instanceof ICPPASTFunctionDefinition)) {
+					parent= parent.getParent();
+				}
+				if (parent instanceof ICPPASTFunctionDefinition) {
+					ICPPASTFunctionDefinition fdef= (ICPPASTFunctionDefinition) parent;
+					final IBinding methodBinding = fdef.getDeclarator().getName().resolvePreBinding();
+					if (methodBinding instanceof ICPPMethod && !((ICPPMethod) methodBinding).isStatic()) {
+						IASTName nameDummy= new CPPASTName();
+						nameDummy.setBinding(binding);
+						IASTExpression owner= new CPPASTLiteralExpression(IASTLiteralExpression.lk_this, CharArrayUtils.EMPTY);
+						owner= new CPPASTUnaryExpression(IASTUnaryExpression.op_star, owner);
+						fTransformedExpression= new CPPASTFieldReference(nameDummy, owner);
+						fTransformedExpression.setParent(getParent());
+						fTransformedExpression.setPropertyInParent(getPropertyInParent());
+					}
+				}
+			}
 		}
-		return false;
+		
+		return fTransformedExpression != null;
+	}
+
+	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
+	}
+	
+	public ValueCategory getValueCategory() {
+        IBinding binding = name.resolvePreBinding();
+        if (checkForTransformation(binding)) {
+			return fTransformedExpression.getValueCategory();
+		}
+        if (binding instanceof ICPPTemplateNonTypeParameter)
+        	return ValueCategory.PRVALUE;
+        
+		if (binding instanceof IVariable || binding instanceof IFunction) {
+			return ValueCategory.LVALUE;
+		}
+		return ValueCategory.PRVALUE;
 	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {

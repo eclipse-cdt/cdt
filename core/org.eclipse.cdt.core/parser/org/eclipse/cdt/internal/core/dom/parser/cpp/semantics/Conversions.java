@@ -192,7 +192,7 @@ public class Conversions {
 				}
 			}
 
-			// � Otherwise, a temporary of type �cv1 T1� is created and initialized from the initializer
+			// Otherwise, a temporary of type 'cv1 T1' is created and initialized from the initializer
 			// expression using the rules for a non-reference copy initialization (8.5). The reference is then
 			// bound to the temporary. If T1 is reference-related to T2, cv1 must be the same cv-qualification
 			// as, or greater cv-qualification than, cv2; otherwise, the program is ill-formed.
@@ -271,6 +271,7 @@ public class Conversions {
 	}
 
 	private static Cost nonReferenceConversion(boolean sourceIsLValue, IType source, IType target, UDCMode udc, boolean isImpliedObject) throws DOMException {
+		// mstodo fix this to better match the specification
 		if (source instanceof InitializerListType) {
 			return listInitializationSequence(((InitializerListType) source), target, udc, false);
 		}
@@ -756,6 +757,7 @@ public class Conversions {
 	 * [4.3] function-to-ptr
 	 */
 	private static final boolean lvalue_to_rvalue(final Cost cost, boolean isLValue) {
+		// mstodo request value category
 		// target should not be a reference here.
 		boolean isConverted= false;
 		IType target = getNestedType(cost.target, REF | TDEF);
@@ -1095,39 +1097,20 @@ public class Conversions {
 	}
 
 	/**
-	 * 4.1
+	 * 4.1, 4.2, 4.3
 	 */
 	public static IType lvalue_to_rvalue(IType type) {
-		IType nested= SemanticUtil.getNestedType(type, TDEF | REF);
-		if (nested == null || nested == type || nested instanceof IArrayType || nested instanceof ICPPFunctionType) {
+		type= SemanticUtil.getNestedType(type, TDEF | REF);
+		if (type instanceof IArrayType) {
+			return new CPPPointerType(((IArrayType) type).getType());
+		}
+		if (type instanceof IFunctionType) {
+			return new CPPPointerType(type);
+		}
+		IType uqType= SemanticUtil.getNestedType(type, TDEF | REF | ALLCVQ);
+		if (uqType instanceof ICPPClassType) {
 			return type;
 		}
-		IType unqualified= SemanticUtil.getNestedType(nested, TDEF | ALLCVQ);
-		if (unqualified instanceof ICPPClassType)
-			return nested;
-		
-		return unqualified;
-	}
-
-	/**
-	 * 4.2
-	 */
-	public static IType array_to_pointer(IType type) {
-		IType nested= SemanticUtil.getNestedType(type, TDEF);
-		if (nested instanceof IArrayType) {
-			return new CPPPointerType(((IArrayType) nested).getType());
-		}
-		return type;
-	}
-
-	/**
-	 * 4.3
-	 */
-	public static IType function_to_pointer(IType type) {
-		IType nested= SemanticUtil.getNestedType(type, TDEF);
-		if (nested instanceof IFunctionType) {
-			return new CPPPointerType(nested);
-		}
-		return type;
+		return uqType;
 	}
 }

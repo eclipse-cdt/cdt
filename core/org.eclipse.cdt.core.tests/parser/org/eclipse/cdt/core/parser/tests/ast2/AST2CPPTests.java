@@ -7313,7 +7313,8 @@ public class AST2CPPTests extends AST2BaseTest {
 		IASTExpressionStatement stmt= getStatement(test, 1);
 		long now= System.currentTimeMillis();
 		IType t= stmt.getExpression().getExpressionType();
-		assertInstance(t, ICPPReferenceType.class);
+		assertInstance(t, ICPPClassType.class);
+		assertTrue(stmt.getExpression().isLValue());
 		final long time = System.currentTimeMillis() - now;
 		assertTrue("Lasted " + time + "ms", time < 5000);
 	}

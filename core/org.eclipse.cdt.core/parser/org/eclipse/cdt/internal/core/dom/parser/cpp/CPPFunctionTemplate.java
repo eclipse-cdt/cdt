@@ -273,8 +273,8 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition
 		return ASTQueries.findInnermostDeclarator(paramDecl.getDeclarator()).getName();
 	}
 
-	public boolean isStatic() {
-		return hasStorageClass(IASTDeclSpecifier.sc_static);
+	public final boolean isStatic() {
+		return isStatic(true);
 	}
 
     public boolean isMutable() {

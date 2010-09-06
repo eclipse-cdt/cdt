@@ -11,15 +11,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
@@ -73,7 +77,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 
     public IType getExpressionType() {
 		if (fType == null) {
-			fType= CPPVisitor.createType(fDeclSpec);
+			fType= prvalueType(CPPVisitor.createType(fDeclSpec));
 		}
 		return fType;
 	}
@@ -82,7 +86,11 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		return false;
 	}
 	
-    @Override
+	public ValueCategory getValueCategory() {
+		return PRVALUE;
+	}
+
+	@Override
 	public boolean accept(ASTVisitor action) {
         if (action.shouldVisitExpressions) {
 		    switch (action.visit(this)) {

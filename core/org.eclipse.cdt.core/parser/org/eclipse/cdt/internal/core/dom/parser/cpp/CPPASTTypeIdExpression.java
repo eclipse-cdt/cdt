@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -84,6 +87,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 	public IType getExpressionType() {
 		switch (getOperator()) {
 		case op_sizeof:
+		case op_alignof:
 			return CPPVisitor.get_SIZE_T(this);
 		case op_typeid:
 			return CPPVisitor.get_type_info(this);
@@ -98,6 +102,8 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		}
 		return false;
 	}
-	
-	
+
+	public ValueCategory getValueCategory() {
+		return isLValue() ? LVALUE : PRVALUE;
+	}
 }

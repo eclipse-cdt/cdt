@@ -12,12 +12,12 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
@@ -44,7 +44,7 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTExpression#copy()
 	 */
-	public IASTExpression copy() {
+	public CPPASTLambdaExpression copy() {
 		CPPASTLambdaExpression result= new CPPASTLambdaExpression();
 		result.fCaptureDefault= fCaptureDefault;
 		if (fCaptures != null) {
@@ -190,5 +190,9 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 
 	public boolean isLValue() {
 		return false;
+	}
+	
+	public ValueCategory getValueCategory() {
+		return ValueCategory.PRVALUE;
 	}
 }

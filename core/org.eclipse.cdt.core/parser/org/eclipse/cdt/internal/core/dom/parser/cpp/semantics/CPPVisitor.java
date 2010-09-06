@@ -1958,18 +1958,17 @@ public class CPPVisitor extends ASTQueries {
 		}
 		IType type = expr.getExpressionType();
 		if (spec.getType() == IASTSimpleDeclSpecifier.t_decltype) {
-			while (expr instanceof IASTUnaryExpression
-					&& ((IASTUnaryExpression) expr).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
-				expr = ((IASTUnaryExpression) expr).getOperand();
+			switch((expr).getValueCategory()) {
+			case XVALUE:
+				type= new CPPReferenceType(type, true);
+				break;
+			case LVALUE:
+				type= new CPPReferenceType(type, false);
+				break;
+			case PRVALUE:
+				break;
 			}
-			if (!(expr instanceof IASTFunctionCallExpression)) {
-				type= SemanticUtil.getNestedType(type, TDEF | REF);
-				if (expr.isLValue())
-					type= new CPPReferenceType(type, false);
-			}
-		} else {
-			type= SemanticUtil.getNestedType(type, TDEF | REF);
-		}
+		} 
 		return type;
 	}
 
@@ -2208,7 +2207,8 @@ public class CPPVisitor extends ASTQueries {
 		}
 		return false;
 	}
-	
+
+	@Deprecated
 	public static boolean isLValueReference(IType t) {
 		t= SemanticUtil.getNestedType(t, TDEF);
 		return t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference();

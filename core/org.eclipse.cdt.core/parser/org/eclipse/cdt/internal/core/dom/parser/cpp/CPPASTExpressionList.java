@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -29,18 +34,18 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 
 public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionList, IASTAmbiguityParent {
 	private static final ICPPFunction[] NO_FUNCTIONS = new ICPPFunction[0];
 
+    private IASTExpression [] expressions = new IASTExpression[2];
+    
 	/**
 	 * Caution: may contain nulls. 
 	 * @see CPPASTExpressionList#computeImplicitNames
 	 */
 	private IASTImplicitName[] implicitNames;
-
 	private ICPPFunction[] overloads = null;
 	
 	
@@ -59,15 +64,13 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 
     public void addExpression(IASTExpression expression) {
         assertNotFrozen();
-        expressions = (IASTExpression [])ArrayUtil.append( IASTExpression.class, expressions, expression );
+		expressions = ArrayUtil.append(expressions, expression);
         if (expression != null) {
 			expression.setParent(this);
 			expression.setPropertyInParent(NESTED_EXPRESSION);
 		}
     }
 
-    private IASTExpression [] expressions = new IASTExpression[2];
-    
     @Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
@@ -190,10 +193,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
 			if (last != null) {
-				try {
-					return last.getType().getReturnType();
-				} catch (DOMException e) {
-				}
+				return typeFromFunctionCall(last);
 			}
 		}
 
@@ -205,24 +205,24 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		return null;
 	}
     
-	public boolean isLValue() {
+	public ValueCategory getValueCategory() {
 		ICPPFunction[] overloads = getOverloads();
 		if (overloads.length > 0) {
 			ICPPFunction last = overloads[overloads.length - 1];
 			if (last != null) {
-				try {
-					return CPPVisitor.isLValueReference(last.getType().getReturnType());
-				} catch (DOMException e) {
-					return false;
-				}
+				return valueCategoryFromFunctionCall(last);
 			}
 		}
 
     	for (int i = expressions.length-1; i >= 0; i--) {
     		IASTExpression expr= expressions[i];
     		if (expr != null)
-    			return expr.isLValue();
+    			return expr.getValueCategory();
 		}
-    	return false;
+    	return PRVALUE;
+	}
+	
+	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
 	}
 }

@@ -12,21 +12,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -34,7 +37,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
 public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpression, IASTAmbiguityParent {
@@ -252,13 +254,10 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     	return overload = CPPSemantics.findOverloadedOperator(this);
     }
 
-	public boolean isLValue() {
-		ICPPFunction op = getOverload();
+    public ValueCategory getValueCategory() {
+    	ICPPFunction op = getOverload();
 		if (op != null) {
-			try {
-				return CPPVisitor.isLValueReference(op.getType().getReturnType());
-			} catch (DOMException e) {
-			}
+			return valueCategoryFromFunctionCall(op);
 		}
 		switch (getOperator()) {
 		case op_assign:
@@ -272,31 +271,46 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		case op_plusAssign:
 		case op_shiftLeftAssign:
 		case op_shiftRightAssign:
-			return true;
-		}
-		return false;
-	}
+			return LVALUE;
 
+		case op_pmdot:
+			if (!(getExpressionType() instanceof ICPPFunctionType)) {
+				return operand1.getValueCategory();
+			}
+			return PRVALUE;
+			
+		case op_pmarrow:
+			if (!(getExpressionType() instanceof ICPPFunctionType)) 
+				return LVALUE;
+			return PRVALUE;
+		}
+		
+		return PRVALUE;
+    }
+    
+	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
+	}
+	
 	private IType createExpressionType() {
 		// Check for overloaded operator.
 		ICPPFunction o= getOverload();
 		if (o != null) {
-			try {
-				return o.getType().getReturnType();
-			} catch (DOMException e) {
-				e.getProblem();
-			}
+			return typeFromFunctionCall(o);
 		}
 		
         final int op = getOperator();
-		IType type1 = SemanticUtil.getUltimateTypeUptoPointers(getOperand1().getExpressionType());
+		IType type1 = prvalueType(operand1.getExpressionType());
 		if (type1 instanceof IProblemBinding) {
 			return type1;
 		}
 		
-		IType type2 = SemanticUtil.getUltimateTypeUptoPointers(getOperand2().getExpressionType());
-		if (type2 instanceof IProblemBinding) {
-			return type2;
+		IType type2 = null;
+		if (operand2 instanceof IASTExpression) {
+			type2= prvalueType(((IASTExpression) operand2).getExpressionType());
+			if (type2 instanceof IProblemBinding) {
+				return type2;
+			}
 		}
 		
     	IType type= CPPArithmeticConversion.convertCppOperandTypes(op, type1, type2);
@@ -316,35 +330,38 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
         	return new CPPBasicType(Kind.eBoolean, 0, this);
 
         case IASTBinaryExpression.op_plus:
-        	if (type1 instanceof IArrayType) {
-        		return arrayTypeToPointerType((IArrayType) type1);
-        	} else if (type2 instanceof IPointerType) {
+        	if (type1 instanceof IPointerType) {
+        		return type1;
+        	} 
+        	if (type2 instanceof IPointerType) {
         		return type2;
-        	} else if (type2 instanceof IArrayType) {
-        		return arrayTypeToPointerType((IArrayType) type2);
-        	}
+        	} 
+            // mstodo problem type
         	break;
 
         case IASTBinaryExpression.op_minus:
-        	if (type2 instanceof IPointerType || type2 instanceof IArrayType) {
-        		if (type1 instanceof IPointerType || type1 instanceof IArrayType) {
-        			return CPPVisitor.getPointerDiffType(this);
+        	if (type1 instanceof IPointerType) {
+            	if (type2 instanceof IPointerType) {
+            		return CPPVisitor.getPointerDiffType(this);
         		}
         		return type1;
         	}
+            // mstodo problem type
         	break;
 
         case ICPPASTBinaryExpression.op_pmarrow:
         case ICPPASTBinaryExpression.op_pmdot:
         	if (type2 instanceof ICPPPointerToMemberType) {
-        		return ((ICPPPointerToMemberType) type2).getType();
+        		IType t= ((ICPPPointerToMemberType) type2).getType();
+        		if (t instanceof ICPPFunctionType)
+        			return t;
+        		if (op == ICPPASTBinaryExpression.op_pmdot && operand1.getValueCategory() == PRVALUE) {
+        			return prvalueType(t);
+        		}
+        		return glvalueType(t);
         	}
         	return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, getRawSignature().toCharArray());
         }
-		return type1;
-	}
-
-	private IType arrayTypeToPointerType(IArrayType type) {
-		return new CPPPointerType(type.getType());
+        return type1;
 	}
 }

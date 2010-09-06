@@ -14,13 +14,16 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -197,8 +200,24 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 						return PDOMName.COULD_BE_POLYMORPHIC_METHOD_CALL;
 					}
 					// v.member()
-					IType type= fr.getFieldOwner().getExpressionType();
-					if (type instanceof ICPPReferenceType) {
+					IASTExpression fieldOwner = fr.getFieldOwner();
+					if (fieldOwner.getValueCategory().isGLValue()) {
+						while (fieldOwner instanceof IASTUnaryExpression
+								&& ((IASTUnaryExpression) fieldOwner).getOperator() == IASTUnaryExpression.op_bracketedPrimary)
+							fieldOwner = ((IASTUnaryExpression) fieldOwner).getOperand();
+						if (fieldOwner instanceof IASTIdExpression) {
+							IBinding b= ((IASTIdExpression) fieldOwner).getName().resolveBinding();
+							if (b instanceof IVariable) {
+								try {
+									IType t = ((IVariable) b).getType();
+									if (!(t instanceof ICPPReferenceType)) {
+										return 0;
+									}			
+								} catch (DOMException e) {
+									return 0;
+								}
+							}
+						}
 						return PDOMName.COULD_BE_POLYMORPHIC_METHOD_CALL;
 					}
 				}

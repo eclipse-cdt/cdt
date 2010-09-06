@@ -23,8 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Handles the ambiguity between cast and function-call expressions: (type)(expr) versus (function)(expr);
@@ -56,13 +54,9 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 	}
     
     public void addExpression(IASTExpression e) {
-		Assert.isLegal(false);
+		throw new UnsupportedOperationException();
     }
     
-    public IType getExpressionType() {
-    	return fCastExpression.getExpressionType();
-    }
-
 	public IASTExpression[] getExpressions() {
 		return new IASTExpression[] {fCastExpression, fFunctionCallExpression};
 	}

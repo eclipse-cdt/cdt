@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
@@ -18,7 +20,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * C++ variant of type id initializer expression.
+ * C++ variant of type id initializer expression. type-id { initializer }
  */
 public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression {
 
@@ -37,6 +39,6 @@ public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpre
 	
 	public IType getExpressionType() {
 		final IASTTypeId typeId = getTypeId();
-		return CPPVisitor.createType(typeId.getAbstractDeclarator());
+		return prvalueType(CPPVisitor.createType(typeId.getAbstractDeclarator()));
 	}
 }

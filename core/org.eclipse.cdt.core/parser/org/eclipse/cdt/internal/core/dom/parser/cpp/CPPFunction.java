@@ -338,7 +338,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	}
     }
 
-    public boolean isStatic() {
+    public final boolean isStatic() {
         return isStatic(true);
     }
 

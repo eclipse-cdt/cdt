@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Handles the ambiguity between a binary- and a cast-expression. (type)+var versus (var)+var.
@@ -46,14 +44,10 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
     	throw new UnsupportedOperationException();
     }
     
-    public void addExpression(IASTExpression e) {
-		Assert.isLegal(false);
+    public final void addExpression(IASTExpression e) {
+    	throw new UnsupportedOperationException();
     }
     
-    public IType getExpressionType() {
-    	return null;
-    }
-
 	@Override
 	public final IASTNode[] getNodes() {
 		return getExpressions();

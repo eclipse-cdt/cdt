@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
@@ -35,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -202,7 +205,10 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		try {
 			if (binding instanceof IVariable) {
 				IType e2= ((IVariable) binding).getType();
-				if (binding instanceof ICPPField && !((ICPPField) binding).isStatic()) {
+				e2= SemanticUtil.getNestedType(e2, TDEF);
+				if (e2 instanceof ICPPReferenceType) {
+					e2= glvalueType(e2);
+				} else if (binding instanceof ICPPField && !((ICPPField) binding).isStatic()) {
 					IType e1= getFieldOwner().getExpressionType();
 					if (isPointerDereference()) {
 						e1= SemanticUtil.getNestedType(e1, TDEF | REF | CVTYPE);
@@ -211,23 +217,34 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 						}
 					}
 					e2 = addQualifiersForAccess((ICPPField) binding, e2, e1);
-				}
+					if (!isPointerDereference() && owner.getValueCategory() == PRVALUE) {
+						e2= prvalueType(e2);
+					} else {
+						e2= glvalueType(e2);
+					}
+				} 
                 return SemanticUtil.mapToAST(e2, this);
-			} else if (binding instanceof IEnumerator) {
+			} 
+			if (binding instanceof IEnumerator) {
 				return ((IEnumerator) binding).getType();
-			} else if (binding instanceof IFunction) {
+			} 
+			if (binding instanceof IFunction) {
 				return SemanticUtil.mapToAST(((IFunction) binding).getType(), this);
-			}  else if (binding instanceof ICPPUnknownBinding) {
+			}  
+			if (binding instanceof ICPPUnknownBinding) {
+				// mstodo type of unknown.
 				return CPPUnknownClass.createUnnamedInstance();
-			} else if (binding instanceof IProblemBinding) {
+			} 
+			if (binding instanceof IProblemBinding) {
 				return (IType) binding;
 			} 
+			// mstodo problem type.
+			return null;
 	    } catch (DOMException e) {
 	        return e.getProblem();
         }
-	    return null;
     }
-
+    
 	public static IType addQualifiersForAccess(ICPPField field, IType fieldType, IType ownerType) throws DOMException {
 		CVQualifier cvq1 = SemanticUtil.getCVQualifier(ownerType);
 		if (field.isMutable()) {
@@ -244,23 +261,34 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 	}
 
     
-	public boolean isLValue() {
-		if (isPointerDereference())
-			return true;
-		
-		IBinding b= getFieldName().resolveBinding();
+	public ValueCategory getValueCategory() {
+		IASTName name= getFieldName();
+		IBinding binding = name.resolvePreBinding();
 		try {
-			if (b instanceof ICPPMember && ((ICPPMember) b).isStatic())
-				return true;
-			if (b instanceof IVariable) {
-				if (SemanticUtil.getNestedType(((IVariable) b).getType(), TDEF) instanceof ICPPReferenceType) {
-					return true;
+			if (binding instanceof IVariable) {
+				IType e2= ((IVariable) binding).getType();
+				e2= SemanticUtil.getNestedType(e2, TDEF);
+				if (e2 instanceof ICPPReferenceType) {
+					return LVALUE;
+				} 
+				if (binding instanceof ICPPField && !((ICPPField) binding).isStatic()) {
+					if (isPointerDereference())
+						return LVALUE;
+
+					return owner.getValueCategory();
 				}
-				return getFieldOwner().isLValue();
-			}
-		} catch (DOMException e) {
-		}
-		return false;
+				return LVALUE;
+			} 
+			if (binding instanceof IFunction) {
+				return LVALUE;
+			}  
+	    } catch (DOMException e) {
+        }
+		return PRVALUE;
+	}
+	
+	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
 	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {

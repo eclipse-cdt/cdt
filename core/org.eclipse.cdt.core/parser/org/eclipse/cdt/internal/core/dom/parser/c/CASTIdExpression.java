@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,11 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 	public boolean isLValue() {
 		return true;
 	}
+	
+	public final ValueCategory getValueCategory() {
+		return ValueCategory.LVALUE;
+	}
+
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CVisitor.findBindingsForContentAssist(n, isPrefix);

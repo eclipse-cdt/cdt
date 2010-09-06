@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
+
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -29,6 +33,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
     private IASTExpression operand;
 	private IASTTypeId typeId;
 	private IType fType;
+	private ValueCategory fValueCategory;
 	
     public CPPASTCastExpression() {
 	}
@@ -119,13 +124,22 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
     
 	public IType getExpressionType() {
 		if (fType == null) {
-			fType= CPPVisitor.createType(typeId.getAbstractDeclarator());
+			IType t= CPPVisitor.createType(typeId.getAbstractDeclarator());
+			fValueCategory= valueCategoryFromReturnType(t);
+			fType= typeFromReturnType(t);
 		}
 		return fType;
 	}
 
+	public ValueCategory getValueCategory() {
+		if (fValueCategory == null) {
+			getExpressionType(); // as a side effect fValueCategory is computed
+		}
+		return fValueCategory;
+	}
+
 	public boolean isLValue() {
-		return CPPVisitor.isLValueReference(getExpressionType());
+		return getValueCategory() == LVALUE;
 	}
 	
 	

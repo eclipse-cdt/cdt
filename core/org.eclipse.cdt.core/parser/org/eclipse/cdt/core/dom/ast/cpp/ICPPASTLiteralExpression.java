@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,8 +36,9 @@ public interface ICPPASTLiteralExpression extends IASTLiteralExpression {
 	public static final int lk_false = IASTLiteralExpression.lk_false;
 
 	/**
-	 * <code>lk_last</code> is maintained for future subinterfaces.
+	 * @deprecated All constants must be defined in {@link IASTLiteralExpression}.
 	 */
+	@Deprecated
 	public static final int lk_last = lk_false;
 	
 	

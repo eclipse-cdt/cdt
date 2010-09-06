@@ -13,11 +13,13 @@ package org.eclipse.cdt.internal.core.dom.parser;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
@@ -139,7 +141,13 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		return bestAlternative;
 	}
     
-	public boolean isLValue() {
-    	return false;
+    public final IType getExpressionType() {
+		throw new UnsupportedOperationException();
+    }
+    public final ValueCategory getValueCategory() {
+		throw new UnsupportedOperationException();
+    }
+	public final boolean isLValue() {
+		throw new UnsupportedOperationException();
     }
 }

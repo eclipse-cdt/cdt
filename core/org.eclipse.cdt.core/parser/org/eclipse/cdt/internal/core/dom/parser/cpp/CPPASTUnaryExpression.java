@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
@@ -48,7 +51,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
  * Unary expression in c++
  */
 public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpression, IASTAmbiguityParent {
-    private int op;
+	private static final CPPBasicType BOOLEAN_TYPE = new CPPBasicType(Kind.eBoolean, 0);
+
+	private int op;
     private IASTExpression operand;
 
     private ICPPFunction overload = UNINITIALIZED_FUNCTION;
@@ -187,6 +192,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 				try {
 					if (name instanceof ICPPASTQualifiedName) {
 						if (!member.isStatic()) { // so if the member is static it will fall through
+							overload= null;
 							if (!inParenthesis) {
 								return new CPPPointerToMemberType(member.getType(), member.getClassOwner(), false, false);
 							} else if (member instanceof IFunction) {
@@ -210,6 +216,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			return CPPVisitor.get_SIZE_T(this);
 		case op_typeid:
 			return CPPVisitor.get_type_info(this);
+		case op_bracketedPrimary:
+			return getOperand().getExpressionType();
 		}
 		
 		final IASTExpression operand = getOperand();
@@ -219,14 +227,16 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 			if (ptm != null)
 				return ptm;
 
-			IType operator = findOperatorReturnType();
-			if (operator != null)
-				return operator;
+	    	ICPPFunction overload = getOverload();
+	    	if (overload != null)
+	    		return typeFromFunctionCall(overload);
 
-			IType type= operand.getExpressionType();
-			type = SemanticUtil.getNestedType(type, TDEF | REF);
-			return new CPPPointerType(type);
+			return new CPPPointerType(operand.getExpressionType());
 		}
+
+    	ICPPFunction overload = getOverload();
+    	if (overload != null)
+    		return typeFromFunctionCall(overload);
 
 		if (op == op_star) {
 			IType type= operand.getExpressionType();
@@ -234,73 +244,73 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 	    	if (type instanceof IProblemBinding) {
 	    		return type;
 	    	}
-		    IType operator = findOperatorReturnType();
-			if (operator != null) {
-				return operator;
-			} else if (type instanceof IPointerType || type instanceof IArrayType) {
-				return ((ITypeContainer) type).getType();
-			} else if (type instanceof ICPPUnknownType) {
+
+	    	if (type instanceof IPointerType || type instanceof IArrayType) {
+	    		type= ((ITypeContainer) type).getType();
+	    		return glvalueType(type);
+			} 
+	    	if (type instanceof ICPPUnknownType) {
+	    		// mstodo Type of unknown
 				return CPPUnknownClass.createUnnamedInstance();
 			}
 			return new ProblemBinding(this, IProblemBinding.SEMANTIC_INVALID_TYPE, this.getRawSignature().toCharArray());
 		}
 
-		IType origType= operand.getExpressionType();
-		IType type = SemanticUtil.getUltimateTypeUptoPointers(origType);
-		IType operator = findOperatorReturnType();
-		if (operator != null) {
-			return operator;
-		}
-		
+		IType typeOfOperand= operand.getExpressionType();
+
 		switch (op) {
 		case op_not:
-			return new CPPBasicType(Kind.eBoolean, 0);
+			return BOOLEAN_TYPE;
+		case op_postFixDecr:
+		case op_postFixIncr:
+			typeOfOperand= prvalueType(typeOfOperand);
+			break;
 		case op_minus:
 		case op_plus:
 		case op_tilde:
-			IType t= CPPArithmeticConversion.promoteCppType(type);
+			IType t= CPPArithmeticConversion.promoteCppType(prvalueType(typeOfOperand));
 			if (t != null) {
 				return t;
 			}
 			break;
 		}
 
-		if (origType instanceof CPPBasicType) {
-			((CPPBasicType) origType).setFromExpression(this);
+		if (typeOfOperand instanceof CPPBasicType) {
+			((CPPBasicType) typeOfOperand).setFromExpression(this);
 		}
-		return origType;
+		return typeOfOperand;
     }
 
-	public boolean isLValue() {
-		ICPPFunction op = getOverload();
-		if (op != null) {
-			try {
-				return CPPVisitor.isLValueReference(op.getType().getReturnType());
-			} catch (DOMException e) {
-			}
-		}
-
-		switch (getOperator()) {
+    public ValueCategory getValueCategory() {
+    	final int op= getOperator();
+		switch (op) {
+		case op_typeid:
+			return LVALUE;
+		case op_sizeof:
+		case op_sizeofParameterPack:
+			return PRVALUE;
 		case op_bracketedPrimary:
-			return getOperand().isLValue();
-		case op_star:
-		case op_prefixDecr:
-		case op_prefixIncr:
-			return true;
-		default:
-			return false;
+			return (operand).getValueCategory();
 		}
-	}
+		
+		if (op == op_amper && computePointerToMemberType() != null) {
+			return PRVALUE;
+		}
 
-    private IType findOperatorReturnType() {
-    	ICPPFunction operatorFunction = getOverload();
-    	if (operatorFunction != null) {
-    		try {
-				return operatorFunction.getType().getReturnType();
-			} catch (DOMException e) {
-				return e.getProblem();
-			}
+		ICPPFunction overload = getOverload();
+    	if (overload != null)
+    		return valueCategoryFromFunctionCall(overload);
+
+    	switch(op) {
+    	case op_star:
+    	case op_prefixDecr:
+    	case op_prefixIncr:
+			return LVALUE;
     	}
-    	return null;
+		return PRVALUE;
     }
+    
+	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
+	}
 }

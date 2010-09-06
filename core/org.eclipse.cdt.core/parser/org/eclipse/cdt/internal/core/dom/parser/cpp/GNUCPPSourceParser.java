@@ -115,7 +115,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
-import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
@@ -2576,7 +2575,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			simpleType= IASTSimpleDeclSpecifier.t_typeof;
         			consume(IGCCToken.t_typeof);
         			typeofExpression= parseTypeidInParenthesisOrUnaryExpression(false, LA(1).getOffset(), 
-        					IGNUASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
+        					IASTTypeIdExpression.op_typeof, -1, CastExprCtx.eNotBExpr);
 
         			encounteredTypename= true;
         			endOffset= calculateEndOffset(typeofExpression);

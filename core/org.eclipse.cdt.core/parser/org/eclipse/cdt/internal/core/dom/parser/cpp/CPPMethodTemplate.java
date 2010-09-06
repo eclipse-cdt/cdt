@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -146,6 +147,18 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
 			if (declSpec != null) {
 				return declSpec.isVirtual();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isStatic(boolean resolveAll) {
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if (decl instanceof ICPPASTTemplateDeclaration) {
+			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
+			if (declSpec != null) {
+				return declSpec.getStorageClass() == IASTDeclSpecifier.sc_static;
 			}
 		}
 		return false;

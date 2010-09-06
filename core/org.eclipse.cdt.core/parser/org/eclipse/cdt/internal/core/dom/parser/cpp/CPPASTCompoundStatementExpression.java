@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -20,7 +23,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
- * @author jcamelon
+ * Gnu-extension: ({ ... })
  */
 public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression {
 	
@@ -82,19 +85,16 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 		if (statements.length > 0) {
 			IASTStatement st = statements[statements.length - 1];
 			if (st instanceof IASTExpressionStatement)
-				return ((IASTExpressionStatement) st).getExpression().getExpressionType();
+				return prvalueType(((IASTExpressionStatement) st).getExpression().getExpressionType());
 		}
 		return null;
 	}
     
 	public boolean isLValue() {
-		IASTCompoundStatement compound = getCompoundStatement();
-		IASTStatement[] statements = compound.getStatements();
-		if (statements.length > 0) {
-			IASTStatement st = statements[statements.length - 1];
-			if (st instanceof IASTExpressionStatement)
-				return ((IASTExpressionStatement)st).getExpression().isLValue();
-		}
 		return false;
+	}
+
+	public ValueCategory getValueCategory() {
+		return PRVALUE;
 	}
 }

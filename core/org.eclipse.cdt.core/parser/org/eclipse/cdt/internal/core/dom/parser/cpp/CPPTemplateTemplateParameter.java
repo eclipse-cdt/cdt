@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -38,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * A template template parameter.
@@ -107,8 +107,13 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 				if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
 					ICPPASTTemplatedTypeTemplateParameter param = (ICPPASTTemplatedTypeTemplateParameter) parent;
 					IASTExpression value = param.getDefaultValue();
-					if (value != null)
-						return CPPVisitor.createType(value);
+					if (value instanceof IASTIdExpression) {
+						IASTName name= ((IASTIdExpression) value).getName();
+						IBinding b= name.resolveBinding();
+						if (b instanceof IType) {
+							return (IType) b;
+						}
+					}
 				}
 			}
 		}

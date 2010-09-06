@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -20,11 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
-/**
- * @author jcamelon
- */
-public class CPPASTConditionalExpression extends ASTNode implements
-        IASTConditionalExpression, IASTAmbiguityParent {
+public class CPPASTConditionalExpression extends ASTNode implements IASTConditionalExpression,
+		IASTAmbiguityParent {
 	
     private IASTExpression condition;
     private IASTExpression negative;
@@ -134,6 +134,7 @@ public class CPPASTConditionalExpression extends ASTNode implements
         }
     }
     
+    // mstodo type of conditional operator
     public IType getExpressionType() {
 		IASTExpression positiveExpression = getPositiveResultExpression();
 		if (positiveExpression == null) {
@@ -146,7 +147,12 @@ public class CPPASTConditionalExpression extends ASTNode implements
 		return t2;
     }
 
+    // mstodo
+    public ValueCategory getValueCategory() {
+    	return PRVALUE;
+    }
+    
 	public boolean isLValue() {
-		return false;
+		return getValueCategory() == LVALUE;
 	}
 }

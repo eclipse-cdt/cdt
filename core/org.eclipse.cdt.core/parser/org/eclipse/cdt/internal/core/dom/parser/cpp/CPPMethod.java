@@ -208,6 +208,18 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	public boolean isMutable() {
         return hasStorageClass( this, IASTDeclSpecifier.sc_mutable );
     }
+    
+	@Override
+	public boolean isStatic(boolean resolveAll) {
+		IASTDeclaration decl = getPrimaryDeclaration();
+		if (decl != null) {
+			ICPPASTDeclSpecifier declSpec = getDeclSpec(decl);
+			if (declSpec != null) {
+				return declSpec.getStorageClass() == IASTDeclSpecifier.sc_static;
+			}
+		}
+		return false;
+	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()

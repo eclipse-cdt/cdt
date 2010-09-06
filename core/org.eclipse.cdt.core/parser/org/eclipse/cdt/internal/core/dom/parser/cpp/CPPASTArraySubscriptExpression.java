@@ -12,13 +12,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
  
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
@@ -27,7 +31,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
@@ -120,8 +125,8 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     	if (overload == UNINITIALIZED_FUNCTION) {
     		overload= null;
     		IType t = getArrayExpression().getExpressionType();
-    		t= SemanticUtil.getUltimateTypeUptoPointers(t);
-    		if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownType)) {
+    		t= SemanticUtil.getNestedType(t, TDEF | REF | CVTYPE);
+    		if (t instanceof ICPPClassType) {
     			overload= CPPSemantics.findOverloadedOperator(this);
     		}
     	}
@@ -177,34 +182,42 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
     public IType getExpressionType() {
 		ICPPFunction op = getOverload();
 		if (op != null) {
-			try {
-				return op.getType().getReturnType();
-			} catch (DOMException e) {
-				return e.getProblem();
+			return ExpressionTypes.typeFromFunctionCall(op);
+		}
+		IType t1 = getArrayExpression().getExpressionType();
+		t1= Conversions.lvalue_to_rvalue(t1);
+		if (t1 instanceof IPointerType) {
+			t1= ((IPointerType) t1).getType();
+			return glvalueType(t1);
+		}
+		
+		IType t2= null;
+		IASTInitializerClause arg = getArgument();
+		if (arg instanceof IASTExpression) {
+			t2= Conversions.lvalue_to_rvalue(t2);
+			if (t2 instanceof IPointerType) {
+				t2= ((IPointerType) t2).getType();
+				return glvalueType(t2);
 			}
 		}
-		IType t = getArrayExpression().getExpressionType();
-		t= SemanticUtil.getUltimateTypeUptoPointers(t);
-		if (t instanceof ICPPUnknownType) {
+		if (t1 instanceof ICPPUnknownType || t2 instanceof ICPPUnknownType) {
+			// mstodo type of unknown
 			return CPPUnknownClass.createUnnamedInstance();
 		}
-		if (t instanceof IPointerType) {
-			return ((IPointerType) t).getType();
-		}
-		if (t instanceof IArrayType) {
-			return ((IArrayType) t).getType();
-		}
+		
+		// mstodo return problem type
 		return null;
     }
 
 	public boolean isLValue() {
+		return getValueCategory() == LVALUE;
+	}
+
+	public ValueCategory getValueCategory() {
 		ICPPFunction op = getOverload();
 		if (op != null) {
-			try {
-				return CPPVisitor.isLValueReference(op.getType().getReturnType());
-			} catch (DOMException e) {
-			}
+			return ExpressionTypes.valueCategoryFromFunctionCall(op);
 		}
-		return true;
+		return ValueCategory.LVALUE;
 	}
 }

@@ -259,4 +259,12 @@ public class BasicCompletionTest extends CompletionTestBase {
 		String[] expected= {"B"};
 		checkCompletion(code, true, expected);
 	}
+	
+	//	typedef int tint;
+	//	void f(x) ti
+	public void testIncompleteKnrFunction_Bug324384() throws Exception {
+		String code = getAboveComment();
+		String[] expected= {"tint"};
+		checkCompletion(code, false, expected);
+	}
 }

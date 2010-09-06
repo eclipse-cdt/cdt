@@ -1890,7 +1890,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             // look ahead for the start of the function body, if end of file is
             // found then return 0 parameters found (implies not KnR C)
             int previous=-1;
-            int next=LA(1).hashCode();
             while (LT(1) != IToken.tLBRACE) {
             	// fix for 100104: check if the parameter declaration is a valid one
             	try {
@@ -1900,7 +1899,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 					return 0;
 				}            	
             	
-               	next = LA(1).hashCode();
+               	final IToken t = LA(1);
+               	if (t.getType() == IToken.tEOC)
+               		break;
+               	
+               	final int next = t.hashCode();
                	if (next == previous) { // infinite loop detected
                		break;
                	}

@@ -761,7 +761,11 @@ public class SystemViewRemoteFileAdapter
 		    }
 		}
 
-		synchronized (file){
+		// taking out the synchronized block to avoid potential deadlock
+		// TODO next release, find a risk-free way to avoid duplicate queries
+		// synchronized (file)
+		
+		{
 			boolean hasChildren = file.hasContents(RemoteChildrenContentsType.getInstance(), filter);
 	
 			if (hasChildren && !file.isStale())

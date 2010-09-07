@@ -38,6 +38,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
@@ -1109,11 +1110,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 						charPos++;
 						if (charPos < lineEnd) {
-							lastWhitespaceEdit= new DeleteEdit(charPos, lineEnd - charPos);
-							if (rootEdit == null) {
-								rootEdit = new MultiTextEdit();
+							// check partition - don't remove whitespace inside strings
+							ITypedRegion partition = TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, charPos, false);
+							if (!ICPartitions.C_STRING.equals(partition.getType())) {
+								lastWhitespaceEdit= new DeleteEdit(charPos, lineEnd - charPos);
+								if (rootEdit == null) {
+									rootEdit = new MultiTextEdit();
+								}
+								rootEdit.addChild(lastWhitespaceEdit);
 							}
-							rootEdit.addChild(lastWhitespaceEdit);
 						}
 					}
 				}

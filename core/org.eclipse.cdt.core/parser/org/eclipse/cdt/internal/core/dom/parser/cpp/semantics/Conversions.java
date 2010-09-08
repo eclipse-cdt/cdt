@@ -480,8 +480,8 @@ public class Conversions {
 				final IValue av= at.getSize();
 				final IValue sv= st.getSize();
 				if (av == sv || (av != null && av.equals(sv))) {
-					t= SemanticUtil.getNestedType(at.getType(), TDEF | REF);
-					s= SemanticUtil.getNestedType(st.getType(), TDEF | REF);
+					t= SemanticUtil.getNestedType(at.getType(), TDEF | REF | ALLCVQ);
+					s= SemanticUtil.getNestedType(st.getType(), TDEF | REF | ALLCVQ);
 				} else {
 					return -1;
 				}
@@ -797,7 +797,7 @@ public class Conversions {
 	 */
 	private static final boolean lvalue_to_rvalue(final Cost cost) {
 		IType target = getNestedType(cost.target, REF | TDEF | ALLCVQ);
-		IType source= getNestedType(cost.source, REF | TDEF | ALLCVQ);
+		IType source= getNestedType(cost.source, REF | TDEF);
 		
 		// 4.2 array to pointer conversion
 		if (source instanceof IArrayType) {
@@ -826,15 +826,14 @@ public class Conversions {
 					}
 				}
 			}
-			if (!isConverted && (target instanceof IPointerType || target instanceof IBasicType)) {
+			if (!isConverted) {
 				source = new CPPPointerType(getNestedType(arrayType.getType(), TDEF));
 			}
-		} else if (target instanceof IPointerType) {
+		} else if (source instanceof IFunctionType) {
 			// 4.3 function to pointer conversion
-			final IType targetPtrTgt= getNestedType(((IPointerType) target).getType(), TDEF);
-			if (targetPtrTgt instanceof IFunctionType && source instanceof IFunctionType) {
-				source = new CPPPointerType(source);
-			} 
+			source = new CPPPointerType(source);
+		} else {
+			source = getNestedType(source, TDEF | REF | ALLCVQ);
 		}
 
 		if (source == null || target == null) {

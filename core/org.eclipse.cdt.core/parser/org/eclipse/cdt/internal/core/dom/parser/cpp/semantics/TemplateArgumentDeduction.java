@@ -188,7 +188,6 @@ public class TemplateArgumentDeduction {
 				
 				boolean isDependentPar= CPPTemplates.isDependentType(par);
 				if (checkExactMatch || isDependentPar) {
-					boolean isReferenceTypeParameter= false;
 					IType arg = fnArgs[j];
 					par= SemanticUtil.getNestedType(par, SemanticUtil.TDEF); // adjustParameterType preserves typedefs
 					
@@ -200,9 +199,11 @@ public class TemplateArgumentDeduction {
 						// Check if this is a deduced context
 						IType inner= Conversions.getInitListType(par);
 						if (inner != null) {
-							IType[] types = ((InitializerListType) arg).getExpressionTypes();
-							for (IType iType : types) {
-								if (!deduct.fromType(inner, iType, false))
+							final InitializerListType initListType = (InitializerListType) arg;
+							IType[] types = initListType.getExpressionTypes();
+							ValueCategory[] valueCats = initListType.getValueCategories();
+							for (int i = 0; i < types.length; i++) {
+								if (!deduceFromFunctionArg(inner, types[i], valueCats[i], checkExactMatch, isDependentPar, deduct))
 									return false;
 							}
 						}
@@ -210,70 +211,9 @@ public class TemplateArgumentDeduction {
 					}
 
 					// 14.8.2.1-2
-					if (par instanceof ICPPReferenceType) {
-						// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
-						// lvalue, the type "lvalue reference to A" is used in place of A for type deduction.
-						isReferenceTypeParameter= true;
-						final ICPPReferenceType refPar = (ICPPReferenceType) par;
-						if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && 
-								argIsLValue != null && argIsLValue[j] == LVALUE) {
-							arg= new CPPReferenceType(getSimplifiedType(arg), false);
-						} else {
-							arg= getArgumentTypeForDeduction(arg, true);
-						}
-						par= SemanticUtil.getNestedType(par, SemanticUtil.REF | SemanticUtil.TDEF);
-					} else {
-						arg= getArgumentTypeForDeduction(arg, false);
-					}
-					
-					if (!checkExactMatch) {
-						// 14.8.2.1-3
-						CVQualifier cvPar= SemanticUtil.getCVQualifier(par);
-						CVQualifier cvArg= SemanticUtil.getCVQualifier(arg);
-						if (cvPar == cvArg || (isReferenceTypeParameter && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
-							IType pcheck= SemanticUtil.getNestedType(par, CVTYPE);
-							if (!(pcheck instanceof ICPPTemplateParameter)) {
-								par= pcheck;
-								arg= SemanticUtil.getNestedType(arg, CVTYPE);
-								IType argcheck= arg;
-								if (par instanceof IPointerType && arg instanceof IPointerType) {
-									pcheck= ((IPointerType) par).getType();
-									argcheck= ((IPointerType) arg).getType();
-									if (pcheck instanceof ICPPTemplateParameter) {
-										pcheck= null;
-									} else {
-										cvPar= SemanticUtil.getCVQualifier(pcheck);
-										cvArg= SemanticUtil.getCVQualifier(argcheck);
-										if (cvPar.isAtLeastAsQualifiedAs(cvArg)) {
-											pcheck= SemanticUtil.getNestedType(pcheck, CVTYPE);
-											argcheck= SemanticUtil.getNestedType(argcheck, CVTYPE);
-										} else {
-											pcheck= null;
-										}
-									}
-								}
-								if (pcheck instanceof ICPPTemplateInstance && argcheck instanceof ICPPClassType) {
-									ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
-									ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
-									if (pTemplate != null) {
-										ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
-										if (aInst != null && aInst != argcheck) {
-											par= pcheck;
-											arg= aInst;
-										}
-									}
-								}
-							}
-						}
-					}
-					
-					if (isDependentPar && !deduct.fromType(par, arg, true)) {
+					ValueCategory cat= argIsLValue != null ? argIsLValue[j] : LVALUE;
+					if (!deduceFromFunctionArg(par, arg, cat, checkExactMatch, isDependentPar, deduct)) {
 						return false;
-					}
-					if (checkExactMatch) {
-						IType instantiated= CPPTemplates.instantiateType(par, deduct.fDeducedArgs, deduct.fPackOffset, null);
-						if (!instantiated.isSameType(arg))
-							return false;
 					}
 				}
 			}
@@ -290,6 +230,76 @@ public class TemplateArgumentDeduction {
 		return false;
 	}
 	
+	private static boolean deduceFromFunctionArg(IType par, IType arg, ValueCategory valueCat, boolean checkExactMatch, boolean isDependentPar, TemplateArgumentDeduction deduct) throws DOMException {
+		boolean isReferenceTypeParameter= false;
+		if (par instanceof ICPPReferenceType) {
+			// If P is an rvalue reference to a cv-unqualified template parameter and the argument is an
+			// lvalue, the type "lvalue reference to A" is used in place of A for type deduction.
+			isReferenceTypeParameter= true;
+			final ICPPReferenceType refPar = (ICPPReferenceType) par;
+			if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && 
+					valueCat == LVALUE) {
+				arg= new CPPReferenceType(getSimplifiedType(arg), false);
+			} else {
+				arg= getArgumentTypeForDeduction(arg, true);
+			}
+			par= SemanticUtil.getNestedType(par, REF | TDEF);
+		} else {
+			arg= getArgumentTypeForDeduction(arg, false);
+		}
+		
+		if (!checkExactMatch) {
+			// 14.8.2.1-3
+			CVQualifier cvPar= SemanticUtil.getCVQualifier(par);
+			CVQualifier cvArg= SemanticUtil.getCVQualifier(arg);
+			if (cvPar == cvArg || (isReferenceTypeParameter && cvPar.isAtLeastAsQualifiedAs(cvArg))) {
+				IType pcheck= SemanticUtil.getNestedType(par, CVTYPE);
+				if (!(pcheck instanceof ICPPTemplateParameter)) {
+					par= pcheck;
+					arg= SemanticUtil.getNestedType(arg, CVTYPE);
+					IType argcheck= arg;
+					if (par instanceof IPointerType && arg instanceof IPointerType) {
+						pcheck= ((IPointerType) par).getType();
+						argcheck= ((IPointerType) arg).getType();
+						if (pcheck instanceof ICPPTemplateParameter) {
+							pcheck= null;
+						} else {
+							cvPar= SemanticUtil.getCVQualifier(pcheck);
+							cvArg= SemanticUtil.getCVQualifier(argcheck);
+							if (cvPar.isAtLeastAsQualifiedAs(cvArg)) {
+								pcheck= SemanticUtil.getNestedType(pcheck, CVTYPE);
+								argcheck= SemanticUtil.getNestedType(argcheck, CVTYPE);
+							} else {
+								pcheck= null;
+							}
+						}
+					}
+					if (pcheck instanceof ICPPTemplateInstance && argcheck instanceof ICPPClassType) {
+						ICPPTemplateInstance pInst = (ICPPTemplateInstance) pcheck;
+						ICPPClassTemplate pTemplate= getPrimaryTemplate(pInst);
+						if (pTemplate != null) {
+							ICPPClassType aInst= findBaseInstance((ICPPClassType) argcheck, pTemplate, CPPSemantics.MAX_INHERITANCE_DEPTH);	
+							if (aInst != null && aInst != argcheck) {
+								par= pcheck;
+								arg= aInst;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (isDependentPar && !deduct.fromType(par, arg, true)) {
+			return false;
+		}
+		if (checkExactMatch) {
+			IType instantiated= CPPTemplates.instantiateType(par, deduct.fDeducedArgs, deduct.fPackOffset, null);
+			if (!instantiated.isSameType(arg))
+				return false;
+		}
+		return true;
+	}
+
 	/**
 	 * 14.8.2.1.3 If P is a class and has the form template-id, then A can be a derived class of the deduced A.
 	 * @throws DOMException 

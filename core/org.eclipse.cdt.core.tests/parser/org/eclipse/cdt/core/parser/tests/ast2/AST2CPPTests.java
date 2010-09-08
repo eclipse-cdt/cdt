@@ -8937,4 +8937,23 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertEquals(1, names.length);
 		assertTrue(names[0].resolveBinding() instanceof ICPPConstructor);
 	}
+	
+	//	void g(char *);
+	//	void f(char *);
+	//	void f(const char *);
+	//	void testa() {
+	//		f("abc");
+	//		g("abc");	
+	//	}
+	public void testRankingOfDeprecatedConversionOnStringLiteral() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction g= bh.assertNonProblem("g(char *)", 1);
+		IFunction fconst= bh.assertNonProblem("f(const char *)", 1);
+		
+		IBinding ref= bh.assertNonProblem("f(\"abc\")", 1);
+		assertSame(fconst, ref);
+		ref= bh.assertNonProblem("g(\"abc\")", 1);
+		assertSame(g, ref);
+	}
 }

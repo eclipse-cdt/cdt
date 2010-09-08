@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [272772] Exception handling in SystemEditableRemoteFile
  * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
  * David McKnight   (IBM)        - [310215] SystemEditableRemoteFile.open does not behave as expected
+ * David McKnight   (IBM)        - [324519] SystemEditableRemoteFile throws NPE when used in headless mode
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -268,12 +269,15 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		IEditorRegistry registry = getEditorRegistry();
 
-		IEditorDescriptor descriptor = registry.getDefaultEditor(fileName);
-		if (descriptor == null)
-		{
-			descriptor = getDefaultTextEditor();
+		if (registry != null){
+			IEditorDescriptor descriptor = registry.getDefaultEditor(fileName);
+			if (descriptor == null)
+			{
+				descriptor = getDefaultTextEditor();
+			}
+			
+			this._editorDescriptor = descriptor;
 		}
-		this._editorDescriptor = descriptor;
 	}
 
 	protected IEditorRegistry getEditorRegistry()

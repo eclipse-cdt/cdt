@@ -8,7 +8,7 @@
 	<property name="cdt-lr-parser-loc" value="${eclipse-home}/cdt_lr_parser_folder"/>
 	<property name="cdt-upc-parser-loc" value="${eclipse-home}/cdt_upc_parser_folder"/>
 	<property name="cdt-lr-parser-xlc-loc" value="${eclipse-home}/cdt_lr_parser_xlc_folder"/>
-	
+	<property name="cdt-vmargs" value=" -Xms40m -Xmx1024m"/>
 	<property name="cdt-common-vmargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
 	
 	<target name="init">
@@ -30,7 +30,7 @@
 			<property name="data-dir" value="${cdt-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -40,7 +40,7 @@
 			<property name="data-dir" value="${cdt-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -50,7 +50,7 @@
 			<property name="data-dir" value="${cdt-debug-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.debug.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.debug.core.tests.AllDebugTests"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -60,7 +60,7 @@
 			<property name="data-dir" value="${cdt-mbs-core-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.core.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.tests.suite.AllManagedBuildTests"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -70,7 +70,7 @@
 			<property name="data-dir" value="${cdt-mbs-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.managedbuilder.ui.tests.suite.AllManagedBuildUITests"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -80,7 +80,7 @@
 			<property name="data-dir" value="${cdt-lr-parser-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.lrparser.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.lrparser.tests.LRParserTestSuite"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -90,7 +90,7 @@
 			<property name="data-dir" value="${cdt-upc-parser-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.parser.upc.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.parser.upc.tests.UPCParserTestSuite"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -100,7 +100,7 @@
 			<property name="data-dir" value="${cdt-lr-parser-xlc-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.core.lrparser.xlc.tests"/>
 			<property name="classname" value="org.eclipse.cdt.core.parser.xlc.tests.suite.XlcTestSuite"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>
@@ -110,7 +110,7 @@
 			<property name="data-dir" value="${eclipse-home}/cdt_codan_folder"/>
 			<property name="plugin-name" value="org.eclipse.cdt.codan.core.test"/>
 			<property name="classname" value="org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite"/>
-			<property name="vmargs" value=" -Xms40m -Xmx512m"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
 			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
 		</ant>
 	</target>

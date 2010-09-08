@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -28,7 +27,7 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class DisassemblyView extends DisassemblyPart implements IViewPart {
 
-	private ISelectionListener fDebugViewListener;
+    private IDebugContextListener fDebugContextListener;
 
 	/**
 	 * 
@@ -61,10 +60,13 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
-		site.getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener= new ISelectionListener() {
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				updateDebugContext();
-			}});
+		DebugUITools.getDebugContextManager().addDebugContextListener(fDebugContextListener = new IDebugContextListener() {
+            public void debugContextChanged(DebugContextEvent event) {
+                if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
+                    updateDebugContext();
+                }
+            }
+        });
 	}
 
 	/*
@@ -95,7 +97,10 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 
 	@Override
 	public void dispose() {
-		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fDebugViewListener);
+	    if (fDebugContextListener != null) {
+	        DebugUITools.getDebugContextManager().removeDebugContextListener(fDebugContextListener);
+	        fDebugContextListener = null;
+	    }
 		super.dispose();
 	}
 }

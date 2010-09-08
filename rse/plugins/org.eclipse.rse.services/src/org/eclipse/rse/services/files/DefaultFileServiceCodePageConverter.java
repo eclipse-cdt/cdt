@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2010 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * David McKnight    (IBM)  -[220379] [api] Provide a means for contributing custom BIDI encodings
  * David McKnight    (IBM)  -[246857] Rename problem when a file is opened in the editor
  * David McKnight    (IBM)  -[279014] [dstore][encoding] text file corruption can occur when downloading from UTF8 to cp1252
+ * David McKnight    (IBM)  -[324669] [dstore] IBM-eucJP to UTF-8 char conversion appends nulls to end of file during text-mode download
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -76,7 +77,9 @@ public class DefaultFileServiceCodePageConverter implements
 				ByteBuffer lclBuf = encoder.encode(decodedBuf);
 				localBuffer = lclBuf.array();
 				outStream = new FileOutputStream(file);
-				outStream.write(localBuffer, 0, localBuffer.length);
+				
+				// use the limit rather than the array length to avoid unwanted nulls
+				outStream.write(localBuffer, 0, lclBuf.limit());
 			}
 		} catch (Exception e) {
 			// outstream could not be written properly: report

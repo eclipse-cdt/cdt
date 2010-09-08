@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -449,10 +449,12 @@ public class RegisterManager extends Manager {
 	private Register findRegister(RegisterDescriptor rd) throws CDIException {
 		Target target = (Target)rd.getTarget();
 		String name = rd.getName();
+		String fullName = rd.getFullName();
 		int position = rd.getPosition();
 		Register[] regs = getRegisters(target);
 		for (int i = 0; i < regs.length; i++) {
 			if (regs[i].getName().equals(name)
+				&& regs[i].getFullName().equals(fullName) 
 				&& regs[i].getCastingArrayStart() == rd.getCastingArrayStart()
 				&& regs[i].getCastingArrayEnd() == rd.getCastingArrayEnd()
 				&& VariableDescriptor.equalsCasting(regs[i], rd)) {

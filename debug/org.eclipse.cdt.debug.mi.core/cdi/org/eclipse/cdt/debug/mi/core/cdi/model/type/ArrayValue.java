@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2010 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,27 +35,51 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	private String hexAddress;
 	
 	/**
+	 * Construct the array value object given a variable
+	 * 
+	 * @param v
+	 * @since 7.1
+	 */
+	public ArrayValue(Variable v) {
+		super(v);
+	}
+
+	/**
 	 * Construct the array value object given a variable and the
 	 * hexadecimal address of the variable.
 	 * 
 	 * @param v
 	 * @param hexAddress
 	 */
-	public ArrayValue(Variable v, String hexAddress) {
-		super(v);
-		if (hexAddress == null || hexAddress.trim().length()==0) {
-			return;
-		} else if (hexAddress.startsWith("0x") || hexAddress.startsWith("0X")) { //$NON-NLS-1$ //$NON-NLS-2$
-			this.hexAddress = hexAddress.substring(2);
-		} else {
-			this.hexAddress = hexAddress;
-		}
+	public ArrayValue(Variable v, String address) {
+		this(v);
+		hexAddress = address;
 	}
 
+	/**
+	 * Compute array address as string.
+	 */
+	private String getAddressString() throws CDIException {
+		if (hexAddress != null) 
+			return hexAddress;
+		
+		String address = getVariable().getHexAddress();
+		if (address == null) {
+			address = ""; //$NON-NLS-1$
+		}
+		if (address.startsWith("0x") || address.startsWith("0X")) { //$NON-NLS-1$ //$NON-NLS-2$
+			hexAddress = address.substring(2);
+		} else {
+			hexAddress = address;
+		}
+		return hexAddress;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
-	public ICDIVariable[] getVariables() throws CDIException {
+	@Override
+    public ICDIVariable[] getVariables() throws CDIException {
 
 		/* GDB is appallingly slow on array fetches. As as slow as 128 entries
 		 * per second on NT gdbs with slow processors. We need to set a timeout
@@ -102,12 +126,14 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
 	public BigInteger pointerValue() throws CDIException {
-		if (hexAddress == null) 
-			return null;
-		try {
-			return new BigInteger(hexAddress, 16);
-		} catch (NumberFormatException e) {
-			return null;
+		String address = getAddressString();
+		if (address.length() > 0 ){
+			try {
+				return new BigInteger(address, 16);
+			} catch (NumberFormatException e) {
+				return null;
+			}
 		}
+		return null;
 	}
 }

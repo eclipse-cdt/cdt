@@ -154,7 +154,12 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		return fMIVar;
 	}
 
-	private String getHexAddress() throws CDIException {
+	/**
+	 * @return The address of this variable as hex string if available, otherwise an empty string.
+	 * @noreference This method is not intended to be referenced by clients outside CDT.
+     * @since 7.1
+     */
+	public String getHexAddress() throws CDIException {
 		if (hexAddress != null) {
 			return hexAddress;
 		}
@@ -162,8 +167,13 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		String qualName = "&(" + getQualifiedName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		VariableDescriptor desc = createDescriptor((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(), getName(), qualName, getPosition(), getStackDepth());
 		Variable v = vm.createVariable( desc );
-		v.setFormat(ICDIFormat.HEXADECIMAL);
-		hexAddress = v.getValue().getValueString();		
+	    // make sure to avoid infinite recursion. see bug 323630
+	    if (v != this) {
+	        v.setFormat(ICDIFormat.HEXADECIMAL);
+	        hexAddress = v.getValue().getValueString();
+	    } else {
+	        hexAddress = ""; //$NON-NLS-1$
+	    }
 		return hexAddress;
 	}
 
@@ -361,7 +371,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			} else if (t instanceof ICDIReferenceType) {
 				value = new ReferenceValue(this);
 			} else if (t instanceof ICDIArrayType) {
-				value = new ArrayValue(this, getHexAddress());
+				value = new ArrayValue(this);
 			} else if (t instanceof ICDIStructType) {
 				value = new StructValue(this);
 			} else {
@@ -510,7 +520,8 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getTypeName()
 	 */
-	public String getTypeName() throws CDIException {
+	@Override
+    public String getTypeName() throws CDIException {
 		if (fTypename == null) {
 			fTypename = getMIVar().getType();
 			if (fTypename == null || fTypename.length() == 0) {

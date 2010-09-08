@@ -268,7 +268,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 		checkCompletion(code, false, expected);
 	}
 	
-	//	void f(x) int y(
+	//	void f(x) int y(ti
 	public void testIncompleteKnrFunction_Bug324384b() throws Exception {
 		// Content assist won't work here, just verify that we don't run out of memory
 		String code = getAboveComment();

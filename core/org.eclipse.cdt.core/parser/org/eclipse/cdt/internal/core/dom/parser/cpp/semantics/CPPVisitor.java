@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -1791,6 +1791,7 @@ public class CPPVisitor extends ASTQueries {
 
 		IType type = AutoTypeResolver.AUTO_TYPE;
 		IType initType = null;
+		ValueCategory valueCat= null;
 		ICPPClassTemplate initializer_list_template = null;
 		try {
 			if (initClause instanceof ICPPASTInitializerList) {
@@ -1804,7 +1805,9 @@ public class CPPVisitor extends ASTQueries {
 			type = decorateType(type, declSpec, declarator);
 	
 			if (initClause instanceof IASTExpression) {
-				initType = ((IASTExpression) initClause).getExpressionType();
+				final IASTExpression expression = (IASTExpression) initClause;
+				initType = expression.getExpressionType();
+				valueCat= expression.getValueCategory();
 			} else if (initClause instanceof ICPPASTInitializerList) {
 				initType = new InitializerListType((ICPPASTInitializerList) initClause);
 			}
@@ -1816,8 +1819,8 @@ public class CPPVisitor extends ASTQueries {
 		}
 		ICPPFunctionTemplate template = new AutoTypeResolver(type);
 		CPPTemplateParameterMap paramMap = new CPPTemplateParameterMap(1);
-		TemplateArgumentDeduction.deduceFromFunctionArgs(template, new IType[] { initType }, new BitSet(),
-				paramMap, false);
+		TemplateArgumentDeduction.deduceFromFunctionArgs(template, new IType[] { initType },
+				new ValueCategory[] { valueCat }, paramMap, false);
 		ICPPTemplateArgument argument = paramMap.getArgument(0, 0);
 		if (argument == null) {
 			return null;

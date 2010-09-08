@@ -14,7 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import java.util.BitSet;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -60,7 +62,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -103,7 +104,7 @@ public class LookupData {
 	private ICPPASTParameterDeclaration[] functionParameters;
 	private IASTInitializerClause[] functionArgs;
 	private IType[] functionArgTypes;
-	private BitSet functionArgLValues;
+	private ValueCategory[] functionArgValueCategories;
 
 	public ICPPClassType skippedScope;
 	public Object foundItems = null;
@@ -526,40 +527,37 @@ public class LookupData {
 		return functionArgTypes;
 	}
 	
-	public BitSet getFunctionArgumentLValues() {
-		if (functionArgLValues == null) {
-			functionArgLValues= new BitSet();
-			IASTInitializerClause[] args= getFunctionArguments();
+	public ValueCategory[] getFunctionArgumentValueCategories() {
+		if (functionArgValueCategories == null) {
+			IASTInitializerClause[] args= functionArgs;
 			if (args != null) {
+				functionArgValueCategories= new ValueCategory[args.length];
 				for (int i = 0; i < args.length; i++) {
 					final IASTInitializerClause arg = args[i];
 					if (arg instanceof IASTExpression) {
-						functionArgLValues.set(i, ((IASTExpression) arg).isLValue());
-					} else {
-						functionArgLValues.set(i, false);
-					}
+						functionArgValueCategories[i]= ((IASTExpression) arg).getValueCategory();
+					} 
 				}
 			} else {
 				IType[] argTypes= getFunctionArgumentTypes();
 				if (argTypes != null) {
+					functionArgValueCategories= new ValueCategory[argTypes.length];
 					for (int i = 0; i < argTypes.length; i++) {
 						IType t= argTypes[i];
-						functionArgLValues.set(i, t instanceof ICPPReferenceType && !((ICPPReferenceType) t).isRValueReference());
+						functionArgValueCategories[i]= valueCategoryFromReturnType(t);
 					}
+				} else {
+					functionArgValueCategories= new ValueCategory[0];
 				}
 			}
 		}
-		return functionArgLValues;
+		return functionArgValueCategories;
 	}
 
 	public void setFunctionParameters(ICPPASTParameterDeclaration[] parameters) {
 		functionParameters= parameters;
 	}
 
-	public IASTInitializerClause[] getFunctionArguments() {
-		return functionArgs;
-	}
-	
 	public int getFunctionArgumentCount() {
 		if (functionArgs != null)
 			return functionArgs.length;

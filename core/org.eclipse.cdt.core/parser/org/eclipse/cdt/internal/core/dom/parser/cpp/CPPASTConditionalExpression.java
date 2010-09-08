@@ -134,7 +134,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
         }
     }
     
-    // mstodo type of conditional operator
+    // mstodo conditional operator (type)
     public IType getExpressionType() {
 		IASTExpression positiveExpression = getPositiveResultExpression();
 		if (positiveExpression == null) {
@@ -147,7 +147,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		return t2;
     }
 
-    // mstodo
+    // mstodo conditional operator (value category)
     public ValueCategory getValueCategory() {
     	return PRVALUE;
     }

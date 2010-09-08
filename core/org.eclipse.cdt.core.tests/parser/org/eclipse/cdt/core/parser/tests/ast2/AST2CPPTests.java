@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -8914,5 +8915,26 @@ public class AST2CPPTests extends AST2BaseTest {
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
 		bh.assertProblem("fint(pe + pe);", 4);
 		bh.assertNonProblem("fint(p + p);", 4);
+	}
+	
+	//	struct C {
+	//		C(const C& c) {}
+	//	};
+	//	struct D {
+	//		explicit operator C();
+	//	};
+	//	void f() {
+	//		D d;
+	//		C c (d);
+	//	}
+	public void testExplicitOperatorInDirectInit() throws Exception {
+		String code= getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code);
+		ICPPASTFunctionDefinition fdef= getDeclaration(tu, 2);
+		IASTDeclarationStatement declstmt= getStatement(fdef, 1);
+		IASTSimpleDeclaration decl= (IASTSimpleDeclaration) declstmt.getDeclaration();
+		IASTImplicitName[] names = ((IASTImplicitNameOwner) decl.getDeclarators()[0]).getImplicitNames();
+		assertEquals(1, names.length);
+		assertTrue(names[0].resolveBinding() instanceof ICPPConstructor);
 	}
 }

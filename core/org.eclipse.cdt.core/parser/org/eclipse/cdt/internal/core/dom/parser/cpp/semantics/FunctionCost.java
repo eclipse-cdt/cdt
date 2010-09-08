@@ -10,13 +10,17 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import java.util.BitSet;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
 
 /**
  * Cost for the entire function call
@@ -24,18 +28,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 class FunctionCost {
 	private final IFunction fFunction;
 	private final Cost[] fCosts;
-	private final BitSet fSourceIsLValue;
+	private final ValueCategory[] fValueCategories;
 	
 	public FunctionCost(IFunction fn, int paramCount) {
 		fFunction= fn;
 		fCosts= new Cost[paramCount];
-		fSourceIsLValue= new BitSet(paramCount);
+		fValueCategories= new ValueCategory[paramCount];
 	}
 	
 	public FunctionCost(IFunction fn, Cost cost) {
 		fFunction= fn;
 		fCosts= new Cost[] {cost};
-		fSourceIsLValue= null; // no udc will be performed
+		fValueCategories= null; // no udc will be performed
 	}
 
 	public int getLength() {
@@ -46,9 +50,9 @@ class FunctionCost {
 		return fCosts[idx];
 	}
 	
-	public void setCost(int idx, Cost cost, boolean sourceIsLValue) {
+	public void setCost(int idx, Cost cost, ValueCategory valueCat) {
 		fCosts[idx]= cost;
-		fSourceIsLValue.set(idx, sourceIsLValue);
+		fValueCategories[idx]= valueCat;
 	}
 
 	public IFunction getFunction() {
@@ -67,7 +71,7 @@ class FunctionCost {
 		for (Cost cost : fCosts) {
 			if (!cost.converts())
 				return false;
-			if (cost.isDeferredUDC())
+			if (cost.isDeferredUDC() != DeferredUDC.NONE)
 				return true;
 		}
 		return false;
@@ -76,13 +80,33 @@ class FunctionCost {
 	public boolean performUDC() throws DOMException {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
-			if (cost.isDeferredUDC()) {
-				Cost udcCost = Conversions.checkUserDefinedConversionSequence(fSourceIsLValue.get(i),
-						cost.source, cost.target, false, false);
-				fCosts[i] = udcCost;
-				if (!udcCost.converts()) {
-					return false;
-				}
+			Cost udcCost= null;
+			switch(cost.isDeferredUDC()) {
+			case NONE: 
+				continue;
+			case COPY_INIT_OF_CLASS:
+				udcCost = Conversions.copyInitializationOfClass(fValueCategories[i], cost.source,
+						(ICPPClassType) cost.target, false);
+				break;
+			case INIT_BY_CONVERSION:
+				IType uqSource= getNestedType(cost.source, TDEF | REF | CVTYPE);
+				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
+						(ICPPClassType) uqSource, cost.target, false);
+				break;
+			case LIST_INIT_OF_CLASS:
+				udcCost = Conversions.listInitializationOfClass((InitializerListType) cost.source, 
+						(ICPPClassType) cost.target, false, false); 
+				break;
+			case DIRECT_LIST_INIT_OF_CLASS:
+				udcCost = Conversions.listInitializationOfClass((InitializerListType) cost.source, 
+						(ICPPClassType) cost.target, true, false); 
+				break;
+			default:
+				return false;
+			}
+			fCosts[i] = udcCost;
+			if (!udcCost.converts()) {
+				return false;
 			}
 		}
 		return true;
@@ -163,7 +187,7 @@ class FunctionCost {
 			Cost otherCost= other.getCost(idxOther);
 			
 			int cmp;
-			if (cost.isDeferredUDC()) {
+			if (cost.isDeferredUDC() != DeferredUDC.NONE) {
 				cmp= cost.getRank().compareTo(otherCost.getRank());
 			} else {
 				cmp= cost.compareTo(otherCost);

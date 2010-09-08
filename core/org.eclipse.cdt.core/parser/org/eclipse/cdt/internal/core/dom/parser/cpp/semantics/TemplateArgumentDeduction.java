@@ -10,16 +10,17 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -60,7 +61,7 @@ public class TemplateArgumentDeduction {
 	 * 14.8.2.1
 	 */
 	static ICPPTemplateArgument[] deduceForFunctionCall(ICPPFunctionTemplate template,
-			ICPPTemplateArgument[] tmplArgs, IType[] fnArgs, BitSet argIsLValue, CPPTemplateParameterMap map)
+			ICPPTemplateArgument[] tmplArgs, IType[] fnArgs, ValueCategory[] argIsLValue, CPPTemplateParameterMap map)
 			throws DOMException {
 		final ICPPTemplateParameter[] tmplParams = template.getTemplateParameters();
 		final int numTmplParams = tmplParams.length;
@@ -151,7 +152,7 @@ public class TemplateArgumentDeduction {
 	 * Deduces the mapping for the template parameters from the function parameters,
 	 * returns <code>false</code> if there is no mapping.
 	 */
-	static boolean deduceFromFunctionArgs(ICPPFunctionTemplate template, IType[] fnArgs, BitSet argIsLValue,
+	static boolean deduceFromFunctionArgs(ICPPFunctionTemplate template, IType[] fnArgs, ValueCategory[] argIsLValue,
 			CPPTemplateParameterMap map, boolean checkExactMatch) {
 		try {
 			IType[] fnPars = template.getType().getParameterTypes();
@@ -214,7 +215,8 @@ public class TemplateArgumentDeduction {
 						// lvalue, the type "lvalue reference to A" is used in place of A for type deduction.
 						isReferenceTypeParameter= true;
 						final ICPPReferenceType refPar = (ICPPReferenceType) par;
-						if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && argIsLValue.get(j)) {
+						if (refPar.isRValueReference() && refPar.getType() instanceof ICPPTemplateParameter && 
+								argIsLValue != null && argIsLValue[j] == LVALUE) {
 							arg= new CPPReferenceType(getSimplifiedType(arg), false);
 						} else {
 							arg= getArgumentTypeForDeduction(arg, true);

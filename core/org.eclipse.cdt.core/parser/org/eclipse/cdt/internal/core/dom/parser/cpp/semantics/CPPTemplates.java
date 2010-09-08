@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
@@ -139,6 +141,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 
 /**
@@ -146,7 +149,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMod
  * type instantiation.
  */
 public class CPPTemplates {
-	private static final BitSet ALL_RVALUES = new BitSet();
 	private static final int PACK_SIZE_DEFER = -1;
 	private static final int PACK_SIZE_FAIL = -2;
 	private static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
@@ -1539,7 +1541,7 @@ public class CPPTemplates {
 	}
 	
 	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] allFnArgs, 
-			BitSet allArgIsLValue, IASTName name, boolean argsContainImpliedObject) {
+			ValueCategory[] allValueCategories, IASTName name, boolean argsContainImpliedObject) {
 		boolean requireTemplate= false;
 		if (name != null) {
 			if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
@@ -1551,7 +1553,7 @@ public class CPPTemplates {
 		}
 
 		IType[] reducedFnArgs= null;
-		BitSet reducedIsLValue= null;
+		ValueCategory[] reducedValueCategories= null;
 		ICPPTemplateArgument[] tmplArgs= null;
 		for (int i = 0; i < functions.length; i++) {
 			IFunction func = functions[i];
@@ -1560,23 +1562,23 @@ public class CPPTemplates {
 				functions[i]= null;
 				
 				final IType[] fnArgs;
-				final BitSet argIsLValue;
+				final ValueCategory[] valueCategories;
 				if (argsContainImpliedObject && template instanceof ICPPMethod) {
-					if (reducedIsLValue == null) {
+					if (reducedValueCategories == null) {
 						if (allFnArgs != null && allFnArgs.length > 0) {
 							reducedFnArgs= ArrayUtil.removeFirst(allFnArgs);
 						}
-						if (allArgIsLValue == null || allArgIsLValue.length() == 0) {
-							reducedIsLValue= ALL_RVALUES;
+						if (allValueCategories == null || allValueCategories.length == 0) {
+							reducedValueCategories= new ValueCategory[0];
 						} else {
-							reducedIsLValue= allArgIsLValue.get(1, allArgIsLValue.length());
+							reducedValueCategories= ArrayUtil.removeFirst(allValueCategories);
 						}
 					}
 					fnArgs= reducedFnArgs;
-					argIsLValue= reducedIsLValue;
+					valueCategories= reducedValueCategories;
 				} else {
 					fnArgs= allFnArgs;
-					argIsLValue= allArgIsLValue;
+					valueCategories= allValueCategories;
 				}
 				
 				// extract template arguments and parameter types.
@@ -1600,7 +1602,7 @@ public class CPPTemplates {
 				}
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
 				try {
-					ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, argIsLValue, map);
+					ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, valueCategories, map);
 					if (args != null) {
 						IBinding instance= instantiateFunctionTemplate(template, args, map);
 						if (instance instanceof IFunction) {
@@ -1719,7 +1721,7 @@ public class CPPTemplates {
 		
 		map= new CPPTemplateParameterMap(2);
 		final IType[] transferredParameterTypes = ((ICPPFunction) transferredTemplate).getType().getParameterTypes();
-		if (!TemplateArgumentDeduction.deduceFromFunctionArgs(f2, transferredParameterTypes, ALL_RVALUES, map, true))
+		if (!TemplateArgumentDeduction.deduceFromFunctionArgs(f2, transferredParameterTypes, null, map, true))
 			return false;
 		
 		final int last = tmplParams1.length -1;
@@ -1981,7 +1983,7 @@ public class CPPTemplates {
 	    } else if (paramType instanceof IArrayType) {
 	    	paramType = new CPPPointerType(((IArrayType) paramType).getType());
 		}
-		Cost cost = Conversions.checkImplicitConversionSequence(paramType, arg, true, UDCMode.noUDC, false);
+		Cost cost = Conversions.checkImplicitConversionSequence(paramType, arg, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY);
 		return cost != null && cost.converts();
 	}
 

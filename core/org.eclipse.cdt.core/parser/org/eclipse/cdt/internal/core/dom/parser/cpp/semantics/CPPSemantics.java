@@ -15,10 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -131,6 +133,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -193,6 +196,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -2288,7 +2292,7 @@ public class CPPSemantics {
 		}
 
 		if (!isFuncDecl || data.forExplicitFunctionSpecialization()) {
-			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.getFunctionArgumentLValues(), 
+			CPPTemplates.instantiateFunctionTemplates(fns, data.getFunctionArgumentTypes(), data.getFunctionArgumentValueCategories(), 
 					data.astName, data.argsContainImpliedObject);
 		}
 		
@@ -2386,7 +2390,7 @@ public class CPPSemantics {
 	private static FunctionCost costForFunctionCall(IFunction fn, boolean allowUDC, LookupData data)
 			throws DOMException {
 		IType[] argTypes = data.getFunctionArgumentTypes();
-		BitSet isLValue= data.getFunctionArgumentLValues();
+		ValueCategory[] isLValue= data.getFunctionArgumentValueCategories();
 		int skipArg= 0;
 	    final ICPPFunctionType ftype= (ICPPFunctionType) fn.getType();
 	    if (ftype == null)
@@ -2412,7 +2416,7 @@ public class CPPSemantics {
 		} else {
 			result= new FunctionCost(fn, sourceLen + 1);
 			
-			boolean sourceIsLValue= true;
+			ValueCategory sourceIsLValue= LVALUE;
 			if (impliedObjectType == null) {
 				impliedObjectType= data.getImpliedObjectType();
 			}
@@ -2425,7 +2429,7 @@ public class CPPSemantics {
 			} else if (impliedObjectType.isSameType(implicitParameterType)) {
 				cost = new Cost(impliedObjectType, implicitParameterType, Rank.IDENTITY);
 			} else {
-				cost = Conversions.checkImplicitConversionSequence(implicitParameterType, impliedObjectType, sourceIsLValue, UDCMode.noUDC, true);
+				cost = Conversions.checkImplicitConversionSequence(implicitParameterType, impliedObjectType, sourceIsLValue, UDCMode.FORBIDDEN, Context.IMPLICIT_OBJECT);
 			    if (!cost.converts()) {
 				    if (CPPTemplates.isDependentType(implicitParameterType) || CPPTemplates.isDependentType(impliedObjectType)) {
 				    	IType s= getNestedType(impliedObjectType, TDEF|REF|CVTYPE);
@@ -2443,17 +2447,17 @@ public class CPPSemantics {
 			result.setCost(k++, cost, sourceIsLValue);
 		}
 
-		final UDCMode udc = allowUDC ? UDCMode.deferUDC : UDCMode.noUDC;
+		final UDCMode udc = allowUDC ? UDCMode.DEFER : UDCMode.FORBIDDEN;
 		for (int j = 0; j < sourceLen; j++) {
 			final IType argType= SemanticUtil.getNestedType(argTypes[j+skipArg], TDEF | REF);
 			if (argType == null)
 				return null;
 
-			final boolean sourceIsLValue = isLValue.get(j+skipArg);
+			final ValueCategory sourceIsLValue = isLValue[j+skipArg];
 
 			IType paramType;
 			if (j < paramTypes.length) {
-				paramType= paramTypes[j];
+				paramType= getNestedType(paramTypes[j], TDEF);
 			} else if (!fn.takesVarArgs()) {
 				paramType= VOID_TYPE;
 			} else {
@@ -2467,7 +2471,16 @@ public class CPPSemantics {
 			} else {
 			    if (CPPTemplates.isDependentType(paramType))
 			    	return CONTAINS_DEPENDENT_TYPES;
-				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue, udc, false);
+			    
+			    Context ctx= Context.ORDINARY;
+			    if (j==0 && sourceLen == 1 && fn instanceof ICPPConstructor) {
+			    	if (paramType instanceof ICPPReferenceType && !((ICPPReferenceType) paramType).isRValueReference()) {
+			    		if (((ICPPConstructor) fn).getClassOwner().isSameType(getNestedType(paramType, TDEF|REF|CVTYPE))) {
+			    			ctx= Context.FIRST_PARAM_OF_DIRECT_COPY_CTOR;
+			    		}
+			    	}
+			    }
+				cost = Conversions.checkImplicitConversionSequence(paramType, argType, sourceIsLValue, udc, ctx);
 				if (data.fNoNarrowing && cost.isNarrowingConversion()) {
 					cost= Cost.NO_CONVERSION;
 				}
@@ -2941,22 +2954,23 @@ public class CPPSemantics {
 			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
-	    	
+	    	final ICPPClassType classType = (ICPPClassType) type;
+
 	    	// Copy initialization
 	    	if (initializer instanceof IASTEqualsInitializer) {
 	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
 	    		IASTInitializerClause initClause = eqInit.getInitializerClause();
 	    		IType sourceType= null;
-	    		boolean isLValue= false;
+	    		ValueCategory isLValue= PRVALUE;
 	    		if (initClause instanceof IASTExpression) {
 	    			final IASTExpression expr = (IASTExpression) initClause;
-					isLValue= expr.isLValue();
+					isLValue= expr.getValueCategory();
 	    			sourceType= SemanticUtil.getSimplifiedType(expr.getExpressionType());
 	    		} else if (initClause instanceof ICPPASTInitializerList) {
 	    			sourceType= new InitializerListType((ICPPASTInitializerList) initClause);
 	    		}
 	    		if (sourceType != null) {
-	    			Cost c= Conversions.checkUserDefinedConversionSequence(isLValue, sourceType, type, false, false);
+	    			Cost c= Conversions.copyInitializationOfClass(isLValue, sourceType, classType, false);
 	    			if (c.converts()) {
 	    				IFunction f= c.getUserDefinedConversion();
 	    				if (f instanceof ICPPConstructor)
@@ -2967,7 +2981,6 @@ public class CPPSemantics {
 	    	}
 	    			
 	    	// Direct Initialization
-	    	ICPPClassType classType = (ICPPClassType) type;
 			CPPASTName astName = new CPPASTName();
 		    astName.setName(classType.getNameCharArray());
 		    astName.setOffsetAndLength((ASTNode) name);
@@ -3022,9 +3035,6 @@ public class CPPSemantics {
 		return null;
     }
 
-	/**
-	 * mstodo remove
-	 */
 	public static IASTExpression createArgForType(IASTNode node, IType type) {
 		CPPASTName x= new CPPASTName();
 		x.setBinding(createVariable(x, type, false, false));    		

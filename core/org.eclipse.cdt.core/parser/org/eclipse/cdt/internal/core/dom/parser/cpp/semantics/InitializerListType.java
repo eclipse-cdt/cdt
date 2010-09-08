@@ -10,9 +10,8 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import java.util.BitSet;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
@@ -24,7 +23,7 @@ class InitializerListType implements IType {
 
 	private final ICPPASTInitializerList fInitializerList;
 	private IType[] fExpressionTypes;
-	private BitSet fLValues;
+	private ValueCategory[] fLValues;
 
 	public InitializerListType(ICPPASTInitializerList list) {
 		fInitializerList= list;
@@ -66,16 +65,14 @@ class InitializerListType implements IType {
 		return fExpressionTypes;
 	}
 
-	public BitSet getIsLValue() {
+	public ValueCategory[] getValueCategories() {
 		if (fLValues == null) {
 			final IASTInitializerClause[] clauses = fInitializerList.getClauses();
-			fLValues= new BitSet(clauses.length);
+			fLValues= new ValueCategory[clauses.length];
 			for (int i = 0; i < clauses.length; i++) {
 				IASTInitializerClause clause = clauses[i];
 				if (clause instanceof IASTExpression) {
-					if (((IASTExpression) clause).isLValue()) {
-						fLValues.set(i);
-					}
+					fLValues[i]= ((IASTExpression) clause).getValueCategory();
 				} 
 			}
 		}

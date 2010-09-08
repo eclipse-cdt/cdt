@@ -30,6 +30,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
  * See [over.best.ics] 13.3.3.1.
  */
 class Cost {
+	public enum DeferredUDC {
+		NONE, COPY_INIT_OF_CLASS, INIT_BY_CONVERSION, LIST_INIT_OF_CLASS, DIRECT_LIST_INIT_OF_CLASS
+	}
 	enum Rank {
 		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, 
 		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
@@ -52,7 +55,7 @@ class Cost {
 			assert false;
 		}
 		@Override
-		public void setDeferredUDC(boolean val) {
+		public void setDeferredUDC(DeferredUDC val) {
 			assert false;
 		}
 		@Override
@@ -79,7 +82,7 @@ class Cost {
 	private Rank fRank;
 	private Rank fSecondStandardConversionRank;
 	private boolean fAmbiguousUDC;
-	private boolean fDeferredUDC;
+	private DeferredUDC fDeferredUDC= DeferredUDC.NONE;
 	private int fQualificationAdjustments;
 	private int fInheritanceDistance;
 	private ICPPFunction fUserDefinedConversion;
@@ -119,12 +122,12 @@ class Cost {
 		fAmbiguousUDC= val;
 	}
 
-	public boolean isDeferredUDC() {
+	public DeferredUDC isDeferredUDC() {
 		return fDeferredUDC;
 	}
 
-	public void setDeferredUDC(boolean val) {
-		fDeferredUDC= val;
+	public void setDeferredUDC(DeferredUDC udc) {
+		fDeferredUDC= udc;
 	}
 
 	public int getInheritanceDistance() {
@@ -160,7 +163,7 @@ class Cost {
 			return -1;
 		
 		// cannot compare costs with deferred user defined conversions
-		assert !fDeferredUDC && !other.fDeferredUDC;
+		assert fDeferredUDC == DeferredUDC.NONE && other.fDeferredUDC == DeferredUDC.NONE;
 
 		int cmp= fRank.compareTo(other.fRank);
 		if (cmp != 0) 
@@ -218,8 +221,8 @@ class Cost {
 			buf.append(comma).append("inheritance=").append(fInheritanceDistance);
 			comma= ", ";
 		}
-		if (fDeferredUDC) {
-			buf.append(comma).append("deferred UDC");
+		if (fDeferredUDC != DeferredUDC.NONE) {
+			buf.append(comma).append(fDeferredUDC);
 			comma= ", ";
 		}
 		if (fAmbiguousUDC) {

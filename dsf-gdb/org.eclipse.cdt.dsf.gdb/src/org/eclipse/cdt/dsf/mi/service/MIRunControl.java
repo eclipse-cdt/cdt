@@ -591,6 +591,8 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
             ? e.getTriggeringContexts()[0] : null;
         fSuspended = true;
         fStepping = false;
+        
+        fResumePending = false;
     }
     
     /**

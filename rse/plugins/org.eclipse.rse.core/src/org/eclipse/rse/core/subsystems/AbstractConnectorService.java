@@ -39,6 +39,7 @@ import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.RSEModelObject;
+import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
@@ -423,59 +424,64 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * number of releases exceeds the initial count.
 	 */
 	// TODO it may be possible to replace this class with the one in the 5.0 JRE when we move to that as a base
-	private class Semaphore {
-		private int count = 1;
-		/**
-		 * Create a semaphore with the specified acquire count.
-		 * @param count
-		 */
-		Semaphore(int count) {
-			this.count = count;
-		}
-		/**
-		 * Acquire the semaphore. If the semaphore has already been acquired "count" times
-		 * then this waits for the timeout period. This method reports false if the timeout
-		 * expires before the semaphore becomes available.
-		 * @param timeout the time in milliseconds to wait for the semaphore.
-		 * @return true if the semaphore was acquired within the timeout period, false otherwise.
-		 */
-		synchronized boolean acquire(long timeout) {
-			long started = System.currentTimeMillis();
-			boolean expired = false;
-			boolean acquired = false;
-			while (count <= 0) {
-				try {
-					wait(1000); // wait one second
-				} catch (InterruptedException e) {
-					// do nothing
-				}
-				long now = System.currentTimeMillis();
-				long elapsed = now - started;
-				expired = elapsed > timeout;
-				if (expired) break;
-			}
-			if (count > 0) {
-				--count;
-				acquired = true;
-			}
-			return acquired;
-		}
-		/**
-		 * Release the semaphore. This makes the semaphore available to be acquired.
-		 */
-		synchronized void release() {
-			count++;
-			notifyAll();			
-		}
-	}
+//	private class Semaphore {
+//		private int count = 1;
+//		/**
+//		 * Create a semaphore with the specified acquire count.
+//		 * @param count
+//		 */
+//		Semaphore(int count) {
+//			this.count = count;
+//		}
+//		/**
+//		 * Acquire the semaphore. If the semaphore has already been acquired "count" times
+//		 * then this waits for the timeout period. This method reports false if the timeout
+//		 * expires before the semaphore becomes available.
+//		 * @param timeout the time in milliseconds to wait for the semaphore.
+//		 * @return true if the semaphore was acquired within the timeout period, false otherwise.
+//		 */
+//		synchronized boolean acquire(long timeout) {
+//			long started = System.currentTimeMillis();
+//			boolean expired = false;
+//			boolean acquired = false;
+//			while (count <= 0) {
+//				try {
+//					wait(1000); // wait one second
+//				} catch (InterruptedException e) {
+//					// do nothing
+//				}
+//				long now = System.currentTimeMillis();
+//				long elapsed = now - started;
+//				expired = elapsed > timeout;
+//				if (expired) break;
+//			}
+//			if (count > 0) {
+//				--count;
+//				acquired = true;
+//			}
+//			return acquired;
+//		}
+//		/**
+//		 * Release the semaphore. This makes the semaphore available to be acquired.
+//		 */
+//		synchronized void release() {
+//			count++;
+//			notifyAll();			
+//		}
+//	}
 	
 	/**
 	 * A SafeRunner makes sure that instances of UnsafeRunnableWithProgress will run one
 	 * at a time. A timeout value is specified. If the runnable cannot be started within 
 	 * the timeout value it is not run and a TimeoutException is thrown.
+	 * <p>
+	 * A SafeRunner keeps track of the thread that is running. If that thread 
+	 * reenters the SafeRunner, then it is allowed to continue execution.
 	 */
 	private class SafeRunner {
-		private Semaphore semaphore = new Semaphore(1);
+//		private Semaphore semaphore = new Semaphore(1);
+		private Mutex semaphore = new Mutex();
+		private Thread semaphoreOwner = null;
 		/**
 		 * Run a runnable. If one is already running in this runner then this one will wait up to
 		 * the specified timeout period. If the timeout expires an exception is thrown.
@@ -485,14 +491,24 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		 * @throws TimeoutException if the timeout expires before the runner becomes unblocked.
 		 */
 		void run(UnsafeRunnableWithProgress runnable, long timeout, IProgressMonitor monitor) throws Exception {
-			if (semaphore.acquire(timeout)) {
-				try {
-					runnable.run(monitor);
-				} finally {
-					semaphore.release();
+			if (semaphoreOwner != Thread.currentThread()) {
+//				if (semaphore.acquire(timeout)) {
+				if (semaphore.waitForLock(monitor, timeout)) {
+					semaphoreOwner = Thread.currentThread();
+					try {
+						if (monitor.isCanceled()) {
+							throw new OperationCanceledException();
+						}
+						runnable.run(monitor);
+					} finally {
+						semaphore.release();
+						semaphoreOwner = null;
+					}
+				} else {
+					throw new TimeoutException(timeout);
 				}
 			} else {
-				throw new TimeoutException(timeout);
+				runnable.run(monitor);
 			}
 		}
 	}

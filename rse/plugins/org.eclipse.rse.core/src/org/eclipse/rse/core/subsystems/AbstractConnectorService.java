@@ -413,63 +413,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	protected int getConnectPort() {
 		return getPort();
 	}
-	
-	/**
-	 * The Semaphore class implements a simple counting semaphore. An initial value 
-	 * is provided. The Semaphore may be acquired this many times before a wait 
-	 * condition occurs. The wait lasts for a timeout and reports whether or not the
-	 * semaphore was acquired in that time.
-	 * 
-	 * This is a simple implementation. No checking is done to ensure that the 
-	 * number of releases exceeds the initial count.
-	 */
-	// TODO it may be possible to replace this class with the one in the 5.0 JRE when we move to that as a base
-//	private class Semaphore {
-//		private int count = 1;
-//		/**
-//		 * Create a semaphore with the specified acquire count.
-//		 * @param count
-//		 */
-//		Semaphore(int count) {
-//			this.count = count;
-//		}
-//		/**
-//		 * Acquire the semaphore. If the semaphore has already been acquired "count" times
-//		 * then this waits for the timeout period. This method reports false if the timeout
-//		 * expires before the semaphore becomes available.
-//		 * @param timeout the time in milliseconds to wait for the semaphore.
-//		 * @return true if the semaphore was acquired within the timeout period, false otherwise.
-//		 */
-//		synchronized boolean acquire(long timeout) {
-//			long started = System.currentTimeMillis();
-//			boolean expired = false;
-//			boolean acquired = false;
-//			while (count <= 0) {
-//				try {
-//					wait(1000); // wait one second
-//				} catch (InterruptedException e) {
-//					// do nothing
-//				}
-//				long now = System.currentTimeMillis();
-//				long elapsed = now - started;
-//				expired = elapsed > timeout;
-//				if (expired) break;
-//			}
-//			if (count > 0) {
-//				--count;
-//				acquired = true;
-//			}
-//			return acquired;
-//		}
-//		/**
-//		 * Release the semaphore. This makes the semaphore available to be acquired.
-//		 */
-//		synchronized void release() {
-//			count++;
-//			notifyAll();			
-//		}
-//	}
-	
+
 	/**
 	 * A SafeRunner makes sure that instances of UnsafeRunnableWithProgress will run one
 	 * at a time. A timeout value is specified. If the runnable cannot be started within 
@@ -479,7 +423,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * reenters the SafeRunner, then it is allowed to continue execution.
 	 */
 	private class SafeRunner {
-//		private Semaphore semaphore = new Semaphore(1);
 		private Mutex semaphore = new Mutex();
 		private Thread semaphoreOwner = null;
 		/**
@@ -492,7 +435,6 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 		 */
 		void run(UnsafeRunnableWithProgress runnable, long timeout, IProgressMonitor monitor) throws Exception {
 			if (semaphoreOwner != Thread.currentThread()) {
-//				if (semaphore.acquire(timeout)) {
 				if (semaphore.waitForLock(monitor, timeout)) {
 					semaphoreOwner = Thread.currentThread();
 					try {

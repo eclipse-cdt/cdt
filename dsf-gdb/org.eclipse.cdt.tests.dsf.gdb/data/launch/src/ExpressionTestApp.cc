@@ -51,6 +51,16 @@ struct childStruct {
 public:
 	Z z;	
 };
+
+// For bug 320277
+class Base {};
+class BaseTest: public Base {
+public:
+  BaseTest() {}
+  void test() { return; }
+};
+// End bug 320277
+
 void locals2() {
 	// Check that we get the content of local variables with 
 	// the same name as the calling method
@@ -299,6 +309,9 @@ int main() {
     testConcurrentUpdateOutOfScopeChildThenParent();
     testUpdateOfPointer();
     testCanWrite();
+    
+    // For bug 320277
+    BaseTest b; b.test();
     
     return 0;
 }

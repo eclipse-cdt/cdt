@@ -392,6 +392,58 @@ public class MIExpressionsTest extends BaseTestCase {
     }
     
     /**
+     * This test makes sure we properly deal with a GDB display bug.
+     * See bug 320277
+     * 
+     * The following code causes a bug in GDB:
+     * 
+     * class Base {};
+     * class BaseTest: public Base {
+     *   public:
+     *     BaseTest() {} // Removing this lines removes GDB's bug
+     *     void test() { return; }
+     * };
+     * 
+     * We see the bug with the following commands:
+     * -var-create - * this
+     * -var-list-children var1
+     * -var-info-path-expression var1.BaseTest
+     * -data-evaluate-expression "(*(Base*) this)"
+     * 
+     * which we can reproduce by creating the children of this
+     * and asking for the DETAILS_FORMAT of the var1.BaseTest child.
+     */
+    @Test
+    public void testBaseChildrenBug() throws Throwable {
+
+        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("BaseTest::test");
+
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        
+    	// First we get 'this' and its children
+        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "this");
+	    final IExpressionDMContext[] children = getChildren(exprDmc, new String[] {"Base"});
+
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getFormattedExpressionValue(
+                		fExpService.getFormattedValueContext(children[0], MIExpressions.DETAILS_FORMAT),
+                		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+               					wait.waitFinished(getStatus());
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+    }
+
+    /**
      * This test verifies that the ExpressionService can write to a variable.
      */
     @Test

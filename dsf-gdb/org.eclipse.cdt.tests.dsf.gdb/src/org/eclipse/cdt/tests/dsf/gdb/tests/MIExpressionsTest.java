@@ -424,12 +424,106 @@ public class MIExpressionsTest extends BaseTestCase {
         
     	// First we get 'this' and its children
         final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "this");
-	    final IExpressionDMContext[] children = getChildren(exprDmc, new String[] {"Base"});
+	    final IExpressionDMContext[] children = getChildren(exprDmc, new String[] {"Base", "Base"});
 
         fExpService.getExecutor().submit(new Runnable() {
             public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(children[0], MIExpressions.DETAILS_FORMAT),
+                		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+               					wait.waitFinished(getStatus());
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        
+        wait.waitReset();
+        
+        // This second child is testing the fact that we could have the child named
+        // the same as its type and we still want to be able to get the details without error.
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getFormattedExpressionValue(
+                		fExpService.getFormattedValueContext(children[1], MIExpressions.DETAILS_FORMAT),
+                		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+               					wait.waitFinished(getStatus());
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+
+    }
+
+    /**
+     * This test makes sure we properly deal with a GDB display bug
+     * and nested children.
+     * See bug 320277.
+     */
+    @Test
+    public void testNestedBaseChildrenBug() throws Throwable {
+
+        MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("BaseTest::test");
+
+        final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+        
+    	// First we get 'this' and its children
+        final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "this");
+	     IExpressionDMContext[] children1 = getChildren(exprDmc, new String[] {"Base", "Base"});
+	    final IExpressionDMContext[] children = getChildren(children1[0], new String[] {"nested", "pNested"});
+	    final IExpressionDMContext[] childOfPointer = getChildren(children[1], new String[] {"*pNested"});
+
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getFormattedExpressionValue(
+                		fExpService.getFormattedValueContext(children[0], MIExpressions.DETAILS_FORMAT),
+                		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+               					wait.waitFinished(getStatus());
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        
+        wait.waitReset();
+        
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getFormattedExpressionValue(
+                		fExpService.getFormattedValueContext(children[1], MIExpressions.DETAILS_FORMAT),
+                		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
+                			@Override
+                			protected void handleCompleted() {
+               					wait.waitFinished(getStatus());
+                			}
+                		});
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+        
+        wait.waitReset();
+        
+        fExpService.getExecutor().submit(new Runnable() {
+            public void run() {
+                fExpService.getFormattedExpressionValue(
+                		fExpService.getFormattedValueContext(childOfPointer[0], MIExpressions.DETAILS_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
                 			@Override
                 			protected void handleCompleted() {

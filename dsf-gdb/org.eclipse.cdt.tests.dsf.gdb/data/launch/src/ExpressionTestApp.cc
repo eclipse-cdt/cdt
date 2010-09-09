@@ -53,11 +53,19 @@ public:
 };
 
 // For bug 320277
-class Base {};
+class Base {
+public:
+  int nested;
+  int* pNested;
+};
 class BaseTest: public Base {
 public:
   BaseTest() {}
-  void test() { return; }
+  void test() { 
+    nested = 8;
+    return; 
+  }
+  Base Base; // make sure we don't get confused by the same name
 };
 // End bug 320277
 

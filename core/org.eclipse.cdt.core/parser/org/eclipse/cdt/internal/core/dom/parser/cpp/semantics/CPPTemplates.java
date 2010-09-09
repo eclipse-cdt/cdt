@@ -922,23 +922,20 @@ public class CPPTemplates {
 			IType origType = types[i];
 			IType newType;
 			if (origType instanceof ICPPParameterPackType) {
-				if (i != types.length-1) {
+				origType= ((ICPPParameterPackType) origType).getType();
+				int packSize= determinePackSize(origType, tpMap);
+				if (packSize == PACK_SIZE_FAIL || packSize == PACK_SIZE_NOT_FOUND) {
 					newType= new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
+				} else if (packSize == PACK_SIZE_DEFER) {
+					newType= origType;
 				} else {
-					origType= ((ICPPParameterPackType) origType).getType();
-					int packSize= determinePackSize(origType, tpMap);
-					if (packSize == PACK_SIZE_FAIL || packSize == PACK_SIZE_NOT_FOUND) {
-						newType= new ProblemBinding(null, IProblemBinding.SEMANTIC_INVALID_TYPE);
-					} else if (packSize == PACK_SIZE_DEFER) {
-						newType= origType;
-					} else {
-						IType[] packResult= new IType[types.length+packSize-1];
-						System.arraycopy(result, 0, packResult, 0, types.length-1);
-						for(int j=0; j<packSize; j++) {
-							packResult[i+j]= CPPTemplates.instantiateType(origType, tpMap, j, within);
-						}
-						return packResult;
+					IType[] packResult= new IType[types.length+packSize-1];
+					System.arraycopy(result, 0, packResult, 0, types.length-1);
+					for(int j=0; j<packSize; j++) {
+						packResult[i+j]= CPPTemplates.instantiateType(origType, tpMap, j, within);
 					}
+					result= packResult;
+					continue;
 				}
 			} else {
 				newType = CPPTemplates.instantiateType(origType, tpMap, packOffset, within);

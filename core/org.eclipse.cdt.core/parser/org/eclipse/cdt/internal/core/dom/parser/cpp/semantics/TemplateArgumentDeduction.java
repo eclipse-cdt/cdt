@@ -171,9 +171,8 @@ public class TemplateArgumentDeduction {
 				} else if (j < fnParCount) {
 					par= fnPars[j];
 					if (par instanceof ICPPParameterPackType) {
-						// must be the last parameter.
 						if (j != fnParCount - 1) 
-							return false; 	
+							continue; 	// non-deduced context
 						
 						par= fnParPack= ((ICPPParameterPackType) par).getType();
 						deduct= new TemplateArgumentDeduction(deduct, fnArgs.length - j);

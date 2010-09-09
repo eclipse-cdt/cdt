@@ -9059,4 +9059,19 @@ public class AST2CPPTests extends AST2BaseTest {
 		dtor= (IASTImplicitNameOwner) name.getParent();
 		assertSame(ctor3, dtor.getImplicitNames()[0].resolveBinding());
 	}
+	
+	//	namespace A {
+	//        inline namespace B {
+	//            namespace C {
+	//                int i;
+	//            }
+	//            using namespace C;
+	//        }
+	//        int i;
+	//    }
+	//    int j = A::i;     
+	public void testInlineNamespaceLookup_324096() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
 }

@@ -5106,5 +5106,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testOverloadResolutionBetweenMethodTemplateAndFunction() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
-	}		
+	}	
+	
+	//	template<typename ...T> void f(T..., T...);
+	//	void test() {
+	//	  f(1,1);
+	//	}
+	public void testFunctionParameterPacksInNonFinalPosition_324096() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}	
 }

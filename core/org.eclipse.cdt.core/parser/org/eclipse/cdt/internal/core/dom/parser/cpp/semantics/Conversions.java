@@ -571,7 +571,14 @@ public class Conversions {
 		final ICPPConstructor[] constructors = t.getConstructors();
 		ICPPConstructor[] ctors= constructors;
 		for (ICPPConstructor ctor : ctors) {
-			if (ctor.getRequiredArgumentCount() <= 1) {
+			final int minArgCount = ctor.getRequiredArgumentCount();
+			if (minArgCount == 0) {
+				if (arg.getExpressionTypes().length == 0) {
+					Cost c= new Cost(arg, t, Rank.IDENTITY);
+					c.setUserDefinedConversion(ctor);
+					return c;
+				}
+			} else if (minArgCount <= 1) {
 				IType[] parTypes= ctor.getType().getParameterTypes();
 				if (parTypes.length > 0) {
 					final IType target = parTypes[0];

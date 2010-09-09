@@ -1758,13 +1758,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	return funcDefinition;
 	}
 
-	protected abstract IASTInitializer optionalInitializer(DeclarationOptions options)
+	protected abstract IASTInitializer optionalInitializer(IASTDeclarator dtor, DeclarationOptions options)
 			throws EndOfFileException, BacktrackException;
 
 	protected IASTDeclarator addInitializer(FoundAggregateInitializer e, DeclarationOptions options)
 			throws EndOfFileException, BacktrackException {
 	    final IASTDeclarator d = e.fDeclarator;
-	    IASTInitializer i = optionalInitializer(options);
+	    IASTInitializer i = optionalInitializer(d, options);
 	    if (i != null) {
 	    	d.setInitializer(i);
 	    	((ASTNode) d).setLength(calculateEndOffset(i) - ((ASTNode) d).getOffset());

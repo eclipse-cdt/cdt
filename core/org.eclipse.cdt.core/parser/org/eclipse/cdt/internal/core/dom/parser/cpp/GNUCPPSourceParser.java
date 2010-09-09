@@ -2975,7 +2975,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				if (LTcatchEOF(1) == IToken.tASSIGN && LTcatchEOF(2) == IToken.tLBRACE) 
 					throw new FoundAggregateInitializer(declspec, dtor);
 
-				IASTInitializer initializer= optionalInitializer(option);
+				IASTInitializer initializer= optionalInitializer(dtor, option);
 				if (initializer != null) {
 					if (initializer instanceof IASTInitializerList
 							&& ((IASTInitializerList) initializer).getSize() == 0) {
@@ -3009,7 +3009,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *    braced-init-list
      */
     @Override
-	protected IASTInitializer optionalInitializer(DeclarationOptions option) throws EndOfFileException, BacktrackException {
+	protected IASTInitializer optionalInitializer(IASTDeclarator dtor, DeclarationOptions option) throws EndOfFileException, BacktrackException {
     	final int lt1= LTcatchEOF(1);
     	
     	// = initializer-clause
@@ -3020,7 +3020,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         		return null;
         	
             int offset= consume().getOffset();
-            IASTInitializerClause initClause = initClause(LT(1) == IToken.tLBRACE);
+            final boolean allowSkipping = LT(1) == IToken.tLBRACE && specifiesArray(dtor);
+			IASTInitializerClause initClause = initClause(allowSkipping);
             IASTEqualsInitializer initExpr= nodeFactory.newEqualsInitializer(initClause);
             return setRange(initExpr, offset, calculateEndOffset(initClause));
         }
@@ -3037,6 +3038,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return null;
     }
     
+	private boolean specifiesArray(IASTDeclarator dtor) {
+		dtor = ASTQueries.findTypeRelevantDeclarator(dtor);
+		return dtor instanceof IASTArrayDeclarator;
+	}
+
 	private IASTInitializer bracedOrCtorStyleInitializer() throws EndOfFileException, BacktrackException {
 		final int lt1= LT(1);
 		if (lt1 == IToken.tLPAREN) {

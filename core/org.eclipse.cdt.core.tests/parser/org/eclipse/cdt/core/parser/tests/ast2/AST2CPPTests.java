@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
+
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -8135,11 +8138,13 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	struct S {
 	//		S(std::initializer_list<double>) {}
 	//		S(std::initializer_list<int>) {}
+	//      S() {}
 	//	};
 	//	void fs(S){}
 	//	void tests() {
 	//		fs({1,2,3});
 	//		fs({1.0,2.0,3.0});
+	//      fs({});
 	//	}
 	public void testListInitialization_302412a() throws Exception {
 		String code= getAboveComment();
@@ -8955,5 +8960,103 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(fconst, ref);
 		ref= bh.assertNonProblem("g(\"abc\")", 1);
 		assertSame(g, ref);
+	}
+	
+	//	struct A {
+	//		int m;
+	//	};
+	//	A&& operator+(A, A);
+	//	A&& f();
+	//	A a;
+	//	A&& ar = static_cast<A&&>(a);
+	//  void test() {
+	//     f();   				// xvalue
+	//     f().m; 				// xvalue
+	//     static_cast<A&&>(a);	// xvalue 
+	//     a+a;					// xvalue
+	//     ar;					// rvalue
+	//  }
+	public void testXValueCategories() throws Exception {
+		String code= getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code);
+		ICPPASTFunctionDefinition fdef= getDeclaration(tu, 5);
+		IASTExpression expr;
+		
+		expr= getExpressionOfStatement(fdef, 0);
+		assertEquals(XVALUE, expr.getValueCategory());
+		assertEquals("A", ASTTypeUtil.getType(expr.getExpressionType()));
+
+		expr= getExpressionOfStatement(fdef, 1);
+		assertEquals(XVALUE, expr.getValueCategory());
+		assertEquals("int", ASTTypeUtil.getType(expr.getExpressionType()));
+
+		expr= getExpressionOfStatement(fdef, 2);
+		assertEquals(XVALUE, expr.getValueCategory());
+		assertEquals("A", ASTTypeUtil.getType(expr.getExpressionType()));
+
+		expr= getExpressionOfStatement(fdef, 3);
+		assertEquals(XVALUE, expr.getValueCategory());
+		assertEquals("A", ASTTypeUtil.getType(expr.getExpressionType()));
+
+		// ar;
+		expr= getExpressionOfStatement(fdef, 4);
+		assertEquals(LVALUE, expr.getValueCategory());
+		assertEquals("A", ASTTypeUtil.getType(expr.getExpressionType()));
+	}
+	
+	//	void f() {
+	//		int i;
+	//		int f1();
+	//		int&& f2();
+	//		int g(const int&);
+	//		int g(const int&&);
+	//		int j = g(i); // calls g(const int&)
+	//		int k = g(f1()); // calls g(const int&&)
+	//		int l = g(f2()); // calls g(const int&&)
+	//	}
+	public void testRankingOfReferenceBindings() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction g1= bh.assertNonProblem("g(const int&)", 1);
+		IFunction g2= bh.assertNonProblem("g(const int&&)", 1);
+		
+		IFunction ref;
+		ref= bh.assertNonProblem("g(i);", 1);
+		assertSame(g1, ref);
+		ref= bh.assertNonProblem("g(f1());", 1);
+		assertSame(g2, ref);
+		ref= bh.assertNonProblem("g(f2());", 1);
+		assertSame(g2, ref);
+	}
+	
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct S {
+	//		S(std::initializer_list<double>); // #1
+	//		S(std::initializer_list<int>);    // #2
+	//		S();                              // #3
+	//	};
+	//	S s1 = { 1.0, 2.0, 3.0 };            // invoke #1
+	//	S s2 = { 1, 2, 3 };                  // invoke #2
+	//	S s3 = { };                          // invoke #3
+	public void testEmptyInitializerList_324096() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction ctor1= bh.assertNonProblem("S(std::initializer_list<double>);", 1);
+		IFunction ctor2= bh.assertNonProblem("S(std::initializer_list<int>);", 1);
+		IFunction ctor3= bh.assertNonProblem("S();", 1);
+		
+		IASTName name;
+		IASTImplicitNameOwner dtor;
+		name= bh.findName("s1", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor1, dtor.getImplicitNames()[0].resolveBinding());
+		name= bh.findName("s2", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor2, dtor.getImplicitNames()[0].resolveBinding());
+		name= bh.findName("s3", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor3, dtor.getImplicitNames()[0].resolveBinding());
 	}
 }

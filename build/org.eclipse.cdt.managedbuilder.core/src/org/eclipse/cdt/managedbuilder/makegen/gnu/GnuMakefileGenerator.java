@@ -2910,7 +2910,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				allRes.add(re);
 			}
 			//  2.  From InputTypes that other than the primary input type
-			if (type != tool.getPrimaryInputType()) {
+			if (!type.getPrimaryInput() && type != tool.getPrimaryInputType()) {
 				String var = type.getBuildVariable();
 				if (var != null && var.length() > 0) {
 					allRes.add(Path.fromOSString("$(" + type.getBuildVariable() + ")"));   //$NON-NLS-1$ //$NON-NLS-2$

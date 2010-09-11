@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
@@ -48,7 +47,6 @@ public class ExcludedFileDecorator implements ILightweightLabelDecorator {
 					isSource = true;
 					break;
 				}
-
 			}
 			// Only bother to mark items that would be included otherwise
 			if (isSource && CDataUtil.isExcluded(resource.getFullPath(), entries)) {

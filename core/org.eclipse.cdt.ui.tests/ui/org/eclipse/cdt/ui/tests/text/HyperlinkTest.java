@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -15,17 +16,27 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 
@@ -37,7 +48,6 @@ import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
  * @author Mike Kucera
  */
 public class HyperlinkTest extends TestCase {
-
 	private static final String CPP_FILE_NAME = "hyperlink_test_cpp.cpp";
 	private static final String CPP_CODE = 
 		"#include <stdio.h> \n" +
@@ -76,7 +86,6 @@ public class HyperlinkTest extends TestCase {
 	private ICProject project;
 	private CEditor editor;
 
-	
 	public static TestSuite suite() {
 		return new TestSuite(HyperlinkTest.class);
 	}
@@ -85,12 +94,21 @@ public class HyperlinkTest extends TestCase {
 		super.setUp();
 		project= CProjectHelper.createCCProject(super.getName(), "unused", IPDOMManager.ID_NO_INDEXER);
 		ICContainer cContainer= CProjectHelper.addCContainer(project, "src");
-		IFile file= EditorTestHelper.createFile((IContainer)cContainer.getResource(), fileName, code, new NullProgressMonitor());
+		IFile file= EditorTestHelper.createFile((IContainer) cContainer.getResource(), fileName, code, new NullProgressMonitor());
 		
 		assertNotNull(file);
 		assertTrue(file.exists());
-		editor = (CEditor)EditorTestHelper.openInEditor(file, true);
+		editor = (CEditor) EditorTestHelper.openInEditor(file, true);
 		EditorTestHelper.joinReconciler(EditorTestHelper.getSourceViewer(editor), 10, 1000, 10);
+		// Since CElementHyperlinkDetector doesn't wait for an AST to be created,
+		// we trigger AST creation ahead of time.
+		IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
+		IWorkingCopy workingCopy = manager.getWorkingCopy(editor.getEditorInput());
+		IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
+			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
+				return Status.OK_STATUS;
+			}
+		});
 	}
 	
 	@Override
@@ -119,8 +137,7 @@ public class HyperlinkTest extends TestCase {
 		IHyperlink[] links = getHyperlinks(mouseOffset);
 		assertNull(links);
 	}
-	
-	
+
 	public void testHyperlinksCpp() throws Exception {
 		// entire include highlighted
 		setUpEditor(CPP_FILE_NAME, CPP_CODE);
@@ -129,9 +146,9 @@ public class HyperlinkTest extends TestCase {
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + 2, 0, "#include <stdio.h>".length());
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") + "<stdio.h".length(), 0, "#include <stdio.h>".length());
 		
-		// hovering over the whitspace inside an include still results in a hyperlink
+		// hovering over the whitespace inside an include still results in a hyperlink
 		assertHyperlink(CPP_CODE.indexOf("<stdio.h>") - 1, 0, "#include <stdio.h>".length());
-		
+
 		// no hyperlinks in macro bodies
 		assertNotHyperlink(CPP_CODE.indexOf("#define") + 1);
 		assertHyperlink(CPP_CODE.indexOf("SOMEMACRO"), CPP_CODE.indexOf("SOMEMACRO"), "SOMEMACRO".length());

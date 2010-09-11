@@ -39,6 +39,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -46,7 +47,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CModelException;
@@ -79,7 +79,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 	 *
 	 * @since 4.0
 	 */
-	private static class PartnerFileComputer extends CPPASTVisitor implements ASTRunnable {
+	private static class PartnerFileComputer extends ASTVisitor implements ASTRunnable {
 		/** 
 		 * When this many times the same partner file is hit, 
 		 * we are confident enough to take it.

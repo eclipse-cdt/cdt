@@ -25,8 +25,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
+import org.eclipse.ui.ide.ResourceSelectionUtil;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
 
 import org.eclipse.cdt.internal.ui.cview.CopyAction;
 import org.eclipse.cdt.internal.ui.cview.PasteAction;
@@ -37,8 +37,6 @@ import org.eclipse.cdt.internal.ui.cview.PasteAction;
  * A clone of org.eclipse.ui.internal.navigator.resources.actions.EditActionGroup.
  */
 public class CNavigatorEditActionGroup extends ActionGroup {
-
-
 	private Clipboard clipboard;
 
 	private CopyAction copyAction;
@@ -92,7 +90,6 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
-
 		if (textActionHandler == null) {
 			textActionHandler = new TextActionHandler(actionBars); // hook handlers
 		}
@@ -147,5 +144,4 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		pasteAction.selectionChanged(selection);
 		deleteAction.selectionChanged(selection); 
 	}
-
 }

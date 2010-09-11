@@ -22,8 +22,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
+import org.eclipse.ui.ide.ResourceSelectionUtil;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
 
 /**
  * This is the action group for refactor actions move and rename.
@@ -90,5 +90,4 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 		moveAction.selectionChanged(selection);
 		renameAction.selectionChanged(selection);
 	}
-
 }

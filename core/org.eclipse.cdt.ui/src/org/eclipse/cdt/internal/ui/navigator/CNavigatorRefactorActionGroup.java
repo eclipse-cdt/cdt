@@ -53,7 +53,7 @@ public class CNavigatorRefactorActionGroup extends ActionGroup {
 
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection)getContext().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		boolean anyResourceSelected = !selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
 						IResource.PROJECT | IResource.FOLDER | IResource.FILE);

@@ -68,8 +68,7 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
 		boolean anyResourceSelected = !selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection,
@@ -100,12 +99,9 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 		updateActionBars();
 
 //		textActionHandler.updateActionBars();
-		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
-                copyAction);
-		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
-                pasteAction);
-		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(),
-                deleteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), pasteAction);
+		actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), deleteAction);
 	}
 
 	protected void makeActions() {
@@ -114,31 +110,25 @@ public class CNavigatorEditActionGroup extends ActionGroup {
 
 		pasteAction = new PasteAction(shell, clipboard);
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-		pasteAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
-		pasteAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		pasteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		pasteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
-		copyAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-		copyAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
  
 		deleteAction = new DeleteResourceAction(shellProvider);
-		deleteAction.setDisabledImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		deleteAction.setImageDescriptor(images
-				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		deleteAction.setDisabledImageDescriptor(
+				images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 	}
 
 	@Override
 	public void updateActionBars() {
-		IStructuredSelection selection = (IStructuredSelection) getContext()
-				.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);

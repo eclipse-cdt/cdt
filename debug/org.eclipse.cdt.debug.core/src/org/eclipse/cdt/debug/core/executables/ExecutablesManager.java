@@ -102,9 +102,9 @@ public class ExecutablesManager extends PlatformObject implements IResourceChang
 				if (provider != null) {
 					trace("Getting executables for project: " + project.getName() + " using " + provider.toString());  //$NON-NLS-1$//$NON-NLS-2$
 
+					List<Executable> executables = provider.getExecutables(project, subMonitor.newChild(1, SubMonitor.SUPPRESS_NONE));
 					// store the list of executables for this project
 					synchronized (executablesMap) {
-						List<Executable> executables = provider.getExecutables(project, subMonitor.newChild(1, SubMonitor.SUPPRESS_NONE));
 						if (!monitor.isCanceled()) {
 							executablesMap.put(project, executables);
 						}

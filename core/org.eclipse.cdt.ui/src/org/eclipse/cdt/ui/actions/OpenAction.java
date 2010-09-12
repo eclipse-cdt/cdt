@@ -122,7 +122,7 @@ public class OpenAction extends SelectionDispatchAction {
 	 */
 	@Override
 	public void run(ITextSelection selection) {
-		if (!ActionUtil.isProcessable(getShell(), fEditor))
+		if (!ActionUtil.isProcessable(fEditor))
 			return;
 		try {
 			ICElement element= SelectionConverter.codeResolve(fEditor, getShell(), getDialogTitle(), 

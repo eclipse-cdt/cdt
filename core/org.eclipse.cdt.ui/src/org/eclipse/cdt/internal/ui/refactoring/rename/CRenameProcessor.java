@@ -30,6 +30,8 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -47,15 +49,16 @@ import org.eclipse.cdt.core.model.ICProject;
 public class CRenameProcessor extends RenameProcessor {
     public static final String IDENTIFIER= "org.eclips.cdt.refactoring.RenameProcessor"; //$NON-NLS-1$
 
-    private CRefactoringArgument fArgument;
+    private final CRefactoringArgument fArgument;
     private CRenameProcessorDelegate fDelegate;
     private String fReplacementText;
     private String fWorkingSet;
     private int fScope;
     private int fSelectedOptions;
-    private CRefactory fManager;
-    private ASTManager fAstManager;
+    private final CRefactory fManager;
+    private final ASTManager fAstManager;
 	private IIndex fIndex;
+	private RefactoringStatus fInitialConditionsStatus;
     
     public CRenameProcessor(CRefactory refactoringManager, CRefactoringArgument arg) {
         fManager= refactoringManager;
@@ -70,7 +73,7 @@ public class CRenameProcessor extends RenameProcessor {
     // overrider
     @Override
 	public Object[] getElements() {
-        return new Object[] {fArgument.getBinding()};
+        return new Object[] { fArgument.getBinding() };
     }
 
     // overrider
@@ -101,15 +104,18 @@ public class CRenameProcessor extends RenameProcessor {
     @Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm)
             throws CoreException, OperationCanceledException {
+    	if (fInitialConditionsStatus != null) {
+    		return fInitialConditionsStatus; // Already checked.
+    	}
         String identifier= null;
-        RefactoringStatus status= new RefactoringStatus();
+        fInitialConditionsStatus= new RefactoringStatus();
         if (fArgument != null) {
-            fAstManager.analyzeArgument(fIndex, pm, status);
+            fAstManager.analyzeArgument(fIndex, pm, fInitialConditionsStatus);
             identifier= fArgument.getName();
         }
-        if (identifier == null || identifier.length() < 1) {
-            status.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidTextSelection);
-            return status;
+        if (identifier == null || identifier.length() == 0) {
+        	fInitialConditionsStatus.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidTextSelection);
+            return fInitialConditionsStatus;
         }
         IFile file= fArgument.getSourceFile();
         IPath path= null;
@@ -122,12 +128,12 @@ public class CRenameProcessor extends RenameProcessor {
         
         fDelegate= createDelegate();
         if (fDelegate == null) {
-            status.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidName);
-            return status;
+        	fInitialConditionsStatus.addFatalError(RenameMessages.CRenameTopProcessor_error_invalidName);
+            return fInitialConditionsStatus;
         }            
-        RefactoringStatus s1= fDelegate.checkInitialConditions(new NullProgressMonitor());
-        status.merge(s1);
-        return status;
+        RefactoringStatus status= fDelegate.checkInitialConditions(new NullProgressMonitor());
+        fInitialConditionsStatus.merge(status);
+        return fInitialConditionsStatus;
     }
 
     private CRenameProcessorDelegate createDelegate() {
@@ -252,9 +258,14 @@ public class CRenameProcessor extends RenameProcessor {
         return fWorkingSet;
     }
 
+    /**
+     * Sets the name of the working set. If the name of the working set is invalid,
+     * it's set to an empty string. 
+     */
     public void setWorkingSet(String workingSet) {
-        fWorkingSet = workingSet;
+        fWorkingSet = checkWorkingSet(workingSet);
     }
+
     public String getReplacementText() {
         return fReplacementText;
     }
@@ -289,4 +300,21 @@ public class CRenameProcessor extends RenameProcessor {
 	public IIndex getIndex() {
 		return fIndex;
 	}
+
+	/**
+	 * @return a save mode from {@link org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper}
+	 */
+	public int getSaveMode() {
+		return fDelegate.getSaveMode();
+	}
+	
+    private String checkWorkingSet(String workingSet) {
+		if (workingSet != null && workingSet.length() > 0) {
+		    IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();
+		    if (wsManager.getWorkingSet(workingSet) != null) {
+		        return workingSet;
+		    }
+		}
+	    return ""; //$NON-NLS-1$
+    }
 }

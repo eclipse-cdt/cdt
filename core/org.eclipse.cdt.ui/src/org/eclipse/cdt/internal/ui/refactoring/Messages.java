@@ -35,6 +35,20 @@ public final class Messages extends NLS {
 	public static String Refactoring_Ambiguity;
 	public static String NodeContainer_Name;
 	public static String NO_FILE;
+	public static String RefactoringSaveHelper_unexpected_exception;
+	public static String RefactoringSaveHelper_saving;
+	public static String RefactoringSaveHelper_always_save;
+	public static String RefactoringSaveHelper_save_all_resources;
+	public static String RefactoringSaveHelper_must_save;
+	public static String ChangeExceptionHandler_abort_button;
+	public static String ChangeExceptionHandler_dialog_message;
+	public static String ChangeExceptionHandler_dialog_title;
+	public static String ChangeExceptionHandler_message;
+	public static String ChangeExceptionHandler_status_without_detail;
+	public static String ChangeExceptionHandler_undo_button;
+	public static String ChangeExceptionHandler_undo_dialog_message;
+	public static String ChangeExceptionHandler_undo_dialog_title;
+	public static String RefactoringExecutionHelper_cannot_execute;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
@@ -63,13 +65,18 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.MultiEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import com.ibm.icu.text.MessageFormat;
@@ -191,14 +198,15 @@ public class EditorUtility {
 		}
 
 		try {
-			if (!isLinked(file)) {
+			if (!file.isLinked(IResource.CHECK_ANCESTORS)) {
 				File tempFile = file.getRawLocation().toFile();
 
 				if (tempFile != null){
 					String canonicalPath = null;
 					try {
 						canonicalPath = tempFile.getCanonicalPath();
-					} catch (IOException e1) {}
+					} catch (IOException e) {
+					}
 
 					if (canonicalPath != null){
 						IPath path = new Path(canonicalPath);
@@ -211,10 +219,15 @@ public class EditorUtility {
 			if (input != null) {
 				return openInEditor(input, getEditorID(input, file), activate);
 			}
-		} catch (CModelException e) {}
+		} catch (CModelException e) {
+		}
 		return null;
 	}
 
+	/**
+	 * @deprecated use IResource.isLinked(IResource.CHECK_ANCESTORS) instead.
+	 */
+	@Deprecated
 	public static boolean isLinked(IFile file) {
 		if (file.isLinked())
 			return true;
@@ -751,6 +764,117 @@ public class EditorUtility {
 			}
 		}
 		return cProject;
+	}
+
+	/**
+	 * Returns an array of all editors that have an unsaved content. If the identical content is
+	 * presented in more than one editor, only one of those editor parts is part of the result.
+	 * @param skipNonResourceEditors if <code>true</code>, editors whose inputs do not adapt to {@link IResource}
+	 * are not saved
+	 *
+	 * @return an array of dirty editor parts
+	 * @since 5.3
+	 */
+	public static IEditorPart[] getDirtyEditors(boolean skipNonResourceEditors) {
+		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
+		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
+		IWorkbench workbench= PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		for (int i= 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages= windows[i].getPages();
+			for (int x= 0; x < pages.length; x++) {
+				IEditorPart[] editors= pages[x].getDirtyEditors();
+				for (int z= 0; z < editors.length; z++) {
+					IEditorPart ep= editors[z];
+					IEditorInput input= ep.getEditorInput();
+					if (inputs.add(input)) {
+						if (!skipNonResourceEditors || isResourceEditorInput(input)) {
+							result.add(ep);
+						}
+					}
+				}
+			}
+		}
+		return result.toArray(new IEditorPart[result.size()]);
+	}
+
+	private static boolean isResourceEditorInput(IEditorInput input) {
+		if (input instanceof MultiEditorInput) {
+			IEditorInput[] inputs= ((MultiEditorInput) input).getInput();
+			for (int i= 0; i < inputs.length; i++) {
+				if (inputs[i].getAdapter(IResource.class) != null) {
+					return true;
+				}
+			}
+		} else if (input.getAdapter(IResource.class) != null) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the editors to save before performing global C-related
+	 * operations.
+	 *
+	 * @param saveUnknownEditors <code>true</code> iff editors with unknown buffer management should also be saved
+	 * @return the editors to save
+	 * @since 5.3
+	 */
+	public static IEditorPart[] getDirtyEditorsToSave(boolean saveUnknownEditors) {
+		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
+		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
+		IWorkbench workbench= PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		for (int i= 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages= windows[i].getPages();
+			for (int x= 0; x < pages.length; x++) {
+				IEditorPart[] editors= pages[x].getDirtyEditors();
+				for (int z= 0; z < editors.length; z++) {
+					IEditorPart ep= editors[z];
+					IEditorInput input= ep.getEditorInput();
+					if (!mustSaveDirtyEditor(ep, input, saveUnknownEditors))
+						continue;
+
+					if (inputs.add(input))
+						result.add(ep);
+				}
+			}
+		}
+		return result.toArray(new IEditorPart[result.size()]);
+	}
+
+	private static boolean mustSaveDirtyEditor(IEditorPart ep, IEditorInput input, boolean saveUnknownEditors) {
+		/*
+		 * Goal: save all editors that could interfere with refactoring operations.
+		 *
+		 * Always save all editors for translation units that are not working copies.
+		 * (Leaving them dirty would cause problems, since the file buffer could have been
+		 * modified but the C model is not reconciled.)
+		 *
+		 * If <code>saveUnknownEditors</code> is <code>true</code>, save all editors
+		 * whose implementation is probably not based on file buffers.
+		 */
+		IResource resource= (IResource) input.getAdapter(IResource.class);
+		if (resource == null)
+			return saveUnknownEditors;
+
+		ICElement element= CCorePlugin.getDefault().getCoreModel().create(resource);
+		if (element instanceof ITranslationUnit) {
+			ITranslationUnit tu= (ITranslationUnit) element;
+			if (getWorkingCopy(tu) == null) {
+				return true;
+			}
+		}
+
+		if (!(ep instanceof ITextEditor))
+			return saveUnknownEditors;
+
+		ITextEditor textEditor= (ITextEditor) ep;
+		IDocumentProvider documentProvider= textEditor.getDocumentProvider();
+		if (!(documentProvider instanceof TextFileDocumentProvider))
+			return saveUnknownEditors;
+
+		return false;
 	}
 
 	/**

@@ -141,14 +141,12 @@ public class CPluginImages {
 
 	// build console
 	public static final String IMG_VIEW_BUILD = NAME_PREFIX + "buildconsole.gif"; //$NON-NLS-1$
-	public static final String IMG_VIEW_MENU = NAME_PREFIX + "view_menu.gif";   //$NON-NLS-1$
 	public static final String IMG_SAVE_CONSOLE = NAME_PREFIX + "save_console.gif";   //$NON-NLS-1$
 
 	// unknown type
 	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.gif"; //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_BUILD_CONSOLE = createManaged(T_VIEW, IMG_VIEW_BUILD);
-	public static final ImageDescriptor IMG_VIEW_MENU_DESC = createManaged(T_VIEW, IMG_VIEW_MENU);
 	public static final ImageDescriptor IMG_SAVE_CONSOLE_DESC = createManaged(T_VIEW, IMG_SAVE_CONSOLE);
 
 	public static final ImageDescriptor DESC_OBJS_VARIABLE= createManaged(T_OBJ, IMG_OBJS_VARIABLE);
@@ -364,6 +362,8 @@ public class CPluginImages {
 
 	public static final ImageDescriptor DESC_DLCL_CONFIGURE_ANNOTATIONS= createUnManaged(T_DLCL, "configure_annotations.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ELCL_CONFIGURE_ANNOTATIONS= createUnManaged(T_ELCL, "configure_annotations.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DLCL_VIEW_MENU= createUnManaged(T_DLCL, "view_menu.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_VIEW_MENU= createUnManaged(T_ELCL, "view_menu.gif"); //$NON-NLS-1$
 	
 	public static final String IMG_OBJS_QUICK_ASSIST= NAME_PREFIX + "quickassist_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_QUICK_ASSIST = createManaged(T_OBJ, IMG_OBJS_QUICK_ASSIST);

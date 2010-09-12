@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -35,30 +34,15 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Input page added to the standard refactoring wizard.
  */
 public class CRenameRefactoringInputPage extends UserInputWizardPage {
-
-    public static final String PAGE_NAME = "RenameRefactoringPage"; //$NON-NLS-1$
+	public static final String PAGE_NAME = "RenameRefactoringPage"; //$NON-NLS-1$
     
-    private static final String KEY_IGNORE_VIRTUAL = "ignoreVirtual"; //$NON-NLS-1$
-    private static final String KEY_REFERENCES_INV = "references_inv"; //$NON-NLS-1$
-    private static final String KEY_COMMENT = "comment"; //$NON-NLS-1$
-    private static final String KEY_STRING = "string"; //$NON-NLS-1$
-    private static final String KEY_INACTIVE = "inactive"; //$NON-NLS-1$
-    private static final String KEY_SCOPE = "scope"; //$NON-NLS-1$
-    private static final String KEY_WORKING_SET_NAME = "workingset"; //$NON-NLS-1$
-
-    private static final String KEY_INCLUDE = "include"; //$NON-NLS-1$
-    private static final String KEY_MACRO_DEFINITION = "macroDefinition"; //$NON-NLS-1$
-    private static final String KEY_PREPROCESSOR = "preprocessor"; //$NON-NLS-1$
-    private static final String KEY_EXHAUSTIVE_FILE_SEARCH = "exhausiveFileSearch"; //$NON-NLS-1$
-
-    private IDialogSettings fDialogSettings;
-    private String fSearchString;
+	final CRenameRefactoringPreferences fPreferences;
+	private String fSearchString;
     private int fOptions;
     private int fForcePreviewOptions= 0;
     private int fEnableScopeOptions;
@@ -82,12 +66,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 
     public CRenameRefactoringInputPage() {
         super(PAGE_NAME);
-        String key= "CRenameRefactoringInputPage"; //$NON-NLS-1$
-        IDialogSettings ds= CUIPlugin.getDefault().getDialogSettings();
-        fDialogSettings= ds.getSection(key);
-        if (fDialogSettings == null) {
-            fDialogSettings= ds.addNewSection(key);
-        }
+        fPreferences = new CRenameRefactoringPreferences();
     }
  
     private boolean hasOption(int options) {
@@ -335,7 +314,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         if (fWorkspace != null) {
             int choice;
             try {
-                choice= fDialogSettings.getInt(KEY_SCOPE);
+                choice= fPreferences.getInt(CRenameRefactoringPreferences.KEY_SCOPE);
             } catch (Exception e) {
                 choice= TextSearchWrapper.SCOPE_RELATED_PROJECTS;
             }
@@ -357,26 +336,26 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             }
             processor.setScope(choice);
        
-            String workingSet= checkWorkingSet(fDialogSettings.get(KEY_WORKING_SET_NAME));
-            fWorkingSetSpec.setText(workingSet);
-            processor.setWorkingSet(workingSet);
+            String workingSet= fPreferences.get(CRenameRefactoringPreferences.KEY_WORKING_SET_NAME);
+    	    processor.setWorkingSet(workingSet);  // CRenameProcessor validates the working set name.
+            fWorkingSetSpec.setText(processor.getWorkingSet());
         }
         
         if (fDoVirtual != null) {
-            boolean val= !fDialogSettings.getBoolean(KEY_IGNORE_VIRTUAL);
+            boolean val= !fPreferences.getBoolean(CRenameRefactoringPreferences.KEY_IGNORE_VIRTUAL);
             fDoVirtual.setSelection(val);
         }
         if (fReferences != null) {
-            boolean val= !fDialogSettings.getBoolean(KEY_REFERENCES_INV);
+            boolean val= !fPreferences.getBoolean(CRenameRefactoringPreferences.KEY_REFERENCES_INV);
             fReferences.setSelection(val);
         }
-        initOption(fInComment, KEY_COMMENT);
-        initOption(fInString, KEY_STRING);
-        initOption(fInInclude, KEY_INCLUDE);
-        initOption(fInMacro, KEY_MACRO_DEFINITION);
-        initOption(fInPreprocessor, KEY_PREPROCESSOR);
-        initOption(fInInactiveCode, KEY_INACTIVE);
-        initOption(fExhausiveFileSearch, KEY_EXHAUSTIVE_FILE_SEARCH);
+        initOption(fInComment, CRenameRefactoringPreferences.KEY_COMMENT);
+        initOption(fInString, CRenameRefactoringPreferences.KEY_STRING);
+        initOption(fInInclude, CRenameRefactoringPreferences.KEY_INCLUDE);
+        initOption(fInMacro, CRenameRefactoringPreferences.KEY_MACRO_DEFINITION);
+        initOption(fInPreprocessor, CRenameRefactoringPreferences.KEY_PREPROCESSOR);
+        initOption(fInInactiveCode, CRenameRefactoringPreferences.KEY_INACTIVE);
+        initOption(fExhausiveFileSearch, CRenameRefactoringPreferences.KEY_EXHAUSTIVE_FILE_SEARCH);
     }
 
     private int computeSelectedOptions() {
@@ -386,8 +365,8 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         options |= computeOption(fInComment, CRefactory.OPTION_IN_COMMENT);
         options |= computeOption(fInString, CRefactory.OPTION_IN_STRING_LITERAL);
         options |= computeOption(fInInclude, CRefactory.OPTION_IN_INCLUDE_DIRECTIVE);
-        options |= computeOption(fInPreprocessor, CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE);
         options |= computeOption(fInMacro, CRefactory.OPTION_IN_MACRO_DEFINITION);
+        options |= computeOption(fInPreprocessor, CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE);
         options |= computeOption(fInInactiveCode, CRefactory.OPTION_IN_INACTIVE_CODE);
         options |= computeOption(fExhausiveFileSearch, CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
         return options;
@@ -403,19 +382,9 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
     private void initOption(Button button, String key) {
         boolean val= false;
         if (button != null) {
-            val= fDialogSettings.getBoolean(key);
+            val= fPreferences.getBoolean(key);
             button.setSelection(val);
         }
-    }
-
-    private String checkWorkingSet(String ws) {
-		if (ws != null && ws.length() > 0) {
-		    IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();
-		    if (wsManager.getWorkingSet(ws)!=null) {
-		        return ws;
-		    }
-		}
-	    return ""; //$NON-NLS-1$
     }
 
     private void storePreferences() {
@@ -428,47 +397,47 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
             } else if (fWorkingSet.getSelection()) {
                 choice= TextSearchWrapper.SCOPE_WORKING_SET;	
             }
-            fDialogSettings.put(KEY_SCOPE, choice);
-            fDialogSettings.put(KEY_WORKING_SET_NAME, fWorkingSetSpec.getText());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_SCOPE, choice);
+            fPreferences.put(CRenameRefactoringPreferences.KEY_WORKING_SET_NAME, fWorkingSetSpec.getText());
         }
         if (fDoVirtual != null) {
-            fDialogSettings.put(KEY_IGNORE_VIRTUAL, !fDoVirtual.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_IGNORE_VIRTUAL, !fDoVirtual.getSelection());
         }
         if (fReferences != null) {
-            fDialogSettings.put(KEY_REFERENCES_INV, !fReferences.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_REFERENCES_INV, !fReferences.getSelection());
         }
         if (fInComment != null) {
-            fDialogSettings.put(KEY_COMMENT, fInComment.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_COMMENT, fInComment.getSelection());
         }
         if (fInString != null) {
-            fDialogSettings.put(KEY_STRING, fInString.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_STRING, fInString.getSelection());
         }
         if (fInInclude != null) {
-            fDialogSettings.put(KEY_INCLUDE, fInInclude.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_INCLUDE, fInInclude.getSelection());
         }
         if (fInPreprocessor != null) {
-            fDialogSettings.put(KEY_PREPROCESSOR, fInPreprocessor.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_PREPROCESSOR, fInPreprocessor.getSelection());
         }
         if (fInMacro != null) {
-            fDialogSettings.put(KEY_MACRO_DEFINITION, fInMacro.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_MACRO_DEFINITION, fInMacro.getSelection());
         }
         if (fInInactiveCode != null) {
-            fDialogSettings.put(KEY_INACTIVE, fInInactiveCode.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_INACTIVE, fInInactiveCode.getSelection());
         }
         if (fExhausiveFileSearch != null) {
-            fDialogSettings.put(KEY_EXHAUSTIVE_FILE_SEARCH, fExhausiveFileSearch.getSelection());
+            fPreferences.put(CRenameRefactoringPreferences.KEY_EXHAUSTIVE_FILE_SEARCH, fExhausiveFileSearch.getSelection());
         }
     }
 
     protected void onSelectWorkingSet() {
 		CRenameProcessor processor= getRenameProcessor();
-        String wsName= checkWorkingSet(fWorkingSetSpec.getText());
+        String wsName= fWorkingSetSpec.getText();
 		IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSetSelectionDialog dlg= 
 		    wsManager.createWorkingSetSelectionDialog(getShell(), false);
 		IWorkingSet currentWorkingSet= wsManager.getWorkingSet(wsName);
 		if (currentWorkingSet != null) {
-			dlg.setSelection(new IWorkingSet[] {currentWorkingSet});
+			dlg.setSelection(new IWorkingSet[] { currentWorkingSet });
 		}
 		IWorkingSet ws= null;
 		if (dlg.open() == Window.OK) {
@@ -486,8 +455,8 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 			}
 		}
 	    
-		fWorkingSetSpec.setText(wsName);
-	    processor.setWorkingSet(wsName);
+	    processor.setWorkingSet(wsName);  // CRenameProcessor validates the working set name.
+		fWorkingSetSpec.setText(processor.getWorkingSet());
 	    updateEnablement();
     }
 

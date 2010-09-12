@@ -376,4 +376,9 @@ public abstract class CRenameProcessorDelegate {
     protected IBinding[] getBindingsToBeRenamed(RefactoringStatus status) {
         return new IBinding[] {getArgument().getBinding()};
     }
+
+	/**
+	 * @return a save mode from {@link org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper}
+	 */
+	public abstract int getSaveMode();
 }

@@ -41,6 +41,7 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
@@ -657,6 +658,21 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fCombinedPreferenceStore;
 	}
 	
+	/**
+	 * Returns a section in the C UI plugin's dialog settings. If the section doesn't exist yet, it is created.
+	 *
+	 * @param name the name of the section
+	 * @return the section of the given name
+	 * @since 5.3
+	 */
+	public IDialogSettings getDialogSettingsSection(String name) {
+		IDialogSettings dialogSettings= getDialogSettings();
+		IDialogSettings section= dialogSettings.getSection(name);
+		if (section == null) {
+			section= dialogSettings.addNewSection(name);
+		}
+		return section;
+	}
 
 	/**
 	 * Returns an array of all editors that have an unsaved content. If the identical content is 

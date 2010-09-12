@@ -39,6 +39,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -74,6 +76,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		CCorrectionProcessor processor= new CCorrectionProcessor(this);
 
 		setQuickAssistProcessor(processor);
+		enableColoredLabels(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 
 		setInformationControlCreator(getInformationControlCreator());
 
@@ -118,8 +121,6 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		fLightBulbUpdater= new QuickAssistLightBulbUpdater(fEditor, sourceViewer);
 		fLightBulbUpdater.install();
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ContentAssistant#uninstall()
@@ -269,7 +270,6 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		}
 		return bestOffset;
 	}
-
 
 	private static boolean isInside(int offset, int start, int end) {
 		return offset == start || offset == end || (offset > start && offset < end); // make sure to handle 0-length ranges

@@ -1131,6 +1131,26 @@ public class PreferenceConstants {
 	public final static String CODEASSIST_PARAMETERS_FOREGROUND= "content_assist_parameters_foreground"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether all dirty editors are automatically saved before a refactoring is
+	 * executed.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 5.3
+	 */
+	public static final String REFACTOR_SAVE_ALL_EDITORS= "Refactoring.savealleditors"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether certain refactorings use a lightweight UI when
+	 * started from a C/C++ editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 5.3
+	 */
+	public static final String REFACTOR_LIGHTWEIGHT= "Refactor.lightweight"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls whether words containing digits should
 	 * be skipped during spell checking.
 	 * <p>
@@ -1479,7 +1499,6 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
 
 		// This option has to be turned on for the spelling checker too work.
-		// As of 4.0, it doesn't produce false positives any more.
 		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, true);
 
 		int sourceHoverModifier= SWT.MOD2;
@@ -1489,7 +1508,7 @@ public class PreferenceConstants {
 
 		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
 
-		// coloring
+		// Coloring
 		PreferenceConverter.setDefault(store, EDITOR_MULTI_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_ITALIC, false);
@@ -1550,7 +1569,7 @@ public class PreferenceConstants {
 		store.setDefault(EDITOR_ASM_DIRECTIVE_BOLD, true);
 		store.setDefault(EDITOR_ASM_DIRECTIVE_ITALIC, false);
 
-		// folding
+		// Folding
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PROVIDER, "org.eclipse.cdt.ui.text.defaultFoldingProvider"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_FUNCTIONS, false);
@@ -1562,7 +1581,7 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, true);
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, false);
 
-		// smart edit
+		// Smart edit
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_BRACKETS, true);
 		store.setDefault(PreferenceConstants.EDITOR_CLOSE_ANGULAR_BRACKETS, true);
@@ -1577,10 +1596,10 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE_LIMIT_TO_EDITED_LINES, true);
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, true);
 
-		// formatter profile
+		// Formatter profile
 		store.setDefault(PreferenceConstants.FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);
 		
-		// content assist
+		// Content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0org.eclipse.cdt.ui.helpProposalCategory:5\0"); //$NON-NLS-1$
 
@@ -1601,7 +1620,11 @@ public class PreferenceConstants {
 				PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND,
 				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_FOREGROUND, new RGB(0, 0, 0)));
 
-		// spell checking
+		// Refactoring.
+		store.setDefault(PreferenceConstants.REFACTOR_SAVE_ALL_EDITORS, false);
+		store.setDefault(PreferenceConstants.REFACTOR_LIGHTWEIGHT, true);
+
+		// Spell checking
 		store.setDefault(PreferenceConstants.SPELLING_LOCALE, "en_US"); //$NON-NLS-1$
 		String isInitializedKey= "spelling_locale_initialized"; //$NON-NLS-1$
 		if (!store.getBoolean(isInitializedKey)) {

@@ -8,6 +8,7 @@
  * Contributors: 
  *    Markus Schorn - initial API and implementation 
  *    IBM Corporation
+ *    Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -25,8 +26,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 import org.eclipse.osgi.util.NLS;
@@ -96,6 +99,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -105,7 +109,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
 /**
  * Used per refactoring to cache the IASTTranslationUnits. Collects methods operating
@@ -897,17 +904,39 @@ public class ASTManager {
         if (ast == null) {
             ICElement celem= CoreModel.getDefault().create(sourceFile);
             if (celem instanceof ITranslationUnit) {
-            	ITranslationUnit tu= (ITranslationUnit) celem;
-            	int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
-            			ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-            	try {
-            		ast= tu.getAST(index, options);
-            	} catch (CoreException e) {
-            		status.addError(e.getMessage());
-            	}
-            	if (cacheit) {
-            		fTranslationUnits.put(sourceFile, ast);
-            	}
+            	ITranslationUnit tu= CModelUtil.toWorkingCopy((ITranslationUnit) celem);
+//				if (tu instanceof IWorkingCopy) {
+//					synchronized (tu) {
+//						try {
+//							ast = ((IWorkingCopy) tu).reconcile(true, false, null);
+//						} catch (CModelException e) {
+//							CUIPlugin.log(e);
+//						}
+//					}
+//				}
+            	// Try to get a shared AST before creating our own.
+            	final IASTTranslationUnit[] ast_holder = new IASTTranslationUnit[1];
+				ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
+					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+						// Leaking of AST outside of runOnAST method is a dangerous, but it does not cause
+						// harm here since the index remains locked for the life time of the AST.
+						ast_holder[0] = ast;
+						return Status.OK_STATUS;
+					}
+				});
+				ast = ast_holder[0];
+				if (ast == null) {
+	            	int options= ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT |
+	            			ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+	            	try {
+	            		ast= tu.getAST(index, options);
+	            	} catch (CoreException e) {
+	            		status.addError(e.getMessage());
+	            	}
+	            	if (cacheit) {
+	            		fTranslationUnits.put(sourceFile, ast);
+	            	}
+				}
             }
         }
         return ast;
@@ -1096,6 +1125,7 @@ public class ASTManager {
     private void findConflictingBindingsWithNewName(IASTTranslationUnit tu, 
             CRefactoringMatchStore store, final Set<IPath> paths, 
             final RefactoringStatus status) {
+
         ASTNameVisitor nv = new ASTSpecificNameVisitor(fRenameTo) {
             @Override
 			protected int visitName(IASTName name, boolean isDestructor) {
@@ -1117,10 +1147,9 @@ public class ASTManager {
                 path= new Path(floc.getFileName());
                 IBinding binding= name.resolveBinding();
                 if (binding instanceof IProblemBinding) {
-                	handleProblemBinding(name.getTranslationUnit(), 
-                			(IProblemBinding) binding, status);
+                	handleProblemBinding(name.getTranslationUnit(), (IProblemBinding) binding, status);
                 } else if (binding != null) {
-                	fConflictingBinding.add(binding);
+            		fConflictingBinding.add(binding);
                 }
             }
         }
@@ -1147,9 +1176,7 @@ public class ASTManager {
 		return name.getImageLocation();
 	}
 
-    private void analyzeAstTextMatchPair(CRefactoringMatch match, IASTName name, 
-            RefactoringStatus status) {
-        
+    private void analyzeAstTextMatchPair(CRefactoringMatch match, IASTName name, RefactoringStatus status) {
         IBinding binding= name.resolveBinding();
         int cmp= FALSE;
         Integer cmpObj= fKnownBindings.get(binding);
@@ -1417,7 +1444,7 @@ public class ASTManager {
                 	String message2 = NLS.bind(RenameMessages.CRenameLocalProcessor_error_message2, conflict.getName());
                 	String message3 = NLS.bind(RenameMessages.CRenameLocalProcessor_error_message3, what);
                 	String space = "  \n"; //$NON-NLS-1$
-                	String formatted = message + space + message1 + space +  message2 + space +  message3;
+                	String formatted = message + space + message1 + space + message2 + space +  message3;
                     RefactoringStatusEntry[] entries= status.getEntries();
                     for (RefactoringStatusEntry entry : entries) {
                         if (formatted.equals(entry.getMessage())) {

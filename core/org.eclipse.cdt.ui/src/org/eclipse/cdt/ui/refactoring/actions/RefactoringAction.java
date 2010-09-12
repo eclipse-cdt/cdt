@@ -34,9 +34,20 @@ public abstract class RefactoringAction extends Action {
     protected ITextEditor fEditor;
     private IWorkbenchSite fSite;
 	private ICElement fElement;
+	private boolean saveRequired;
 
 	public RefactoringAction(String label) {
 		super(label);
+		saveRequired = true;
+	}
+
+	/**
+	 * Sets behavior with respect to saving dirty editors.
+	 * @param saveRequired if <code>true</code>, dirty editors will be saved before refactoring.
+	 * @since 5.3
+	 */
+	public void setSaveRequired(boolean saveRequired) {
+		this.saveRequired = saveRequired;
 	}
 
     public void setEditor(IEditorPart editor) {
@@ -55,9 +66,11 @@ public abstract class RefactoringAction extends Action {
 	
     @Override
 	public final void run() {
-    	EclipseObjects.getActivePage().saveAllEditors(true);
-    	if (EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
-    		return;
+    	if (saveRequired) {
+	    	EclipseObjects.getActivePage().saveAllEditors(true);
+	    	if (EclipseObjects.getActivePage().getDirtyEditors().length != 0) {
+	    		return;
+	    	}
     	}
     	if (fEditor != null) {
             ISelectionProvider provider= fEditor.getSelectionProvider();

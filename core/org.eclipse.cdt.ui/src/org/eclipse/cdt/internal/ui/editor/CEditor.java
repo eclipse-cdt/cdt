@@ -150,7 +150,6 @@ import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -1222,6 +1221,20 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @since 3.0
 	 */
 	private EditorSelectionChangedListener fEditorSelectionChangedListener;
+
+	/**
+	 * Time when last error message got set.
+	 * 
+	 * @since 5.3
+	 */
+	private long fErrorMessageTime;
+
+	/**
+	 * Timeout for the error message.
+	 * 
+	 * @since 5.3
+	 */
+	private static final long ERROR_MESSAGE_TIMEOUT= 1000;
 
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
@@ -2847,26 +2860,27 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
     /**
      * Sets the given message as error message to this editor's status line.
      *
-     * @param msg message to be set
+     * @param message message to be set
      */
     @Override
-	protected void setStatusLineErrorMessage(String msg) {
-    	IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
-    	if (statusLine != null)
-    		statusLine.setMessage(true, msg, null);
+	public void setStatusLineErrorMessage(String message) {
+		long now= System.currentTimeMillis();
+		if (message != null || now - fErrorMessageTime > ERROR_MESSAGE_TIMEOUT) {
+			super.setStatusLineErrorMessage(message);
+			fErrorMessageTime= message != null ? now : 0;
+		}
     }
 
 	/**
 	 * Sets the given message as message to this editor's status line.
 	 *
-	 * @param msg message to be set
+	 * @param message message to be set
 	 * @since 3.0
 	 */
 	@Override
-	protected void setStatusLineMessage(String msg) {
-		IEditorStatusLine statusLine = (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
-		if (statusLine != null)
-			statusLine.setMessage(false, msg, null);
+	protected void setStatusLineMessage(String message) {
+		if (System.currentTimeMillis() - fErrorMessageTime > ERROR_MESSAGE_TIMEOUT)
+			super.setStatusLineMessage(message);
 	}
 
 	/**

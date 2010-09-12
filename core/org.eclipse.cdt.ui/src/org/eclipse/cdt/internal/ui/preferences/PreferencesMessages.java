@@ -304,20 +304,24 @@ public final class PreferencesMessages extends NLS {
 	public static String FileLanguagesPropertyPage_missingLanguage;
 	public static String FileLanguagesPropertyPage_mappingTableTitle;
 
-	public static String CPluginPreferencePage_0;
+	public static String CPluginPreferencePage_outline_view;
+	public static String CPluginPreferencePage_build_scope;
 	public static String CPluginPreferencePage_1;
 	public static String CPluginPreferencePage_2;
 	public static String CPluginPreferencePage_3;
 	public static String CPluginPreferencePage_4;
-	public static String CPluginPreferencePage_5;
+	public static String CPluginPreferencePage_building_configurations;
 	public static String CPluginPreferencePage_7;
-	public static String CPluginPreferencePage_caption;
+	public static String CPluginPreferencePage_description;
 	public static String CPluginPreferencePage_cdtDialogs_group;
 	public static String CPluginPreferencePage_clear_button;
 	public static String CPluginPreferencePage_clearDoNotShowAgainSettings_label;
 	public static String CPluginPreferencePage_structuralParseMode_label;
 	public static String CPluginPreferencePage_note;
 	public static String CPluginPreferencePage_performanceHint;
+	public static String CPluginPreferencePage_refactoring_title;
+	public static String CPluginPreferencePage_refactoring_auto_save;
+	public static String CPluginPreferencePage_refactoring_lightweight;
 
 	public static String PropertyAndPreferencePage_useworkspacesettings_change;
 	public static String PropertyAndPreferencePage_showprojectspecificsettings_label;

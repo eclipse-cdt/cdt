@@ -109,5 +109,21 @@ public class RenameMessages extends NLS {
 	public static String RenameCSourceFolderChange_ErrorMsg;
 	public static String RenameCSourceFolderChange_Name0;
 	public static String RenameSourceFolder_0;
+	public static String RenameInformationPopup_delayJobName;
+	public static String RenameInformationPopup_EnterNewName;
+	public static String RenameInformationPopup_menu;
+	public static String RenameInformationPopup_OpenDialog;
+	public static String RenameInformationPopup_preferences;
+	public static String RenameInformationPopup_Preview;
+	public static String RenameInformationPopup_RenameInWorkspace;
+	public static String RenameInformationPopup_snap_bottom_right;
+	public static String RenameInformationPopup_snap_over_left;
+	public static String RenameInformationPopup_snap_over_right;
+	public static String RenameInformationPopup_snap_under_left;
+	public static String RenameInformationPopup_snap_under_right;
+	public static String RenameInformationPopup_SnapTo;
+	public static String RenameLinkedMode_error_saving_editor;
+	public static String RenameSupport_not_available;
+	public static String RenameSupport_dialog_title;
 	public static String TextSearch_monitor_categorizeMatches;
 }

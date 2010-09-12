@@ -43,6 +43,9 @@ public class ActionMessages extends NLS {
 	public static String MemberFilterActionGroup_hide_inactive_description;
 	public static String ActionUtil_notOnBuildPath_title;
 	public static String ActionUtil_notOnBuildPath_message;
+	public static String ActionUtil_warning_derived_dontShowAgain;
+	public static String ActionUtil_warning_derived_message;
+	public static String ActionUtil_warning_derived_title;
 	public static String SelectAllAction_label;
 	public static String SelectAllAction_tooltip;
 	public static String ToggleLinkingAction_label;

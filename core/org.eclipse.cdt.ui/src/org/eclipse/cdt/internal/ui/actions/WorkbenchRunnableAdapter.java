@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,16 +25,17 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.IThreadListener;
 
 /**
  * An <code>IRunnableWithProgress</code> that adapts and  <code>IWorkspaceRunnable</code>
  * so that is can be executed inside <code>IRunnableContext</code>. <code>OperationCanceledException</code> 
  * thrown by the adapted runnable are caught and re-thrown as a <code>InterruptedException</code>.
  */
-public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
-	
+public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadListener {
 	private IWorkspaceRunnable fWorkspaceRunnable;
 	private ISchedulingRule fRule;
+	private boolean fTransfer;
 	
 	/**
 	 * Runs a workspace runnable with the workspace lock.
@@ -51,8 +52,28 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
 		fRule= rule;
 	}
 	
+	/**
+	 * Runs a workspace runnable with the given lock or <code>null</code> to run with no lock at
+	 * all.
+	 * 
+	 * @param runnable the runnable
+	 * @param rule the scheduling rule, or <code>null</code>
+	 * @param transfer <code>true</code> iff the rule is to be transfered to the modal context
+	 *            thread
+	 */
+	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule, boolean transfer) {
+		fWorkspaceRunnable= runnable;
+		fRule= rule;
+		fTransfer= transfer;
+	}
+
 	public ISchedulingRule getSchedulingRule() {
 		return fRule;
+	}
+
+	public void threadChange(Thread thread) {
+		if (fTransfer)
+			Job.getJobManager().transferRule(fRule, thread);
 	}
 
 	/*

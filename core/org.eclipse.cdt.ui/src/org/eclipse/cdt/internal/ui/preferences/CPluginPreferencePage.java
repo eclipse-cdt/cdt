@@ -9,14 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,16 +48,20 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
 /**
  * The page for general C/C++ preferences.
  */
-public class CPluginPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class CPluginPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	public static final String C_BASE_PREF_PAGE_ID= "org.eclipse.cdt.ui.preferences.CPluginPreferencePage"; //$NON-NLS-1$
 	
-	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= PreferencesMessages.CPluginPreferencePage_structuralParseMode_label;
 	private static final int GROUP_VINDENT = 5;
 	private static final int GROUP_HINDENT = 20;
+	private ArrayList<Button> fCheckBoxes;
 	private Button b1, b2, b3;
 	
 	public CPluginPreferencePage() {
-		super(GRID);
+		super();
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
+		setDescription(PreferencesMessages.CPluginPreferencePage_description);
+
+		fCheckBoxes= new ArrayList<Button>();
 	}
 	
 	@Override
@@ -63,46 +70,33 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_PREF_PAGE);
 	}	
 
-	/**
-	 * @see FieldEditorPreferencePage#createControl(Composite)
-	 */	
 	@Override
-	protected void createFieldEditors() {
-		Composite parent= getFieldEditorParent();
+	protected Control createContents(Composite parent) {
+		initializeDialogUnits(parent);
 
-		Label caption= new Label(parent, SWT.NULL);
-		caption.setText(PreferencesMessages.CPluginPreferencePage_caption);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 1;
-		caption.setLayoutData(gd);
+		Composite container= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth= 0;
+		layout.verticalSpacing= convertVerticalDLUsToPixels(10);
+		layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		container.setLayout(layout);
 
-		addFiller(parent);
+		Group outlineViewGroup = addGroup(container, PreferencesMessages.CPluginPreferencePage_outline_view);
+		addCheckBox(outlineViewGroup, PreferencesMessages.CPluginPreferencePage_structuralParseMode_label,
+				PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
 		
-		BooleanFieldEditor useStructuralParseMode= new BooleanFieldEditor(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, USE_STRUCTURAL_PARSE_MODE_LABEL, parent);
-		addField(useStructuralParseMode);
+		addNote(outlineViewGroup, PreferencesMessages.CPluginPreferencePage_performanceHint);
 		
-		String noteTitle= PreferencesMessages.CPluginPreferencePage_note; 
-		String noteMessage= PreferencesMessages.CPluginPreferencePage_performanceHint; 
-		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), parent, noteTitle, noteMessage);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 1;
-		noteControl.setLayoutData(gd);
-		
-		// Build either default cfg or all. 
-		Group gr = new Group(parent, SWT.NONE);
-		gr.setText(PreferencesMessages.CPluginPreferencePage_0);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.verticalIndent = GROUP_VINDENT;
-		gr.setLayoutData(gd);
-		gr.setLayout(new GridLayout());
-
+		// Build either default configuration or all. 
+		Group gr = addGroup(container, PreferencesMessages.CPluginPreferencePage_build_scope);
 		Label l1 = new Label(gr, SWT.NONE);
 		l1.setText(PreferencesMessages.CPluginPreferencePage_1);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalIndent = GROUP_VINDENT;
 		l1.setLayoutData(gd);
 
-		boolean b = ACBuilder.needAllConfigBuild();
+		boolean needAllConfigBuild = ACBuilder.needAllConfigBuild();
 
 		b1 = new Button(gr, SWT.RADIO);
 		b1.setText(PreferencesMessages.CPluginPreferencePage_2);
@@ -110,49 +104,36 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		gd.verticalIndent = GROUP_VINDENT;
 		gd.horizontalIndent = GROUP_HINDENT;
 		b1.setLayoutData(gd);
-		b1.setSelection(!b);
+		b1.setSelection(!needAllConfigBuild);
 
 		b2 = new Button(gr, SWT.RADIO);
 		b2.setText(PreferencesMessages.CPluginPreferencePage_3);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = GROUP_HINDENT;
 		b2.setLayoutData(gd);
-		b2.setSelection(b);
+		b2.setSelection(needAllConfigBuild);
 		
-		noteControl= createNoteComposite(
-				JFaceResources.getDialogFont(), 
-				gr, 
-				PreferencesMessages.CPluginPreferencePage_note, 
-				PreferencesMessages.CPluginPreferencePage_4);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.verticalIndent = GROUP_VINDENT;
-		noteControl.setLayoutData(gd);
+		addNote(gr, PreferencesMessages.CPluginPreferencePage_4);
 
-		// Building project dependencies 
-		Group gr2 = new Group(parent, SWT.NONE);
-		gr2.setText(PreferencesMessages.CPluginPreferencePage_5);
-		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
-		gd2.verticalIndent = GROUP_VINDENT;
-		gr2.setLayoutData(gd2);
-		gr2.setLayout(new GridLayout());
-
-		boolean b2 = ACBuilder.buildConfigResourceChanges();
-		
+		// Building project dependencies.
+		Group gr2 = addGroup(container, PreferencesMessages.CPluginPreferencePage_building_configurations);
 		b3 = new Button(gr2, SWT.CHECK);
 		b3.setText(PreferencesMessages.CPluginPreferencePage_7);
-		gd2 = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd2 = new GridData(GridData.FILL_HORIZONTAL);
 		gd2.verticalIndent = GROUP_VINDENT;
 		b3.setLayoutData(gd2);
-		b3.setSelection(b2);
+		b3.setSelection(ACBuilder.buildConfigResourceChanges());
 		
-		GridLayout layout = new GridLayout();
-		layout.numColumns= 2;
-
-		Group dontAskGroup= new Group(parent, SWT.NONE);
-		dontAskGroup.setLayout(layout);
-		dontAskGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		dontAskGroup.setText(PreferencesMessages.CPluginPreferencePage_cdtDialogs_group);
-
+		// Refactoring.
+		Group refactoringGroup = addGroup(container, PreferencesMessages.CPluginPreferencePage_refactoring_title);
+		addCheckBox(refactoringGroup,
+				PreferencesMessages.CPluginPreferencePage_refactoring_auto_save,
+				PreferenceConstants.REFACTOR_SAVE_ALL_EDITORS);
+		addCheckBox(refactoringGroup,
+				PreferencesMessages.CPluginPreferencePage_refactoring_lightweight,
+				PreferenceConstants.REFACTOR_LIGHTWEIGHT);
+		
+		Group dontAskGroup= addGroup(container, PreferencesMessages.CPluginPreferencePage_cdtDialogs_group, 2);
 		Label label= new Label(dontAskGroup, SWT.WRAP);
 		label.setText(PreferencesMessages.CPluginPreferencePage_clearDoNotShowAgainSettings_label);
 		GridData data= new GridData(GridData.FILL, GridData.CENTER, true, false);
@@ -171,23 +152,56 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 			}
 		});
 		SWTUtil.setButtonDimensionHint(clearButton);
-		Dialog.applyDialogFont(parent);
+		Dialog.applyDialogFont(container);
+		return container;
 	}
+
+	private void addNote(Group parent, String noteMessage) {
+		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), parent,
+				PreferencesMessages.CPluginPreferencePage_note, noteMessage);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.verticalIndent = GROUP_VINDENT;
+		noteControl.setLayoutData(gd);
+	}
+
 	@Override
-	protected Composite createNoteComposite(Font font, Composite composite,
-			String title, String message) {
-		Composite messageComposite = super.createNoteComposite(font, composite,
-				title, message);
+	protected Composite createNoteComposite(Font font, Composite composite, String title, String message) {
+		Composite messageComposite = super.createNoteComposite(font, composite, title, message);
 		Control[] children = messageComposite.getChildren();
 		if (children.length == 2 && (children[1] instanceof Label)) {
 			// this is temporary fix for problem that 3 line note does not displayed properly within the group
 			Label messageLabel = (Label) children[1];
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.widthHint=400;
+			gd.widthHint=500;
 			messageLabel.setLayoutData(gd);
 		}
 		return messageComposite;
 	}
+	
+	private Group addGroup(Composite parent, String label) {
+		return addGroup(parent, label, 1);
+	}
+
+	private Group addGroup(Composite parent, String label, int numColumns) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(label);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setLayout(new GridLayout(numColumns, false));
+		return group;
+	}
+
+	private Button addCheckBox(Composite parent, String label, String key) {
+		Button button= new Button(parent, SWT.CHECK);
+		button.setText(label);
+		button.setData(key);
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+		button.setSelection(getPreferenceStore().getBoolean(key));
+
+		fCheckBoxes.add(button);
+		return button;
+	}
+
 	protected void addFiller(Composite composite) {
 		PixelConverter pixelConverter= new PixelConverter(composite);
 		Label filler= new Label(composite, SWT.LEFT );
@@ -235,6 +249,12 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public boolean performOk() {
 		if (!super.performOk())
 			return false;
+		IPreferenceStore store= getPreferenceStore();
+		for (int i= 0; i < fCheckBoxes.size(); i++) {
+			Button button= fCheckBoxes.get(i);
+			String key= (String) button.getData();
+			store.setValue(key, button.getSelection());
+		}
 		// tell the Core Plugin about this preference
 		CCorePlugin.getDefault().setStructuralParseMode(useStructuralParseMode());
 		ACBuilder.setAllConfigBuild(b2.getSelection());
@@ -245,6 +265,12 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
     @Override
 	protected void performDefaults() {
     	super.performDefaults();
+		IPreferenceStore store= getPreferenceStore();
+		for (int i= 0; i < fCheckBoxes.size(); i++) {
+			Button button= fCheckBoxes.get(i);
+			String key= (String) button.getData();
+			button.setSelection(store.getDefaultBoolean(key));
+		}
 		ACBuilder.setAllConfigBuild(false);
 		ACBuilder.setBuildConfigResourceChanges(false);
 		b1.setSelection(true);

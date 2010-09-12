@@ -48,6 +48,7 @@ import org.eclipse.cdt.ui.text.IInvocationContext;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 
+import org.eclipse.cdt.internal.ui.actions.ActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
@@ -70,16 +71,30 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		doExecute();
+		return null;
+	}
+
+	/**
+	 * Try to execute the correction command.
+	 * 
+	 * @return <code>true</code> iff the correction could be started
+	 * @since 5.3
+	 */
+	public boolean doExecute() {
 		ISelection selection= fEditor.getSelectionProvider().getSelection();
 		ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
 		IAnnotationModel model= CUIPlugin.getDefault().getDocumentProvider().getAnnotationModel(fEditor.getEditorInput());
 		if (selection instanceof ITextSelection && tu != null && model != null) {
+			if (!ActionUtil.isEditable(fEditor)) {
+				return false;
+			}
 			ICompletionProposal proposal= findCorrection(fId, fIsAssist, (ITextSelection) selection, tu, model);
 			if (proposal != null) {
 				invokeProposal(proposal, ((ITextSelection) selection).getOffset());
 			}
 		}
-		return null;
+		return false;
 	}
 	
 	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection, ITranslationUnit tu, IAnnotationModel model) {

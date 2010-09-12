@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
@@ -17,6 +18,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.osgi.util.TextProcessor;
 
 import org.eclipse.cdt.core.formatter.IndentManipulation;
 import org.eclipse.cdt.core.model.ICProject;
@@ -27,8 +30,23 @@ import org.eclipse.cdt.core.model.ICProject;
  */
 public class Strings {
 	
-	private Strings(){}
+	private Strings() {}
 	
+	/**
+	 * Tells whether we have to use the {@link TextProcessor}
+	 * <p>
+	 * This is used for performance optimization.
+	 * </p>
+	 * @since 3.4
+	 */
+	public static final boolean USE_TEXT_PROCESSOR;
+	static {
+		String testString= "args : String[]"; //$NON-NLS-1$
+		USE_TEXT_PROCESSOR= testString != TextProcessor.process(testString);
+	}
+
+	private static final String C_ELEMENT_DELIMITERS= TextProcessor.getDefaultDelimiters() + "<>(),?{} "; //$NON-NLS-1$
+
 	public static boolean startsWithIgnoreCase(String text, String prefix) {
 		int textLength= text.length();
 		int prefixLength= prefix.length();
@@ -82,7 +100,7 @@ public class Strings {
 
 	/**
 	 * Returns <code>true</code> if the given string only consists of
-	 * white spaces according to Java. If the string is empty, <code>true
+	 * white spaces according to C. If the string is empty, <code>true
 	 * </code> is returned.
 	 * 
 	 * @return <code>true</code> if the string only consists of white
@@ -449,5 +467,94 @@ public class Strings {
 
 	public static String removeMnemonicIndicator(String string) {
 		return LegacyActionTools.removeMnemonics(string);
+	}
+
+	/**
+	 * Adds special marks so that that the given string is readable in a BiDi environment.
+	 * 
+	 * @param string the string
+	 * @return the processed styled string
+	 * @since 5.3
+	 */
+	public static String markLTR(String string) {
+		if (!USE_TEXT_PROCESSOR)
+			return string;
+
+		return TextProcessor.process(string);
+	}
+
+	/**
+	 * Adds special marks so that that the given string is readable in a BiDi environment.
+	 * 
+	 * @param string the string
+	 * @param delimiters the delimiters
+	 * @return the processed styled string
+	 * @since 5.3
+	 */
+	public static String markLTR(String string, String delimiters) {
+		if (!USE_TEXT_PROCESSOR)
+			return string;
+
+		return TextProcessor.process(string, delimiters);
+	}
+
+	/**
+	 * Adds special marks so that that the given C element label is readable in a BiDi
+	 * environment.
+	 * 
+	 * @param string the string
+	 * @return the processed styled string
+	 * @since 5.3
+	 */
+	public static String markCElementLabelLTR(String string) {
+		if (!USE_TEXT_PROCESSOR)
+			return string;
+
+		return TextProcessor.process(string, C_ELEMENT_DELIMITERS);
+	}
+
+	/**
+	 * Adds special marks so that that the given styled C element label is readable in a BiDi
+	 * environment.
+	 * 
+	 * @param styledString the styled string
+	 * @return the processed styled string
+	 * @since 5.3
+	 */
+	public static StyledString markCElementLabelLTR(StyledString styledString) {
+		if (!USE_TEXT_PROCESSOR)
+			return styledString;
+
+		String inputString= styledString.getString();
+		String string= TextProcessor.process(inputString, C_ELEMENT_DELIMITERS);
+		if (string != inputString)
+			insertMarks(styledString, inputString, string);
+		return styledString;
+	}
+
+	/**
+	 * Inserts the marks into the given styled string.
+	 * 
+	 * @param styledString the styled string
+	 * @param originalString the original string
+	 * @param processedString the processed string
+	 * @since 5.3
+	 */
+	private static void insertMarks(StyledString styledString, String originalString, String processedString) {
+		int originalLength= originalString.length();
+		int processedStringLength= processedString.length();
+		char orig= originalLength > 0 ? originalString.charAt(0) : '\0';
+		for (int o= 0, p= 0; p < processedStringLength; p++) {
+			char processed= processedString.charAt(p);
+			if (o < originalLength) {
+				if (orig == processed) {
+					o++;
+					if (o < originalLength)
+						orig= originalString.charAt(o);
+					continue;
+				}
+			}
+			styledString.insert(processed, p);
+		}
 	}
 }

@@ -17,10 +17,8 @@ import org.eclipse.osgi.util.NLS;
  * Helper class to get NLSed messages.
  */
 public final class CorrectionMessages extends NLS {
-	private static final String BUNDLE_NAME= CorrectionMessages.class.getName();
-
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, CorrectionMessages.class);
+		NLS.initializeMessages(CorrectionMessages.class.getName(), CorrectionMessages.class);
 	}
 
 	private CorrectionMessages() {
@@ -40,4 +38,6 @@ public final class CorrectionMessages extends NLS {
 	public static String TUCorrectionProposal_error_message;
 	public static String LinkedNamesAssistProposal_proposalinfo;
 	public static String LinkedNamesAssistProposal_description;
+	public static String RenameRefactoringProposal_additionalInfo;
+	public static String RenameRefactoringProposal_name;
 }

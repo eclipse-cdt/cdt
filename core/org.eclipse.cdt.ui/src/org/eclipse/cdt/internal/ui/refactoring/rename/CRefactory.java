@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
+ *    Markus Schorn - initial API and implementation
+ *    Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -18,10 +19,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.IDE;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringStarter;
 
 /**
  * Serves to launch the various refactorings.
@@ -80,40 +82,58 @@ public class CRefactory {
         }
         CRefactoringArgument iarg= new CRefactoringArgument(arg);
         final CRenameProcessor processor = new CRenameProcessor(this, iarg);
-		try {
-			processor.lockIndex();
-			try {
-				CRenameRefactoring r= new CRenameRefactoring(processor);
-				RefactoringWizardOpenOperation op= 
-						new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-				op.run(shell, RenameMessages.CRefactory_title_rename);
-			} finally {
-				processor.unlockIndex();
-			}
-		} catch (CoreException e) {
-			CUIPlugin.log(e);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
+		CRenameRefactoring refactoring= new CRenameRefactoring(processor);
+        openDialog(shell, refactoring, false);
     }
     
-	public void rename(Shell shell, IWorkingCopy wc, ITextSelection s) {
-        IResource res= wc.getResource();
-        if (res instanceof IFile == false) {
+	public void rename(Shell shell, IWorkingCopy workingCopy, ITextSelection selection) {
+        IResource res= workingCopy.getResource();
+        if (!(res instanceof IFile)) {
         	return;
         }
         if (!IDE.saveAllEditors(new IResource[] { ResourcesPlugin.getWorkspace().getRoot() }, false)) {
             return;
         }
-        CRefactoringArgument iarg= new CRefactoringArgument((IFile) res, s.getOffset(), s.getLength());
+        CRefactoringArgument iarg=
+        	new CRefactoringArgument((IFile) res, selection.getOffset(), selection.getLength());
         final CRenameProcessor processor = new CRenameProcessor(this, iarg);
-        try {
+		CRenameRefactoring refactoring= new CRenameRefactoring(processor);
+        openDialog(shell, refactoring, false);
+	}
+
+	/**
+	 * Opens the refactoring dialog.
+	 *
+	 * <p>
+	 * This method has to be called from within the UI thread.
+	 * </p>
+	 *
+	 * @param shell a shell used as a parent for the refactoring, preview, or error dialog
+	 * @param showPreviewOnly if <code>true</code>, the dialog skips all user input pages and
+	 * directly shows the preview or error page. Otherwise, shows all pages.
+	 * @return <code>true</code> if the refactoring has been executed successfully,
+	 * or <code>false</code> if it has been canceled.
+	 */
+	static boolean openDialog(Shell shell, CRenameRefactoring refactoring, boolean showPreviewOnly) {
+		try {
+    		CRenameRefactoringWizard wizard;
+    		if (!showPreviewOnly) {
+    			wizard = new CRenameRefactoringWizard(refactoring);
+    		} else {
+    			wizard = new CRenameRefactoringWizard(refactoring) {
+    				@Override
+					protected void addUserInputPages() {
+    					// nothing to add
+    				}
+    			};
+    			wizard.setForcePreviewReview(showPreviewOnly);
+    		}
+    		RefactoringStarter starter = new RefactoringStarter();
+			CRenameProcessor processor = (CRenameProcessor) refactoring.getProcessor();
         	processor.lockIndex();
         	try {
-        		CRenameRefactoring r= new CRenameRefactoring(processor);
-        		RefactoringWizardOpenOperation op= 
-        				new RefactoringWizardOpenOperation(new CRenameRefactoringWizard(r));
-        		op.run(shell, RenameMessages.CRefactory_title_rename);
+        		processor.checkInitialConditions(new NullProgressMonitor());
+        		return starter.activate(wizard, shell, RenameMessages.CRefactory_title_rename, processor.getSaveMode());
         	} finally {
         		processor.unlockIndex();
         	}
@@ -122,6 +142,7 @@ public class CRefactory {
         } catch (CoreException e) {
         	CUIPlugin.log(e);
 		}
+        return false;
 	}
 
     public TextSearchWrapper getTextSearch() {

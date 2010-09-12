@@ -51,6 +51,7 @@ import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
 import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
 import org.eclipse.cdt.internal.ui.text.correction.ProblemLocation;
 import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.RenameRefactoringProposal;
 import org.eclipse.cdt.internal.ui.text.correction.proposals.TUCorrectionProposal;
 
 public class AssistQuickFixTest extends BaseUITestCase {
@@ -263,9 +264,10 @@ public class AssistQuickFixTest extends BaseUITestCase {
         CorrectionContext context= getCorrectionContext(fMatch.getOffset(), 0);
         List<ICCompletionProposal> proposals= collectAssists(context, null);
         
-        assertNumberOfProposals(proposals, 1);
+        assertNumberOfProposals(proposals, 2);
         assertCorrectLabels(proposals);
         assertTrue(proposals.get(0) instanceof LinkedNamesAssistProposal);
+        assertTrue(proposals.get(1) instanceof RenameRefactoringProposal);
     }
 
 	public void testLocalRenameMacro() throws Exception {
@@ -279,9 +281,10 @@ public class AssistQuickFixTest extends BaseUITestCase {
         CorrectionContext context= getCorrectionContext(fMatch.getOffset(), 0);
         List<ICCompletionProposal> proposals= collectAssists(context, null);
         
-        assertNumberOfProposals(proposals, 1);
+        assertNumberOfProposals(proposals, 2);
         assertCorrectLabels(proposals);
         assertTrue(proposals.get(0) instanceof LinkedNamesAssistProposal);
+        assertTrue(proposals.get(1) instanceof RenameRefactoringProposal);
     }
 
 	public void testLocalRenameLanguageKeyword() throws Exception {

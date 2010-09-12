@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRe
 public class ExtractConstantAction extends RefactoringAction {
     
     public ExtractConstantAction() {
-        super(Messages.ExtractConstantAction_label); 
+        super(Messages.ExtractConstantAction_label);
     }
     
 	@Override

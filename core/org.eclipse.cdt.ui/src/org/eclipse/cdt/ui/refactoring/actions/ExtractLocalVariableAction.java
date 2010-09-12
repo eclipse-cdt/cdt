@@ -29,7 +29,7 @@ import org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocal
 public class ExtractLocalVariableAction extends RefactoringAction {
     
     public ExtractLocalVariableAction() {
-        super(Messages.ExtractLocalVariableAction_label); 
+        super(Messages.ExtractLocalVariableAction_label);
     }
     
 	@Override

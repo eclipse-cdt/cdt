@@ -426,8 +426,8 @@ public class RenameLinkedMode {
         processor.setReplacementText(newName);
         CRenameRefactoringPreferences preferences = new CRenameRefactoringPreferences();
         processor.setSelectedOptions(preferences.getOptions());
-        processor.setScope(preferences.getInt(CRenameRefactoringPreferences.KEY_SCOPE));
-        processor.setWorkingSet(preferences.get(CRenameRefactoringPreferences.KEY_WORKING_SET_NAME));
+        processor.setScope(preferences.getScope());
+        processor.setWorkingSet(preferences.getWorkingSet());
 		RenameSupport renameSupport= RenameSupport.create(processor);
 		return renameSupport;
 	}

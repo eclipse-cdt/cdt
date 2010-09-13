@@ -301,7 +301,6 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         updatePageComplete();
     }
 
-    // overrider
     @Override
 	public void dispose() {
         storePreferences();
@@ -312,14 +311,9 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         CRenameProcessor processor= getRenameProcessor();
         
         if (fWorkspace != null) {
-            int choice;
-            try {
-                choice= fPreferences.getInt(CRenameRefactoringPreferences.KEY_SCOPE);
-            } catch (Exception e) {
-                choice= TextSearchWrapper.SCOPE_RELATED_PROJECTS;
-            }
+            int scope = fPreferences.getScope();
             
-            switch (choice) {
+            switch (scope) {
             case TextSearchWrapper.SCOPE_WORKSPACE:
                 fWorkspace.setSelection(true);
                 break;
@@ -330,13 +324,13 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
                 fWorkingSet.setSelection(true);
                 break;
             default:
-                choice= TextSearchWrapper.SCOPE_RELATED_PROJECTS;
+                scope= TextSearchWrapper.SCOPE_RELATED_PROJECTS;
                 fDependent.setSelection(true);
                 break;
             }
-            processor.setScope(choice);
+            processor.setScope(scope);
        
-            String workingSet= fPreferences.get(CRenameRefactoringPreferences.KEY_WORKING_SET_NAME);
+            String workingSet= fPreferences.getWorkingSet();
     	    processor.setWorkingSet(workingSet);  // CRenameProcessor validates the working set name.
             fWorkingSetSpec.setText(processor.getWorkingSet());
         }

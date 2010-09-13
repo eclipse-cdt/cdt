@@ -41,16 +41,8 @@ public class CRenameRefactoringPreferences {
         }
 	}
 
-	public String get(String key) {
-		return fDialogSettings.get(key);
-	}
-
 	public boolean getBoolean(String key) {
 		return fDialogSettings.getBoolean(key);
-	}
-
-	public int getInt(String key) {
-		return fDialogSettings.getInt(key);
 	}
 
 	public void put(String key, int value) {
@@ -63,6 +55,18 @@ public class CRenameRefactoringPreferences {
 
 	public void put(String key, boolean value) {
 		fDialogSettings.put(key, value);
+	}
+
+	public int getScope() {
+	    try {
+	        return fDialogSettings.getInt(KEY_SCOPE);
+	    } catch (Exception e) {
+	        return TextSearchWrapper.SCOPE_RELATED_PROJECTS;
+	    }
+	}
+
+	public String getWorkingSet() {
+		return fDialogSettings.get(KEY_WORKING_SET_NAME);
 	}
 
 	public int getOptions() {

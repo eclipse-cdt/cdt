@@ -18,6 +18,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -271,8 +272,17 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNoProblemBindings( col );
 		return tu;
 	}
-	
-	
+
+	protected IASTTranslationUnit parseAndCheckBindings() throws Exception {
+		String code= getAboveComment();
+		return parseAndCheckBindings(code);
+	}
+
+	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
+		String code= getAboveComment();
+		return new BindingAssertionHelper(code, true);
+	}
+
 	public void testBug40422() throws Exception
 	{
 		IASTTranslationUnit tu = parse( "class A { int y; }; int A::* x = 0;", ParserLanguage.CPP ); //$NON-NLS-1$
@@ -4543,7 +4553,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    };                                     
 	//    Sub::Sub( Other * b ) : Base(b) {}     
 	public void testBug95673() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		
 		ICPPConstructor ctor= ba.assertNonProblem("Base( Other", 4, ICPPConstructor.class);
 		ICPPConstructor ctor2=  ba.assertNonProblem("Base(b)", 4, ICPPConstructor.class);
@@ -4949,7 +4959,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//   f1(__null);
 	// }
 	public void testBug240567() throws Exception {    	  
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper bh= getAssertionHelper();
 		bh.assertNonProblem("f1(__null", 2, ICPPFunction.class);
 	}
 	
@@ -5298,7 +5308,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		problem5(ptm);
 	//	}
 	public void testBug214335() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		
 		IBinding b00= bh.assertProblem("problem1(\"", 8);
 		IBinding b01= bh.assertProblem("problem2(\"", 8);
@@ -5416,7 +5426,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    a=0;
 	// }
 	public void testUsingDirectiveWithNestedClass_Bug209582() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		
 		IBinding b= bh.assertNonProblem("a=", 1);
 		assertEquals("x", b.getScope().getScopeName().toString());
@@ -5435,7 +5445,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    Test foo3 (&bar); 
 	// }   
 	public void testCastAmbiguity_Bug211756() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		
 		bh.assertNonProblem("foo1", 4);
 		bh.assertNonProblem("foo2", 4);
@@ -5449,7 +5459,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	    return 0;
 	// }
 	public void testTemplateIDAmbiguity_Bug104706() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		
 		bh.assertNonProblem("relayIndex <", 10);
 		bh.assertNonProblem("relayIndex >", 10);
@@ -5487,7 +5497,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    func(unqualified);
 	// }
 	public void testScopeOfUsingDelegates_Bug219424() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		
 		bh.assertNonProblem("cl c", 2);
 		bh.assertNonProblem("func(qualified)", 4);
@@ -5593,7 +5603,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	
 	// namespace ns { typedef int ns::TINT; } // illegal, still no CCE is expected.
 	public void testQualifiedTypedefs_Bug222093() throws Exception{
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		IBinding td= bh.assertProblem("TINT", 4);
 		bh.assertProblem("ns::", 2);
 	}
@@ -5667,7 +5677,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		foo/*k2*/(11.1E1L);
 	//	}
 	public void testLiteralsViaOverloads_225534() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		char[] cs= {'a','b','e','f','g','h','i','j','k'};
 		for(char c : cs) {
 			for(int i=1; i<(c < 'i' ? 4 : 3); i++) {
@@ -5727,7 +5737,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// X::operator int() {}
 	// X::xtint(a); // 2
 	public void testEmptyDeclSpecifier() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("X {", 1, ICPPClassType.class);
 		ba.assertNonProblem("X()", 1, ICPPConstructor.class);
 		ba.assertNonProblem("~X", 2, ICPPMethod.class);
@@ -5832,7 +5842,7 @@ public class AST2CPPTests extends AST2BaseTest {
     // class C;
     // void func(void (C::*m)(int) const);
     public void test233889_a() throws Exception {
-    	BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper bh= getAssertionHelper();
 		ICPPFunction func= bh.assertNonProblem("func(", 4, ICPPFunction.class);
 		assertEquals(1,func.getParameters().length);
 		IType type= func.getParameters()[0].getType();
@@ -5854,7 +5864,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		 func(&C::m2);
 	//	 }
     public void testBug233889_b() throws Exception {
-		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper bh= getAssertionHelper();
 		ICPPFunction fn1= bh.assertNonProblem("func(&C::m1", 4, ICPPFunction.class);
 		ICPPFunction fn2= bh.assertNonProblem("func(&C::m2", 4, ICPPFunction.class);
 		assertNotSame(fn1, fn2);
@@ -5875,7 +5885,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		void member4() const volatile { foo(this);/*4*/ }
 	//	};
 	public void testThisType() throws Exception {
-		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba=getAssertionHelper();
 		ICPPFunction pt1= ba.assertNonProblem("foo(this);/*1*/", 3, ICPPFunction.class);
 		ICPPFunction pt2= ba.assertNonProblem("foo(this);/*2*/", 3, ICPPFunction.class);
 		ICPPFunction pt3= ba.assertNonProblem("foo(this);/*3*/", 3, ICPPFunction.class);
@@ -5904,7 +5914,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//      a2->foo();/*2*/
 	//	}
 	public void testMemberAccessOperator_a() throws Exception {
-		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba=getAssertionHelper();
 		ba.assertProblem("foo();/*1*/", 3);
 		ba.assertNonProblem("foo();/*2*/", 3);
 	}
@@ -5927,7 +5937,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		b2->foo();/*2*/
 	//	}
 	public void testMemberAccessOperator_b() throws Exception {
-		BindingAssertionHelper ba=new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba=getAssertionHelper();
 		ICPPMethod m1= ba.assertNonProblem("foo();/*1*/", 3, ICPPMethod.class);
 		ICPPMethod m2= ba.assertNonProblem("foo();/*2*/", 3, ICPPMethod.class);
 		assertEquals(m1.getClassOwner().getName(), "A");
@@ -5943,7 +5953,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	   c->foo();/**/ // refers to A::foo
 	//	}
 	public void testMemberAccessOperator_c() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("foo();/**/", 3);
 	}
 	
@@ -5956,7 +5966,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	   c->foo();/**/ // expect problem - foo is not in B
 	//	}
 	public void testMemberAccessOperator_d() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("foo();/**/", 3);
 	}
 	
@@ -5972,7 +5982,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	   c->foo();/**/ // refers to A::foo
 	//	}
 	public void testMemberAccessOperator_e() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("foo();/**/", 3);
 	}
 	
@@ -6000,7 +6010,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f4(s);
 	//	}
 	public void testArrayToPointerConversion() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("f1(p)", 2, ICPPFunction.class);
 		ba.assertProblem("f2(q)", 2);
 		ba.assertNonProblem("f3(r)", 2, ICPPFunction.class);
@@ -6100,7 +6110,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  func(y);
 	//	}
 	public void testOverloadedFunction_248774() throws Exception {
-		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper helper= getAssertionHelper();
 		ICPPFunction func1= helper.assertNonProblem("func(x)", 4, ICPPFunction.class);
 		ICPPFunction func2= helper.assertNonProblem("func(y)", 4, ICPPFunction.class);
 		assertNotSame(func1, func2);
@@ -6119,7 +6129,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  func(y[0]);
 	//	}
 	public void testOverloadedOperator_248803() throws Exception {
-		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper helper= getAssertionHelper();
 		ICPPFunction func1= helper.assertNonProblem("func(x[0])", 4, ICPPFunction.class);
 		ICPPFunction func2= helper.assertNonProblem("func(y[0])", 4, ICPPFunction.class);
 		assertNotSame(func1, func2);
@@ -6144,7 +6154,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    void m();//5
 	// };	
 	public void testOverridden_248846() throws Exception {
-		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper helper= getAssertionHelper();
 		ICPPMethod m0= helper.assertNonProblem("m();//0", 1, ICPPMethod.class);
 		ICPPMethod m1= helper.assertNonProblem("m();//1", 1, ICPPMethod.class);
 		ICPPMethod m2= helper.assertNonProblem("m();//2", 1, ICPPMethod.class);
@@ -6242,7 +6252,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f(p);
 	//	}
     public void testFunctionExtraArgument() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("f(p)", 1);
     }
 
@@ -6367,7 +6377,7 @@ public class AST2CPPTests extends AST2BaseTest {
     //    int y;
 	//	};
     public void testScopeOfClassMember_259460() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("B b", 1, ICPPClassType.class);
 		ba.assertProblem("B p", 1);
 		ba.assertProblem("B method", 1);
@@ -6386,7 +6396,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    };
 	//  };
     public void testScopeOfClassMember_259648() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("GREEN)", 5, IEnumerator.class);
 		ba.assertNonProblem("RED;", 3, IEnumerator.class);
 		ba.assertProblem("GREEN;", 5);
@@ -6404,7 +6414,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	// 	  func(*b);
 	// 	}
 	public void testSmartPointerReference_259680() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ICPPFunction f1= ba.assertNonProblem("func(*a)", 4, ICPPFunction.class);
 		ICPPFunction f2= ba.assertNonProblem("func(*b)", 4, ICPPFunction.class);
 		assertNotSame(f1, f2);
@@ -6445,7 +6455,7 @@ public class AST2CPPTests extends AST2BaseTest {
     //    (p1 % p2).a; //5
     //  }
     public void testOverloadedBinaryOperator_259927_1() throws Exception {
-        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        BindingAssertionHelper ba= getAssertionHelper();
         ba.assertNonProblem("a; //1", 1, ICPPField.class);
         ba.assertNonProblem("a; //2", 1, ICPPField.class);
         ba.assertNonProblem("a; //3", 1, ICPPField.class);
@@ -6474,7 +6484,7 @@ public class AST2CPPTests extends AST2BaseTest {
     //    (b + i).a; //6
     //  }
     public void testOverloadedBinaryOperator_259927_2() throws Exception {
-        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        BindingAssertionHelper ba= getAssertionHelper();
         ba.assertNonProblem("a; //1", 1, ICPPField.class);
         ba.assertNonProblem("a; //2", 1, ICPPField.class);
         ba.assertNonProblem("a; //3", 1, ICPPField.class);
@@ -6498,7 +6508,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    (++p1).x; //2
 	// }
     public void testOverloadedUnaryOperator_259927_3() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper ba= getAssertionHelper();
     	ba.assertNonProblem("x; //1", 1, ICPPField.class);
     	ba.assertNonProblem("x; //2", 1, ICPPField.class);
     }
@@ -6516,7 +6526,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    (++p1).x; //2
 	// }
     public void testOverloadedUnaryOperator_259927_4() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper ba= getAssertionHelper();
     	ba.assertNonProblem("x; //1", 1, ICPPField.class);
     	ba.assertNonProblem("x; //2", 1, ICPPField.class);
     }
@@ -6547,7 +6557,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	(~b).xx; // 6
 	// }
     public void testOverloadedUnaryOperator_259927_5() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper ba= getAssertionHelper();
     	for(int i = 1; i <=6; i++)
     		ba.assertNonProblem("xx; // "+i, 2, ICPPField.class);
     }
@@ -6578,7 +6588,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	(~b).xx; // 6
 	//}
     public void testOverloadedUnaryOperator_259927_6() throws Exception {
-    	BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+    	BindingAssertionHelper ba= getAssertionHelper();
     	for(int i = 1; i <=6; i++)
     		ba.assertNonProblem("xx; // "+i, 2, ICPPField.class);	
     }
@@ -6599,7 +6609,7 @@ public class AST2CPPTests extends AST2BaseTest {
     //	 typedef int S2 (int(t));  // resolve this ambiguity first
     // };
     public void testOrderOfAmbiguityResolution_259373() throws Exception {
-        BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+        BindingAssertionHelper ba= getAssertionHelper();
         ICPPVariable a= ba.assertNonProblem("a;", 1);
         assertInstance(a.getType(), IPointerType.class);
         ICPPVariable b= ba.assertNonProblem("b;", 1);
@@ -6780,7 +6790,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f(a());
 	//	}
 	public void testBug263152_1() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("f(a())", 1);
 	}
 
@@ -6796,7 +6806,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  p.m(a());
 	//	}
 	public void testBug263152_2() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("m(a())", 1, ICPPMethod.class);
 	}
 
@@ -6807,7 +6817,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  }
 	//	};
 	public void _testInstanceMemberInStaticMethod_263154() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("a =", 1);
 	}
 
@@ -6843,7 +6853,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f(s);
 	//	}
 	public void testPointerToNonPointerConversion_263159() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("f(p)", 1);
 		ba.assertProblem("f(q)", 1);
 		ba.assertProblem("f(r)", 1);
@@ -6860,7 +6870,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  fia(0);
 	//	}
 	public void testNonPointerToPointerConversion_263707() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("fip(1)", 3);
 		ba.assertProblem("fia(1)", 3);
 		ba.assertNonProblem("fip(0)", 3, ICPPFunction.class);
@@ -6982,7 +6992,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f(!p);
 	//	}
 	public void testTypeOfNotExpression_265779() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertNonProblem("f(!p)", 1);
 	}
 	
@@ -7105,7 +7115,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	    (x + 1.0).b; //3
 	//	}
 	public void testOverloadResolutionForOperators_Bug266211() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
     	ba.assertNonProblem("a; //1", 1, ICPPField.class);
     	ba.assertNonProblem("a; //2", 1, ICPPField.class);
     	ba.assertNonProblem("b; //3", 1, ICPPField.class);
@@ -7126,7 +7136,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	    (x + 1.0).a; //2
 	//	}
 	public void testOverloadResolutionForOperators_Bug268534() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
     	ba.assertNonProblem("a; //1", 1, ICPPField.class);
     	ba.assertNonProblem("a; //2", 1, ICPPField.class);
 	}
@@ -7140,7 +7150,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//		test(c);
 	//	}
 	public void testInvalidUserDefinedConversion_Bug269729() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
     	ba.assertProblem("test(c)", 4);
 	}
 	
@@ -7174,14 +7184,14 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	struct A;
 	//	A a;
 	public void testForwardDeclarationAfterUsing_271236() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
     	ba.assertNonProblem("A a;", 1, ICPPClassType.class);
 	}
 	
 	//	template <class T> class Moo;
 	//	bool getFile(Moo <class Foo> & res);
 	public void testScopeOfClassFwdDecl_270831() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
     	ICPPClassType t= ba.assertNonProblem("Foo", 3, ICPPClassType.class);
     	IScope scope= t.getScope();
     	assertEquals(EScopeKind.eGlobal, scope.getKind());
@@ -7349,7 +7359,7 @@ public class AST2CPPTests extends AST2BaseTest {
 	//	  f(l1);
 	//	}
 	public void testEnumToIntConversion_285368() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
     	ICPPFunction f1 = ba.assertNonProblem("f(i1)", 1, ICPPFunction.class);
     	IType t1 = f1.getType().getParameterTypes()[0];
     	assertTrue(t1 instanceof ICPPBasicType);
@@ -7369,7 +7379,7 @@ public class AST2CPPTests extends AST2BaseTest {
 
 	// typedef enum enum_name enum_name;
 	public void testTypedefRecursion_285457() throws Exception {
-		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper ba= getAssertionHelper();
 		ba.assertProblem("enum_name", 9);
 	}
 	
@@ -8650,7 +8660,7 @@ public class AST2CPPTests extends AST2BaseTest {
 //		      Y* m(Y*);//3
 //		  };
 	public void testOverrideSimpleCovariance_Bug321617() throws Exception {
-		BindingAssertionHelper helper= new BindingAssertionHelper(getAboveComment(), true);
+		BindingAssertionHelper helper= getAssertionHelper();
 		ICPPMethod m0= helper.assertNonProblem("m();//0", 1, ICPPMethod.class);
 		ICPPMethod m1= helper.assertNonProblem("m(X*);//1", 1, ICPPMethod.class);
 		ICPPMethod m2= helper.assertNonProblem("m();//2", 1, ICPPMethod.class);
@@ -9071,7 +9081,41 @@ public class AST2CPPTests extends AST2BaseTest {
 	//    }
 	//    int j = A::i;     
 	public void testInlineNamespaceLookup_324096() throws Exception {
-		String code= getAboveComment();
-		parseAndCheckBindings(code);
+		parseAndCheckBindings();
+	}
+	
+	//	struct C {
+	//		operator int();
+	//	};
+	//	void f(C);
+	//	void f(int);
+	//	void test() {
+	//		C c;
+	//		f(true ? c : 1); // calls f(int), not f(C);
+	//	}
+	public void testConditionalOperator_324853a() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		IBinding f = bh.assertNonProblem("f(int);", 1);
+		IBinding ref= bh.assertNonProblem("f(true ? c : 1)", 1);
+		assertSame(f, ref);
+	}
+	
+	//	void f(char*);
+	//	void f(const char*);
+	//  void g(char*);
+	//	void test(char* p, const char* cp) {
+	//	  f(0 ? cp : p);
+	//	  f(0 ? p : ""); // uses f(const char*);
+	//    g(0 ? p : ""); // converts "" to char*
+	//	}
+	public void testConditionalOperator_324853b() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		IBinding fc = bh.assertNonProblem("f(const char*);", 1);
+		IBinding ref;
+		ref= bh.assertNonProblem("f(0 ? cp : p)", 1);
+		assertSame(fc, ref);
+		ref= bh.assertNonProblem("f(0 ? p : \"\")", 1);   // "" converted to char*
+		assertSame(fc, ref);
+		bh.assertNonProblem("g(0 ? p : \"\")", 1);  // 
 	}
 }

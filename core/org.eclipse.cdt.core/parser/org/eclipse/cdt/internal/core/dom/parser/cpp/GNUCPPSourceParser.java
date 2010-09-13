@@ -2588,7 +2588,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         			simpleType= IASTSimpleDeclSpecifier.t_decltype;
         			consume(IToken.t_decltype);
         			consume(IToken.tLPAREN);
-        			typeofExpression= unaryExpression(CastExprCtx.eNotBExpr);
+        			typeofExpression= expression();
         			endOffset= consumeOrEOC(IToken.tRPAREN).getEndOffset();
 
         			encounteredTypename= true;

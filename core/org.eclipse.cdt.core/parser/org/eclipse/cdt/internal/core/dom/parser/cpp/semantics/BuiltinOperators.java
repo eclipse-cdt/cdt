@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -216,6 +217,11 @@ class BuiltinOperators {
 			
 		case NOT:
 			addFunction(BOOL, BOOL);
+			break;
+			
+		case CONDITIONAL_OPERATOR:
+			binaryPromotedArithmetic(true, ReturnType.CONVERT);
+			conditional();
 			break;
 		}
 		
@@ -516,6 +522,19 @@ class BuiltinOperators {
 		} 
 	}
 	
+	// 13.6-25
+	private void conditional() {
+		for (int i = FIRST; i <= SECOND; i++) {
+			IType[] types= getClassConversionTypes(i);
+			for (IType type : types) {
+				type= SemanticUtil.getNestedType(type, TDEF|REF|CVTYPE);
+				if (isPointer(type) || isScopedEnumeration(type) || isPointerToMember(type)) {
+					addFunction(type, type, type);
+				} 
+			}
+		}
+	}
+
 	private void addFunction(IType returnType, IType p1) {
 		addFunction(returnType, new IType[] {p1});
 	}
@@ -556,7 +575,11 @@ class BuiltinOperators {
 	private boolean isEnumeration(IType type) {
 		return type instanceof IEnumeration;
 	}
-	
+
+	private boolean isScopedEnumeration(IType type) {
+		return type instanceof ICPPEnumeration && ((ICPPEnumeration) type).isScoped();
+	}
+
 	private boolean isPointer(IType type) {
 		return type instanceof IPointerType && !(type instanceof ICPPPointerToMemberType);
 	}

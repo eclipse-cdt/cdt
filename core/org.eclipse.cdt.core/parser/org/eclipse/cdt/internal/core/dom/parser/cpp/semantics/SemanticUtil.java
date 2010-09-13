@@ -253,12 +253,14 @@ public class SemanticUtil {
 				t= ((ITypedef) type).getType();
 			} else if (type instanceof IQualifierType) {
 				final IQualifierType qt = (IQualifierType) type;
+				final IType qttgt = qt.getType();
 				if (allcvq || cvtype) {
-					t= qt.getType();
+					t= qttgt;
 				} else if (tdef) {
-					t= getNestedType(qt.getType(), options);
-					t= addQualifiers(t, qt.isConst(), qt.isVolatile());
-					return t;
+					t= getNestedType(qttgt, options);
+					if (t == qttgt) 
+						return qt;
+					return addQualifiers(t, qt.isConst(), qt.isVolatile());
 				} 
 			} else if (type instanceof IArrayType) {
 				final IArrayType atype= (IArrayType) type;

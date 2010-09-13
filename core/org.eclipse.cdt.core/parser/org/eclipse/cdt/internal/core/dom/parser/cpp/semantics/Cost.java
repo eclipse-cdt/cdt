@@ -29,11 +29,11 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
  * 
  * See [over.best.ics] 13.3.3.1.
  */
-class Cost {
+public class Cost {
 	public enum DeferredUDC {
 		NONE, COPY_INIT_OF_CLASS, INIT_BY_CONVERSION, LIST_INIT_OF_CLASS, DIRECT_LIST_INIT_OF_CLASS
 	}
-	enum Rank {
+	public enum Rank {
 		IDENTITY, PROMOTION, CONVERSION, CONVERSION_PTR_BOOL, 
 		USER_DEFINED_CONVERSION, ELLIPSIS_CONVERSION, NO_MATCH
 	}

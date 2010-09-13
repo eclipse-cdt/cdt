@@ -70,7 +70,12 @@ public enum OverloadableOperator {
 	NEW("new"), 
 	DELETE_ARRAY("delete[]"), 
 	DELETE("delete"), 
-	NEW_ARRAY("new[]"); 
+	NEW_ARRAY("new[]"),
+	
+	/**
+	 * Cannot be overloaded by the user, however overload resolution needs to be performed.
+	 */
+	CONDITIONAL_OPERATOR("?");
 	
 	private final char[] rep;
 	

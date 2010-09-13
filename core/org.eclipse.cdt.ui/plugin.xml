@@ -1879,6 +1879,18 @@
             commandId="org.eclipse.cdt.ui.edit.text.c.sort.lines"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <key
+     		platform="carbon"
+            sequence="M1+M3+S"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+     		platform="carbon"
+            sequence="CTRL+COMMAND+S"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.text.c.sort.lines"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
             sequence="M1+O"
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.open.outline"

@@ -76,11 +76,14 @@ public class ASTModificationHelper {
 				break;
 			
 			case INSERT_BEFORE:
-				T insertedTNode = cast(parentModification.getNewNode(), clazz);	
-				
-				int targetNodeIndex = modifiedChildren.indexOf(parentModification.getTargetNode());
-				if(targetNodeIndex >= 0){
-					modifiedChildren.add(targetNodeIndex, insertedTNode);
+				newNode = parentModification.getNewNode();
+				if (newNode instanceof ContainerNode) {
+					ContainerNode contNode = (ContainerNode) newNode;
+					for (IASTNode node : contNode.getNodes()) {
+						insertNode(clazz, modifiedChildren, parentModification, node);
+					}
+				} else {
+					insertNode(clazz, modifiedChildren, parentModification, newNode);
 				}
 				break;	
 				
@@ -91,6 +94,16 @@ public class ASTModificationHelper {
 		return modifiedChildren.toArray(newArrayInstance(clazz, modifiedChildren.size()));
 	}
 
+
+	private <T> void insertNode(Class<T> clazz, ArrayList<T> modifiedChildren,
+			ASTModification parentModification, IASTNode newNode) {
+		T insertedTNode = cast(newNode, clazz);
+
+		int targetNodeIndex = modifiedChildren.indexOf(parentModification.getTargetNode());
+		if (targetNodeIndex >= 0) {
+			modifiedChildren.add(targetNodeIndex, insertedTNode);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private <T> T[] newArrayInstance(Class<T> clazz, int size) {

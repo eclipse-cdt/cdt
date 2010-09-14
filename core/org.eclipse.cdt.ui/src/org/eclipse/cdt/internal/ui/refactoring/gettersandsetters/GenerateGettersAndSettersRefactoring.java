@@ -253,7 +253,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 		for (IASTFunctionDefinition functionDefinition : definitions) {
 			cont.addNode(functionDefinition);
 		}
-		rewrite = rewrite.insertBefore(parent, nodeToInsertBefore, cont , null);
+		rewrite = rewrite.insertBefore(parent, nodeToInsertBefore, cont, null);
 	}
 
 	public GetterAndSetterContext getContext() {

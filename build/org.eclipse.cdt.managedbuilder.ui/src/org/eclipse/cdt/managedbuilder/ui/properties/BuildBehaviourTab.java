@@ -22,7 +22,6 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.ICPropertyProvider;
@@ -82,7 +81,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		// Build setting group
-		Group g3 = setupGroup(usercomp, Messages.BuilderSettingsTab_9, 2, GridData.FILL_HORIZONTAL); 
+		Group g3 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.9"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		GridLayout gl = new GridLayout(2, true);
 		gl.verticalSpacing = 0;
 		gl.marginWidth = 0;
@@ -100,7 +99,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		gl.marginHeight = 0;
 		c1.setLayout(gl);
 		
-		b_stopOnError = setupCheck(c1, Messages.BuilderSettingsTab_10, 1, GridData.BEGINNING); 
+		b_stopOnError = setupCheck(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		
 		Composite c2 = new Composite(g3, SWT.NONE);
 		setupControl(c2, 1, GridData.FILL_BOTH);
@@ -110,7 +109,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		gl.marginHeight = 0;
 		c2.setLayout(gl);
 		
-		b_parallel = setupCheck(c2, Messages.BuilderSettingsTab_11, 1, GridData.BEGINNING); 
+		b_parallel = setupCheck(c2, Messages.getString("BuilderSettingsTab.11"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
 		Composite c3 = new Composite(g3, SWT.NONE);
 		setupControl(c3, 1, GridData.FILL_BOTH);
@@ -121,7 +120,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		c3.setLayout(gl);
 		
 		b_parallelOpt= new Button(c3, SWT.RADIO);
-		b_parallelOpt.setText(Messages.BuilderSettingsTab_12); 
+		b_parallelOpt.setText(Messages.getString("BuilderSettingsTab.12")); //$NON-NLS-1$
 		setupControl(b_parallelOpt, 2, GridData.BEGINNING);
 		((GridData)(b_parallelOpt.getLayoutData())).horizontalIndent = 15;
 		b_parallelOpt.addSelectionListener(new SelectionAdapter() {
@@ -132,7 +131,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		 }});
 		
 		b_parallelNum= new Button(c3, SWT.RADIO);
-		b_parallelNum.setText(Messages.BuilderSettingsTab_13); 
+		b_parallelNum.setText(Messages.getString("BuilderSettingsTab.13")); //$NON-NLS-1$
 		setupControl(b_parallelNum, 1, GridData.BEGINNING);
 		((GridData)(b_parallelNum.getLayoutData())).horizontalIndent = 15;
 		b_parallelNum.addSelectionListener(new SelectionAdapter() {
@@ -157,13 +156,13 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		AccessibleListener makeTargetLabelAccessibleListener = new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = Messages.BuilderSettingsTab_16; 
+				e.result = Messages.getString("BuilderSettingsTab.16"); //$NON-NLS-1$
 			}
 		};
-		Group g4 = setupGroup(usercomp, Messages.BuilderSettingsTab_14, 3, GridData.FILL_HORIZONTAL); 
-		setupLabel(g4, Messages.BuilderSettingsTab_15, 1, GridData.BEGINNING); 
-		title2 = setupLabel(g4, Messages.BuilderSettingsTab_16, 2, GridData.BEGINNING); 
-		b_autoBuild = setupCheck(g4, Messages.BuilderSettingsTab_17, 1, GridData.BEGINNING); 
+		Group g4 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.14"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		setupLabel(g4, Messages.getString("BuilderSettingsTab.15"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		title2 = setupLabel(g4, Messages.getString("BuilderSettingsTab.16"), 2, GridData.BEGINNING); //$NON-NLS-1$
+		b_autoBuild = setupCheck(g4, Messages.getString("BuilderSettingsTab.17"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_autoBuild = setupBlock(g4, b_autoBuild);
 		t_autoBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -171,8 +170,8 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 					setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
 			}} );
 		t_autoBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
-		setupLabel(g4, Messages.BuilderSettingsTab_18, 3, GridData.BEGINNING); 
-		b_cmdBuild = setupCheck(g4, Messages.BuilderSettingsTab_19, 1, GridData.BEGINNING); 
+		setupLabel(g4, Messages.getString("BuilderSettingsTab.18"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		b_cmdBuild = setupCheck(g4, Messages.getString("BuilderSettingsTab.19"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdBuild = setupBlock(g4, b_cmdBuild);
 		t_cmdBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -180,7 +179,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 					setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
 			}} );
 		t_cmdBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
-		b_cmdClean = setupCheck(g4, Messages.BuilderSettingsTab_20, 1, GridData.BEGINNING); 
+		b_cmdClean = setupCheck(g4, Messages.getString("BuilderSettingsTab.20"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdClean = setupBlock(g4, b_cmdClean);
 		t_cmdClean.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

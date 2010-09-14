@@ -11,7 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.swt.SWT;
@@ -37,11 +37,11 @@ public class WizardDefaultsTab extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
 		show_sup = new Button(usercomp, SWT.CHECK);
-        show_sup.setText(Messages.WizardDefaultsTab_0); 
+        show_sup.setText(Messages.getString("WizardDefaultsTab.0")); //$NON-NLS-1$
         show_sup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_oth = new Button(usercomp, SWT.CHECK);
-        show_oth.setText(Messages.WizardDefaultsTab_1); 
+        show_oth.setText(Messages.getString("WizardDefaultsTab.1")); //$NON-NLS-1$
         show_oth.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));

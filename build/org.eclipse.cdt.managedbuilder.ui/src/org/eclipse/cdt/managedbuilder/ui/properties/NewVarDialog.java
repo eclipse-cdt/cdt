@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.jface.dialogs.Dialog;
@@ -54,6 +54,25 @@ import org.eclipse.swt.widgets.Text;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class NewVarDialog extends Dialog {
+	// String constants
+	private static final String PREFIX = "NewBuildMacroDialog";	//$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
+	private static final String VALUE = LABEL + ".value";	//$NON-NLS-1$
+
+	private static final String TYPE = LABEL + ".type";	//$NON-NLS-1$
+	private static final String TYPE_TEXT = TYPE + ".text";	//$NON-NLS-1$
+	private static final String TYPE_TEXT_LIST = TYPE + ".text.list";	//$NON-NLS-1$
+	private static final String TYPE_PATH_FILE = TYPE + ".path.file";	//$NON-NLS-1$
+	private static final String TYPE_PATH_FILE_LIST = TYPE + ".path.file.list";	//$NON-NLS-1$
+	private static final String TYPE_PATH_DIR = TYPE + ".path.dir";	//$NON-NLS-1$
+	private static final String TYPE_PATH_DIR_LIST = TYPE + ".path.dir.list";	//$NON-NLS-1$
+	private static final String TYPE_PATH_ANY = TYPE + ".path.any";	//$NON-NLS-1$
+	private static final String TYPE_PATH_ANY_LIST = TYPE + ".path.any.list";	//$NON-NLS-1$
+	
+	private static final String BROWSE = LABEL + ".browse";	//$NON-NLS-1$
+	private static final String LIST_TITLE = LABEL + ".list.title";	//$NON-NLS-1$
+	private static final String TITLE_NEW = LABEL + ".title.new"; 	//$NON-NLS-1$
+	private static final String TITLE_EDIT = LABEL + ".title.edit"; 	//$NON-NLS-1$
 	private static final String EMPTY_STRING = new String();
 
 	// The title of the dialog.
@@ -86,9 +105,9 @@ public class NewVarDialog extends Dialog {
 		super(parentShell);
 		cfgd = _cfgd;
 		if(editedMacro != null)
-			fTitle = Messages.NewBuildMacroDialog_label_title_edit;
+			fTitle = UIMessages.getString(TITLE_EDIT);
 		else
-			fTitle = Messages.NewBuildMacroDialog_label_title_new;
+			fTitle = UIMessages.getString(TITLE_NEW);
 		fEditedMacro = editedMacro;
 		vars = _vars;
 	}
@@ -118,7 +137,7 @@ public class NewVarDialog extends Dialog {
 
 		Label nameLabel = new Label(comp, SWT.LEFT);
 		nameLabel.setFont(comp.getFont());
-		nameLabel.setText(Messages.NewVarDialog_0); 
+		nameLabel.setText(Messages.getString("NewVarDialog.0")); //$NON-NLS-1$
 		nameLabel.setLayoutData(new GridData());
 		
 		fMacroNameEdit = new CCombo(comp, SWT.BORDER);
@@ -142,7 +161,7 @@ public class NewVarDialog extends Dialog {
 
 		if (fEditedMacro == null && cfgd != null && !(cfgd instanceof ICMultiItemsHolder)) {
 			Button c_all = new Button(comp, SWT.CHECK);
-			c_all.setText(Messages.NewVarDialog_1); 
+			c_all.setText(Messages.getString("NewVarDialog.1")); //$NON-NLS-1$
 			gd = new GridData(GridData.BEGINNING);
 			gd.horizontalSpan = 3;
 			c_all.setLayoutData(gd);
@@ -156,7 +175,7 @@ public class NewVarDialog extends Dialog {
 		
 		Label typeLabel = new Label(comp, SWT.LEFT);
 		typeLabel.setFont(comp.getFont());
-		typeLabel.setText(Messages.NewBuildMacroDialog_label_type);
+		typeLabel.setText(UIMessages.getString(TYPE));
 		gd = new GridData();
 		typeLabel.setLayoutData(gd);
 		
@@ -166,14 +185,14 @@ public class NewVarDialog extends Dialog {
 //		gd.widthHint = 100;
 		fTypeSelector.setLayoutData(gd);
 		fTypeSelector.setItems(new String[]{
-				Messages.NewBuildMacroDialog_label_type_text,
-				Messages.NewBuildMacroDialog_label_type_text_list,
-				Messages.NewBuildMacroDialog_label_type_path_file,
-				Messages.NewBuildMacroDialog_label_type_path_file_list,
-				Messages.NewBuildMacroDialog_label_type_path_dir,
-				Messages.NewBuildMacroDialog_label_type_path_dir_list,
-				Messages.NewBuildMacroDialog_label_type_path_any,
-				Messages.NewBuildMacroDialog_label_type_path_any_list
+				UIMessages.getString(TYPE_TEXT),
+				UIMessages.getString(TYPE_TEXT_LIST),
+				UIMessages.getString(TYPE_PATH_FILE),
+				UIMessages.getString(TYPE_PATH_FILE_LIST),
+				UIMessages.getString(TYPE_PATH_DIR),
+				UIMessages.getString(TYPE_PATH_DIR_LIST),
+				UIMessages.getString(TYPE_PATH_ANY),
+				UIMessages.getString(TYPE_PATH_ANY_LIST)
 		});
 		setSelectedType(IBuildMacro.VALUE_TEXT);
 
@@ -185,7 +204,7 @@ public class NewVarDialog extends Dialog {
 
 		fMacroValueLabel = new Label(comp, SWT.LEFT);
 		fMacroValueLabel.setFont(comp.getFont());
-		fMacroValueLabel.setText(Messages.NewBuildMacroDialog_label_value);
+		fMacroValueLabel.setText(UIMessages.getString(VALUE));
 		gd = new GridData();
 		gd.horizontalSpan = 1;		
 		fMacroValueLabel.setLayoutData(gd);
@@ -204,7 +223,7 @@ public class NewVarDialog extends Dialog {
 
 		fBrowseButton = new Button(comp,SWT.PUSH);
 		fBrowseButton.setFont(comp.getFont());
-		fBrowseButton.setText(Messages.NewBuildMacroDialog_label_browse);
+		fBrowseButton.setText(UIMessages.getString(BROWSE));
 		fBrowseButton.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e){
@@ -223,7 +242,7 @@ public class NewVarDialog extends Dialog {
 		fListEditorContainier.setLayoutData(gd);
 		fListEditorContainier.setLayout(new GridLayout());
 
-		fListEditor = new FileListControl(fListEditorContainier, Messages.NewBuildMacroDialog_label_list_title, IOption.BROWSE_NONE);
+		fListEditor = new FileListControl(fListEditorContainier, UIMessages.getString(LIST_TITLE), IOption.BROWSE_NONE);
 		/* Enable workspace support for list editor */
 		fListEditor.setWorkspaceSupport(true);
 

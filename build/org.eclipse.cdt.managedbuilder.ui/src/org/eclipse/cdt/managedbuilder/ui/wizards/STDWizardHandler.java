@@ -23,7 +23,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,13 +38,13 @@ import org.eclipse.swt.widgets.Composite;
 public class STDWizardHandler extends MBSWizardHandler {
 
 	public STDWizardHandler(Composite p, IWizard w) {
-		super(Messages.StdBuildWizard_0, p, w); 
+		super(Messages.getString("StdBuildWizard.0"), p, w); //$NON-NLS-1$
 	}
 
 	@Override
 	public void addTc(IToolChain tc) {
 		if (tc == null) {
-			full_tcs.put(Messages.StdProjectTypeHandler_0, null); 
+			full_tcs.put(UIMessages.getString("StdProjectTypeHandler.0"), null); //$NON-NLS-1$
 		} else {
 			if (tc.isAbstract() || tc.isSystemObject()) return;
 		// 	unlike CWizardHandler, we don't check for configs
@@ -94,7 +95,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    		}
 	    		bld.setManagedBuildOn(false);
 	    	} else {
-	    		System.out.println(Messages.StdProjectTypeHandler_3); 
+	    		System.out.println(UIMessages.getString("StdProjectTypeHandler.3")); //$NON-NLS-1$
 	    	}
 	    	cfg.setArtifactName(mProj.getDefaultArtifactName());
 	    	CConfigurationData data = cfg.getConfigurationData();

@@ -14,7 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.preferences;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -55,31 +55,31 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout(1, false));
 
         show_mng = new Button(usercomp, SWT.CHECK);
-        show_mng.setText(Messages.PropertyPageDefsTab_0); 
+        show_mng.setText(UIMessages.getString("PropertyPageDefsTab.0")); //$NON-NLS-1$
         show_mng.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         show_inc_files = new Button(usercomp, SWT.CHECK);
-        show_inc_files.setText(Messages.PropertyPageDefsTab_showIncludeFileTab); 
+        show_inc_files.setText(UIMessages.getString("PropertyPageDefsTab.showIncludeFileTab")); //$NON-NLS-1$
         show_inc_files.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_tree = new Button(usercomp, SWT.CHECK);
-        show_tree.setText(Messages.PropertyPageDefsTab_1); 
+        show_tree.setText(UIMessages.getString("PropertyPageDefsTab.1")); //$NON-NLS-1$
         show_tree.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_tool = new Button(usercomp, SWT.CHECK);
-        show_tool.setText(Messages.PropertyPageDefsTab_4); 
+        show_tool.setText(UIMessages.getString("PropertyPageDefsTab.4")); //$NON-NLS-1$
         show_tool.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		show_exp = new Button(usercomp, SWT.CHECK);
-        show_exp.setText(Messages.PropertyPageDefsTab_10); 
+        show_exp.setText(UIMessages.getString("PropertyPageDefsTab.10")); //$NON-NLS-1$
         show_exp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         show_tipbox = new Button(usercomp, SWT.CHECK);
-        show_tipbox.setText(Messages.PropertyPageDefsTab_16); 
+        show_tipbox.setText(UIMessages.getString("PropertyPageDefsTab.16")); //$NON-NLS-1$
         show_tipbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         Group saveGrp = new Group(usercomp, SWT.NONE);
-        saveGrp.setText(Messages.PropertyPageDefsTab_11); 
+        saveGrp.setText(UIMessages.getString("PropertyPageDefsTab.11")); //$NON-NLS-1$
         saveGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         FillLayout fl = new FillLayout(SWT.VERTICAL);
         fl.spacing = SPACING;
@@ -88,14 +88,14 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         saveGrp.setLayout(fl);
         
         s_0 = new Button(saveGrp, SWT.RADIO);
-        s_0.setText(Messages.PropertyPageDefsTab_13); 
+        s_0.setText(UIMessages.getString("PropertyPageDefsTab.13")); //$NON-NLS-1$
         s_1 = new Button(saveGrp, SWT.RADIO);
-        s_1.setText(Messages.PropertyPageDefsTab_12); 
+        s_1.setText(UIMessages.getString("PropertyPageDefsTab.12")); //$NON-NLS-1$
         s_2 = new Button(saveGrp, SWT.RADIO);
-        s_2.setText(Messages.PropertyPageDefsTab_14); 
+        s_2.setText(UIMessages.getString("PropertyPageDefsTab.14")); //$NON-NLS-1$
         
         Group discGrp = new Group(usercomp, SWT.NONE);
-        discGrp.setText(Messages.PropertyPageDefsTab_5); 
+        discGrp.setText(UIMessages.getString("PropertyPageDefsTab.5")); //$NON-NLS-1$
         discGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fl = new FillLayout(SWT.VERTICAL);
         fl.spacing = SPACING;
@@ -104,13 +104,13 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         discGrp.setLayout(fl);
         
         b_0 = new Button(discGrp, SWT.RADIO);
-        b_0.setText(Messages.PropertyPageDefsTab_6); 
+        b_0.setText(UIMessages.getString("PropertyPageDefsTab.6")); //$NON-NLS-1$
         b_1 = new Button(discGrp, SWT.RADIO);
-        b_1.setText(Messages.PropertyPageDefsTab_7); 
+        b_1.setText(UIMessages.getString("PropertyPageDefsTab.7")); //$NON-NLS-1$
         b_2 = new Button(discGrp, SWT.RADIO);
-        b_2.setText(Messages.PropertyPageDefsTab_8); 
+        b_2.setText(UIMessages.getString("PropertyPageDefsTab.8")); //$NON-NLS-1$
         b_3 = new Button(discGrp, SWT.RADIO);
-        b_3.setText(Messages.PropertyPageDefsTab_9); 
+        b_3.setText(UIMessages.getString("PropertyPageDefsTab.9")); //$NON-NLS-1$
         
         show_inc_files.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_SHOW_INC_FILES));
         show_tree.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_DTREE));

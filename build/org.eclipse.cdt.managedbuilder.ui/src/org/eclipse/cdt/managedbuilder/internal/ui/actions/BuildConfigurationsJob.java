@@ -13,7 +13,6 @@ package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -79,7 +78,7 @@ public class BuildConfigurationsJob extends Job {
 				ManagedBuildManager.buildConfigurations(cfgs, null, monitor, true, buildKind);
 			}
 		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, Messages.BuildConfigurationsJob_BuildError, e.getLocalizedMessage());
+			return new Status(IStatus.ERROR, org.eclipse.cdt.managedbuilder.internal.ui.actions.Messages.BuildConfigurationsJob_BuildError, e.getLocalizedMessage());
 		}
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;

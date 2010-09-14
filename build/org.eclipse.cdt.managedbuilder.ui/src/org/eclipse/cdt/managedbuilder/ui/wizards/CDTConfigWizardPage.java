@@ -19,7 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -57,9 +57,9 @@ public class CDTConfigWizardPage extends WizardPage {
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.CConfigWizardPage"; //$NON-NLS-1$
 
 	private static final Image IMG_CONFIG = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CONFIG);
-	private static final String TITLE = Messages.CConfigWizardPage_0; 
-	private static final String MESSAGE = Messages.CConfigWizardPage_1; 
-	private static final String COMMENT = Messages.CConfigWizardPage_12; 
+	private static final String TITLE = UIMessages.getString("CConfigWizardPage.0"); //$NON-NLS-1$
+	private static final String MESSAGE = UIMessages.getString("CConfigWizardPage.1"); //$NON-NLS-1$
+	private static final String COMMENT = UIMessages.getString("CConfigWizardPage.12"); //$NON-NLS-1$
 	private static final String EMPTY_STR = "";  //$NON-NLS-1$
 
 	private Table table;
@@ -78,7 +78,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	IWizardPage[] customPages = null;
 
 	public CDTConfigWizardPage(MBSWizardHandler h) {
-		super(Messages.CDTConfigWizardPage_0); 
+		super(UIMessages.getString("CDTConfigWizardPage.0")); //$NON-NLS-1$
 		setPageComplete(false);
 		handler = h;
 		setWizard(h.getWizard());
@@ -109,11 +109,11 @@ public class CDTConfigWizardPage extends WizardPage {
 		c1.setLayout(new GridLayout(2, false));
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		setupLabel(c1, Messages.CConfigWizardPage_4, GridData.BEGINNING); 
+		setupLabel(c1, UIMessages.getString("CConfigWizardPage.4"), GridData.BEGINNING); //$NON-NLS-1$
 		l_projtype = setupLabel(c1, EMPTY_STR, GridData.FILL_HORIZONTAL);
-		setupLabel(c1, Messages.CConfigWizardPage_5, GridData.BEGINNING); 
+		setupLabel(c1, UIMessages.getString("CConfigWizardPage.5"), GridData.BEGINNING); //$NON-NLS-1$
 		l_chains = setupLabel(c1, EMPTY_STR, GridData.FILL_HORIZONTAL);
-		setupLabel(c1, Messages.CConfigWizardPage_6, GridData.BEGINNING); 
+		setupLabel(c1, UIMessages.getString("CConfigWizardPage.6"), GridData.BEGINNING); //$NON-NLS-1$
 		setupLabel(c1, EMPTY_STR, GridData.BEGINNING);
 
 		Composite c2 = new Composite(parent, SWT.NONE);
@@ -150,7 +150,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		c.setLayout(new GridLayout());
 
 		Button b1 = new Button(c, SWT.PUSH);
-		b1.setText(Messages.CConfigWizardPage_7); 
+		b1.setText(UIMessages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
 		b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -161,7 +161,7 @@ public class CDTConfigWizardPage extends WizardPage {
 			}});
 
 		Button b2 = new Button(c, SWT.PUSH);
-		b2.setText(Messages.CConfigWizardPage_8); 
+		b2.setText(UIMessages.getString("CConfigWizardPage.8")); //$NON-NLS-1$
 		b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b2.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -175,7 +175,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		new Label(c, 0).setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Button b3 = new Button(c, SWT.PUSH);
-		b3.setText(Messages.CConfigWizardPage_13); 
+		b3.setText(UIMessages.getString("CConfigWizardPage.13")); //$NON-NLS-1$
 		b3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b3.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -245,12 +245,12 @@ public class CDTConfigWizardPage extends WizardPage {
 			return true;
 
 		if (table.getItemCount() == 0) {
-			errorMessage = Messages.CConfigWizardPage_10; 
+			errorMessage = UIMessages.getString("CConfigWizardPage.10"); //$NON-NLS-1$
 			message = errorMessage;
 			return false;
 		}
 		if (tv.getCheckedElements().length == 0) {
-			errorMessage = Messages.CConfigWizardPage_11; 
+			errorMessage = UIMessages.getString("CConfigWizardPage.11"); //$NON-NLS-1$
 			message = errorMessage;
 			return false;
 		}

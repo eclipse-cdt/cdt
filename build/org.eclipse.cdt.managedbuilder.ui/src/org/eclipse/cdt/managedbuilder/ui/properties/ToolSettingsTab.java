@@ -32,7 +32,6 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.resources.IResource;
@@ -198,7 +197,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			if (tipText==null) {
 				return;
 			}
-			tipText.setText(Messages.ToolSettingsTab_0); 
+			tipText.setText(Messages.getString("ToolSettingsTab.0")); //$NON-NLS-1$
 			tipText.update();
 		}
 
@@ -340,7 +339,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private void createTipArea (Composite parent) {
 			tipText = new StyledText(parent, SWT.V_SCROLL|SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
 			tipText.setLayoutData(new GridData(GridData.FILL_BOTH));
-			tipText.setText(Messages.ToolSettingsTab_0); 
+			tipText.setText(Messages.getString("ToolSettingsTab.0")); //$NON-NLS-1$
 
 			styleRange = new StyleRange();
 			styleRange.start = 0;

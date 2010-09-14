@@ -16,11 +16,12 @@ import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.AbstractCBuildPropertyTab;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.managedbuilder.ui.wizards.MBSWizardHandler;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
@@ -65,7 +66,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
     	c.setLayout(new GridLayout(2, true));
 
         Label l1 = new Label(c, SWT.NONE);
-        l1.setText(Messages.CMainWizardPage_0); 
+        l1.setText(UIMessages.getString("CMainWizardPage.0")); //$NON-NLS-1$
         l1.setFont(parent.getFont());
         l1.setLayoutData(new GridData(GridData.BEGINNING));
         
@@ -88,21 +89,21 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
         right.setLayout(new PageLayout());
 
     	Label l = new Label(c,SWT.WRAP | SWT.CENTER);
-        l.setText(Messages.PreferredToolchainsTab_0); 
+        l.setText(Messages.getString("PreferredToolchainsTab.0")); //$NON-NLS-1$
         GridData gd = new GridData(GridData.CENTER);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
 
         new Label(c,0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref1 = new Button(c, SWT.PUSH);
-        pref1.setText(Messages.PreferredToolchainsTab_1); 
+        pref1.setText(Messages.getString("PreferredToolchainsTab.1")); //$NON-NLS-1$
         pref1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { setPref(true); }} );
 
         new Label(c,0).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));        
         pref0 = new Button(c, SWT.PUSH);
-        pref0.setText(Messages.PreferredToolchainsTab_2); 
+        pref0.setText(Messages.getString("PreferredToolchainsTab.2")); //$NON-NLS-1$
         pref0.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         pref0.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) { setPref(false); }} );
@@ -118,7 +119,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
                
         show_sup = new Button(c, SWT.CHECK);
         show_sup.setSelection(true);
-        show_sup.setText(Messages.CMainWizardPage_1); 
+        show_sup.setText(Messages.getString("CMainWizardPage.1")); //$NON-NLS-1$
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
         show_sup.setLayoutData(gd);
@@ -167,7 +168,7 @@ public class PreferredToolchainsTab extends AbstractCBuildPropertyTab {
 				temp = temp + ", " + iterator.next(); //$NON-NLS-1$
 			}
 		
-			preferredTCsLabel.setText(Messages.PreferredToolchainsTab_3 + temp); 
+			preferredTCsLabel.setText(Messages.getString("PreferredToolchainsTab.3") + temp); //$NON-NLS-1$
 		}
 	}
 	

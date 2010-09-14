@@ -10,17 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * @deprecated. This class is not used. Use {@link org.eclipse.cdt.managedbuilder.internal.ui} instead.
  */
-@Deprecated
 public class Messages {
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.ui.properties.messages"; //$NON-NLS-1$
+
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+			.getBundle(BUNDLE_NAME);
+
 	private Messages() {
 	}
 
 	public static String getString(String key) {
-		return '!' + key + '!';
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
 	}
 }

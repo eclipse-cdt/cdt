@@ -16,7 +16,6 @@ import org.eclipse.cdt.internal.ui.workingsets.IWorkingSetConfiguration;
 import org.eclipse.cdt.internal.ui.workingsets.WorkingSetProjectConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -72,8 +71,9 @@ class MBSProjectConfiguration extends WorkingSetProjectConfiguration {
 				: ManagedBuildManager.getConfigurationForDescription(config);
 
 		if (mbsConfig == null) {
-			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
-					NLS.bind(Messages.MBSProjectConfiguration_No_configuration_selected_for_project, project.getName()));
+			result = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, NLS.bind(
+					"No configuration selected for project \"{0}\".", project
+							.getName()));
 		} else {
 			monitor = SubMonitor.convert(monitor);
 

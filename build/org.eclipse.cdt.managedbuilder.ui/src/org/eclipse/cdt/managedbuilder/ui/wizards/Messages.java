@@ -14,9 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * @since 7.0
- * @deprecated. This class is not used. Use {@link org.eclipse.cdt.managedbuilder.internal.ui} instead.
  */
-@Deprecated
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.ui.wizards.messages"; //$NON-NLS-1$
 	public static String NewMakeProjFromExisting_0;

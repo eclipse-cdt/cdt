@@ -12,7 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 
@@ -21,13 +21,13 @@ import org.eclipse.jface.wizard.IWizard;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class StdBuildWizard extends AbstractCWizard {
-	private static final String NAME = Messages.StdBuildWizard_0; 
+	private static final String NAME = Messages.getString("StdBuildWizard.0"); //$NON-NLS-1$
 	private static final String ID = "org.eclipse.cdt.build.makefile.projectType"; //$NON-NLS-1$
 	
 	/**
 	 * @since 5.1
 	 */
-	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_0;  
+	public static final String EMPTY_PROJECT = Messages.getString("AbstractCWizard.0");  //$NON-NLS-1$
 	
 	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {

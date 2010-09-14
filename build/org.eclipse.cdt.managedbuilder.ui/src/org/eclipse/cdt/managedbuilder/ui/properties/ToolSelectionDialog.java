@@ -23,7 +23,6 @@ import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
 import org.eclipse.cdt.managedbuilder.tcmodification.IModificationOperation;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
@@ -83,7 +82,7 @@ public class ToolSelectionDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(Messages.ToolSelectionDialog_0); 
+		shell.setText(Messages.getString("ToolSelectionDialog.0")); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -126,7 +125,7 @@ public class ToolSelectionDialog extends Dialog {
 			}});
 		
 		TableColumn col = new TableColumn(t1, SWT.NONE);
-		col.setText(Messages.ToolSelectionDialog_1); 
+		col.setText(Messages.getString("ToolSelectionDialog.1")); //$NON-NLS-1$
 		col.setWidth(COL_WIDTH);
 		
 		l1 = new CLabel(c1, SWT.BORDER);
@@ -145,7 +144,7 @@ public class ToolSelectionDialog extends Dialog {
 			}});
 		
 		col = new TableColumn(t2, SWT.NONE);
-		col.setText(Messages.ToolSelectionDialog_2); 
+		col.setText(Messages.getString("ToolSelectionDialog.2")); //$NON-NLS-1$
 		col.setWidth(COL_WIDTH);
 
 		txt2 = new Text(c3, SWT.BORDER | SWT.WRAP | SWT.MULTI |
@@ -156,7 +155,7 @@ public class ToolSelectionDialog extends Dialog {
 		txt2.setLayoutData(gd);
 		
 		b_add = new Button(c2, SWT.PUSH);
-		b_add.setText(Messages.ToolSelectionDialog_12);  
+		b_add.setText(Messages.getString("ToolSelectionDialog.12"));  //$NON-NLS-1$
 		b_add.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -172,7 +171,7 @@ public class ToolSelectionDialog extends Dialog {
 		b_add.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 
 		b_rep = new Button(c2, SWT.PUSH);
-		b_rep.setText(Messages.ToolSelectionDialog_14); 
+		b_rep.setText(Messages.getString("ToolSelectionDialog.14")); //$NON-NLS-1$
 		b_rep.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -181,7 +180,7 @@ public class ToolSelectionDialog extends Dialog {
 		b_rep.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		
 		b_del = new Button(c2, SWT.PUSH);
-		b_del.setText(Messages.ToolSelectionDialog_13);  
+		b_del.setText(Messages.getString("ToolSelectionDialog.13"));  //$NON-NLS-1$
 		b_del.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b_del.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -203,7 +202,7 @@ public class ToolSelectionDialog extends Dialog {
 		new Label(c2, SWT.NONE).setLayoutData(new GridData(GridData.FILL, SWT.FILL, true, true));
 		
 		b_all = new Button(c2, SWT.CHECK | SWT.WRAP);
-		b_all.setText(Messages.ToolSelectionDialog_15); 
+		b_all.setText(Messages.getString("ToolSelectionDialog.15")); //$NON-NLS-1$
 		b_all.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b_all.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -374,7 +373,7 @@ public class ToolSelectionDialog extends Dialog {
 			if (IMG_ARROW.equals(ti.getImage()) && !isPrj) {
 				TableItem[] tis = t2.getSelection();
 				if (tis != null && tis.length > 0) {
-					message = Messages.ToolSelectionDialog_16 + 
+					message = Messages.getString("ToolSelectionDialog.16") + //$NON-NLS-1$
 					((ITool)tis[0].getData()).getUniqueRealName();   
 				}
 			}
@@ -459,7 +458,7 @@ public class ToolSelectionDialog extends Dialog {
 			int c = st.getCode();
 			String s = EMPTY_STR;
 			if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
-				s = s + Messages.ToolSelectionDialog_7; 
+				s = s + Messages.getString("ToolSelectionDialog.7"); //$NON-NLS-1$
 				ITool[][] tools = st.getToolsConflicts();
 				List<String> conflictTools = new ArrayList<String>();
 				for (int k=0; k<t2.getItemCount(); k++) {
@@ -484,7 +483,7 @@ public class ToolSelectionDialog extends Dialog {
 				}
 			}
 			if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {
-				s = s + Messages.ToolSelectionDialog_8; 
+				s = s + Messages.getString("ToolSelectionDialog.8"); //$NON-NLS-1$
 				ITool[] tools = st.getNonManagedBuildTools();
 				for (int k=0; k<t2.getItemCount(); k++) {
 					TableItem ti = t2.getItem(k);
@@ -498,13 +497,13 @@ public class ToolSelectionDialog extends Dialog {
 				}
 			}
 			if ((c & IModificationStatus.PROPS_NOT_DEFINED) != 0) {
-				s = s + Messages.ToolSelectionDialog_9;  
+				s = s + Messages.getString("ToolSelectionDialog.9");  //$NON-NLS-1$
 			}
 			if ((c & IModificationStatus.PROPS_NOT_SUPPORTED) != 0) {
-				s = s + Messages.ToolSelectionDialog_10;  
+				s = s + Messages.getString("ToolSelectionDialog.10");  //$NON-NLS-1$
 			}
 			if ((c & IModificationStatus.REQUIRED_PROPS_NOT_SUPPORTED) != 0) {
-				s = s + Messages.ToolSelectionDialog_11;  
+				s = s + Messages.getString("ToolSelectionDialog.11");  //$NON-NLS-1$
 			}
 			errorLabel.setText(s);
 //			if(getButton(IDialogConstants.OK_ID) != null)

@@ -25,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.MultiLineTextFieldEditor;
-import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -85,7 +85,13 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	// Data members
 	
 	// all build options field editor label
-	private static final String ALL_OPTIONS = Messages.BuildToolSettingsPage_alloptions;
+	private static final String ALL_OPTIONS = UIMessages.getString("BuildToolSettingsPage.alloptions"); //$NON-NLS-1$
+	// Field editor label for tool command
+	private static final String COMMAND = "BuildToolSettingsPage.tool.command"; //$NON-NLS-1$
+	// Advanced settings label
+	private static final String ADVANCED_GROUP = "BuildToolSettingsPage.tool.advancedSettings"; //$NON-NLS-1$
+	// Field editor label for tool command line pattern
+	private static final String COMMAND_LINE_PATTERN = "BuildToolSettingsPage.tool.commandLinePattern"; //$NON-NLS-1$
 
 	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
 	// Whitespace character
@@ -140,7 +146,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		Composite parent = getFieldEditorParent();
 		FontMetrics fm = AbstractCPropertyTab.getFontMetrics(parent);
 		commandStringField = new StringFieldEditor(fTool.getId(),
-				Messages.BuildToolSettingsPage_tool_command,
+				UIMessages.getString(COMMAND),
 				parent);
 		commandStringField.setEmptyStringAllowed(false);
 		GridData gd = ((GridData)commandStringField.getTextControl(parent).getLayoutData());
@@ -158,12 +164,12 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		addField(allOptionFieldEditor);
 		
 		addField( createLabelEditor( getFieldEditorParent(), WHITESPACE ) );
-		addField( createLabelEditor( getFieldEditorParent(), Messages.BuildToolSettingsPage_tool_advancedSettings ) );
+		addField( createLabelEditor( getFieldEditorParent(), UIMessages.getString(ADVANCED_GROUP) ) );
 		
 		// Add a string editor to edit the tool command line pattern
 		parent = getFieldEditorParent();
 		commandLinePatternField = new StringFieldEditor(fTool.getId() + ToolSettingsPrefStore.COMMAND_LINE_SUFFIX,
-				Messages.BuildToolSettingsPage_tool_commandLinePattern,
+				UIMessages.getString(COMMAND_LINE_PATTERN),
 				parent);
 		gd = ((GridData)commandLinePatternField.getTextControl(parent).getLayoutData());
 		gd.grabExcessHorizontalSpace = true;

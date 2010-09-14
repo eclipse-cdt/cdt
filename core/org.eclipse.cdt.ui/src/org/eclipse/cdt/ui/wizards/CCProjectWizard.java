@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 /**
  * The wizard to create new MBS C++ Project.
@@ -28,7 +27,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 public class CCProjectWizard extends CDTCommonProjectWizard {
 
 	public CCProjectWizard() {
-		super(Messages.NewModelProjectWizard_2, Messages.NewModelProjectWizard_3); 
+		super(UIMessages.getString("NewModelProjectWizard.2"), UIMessages.getString("NewModelProjectWizard.3")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override
@@ -43,7 +42,7 @@ public class CCProjectWizard extends CDTCommonProjectWizard {
 		}
 		
 		try {
-			continueCreationMonitor.beginTask(Messages.CCProjectWizard_0, 2); 
+			continueCreationMonitor.beginTask(UIMessages.getString("CCProjectWizard.0"), 2); //$NON-NLS-1$
 			CProjectNature.addCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
 			CCProjectNature.addCCNature(prj, new SubProgressMonitor(continueCreationMonitor, 1));
 		} catch (CoreException e) {}

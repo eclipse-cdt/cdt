@@ -22,8 +22,6 @@ import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -51,7 +49,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_DIR,
-				Messages.LibraryPathTab_1,  
+				UIMessages.getString("LibraryPathTab.1"),  //$NON-NLS-1$ 
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAllCfgs = dlg.check1;
@@ -67,7 +65,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_DIR,
-				Messages.LibraryPathTab_2,  
+				UIMessages.getString("LibraryPathTab.2"),  //$NON-NLS-1$ 
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {

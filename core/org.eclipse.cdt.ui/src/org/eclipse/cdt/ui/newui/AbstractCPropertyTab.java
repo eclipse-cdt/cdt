@@ -61,7 +61,6 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * It is a parent for all standard property tabs 
@@ -89,23 +88,23 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 
 	// commonly used button names
 	public static final String EMPTY_STR = ""; //$NON-NLS-1$
-	public static final String ADD_STR = Messages.FileListControl_add; 
-	public static final String DEL_STR = Messages.FileListControl_delete; 
-	public static final String EDIT_STR = Messages.FileListControl_edit; 
-	public static final String MOVEUP_STR = Messages.FileListControl_moveup; 
-	public static final String MOVEDOWN_STR = Messages.FileListControl_movedown; 
-	public static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace; 
-	public static final String FILESYSTEMBUTTON_NAME = Messages.FileListControl_button_fs; 
-	public static final String VARIABLESBUTTON_NAME = Messages.AbstractCPropertyTab_1; 
-	public static final String FILESYSTEM_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_fs_dir_dlg_msg;	
+	public static final String ADD_STR = UIMessages.getString("FileListControl.add"); //$NON-NLS-1$
+	public static final String DEL_STR = UIMessages.getString("FileListControl.delete"); //$NON-NLS-1$
+	public static final String EDIT_STR = UIMessages.getString("FileListControl.edit"); //$NON-NLS-1$
+	public static final String MOVEUP_STR = UIMessages.getString("FileListControl.moveup"); //$NON-NLS-1$
+	public static final String MOVEDOWN_STR = UIMessages.getString("FileListControl.movedown"); //$NON-NLS-1$
+	public static final String WORKSPACEBUTTON_NAME = UIMessages.getString("FileListControl.button.workspace"); //$NON-NLS-1$
+	public static final String FILESYSTEMBUTTON_NAME = UIMessages.getString("FileListControl.button.fs"); //$NON-NLS-1$
+	public static final String VARIABLESBUTTON_NAME = UIMessages.getString("AbstractCPropertyTab.1"); //$NON-NLS-1$
+	public static final String FILESYSTEM_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.fs.dir.dlg.msg");	//$NON-NLS-1$
 	public static final String FILESYSTEM_FILE_DIALOG_TITLE = EMPTY_STR;	
-	public static final String WORKSPACE_DIR_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_dir_dlg_title;	
-	public static final String WORKSPACE_FILE_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_file_dlg_title;	
-	public static final String WORKSPACE_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_wsp_dir_dlg_msg;	
-	public static final String WORKSPACE_FILE_DIALOG_MSG = Messages.BrowseEntryDialog_wsp_file_dlg_msg;	
-	public static final String WORKSPACE_FILE_DIALOG_ERR = Messages.BrowseEntryDialog_wsp_file_dlg_err;	
-	public static final String WORKSPACE_DIR_DIALOG_ERR = Messages.BrowseEntryDialog_wsp_dir_dlg_err;	
-	public static final String BACKGROUND_TEXT_DEFAULT = Messages.AbstractCPropertyTab_2; 
+	public static final String WORKSPACE_DIR_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.title");	//$NON-NLS-1$
+	public static final String WORKSPACE_FILE_DIALOG_TITLE = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.title");	//$NON-NLS-1$
+	public static final String WORKSPACE_DIR_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.msg");	//$NON-NLS-1$
+	public static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
+	public static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
+	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
+	public static final String BACKGROUND_TEXT_DEFAULT = UIMessages.getString("AbstractCPropertyTab.2"); //$NON-NLS-1$
 	public static final Color BACKGROUND_FOR_USER_VAR = new Color(Display.getDefault(), 255, 255, 200); // light yellow
 
 	private static final String PREFIX = "org.eclipse.cdt.ui."; //$NON-NLS-1$
@@ -423,7 +422,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		
 		ICdtVariableManager vm = CCorePlugin.getDefault().getCdtVariableManager();
 		BuildVarListDialog dialog = new BuildVarListDialog(shell, vm.getVariables(cfgd));
-		dialog.setTitle(Messages.AbstractCPropertyTab_0); 
+		dialog.setTitle(UIMessages.getString("AbstractCPropertyTab.0")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected.length > 0) {

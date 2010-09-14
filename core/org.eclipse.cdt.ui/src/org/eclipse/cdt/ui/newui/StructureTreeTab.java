@@ -65,7 +65,6 @@ import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * This tab is intended to browse 
@@ -94,7 +93,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			c.setLayoutData(new GridData(GridData.FILL_BOTH));
 			c.setLayout(new GridLayout(2, false));
 			Label l = new Label(c, 0);
-			l.setText(Messages.StructureTreeTab_0);  
+			l.setText(UIMessages.getString("StructureTreeTab.0"));  //$NON-NLS-1$
 			c.setLayoutData(new GridData(GridData.BEGINNING));
 			Spinner sp = new Spinner(c, SWT.BORDER);
 			sp.setMaximum(NESTING_MAX);
@@ -135,7 +134,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 			ti = ti.getParentItem();
 			if (ti == null) return true;
 		}
-		tiSaved.setText(2, Messages.StructureTreeTab_1); 
+		tiSaved.setText(2, UIMessages.getString("StructureTreeTab.1")); //$NON-NLS-1$
 		tiSaved.setImage(IMG);
 		return false;
 	}
@@ -153,7 +152,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 	}
 	private TreeItem create(TreeItem ti0, String text, long val) {
 		TreeItem t = create(ti0, text, String.valueOf(val));
-		t.setText(2, Messages.StructureTreeTab_2); 
+		t.setText(2, UIMessages.getString("StructureTreeTab.2")); //$NON-NLS-1$
 		return t;
 	}
 
@@ -161,7 +160,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		TreeItem ti =  ti0 == null ? new TreeItem(tree, 0) : new TreeItem(ti0, 0);
 		ti.setText(0, text == null ? NULL : text);
 		ti.setText(1, val  == null ? NULL : val );
-		ti.setText(2, Messages.StructureTreeTab_3); 
+		ti.setText(2, UIMessages.getString("StructureTreeTab.3")); //$NON-NLS-1$
 		return ti;
 	}
 	
@@ -171,15 +170,15 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		usercomp.setLayout(new GridLayout(5, false));
 		
 		Label lb = new Label(usercomp, 0);
-		lb.setText(Messages.StructureTreeTab_4); 
+		lb.setText(UIMessages.getString("StructureTreeTab.4")); //$NON-NLS-1$
 		lb.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		combo = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		combo.add(Messages.ConfigDescriptionTab_0); 
-		combo.add(Messages.ConfigDescriptionTab_1); 
+		combo.add(UIMessages.getString("ConfigDescriptionTab.0")); //$NON-NLS-1$
+		combo.add(UIMessages.getString("ConfigDescriptionTab.1")); //$NON-NLS-1$
 		if (page.isForFolder() || page.isForFile()) {
-			combo.add(Messages.ConfigDescriptionTab_2); 
+			combo.add(UIMessages.getString("ConfigDescriptionTab.2")); //$NON-NLS-1$
 			combo.select(2); // ResourceDescription
 		} else
 			combo.select(1); // ConfigurationDescription
@@ -193,7 +192,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		GridData gd = new GridData(GridData.END);
 		gd.minimumWidth = BUTTON_WIDTH;
 		b1.setLayoutData(gd);
-		b1.setText(Messages.StructureTreeTab_5); 
+		b1.setText(UIMessages.getString("StructureTreeTab.5")); //$NON-NLS-1$
 		b1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -206,7 +205,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		gd = new GridData(GridData.END);
 		gd.minimumWidth = BUTTON_WIDTH;
 		b2.setLayoutData(gd);
-		b2.setText(Messages.StructureTreeTab_6); 
+		b2.setText(UIMessages.getString("StructureTreeTab.6")); //$NON-NLS-1$
 		b2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -222,7 +221,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		gd = new GridData(GridData.END);
 		gd.minimumWidth = BUTTON_WIDTH;
 		b3.setLayoutData(gd);
-		b3.setText(Messages.StructureTreeTab_7); 
+		b3.setText(UIMessages.getString("StructureTreeTab.7")); //$NON-NLS-1$
 		b3.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -237,13 +236,13 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 		tree.setLayoutData(gd);
 		
 		TreeColumn tc = new TreeColumn(tree, 0);
-		tc.setText(Messages.StructureTreeTab_8); 
+		tc.setText(UIMessages.getString("StructureTreeTab.8")); //$NON-NLS-1$
 		tc.setWidth(300);
 		tc = new TreeColumn(tree, 0);
-		tc.setText(Messages.StructureTreeTab_9); 
+		tc.setText(UIMessages.getString("StructureTreeTab.9")); //$NON-NLS-1$
 		tc.setWidth(100);
 		tc = new TreeColumn(tree, 0);
-		tc.setText(Messages.StructureTreeTab_10); 
+		tc.setText(UIMessages.getString("StructureTreeTab.10")); //$NON-NLS-1$
 		tc.setWidth(200);
 		
 		tree.setHeaderVisible(true);
@@ -769,7 +768,7 @@ public class StructureTreeTab  extends AbstractCPropertyTab {
 				try {
 					tree.removeAll();
 					TreeItem ti = new TreeItem(tree, 0);
-					ti.setText(0, Messages.StructureTreeTab_11); 
+					ti.setText(0, UIMessages.getString("StructureTreeTab.11")); //$NON-NLS-1$
 					tree.update();
 					tree.setRedraw(false);
 					tree.removeAll();

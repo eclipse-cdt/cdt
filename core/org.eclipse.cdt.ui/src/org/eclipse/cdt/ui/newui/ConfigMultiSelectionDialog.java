@@ -34,8 +34,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -63,7 +61,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(Messages.ConfigMultiSelectionDialog_0); 
+		shell.setText(UIMessages.getString("ConfigMultiSelectionDialog.0")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -95,14 +93,14 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		
 		message = new Label(composite, SWT.NONE);
 		message.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		message.setText(Messages.ConfigMultiSelectionDialog_1); 
+		message.setText(UIMessages.getString("ConfigMultiSelectionDialog.1")); //$NON-NLS-1$
 		message.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_RED));
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_1); 
+		col.setText(UIMessages.getString("ManageConfigDialog.1")); //$NON-NLS-1$
 		col.setWidth(100);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_2); 
+		col.setText(UIMessages.getString("ManageConfigDialog.2")); //$NON-NLS-1$
 		col.setWidth(120);
 		
 		tv = new CheckboxTableViewer(table);

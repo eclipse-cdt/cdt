@@ -48,9 +48,9 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 	public class CDTMainWizardPage extends WizardNewProjectCreationPage implements IWizardItemsListListener {
 		private static final Image IMG_CATEGORY = CPluginImages.get(CPluginImages.IMG_OBJS_SEARCHFOLDER);
@@ -104,7 +104,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	    	c.setLayout(new GridLayout(2, true));
 	    	
 	        Label l1 = new Label(c, SWT.NONE);
-	        l1.setText(Messages.CMainWizardPage_0); 
+	        l1.setText(UIMessages.getString("CMainWizardPage.0")); //$NON-NLS-1$
 	        l1.setFont(parent.getFont());
 	        l1.setLayoutData(new GridData(GridData.BEGINNING));
 	        
@@ -130,7 +130,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		                		 if (tree.getItem(i).getText().compareTo(e.result) == 0)
 		                			 return;
 		                	 }
-	                         e.result = Messages.CMainWizardPage_0; 
+	                         e.result = UIMessages.getString("CMainWizardPage.0"); //$NON-NLS-1$
 		                 }
 		             }
 				 );
@@ -139,7 +139,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        right.setLayout(new PageLayout());
 
 	        show_sup = new Button(c, SWT.CHECK);
-	        show_sup.setText(Messages.CMainWizardPage_1); 
+	        show_sup.setText(UIMessages.getString("CMainWizardPage.1")); //$NON-NLS-1$
 	        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        show_sup.setLayoutData(gd);
@@ -179,7 +179,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	    		return false;
 
 	        if (getProjectName().indexOf('#') >= 0) {
-	            setErrorMessage(Messages.CDTMainWizardPage_0);	             
+	            setErrorMessage(UIMessages.getString("CDTMainWizardPage.0"));	             //$NON-NLS-1$
 	            return false;
 	        }
 	        
@@ -193,7 +193,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        			bad = false;
 	        	}
 	        	if (bad) { 
-	        		setErrorMessage(Messages.CMainWizardPage_10); 
+	        		setErrorMessage(UIMessages.getString("CMainWizardPage.10")); //$NON-NLS-1$
 	        	    return false;
 	        	}
 	        }
@@ -210,9 +210,9 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        		IFileInfo f = fs.fetchInfo();
 		        	if (f.exists()) {
 		        		if (f.isDirectory()) {
-		        			setMessage(Messages.CMainWizardPage_7, IMessageProvider.WARNING); 
+		        			setMessage(UIMessages.getString("CMainWizardPage.7"), IMessageProvider.WARNING); //$NON-NLS-1$
 		        		} else {
-		        			setErrorMessage(Messages.CMainWizardPage_6); 
+		        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
 		        			return false;
 		        		}
 		        	}
@@ -231,7 +231,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        }
 
 	        if (tree.getItemCount() == 0) {
-	        	setErrorMessage(Messages.CMainWizardPage_3); 
+	        	setErrorMessage(UIMessages.getString("CMainWizardPage.3")); //$NON-NLS-1$
 	        	return false;
 	        }
 	        
@@ -283,7 +283,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 						try {
 							w = (CNewWizard) element.createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
-							System.out.println(Messages.CMainWizardPage_5 + e.getLocalizedMessage()); 
+							System.out.println(UIMessages.getString("CMainWizardPage.5") + e.getLocalizedMessage()); //$NON-NLS-1$
 							return null; 
 						}
 						if (w == null) return null;
@@ -439,7 +439,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 					if (categorySelectedLabel == null) {
 						categorySelectedLabel = new Label(right, SWT.WRAP);
 						categorySelectedLabel.setText(
-								Messages.CDTMainWizardPage_1);  
+								UIMessages.getString("CDTMainWizardPage.1"));  //$NON-NLS-1$
 						right.layout();
 					}
 					categorySelectedLabel.setVisible(true);

@@ -25,8 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 /**
  * A job that builds a bunch of workspace projects or a working set configuration.
@@ -42,7 +41,7 @@ public final class BuildJob extends Job {
 	 *            the projects to build
 	 */
 	public BuildJob(Collection<IProject> projects) {
-		super(Messages.WorkingSetConfigAction_21); 
+		super(UIMessages.getString("WorkingSetConfigAction.21")); //$NON-NLS-1$
 		this.projects = new java.util.ArrayList<IProject>(projects);
 	}
 
@@ -53,7 +52,7 @@ public final class BuildJob extends Job {
 	 *            the working set configuration to build
 	 */
 	public BuildJob(IWorkingSetConfiguration workingSetConfig) {
-		super(Messages.WorkingSetConfigAction_21); 
+		super(UIMessages.getString("WorkingSetConfigAction.21")); //$NON-NLS-1$
 		this.workingSetConfig = workingSetConfig;
 	}
 
@@ -70,11 +69,11 @@ public final class BuildJob extends Job {
 		try {
 			for (IProject p : projects) {
 				try {
-					setName(Messages.WorkingSetConfigAction_21 + p.getName()); 
+					setName(UIMessages.getString("WorkingSetConfigAction.21") + p.getName()); //$NON-NLS-1$
 					p.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 				} catch (CoreException e) {
 					return new MultiStatus(CUIPlugin.PLUGIN_ID, 0, new IStatus[] { e.getStatus() },
-							Messages.WorkingSetConfigAction_22, 
+							UIMessages.getString("WorkingSetConfigAction.22"), //$NON-NLS-1$
 							null);
 				}
 				if (monitor.isCanceled()) {

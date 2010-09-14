@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -76,9 +75,9 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		
 		Label l1 = new Label(c, SWT.NONE);
 		if ((mode & DIR_MASK) == DIR_MASK)
-			l1.setText(Messages.IncludeDialog_0); 
+			l1.setText(UIMessages.getString("IncludeDialog.0")); //$NON-NLS-1$
 		else
-			l1.setText(Messages.IncludeDialog_1); 
+			l1.setText(UIMessages.getString("IncludeDialog.1")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		l1.setLayoutData(gd);
@@ -102,7 +101,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		c1.setLayout(new GridLayout(1, false));
 		
 		b_add2confs = new Button(c1, SWT.CHECK);
-		b_add2confs.setText(Messages.IncludeDialog_2); 
+		b_add2confs.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		if (((mode & OLD_MASK) == OLD_MASK) ||
 				(cfgd instanceof ICMultiConfigDescription)) {
@@ -112,7 +111,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_add2confs.setLayoutData(gd);
 
 		b_add2langs = new Button(c1, SWT.CHECK);
-		b_add2langs.setText(Messages.IncludeDialog_3); 
+		b_add2langs.setText(UIMessages.getString("IncludeDialog.3")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		if ((mode & OLD_MASK) == OLD_MASK) {
 			gd.heightHint = 1;
@@ -121,7 +120,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_add2langs.setLayoutData(gd);
 
 		c_wsp = new Button(c1, SWT.CHECK);
-		c_wsp.setText(Messages.ExpDialog_4); 
+		c_wsp.setText(UIMessages.getString("ExpDialog.4")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		c_wsp.setLayoutData(gd);
 		c_wsp.setSelection(isWsp);

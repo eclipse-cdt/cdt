@@ -97,7 +97,6 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * It is a parent for all standard CDT property pages
@@ -233,11 +232,11 @@ implements
 
 		String s = null;
 		if (!checkElement()) {
-			s = Messages.AbstractPage_0; 
+			s = UIMessages.getString("AbstractPage.0"); //$NON-NLS-1$
 		} else if (!isApplicable()) {
 			return null;
 		} else if (!isCDTProject(getProject())) {
-			s = Messages.AbstractPage_2; 
+			s = UIMessages.getString("AbstractPage.2"); //$NON-NLS-1$
 		}
 		
 	    if (s == null) {
@@ -267,7 +266,7 @@ implements
 			configGroup.setLayout(new GridLayout(3, false));
 
 			Label configLabel = new Label(configGroup, SWT.NONE);
-			configLabel.setText(Messages.AbstractPage_6); 
+			configLabel.setText(UIMessages.getString("AbstractPage.6")); //$NON-NLS-1$
 			configLabel.setLayoutData(new GridData(GridData.BEGINNING));
 
 			configSelector = new Combo(configGroup, SWT.READ_ONLY | SWT.DROP_DOWN);
@@ -281,7 +280,7 @@ implements
 
 			if (!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG)) {
 				manageButton = new Button(configGroup, SWT.PUSH);
-				manageButton.setText(Messages.AbstractPage_12); 
+				manageButton.setText(UIMessages.getString("AbstractPage.12")); //$NON-NLS-1$
 				gd = new GridData(GridData.END);
 				gd.minimumWidth = 150;
 				manageButton.setLayoutData(gd);
@@ -320,7 +319,7 @@ implements
 
 			if (isForFolder() || isForFile()) {
 				excludeFromBuildCheck = new Button(configGroup, SWT.CHECK);
-				excludeFromBuildCheck.setText(Messages.AbstractPage_7); 
+				excludeFromBuildCheck.setText(UIMessages.getString("AbstractPage.7")); //$NON-NLS-1$
 				gd = new GridData(GridData.FILL_HORIZONTAL);
 				gd.horizontalSpan = 3;
 				excludeFromBuildCheck.setLayoutData(gd);
@@ -573,7 +572,7 @@ implements
 		// if creation failed, report an error and return null
 		if (c == null) {
 			MessageBox mb = new MessageBox(getShell());
-			mb.setMessage(Messages.AbstractPage_3); 
+			mb.setMessage(UIMessages.getString("AbstractPage.3")); //$NON-NLS-1$
 			mb.open();
 		}
     	return c;
@@ -656,7 +655,7 @@ implements
 					else
 						CDTPropertyManager.performOk(AbstractPage.this);
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().logErrorMessage(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+					CUIPlugin.getDefault().logErrorMessage(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 				updateViews(internalElement);
 			}
@@ -667,8 +666,8 @@ implements
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
 			CUIPlugin.errorDialog(getShell(), 
-					Messages.AbstractPage_8,  
-					Messages.AbstractPage_9, e1, true); 
+					UIMessages.getString("AbstractPage.8"),  //$NON-NLS-1$
+					UIMessages.getString("AbstractPage.9"), e1, true); //$NON-NLS-1$
 			return false;
 		} catch (InterruptedException e) {
 			// IProgressService.runInUI(...) misuses this exception to signal that the operation was canceled.
@@ -701,7 +700,7 @@ implements
 	private void rebuildIndex() {
 		final Shell shell= getShell();
 		final String title= getTitle();
-		final String msg= Messages.AbstractPage_rebuildIndex_question; 
+		final String msg= UIMessages.getString("AbstractPage.rebuildIndex.question"); //$NON-NLS-1$
 		int result= OptionalMessageDialog.open(PREF_ASK_REINDEX,
 				shell, title, null /* default image */, msg, MessageDialog.QUESTION, 
 				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
@@ -747,7 +746,7 @@ implements
 		for (int i = 0; i < cfgDescs.length; ++i) {
 			String name = cfgDescs[i].getName();
 			if (cfgDescs[i].isActive()) {
-				name = name + "  " + Messages.AbstractPage_16; //$NON-NLS-1$ 
+				name = name + "  " + UIMessages.getString("AbstractPage.16"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			configSelector.add(name);
 		}
@@ -757,14 +756,14 @@ implements
 
 		// "All cfgs" - shown if at least 2 cfgs available
 		if (cfgDescs.length > 1) {
-			configSelector.add(Messages.AbstractPage_4); 
+			configSelector.add(UIMessages.getString("AbstractPage.4")); //$NON-NLS-1$
 			if (multiCfgs == cfgDescs) {
 				cfgIndex = cfgDescs.length;
 			}
 		}
 		// "Multi cfgs" - shown if at least 3 cfgs available
 		if (cfgDescs.length > 2) {
-			configSelector.add(Messages.AbstractPage_5); 
+			configSelector.add(UIMessages.getString("AbstractPage.5")); //$NON-NLS-1$
 			if (multiCfgs != null && multiCfgs != cfgDescs) {
 				cfgIndex = cfgDescs.length + 1;
 			}
@@ -933,7 +932,7 @@ implements
 						else
 							out = cf.createFileDescription(p, out);
 					} catch (CoreException e) {
-						System.out.println(Messages.AbstractPage_10 + 
+						System.out.println(UIMessages.getString("AbstractPage.10") + //$NON-NLS-1$
 								p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
 					}
 				}
@@ -1051,7 +1050,7 @@ implements
 			if (element.getName().equals(ELEMENT_NAME)) {
 				if (loadTab(element, parent)) return;
 			} else {
-				System.out.println(Messages.AbstractPage_13 + element.getName()); 
+				System.out.println(UIMessages.getString("AbstractPage.13") + element.getName()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -1073,7 +1072,7 @@ implements
 		try {
 			page = (ICPropertyTab) element.createExecutableExtension(CLASS_NAME);
 		} catch (CoreException e) {
-			System.out.println(Messages.AbstractPage_14 +  
+			System.out.println(UIMessages.getString("AbstractPage.14") +  //$NON-NLS-1$
 					e.getLocalizedMessage());
 			return false; 
 		}
@@ -1228,7 +1227,7 @@ implements
 	@Override
 	public IAdaptable getElement() {
 		if (internalElement == null && !checkElement()) 
-			throw (new NullPointerException(Messages.AbstractPage_15)); 
+			throw (new NullPointerException(UIMessages.getString("AbstractPage.15"))); //$NON-NLS-1$
 		return internalElement; 
 	}
 	

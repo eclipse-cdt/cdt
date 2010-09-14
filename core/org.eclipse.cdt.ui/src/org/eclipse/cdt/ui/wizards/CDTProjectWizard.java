@@ -12,12 +12,12 @@ package org.eclipse.cdt.ui.wizards;
 
 import org.eclipse.core.resources.IProject;
 
-import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 public class CDTProjectWizard extends CDTCommonProjectWizard {
 
 	public CDTProjectWizard() {
-		super(Messages.NewModelProjectWizard_0, Messages.NewModelProjectWizard_1); 
+		super(UIMessages.getString("NewModelProjectWizard.0"), UIMessages.getString("NewModelProjectWizard.1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override

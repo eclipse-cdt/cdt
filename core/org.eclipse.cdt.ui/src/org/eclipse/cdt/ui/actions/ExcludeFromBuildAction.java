@@ -44,9 +44,9 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractPage;
+import org.eclipse.cdt.ui.newui.UIMessages;
 
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Action which excludes resources from build.
@@ -200,7 +200,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				try {
 					CoreModel.getDefault().setProjectDescription(p, prjd);
 				} catch (CoreException e) {
-					CUIPlugin.getDefault().logErrorMessage(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+					CUIPlugin.getDefault().logErrorMessage(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 				AbstractPage.updateViews(res);
 			}

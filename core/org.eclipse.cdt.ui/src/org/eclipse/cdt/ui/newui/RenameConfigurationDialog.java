@@ -12,14 +12,10 @@
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -37,6 +33,16 @@ import org.eclipse.swt.widgets.Text;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameConfigurationDialog extends Dialog {
+	// String constants
+	private static final String PREFIX = "RenameConfiguration";	//$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label";	//$NON-NLS-1$
+	private static final String ERROR = PREFIX + ".error";	//$NON-NLS-1$	
+	private static final String NAME = LABEL + ".name";	//$NON-NLS-1$
+	private static final String DUPLICATE = ERROR + ".duplicateName";	//$NON-NLS-1$	
+	private static final String CASE = ERROR + ".caseName";	//$NON-NLS-1$	
+	private static final String INVALID = ERROR + ".invalidName";	//$NON-NLS-1$	
+	private static final String DESCRIPTION = LABEL + ".description"; //$NON-NLS-1$
+	
 	// Widgets
 	
 	private Text configName;
@@ -126,7 +132,7 @@ public class RenameConfigurationDialog extends Dialog {
 		// as a directory name in the filesystem.
 		Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
 		warningLabel.setFont(parent.getFont());
-		warningLabel.setText(Messages.RenameConfiguration_label_warning); 
+		warningLabel.setText(UIMessages.getString("RenameConfiguration.label.warning")); //$NON-NLS-1$
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
 		gd.widthHint = 300;
 		warningLabel.setLayoutData(gd);
@@ -134,7 +140,7 @@ public class RenameConfigurationDialog extends Dialog {
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
-		nameLabel.setText(Messages.RenameConfiguration_label_name);
+		nameLabel.setText(UIMessages.getString(NAME));
 				
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
@@ -158,7 +164,7 @@ public class RenameConfigurationDialog extends Dialog {
 //		 Add a label and a text widget for Configuration's description
         final Label descriptionLabel = new Label(group1, SWT.LEFT);
         descriptionLabel.setFont(parent.getFont());
-        descriptionLabel.setText(Messages.RenameConfiguration_label_description);
+        descriptionLabel.setText(UIMessages.getString(DESCRIPTION));
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 1;
@@ -246,11 +252,11 @@ public class RenameConfigurationDialog extends Dialog {
 			s = "";	//$NON-NLS-1$
 		 	// Make sure the name is not a duplicate
 		} else if (isDuplicateName(currentName)) {
-			s = NLS.bind(Messages.RenameConfiguration_error_duplicateName, currentName);
+			s = UIMessages.getFormattedString(DUPLICATE, currentName);
 		} else if (isSimilarName(currentName)) {
-			s = NLS.bind(Messages.RenameConfiguration_error_caseName, currentName);
+			s = UIMessages.getFormattedString(CASE, currentName);
 		} else if (!validateName(currentName)) {
-			s = NLS.bind(Messages.RenameConfiguration_error_invalidName, currentName);	
+			s = UIMessages.getFormattedString(INVALID, currentName);	
 		}
 		Button b = getButton(IDialogConstants.OK_ID);
 		if (s != null) {

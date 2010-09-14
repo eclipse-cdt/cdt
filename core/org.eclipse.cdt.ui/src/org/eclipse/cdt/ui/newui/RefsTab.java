@@ -41,8 +41,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -53,7 +51,7 @@ public class RefsTab extends AbstractCPropertyTab {
 	public Composite comp;
 	private Tree tree;
 
-	static private final String ACTIVE = "[" + Messages.RefsTab_Active + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+	static private final String ACTIVE = "[" + UIMessages.getString("RefsTab.3") + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private static final int EXPAND_ALL_BUTTON = 0;
 	private static final int COLLAPSE_ALL_BUTTON = 1;
@@ -64,8 +62,8 @@ public class RefsTab extends AbstractCPropertyTab {
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		initButtons(new String[] {
-				Messages.RefsTab_ExpandAll,
-				Messages.RefsTab_CollapseAll,
+				UIMessages.getString("RefsTab.0"), //$NON-NLS-1$
+				UIMessages.getString("RefsTab.2"), //$NON-NLS-1$
 				null,
 				MOVEUP_STR,
 				MOVEDOWN_STR}, 120);
@@ -77,7 +75,7 @@ public class RefsTab extends AbstractCPropertyTab {
             new AccessibleAdapter() {
                 @Override
 				public void getName(AccessibleEvent e) {
-                	e.result = Messages.RefsTab_ProjectsList;
+                	e.result = UIMessages.getString("RefsTab.4"); //$NON-NLS-1$
                 }
             }
         );
@@ -260,7 +258,7 @@ public class RefsTab extends AbstractCPropertyTab {
 				prj = p.getWorkspace().getRoot().getProject(pname);
 				cfgs = page.getCfgsReadOnly(prj);
 			} catch (Exception e) {
-				CUIPlugin.log(Messages.RefsTab_ConfigurationsAccessError+pname, e);
+				CUIPlugin.log(UIMessages.getString("RefsTab_ConfigurationsAccessError")+pname, e); //$NON-NLS-1$
 				continue;
 			}
 			if (cfgs == null || cfgs.length == 0) {

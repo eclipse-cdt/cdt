@@ -52,7 +52,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	protected Table table;
@@ -68,8 +67,8 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	public static final Image IMG_FS = CPluginImages.get(CPluginImages.IMG_FILESYSTEM); 
 	public static final Image IMG_WS = CPluginImages.get(CPluginImages.IMG_WORKSPACE); 
 	public static final Image IMG_MK = CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
-	private static final String ALL = Messages.AbstractExportTab_0; 
-	private static final String LIST = Messages.AbstractExportTab_1; 
+	private static final String ALL = UIMessages.getString("AbstractExportTab.0"); //$NON-NLS-1$
+	private static final String LIST = UIMessages.getString("AbstractExportTab.1"); //$NON-NLS-1$
 	private static Map<String, String> names_l = new HashMap<String, String>();
 	private static Map<String, String> names_t = new HashMap<String, String>();
 	private static String[] names_ls; 	
@@ -129,16 +128,16 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	    });
  	    TableColumn c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(hasValues() ? 100 : 200);
-	    c.setText(Messages.EnvDialog_0); 
+	    c.setText(UIMessages.getString("EnvDialog.0")); //$NON-NLS-1$
  	    c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(hasValues() ? 100 : 0);
-	    c.setText(Messages.EnvDialog_1); 
+	    c.setText(UIMessages.getString("EnvDialog.1")); //$NON-NLS-1$
  	    c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(100);
-	    c.setText(Messages.LanguagesTab_1); 
+	    c.setText(UIMessages.getString("LanguagesTab.1")); //$NON-NLS-1$
  	    c = new TableColumn(table, SWT.NONE);
 	    c.setWidth(100);
-	    c.setText(Messages.LanguagesTab_0); 
+	    c.setText(UIMessages.getString("LanguagesTab.0")); //$NON-NLS-1$
 	    
 	    initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR});
 	    updateData(getResDesc());
@@ -231,7 +230,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 		switch (i) {
 		case 0: // add
 			dlg = new ExpDialog(usercomp.getShell(), true,
-					Messages.AbstractExportTab_2, EMPTY_STR, EMPTY_STR, cfg, 
+					UIMessages.getString("AbstractExportTab.2"), EMPTY_STR, EMPTY_STR, cfg, //$NON-NLS-1$
 					null, null, getKind(), names_ls, names_ts, namesList, false); 
 			if (dlg.open()) {
 				ent[0] = doAdd(dlg.text1.trim(), dlg.text2.trim(), dlg.check2);
@@ -260,7 +259,7 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 				s1 = s2 = old.getName();
 			boolean isWsp = (old.entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
 			dlg = new ExpDialog(usercomp.getShell(), false,
-					Messages.AbstractExportTab_3, s1, s2, cfg, 
+					UIMessages.getString("AbstractExportTab.3"), s1, s2, cfg, //$NON-NLS-1$
 					id2name(old.setting.getCompatibleLanguageIds(), names_l),
 					id2name(old.setting.getCompatibleContentTypeIds(), names_t),
 					getKind(), names_ls, names_ts, null, isWsp); 

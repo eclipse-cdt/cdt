@@ -55,7 +55,6 @@ import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * CLocationTab implements common features for "Source Location" and "Output Location"
@@ -97,11 +96,11 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		public String toString() {
 			String[] s = getExts();
 			if (s.length == 0) 
-				return Messages.CLocationTab_0; 
-			String x = Messages.CLocationTab_1; 
+				return UIMessages.getString("CLocationTab.0"); //$NON-NLS-1$
+			String x = UIMessages.getString("CLocationTab.1"); //$NON-NLS-1$
 			for (String element : s)
-				x = x + element + Messages.CLocationTab_2; 
-			x = x.substring(0, x.length() - 2) + Messages.CLocationTab_3; 
+				x = x + element + UIMessages.getString("CLocationTab.2"); //$NON-NLS-1$
+			x = x.substring(0, x.length() - 2) + UIMessages.getString("CLocationTab.3"); //$NON-NLS-1$
 			return x;
 		} 
 	}
@@ -141,7 +140,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 				updateButtons();
 			}});
 		
-		initButtons(new String[] {Messages.CLocationTab_4, Messages.CLocationTab_5, Messages.CLocationTab_6, Messages.CLocationTab_7}, 150); 
+		initButtons(new String[] {UIMessages.getString("CLocationTab.4"),UIMessages.getString("CLocationTab.5"), UIMessages.getString("CLocationTab.6"), UIMessages.getString("CLocationTab.7")}, 150); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		tree.setContentProvider(new ITreeContentProvider() {
 			public Object[] getChildren(Object parentElement) {
 				if (parentElement instanceof _Entry)
@@ -435,7 +434,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 				protected String decorateText(String input, Object element) {
 			    	if (element instanceof Holder &&
 			    	    ((Holder)element).isRoot())
-			    			return Messages.CLocationTab_8; 
+			    			return UIMessages.getString("CLocationTab.8"); //$NON-NLS-1$
 			    	return super.decorateText(input, element);
 			    }
 			},

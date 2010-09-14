@@ -21,8 +21,6 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -31,14 +29,14 @@ public class IncludeTab extends AbstractLangsListTab {
    @Override
 public void additionalTableSet() {
 	   columnToFit = new TableColumn(table, SWT.NONE);
-	   columnToFit.setText(Messages.IncludeTab_0); 
-	   columnToFit.setToolTipText(Messages.IncludeTab_0); 
+	   columnToFit.setText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
+	   columnToFit.setToolTipText(UIMessages.getString("IncludeTab.0")); //$NON-NLS-1$
 	   showBIButton.setSelection(true);
 	   table.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {                       
                   @Override
 					public void getName(AccessibleEvent e) {
-                          e.result = Messages.IncludeTab_0; 
+                          e.result = UIMessages.getString("IncludeTab.0"); //$NON-NLS-1$
                   }
               }
 		  );
@@ -48,7 +46,7 @@ public void additionalTableSet() {
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_DIR,
-				Messages.IncludeTab_1,  
+				UIMessages.getString("IncludeTab.1"),  //$NON-NLS-1$
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAllCfgs = dlg.check1;
@@ -66,7 +64,7 @@ public void additionalTableSet() {
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_DIR,
-				Messages.IncludeTab_2,  
+				UIMessages.getString("IncludeTab.2"),  //$NON-NLS-1$
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open()) {

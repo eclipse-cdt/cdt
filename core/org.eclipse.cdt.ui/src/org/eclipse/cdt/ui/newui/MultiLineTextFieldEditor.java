@@ -25,8 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  *	MultiLineTextFieldEditor.
  *	Field editor that is same as string field editor but 
@@ -36,6 +34,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  */
 public class MultiLineTextFieldEditor extends FieldEditor {
 	
+	private static final String ERROR_MESSAGE = "Multiline.error.message";	//$NON-NLS-1$
+
 	/**
 	 * Validation strategy constant (value <code>0</code>) indicating that
 	 * the editor should perform validation after every key stroke.
@@ -125,7 +125,7 @@ public class MultiLineTextFieldEditor extends FieldEditor {
 		init(name, labelText);
 		setValidateStrategy(strategy);
 		isValid = false;
-		errorMessage = Messages.Multiline_error_message;
+		errorMessage = UIMessages.getString(ERROR_MESSAGE);
 		createControl(parent);
 	}
 	

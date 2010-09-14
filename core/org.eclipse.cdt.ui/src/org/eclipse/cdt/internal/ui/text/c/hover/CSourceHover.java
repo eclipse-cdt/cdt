@@ -96,7 +96,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 	private static final boolean DEBUG = false;
 
-	private static class SingletonRule implements ISchedulingRule {
+	protected static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
@@ -109,7 +109,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	/**
 	 * Computes the source location for a given identifier.
 	 */
-	private static class ComputeSourceRunnable implements ASTRunnable {
+	protected static class ComputeSourceRunnable implements ASTRunnable {
 
 		private final ITranslationUnit fTU;
 		private final IRegion fTextRegion;
@@ -725,7 +725,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		return source.substring(i);
 	}
 
-	private String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion) {
+	protected String searchInIndex(final ITranslationUnit tUnit, IRegion textRegion) {
 		final ComputeSourceRunnable computer= new ComputeSourceRunnable(tUnit, textRegion);
 		Job job= new Job(CHoverMessages.CSourceHover_jobTitle) {
 			@Override

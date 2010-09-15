@@ -43,6 +43,11 @@ public class HeadlessBuildMessages extends NLS {
 	public static String HeadlessBuilder_RegExSyntaxError;
 	public static String HeadlessBuilder_Skipping;
 	public static String HeadlessBuilder_Skipping2;
+	public static String HeadlessBuilder_ToolOption_Replace;
+	public static String HeadlessBuilder_ToolOption_Append;
+	public static String HeadlessBuilder_ToolOption_Prepend;
+	public static String HeadlessBuilder_ToolOption_Remove;
+	public static String HeadlessBuilder_ToolOption_Types;
 	public static String HeadlessBuilder_unknown_argument;
 	public static String HeadlessBuilder_URI;
 	public static String HeadlessBuilder_usage;

@@ -19,9 +19,11 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -37,7 +39,12 @@ import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.filesystem.EFS;
@@ -82,6 +89,10 @@ import org.eclipse.osgi.service.datalocation.Location;
  *   - Append environment variable to build :  -Ea         {var=value}
  *   - Prepend environment variable to build : -Ep         {var=value}
  *   - Remove environment variable in build :  -Er         {var}
+ *   - Replace a tool option value:            -T          {toolid} {optionid=value}
+ *   - Append to a tool option value:          -Ta         {toolid} {optionid=value}
+ *   - Prepend to a tool option value:         -Tp         {toolid} {optionid=value}
+ *   - Remove a tool option:                   -Tr         {toolid} {optionid=value}
  *
  * Build output is automatically sent to stdout.
  * @since 6.0
@@ -91,11 +102,58 @@ public class HeadlessBuilder implements IApplication {
 	/**
 	 * IProgressMonitor to provide printing of task
 	 */
-	private class PrintingProgressMonitor extends NullProgressMonitor {
+	private static class PrintingProgressMonitor extends NullProgressMonitor {
 		@Override
 		public void beginTask(String name, int totalWork) {
 			if (name != null && name.length() > 0)
 				System.out.println(name);
+		}
+	}
+
+	/**
+	 * A class representing a new tool option value
+	 */
+	private static class ToolOption {
+		public static final int REPLACE = 0;
+		public static final int APPEND = 1;
+		public static final int PREPEND = 2;
+		public static final int REMOVE = 3;
+		final String toolId;
+		final String optionId;
+		final String value;
+		final int operation;
+
+		ToolOption(String toolId, String optionId, String value, int operation) {
+			this.toolId = toolId;
+			this.optionId = optionId;
+			this.value = value;
+			this.operation = operation;
+		}
+	}
+
+	/**
+	 * A class representing a backed-up tool option to restored at the end of the build
+	 */
+	private static class SavedToolOption {
+		final String toolId;
+		final String optionId;
+		final Object value;
+
+		SavedToolOption(String toolId, String optionId, Object value) {
+			this.toolId = toolId;
+			this.optionId = optionId;
+			this.value = value;
+		}
+
+		@Override
+		public int hashCode() {
+			return toolId.hashCode() + optionId.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			SavedToolOption option = (SavedToolOption) obj;
+			return toolId.equals(option.toolId) && optionId.equals(option.optionId);
 		}
 	}
 
@@ -114,6 +172,11 @@ public class HeadlessBuilder implements IApplication {
 	private final Set<String> projectRegExToClean = new HashSet<String>();
 	private boolean buildAll = false;
 	private boolean cleanAll = false;
+
+	/** List of Tool Option values being set */
+	private List<ToolOption> toolOptions = new ArrayList<ToolOption>();
+	/** Map from configuration ID -> Set of SavedToolOptions */
+	private Map<String, Set<SavedToolOption>> savedToolOptions = new HashMap<String, Set<SavedToolOption>>();
 
 	private static final String MATCH_ALL_CONFIGS = ".*"; //$NON-NLS-1$
 
@@ -387,6 +450,21 @@ public class HeadlessBuilder implements IApplication {
 			 */
 			final boolean buildAllConfigs = ACBuilder.needAllConfigBuild();
 			try {
+				// Set the tool options for all project configurations
+				// (This can't be done just for the projects being built, as they
+				// may cause other projects to be built via references)
+				if (!toolOptions.isEmpty())
+					for (IProject project : allProjects) {
+						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+						if (info == null)
+							continue;
+						IManagedProject mProj = info.getManagedProject();
+						IConfiguration[] cfgs = mProj.getConfigurations();
+						for (IConfiguration cfg : cfgs)
+							setToolOptions(cfg);
+						ManagedBuildManager.saveBuildInfo(project, true);
+					}
+
 				// Clean the projects
 				if (cleanAll) {
 					// Ensure we clean all the configurations
@@ -424,6 +502,18 @@ public class HeadlessBuilder implements IApplication {
 						buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(p);
 				}
 			} finally {
+				// Reset the tool options
+				if (!savedToolOptions.isEmpty())
+					for (IProject project : allProjects) {
+						IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
+						if (info == null)
+							continue;
+						IManagedProject mProj = info.getManagedProject();
+						IConfiguration[] cfgs = mProj.getConfigurations();
+						for (IConfiguration cfg : cfgs)
+							resetToolOptions(cfg);
+						ManagedBuildManager.saveBuildInfo(project, true);
+					}
 				// Reset the build_all_configs preference value to its previous state
 				ACBuilder.setAllConfigBuild(buildAllConfigs);
 				// Unhook the external settings provider
@@ -490,6 +580,10 @@ public class HeadlessBuilder implements IApplication {
 	 *   -Ea		 {var=value} append value to environment variable when running all tools
 	 *   -Ep		 {var=value} prepend value to environment variable when running all tools
 	 *   -Er         {var} remove/unset the given environment variable
+	 *   -T          {toolid} {optionid=value} replace a tool option value
+	 *   -Ta         {toolid} {optionid=value} append to a tool option value
+	 *   -Tp         {toolid} {optionid=value} prepend to a tool option value
+	 *   -Tr         {toolid} {optionid=value} remove a tool option value
 	 *
 	 * Each argument may be specified more than once
 	 * @param args String[] of arguments to parse
@@ -528,6 +622,22 @@ public class HeadlessBuilder implements IApplication {
 					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_PREPEND);
 				} else if ("-Er".equals(args[i])) { //$NON-NLS-1$
 					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_REMOVE);
+				} else if ("-T".equals(args[i])) { //$NON-NLS-1$
+					String toolId = args[++i];
+					String option = args[++i];
+					addToolOption(toolId, option, ToolOption.REPLACE);
+				} else if ("-Ta".equals(args[i])) { //$NON-NLS-1$
+					String toolId = args[++i];
+					String option = args[++i];
+					addToolOption(toolId, option, ToolOption.APPEND);
+				} else if ("-Tp".equals(args[i])) { //$NON-NLS-1$
+					String toolId = args[++i];
+					String option = args[++i];
+					addToolOption(toolId, option, ToolOption.PREPEND);
+				} else if ("-Tr".equals(args[i])) { //$NON-NLS-1$
+					String toolId = args[++i];
+					String option = args[++i];
+					addToolOption(toolId, option, ToolOption.REMOVE);
 				} else {
 					throw new Exception(HeadlessBuildMessages.HeadlessBuilder_unknown_argument + args[i]);
 				}
@@ -548,6 +658,11 @@ public class HeadlessBuilder implements IApplication {
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Append);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Prepend);
 			System.err.println(HeadlessBuildMessages.HeadlessBuilder_EnvVar_Remove);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Replace);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Append);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Prepend);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Remove);
+			System.err.println(HeadlessBuildMessages.HeadlessBuilder_ToolOption_Types);
 			return false;
 		}
 
@@ -575,7 +690,108 @@ public class HeadlessBuilder implements IApplication {
 		EnvironmentVariableManager.fUserSupplier.createOverrideVariable(name, value, op, null);
 	}
 
-	public void stop() {
+	private void addToolOption(String toolId, String option, int operation) {
+		String optionId = option;
+		String value = ""; //$NON-NLS-1$
+		if (option.indexOf('=') != -1) {
+			value = option.substring(option.indexOf('=') + 1);
+			optionId = option.substring(0, option.indexOf('='));
+		}
+		toolOptions.add(new ToolOption(toolId, optionId, value, operation));
 	}
 
+	/**
+	 * Set the tool options in a configuration, and saves the current values so that
+	 * they can be restored at the end of the build. These are reset after the build
+	 * by calls to {@link #resetToolOptions(IConfiguration)}.
+	 */
+	@SuppressWarnings("unchecked")
+	private void setToolOptions(IConfiguration configuration) throws BuildException {
+		if (!savedToolOptions.containsKey(configuration.getId()))
+			savedToolOptions.put(configuration.getId(), new HashSet<SavedToolOption>());
+		Set<SavedToolOption> savedToolOptionsSet = savedToolOptions.get(configuration.getId());
+		for (ToolOption toolOption : toolOptions) {
+			ITool[] tools = configuration.getToolsBySuperClassId(toolOption.toolId);
+			for (ITool tool : tools) {
+				IOption option = tool.getOptionBySuperClassId(toolOption.optionId);
+				if (option != null) {
+					// Save the tool option so that it can be reset later (does not overwrite existing
+					// saved options, so if an option is specified multiple times it will be reset to the
+					// correct value)
+					savedToolOptionsSet.add(new SavedToolOption(tool.getId(), option.getId(), option.getValue()));
+					// Update the value of the tool option in a type-dependent manner
+					switch (option.getValueType()) {
+						case IOption.BOOLEAN:
+							boolean booleanValue = (Boolean) option.getDefaultValue();
+							if (toolOption.operation != ToolOption.REMOVE)
+							booleanValue = Boolean.parseBoolean(toolOption.value);
+							ManagedBuildManager.setOption(configuration, tool, option, booleanValue);
+							break;
+						case IOption.STRING_LIST:
+						case IOption.INCLUDE_PATH:
+						case IOption.PREPROCESSOR_SYMBOLS:
+						case IOption.LIBRARIES:
+						case IOption.OBJECTS:
+						case IOption.INCLUDE_FILES:
+						case IOption.LIBRARY_PATHS:
+						case IOption.LIBRARY_FILES:
+						case IOption.MACRO_FILES:
+						case IOption.UNDEF_INCLUDE_PATH:
+						case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
+						case IOption.UNDEF_INCLUDE_FILES:
+						case IOption.UNDEF_LIBRARY_PATHS:
+						case IOption.UNDEF_LIBRARY_FILES:
+						case IOption.UNDEF_MACRO_FILES:
+							List<String> listValue = new ArrayList<String>();
+							switch (toolOption.operation) {
+								case ToolOption.APPEND:
+									listValue.addAll((List<String>) option.getValue());
+									listValue.addAll(Arrays.asList(toolOption.value.split(","))); //$NON-NLS-1$
+									break;
+								case ToolOption.PREPEND:
+									listValue.addAll(Arrays.asList(toolOption.value.split(","))); //$NON-NLS-1$
+									listValue.addAll((List<String>) option.getValue());
+									break;
+								case ToolOption.REMOVE:
+									listValue = (List<String>) option.getDefaultValue();
+									break;
+								default:
+									listValue = Arrays.asList(toolOption.value.split(",")); //$NON-NLS-1$
+									break;
+							}
+							ManagedBuildManager.setOption(configuration, tool, option, listValue == null ? new String[0] : listValue.toArray(new String[listValue.size()]));
+							break;
+						default: // IOption.ENUMERATED, IOption.STRING
+							String stringValue = toolOption.value;
+							switch (toolOption.operation) {
+								case ToolOption.APPEND:
+									stringValue = option.getValue() + stringValue;
+									break;
+								case ToolOption.PREPEND:
+									stringValue = stringValue + option.getValue();
+									break;
+								case ToolOption.REMOVE:
+									stringValue = (String) option.getDefaultValue();
+									break;
+							}
+							ManagedBuildManager.setOption(configuration, tool, option, stringValue);
+							break;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Reset the tool options that were set using {@link #setToolOptions(IConfiguration)}
+	 */
+	private void resetToolOptions(IConfiguration configuration) throws BuildException {
+		for (SavedToolOption toolOption : savedToolOptions.get(configuration.getId())) {
+			IOption option = configuration.getTool(toolOption.toolId).getOptionById(toolOption.optionId);
+			option.setValue(toolOption.value);
+		}
+	}
+
+	public void stop() {
+	}
 }

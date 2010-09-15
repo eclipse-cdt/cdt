@@ -32,23 +32,23 @@ import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
+import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
 import org.eclipse.cdt.dsf.debug.service.IMixedInstruction;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
-import org.eclipse.cdt.dsf.debug.service.IStack;
-import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -244,20 +244,24 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 				stack.getTopFrame(fTargetContext, new DataRequestMonitor<IFrameDMContext>(executor, null) {
 					@Override
 					protected void handleCompleted() {
-						fCallback.setUpdatePending(false);
 						fTargetFrameContext= getData();
 						if (fTargetFrameContext != null) {
 							retrieveFrameAddressInSessionThread(frame);
+						} else {
+						    fCallback.setUpdatePending(false);
 						}
 					}
 				});
 			} else {
 				// TODO retrieve other stack frame
+	            fCallback.setUpdatePending(false);
 			}
 			return;
 		}
-		else {
-			assert frame == fTargetFrameContext.getLevel();
+		else if (frame != fTargetFrameContext.getLevel()) {
+		    // frame context has changed in the meantime - reinvoke
+            retrieveFrameAddressInSessionThread(fTargetFrameContext.getLevel());
+			return;
 		}
 		
 		stack.getFrameData(fTargetFrameContext, new DataRequestMonitor<IFrameDMData>(executor, null) {
@@ -281,7 +285,6 @@ public class DisassemblyBackendDsf implements IDisassemblyBackend, SessionEndedL
 								fCallback.gotoFrame(frame, addressValue);
 							}
 						}
-
 					});
 				} else {
 					final IStatus status= getStatus();

@@ -26,8 +26,10 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -5116,4 +5118,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}	
+	
+	//	template<typename _CharT> struct OutStream {
+	//		OutStream& operator<<(OutStream& (*__pf)(OutStream&));
+	//	};
+	//	template<typename _CharT> OutStream<_CharT>& endl(OutStream<_CharT>& __os);
+	//
+	//	void test() {
+	//		OutStream<char> out;
+	//		out << endl;
+	//	} 
+	public void testInstantiationOfEndl_297457() throws Exception {
+		final String code= getAboveComment();
+		IASTTranslationUnit tu= parseAndCheckBindings(code);
+		final IASTNodeSelector nodeSelector = tu.getNodeSelector(null);
+		
+		IASTName methodName= nodeSelector.findEnclosingName(code.indexOf("operator<<"), 1);
+		IASTImplicitName name = nodeSelector.findImplicitName(code.indexOf("<< endl"), 2);
+		
+		final IBinding method = methodName.resolveBinding();
+		final IBinding reference = name.resolveBinding();
+		assertSame(method, ((ICPPSpecialization) reference).getSpecializedBinding());
+	}
 }

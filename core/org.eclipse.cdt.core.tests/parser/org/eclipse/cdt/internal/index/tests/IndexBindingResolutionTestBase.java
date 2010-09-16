@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -81,7 +82,13 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	
 	protected IASTName findName(String section, int len) {
 		IASTTranslationUnit ast = strategy.getAst();
-		return ast.getNodeSelector(null).findName(strategy.getTestData()[1].indexOf(section), len);
+		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+		final int offset = strategy.getTestData()[1].indexOf(section);
+		IASTName name= nodeSelector.findName(offset, len);
+		if (name == null)
+			name= nodeSelector.findImplicitName(offset, len);
+		
+		return name;
 	}
 	
 	/**

@@ -1780,4 +1780,19 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		inst = getBindingFromASTName("g(1)", 1);
 		assertTrue(inst.isExplicitSpecialization());
 	}
+
+	//	template<typename _CharT> struct OutStream {
+	//		OutStream& operator<<(OutStream& (*__pf)(OutStream&));
+	//	};
+	//	template<typename _CharT> OutStream<_CharT>& endl(OutStream<_CharT>& __os);
+
+	//	void test() {
+	//		OutStream<char> out;
+	//		out << endl;
+	//	} 
+	public void testInstantiationOfEndl_297457() throws Exception {
+		final IBinding reference = getBindingFromASTName("<< endl", 2);
+		assertTrue(reference instanceof ICPPSpecialization);
+	}
+
 }

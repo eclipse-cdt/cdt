@@ -1906,7 +1906,7 @@ public class CPPSemantics {
 	        	if (type == null) {
 	                type = temp;
 	        	} else if (!type.equals(temp)) {
-	        		int c = compareByRelevance(data, type, temp);
+	        		int c = compareByRelevance(data.tu, type, temp);
 	        		if (c < 0) {
         				type= temp;
 	        		} else if (c == 0) {
@@ -1927,7 +1927,7 @@ public class CPPSemantics {
 	        	} else if (obj == temp) {
 	        	    // Ok, delegates are synonyms.
 	        	} else {
-	        		int c = compareByRelevance(data, obj, temp);
+	        		int c = compareByRelevance(data.tu, obj, temp);
 	        		if (c < 0) {
 	        			obj= temp;
 	        		} else if (c == 0) {
@@ -1966,7 +1966,7 @@ public class CPPSemantics {
 
 	    if (obj != null && type != null) {
 	    	if (obj instanceof ICPPNamespace) {
-	    		if (compareByRelevance(data, type, obj) >= 0) {
+	    		if (compareByRelevance(data.tu, type, obj) >= 0) {
 	    			obj= null;
 	    		}
 	    	} else if (!data.typesOnly && overrulesByRelevance(data, type, obj)) {
@@ -2019,16 +2019,16 @@ public class CPPSemantics {
 	 * the two bindings have the same relevance; -1 if <code>b1</code> is less relevant than
 	 * <code>b2</code>.
 	 */
-	static int compareByRelevance(LookupData data, IBinding b1, IBinding b2) {
+	static int compareByRelevance(IASTTranslationUnit tu, IBinding b1, IBinding b2) {
 		boolean b1FromIndex= isFromIndex(b1);
 		boolean b2FromIndex= isFromIndex(b2);
 		if (b1FromIndex != b2FromIndex) {
 			return !b1FromIndex ? 1 : -1;
 		} else if (b1FromIndex) {
 			// Both are from index.
-			if (data != null && data.tu != null) {
-	    		boolean b1Reachable= isReachableFromAst(data.tu, b1);
-	    		boolean b2Reachable= isReachableFromAst(data.tu, b2);
+			if (tu != null) {
+	    		boolean b1Reachable= isReachableFromAst(tu, b1);
+	    		boolean b2Reachable= isReachableFromAst(tu, b2);
 	    		if (b1Reachable != b2Reachable) {
 	    			return b1Reachable ? 1 : -1;
 	    		}
@@ -2357,7 +2357,7 @@ public class CPPSemantics {
 				potentialCosts.add(fnCost);
 				continue;
 			}
-			int cmp= fnCost.compareTo(data, bestFnCost);
+			int cmp= fnCost.compareTo(data.tu, bestFnCost);
 			if (cmp < 0) {
 				bestFnCost= fnCost;
 				ambiguousFunctions= null;
@@ -2369,7 +2369,7 @@ public class CPPSemantics {
 		if (potentialCosts != null) {
 			for (FunctionCost fnCost : potentialCosts) {
 				if (!fnCost.mustBeWorse(bestFnCost) && fnCost.performUDC()) {
-					int cmp= fnCost.compareTo(data, bestFnCost);
+					int cmp= fnCost.compareTo(data.tu, bestFnCost);
 					if (cmp < 0) {
 						bestFnCost= fnCost;
 						ambiguousFunctions= null;
@@ -2765,6 +2765,8 @@ public class CPPSemantics {
     	// Second pass, consider templates
     	ICPPFunction result= null;
     	ICPPFunctionTemplate resultTemplate= null;
+    	boolean isAmbiguous= false;
+    	final IASTTranslationUnit tu= name.getTranslationUnit();
     	for (IFunction fn : fns) {
     		try {
     			if (fn instanceof ICPPFunctionTemplate) {
@@ -2774,10 +2776,14 @@ public class CPPSemantics {
     					int cmp= -1;
     					if (result != null) {
     						cmp= CPPTemplates.orderTemplateFunctions(resultTemplate, template);
-    						if (cmp == 0)
-    				    		return null;
+    						if (cmp == 0) 
+    							cmp= compareByRelevance(tu, resultTemplate, template);
     					}
+    					if (cmp == 0)
+    						isAmbiguous= true;
+    					
     					if (cmp < 0) {
+    						isAmbiguous= false;
     						resultTemplate= template;
     						result= inst;
     					}
@@ -2786,6 +2792,9 @@ public class CPPSemantics {
     		} catch (DOMException e) {
     		}
     	}
+    	if (isAmbiguous)
+    		return null;
+    	
     	return result;
 	}
     

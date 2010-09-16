@@ -14,6 +14,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -115,7 +116,7 @@ class FunctionCost {
 	/**
 	 * Compares this function call cost to another one.
 	 */
-	public int compareTo(LookupData data, FunctionCost other) throws DOMException {
+	public int compareTo(IASTTranslationUnit tu, FunctionCost other) throws DOMException {
 		if (other == null)
 			return -1;
 		
@@ -163,7 +164,7 @@ class FunctionCost {
 		
 		// if we are ambiguous at this point prefer non-index bindings
 		if (haveBetter == haveWorse) {
-			return -CPPSemantics.compareByRelevance(data, getFunction(), other.getFunction());
+			return -CPPSemantics.compareByRelevance(tu, getFunction(), other.getFunction());
 		}
 		
 		if (haveBetter) 

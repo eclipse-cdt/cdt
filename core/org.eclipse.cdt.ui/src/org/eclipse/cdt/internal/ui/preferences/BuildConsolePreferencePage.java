@@ -42,6 +42,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static final String PREF_BUILDCONSOLE_ERROR_COLOR = "buildConsoleErrorStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_BACKGROUND_COLOR = "buildConsoleBackgroundColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR = "buildConsoleProblemBackgroundColor"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR = "buildConsoleProblemWarningBackgroundColor"; //$NON-NLS-1$
+	public static final String PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR = "buildConsoleProblemInfoBackgroundColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR = "buildConsoleProblemHighlightedColor"; //$NON-NLS-1$
 
 	public BuildConsolePreferencePage() {
@@ -87,6 +89,10 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 				CUIPlugin.getResourceString("ConsolePreferencePage.backgroundColor.label"), parent)); //$NON-NLS-1$
 		addField(createColorFieldEditor(PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR,
 				CUIPlugin.getResourceString("ConsolePreferencePage.problemBackgroundColor.label"), parent)); //$NON-NLS-1$
+		addField(createColorFieldEditor(PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR,
+				CUIPlugin.getResourceString("ConsolePreferencePage.problemWarningBackgroundColor.label"), parent)); //$NON-NLS-1$
+		addField(createColorFieldEditor(PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR,
+				CUIPlugin.getResourceString("ConsolePreferencePage.problemInfoBackgroundColor.label"), parent)); //$NON-NLS-1$
 		addField(createColorFieldEditor(PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR,
 				CUIPlugin.getResourceString("ConsolePreferencePage.problemHighlightedColor.label"), parent)); //$NON-NLS-1$
 	}
@@ -143,6 +149,8 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_BACKGROUND_COLOR, new RGB(255, 255, 255));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR, new RGB(254, 231, 224));
+		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR, new RGB(254, 243, 218));
+		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR, new RGB(244, 247, 254));
 		PreferenceConverter.setDefault(prefs, PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR, new RGB(255, 0, 0));
 	}
 

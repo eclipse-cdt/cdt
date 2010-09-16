@@ -26,8 +26,10 @@ public class BuildConsolePartition extends TypedRegion {
 	/** Partition type */
 	public static final String CONSOLE_PARTITION_TYPE = CUIPlugin.getPluginId() + ".CONSOLE_PARTITION_TYPE"; //$NON-NLS-1$	
 	
-	/** Partition type to report errors in console */
+	/** Partition types to report build problems in the console */
 	public static final String ERROR_PARTITION_TYPE = CUIPlugin.getPluginId() + ".ERROR_PARTITION_TYPE"; //$NON-NLS-1$  
+	public static final String INFO_PARTITION_TYPE = CUIPlugin.getPluginId() + ".INFO_PARTITION_TYPE"; //$NON-NLS-1$  
+	public static final String WARNING_PARTITION_TYPE = CUIPlugin.getPluginId() + ".WARNING_PARTITION_TYPE"; //$NON-NLS-1$  
 	
 	public BuildConsolePartition(BuildConsoleStreamDecorator stream, int offset, int length, String type) {
 		super(offset, length, type);
@@ -77,14 +79,17 @@ public class BuildConsolePartition extends TypedRegion {
 	 */
 	public boolean canBeCombinedWith(BuildConsolePartition partition) {
 		// Error partitions never can be combined together
-		if ( getType() == ERROR_PARTITION_TYPE ) return false; 
+		String type = getType();
+		if (isProblemPartitionType(type)) {
+			return false; 
+		}
 
 		int start = getOffset();
 		int end = start + getLength();
 		int otherStart = partition.getOffset();
 		int otherEnd = otherStart + partition.getLength();
 		boolean overlap = (otherStart >= start && otherStart <= end) || (start >= otherStart && start <= otherEnd);
-		return getStream() != null && overlap && getType().equals(partition.getType()) && getStream().equals(partition.getStream());
+		return getStream() != null && overlap && type.equals(partition.getType()) && getStream().equals(partition.getStream());
 	}
 
 	/**
@@ -117,4 +122,12 @@ public class BuildConsolePartition extends TypedRegion {
 	public ProblemMarkerInfo getMarker() {
 		return fMarker;
 	}
+
+	public static boolean isProblemPartitionType(String type) {
+		return type==BuildConsolePartition.ERROR_PARTITION_TYPE
+			|| type==BuildConsolePartition.WARNING_PARTITION_TYPE
+			|| type==BuildConsolePartition.INFO_PARTITION_TYPE;
+	}
+	
+
 }

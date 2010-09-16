@@ -258,8 +258,15 @@ public class BuildConsoleViewer extends TextViewer
 
 		BuildConsolePartition partition = (BuildConsolePartition) partitioner.getPartition(event.lineOffset);
 		// Set background for error partitions
-		if ( partition != null && partition.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
-			event.lineBackground = partitioner.fManager.getProblemBackgroundColor();
+		if (partition!=null) {
+			String type = partition.getType();
+			if (type==BuildConsolePartition.ERROR_PARTITION_TYPE) {
+				event.lineBackground = partitioner.fManager.getProblemBackgroundColor();
+			} else if (type==BuildConsolePartition.WARNING_PARTITION_TYPE) {
+				event.lineBackground = partitioner.fManager.getWarningBackgroundColor();
+			} else if (type==BuildConsolePartition.INFO_PARTITION_TYPE) {
+				event.lineBackground = partitioner.fManager.getInfoBackgroundColor();
+			}
 		}
 	}
 

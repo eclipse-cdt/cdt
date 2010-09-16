@@ -23,6 +23,7 @@ import java.util.Vector;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -327,7 +328,8 @@ public class BuildConsolePartitioner
 	}
 
 	private void addStreamEntryToDocument(StreamEntry entry) throws BadLocationException {
-		if ( entry.getMarker() == null ) {
+		ProblemMarkerInfo marker = entry.getMarker();
+		if (marker==null) {
 			// It is plain unmarkered console output
 			addPartition(new BuildConsolePartition(fLastStream,
 					fDocument.getLength(),
@@ -336,10 +338,18 @@ public class BuildConsolePartitioner
 		} else {
 			// this text line in entry is markered with ProblemMarkerInfo,
 			// create special partition for it.
+			String errorPartitionType;
+			if (marker.severity==IMarker.SEVERITY_INFO) {
+				errorPartitionType = BuildConsolePartition.INFO_PARTITION_TYPE;
+			} else if (marker.severity==IMarker.SEVERITY_WARNING) {
+				errorPartitionType = BuildConsolePartition.WARNING_PARTITION_TYPE;
+			} else {
+				errorPartitionType = BuildConsolePartition.ERROR_PARTITION_TYPE;
+			}
 			addPartition(new BuildConsolePartition(fLastStream,
 					fDocument.getLength(),
 					entry.getText().length(),
-					BuildConsolePartition.ERROR_PARTITION_TYPE, entry.getMarker()));
+					errorPartitionType, marker));
 		}
 		fDocument.replace(fDocument.getLength(), 0, entry.getText());
 	}
@@ -479,21 +489,21 @@ public class BuildConsolePartitioner
 
 						ITypedRegion newPartition = null;
 						int offset = region.getOffset();
+						String type = messageConsolePartition.getType();
 						if (offset < overflow) {
 							int endOffset = offset + region.getLength();
-							if (endOffset < overflow ||
-									messageConsolePartition.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
+							if (endOffset < overflow || BuildConsolePartition.isProblemPartitionType(type)) {
 								// remove partition,
 								// partitions with problem markers can't be split - remove them too
 							} else {
 								// split partition
 								int length = endOffset - overflow;
-								newPartition = messageConsolePartition.createNewPartition(0, length, messageConsolePartition.getType());
+								newPartition = messageConsolePartition.createNewPartition(0, length, type);
 							}
 						} else {
 							// modify partition offset
-							newPartition = messageConsolePartition.createNewPartition(messageConsolePartition.getOffset()
-									- overflow, messageConsolePartition.getLength(), messageConsolePartition.getType());
+							offset = messageConsolePartition.getOffset() - overflow;
+							newPartition = messageConsolePartition.createNewPartition(offset, messageConsolePartition.getLength(), type);
 						}
 						if (newPartition != null) {
 							newParitions.add(newPartition);
@@ -572,31 +582,35 @@ public class BuildConsolePartitioner
 		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}
 
-	/** This method is useful for future debugging and bugfixing */
-	@SuppressWarnings("unused")
+	/** This method is useful for future debugging and bug-fixing */
+	@SuppressWarnings({ "unused", "nls" })
 	private void printDocumentPartitioning() {
-		System.out.println("Document partitioning: "); //$NON-NLS-1$
+		System.out.println("Document partitioning: ");
 		for (ITypedRegion tr : fPartitions) {
 			BuildConsolePartition p = (BuildConsolePartition) tr;
 			int start = p.getOffset();
 			int end = p.getOffset() + p.getLength();
 			String text;
-			String isError = "U"; //$NON-NLS-1$
-			if (p.getType() == BuildConsolePartition.ERROR_PARTITION_TYPE) {
-				isError = "E"; //$NON-NLS-1$
-			} else if (p.getType() == BuildConsolePartition.CONSOLE_PARTITION_TYPE) {
-				isError = "C"; //$NON-NLS-1$
+			String isError = "U";
+			String type = p.getType();
+			if (type == BuildConsolePartition.ERROR_PARTITION_TYPE) {
+				isError = "E";
+			} else if (type == BuildConsolePartition.WARNING_PARTITION_TYPE) {
+				isError = "W";
+			} else if (type == BuildConsolePartition.INFO_PARTITION_TYPE) {
+				isError = "I";
+			} else if (type == BuildConsolePartition.CONSOLE_PARTITION_TYPE) {
+				isError = "C";
 			}
 			try {
 				text = fDocument.get(p.getOffset(), p.getLength());
 			} catch (BadLocationException e) {
-				text = "N/A"; //$NON-NLS-1$
+				text = "N/A";
 			}
-			if (text.endsWith("\n")) { //$NON-NLS-1$
+			if (text.endsWith("\n")) {
 				text = text.substring(0, text.length() - 1);
 			}
-			System.out.println("    " + isError + " " + start + "-" + end + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					":[" + text + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("    " + isError + " " + start + "-" + end + ":[" + text + "]");
 		}
 	}
 

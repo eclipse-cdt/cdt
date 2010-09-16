@@ -42,7 +42,8 @@ class DocumentMarkerManager {
 			if ( i == fPartitioner.fPartitions.size() ) {
 				i = 0;
 			}
-			if ( fPartitioner.fPartitions.get(i).getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
+			String type = fPartitioner.fPartitions.get(i).getType();
+			if (BuildConsolePartition.isProblemPartitionType(type)) {
 				highlightedPartitionIndex = i;
 				return;
 			} else {
@@ -64,7 +65,8 @@ class DocumentMarkerManager {
 			if ( i == -1 ) {
 				i = fPartitioner.fPartitions.size() - 1;
 			}
-			if ( fPartitioner.fPartitions.get(i).getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
+			String type = fPartitioner.fPartitions.get(i).getType();
+			if (BuildConsolePartition.isProblemPartitionType(type)) {
 				highlightedPartitionIndex = i;
 				return;
 			} else {
@@ -75,7 +77,8 @@ class DocumentMarkerManager {
 	
 	void moveToFirstError() {
 		for (int i=0; i<fPartitioner.fPartitions.size(); i++) {
-			if ( fPartitioner.fPartitions.get(i).getType() == BuildConsolePartition.ERROR_PARTITION_TYPE ) {
+			String type = fPartitioner.fPartitions.get(i).getType();
+			if (BuildConsolePartition.isProblemPartitionType(type)) {
 				highlightedPartitionIndex = i;
 				return;			
 			}
@@ -86,13 +89,14 @@ class DocumentMarkerManager {
 	/** Returns true if offset points to error partition and false otherwise */
 	boolean moveToErrorByOffset(int offset) {
 		ITypedRegion p = fPartitioner.getPartition(offset);
-		if ( BuildConsolePartition.ERROR_PARTITION_TYPE.equals(p.getType()) ) {
+		String type = p.getType();
+		if (BuildConsolePartition.isProblemPartitionType(type)) {
 			highlightedPartitionIndex = fPartitioner.fPartitions.indexOf(p);
 			return true;
 		}
 		return false;
 	}
-	
+
 	/** Get marker for current error */
 	ProblemMarkerInfo getCurrentErrorMarker() {
 		BuildConsolePartition p = getCurrentPartition();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 		return suite(DoxygenCCommentAutoEditStrategyTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null);
@@ -63,6 +64,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		CProjectHelper.delete(fCProject);
 		super.tearDown();
@@ -571,7 +573,50 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	public void testAutoDocCommentContent17_Dec() throws CoreException {
 		assertAutoEditBehaviour();
 	}
+
+	//	/**X
+	//	extern "C" void foo(int x);
 	
+	//	/**
+	//	 * X
+	//	 * @param x
+	//	 */
+	//	extern "C" void foo(int x);
+	public void testAutoDocCommentExternC1() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	//	/**X
+	//	extern "C" {
+	//	void foo(int x);
+	//	}
+
+	//	/**
+	//	 * X
+	//	 */
+	//	extern "C" {
+	//	void foo(int x);
+	//	}
+	public void testAutoDocCommentExternC2() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
+	//	extern "C" {
+	//	/**X
+	//	void foo(int x);
+	//	}
+
+	//	extern "C" {
+	//	/**
+	//	 * X
+	//	 * @param x
+	//	 */
+	//	void foo(int x);
+	//	}
+	public void testAutoDocCommentExternC3() throws CoreException {
+		assertAutoEditBehaviour();
+	}
+
 	protected void assertAutoEditBehaviour() throws CoreException {
 		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
 		final IDocument doc = new Document();
@@ -588,6 +633,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 				
 		
 		DoxygenMultilineAutoEditStrategy ds= new DoxygenMultilineAutoEditStrategy() {
+			@Override
 			public IASTTranslationUnit getAST() {
 				final IFile file= fCProject.getProject().getFile("testContent.cpp");
 				try {

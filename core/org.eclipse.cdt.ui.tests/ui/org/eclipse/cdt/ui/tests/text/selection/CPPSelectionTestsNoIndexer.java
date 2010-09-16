@@ -1153,4 +1153,55 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	node= testF3(file, index+4);
     	assertContents(code, node.getFileLocation().getNodeOffset(), "AAA");
     }
+
+	//	void bug(int var) {
+	//		int foo = var;
+	//		int foo2(var);
+	//	}
+	public void testBug325135a() throws Exception {
+	    String code = getAboveComment();
+	    IFile file = importFile("testBug325135a.cpp", code); //$NON-NLS-1$
+	    int parOffset= code.indexOf("var)");
+	    
+	    int offset = code.indexOf("var;"); //$NON-NLS-1$
+	    IASTNode decl = testF3(file, offset);
+	    assertTrue(decl instanceof IASTName);
+	    assertEquals("var", ((IASTName) decl).toString()); //$NON-NLS-1$
+	    assertEquals(parOffset, ((ASTNode) decl).getOffset());
+	    assertEquals(3, ((ASTNode) decl).getLength());
+	    
+		offset = code.indexOf("var);"); //$NON-NLS-1$
+	    decl = testF3(file, offset);
+	    assertTrue(decl instanceof IASTName);
+	    assertEquals("var", ((IASTName) decl).toString()); //$NON-NLS-1$
+	    assertEquals(parOffset, ((ASTNode) decl).getOffset());
+	    assertEquals(3, ((ASTNode) decl).getLength());
+	}
+	
+	//	template<typename T> class C {
+	//		template<typename V> void f(V v) {
+	//			T t;
+	//			V s;
+	//		}
+	//	};
+	public void testBug325135b() throws Exception {
+	    String code = getAboveComment();
+	    IFile file = importFile("testBug325135b.cpp", code); //$NON-NLS-1$
+	    
+	    int offsetT= code.indexOf("T>");
+	    int offsetV= code.indexOf("V>");
+	    
+	    int offset = code.indexOf("T t;"); 
+	    IASTNode decl = testF3(file, offset);
+	    assertTrue(decl instanceof IASTName);
+	    assertEquals("T", ((IASTName) decl).toString()); 
+	    assertEquals(offsetT, ((ASTNode) decl).getOffset());
+	    
+	    offset = code.indexOf("V s;"); 
+	    decl = testF3(file, offset);
+	    assertTrue(decl instanceof IASTName);
+	    assertEquals("V", ((IASTName) decl).toString()); 
+	    assertEquals(offsetV, ((ASTNode) decl).getOffset());
+	}
+
 }

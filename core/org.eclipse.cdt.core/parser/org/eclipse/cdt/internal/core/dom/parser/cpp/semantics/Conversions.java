@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -668,14 +669,18 @@ public class Conversions {
 
 		FunctionCost cost1= null;
 		Cost cost2= null;
-		ICPPConstructor[] ctors= t.getConstructors();
-		CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source}, new ValueCategory[] {valueCat}, null, false);
+		ICPPFunction[] ctors= t.getConstructors();
+		ctors= CPPTemplates.instantiateFunctionTemplates(ctors, new IType[]{source}, new ValueCategory[] {valueCat}, null, false);
 
-		for (ICPPConstructor ctor : ctors) {
+		for (ICPPFunction f : ctors) {
+			if (!(f instanceof ICPPConstructor) || f instanceof IProblemBinding)
+				continue;
+			
+			ICPPConstructor ctor= (ICPPConstructor) f;
 			// Note: the special case of initializing a temporary to be bound to the first parameter 
 			// of a copy constructor called with a single argument in the context of direct-initialization
 			// is (more naturally) handled in initializationByConversionForDirectReference.
-			if (ctor != null && !(ctor instanceof IProblemBinding) && !ctor.isExplicit()) {
+			if (!ctor.isExplicit()) {
 				final ICPPFunctionType ft = ctor.getType();
 				final IType[] ptypes = ft.getParameterTypes();
 				FunctionCost c1;

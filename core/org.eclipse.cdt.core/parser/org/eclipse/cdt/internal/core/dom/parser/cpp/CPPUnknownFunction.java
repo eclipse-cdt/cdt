@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
  */
 public class CPPUnknownFunction extends CPPUnknownBinding implements ICPPFunction {
 
-	public static IFunction createForSample(IFunction sample) throws DOMException {
+	public static ICPPFunction createForSample(IFunction sample) throws DOMException {
 		if (sample instanceof ICPPConstructor)
 			return new CPPUnknownConstructor(((ICPPConstructor) sample).getClassOwner());
 		

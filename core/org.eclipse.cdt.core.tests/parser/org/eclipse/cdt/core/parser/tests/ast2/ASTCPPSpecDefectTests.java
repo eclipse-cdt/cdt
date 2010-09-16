@@ -66,7 +66,7 @@ public class ASTCPPSpecDefectTests extends AST2BaseTest {
 	//	void test() {
 	//		fp(f0);  
 	//	}
-	public void _testADLForOverloadSet_324842() throws Exception {
+	public void testADLForOverloadSet_324842() throws Exception {
 		parseAndCheckBindings();
 	}
 }

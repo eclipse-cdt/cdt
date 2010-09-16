@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -108,6 +109,9 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 
 	public IType getExpressionType() {
         IBinding binding = name.resolvePreBinding();
+        if (binding instanceof CPPFunctionSet)
+        	binding= name.resolveBinding();
+        
         if (checkForTransformation(binding)) {
         	return fTransformedExpression.getExpressionType();
         }

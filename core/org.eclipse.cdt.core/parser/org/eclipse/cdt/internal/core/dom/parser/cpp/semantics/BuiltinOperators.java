@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeOrFunctionSet;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
@@ -83,13 +84,13 @@ class BuiltinOperators {
 		fUnary= args.length<2;
 		fGlobalCandidates= globCandidates;
 		if (args.length > 0 && args[0] instanceof IASTExpression) {
-			IType type= ((IASTExpression) args[0]).getExpressionType();
+			IType type= typeOrFunctionSet((IASTExpression) args[0]);
 			if (!(type instanceof IProblemBinding)) 
 				fType1= type;
 			
 		}
 		if (args.length > 1 && args[1] instanceof IASTExpression) {
-			IType type= ((IASTExpression) args[1]).getExpressionType();
+			IType type= typeOrFunctionSet((IASTExpression) args[1]);
 			if (!(type instanceof IProblemBinding))
 				fType2= type;
 		}

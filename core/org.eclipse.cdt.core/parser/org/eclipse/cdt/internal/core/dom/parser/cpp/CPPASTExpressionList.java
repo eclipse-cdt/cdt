@@ -14,8 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -155,22 +154,26 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	    		return overloads = NO_FUNCTIONS;
 	    	
 	    	overloads = new ICPPFunction[exprs.length-1];
-	    	IType lookupType = exprs[0].getExpressionType();
+	    	IType lookupType = typeOrFunctionSet(exprs[0]);
+	    	ValueCategory vcat= valueCat(exprs[0]);
 	    	
-	    	for(int i = 1; i < exprs.length; i++) {
-	    		IASTExpression e1 = exprs[i-1], e2 = exprs[i];	
-	    		ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(e1, e2, lookupType);
-	    		if(overload == null) {
-	    			lookupType = e2.getExpressionType();
-	    		}
-	    		else {
-	    			overloads[i-1] = overload;
-	    			try {
+			for (int i = 1; i < exprs.length; i++) {
+				IASTExpression e1 = exprs[i - 1], e2 = exprs[i];
+				ICPPFunction overload = CPPSemantics.findOverloadedOperatorComma(e1, lookupType, vcat, e2);
+				if (overload == null) {
+					lookupType = typeOrFunctionSet(e2);
+					vcat= valueCat(e2);
+				} else {
+					overloads[i - 1] = overload;
+					try {
 						lookupType = overload.getType().getReturnType();
+						vcat= valueCategoryFromReturnType(lookupType);
+						lookupType= typeFromReturnType(lookupType);
 					} catch (DOMException e) {
-						lookupType = e2.getExpressionType();
+						lookupType = typeOrFunctionSet(e2);
+						vcat= valueCat(e2);
 					}
-	    		}
+				}
 			}
     	}
     	

@@ -152,6 +152,7 @@ public class CPPTemplates {
 	private static final int PACK_SIZE_DEFER = -1;
 	private static final int PACK_SIZE_FAIL = -2;
 	private static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
+	private static final ICPPFunction[] NO_FUNCTIONS = {};
 
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
@@ -1515,7 +1516,7 @@ public class CPPTemplates {
 	 * empty IType array is returned if id is <code>null</code>
 	 * @throws DOMException 
 	 */
-	static public ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) throws DOMException {
+	public static ICPPTemplateArgument[] createTemplateArgumentArray(ICPPASTTemplateId id) throws DOMException {
 		ICPPTemplateArgument[] result= ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		if (id != null) {
 			IASTNode[] params= id.getTemplateArguments();
@@ -1537,7 +1538,7 @@ public class CPPTemplates {
 		return result;
 	}
 	
-	static protected void instantiateFunctionTemplates(IFunction[] functions, IType[] allFnArgs, 
+	static ICPPFunction[] instantiateFunctionTemplates(ICPPFunction[] fns, IType[] allFnArgs, 
 			ValueCategory[] allValueCategories, IASTName name, boolean argsContainImpliedObject) {
 		boolean requireTemplate= false;
 		if (name != null) {
@@ -1552,12 +1553,13 @@ public class CPPTemplates {
 		IType[] reducedFnArgs= null;
 		ValueCategory[] reducedValueCategories= null;
 		ICPPTemplateArgument[] tmplArgs= null;
-		for (int i = 0; i < functions.length; i++) {
-			IFunction func = functions[i];
+		ICPPFunction[] result= fns;
+		int idx= 0;
+		for (int i = 0; i < fns.length; i++) {
+			final ICPPFunction func = fns[i];
+			ICPPFunction rf= null;
 			if (func instanceof ICPPFunctionTemplate) {
 				ICPPFunctionTemplate template= (ICPPFunctionTemplate) func;
-				functions[i]= null;
-				
 				final IType[] fnArgs;
 				final ValueCategory[] valueCategories;
 				if (argsContainImpliedObject && template instanceof ICPPMethod) {
@@ -1583,18 +1585,16 @@ public class CPPTemplates {
 					tmplArgs = ICPPTemplateArgument.EMPTY_ARGUMENTS;
 					try {
 						if (fnArgs == null || containsDependentType(fnArgs)) {
-							functions[i]= CPPUnknownFunction.createForSample(template);
-							return;
+							return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
 						}
 						if (name instanceof ICPPASTTemplateId && !(template instanceof ICPPConstructor)) {
 							tmplArgs = createTemplateArgumentArray((ICPPASTTemplateId) name);
 							if (hasDependentArgument(tmplArgs)) {
-								functions[i]= CPPUnknownFunction.createForSample(template);
-								return;
+								return new ICPPFunction[] {CPPUnknownFunction.createForSample(template)};
 							}
 						}
 					} catch (DOMException e) {
-						return;
+						return NO_FUNCTIONS;
 					}
 				}
 				CPPTemplateParameterMap map= new CPPTemplateParameterMap(fnArgs.length);
@@ -1602,19 +1602,30 @@ public class CPPTemplates {
 					ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForFunctionCall(template, tmplArgs, fnArgs, valueCategories, map);
 					if (args != null) {
 						IBinding instance= instantiateFunctionTemplate(template, args, map);
-						if (instance instanceof IFunction) {
-							functions[i]= (IFunction) instance;
+						if (instance instanceof ICPPFunction) {
+							rf= (ICPPFunction) instance;
 						} 
 					}
 				} catch (DOMException e) {
 					// try next candidate
 				}
-			} else if (requireTemplate 
-					&& !(func instanceof ICPPConstructor) && !(func instanceof ICPPUnknownBinding)
-					&& !(func instanceof ICPPMethod && ((ICPPMethod) func).isDestructor())) {
-				functions[i]= null;
-			}		
+			} else if (!requireTemplate 
+					|| (func instanceof ICPPConstructor) || (func instanceof ICPPUnknownBinding)
+					|| (func instanceof ICPPMethod && ((ICPPMethod) func).isDestructor())) {
+				rf= func;
+			}
+			if (rf != func || result != fns) {
+				if (result == fns) {
+					result= new ICPPFunction[fns.length-(i-idx)];
+					System.arraycopy(fns, 0, result, 0, idx);
+				}
+				if (rf != null) 
+					result[idx]= rf;
+			}
+			if (rf != null)
+				idx++;
 		}
+		return result;
 	}
 
 	static protected void instantiateConversionTemplates(IFunction[] functions, IType conversionType) {
@@ -1653,6 +1664,42 @@ public class CPPTemplates {
 		}
 	}
 
+	/**
+	 * 14.8.2.2 Deducing template arguments taking the address of a function template [temp.deduct.funcaddr]
+	 */
+	static protected ICPPFunction instantiateFunctionTemplate(ICPPFunctionTemplate template, IFunctionType target, IASTName name) {
+		if (name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
+			name= (IASTName) name.getParent();
+		}
+		try {
+			if (isDependentType(target)) {
+				return CPPUnknownFunction.createForSample(template);
+			}
+
+			ICPPTemplateArgument[] tmplArgs;
+			if (name instanceof ICPPASTTemplateId && !(template instanceof ICPPConstructor)) {
+				tmplArgs = createTemplateArgumentArray((ICPPASTTemplateId) name);
+				if (hasDependentArgument(tmplArgs)) {
+					return CPPUnknownFunction.createForSample(template);
+				}
+			} else {
+				tmplArgs= ICPPTemplateArgument.EMPTY_ARGUMENTS;
+			}
+
+			CPPTemplateParameterMap map= new CPPTemplateParameterMap(4);
+			ICPPTemplateArgument[] args= TemplateArgumentDeduction.deduceForAddressOf(template, tmplArgs, target, map);
+			if (args != null) {
+				IBinding instance= instantiateFunctionTemplate(template, args, map);
+				if (instance instanceof ICPPFunction) {
+					return (ICPPFunction) instance;
+				} 
+			}
+		} catch (DOMException e) {
+		}
+		return null;
+	}
+
+	
 	/**
 	 * Transforms a function template for use in partial ordering, as described in the
 	 * spec 14.5.5.2-3

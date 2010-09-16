@@ -445,7 +445,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//		A<B> a;
 	//		a.f= foo<B>;
 	//	}
-	public void _testOverloadedFunctionTemplate() {
+	public void testOverloadedFunctionTemplate() {
 		IBinding b0= getBindingFromASTName("foo<B>;", 6);
 		assertInstance(b0, ICPPFunction.class);
 		assertInstance(b0, ICPPSpecialization.class);

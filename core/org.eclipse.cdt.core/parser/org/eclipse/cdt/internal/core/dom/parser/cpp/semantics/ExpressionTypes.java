@@ -15,7 +15,12 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -77,5 +82,46 @@ public class ExpressionTypes {
 			return glvalueType(r);
 		}
 		return prvalueType(r);
+	}
+
+	public static IType typeOrFunctionSet(IASTExpression e) {
+		FunctionSetType fs= getFunctionSetType(e);
+		if (fs != null) {
+			return fs;
+		} 
+		return e.getExpressionType();
 	} 
+	
+	public static ValueCategory valueCat(IASTExpression e) {
+		FunctionSetType fs= getFunctionSetType(e);
+		if (fs != null)
+			return fs.getValueCategory();
+		return e.getValueCategory();
+	}
+			
+	private static FunctionSetType getFunctionSetType(IASTExpression e) {
+		boolean addressOf= false;
+    	while (e instanceof IASTUnaryExpression) {
+    		final IASTUnaryExpression unary = (IASTUnaryExpression) e;
+			final int op= unary.getOperator();
+			if (op == IASTUnaryExpression.op_bracketedPrimary) {
+    			e= unary.getOperand();
+    		} else if (!addressOf && op == IASTUnaryExpression.op_amper) {
+    			addressOf= true;
+    			e= unary.getOperand();
+    		} else {
+    			break;
+    		}
+    	}
+    	
+    	if (e instanceof IASTIdExpression) {
+    		IASTIdExpression idexpr= (IASTIdExpression) e;
+    		final IASTName name = idexpr.getName();
+			IBinding b= name.resolvePreBinding();
+    		if (b instanceof CPPFunctionSet) {
+    			return new FunctionSetType(((CPPFunctionSet) b).getBindings(), name, addressOf);
+    		}
+    	}
+    	return null;
+	}
 }

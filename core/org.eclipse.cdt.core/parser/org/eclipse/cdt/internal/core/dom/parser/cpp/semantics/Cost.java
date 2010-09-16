@@ -89,6 +89,7 @@ public class Cost {
 	private ReferenceBinding fReferenceBinding;
 
 	private boolean fCouldNarrow;
+	private ICPPFunction fSelectedFunction; // For targeted functions
 	
 	public Cost(IType s, IType t, Rank rank) {
 		source = s;
@@ -265,5 +266,16 @@ public class Cost {
 
 	public ICPPFunction getUserDefinedConversion() {
 		return fUserDefinedConversion;
+	}
+
+	/**
+	 * Stores a selected function. Used when resolving targeted functions. 
+	 */
+	public void setSelectedFunction(ICPPFunction function) {
+		fSelectedFunction= function;
+	}
+	
+	public ICPPFunction getSelectedFunction() {
+		return fSelectedFunction;
 	}
 }

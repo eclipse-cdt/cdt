@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getSimplifiedType;
 
 import java.util.Collections;
 import java.util.List;
@@ -509,8 +510,9 @@ public class LookupData {
 				for (int i = 0; i < exprs.length; i++) {
 					IASTInitializerClause e = exprs[i];
 					if (e instanceof IASTExpression) {
-						IType etype= ((IASTExpression) e).getExpressionType();
-						functionArgTypes[i]= SemanticUtil.getSimplifiedType(etype);
+						// Find function set when taking an address of a function
+						final IType t = ExpressionTypes.typeOrFunctionSet((IASTExpression) e);
+						functionArgTypes[i]= getSimplifiedType(t);
 					} else if (e instanceof ICPPASTInitializerList) {
 						functionArgTypes[i]= new InitializerListType((ICPPASTInitializerList) e);
 					}
@@ -535,7 +537,7 @@ public class LookupData {
 				for (int i = 0; i < args.length; i++) {
 					final IASTInitializerClause arg = args[i];
 					if (arg instanceof IASTExpression) {
-						functionArgValueCategories[i]= ((IASTExpression) arg).getValueCategory();
+						functionArgValueCategories[i] = ExpressionTypes.valueCat((IASTExpression) arg);
 					} 
 				}
 			} else {

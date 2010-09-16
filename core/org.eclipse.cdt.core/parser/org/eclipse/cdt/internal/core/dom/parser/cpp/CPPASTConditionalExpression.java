@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -213,46 +214,50 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		
 		final ValueCategory vcat2= expr2.getValueCategory();
 		final ValueCategory vcat3= expr3.getValueCategory();
-		final boolean isClassType2 = uqt2 instanceof ICPPClassType;
-		final boolean isClassType3 = uqt3 instanceof ICPPClassType;
 
-		// Same type and same value category
+		// Same type
 		if (t2.isSameType(t3)) {
 			if (vcat2 == vcat3) {
 				fType= t2;
 				fValueCategory= vcat2;
-				return;
-			} 
-		} else {
-			// Different types with at least one class type
-			if (isClassType2 || isClassType3) {
-				final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3); // sets fType and fValueCategory
-				final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2); // sets fType and fValueCategory
-				if (cost2.converts() || cost3.converts()) {
-					if (cost2.converts()) {
-						if (cost3.converts() || cost2.isAmbiguousUDC()) {
-							fType= createProblem();
-						}
-					} else if (cost3.isAmbiguousUDC()) {
+			} else {
+				fType= prvalueType(t2);
+				fValueCategory= PRVALUE;
+			}
+			return;
+		} 
+		
+		final boolean isClassType2 = uqt2 instanceof ICPPClassType;
+		final boolean isClassType3 = uqt3 instanceof ICPPClassType;
+
+		// Different types with at least one class type
+		if (isClassType2 || isClassType3) {
+			final Cost cost2= convertToMatch(t2, vcat2, uqt2, t3, vcat3, uqt3); // sets fType and fValueCategory
+			final Cost cost3= convertToMatch(t3, vcat3, uqt3, t2, vcat2, uqt2); // sets fType and fValueCategory
+			if (cost2.converts() || cost3.converts()) {
+				if (cost2.converts()) {
+					if (cost3.converts() || cost2.isAmbiguousUDC()) {
 						fType= createProblem();
 					}
-					return;
-				}
-			} else if (vcat2 == vcat3 && vcat2.isGLValue() && uqt2.isSameType(uqt3)) {
-				// Two lvalues or two xvalues with same type up to qualification.
-				final CVQualifier cv2 = SemanticUtil.getCVQualifier(t2);
-				final CVQualifier cv3 = SemanticUtil.getCVQualifier(t3);
-				if (cv2.isAtLeastAsQualifiedAs(cv3)) {
-					fType= t2;
-					fValueCategory= vcat2;
-				} else if (cv3.isAtLeastAsQualifiedAs(cv2)) {
-					fType= t3;
-					fValueCategory= vcat3;
-				} else {
-					createProblem();
+				} else if (cost3.isAmbiguousUDC()) {
+					fType= createProblem();
 				}
 				return;
 			}
+		} else if (vcat2 == vcat3 && vcat2.isGLValue() && uqt2.isSameType(uqt3)) {
+			// Two lvalues or two xvalues with same type up to qualification.
+			final CVQualifier cv2 = SemanticUtil.getCVQualifier(t2);
+			final CVQualifier cv3 = SemanticUtil.getCVQualifier(t3);
+			if (cv2.isAtLeastAsQualifiedAs(cv3)) {
+				fType= t2;
+				fValueCategory= vcat2;
+			} else if (cv3.isAtLeastAsQualifiedAs(cv2)) {
+				fType= t3;
+				fValueCategory= vcat3;
+			} else {
+				createProblem();
+			}
+			return;
 		}
 		
 		// 5.16-5: At least one class type but no conversion

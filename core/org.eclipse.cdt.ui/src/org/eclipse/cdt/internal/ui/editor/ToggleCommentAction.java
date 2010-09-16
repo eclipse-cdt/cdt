@@ -24,6 +24,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ISelection;
@@ -173,16 +174,25 @@ public final class ToggleCommentAction extends TextEditorAction {
 	 * Creates a region describing the text block (something that starts at
 	 * the beginning of a line) completely containing the current selection.
 	 *
+	 * Note, the implementation has to match {@link TextViewer}.getTextBlockFromSelection().
+	 * 
 	 * @param selection The selection to use
 	 * @param document The document
 	 * @return the region describing the text block comprising the given selection
 	 */
 	private IRegion getTextBlockFromSelection(ITextSelection selection, IDocument document) {
 		try {
-			IRegion line= document.getLineInformationOfOffset(selection.getOffset());
-			int length= selection.getLength() == 0 ?
-					line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
-			return new Region(line.getOffset(), length);
+			// Until https://bugs.eclipse.org/bugs/show_bug.cgi?id=325438 is fixed, work around it
+			int start= document.getLineOffset(selection.getStartLine());
+			int endLine= selection.getEndLine();
+			IRegion endLineInfo= document.getLineInformation(endLine);
+			int end= endLineInfo.getOffset() + endLineInfo.getLength();
+			return new Region(start, end - start);
+
+//			IRegion line= document.getLineInformationOfOffset(selection.getOffset());
+//			int length= selection.getLength() == 0 ?
+//					line.getLength() : selection.getLength() + (selection.getOffset() - line.getOffset());
+//			return new Region(line.getOffset(), length);
 
 		} catch (BadLocationException e) {
 			CUIPlugin.log(e);  // Should not happen
@@ -298,13 +308,12 @@ public final class ToggleCommentAction extends TextEditorAction {
 
 		String[] types= configuration.getConfiguredContentTypes(sourceViewer);
 		Map<String, String[]> prefixesMap= new HashMap<String, String[]>(types.length);
-		for (int i= 0; i < types.length; i++) {
-			String type= types[i];
+		for (String type : types) {
 			String[] prefixes= configuration.getDefaultPrefixes(sourceViewer, type);
 			if (prefixes != null && prefixes.length > 0) {
 				int emptyPrefixes= 0;
-				for (int j= 0; j < prefixes.length; j++) {
-					if (prefixes[j].length() == 0)
+				for (String prefixe : prefixes) {
+					if (prefixe.length() == 0)
 						emptyPrefixes++;
 				}
 

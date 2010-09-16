@@ -20,6 +20,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 
+import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -35,7 +36,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
 /**
@@ -169,16 +172,45 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	protected StringBuilder customizeAfterNewLineForDeclaration(IDocument doc, IASTDeclaration dec, ITypedRegion partition) {
 		fLineDelimiter = TextUtilities.getDefaultLineDelimiter(doc);
 
-		while(dec instanceof ICPPASTTemplateDeclaration) /* if? */
-			dec= ((ICPPASTTemplateDeclaration)dec).getDeclaration(); 
+		IASTDeclaration declToDocument = dec;
+		
+		if(declToDocument instanceof ICPPASTLinkageSpecification) {
+			ICPPASTLinkageSpecification linkageSpecification = (ICPPASTLinkageSpecification)declToDocument;
+			IASTDeclaration[] declarations = linkageSpecification.getDeclarations();
+			
+			if(declarations.length == 1) {
+				
+				boolean isCurlyExtern = false;
+				IToken token = null;
+				
+				try {
+					token = declarations[0].getTrailingSyntax();
+				} catch (UnsupportedOperationException e) {
+					return new StringBuilder();
+				} catch (ExpansionOverlapsBoundaryException e) {
+					return new StringBuilder();
+				}
+				
+				if(token != null && token.getType() == IToken.tRBRACE) {
+					isCurlyExtern = true;
+				}
+				
+				if(!isCurlyExtern) {
+					declToDocument = declarations[0];	
+				}
+			}
+		}
+		
+		while(declToDocument instanceof ICPPASTTemplateDeclaration) /* if? */
+			declToDocument= ((ICPPASTTemplateDeclaration)declToDocument).getDeclaration(); 
 
-		if(dec instanceof IASTFunctionDefinition) {
-			IASTFunctionDefinition fd= (IASTFunctionDefinition) dec;
+		if(declToDocument instanceof IASTFunctionDefinition) {
+			IASTFunctionDefinition fd= (IASTFunctionDefinition) declToDocument;
 			return documentFunction(fd.getDeclarator(), fd.getDeclSpecifier());
 		}
 
-		if(dec instanceof IASTSimpleDeclaration) {
-			IASTSimpleDeclaration sdec= (IASTSimpleDeclaration) dec;
+		if(declToDocument instanceof IASTSimpleDeclaration) {
+			IASTSimpleDeclaration sdec= (IASTSimpleDeclaration) declToDocument;
 			StringBuilder result= new StringBuilder();
 			
 			if(sdec.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
@@ -201,7 +233,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 		}
 
 		try {
-			alterDoc(doc, dec);
+			alterDoc(doc, declToDocument);
 		} catch(BadLocationException ble) {
 			/*ignore*/
 		}

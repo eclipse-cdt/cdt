@@ -80,9 +80,9 @@ public class CfgSCJobsUtil {
         }
         final IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
 
-        List providerIds = buildInfo.getProviderIdList();
+        List<String> providerIds = buildInfo.getProviderIdList();
         for (int i = 0; i < providerIds.size(); ++i) {
-            final String providerId = (String) providerIds.get(i);
+            final String providerId = providerIds.get(i);
             if (buildInfo.isProviderOutputParserEnabled(providerId)) {
                 final IExternalScannerInfoProvider esiProvider = profileInstance.
                         createExternalScannerInfoProvider(providerId);

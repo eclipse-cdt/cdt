@@ -76,9 +76,12 @@ public class ScannerConfigBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	@Override
-	protected IProject [] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		if (DEBUG_EVENTS)
-			printEvent(kind, args);
+	protected IProject [] build(int kind, @SuppressWarnings("rawtypes") Map args, IProgressMonitor monitor) throws CoreException {
+		if (DEBUG_EVENTS) {
+			@SuppressWarnings("unchecked")
+			Map<String, String> argsMap = args;
+			printEvent(kind, argsMap);
+		}
 
 		// If auto discovery is disabled, do nothing
 //		boolean autodiscoveryEnabled;

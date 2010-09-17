@@ -197,7 +197,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		}
 		
 		((FolderInfo)cInfo.fLoadContext.getConfiguration().getRootFolderInfo()).setContainsDiscoveredScannerInfo(true);
-		Map map = baseInfo.getSymbols();
+		Map<String, String> map = baseInfo.getSymbols();
 		IPath paths[] = baseInfo.getIncludePaths();
 		
 		PathInfo info = new PathInfo(paths, null, map, null, null);
@@ -214,7 +214,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		IRcSettingInfo[] rcInfos = calculator.getSettingInfos(cInfo.fLoadContext.getConfiguration().getOwner().getProject(), data, info, true);
 		
 		CResourceData rcDatas[] = data.getResourceDatas();
-		Map rcDataMap = new HashMap();
+		Map<IPath, CResourceData> rcDataMap = new HashMap<IPath, CResourceData>();
 		CResourceData rcData;
 		for(int i = 0; i < rcDatas.length; i++){
 			rcData = rcDatas[i];
@@ -243,8 +243,8 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 		
 		if(!rcDataMap.isEmpty()){
 			CResourceData tmpRcData;
-			for(Iterator iter = rcDataMap.values().iterator(); iter.hasNext();){
-				tmpRcData = (CResourceData)iter.next();
+			for(Iterator<CResourceData> iter = rcDataMap.values().iterator(); iter.hasNext();){
+				tmpRcData = iter.next();
 				if(tmpRcData.getPath().segmentCount() == 0 && tmpRcData.getType() == ICSettingBase.SETTING_FOLDER){
 					cache(cInfo, PerFileSettingsCalculator.createEmptyRcSettingInfo((CFolderData)tmpRcData));
 				} else {

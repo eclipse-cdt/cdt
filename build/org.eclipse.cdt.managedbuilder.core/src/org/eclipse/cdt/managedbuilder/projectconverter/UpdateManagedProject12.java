@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -75,7 +74,7 @@ class UpdateManagedProject12 {
 	private static final String ID_OPTIONS = "options";	//$NON-NLS-1$
 	private static final String ID_PATHS = "paths";	//$NON-NLS-1$
 	private static final String ID_PREPROC = "preprocessor";	//$NON-NLS-1$
-	private static final String ID_RELEASE = "release";	//$NON-NLS-1$
+//	private static final String ID_RELEASE = "release";	//$NON-NLS-1$
 	private static final String ID_SEPARATOR = ".";	//$NON-NLS-1$
 	private static final String ID_SHARED = "so";	//$NON-NLS-1$
 	private static final String ID_SOLARIS = "solaris";	//$NON-NLS-1$
@@ -103,7 +102,7 @@ class UpdateManagedProject12 {
 	private static final int TYPE_EXE = 0;
 	private static final int TYPE_SHARED = 1;
 	private static final int TYPE_STATIC = 2;
-	private static Map configIdMap;
+	private static Map<String, IConfiguration> configIdMap;
 	
 	/* (non-Javadoc)
 	 * Generates a valid 2.1 eqivalent ID for an old 1.2 format
@@ -120,13 +119,13 @@ class UpdateManagedProject12 {
 		boolean debug = false;
 		int type = -1;
 		
-		Vector idTokens = new Vector(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 		try {
-		    String platform = (String) idTokens.get(0);
+		    String platform = idTokens.get(0);
 		    if (platform.equalsIgnoreCase(ID_CYGWIN)) {
 		        cygwin = builtIn = true;
 		    } else if ((platform.equalsIgnoreCase(ID_LINUX) || platform.equalsIgnoreCase(ID_SOLARIS))
-		            && ((String)idTokens.get(1)).equalsIgnoreCase(ID_GNU)) {
+		            && (idTokens.get(1)).equalsIgnoreCase(ID_GNU)) {
 		       builtIn = true; 
 		    }
 		            
@@ -141,9 +140,7 @@ class UpdateManagedProject12 {
 		}
 		
 		// Otherwise make the conversion
-		Iterator iter = idTokens.iterator();
-		while (iter.hasNext()) {
-			String id = (String) iter.next();
+		for (String id : idTokens) {
 			if(id.equalsIgnoreCase(ID_EXEC)) {
 				type = TYPE_EXE;
 			} else if(id.equalsIgnoreCase(ID_SHARED)) {
@@ -246,11 +243,11 @@ class UpdateManagedProject12 {
 
 	    String optId = null;	    
 		String[] idTokens = oldId.split(REGEXP_SEPARATOR);
-		Vector oldIdVector = new Vector(Arrays.asList(idTokens));
+		Vector<String> oldIdVector = new Vector<String>(Arrays.asList(idTokens));
 		if (isBuiltInOption(oldIdVector)) {
 			
 			// New ID will be in form gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
-			Vector newIdVector = new Vector(idTokens.length + 2);
+			Vector<String> newIdVector = new Vector<String>(idTokens.length + 2);
 			
 			// We can ignore the first element of the old IDs since it is just [cygwin|linux|solaris]
 			for (int index = 1; index < idTokens.length; ++index) {
@@ -258,12 +255,12 @@ class UpdateManagedProject12 {
 			}
 	 		
 			// In the case of some Cygwin C++ tools, the old ID will be missing gnu
-			if (!((String)newIdVector.firstElement()).equals(ID_GNU)) {
+			if (!(newIdVector.firstElement()).equals(ID_GNU)) {
 				newIdVector.add(0, ID_GNU);
 			}
 			
 			// In some old IDs the language specifier is missing for librarian and C++ options
-			String langToken = (String)newIdVector.get(1); 
+			String langToken = newIdVector.get(1); 
 			if(!langToken.equals(TOOL_LANG_C)) {
 				// In the case of the librarian the language must be set to both
 				if (langToken.equals(TOOL_NAME_LIB) || langToken.equals(TOOL_NAME_AR)) {
@@ -274,7 +271,7 @@ class UpdateManagedProject12 {
 			}
 			
 			// Standardize the next token to compiler, link, or lib
-			String toolToken = (String)newIdVector.get(2);
+			String toolToken = newIdVector.get(2);
 			if (toolToken.equals(ID_PREPROC)) {
 				// Some compiler preprocessor options are missing this
 				newIdVector.add(2, TOOL_NAME_COMPILER);
@@ -289,7 +286,7 @@ class UpdateManagedProject12 {
 			}
 			
 			// Add in the option tag
-			String optionToken = (String)newIdVector.get(3);
+			String optionToken = newIdVector.get(3);
 			if (optionToken.equals(ID_OPTIONS)) {
 				// Some old-style options had "options" in the id
 				newIdVector.remove(3);
@@ -297,7 +294,7 @@ class UpdateManagedProject12 {
 			newIdVector.add(3, ID_OPTION);
 			
 			// Convert any lingering "incpaths" to "include.paths"
-			String badToken = (String) newIdVector.lastElement();
+			String badToken = newIdVector.lastElement();
 			if (badToken.equals(ID_INCPATHS)) {
 				newIdVector.remove(newIdVector.lastElement());
 				newIdVector.addElement(ID_INCLUDE);
@@ -331,7 +328,7 @@ class UpdateManagedProject12 {
 			// Construct the new ID
 			optId = new String();
 			for (int rebuildIndex = 0; rebuildIndex < newIdVector.size(); ++ rebuildIndex) {
-				String token = (String) newIdVector.get(rebuildIndex);
+				String token = newIdVector.get(rebuildIndex);
 				optId += token;
 				if (rebuildIndex < newIdVector.size() - 1) {
 					optId += ID_SEPARATOR;
@@ -405,7 +402,7 @@ class UpdateManagedProject12 {
 					case IOption.PREPROCESSOR_SYMBOLS:
 					case IOption.LIBRARIES:
 					case IOption.OBJECTS:
-						Vector values = new Vector();
+						Vector<String> values = new Vector<String>();
 						NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
 						for (int i = 0; i < nodes.getLength(); ++i) {
 							Node node = nodes.item(i);
@@ -416,7 +413,7 @@ class UpdateManagedProject12 {
 								}
 							}
 						}
-						configuration.setOption(tool, newOpt, (String[])values.toArray(new String[values.size()]));
+						configuration.setOption(tool, newOpt, values.toArray(new String[values.size()]));
 						break;
 				}
 			} catch (BuildException e) {
@@ -442,13 +439,13 @@ class UpdateManagedProject12 {
 		// Is this a built-in target or one we cannot convert
 		boolean builtIn = false;
 
-		Vector idTokens = new Vector(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 		try {
-		    String platform = (String) idTokens.get(0);
+		    String platform = idTokens.get(0);
 		    if (platform.equalsIgnoreCase(ID_CYGWIN)) {
 		        builtIn = true;
 		    } else if ((platform.equalsIgnoreCase(ID_LINUX) || platform.equalsIgnoreCase(ID_SOLARIS))
-		            && ((String)idTokens.get(1)).equalsIgnoreCase(ID_GNU)) {
+		            && (idTokens.get(1)).equalsIgnoreCase(ID_GNU)) {
 		       posix = builtIn = true; 
 		    }
 		    
@@ -461,9 +458,7 @@ class UpdateManagedProject12 {
 		    return oldId;
 		}
 		
-		Iterator iter = idTokens.iterator();
-		while (iter.hasNext()) {
-			String token = (String) iter.next();
+		for (String token : idTokens) {
 			if (token.equalsIgnoreCase(ID_EXEC)){
 				type = TYPE_EXE;
 			} else if (token.equalsIgnoreCase(ID_SHARED)){
@@ -552,11 +547,9 @@ class UpdateManagedProject12 {
 			int toolType = -1;
 			
 			// Figure out what kind of tool the ref pointed to
-			Vector idTokens = new Vector(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+			Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 			
-			Iterator iter = idTokens.iterator();
-			while (iter.hasNext()) {
-				String token = (String) iter.next();
+			for (String token : idTokens) {
 				if(token.equals(TOOL_LANG_C)) {
 					cppFlag = false;
 				} else if (token.equalsIgnoreCase(TOOL_NAME_COMPILER)) {
@@ -731,7 +724,7 @@ class UpdateManagedProject12 {
 			try {
 				Element defaultConfig = (Element) defaultConfiguration.item(0);
 				String oldDefaultConfigId = defaultConfig.getAttribute(IBuildObject.ID);
-				IConfiguration newDefaultConfig = (IConfiguration) getConfigIdMap().get(oldDefaultConfigId);
+				IConfiguration newDefaultConfig = getConfigIdMap().get(oldDefaultConfigId);
 				if (newDefaultConfig != null) {
 					info.setDefaultConfiguration(newDefaultConfig);
 					info.setSelectedConfiguration(newDefaultConfig);
@@ -785,17 +778,17 @@ class UpdateManagedProject12 {
 	/* (non-Javadoc)
 	 * @return Returns the configIdMap.
 	 */
-	protected static Map getConfigIdMap() {
+	protected static Map<String, IConfiguration> getConfigIdMap() {
 		if (configIdMap == null) {
-			configIdMap = new HashMap();
+			configIdMap = new HashMap<String, IConfiguration>();
 		}
 		return configIdMap;
 	}
 
-	protected static boolean isBuiltInOption(Vector idTokens) {
+	protected static boolean isBuiltInOption(Vector<String> idTokens) {
 	    try {
-	        String platform = (String) idTokens.firstElement();
-	        String secondToken = (String) idTokens.get(1);
+	        String platform = idTokens.firstElement();
+	        String secondToken = idTokens.get(1);
 	        if (platform.equals(ID_CYGWIN)) {
 	            // bit of a mess since was done first
 	            // but valid second tokens are 'compiler',

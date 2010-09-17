@@ -44,7 +44,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UpdateManagedProjectManager {
-	static private ThreadLocal fThreadInfo = new ThreadLocal();
+	static private ThreadLocal<Map<String, UpdateManagedProjectManager>> fThreadInfo = new ThreadLocal<Map<String, UpdateManagedProjectManager>>();
 	static private IOverwriteQuery fBackupFileOverwriteQuery = null;
 	static private IOverwriteQuery fOpenQuestionQuery = null;
 	static private IOverwriteQuery fUpdateProjectQuery = null;
@@ -77,7 +77,7 @@ public class UpdateManagedProjectManager {
 	}
 	
 	static private UpdateManagedProjectManager getExistingUpdateManager(IProject project){
-		Map map = getManagerMap(false);
+		Map<String, UpdateManagedProjectManager> map = getManagerMap(false);
 		return map != null ? (UpdateManagedProjectManager)map.get(project.getName()) : null;
 	}
 
@@ -102,10 +102,10 @@ public class UpdateManagedProjectManager {
 		getManagerMap(false).remove(project.getName());
 	}
 	
-	static private Map getManagerMap(boolean create){
-		Map map = (Map)fThreadInfo.get();
+	static private Map<String, UpdateManagedProjectManager> getManagerMap(boolean create){
+		Map<String, UpdateManagedProjectManager> map = fThreadInfo.get();
 		if(map == null && create){
-			map = new HashMap();
+			map = new HashMap<String, UpdateManagedProjectManager>();
 			fThreadInfo.set(map);
 		}
 		return map;

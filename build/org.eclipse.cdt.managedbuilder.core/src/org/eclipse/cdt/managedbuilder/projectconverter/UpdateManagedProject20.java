@@ -437,7 +437,7 @@ class UpdateManagedProject20 {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS:{
-						Vector values = new Vector();
+						Vector<String> values = new Vector<String>();
 						NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
 						for (int j = 0; j < nodes.getLength(); ++j) {
 							Node node = nodes.item(j);
@@ -448,7 +448,7 @@ class UpdateManagedProject20 {
 								}
 							}
 						}
-						configuration.setOption(tool,option,(String[])values.toArray(new String[values.size()]));
+						configuration.setOption(tool,option,values.toArray(new String[values.size()]));
 						break;
 					}
 				default:

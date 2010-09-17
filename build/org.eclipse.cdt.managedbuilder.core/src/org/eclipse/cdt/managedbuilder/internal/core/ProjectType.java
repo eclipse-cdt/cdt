@@ -47,8 +47,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	private IProjectType superClass;
 	private String superClassId;
 	//  Parent and children
-	private List configList;	//  Configurations of this project type
-	private Map configMap;
+	private List<Configuration> configList;	//  Configurations of this project type
+	private Map<String, IConfiguration> configMap;
 	//  Managed Build model attributes
 	private Boolean isAbstract;
 	private Boolean isTest;
@@ -232,20 +232,14 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfiguration()
 	 */
 	public IConfiguration getConfiguration(String id) {
-		return (IConfiguration)getConfigurationMap().get(id);
+		return getConfigurationMap().get(id);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#getConfigurations()
 	 */
 	public IConfiguration[] getConfigurations() {
-		IConfiguration[] configs = new IConfiguration[getConfigurationList().size()];
-		Iterator iter = getConfigurationList().listIterator();
-		int i = 0;
-		while (iter.hasNext()) {
-			Configuration config = (Configuration)iter.next();
-			configs[i++] = config; 
-		}
+		IConfiguration[] configs = getConfigurationList().toArray(new IConfiguration[0]);
 		return configs;
 	}
 	
@@ -254,9 +248,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 */
 	public void removeConfiguration(String id) {
 		// Remove the specified configuration from the list and map
-		Iterator iter = getConfigurationList().listIterator();
+		Iterator<Configuration> iter = getConfigurationList().listIterator();
 		while (iter.hasNext()) {
-			 IConfiguration config = (IConfiguration)iter.next();
+			 IConfiguration config = iter.next();
 			 if (config.getId().equals(id)) {
 			 	getConfigurationList().remove(config);
 				getConfigurationMap().remove(id);
@@ -280,9 +274,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * 
 	 * @return List containing the configurations
 	 */
-	private List getConfigurationList() {
+	private List<Configuration> getConfigurationList() {
 		if (configList == null) {
-			configList = new ArrayList();
+			configList = new ArrayList<Configuration>();
 		}
 		return configList;
 	}
@@ -290,9 +284,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/**
 	 * Safe accessor for the map of configuration ids to configurations
 	 */
-	private Map getConfigurationMap() {
+	private Map<String, IConfiguration> getConfigurationMap() {
 		if (configMap == null) {
-			configMap = new HashMap();
+			configMap = new HashMap<String, IConfiguration>();
 		}
 		return configMap;
 	}
@@ -432,9 +426,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 			}
 
 			// Call resolve references on any children
-			Iterator configIter = getConfigurationList().iterator();
-			while (configIter.hasNext()) {
-				Configuration current = (Configuration)configIter.next();
+			List<Configuration> configurationList = getConfigurationList();
+			for (Configuration current : configurationList) {
 				current.resolveReferences();
 			}
 		}
@@ -444,9 +437,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#isSupported()
 	 */
 	public boolean isSupported(){
-		Iterator configIter = getConfigurationList().iterator();
-		while (configIter.hasNext()) {
-			Configuration current = (Configuration)configIter.next();
+		List<Configuration> configurationList = getConfigurationList();
+		for (Configuration current : configurationList) {
 			if(current.isSupported())
 				return true;
 		}
@@ -696,9 +688,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	}
 
 	public void propertiesChanged() {
-		List list = getConfigurationList();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			((Configuration)list.get(i)).propertiesChanged();
+			list.get(i).propertiesChanged();
 		}
 	}
 
@@ -712,54 +704,54 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	}
 
 	public boolean supportsType(String typeId) {
-		List list = getConfigurationList();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			if(((Configuration)list.get(i)).supportsType(typeId))
+			if(list.get(i).supportsType(typeId))
 				return true;
 		}
 		return false;
 	}
 
 	public boolean supportsValue(String typeId, String valueId) {
-		List list = getConfigurationList();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			if(((Configuration)list.get(i)).supportsValue(typeId, valueId))
+			if(list.get(i).supportsValue(typeId, valueId))
 				return true;
 		}
 		return false;
 	}
 
 	public String[] getRequiredTypeIds() {
-		List result = new ArrayList();
-		List list = getConfigurationList();
+		List<String> result = new ArrayList<String>();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			result.addAll(Arrays.asList(((Configuration)list.get(i)).getRequiredTypeIds()));
+			result.addAll(Arrays.asList((list.get(i)).getRequiredTypeIds()));
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public String[] getSupportedTypeIds() {
-		List result = new ArrayList();
-		List list = getConfigurationList();
+		List<String> result = new ArrayList<String>();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			result.addAll(Arrays.asList(((Configuration)list.get(i)).getSupportedTypeIds()));
+			result.addAll(Arrays.asList((list.get(i)).getSupportedTypeIds()));
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public String[] getSupportedValueIds(String typeId) {
-		List result = new ArrayList();
-		List list = getConfigurationList();
+		List<String> result = new ArrayList<String>();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			result.addAll(Arrays.asList(((Configuration)list.get(i)).getSupportedValueIds(typeId)));
+			result.addAll(Arrays.asList((list.get(i)).getSupportedValueIds(typeId)));
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public boolean requiresType(String typeId) {
-		List list = getConfigurationList();
+		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
-			if(((Configuration)list.get(i)).requiresType(typeId))
+			if(list.get(i).requiresType(typeId))
 				return true;
 		}
 		return false;

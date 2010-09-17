@@ -33,7 +33,7 @@ import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpres
 public class BooleanExpressionApplicabilityCalculator implements IOptionApplicability {
 	private OptionEnablementExpression fExpressions[];
 
-	private Map fRefPropsMap;
+	private Map<String, Set<String>> fRefPropsMap;
 	
 	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement optionElement){
 		this(optionElement.getChildren(OptionEnablementExpression.NAME));
@@ -195,9 +195,9 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return adjusted;
 	}
 	
-	private Map getReferencedProperties(){
+	private Map<String, Set<String>> getReferencedProperties(){
 		if(fRefPropsMap == null){
-			fRefPropsMap = new HashMap();
+			fRefPropsMap = new HashMap<String, Set<String>>();
 		
 			for(int i = 0; i < fExpressions.length; i++){
 				fExpressions[i].getReferencedProperties(fRefPropsMap);
@@ -207,28 +207,28 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 	}
 
 	public boolean referesProperty(String id){
-		Map map = getReferencedProperties();
+		Map<String, Set<String>> map = getReferencedProperties();
 		
 		return map.containsKey(id);
 	}
 
 	public boolean referesPropertyValue(String propertyId, String valueId){
-		Map map = getReferencedProperties();
-		Set set = (Set)map.get(propertyId);
+		Map<String, Set<String>> map = getReferencedProperties();
+		Set<String> set = map.get(propertyId);
 		if(set != null)
 			return set.contains(valueId);
 		return false;
 	}
 	
 	public String[] getReferencedPropertyIds(){
-		Map map = getReferencedProperties();
-		return (String[])map.keySet().toArray(new String[map.size()]);
+		Map<String, Set<String>> map = getReferencedProperties();
+		return map.keySet().toArray(new String[map.size()]);
 	}
 
 	public String[] getReferencedValueIds(String propertyId){
-		Map map = getReferencedProperties();
-		Set set = (Set)map.get(propertyId);
-		return (String[])set.toArray(new String[set.size()]);
+		Map<String, Set<String>> map = getReferencedProperties();
+		Set<String> set = map.get(propertyId);
+		return set.toArray(new String[set.size()]);
 	}
 
 }

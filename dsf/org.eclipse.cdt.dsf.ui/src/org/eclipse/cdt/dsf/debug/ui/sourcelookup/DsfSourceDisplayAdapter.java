@@ -74,6 +74,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -388,10 +389,21 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
             final IEditorPart[] editor = new IEditorPart[] {null};
             Runnable r = new Runnable() {
-                public void run() {
+				public void run() {
                     if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
                         try {
-                            editor[0] = page.openEditor(input, id, false);
+                        	if (input instanceof CSourceNotFoundEditorInput)
+                        	{ 	// Don't open additional source not found editors if
+                        		// there is one to reuse.
+                                editor[0] = page.openEditor(input, id, false, IWorkbenchPage.MATCH_ID);
+                                if (editor[0] instanceof IReusableEditor) {
+                                	IReusableEditor re = (IReusableEditor)editor[0];
+                                	if (! input.equals(re.getEditorInput()))
+                                		re.setInput(input);
+                                }
+                            }
+                        	else
+                        		editor[0] = page.openEditor(input, id, false);
                         } catch (PartInitException e) {}
                     }
                 }

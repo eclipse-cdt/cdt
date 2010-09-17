@@ -85,30 +85,40 @@ public class Conversions {
 	public static Cost checkImplicitConversionSequence(IType target, IType exprType,
 			ValueCategory valueCat, UDCMode udc, Context ctx) throws DOMException {
 		final boolean isImpliedObject= ctx == Context.IMPLICIT_OBJECT;
-		if (isImpliedObject) {
+		if (isImpliedObject) 
 			udc= UDCMode.FORBIDDEN;
-		}
 		
 		target= getNestedType(target, TDEF);
 		exprType= getNestedType(exprType, TDEF | REF);
+		final IType cv1T1= getNestedType(target, TDEF | REF);
+		final IType T1= getNestedType(cv1T1, TDEF | REF | ALLCVQ);
 		
+		ReferenceBinding refBindingType= ReferenceBinding.OTHER;
 		if (target instanceof ICPPReferenceType) {
 			// [8.5.3-5] initialization of a reference 
 			final boolean isLValueRef= !((ICPPReferenceType) target).isRValueReference();
-			final IType cv1T1= getNestedType(target, TDEF | REF);
-			final IType T1= getNestedType(cv1T1, TDEF | REF | ALLCVQ);
 			final IType cv2T2= exprType;
 			final IType T2= getNestedType(cv2T2, TDEF | REF | ALLCVQ);
 
 			// mstodo: will change when implementing rvalue references on this pointer
 			final boolean isImplicitWithoutRefQualifier = isImpliedObject; 
-			ReferenceBinding refBindingType= ReferenceBinding.OTHER;
 			if (!isImplicitWithoutRefQualifier) {
 				if (isLValueRef) {
 					refBindingType= ReferenceBinding.LVALUE_REF;
-				} else if (valueCat == LVALUE) {
+				} else {
 					refBindingType= ReferenceBinding.RVALUE_REF_BINDS_RVALUE;
 				}
+			}
+
+			if (exprType instanceof InitializerListType) {
+				if (isLValueRef && getCVQualifier(cv1T1) != CVQualifier.c)
+					return Cost.NO_CONVERSION;
+
+				Cost cost= listInitializationSequence(((InitializerListType) exprType), T1, udc, false);
+				if (cost.converts()) {
+					cost.setReferenceBinding(refBindingType);
+				}
+				return cost;
 			}
 
 			// If the reference is an lvalue reference and ...
@@ -237,23 +247,11 @@ public class Conversions {
 		} 
 		
 		// Non-reference binding
-		IType uqsource= getNestedType(exprType, TDEF | REF | ALLCVQ);
-		IType uqtarget= getNestedType(target, TDEF | REF | ALLCVQ);
-		
-		// [13.3.3.1-6] Derived to base conversion
-		if (uqsource instanceof ICPPClassType && uqtarget instanceof ICPPClassType) {
-			int depth= SemanticUtil.calculateInheritanceDepth(uqsource, uqtarget);
-			if (depth > -1) {
-				if (depth == 0) {
-					return new Cost(uqsource, uqtarget, Rank.IDENTITY);
-				}
-				Cost cost= new Cost(uqsource, uqtarget, Rank.CONVERSION);
-				cost.setInheritanceDistance(depth);
-				return cost;
-			}
+		Cost cost= nonReferenceConversion(valueCat, exprType, T1, udc, isImpliedObject);
+		if (cost.converts()) {
+			cost.setReferenceBinding(refBindingType);
 		}
-		
-		return nonReferenceConversion(valueCat, exprType, uqtarget, udc, isImpliedObject);
+		return cost;
 	}
 
 	/**
@@ -314,7 +312,7 @@ public class Conversions {
 		if (uqTarget instanceof ICPPClassType) {
 			if (uqSource instanceof ICPPClassType) {
 				// 13.3.3.1-6 Conceptual derived to base conversion
-				int depth= calculateInheritanceDepth(uqTarget, uqSource);
+				int depth= calculateInheritanceDepth(uqSource, uqTarget);
 				if (depth >= 0) {
 					if (depth == 0) {
 						return new Cost(source, target, Rank.IDENTITY);

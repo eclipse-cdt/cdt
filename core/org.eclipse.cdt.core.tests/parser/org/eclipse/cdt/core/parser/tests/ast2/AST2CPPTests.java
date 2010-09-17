@@ -9118,4 +9118,40 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame(fc, ref);
 		bh.assertNonProblem("g(0 ? p : \"\")", 1);  // 
 	}
+	
+	//	struct C {
+	//	  C();
+	//	  C(int a, int b);
+	//	};
+	//
+	//	C c1;                 // C()
+	//	C c2(1,2);            // C(int, int)
+	//	C c3 ({1,2});         // C(C(int, int)) // copy ctor is elided
+	//	C c4 ={1,2};          // C(C(int, int)) // copy ctor is elided
+	//	C c5 {1,2};           // C(int, int)
+	public void testCtorForAutomaticVariables_156668() throws Exception {
+		String code= getAboveComment();
+		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
+		IFunction ctor1= bh.assertNonProblem("C();", 1);
+		IFunction ctor2= bh.assertNonProblem("C(int a, int b);", 1);
+		
+		IASTName name;
+		IASTImplicitNameOwner dtor;
+		name= bh.findName("c1", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor1, dtor.getImplicitNames()[0].resolveBinding());
+		name= bh.findName("c2", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor2, dtor.getImplicitNames()[0].resolveBinding());
+		name= bh.findName("c3", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor2, dtor.getImplicitNames()[0].resolveBinding());
+		name= bh.findName("c4", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor2, dtor.getImplicitNames()[0].resolveBinding());
+		name= bh.findName("c5", 2);
+		dtor= (IASTImplicitNameOwner) name.getParent();
+		assertSame(ctor2, dtor.getImplicitNames()[0].resolveBinding());
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,7 +293,7 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 	//  void automatic() {
 	//    MyClass m;
 	//  }		
-	public void _testAutomaticConstructor_156668() throws Exception {
+	public void testAutomaticConstructor_156668() throws Exception {
 		String content = readTaggedComment("testAutomaticConstructor");
 		IFile file= createFile(getProject(), "testConstructor.cpp", content);
 		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
@@ -304,6 +304,15 @@ public class BasicCppCallHierarchyTest extends CallHierarchyBaseTest {
 		Tree tree = getCHTreeViewer().getTree();
 		checkTreeNode(tree, 0, "MyClass::MyClass()");
 		checkTreeNode(tree, 0, 0, "automatic()");
+	}
+
+	public void _testAutomaticDestructor_156668() throws Exception {
+		String content = readTaggedComment("testAutomaticConstructor");
+		IFile file= createFile(getProject(), "testConstructor.cpp", content);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		CEditor editor = openEditor(file);
+		openCallHierarchy(editor);
+		Tree tree = getCHTreeViewer().getTree();
 
 		editor.selectAndReveal(content.indexOf("~MyClass"), 2);
 		openCallHierarchy(editor);

@@ -74,6 +74,10 @@ public class Cost {
 		public void setCouldNarrow() {
 			assert false;
 		}
+		@Override
+		public void setSelectedFunction(ICPPFunction function) {
+			assert false;
+		}
 	};
 
 	IType source;
@@ -110,6 +114,11 @@ public class Cost {
 		fRank= rank;
 	}
 	
+
+	public ReferenceBinding getReferenceBinding() {
+		return fReferenceBinding;
+	}
+
 	public void setReferenceBinding(ReferenceBinding binding) {
 		fReferenceBinding= binding;
 	}

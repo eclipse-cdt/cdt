@@ -196,6 +196,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalNamespaceScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
@@ -2399,7 +2400,14 @@ public class CPPSemantics {
 				((FunctionSetType) iType).applySelectedFunction(bestFnCost.getCost(i).getSelectedFunction());
 			}
 		}
-		return bestFnCost.getFunction();
+		IFunction result= bestFnCost.getFunction();
+		if (bestFnCost.isDirectInitWithCopyCtor()) {
+			Cost c0= bestFnCost.getCost(0);
+			IFunction firstConversion= c0.getUserDefinedConversion();
+			if (firstConversion instanceof ICPPConstructor) 
+				return firstConversion;
+		}
+		return result;
 	}
 
 	private static void setTargetedFunctionsToUnknown(IType[] argTypes) {
@@ -2450,8 +2458,8 @@ public class CPPSemantics {
 				if (iast != i) {
 					fns[i]= fns[iast];
 					fns[iast]= fn;
-					iast++;
 				}
+				iast++;
 			}
 		}
 	}
@@ -2545,9 +2553,10 @@ public class CPPSemantics {
 			    
 			    Context ctx= Context.ORDINARY;
 			    if (j==0 && sourceLen == 1 && fn instanceof ICPPConstructor) {
-			    	if (paramType instanceof ICPPReferenceType && !((ICPPReferenceType) paramType).isRValueReference()) {
+			    	if (paramType instanceof ICPPReferenceType) {
 			    		if (((ICPPConstructor) fn).getClassOwner().isSameType(getNestedType(paramType, TDEF|REF|CVTYPE))) {
 			    			ctx= Context.FIRST_PARAM_OF_DIRECT_COPY_CTOR;
+			    			result.setIsDirectInitWithCopyCtor(true);
 			    		}
 			    	}
 			    }
@@ -2940,7 +2949,8 @@ public class CPPSemantics {
     	IASTDeclarator dtor= ASTQueries.findOutermostDeclarator(declarator);
     	IASTNode parent = dtor.getParent();
     	if (parent instanceof IASTSimpleDeclaration) {
-    		if (dtor.getInitializer() == null) {
+    		final IASTInitializer initializer = dtor.getInitializer();
+			if (initializer == null) {
     			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
     			parent = parent.getParent();
     			if (parent instanceof IASTCompositeTypeSpecifier ||
@@ -2950,7 +2960,7 @@ public class CPPSemantics {
     				return null;
     			}
 			}
-	    	return findImplicitlyCalledConstructor(declarator.getName(), dtor.getInitializer());
+	    	return findImplicitlyCalledConstructor(declarator.getName(), initializer);
 		}
     	return null;
     }
@@ -2976,10 +2986,12 @@ public class CPPSemantics {
 			type = SemanticUtil.getNestedType(((ICPPVariable) binding).getType(), TDEF | CVTYPE);
 	    	if (!(type instanceof ICPPClassType))
 	    		return null;
+	    	if (type instanceof ICPPClassTemplate || type instanceof ICPPUnknownClassType || type instanceof IProblemBinding)
+	    		return null;
+	    	
 	    	final ICPPClassType classType = (ICPPClassType) type;
-
-	    	// Copy initialization
 	    	if (initializer instanceof IASTEqualsInitializer) {
+		    	// Copy initialization
 	    		IASTEqualsInitializer eqInit= (IASTEqualsInitializer) initializer;
 	    		IASTInitializerClause initClause = eqInit.getInitializerClause();
 	    		IType sourceType= null;
@@ -2994,35 +3006,47 @@ public class CPPSemantics {
 	    		if (sourceType != null) {
 	    			Cost c= Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED, Context.ORDINARY);
 	    			if (c.converts()) {
-	    				IFunction f= c.getUserDefinedConversion();
-	    				if (f instanceof ICPPConstructor)
-	    					return (ICPPConstructor) f;
+						ICPPFunction f = c.getUserDefinedConversion();
+						if (f instanceof ICPPConstructor)
+							return (ICPPConstructor) f;
+						// If a conversion is used, the constructor is elided.
 	    			}
-	    			return null;
 	    		}
-	    	}
-	    			
-	    	// Direct Initialization
-			CPPASTName astName = new CPPASTName();
-		    astName.setName(classType.getNameCharArray());
-		    astName.setOffsetAndLength((ASTNode) name);
-			CPPASTIdExpression idExp = new CPPASTIdExpression(astName);
-			idExp.setParent(name.getParent());
-			idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
+	    	} else if (initializer instanceof ICPPASTInitializerList) {
+	    		// List initialization
+	    		final InitializerListType listType = new InitializerListType((ICPPASTInitializerList) initializer);
+				Cost c= Conversions.listInitializationSequence(listType, type, UDCMode.ALLOWED, true);
+    			if (c.converts()) {
+    				ICPPFunction f = c.getUserDefinedConversion();
+    				if (f instanceof ICPPConstructor)
+    					return (ICPPConstructor) f;
+    			}
+	    	} else if (initializer instanceof ICPPASTConstructorInitializer) {
+		    	// Direct Initialization
+			    final IASTInitializerClause[] arguments = ((ICPPASTConstructorInitializer) initializer).getArguments();
+				CPPASTName astName = new CPPASTName();
+			    astName.setName(classType.getNameCharArray());
+			    astName.setOffsetAndLength((ASTNode) name);
+				CPPASTIdExpression idExp = new CPPASTIdExpression(astName);
+				idExp.setParent(name.getParent());
+				idExp.setPropertyInParent(IASTFunctionCallExpression.FUNCTION_NAME);
 
-		    LookupData data = new LookupData(astName);
-			if (initializer == null) {
-				data.setFunctionArguments(false);
-		    } else if (initializer instanceof ICPPASTConstructorInitializer) {
-				data.setFunctionArguments(false, ((ICPPASTConstructorInitializer) initializer).getArguments());
-			} else {
+			    LookupData data = new LookupData(astName);
+				data.setFunctionArguments(false, arguments);
+			    data.forceQualified = true;
+			    data.foundItems = classType.getConstructors();
+			    binding = resolveAmbiguities(data, astName);
+			    if (binding instanceof ICPPConstructor)
+			    	return (ICPPConstructor) binding;
+	    	} else if (initializer == null) {
+	    		// Default initialization
+	    		ICPPConstructor[] ctors = classType.getConstructors();
+				for (ICPPConstructor ctor : ctors) {
+					if (ctor.getRequiredArgumentCount() == 0)
+						return ctor;
+				}
 				return null;
-			}
-		    data.forceQualified = true;
-		    data.foundItems = classType.getConstructors();
-		    binding = resolveAmbiguities(data, astName);
-		    if (binding instanceof ICPPConstructor)
-		    	return (ICPPConstructor) binding;
+	    	}
 		} catch (DOMException e) {
 		}
 		return null;

@@ -30,6 +30,7 @@ class FunctionCost {
 	private final IFunction fFunction;
 	private final Cost[] fCosts;
 	private final ValueCategory[] fValueCategories;
+	private boolean fIsDirectCopyCtor;
 	
 	public FunctionCost(IFunction fn, int paramCount) {
 		fFunction= fn;
@@ -109,6 +110,7 @@ class FunctionCost {
 			if (!udcCost.converts()) {
 				return false;
 			}
+			udcCost.setReferenceBinding(cost.getReferenceBinding());
 		}
 		return true;
 	}
@@ -211,5 +213,13 @@ class FunctionCost {
 			}
 		}
 		return null;
+	}
+
+	public void setIsDirectInitWithCopyCtor(boolean val) {
+		fIsDirectCopyCtor= val;
+	}
+	
+	public boolean isDirectInitWithCopyCtor() {
+		return fIsDirectCopyCtor;
 	}
 }

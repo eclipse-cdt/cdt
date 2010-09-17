@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 
 /**
@@ -1991,6 +1992,8 @@ public class SemanticHighlightings {
 							&& ((ICPPMethod) binding).isImplicit()) {
 						return false;
 					}
+					if (binding instanceof ICPPUnknownBinding)
+						return false;
 					char[] chars = name.toCharArray();
 					if (chars[0] == '~' || OverloadableOperator.isNew(chars)
 							|| OverloadableOperator.isDelete(chars)) {

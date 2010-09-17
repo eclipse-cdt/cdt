@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,11 +20,13 @@
  * David McKnight   (IBM)        - [253262] Cache Cleanup is removing .settings directory
  * David McKnight   (IBM)        - [245260] Different user's connections on a single host are mapped to the same temp files cache
  * David McKnight   (IBM)        - [276103] Files with names in different cases are not handled properly
+ * David McKnight   (IBM)        - [325502] The default editor for a file is not updated when opened in RSE explorer
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -871,7 +873,25 @@ public class SystemRemoteEditManager
 							}
 							// fall through and let the new editable get created
 						}
-						else {					
+						else {		
+							if (descriptor != null){
+								// using reflection	to change descriptor since there's
+								// no API right now
+								try {
+						            Class cls = editable.getClass();
+						            Field[] fields = cls.getDeclaredFields();
+						            for (int i = 0; i < fields.length; i++){
+						            	Field fld = fields[i];
+						            	String name= fld.getName();
+						            	if (name.equals("_editorDescriptor")){ //$NON-NLS-1$
+						            		fld.setAccessible(true);
+						            		fld.set(editable, descriptor);
+						            	}
+						            }
+								}
+								catch (Exception e){									
+								}
+							}
 							return editable;
 						}
 					}

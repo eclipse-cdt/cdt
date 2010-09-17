@@ -69,12 +69,16 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	private static final String PROJECT = "MarkOccurrenceTest";
 
 	private static final String OCCURRENCE_ANNOTATION= "org.eclipse.cdt.ui.occurrences";
+	private static final String WRITE_OCCURRENCE_ANNOTATION= "org.eclipse.cdt.ui.occurrences.write";
+	
 	private static final RGB fgHighlightRGB= getHighlightRGB();
+	private static final RGB fgWriteHighlightRGB= getWriteHighlightRGB();
 	
 	private CEditor fEditor;
 	private IDocument fDocument;
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
 	private int fOccurrences;
+	private int fWriteOccurrences;
 	private IAnnotationModel fAnnotationModel;
 	private ISelectionListenerWithAST fSelWASTListener;
 	private IRegion fMatch;
@@ -117,6 +121,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 			fProjectSetup.setUp();
 		}
 		assertNotNull(fgHighlightRGB);
+		assertNotNull(fgWriteHighlightRGB);
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
 	    // TLETODO temporary fix for bug 314635
@@ -143,11 +148,14 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	
 			private synchronized void countOccurrences() {
 				fOccurrences= 0;
+				fWriteOccurrences= 0;
 				Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
 				while (iter.hasNext()) {
 					Annotation annotation= iter.next();
-					if (OCCURRENCE_ANNOTATION.equals(annotation.getType()))
+					if (annotation.getType().startsWith(OCCURRENCE_ANNOTATION))
 						fOccurrences++;
+					if (annotation.getType().equals(WRITE_OCCURRENCE_ANNOTATION))
+						fWriteOccurrences++;
 				}
 			}
 		};
@@ -193,7 +201,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -207,7 +215,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(5);
+		assertOccurrences(5, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -221,7 +229,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -235,7 +243,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(4);
+		assertOccurrences(4, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -249,7 +257,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -263,7 +271,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -277,7 +285,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(4);
+		assertOccurrences(4, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -306,7 +314,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		fMatch= new Region(fMatch.getOffset(), 4);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(1);
+		assertOccurrences(1, 0);
 		assertOccurrencesInWidget();
 		
 		store.setValue("REUSE_OPEN_EDITORS_BOOLEAN", false);
@@ -323,7 +331,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 	
@@ -337,7 +345,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 	
@@ -351,7 +359,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 1);
 		assertOccurrencesInWidget();
 	}
 	
@@ -365,7 +373,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 2);
 		assertOccurrencesInWidget();
 	}
 	
@@ -380,7 +388,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		fMatch= new Region(fMatch.getOffset(), fMatch.getLength() - 1);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -395,7 +403,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		fMatch= new Region(fMatch.getOffset() + 1, fMatch.getLength() - 1);
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 	
@@ -409,7 +417,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 1);
 		assertOccurrencesInWidget();
 	}
 	
@@ -423,7 +431,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(5);
+		assertOccurrences(5, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -437,7 +445,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -451,7 +459,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -465,7 +473,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(3, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -479,7 +487,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(4);
+		assertOccurrences(4, 2);
 		assertOccurrencesInWidget();
 	}
 
@@ -493,7 +501,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 
@@ -507,7 +515,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(2, 0);
 		assertOccurrencesInWidget();
 	}
 	
@@ -524,17 +532,17 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(0);
+		assertOccurrences(0, 0);
 		assertOccurrencesInWidget();
 	}
 	
 	private void assertOccurrencesInWidget() {
-		EditorTestHelper.runEventQueue(500);
+		EditorTestHelper.runEventQueue(100);
 
 		Iterator<Annotation> iter= fAnnotationModel.getAnnotationIterator();
 		while (iter.hasNext()) {
 			Annotation annotation= iter.next();
-			if (OCCURRENCE_ANNOTATION.equals(annotation.getType()))
+			if (annotation.getType().startsWith(OCCURRENCE_ANNOTATION))
 				assertOccurrenceInWidget(fAnnotationModel.getPosition(annotation));
 		}
 	}
@@ -544,7 +552,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		for (int i= 0; i < styleRanges.length; i++) {
 			if (styleRanges[i].background != null) {
 				RGB rgb= styleRanges[i].background.getRGB();
-				if (fgHighlightRGB.equals(rgb))
+				if ((fgHighlightRGB.equals(rgb)) || (fgWriteHighlightRGB.equals(rgb)))
 					return;
 			}
 		}
@@ -565,15 +573,30 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		return null;
 	}
 
-	private void assertOccurrences(final int expected) {
+	/**
+	 * Returns the write occurrence annotation color.
+	 * 
+	 * @return the write occurrence annotation color
+	 */
+	private static RGB getWriteHighlightRGB() {
+		AnnotationPreference annotationPref= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(WRITE_OCCURRENCE_ANNOTATION);
+		IPreferenceStore store= EditorsUI.getPreferenceStore();
+		if (store != null)
+			return PreferenceConverter.getColor(store, annotationPref.getColorPreferenceKey());
+		
+		return null;
+	}
+
+	private void assertOccurrences(final int expected, final int expectedWrite) {
 		DisplayHelper helper= new DisplayHelper() {
 			@Override
 			protected boolean condition() {
-				return fOccurrences == expected;
+				return ((fOccurrences == expected) && (fWriteOccurrences == expectedWrite));
 			}
 		};
 		if (!helper.waitForCondition(EditorTestHelper.getActiveDisplay(), 10000)) {
 			assertEquals(expected, fOccurrences);
+			assertEquals(expectedWrite, fWriteOccurrences);
 		}
 	}
 }

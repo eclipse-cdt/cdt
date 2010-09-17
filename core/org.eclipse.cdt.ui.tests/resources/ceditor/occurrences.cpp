@@ -17,7 +17,7 @@ static void globalStaticFunc() {
     EMPTY_MACRO(n);
 	globalVariable = 1;
     EMPTY_MACRO(1);
-    return 0;
+    return;
 }
 
 class Base1 {

@@ -210,6 +210,7 @@ import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
 import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
+import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
@@ -3189,7 +3190,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				Position position= new Position(location.getOffset(), location.getLength());
 
 				String description= location.getDescription();
-				String annotationType= "org.eclipse.cdt.ui.occurrences"; //$NON-NLS-1$
+				String annotationType= (location.getFlags() == IOccurrencesFinder.F_WRITE_OCCURRENCE) ? "org.eclipse.cdt.ui.occurrences.write" : "org.eclipse.cdt.ui.occurrences"; //$NON-NLS-1$ //$NON-NLS-2$
 
 				annotationMap.put(new Annotation(annotationType, false, description), position);
 			}

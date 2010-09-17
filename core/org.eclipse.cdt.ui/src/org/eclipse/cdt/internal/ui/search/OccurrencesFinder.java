@@ -19,12 +19,17 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
+import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
@@ -42,8 +47,10 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	private IBinding fTarget;
 
 	private List<OccurrenceLocation> fResult;
-	private String fDescription;
 
+	private String fReadDescription;
+	private String fWriteDescription;
+	
 	private int fOptions;
 	
 	public OccurrencesFinder() {
@@ -59,7 +66,8 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		if (fTarget == null)
 			return CSearchMessages.OccurrencesFinder_no_binding; 
 		
-		fDescription= Messages.format(CSearchMessages.OccurrencesFinder_occurrence_description, fTarget.getName());
+		fReadDescription= Messages.format(CSearchMessages.OccurrencesFinder_occurrence_description, fTarget.getName());
+		fWriteDescription= Messages.format(CSearchMessages.OccurrencesFinder_occurrence_write_description, fTarget.getName());
 		return null;
 	}
 	
@@ -154,8 +162,6 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 	
 	private boolean addUsage(IASTName node, IBinding binding) {
 		if (binding != null /* && Bindings.equals(binding, fTarget) */) {
-			int flag= 0;
-			String description= fDescription;
 			if (node instanceof ICPPASTTemplateId) {
 				node= ((ICPPASTTemplateId) node).getTemplateName();
 			}
@@ -167,7 +173,21 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 				final int offset= fileLocation.getNodeOffset();
 				final int length= fileLocation.getNodeLength();
 				if (offset >= 0 && length > 0) {
-					fResult.add(new OccurrenceLocation(offset, length, flag, description));
+					if (binding instanceof IVariable) {
+						boolean isWrite;
+						if (binding instanceof ICPPVariable) {
+							isWrite = ((CPPVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
+						}
+						else { 
+							isWrite = ((CVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
+						}
+						int flag = isWrite ? F_WRITE_OCCURRENCE : F_READ_OCCURRENCE;
+						String description = isWrite ? fWriteDescription : fReadDescription;
+						fResult.add(new OccurrenceLocation(offset, length, flag, description));
+					}
+					else {
+						fResult.add(new OccurrenceLocation(offset, length, F_READ_OCCURRENCE, fWriteDescription));
+					}
 				}
 			}
 			return true;

@@ -2601,25 +2601,42 @@
             annotationType="org.eclipse.cdt.ui.occurrences"
             label="%OccurrenceAnnotation.label"
             icon="$nl$/icons/obj16/searchm_obj.gif"
-            textPreferenceKey="org.eclipse.cdt.ui.occurrenceIndication"
+            textPreferenceKey="occurrenceIndication"
             textPreferenceValue="false"
-            highlightPreferenceKey="org.eclipse.cdt.ui.occurrenceHighlighting"
+            highlightPreferenceKey="occurrenceHighlighting"
             highlightPreferenceValue="true"
             contributesToHeader="false"
-            overviewRulerPreferenceKey="org.eclipse.cdt.ui.occurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
             overviewRulerPreferenceValue="true"
-            verticalRulerPreferenceKey="org.eclipse.cdt.ui.occurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
             verticalRulerPreferenceValue="false"
-            colorPreferenceKey="org.eclipse.cdt.ui.occurrenceIndicationColor"
+            colorPreferenceKey="occurrenceIndicationColor"
             colorPreferenceValue="212,212,212"
             presentationLayer="4"
-            showInNextPrevDropdownToolbarActionKey="org.eclipse.cdt.ui.showOccurrenceInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
             showInNextPrevDropdownToolbarAction="true"
-            isGoToNextNavigationTargetKey="org.eclipse.cdt.ui.isOccurrenceGoToNextNavigationTarget"
+            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
 	        isGoToNextNavigationTarget="false"
-            isGoToPreviousNavigationTargetKey="org.eclipse.cdt.ui.isOccurrenceGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
 	        isGoToPreviousNavigationTarget="false"
-            textStylePreferenceKey="org.eclipse.cdt.ui.occurrenceTextStyle"
+            textStylePreferenceKey="occurrenceTextStyle"
+            textStylePreferenceValue="NONE">
+	  </specification>
+	  <specification
+            annotationType="org.eclipse.cdt.ui.occurrences.write"
+            label="%WriteOccurrenceAnnotation.label"
+            textPreferenceKey="occurrenceIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="writeOccurrenceHighlighting"
+            highlightPreferenceValue="true"
+            overviewRulerPreferenceKey="writeOccurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="writeOccurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="writeOccurrenceIndicationColor"
+            colorPreferenceValue="240, 216, 168"
+            presentationLayer="4"
+            textStylePreferenceKey="writeOccurrenceTextStyle"
             textStylePreferenceValue="NONE">
 	  </specification>
 	  <specification
@@ -2797,6 +2814,10 @@
       </type>
       <type
          name="org.eclipse.cdt.ui.occurrences">
+      </type>
+      <type
+         name="org.eclipse.cdt.ui.occurrences.write"
+         super="org.eclipse.cdt.ui.occurrences">
       </type>
       <type name="org.eclipse.cdt.ui.overrideIndicator"/>
    </extension>

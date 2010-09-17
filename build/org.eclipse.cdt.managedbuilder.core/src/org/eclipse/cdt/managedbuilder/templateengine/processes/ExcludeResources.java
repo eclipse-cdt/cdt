@@ -12,7 +12,6 @@ package org.eclipse.cdt.managedbuilder.templateengine.processes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.templateengine.process.processes.Messages;
@@ -76,7 +75,7 @@ public class ExcludeResources extends ProcessRunner {
 		 * Determine which configurations to exclude for
 		 */
 		IConfiguration[] allConfigs = managedProject.getConfigurations();
-		List/*<IConfiguration>*/ matchingConfigs = new ArrayList/*<IConfiguration>*/();
+		List<IConfiguration> matchingConfigs = new ArrayList<IConfiguration>();
 		for(int i=0; i<allConfigs.length; i++) {
 			IConfiguration config = allConfigs[i];
 			if(config.getId().matches(configIdPattern)) {
@@ -85,7 +84,7 @@ public class ExcludeResources extends ProcessRunner {
 		}
 		
 		if(invert) {
-			List invertedConfigs = new ArrayList(Arrays.asList(allConfigs));
+			List<IConfiguration> invertedConfigs = new ArrayList<IConfiguration>(Arrays.asList(allConfigs));
 			invertedConfigs.removeAll(matchingConfigs);
 			matchingConfigs = invertedConfigs;
 		}
@@ -93,7 +92,7 @@ public class ExcludeResources extends ProcessRunner {
 		/*
 		 * Visit project resources and exclude them if they match any pattern
 		 */
-		final List configsToProcess = matchingConfigs;
+		final List<IConfiguration> configsToProcess = matchingConfigs;
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				IPath lPath = proxy.requestFullPath();
@@ -104,17 +103,13 @@ public class ExcludeResources extends ProcessRunner {
 						isDerived |= res.isDerived();
 					}
 					
-					if(!isDerived) {					
-						for(Iterator i = configsToProcess.iterator(); i.hasNext(); ) {
-							IConfiguration config = (IConfiguration) i.next();
-							
-							
+					if(!isDerived) {
+						for (IConfiguration config : configsToProcess) {
 							IResourceConfiguration resourceConfig = config.getResourceConfiguration(lPath.toString());
 							// Only add a resource configuration if the file pattern matches something that
 							//is actually supposed to be excluded. Adding a resrouce configuration for all files
 							// regardless of wheter they need it or not mess up the makefile generation.
-							for(int j=0; j<filePatterns.length; j++) {
-								String filePattern = filePatterns[j];
+							for (String filePattern : filePatterns) {
 								if(lPath.toString().matches(filePattern)) {
 									if(resourceConfig==null) {
 										IFile file = (IFile) proxy.requestResource();

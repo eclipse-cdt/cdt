@@ -326,6 +326,7 @@ public class CommonBuilder extends ACBuilder {
 			for (IBuilder builder : builders) {
 				buildCfgSet.add(builder.getParent().getParent());
 			}
+			@SuppressWarnings("unchecked")
 			List<Configuration> othersList = ListComparator.getAdded(allCfgs, buildCfgSet.toArray());
 			if(othersList != null)
 				otherConfigs = othersList.toArray(new Configuration[othersList.size()]);
@@ -417,7 +418,9 @@ public class CommonBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */
 	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map argsMap, IProgressMonitor monitor) throws CoreException {
+		@SuppressWarnings("unchecked")
+		Map<String, String> args = argsMap;
 		if (DEBUG_EVENTS)
 			printEvent(kind, args);
 

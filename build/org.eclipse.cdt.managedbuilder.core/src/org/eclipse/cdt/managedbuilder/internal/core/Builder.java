@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -110,10 +110,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	private Boolean supportsManagedBuild;
 	//custom builder settings
 	private String[] customizedErrorParserIds; 
-	private HashMap customizedEnvironment;
+	private HashMap<String, String> customizedEnvironment;
 	private Boolean appendEnvironment;// = Boolean.valueOf(true);
 	private String buildPath;
-	private HashMap customBuildProperties;
+	private HashMap<String, String> customBuildProperties;
 //	private Boolean isWorkspaceBuildPath;
 	private String ignoreErrCmd;
 	private String parallelBuildCmd;
@@ -289,11 +289,11 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(builder.customizedErrorParserIds != null)
 			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
 		if(builder.customizedEnvironment != null)
-			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
+			customizedEnvironment = (HashMap<String, String>) builder.customizedEnvironment.clone();
 		appendEnvironment = builder.appendEnvironment;
 		buildPath = builder.buildPath;
 		if(builder.customBuildProperties != null)
-			customBuildProperties = (HashMap)builder.customBuildProperties.clone();
+			customBuildProperties = (HashMap<String, String>) builder.customBuildProperties.clone();
 
 			
 			
@@ -393,14 +393,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(builder.customizedErrorParserIds != null)
 			customizedErrorParserIds = builder.customizedErrorParserIds.clone();
 		if(builder.customizedEnvironment != null)
-			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
+			customizedEnvironment = (HashMap<String, String>) builder.customizedEnvironment.clone();
 		appendEnvironment = builder.appendEnvironment;
 		if(isBuildPathEditable()){
 			if(!getBuildPath().equals(builder.getBuildPath()))
 				setBuildPath(builder.getBuildPath());
 		}
 		if(builder.customBuildProperties != null)
-			customBuildProperties = (HashMap)builder.customBuildProperties.clone();
+			customBuildProperties = (HashMap<String, String>) builder.customBuildProperties.clone();
 
 		if(allBuildSettings){
 			if(!getCommand().equals(builder.getCommand()))
@@ -520,14 +520,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			customizedErrorParserIds = CDataUtil.stringToArray(tmp, ";"); //$NON-NLS-1$
 		tmp = element.getAttribute(ATTRIBUTE_ENVIRONMENT);
 		if(tmp != null)
-			customizedEnvironment = (HashMap)MapStorageElement.decodeMap(tmp);
+			customizedEnvironment = MapStorageElement.decodeMap(tmp);
 		tmp = element.getAttribute(ATTRIBUTE_APPEND_ENVIRONMENT);
 		if(tmp != null)
 			appendEnvironment = Boolean.valueOf(tmp);
 		buildPath = element.getAttribute(ATTRIBUTE_BUILD_PATH);
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
 		if(tmp != null)
-			customBuildProperties = (HashMap)MapStorageElement.decodeMap(tmp);
+			customBuildProperties = MapStorageElement.decodeMap(tmp);
 
 		ignoreErrCmd = element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD);
         tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
@@ -573,12 +573,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	        		if(entries.length == 0){
 	        			outputEntries = new ICOutputEntry[0];
 	        		} else {
-		        		List list = new ArrayList(entries.length);
+		        		List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length);
 		        		for(int k = 0; k < entries.length; k++){
 		        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
 		        				list.add(entries[k]);
 		        		}
-		        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
+		        		outputEntries = list.toArray(new ICOutputEntry[list.size()]);
 	        		}
 	        	}
         	}
@@ -696,7 +696,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		
 		tmp = element.getAttribute(ATTRIBUTE_ENVIRONMENT);
 		if(tmp != null)
-			customizedEnvironment = (HashMap)MapStorageElement.decodeMap(tmp);
+			customizedEnvironment = MapStorageElement.decodeMap(tmp);
 		
 		tmp = element.getAttribute(ATTRIBUTE_APPEND_ENVIRONMENT);
 		if(tmp != null)
@@ -707,7 +707,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		
 		tmp = element.getAttribute(ATTRIBUTE_CUSTOM_PROPS);
 		if(tmp != null)
-			customBuildProperties = (HashMap)MapStorageElement.decodeMap(tmp);
+			customBuildProperties = MapStorageElement.decodeMap(tmp);
 
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.getAttribute(IToolChain.ERROR_PARSERS) != null) {
@@ -754,12 +754,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	        		if(entries.length == 0){
 	        			outputEntries = new ICOutputEntry[0];
 	        		} else {
-		        		List list = new ArrayList(entries.length);
+		        		List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length);
 		        		for(int k = 0; k < entries.length; k++){
 		        			if(entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
 		        				list.add(entries[k]);
 		        		}
-		        		outputEntries = (ICOutputEntry[])list.toArray(new ICOutputEntry[list.size()]);
+		        		outputEntries = list.toArray(new ICOutputEntry[list.size()]);
 	        		}
 	        	}
         	}
@@ -1180,12 +1180,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List list = new ArrayList(tok.countTokens());
+				List<String> list = new ArrayList<String>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
 				String[] strArr = {""};	//$NON-NLS-1$
-				errorParsers = (String[]) list.toArray(strArr);
+				errorParsers = list.toArray(strArr);
 			}
 		} else {
 			errorParsers = new String[0];
@@ -1413,10 +1413,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String high = ManagedBuildManager
 					.getExtensionBuilderMap().lastKey();
 			
-			SortedMap subMap = null;
+			SortedMap<String, IBuilder> subMap = null;
 			if (superClassId.compareTo(high) <= 0) {
-				subMap = ManagedBuildManager.getExtensionBuilderMap().subMap(
-						superClassId, high + "\0"); //$NON-NLS-1$
+				subMap = ManagedBuildManager.getExtensionBuilderMap().subMap(superClassId, high + "\0"); //$NON-NLS-1$
 			} else {
 				// It means there are no entries in the map for the given id.
 				// make the project is invalid
@@ -1439,8 +1438,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String version = ManagedBuildManager
 					.getVersionFromIdAndVersion(superClassId);
 
-			Collection c = subMap.values();
-			IBuilder[] builderElements = (IBuilder[])c.toArray(new IBuilder[c.size()]);
+			Collection<IBuilder> c = subMap.values();
+			IBuilder[] builderElements = c.toArray(new IBuilder[c.size()]);
 			
 			for (int i = 0; i < builderElements.length; i++) {
 				IBuilder builderElement = builderElements[i];
@@ -2038,7 +2037,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		} else if(BuilderFactory.BUILD_APPEND_ENVIRONMENT.equals(name)){
 			result = Boolean.valueOf(appendEnvironment()).toString();
 		} else if(customBuildProperties != null){
-			result = (String)customBuildProperties.get(name);
+			result = customBuildProperties.get(name);
 		}
 		
 		if(result == null)
@@ -2127,21 +2126,22 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 	
 
-	public Map getEnvironment() {
+	public Map<String, String> getEnvironment() {
 		if(customizedEnvironment != null)
-			return (HashMap)customizedEnvironment.clone();
+			return (HashMap<String, String>)customizedEnvironment.clone();
 		return null;
 	}
 
-	public Map getExpandedEnvironment() throws CoreException {
+	public Map<String, String> getExpandedEnvironment() throws CoreException {
 		if(customizedEnvironment != null){
-			Map expanded = (HashMap)customizedEnvironment.clone();
+			@SuppressWarnings("unchecked")
+			Map<String, String> expanded = (HashMap<String, String>)customizedEnvironment.clone();
 			ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 			String separator = CCorePlugin.getDefault().getBuildEnvironmentManager().getDefaultDelimiter();
 			ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(getParent().getParent());
-			for(Iterator iter = expanded.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				String value = (String)entry.getValue();
+			Set<Entry<String, String>> entrySet = expanded.entrySet();
+			for (Entry<String, String> entry : entrySet) {
+				String value = entry.getValue();
 				try {
 					value = mngr.resolveValue(value, "", separator, cfgDes); //$NON-NLS-1$
 					entry.setValue(value);
@@ -2209,7 +2209,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			if(value == null){
 				customizedEnvironment = null;
 			} else {
-				customizedEnvironment = (HashMap)MapStorageElement.decodeMap(value);
+				customizedEnvironment = MapStorageElement.decodeMap(value);
 			}
 		} else if(BuilderFactory.BUILD_APPEND_ENVIRONMENT.equals(name)){
 			appendEnvironment = value != null ?
@@ -2219,15 +2219,15 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 	
-	private Map getCustomBuildPropertiesMap(){
+	private Map<String, String> getCustomBuildPropertiesMap(){
 		if(customBuildProperties == null){
-			customBuildProperties = new HashMap();
+			customBuildProperties = new HashMap<String, String>();
 		}
 		return customBuildProperties;
 	}
 
-	public void setEnvironment(Map env) throws CoreException {
-		customizedEnvironment = new HashMap(env);
+	public void setEnvironment(Map<String, String> env) throws CoreException {
+		customizedEnvironment = new HashMap<String, String>(env);
 	}
 
 	public boolean isCustomBuilder() {
@@ -2528,12 +2528,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		errorParserIds = null;
 	}
 	
-	void removeErrorParsers(Set set){
-		Set oldSet = contributeErrorParsers(null);
+	void removeErrorParsers(Set<String> set){
+		Set<String> oldSet = contributeErrorParsers(null);
 		if(oldSet == null)
-			oldSet = new HashSet();
+			oldSet = new HashSet<String>();
 		oldSet.removeAll(set);
-		setErrorParserList((String[])oldSet.toArray(new String[oldSet.size()]));
+		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
 	}
 	
 	public void setErrorParserList(String[] ids) {

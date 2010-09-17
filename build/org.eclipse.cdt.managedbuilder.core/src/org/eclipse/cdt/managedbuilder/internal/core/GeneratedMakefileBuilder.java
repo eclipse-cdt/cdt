@@ -392,7 +392,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, @SuppressWarnings("rawtypes") Map argsMap, IProgressMonitor monitor) throws CoreException {
+		@SuppressWarnings("unchecked")
+		Map<String, String> args = argsMap;
 		if (DEBUG_EVENTS)
 			printEvent(kind, args);
 

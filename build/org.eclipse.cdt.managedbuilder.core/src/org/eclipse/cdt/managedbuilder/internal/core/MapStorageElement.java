@@ -170,9 +170,9 @@ public class MapStorageElement implements ICStorageElement {
 		fMap.put(getMapKey(name), value);
 	}
 	
-	public static Map<String, String> decodeMap(String value) {
+	public static HashMap<String, String> decodeMap(String value) {
 		List<String> list = decodeList(value);
-		Map<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<String, String>();
 		char escapeChar = '\\';
 
 		for(int i = 0; i < list.size(); i++){

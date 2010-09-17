@@ -121,11 +121,11 @@ public class ManagedMakeProject implements ICOwner {
 	private String[] parseStringToArray(String syms) {
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
-			ArrayList list = new ArrayList(tok.countTokens());
+			ArrayList<String> list = new ArrayList<String>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}
-			return (String[]) list.toArray(new String[list.size()]);
+			return list.toArray(new String[list.size()]);
 		}
 		return new String[0];
 	}

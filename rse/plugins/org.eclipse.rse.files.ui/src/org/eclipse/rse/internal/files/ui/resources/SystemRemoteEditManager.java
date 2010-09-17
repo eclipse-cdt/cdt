@@ -874,23 +874,8 @@ public class SystemRemoteEditManager
 							// fall through and let the new editable get created
 						}
 						else {		
-							if (descriptor != null){
-								// using reflection	to change descriptor since there's
-								// no API right now
-								try {
-						            Class cls = editable.getClass();
-						            Field[] fields = cls.getDeclaredFields();
-						            for (int i = 0; i < fields.length; i++){
-						            	Field fld = fields[i];
-						            	String name= fld.getName();
-						            	if (name.equals("_editorDescriptor")){ //$NON-NLS-1$
-						            		fld.setAccessible(true);
-						            		fld.set(editable, descriptor);
-						            	}
-						            }
-								}
-								catch (Exception e){									
-								}
+							if (descriptor != null){ // update the editor descriptor
+								editable.setEditorDescriptor(descriptor);
 							}
 							return editable;
 						}

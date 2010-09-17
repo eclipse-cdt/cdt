@@ -40,6 +40,7 @@
  * David McKnight   (IBM)        - [284420] nullprogressmonitor is needed
  * David McKnight   (IBM)        - [310215] SystemEditableRemoteFile.open does not behave as expected
  * David McKnight   (IBM)        - [324519] SystemEditableRemoteFile throws NPE when used in headless mode
+ * David McKnight   (IBM)        - [325502] The default editor for a file is not updated when opened in RSE explorer
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -2013,4 +2014,22 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		return remoteFile.isStale();
 	}
 
+	/**
+	 * Get the editor descriptor to be associated with the remote file
+	 * @return the editor descriptor associated with this remote file
+	 * @since 3.3 
+	 */
+	public IEditorDescriptor getEditorDescriptor(){
+		return _editorDescriptor;
+	}
+	
+	/**
+	 * Set the editor descriptor to be associated with the remote file
+	 * @param descriptor the new editor descriptor
+	 * @since 3.3
+	 */
+	public void setEditorDescriptor(IEditorDescriptor descriptor){
+		_editorDescriptor = descriptor;
+	}
+	
 }

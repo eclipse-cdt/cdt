@@ -134,12 +134,11 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 				case IOption.LIBRARY_PATHS:
 				case IOption.LIBRARY_FILES:
 				case IOption.MACRO_FILES:
-					List list= (List) option.getValue();
-					String[] newValue= concat((String[]) list.toArray(new String[list.size()]), value);
+					@SuppressWarnings("unchecked")
+					List<String> list= (List<String>) option.getValue();
+					String[] newValue= concat(list.toArray(new String[list.size()]), value);
 					ManagedBuildManager.setOption(resourceConfig, optionHolder, option, newValue);
 					modified = true;
-				default:
-					continue;
 				}
 			}
 		}
@@ -162,12 +161,11 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 				case IOption.LIBRARY_PATHS:
 				case IOption.LIBRARY_FILES:
 				case IOption.MACRO_FILES:
-					List list= (List) option.getValue();
-					String[] newValue= concat((String[]) list.toArray(new String[list.size()]), value);
+					@SuppressWarnings("unchecked")
+					List<String> list= (List<String>) option.getValue();
+					String[] newValue= concat(list.toArray(new String[list.size()]), value);
 					ManagedBuildManager.setOption(config, optionHolder, option, newValue);
 					modified = true;
-				default:
-					continue;
 				}
 			}
 		}

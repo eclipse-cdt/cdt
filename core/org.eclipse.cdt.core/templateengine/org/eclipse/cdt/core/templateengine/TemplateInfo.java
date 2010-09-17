@@ -26,7 +26,7 @@ public class TemplateInfo {
 	private boolean isCategory;
 	private String icon;
 	private String templateId;
-	private List<?> configs; /*This seems to be used for storing build-system specific configurations*/
+	private List<?> configs; /*IConfiguration This seems to be used for storing build-system specific configurations*/
 	
 	/**
 	 * 
@@ -106,11 +106,11 @@ public class TemplateInfo {
 		this.toolChainIdSet = toolChainIdSet;
 	}
 	
-	public List<?> getConfigurations() {
+	public List<?/*IConfiguration*/> getConfigurations() {
 		return configs;
 	}
 	
-	public void setConfigurations(List<?> configs) {
+	public void setConfigurations(List<?/*IConfiguration*/> configs) {
 		this.configs = configs;
 	}
 	

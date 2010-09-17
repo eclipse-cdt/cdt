@@ -69,14 +69,15 @@ public class NewManagedProject extends ProcessRunner {
 					locationPath = Path.fromPortableString(location);
 				}
 				
-				List configs = template.getTemplateInfo().getConfigurations();
+				@SuppressWarnings("unchecked")
+				List<IConfiguration> configs = (List<IConfiguration>) template.getTemplateInfo().getConfigurations();
 				if (configs == null || configs.size() == 0) {
 					throw new ProcessFailureException(Messages.getString("NewManagedProject.4") + projectName); //$NON-NLS-1$
 				}
 				
 				pca.setProject(project);
 				pca.setProjectLocation(locationPath);
-				pca.setConfigs((IConfiguration[]) configs.toArray(new IConfiguration[configs.size()]));
+				pca.setConfigs(configs.toArray(new IConfiguration[configs.size()]));
 				pca.setArtifactExtension(artifactExtension);
 				info = pca.createProject(monitor, CCorePlugin.DEFAULT_INDEXER, isCProject);
 

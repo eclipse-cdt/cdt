@@ -309,7 +309,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * @see java.concurrent.Future#get
      */
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        fSync.doGet();
+    	fSync.doGet(unit.toNanos(timeout));
         return null;
     }
 

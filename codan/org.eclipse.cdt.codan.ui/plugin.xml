@@ -108,6 +108,10 @@
             class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
             markerType="org.eclipse.cdt.codan.core.codanProblem">
       </markerResolutionGenerator>
+            <markerResolutionGenerator
+            class="org.eclipse.cdt.codan.internal.ui.CodanProblemMarkerResolutionGenerator"
+            markerType="org.eclipse.cdt.codan.core.codanSemanticProblem">
+      </markerResolutionGenerator>
    </extension>
     <extension
          point="org.eclipse.ui.ide.markerResolution">

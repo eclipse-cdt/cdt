@@ -49,7 +49,6 @@ public class TranslationUnitHelper {
 	 * @throws CoreException 
 	 */
 	public static IASTTranslationUnit loadTranslationUnit(String filename, boolean useIndex) throws CoreException{
-
 		if (filename != null) {
 			IFile[] tmpFile = null;
 
@@ -71,9 +70,9 @@ public class TranslationUnitHelper {
 		if (file == null) {
 			return null;
 		}
-		if(useIndex) {
+		if (useIndex) {
 			return loadIndexBasedTranslationUnit(file);
-		}else {
+		} else {
 			return loadFileBasedTranslationUnit(file);
 		}
 	}
@@ -87,8 +86,7 @@ public class TranslationUnitHelper {
 		}
 	}
 
-	private static IASTTranslationUnit loadIndexBasedTranslationUnit(IFile file)
-			throws CoreException {
+	private static IASTTranslationUnit loadIndexBasedTranslationUnit(IFile file) throws CoreException {
 		IIndex index = null;
 		try {
 			index = lockIndex();
@@ -137,9 +135,9 @@ public class TranslationUnitHelper {
 	public static IASTNode getFirstNode(IASTTranslationUnit unit) {
 		IASTDeclaration firstNode = null;
 		for (IASTDeclaration each : unit.getDeclarations()) {
-			if(firstNode == null) {
+			if (firstNode == null) {
 				firstNode = each;
-			} else if(each.getNodeLocations() != null && 
+			} else if (each.getNodeLocations() != null && 
 					each.getNodeLocations()[0].getNodeOffset() < firstNode.getNodeLocations()[0].getNodeOffset()) {
 				firstNode = each;
 			}

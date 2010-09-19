@@ -358,7 +358,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		if (preferenceStore.contains(preference)) {
 			rgb = PreferenceConverter.getColor(preferenceStore, preference);
 		} else {
-			rgb = new RGB(255, 255, 255); // white background
+			rgb = new RGB(200, 200, 200); // gray background
 		}
 		return new Color(display, rgb);
 	}

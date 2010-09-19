@@ -94,7 +94,7 @@ public class ASTHelper {
 		return true;
 	}
 
-	public static boolean isClassDeklarationName(IASTName astName) {
+	public static boolean isClassDeclarationName(IASTName astName) {
 		if (astName == null)
 			return false;
 		IASTNode parent = astName.getParent();
@@ -205,7 +205,7 @@ public class ASTHelper {
 			}
 			IBinding binding = name.resolveBinding();
 			for(IASTName aktName : name.getTranslationUnit().getDeclarationsInAST(binding)) {
-				if(!isClassDeklarationName(aktName)) {
+				if(!isClassDeclarationName(aktName)) {
 					return false;
 				}
 			}

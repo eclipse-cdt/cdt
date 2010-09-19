@@ -90,6 +90,7 @@ import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
@@ -509,6 +510,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 		DocCommentOwnerManager.getInstance().addListener(new EditorReopener());
 		ASTRewriteAnalyzer.setCTextFileChangeFactory(new CTextFileChangeFactory());
 		
+		// A workaround for black console bug 320723.
+		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
+
 		// start make-ui plugin, such that it can check for project conversions.
 		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
 			@Override

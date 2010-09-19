@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -251,12 +252,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 				errorStream.setConsole(fConsole);
 				errorColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_ERROR_COLOR);
 				errorStream.setColor(errorColor);
-				backgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+				backgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 				fConsole.setBackground(backgroundColor);
 				problemHighlightedColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_HIGHLIGHTED_COLOR);
-				problemErrorBackgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
-				problemWarningBackgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
-				problemInfoBackgroundColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
+				problemErrorBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
+				problemWarningBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
+				problemInfoBackgroundColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
 			}
 		});
 		CUIPlugin.getWorkspace().addResourceChangeListener(this);
@@ -287,7 +288,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			errorColor.dispose();
 			errorColor = newColor;
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_BACKGROUND_COLOR);
 			fConsole.setBackground(newColor);
 			backgroundColor.dispose();
 			backgroundColor = newColor;
@@ -297,17 +298,17 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			problemHighlightedColor = newColor;
 			redrawTextViewer();
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR);
 			problemErrorBackgroundColor.dispose();
 			problemErrorBackgroundColor = newColor;
 			redrawTextViewer();
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_WARNING_BACKGROUND_COLOR);
 			problemWarningBackgroundColor.dispose();
 			problemWarningBackgroundColor = newColor;
 			redrawTextViewer();
 		} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR)) {
-			Color newColor = createColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
+			Color newColor = createBackgroundColor(CUIPlugin.getStandardDisplay(), BuildConsolePreferencePage.PREF_BUILDCONSOLE_PROBLEM_INFO_BACKGROUND_COLOR);
 			problemInfoBackgroundColor.dispose();
 			problemInfoBackgroundColor = newColor;
 			redrawTextViewer();
@@ -342,14 +343,29 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	/**
 	 * Returns a color instance based on data from a preference field.
 	 */
-	Color createColor(Display display, String preference) {
+	private Color createColor(Display display, String preference) {
 		RGB rgb = PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), preference);
 		return new Color(display, rgb);
 	}
+
+	/**
+	 * Returns a background color instance based on data from a preference field.
+	 * This is a workaround for black console bug 320723. 
+	 */
+	private Color createBackgroundColor(Display display, String preference) {
+		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
+		RGB rgb;
+		if (preferenceStore.contains(preference)) {
+			rgb = PreferenceConverter.getColor(preferenceStore, preference);
+		} else {
+			rgb = new RGB(255, 255, 255); // white background
+		}
+		return new Color(display, rgb);
+	}
+
 	/**
 	 * Returns the console for the project, or <code>null</code> if none.
 	 */
-
 	public IConsole getConsole(IProject project) {
 		Assert.isNotNull(project);
 		fLastProject = project;

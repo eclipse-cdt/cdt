@@ -11,7 +11,7 @@
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,6 +19,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -51,10 +52,10 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
         return TextSearchWrapper.SCOPE_FILE;
     }
     
-    @Override
-	protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, 
-            RefactoringStatus status) {
-    	super.analyzeTextMatches(matches, monitor, status);
+	@Override
+	protected void analyzeTextMatches(IBinding[] renameBindings, Collection<CRefactoringMatch> matches,
+			IProgressMonitor monitor, RefactoringStatus status) {
+    	super.analyzeTextMatches(renameBindings, matches, monitor, status);
         if (fScope != null) {
             CRefactoringArgument argument = getArgument();
             int[] result= new int[] {0, Integer.MAX_VALUE};

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google) 
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -63,8 +64,8 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
     }
     
     @Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, 
-            CheckConditionsContext context) throws OperationCanceledException, CoreException {
+	public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, CheckConditionsContext context)
+    		throws OperationCanceledException, CoreException {
         CRefactoringArgument argument= getArgument();
         RefactoringStatus result= new RefactoringStatus();
         IScope scope= argument.getScope();
@@ -84,7 +85,8 @@ public class CRenameMethodProcessor extends CRenameGlobalProcessor {
                 }
             }                
         }
-        if (argument.getArgumentKind() == CRefactory.ARGUMENT_VIRTUAL_METHOD && (getSelectedOptions() & CRefactory.OPTION_DO_VIRTUAL) == 0) {
+        if (argument.getArgumentKind() == CRefactory.ARGUMENT_VIRTUAL_METHOD &&
+        		(getSelectedOptions() & CRefactory.OPTION_DO_VIRTUAL) == 0) {
             result.merge(RefactoringStatus.createWarningStatus(RenameMessages.CRenameMethodProcessor_warning_renameVirtual));
         }
 

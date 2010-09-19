@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
- *    IBM Corporation - Bug 112366
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation 
+ *     IBM Corporation - Bug 112366
+ *     Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -53,7 +53,7 @@ import org.eclipse.cdt.ui.refactoring.CTextFileChange;
  */
 public abstract class CRenameProcessorDelegate {
     private CRenameProcessor fTopProcessor;
-    private ArrayList<CRefactoringMatch> fMatches= null;
+    private ArrayList<CRefactoringMatch> fMatches;
     protected String fProcessorBaseName;
     private int fAvailableOptions=         
 	        CRefactory.OPTION_ASK_SCOPE | 
@@ -113,7 +113,8 @@ public abstract class CRenameProcessorDelegate {
     final public String getProcessorName() {
         String identifier= getArgument().getName();
         if (identifier != null) {
-            return NLS.bind(RenameMessages.CRenameProcessorDelegate_wizard_title, fProcessorBaseName, identifier);
+            return NLS.bind(RenameMessages.CRenameProcessorDelegate_wizard_title, fProcessorBaseName,
+            		identifier);
         }
         return null;
     }
@@ -158,10 +159,11 @@ public abstract class CRenameProcessorDelegate {
 
     /**
      * Builds an index-based file filter for the name search.
-     * @return A set of files containing references to the name, or <code>null</code> if
+     * @param bindings bindings being renamed
+     * @return A set of files containing references to the bindings, or <code>null</code> if
      * exhaustive file search is requested.
      */
-    private Collection<IResource> getFileFilter() {
+    private Collection<IResource> getFileFilter(IBinding[] bindings) {
     	if ((getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0) {
     		return null;
     	}
@@ -169,18 +171,16 @@ public abstract class CRenameProcessorDelegate {
     	if (index == null) {
     		return null;
     	}
-    	IBinding binding = getArgument().getBinding();
-    	if (binding == null) {
-    		return null;
-    	}
 		Set<IIndexFileLocation> locations = new HashSet<IIndexFileLocation>();
     	try {
     		index.acquireReadLock();
-			IIndexName[] names = index.findNames(binding,
-					IIndex.FIND_ALL_OCCURRENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
-			for (IIndexName name : names) {
-				locations.add(name.getFile().getLocation());
-			}
+        	for (IBinding binding : bindings) {
+				IIndexName[] names = index.findNames(binding,
+						IIndex.FIND_ALL_OCCURRENCES | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
+				for (IIndexName name : names) {
+					locations.add(name.getFile().getLocation());
+				}
+        	}
 		} catch (InterruptedException e) {
 			return null;
 		} catch (CoreException e) {
@@ -208,16 +208,19 @@ public abstract class CRenameProcessorDelegate {
         return new RefactoringStatus();
     }
 
-    public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, CheckConditionsContext context) throws CoreException, OperationCanceledException {
+    public RefactoringStatus checkFinalConditions(IProgressMonitor monitor, CheckConditionsContext context)
+    		throws CoreException, OperationCanceledException {
         RefactoringStatus result= new RefactoringStatus();
         monitor.beginTask(RenameMessages.CRenameProcessorDelegate_task_checkFinalCondition, 2);
         IFile file= getArgument().getSourceFile();
         //assert file!=null;
-    
+
+        IBinding[] renameBindings= getBindingsToBeRenamed(result);
+
         // perform text-search
         fMatches= new ArrayList<CRefactoringMatch>();
         TextSearchWrapper txtSearch= getManager().getTextSearch();
-        Collection<IResource> fileFilter = getFileFilter();
+        Collection<IResource> fileFilter = getFileFilter(renameBindings);
         if (fileFilter != null && !fileFilter.contains(file)) {
         	fileFilter.add(file);
         }
@@ -232,8 +235,8 @@ public abstract class CRenameProcessorDelegate {
         if (result.hasFatalError()) {
             return result;
         }
-        selectMatchesByLocation(fMatches);        
-        analyzeTextMatches(fMatches, new SubProgressMonitor(monitor, 1), result);
+        selectMatchesByLocation(fMatches);
+        analyzeTextMatches(renameBindings, fMatches, new SubProgressMonitor(monitor, 1), result);
         if (result.hasFatalError()) {
             return result;
         }
@@ -266,7 +269,8 @@ public abstract class CRenameProcessorDelegate {
             if (potentialMatchCount == 1) {
                 msg= RenameMessages.CRenameProcessorDelegate_warning_potentialMatch_singular;
             } else {
-                msg= NLS.bind(RenameMessages.CRenameProcessorDelegate_warning_potentialMatch_plural, potentialMatchCount);
+                msg= NLS.bind(RenameMessages.CRenameProcessorDelegate_warning_potentialMatch_plural,
+                		potentialMatchCount);
             }
             result.addWarning(msg);
         }
@@ -275,7 +279,8 @@ public abstract class CRenameProcessorDelegate {
             if (commentCount == 1) {
                 msg= RenameMessages.CRenameProcessorDelegate_warning_commentMatch_singular;
             } else {
-                msg= NLS.bind(RenameMessages.CRenameProcessorDelegate_warning_commentMatch_plural, commentCount);
+                msg= NLS.bind(RenameMessages.CRenameProcessorDelegate_warning_commentMatch_plural,
+                		commentCount);
             }
             result.addWarning(msg);
         }
@@ -289,11 +294,9 @@ public abstract class CRenameProcessorDelegate {
         return result;
     }
 
-	protected void analyzeTextMatches(ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, RefactoringStatus status) {
-        CRefactoringArgument argument= getArgument();
-        IBinding[] renameBindings= getBindingsToBeRenamed(status);
-        if (renameBindings != null && renameBindings.length > 0 && 
-                argument.getArgumentKind() != CRefactory.ARGUMENT_UNKNOWN) {
+	protected void analyzeTextMatches(IBinding[] renameBindings, Collection<CRefactoringMatch> matches,
+			IProgressMonitor monitor, RefactoringStatus status) {
+        if (renameBindings.length > 0 && getArgument().getArgumentKind() != CRefactory.ARGUMENT_UNKNOWN) {
             ASTManager mngr= getAstManager();
             mngr.setValidBindings(renameBindings);
             mngr.setRenameTo(getReplacementText());
@@ -301,7 +304,7 @@ public abstract class CRenameProcessorDelegate {
         }
     }
 
-    private void selectMatchesByLocation(ArrayList<CRefactoringMatch> matches) {
+    private void selectMatchesByLocation(Collection<CRefactoringMatch> matches) {
         int acceptTextLocation= getAcceptedLocations(getSelectedOptions());
         for (Iterator<CRefactoringMatch> iter = matches.iterator(); iter.hasNext();) {
             CRefactoringMatch match = iter.next();
@@ -317,10 +320,10 @@ public abstract class CRenameProcessorDelegate {
     }
 
     public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-        if (fMatches.size() == 0) {
+        if (fMatches.isEmpty()) {
             return null;
         }
-        Collections.sort(fMatches, new Comparator<CRefactoringMatch>(){
+        Collections.sort(fMatches, new Comparator<CRefactoringMatch>() {
             public int compare(CRefactoringMatch m1, CRefactoringMatch m2) {
                 IFile f1= m1.getFile();
                 IFile f2= m2.getFile();
@@ -371,10 +374,10 @@ public abstract class CRenameProcessorDelegate {
     }
 
     /**
-     * Returns the array of bindings that must be renamed
+     * Returns the array of bindings that must be renamed.
      */
     protected IBinding[] getBindingsToBeRenamed(RefactoringStatus status) {
-        return new IBinding[] {getArgument().getBinding()};
+        return new IBinding[] { getArgument().getBinding() };
     }
 
 	/**

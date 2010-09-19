@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2004, 2010 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -182,23 +183,20 @@ public class CRenameProcessor extends RenameProcessor {
     }
 
     @Override
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
-            CheckConditionsContext context) throws CoreException,
-            OperationCanceledException {
+	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
+    		throws CoreException, OperationCanceledException {
         return fDelegate.checkFinalConditions(pm, context);
     }
 
     @Override
-	public Change createChange(IProgressMonitor pm) throws CoreException,
-            OperationCanceledException {
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
         return fDelegate.createChange(pm);
     }
 
     @Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status,
             SharableParticipants sharedParticipants) throws CoreException {
-        RenameArguments arguments= new RenameArguments(getReplacementText(), 
-                true);
+        RenameArguments arguments= new RenameArguments(getReplacementText(), true);
         final String[] natures= {CCProjectNature.CC_NATURE_ID, CProjectNature.C_NATURE_ID};
         List<RenameParticipant> result= new ArrayList<RenameParticipant>();
         IBinding binding= getArgument().getBinding();

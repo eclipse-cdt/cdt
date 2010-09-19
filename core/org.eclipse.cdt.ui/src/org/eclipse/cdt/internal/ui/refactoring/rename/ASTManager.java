@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
- *    IBM Corporation
- *    Sergey Prigogin (Google)
+ *     Markus Schorn - initial API and implementation 
+ *     IBM Corporation
+ *     Sergey Prigogin (Google)
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -115,8 +115,8 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
 /**
- * Used per refactoring to cache the IASTTranslationUnits. Collects methods operating
- * on ASTNodes.
+ * Used for refactoring to cache the IASTTranslationUnits.
+ * Contains a collection of methods operating on ASTNodes.
  */
 public class ASTManager {
     public final static int TRUE= 1;
@@ -331,8 +331,7 @@ public class ASTManager {
             return TRUE;
         }
 
-        if (node1 instanceof IASTTranslationUnit &&
-                node2 instanceof IASTTranslationUnit) {
+        if (node1 instanceof IASTTranslationUnit && node2 instanceof IASTTranslationUnit) {
             return hasSameLocation(node1, node2, fileStatic);
         }
         
@@ -379,7 +378,7 @@ public class ASTManager {
             return FALSE;
         }
         if (s1 instanceof ICFunctionScope || s1 instanceof ICFunctionPrototypeScope
-                || s1 instanceof ICScope) {
+        		|| s1 instanceof ICScope) {
             if (s2 instanceof ICFunctionScope || s2 instanceof ICFunctionPrototypeScope
                     || s2 instanceof ICScope) {
                 return hasSameLocation(node1, node2, true);
@@ -425,8 +424,7 @@ public class ASTManager {
         return isSameParameterList(b1.getParameterTypes(), b2.getParameterTypes());
     }        
 
-    private static int isSameParameterList(IType[] p1, 
-            IType[] p2) throws DOMException {
+    private static int isSameParameterList(IType[] p1, IType[] p2) throws DOMException {
         if (p1 == p2) {
             return TRUE;
         }
@@ -439,11 +437,11 @@ public class ASTManager {
         int retval= TRUE;
         for (int i = 0; i < p2.length; i++) {
             switch (isSameType(p1[i], p2[i])) {
-                case FALSE:
-                    return FALSE;
-                case UNKNOWN:
-                    retval= UNKNOWN;
-                    break;
+            case FALSE:
+                return FALSE;
+            case UNKNOWN:
+                retval= UNKNOWN;
+                break;
             }
         }
         
@@ -464,11 +462,11 @@ public class ASTManager {
         int retval= TRUE;
         for (int i = 0; i < p2.length; i++) {
             switch (isSameType(p1[i].getType(), p2[i].getType())) {
-                case FALSE:
-                    return FALSE;
-                case UNKNOWN:
-                    retval= UNKNOWN;
-                    break;
+            case FALSE:
+                return FALSE;
+            case UNKNOWN:
+                retval= UNKNOWN;
+                break;
             }
         }
         
@@ -484,8 +482,7 @@ public class ASTManager {
         if (t1 == t2) {
             return TRUE;
         }
-        if (t1 == null || t2 == null || t1 instanceof IProblemBinding ||
-                t2 instanceof IProblemBinding) {
+        if (t1 == null || t2 == null || t1 instanceof IProblemBinding || t2 instanceof IProblemBinding) {
             return UNKNOWN;
         }
         
@@ -750,8 +747,8 @@ public class ASTManager {
         }
     }
 
-    public static IBinding[] findInScope(final IScope scope, String name,
-            boolean removeGlobalsWhenClassScope) throws DOMException {
+    public static IBinding[] findInScope(final IScope scope, String name, boolean removeGlobalsWhenClassScope)
+    		throws DOMException {
         IBinding[] result= null;
         result = scope.find(name);
         if (result == null || result.length == 0) {
@@ -841,7 +838,8 @@ public class ASTManager {
         				node instanceof IASTPreprocessorIfStatement) {
         			final IASTFileLocation fileLocation = node.getFileLocation();
         			if (fileLocation != null) {
-        				final String ident= extractIdentifier(node.getRawSignature(), offset - fileLocation.getNodeOffset(), length);
+        				final String ident= extractIdentifier(node.getRawSignature(),
+        						offset - fileLocation.getNodeOffset(), length);
         				if (ident != null) {
         					IASTPreprocessorMacroDefinition[] mdefs= tu.getMacroDefinitions();
         					for (IASTPreprocessorMacroDefinition mdef : mdefs) {
@@ -898,22 +896,13 @@ public class ASTManager {
 		return rawSignature.substring(offset, end);
 	}
 
-	private IASTTranslationUnit getTranslationUnit(IIndex index, IFile sourceFile, 
-            boolean cacheit, RefactoringStatus status) {
+	private IASTTranslationUnit getTranslationUnit(IIndex index, IFile sourceFile, boolean cacheit,
+			RefactoringStatus status) {
         IASTTranslationUnit ast=  fTranslationUnits.get(sourceFile);
         if (ast == null) {
             ICElement celem= CoreModel.getDefault().create(sourceFile);
             if (celem instanceof ITranslationUnit) {
             	ITranslationUnit tu= CModelUtil.toWorkingCopy((ITranslationUnit) celem);
-//				if (tu instanceof IWorkingCopy) {
-//					synchronized (tu) {
-//						try {
-//							ast = ((IWorkingCopy) tu).reconcile(true, false, null);
-//						} catch (CModelException e) {
-//							CUIPlugin.log(e);
-//						}
-//					}
-//				}
             	// Try to get a shared AST before creating our own.
             	final IASTTranslationUnit[] ast_holder = new IASTTranslationUnit[1];
 				ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
@@ -942,8 +931,8 @@ public class ASTManager {
         return ast;
     }
 
-    public void analyzeTextMatches(IIndex index, ArrayList<CRefactoringMatch> matches, IProgressMonitor monitor, 
-            RefactoringStatus status) {
+    public void analyzeTextMatches(IIndex index, Collection<CRefactoringMatch> matches,
+    		IProgressMonitor monitor, RefactoringStatus status) {
         CRefactoringMatchStore store= new CRefactoringMatchStore();
         for (CRefactoringMatch match : matches) {
             store.addMatch(match);
@@ -1030,9 +1019,8 @@ public class ASTManager {
         fConflictingBinding= null;
     }
 
-    private void analyzeLanguageMatches(IASTTranslationUnit tu, 
-            final CRefactoringMatchStore store, final Set<IPath> paths,
-            final RefactoringStatus status) {
+    private void analyzeLanguageMatches(IASTTranslationUnit tu, final CRefactoringMatchStore store,
+    		final Set<IPath> paths, final RefactoringStatus status) {
         ASTNameVisitor nv = new ASTSpecificNameVisitor(fArgument.getName()) {
             @Override
 			protected int visitName(IASTName name, boolean isDestructor) {
@@ -1044,9 +1032,8 @@ public class ASTManager {
         tu.accept(nv);
     }
 
-    private void analyzeMacroMatches(IASTTranslationUnit tu, 
-            final CRefactoringMatchStore store, final Set<IPath> pathsVisited,
-            final RefactoringStatus status) {
+    private void analyzeMacroMatches(IASTTranslationUnit tu, final CRefactoringMatchStore store,
+    		final Set<IPath> pathsVisited, final RefactoringStatus status) {
         String lookfor= fArgument.getName();
         IASTPreprocessorMacroDefinition[] mdefs= tu.getMacroDefinitions();
         for (IASTPreprocessorMacroDefinition mdef : mdefs) {
@@ -1122,10 +1109,8 @@ public class ASTManager {
 //        }
 //    }
 
-    private void findConflictingBindingsWithNewName(IASTTranslationUnit tu, 
-            CRefactoringMatchStore store, final Set<IPath> paths, 
-            final RefactoringStatus status) {
-
+    private void findConflictingBindingsWithNewName(IASTTranslationUnit tu, CRefactoringMatchStore store,
+    		final Set<IPath> paths, final RefactoringStatus status) {
         ASTNameVisitor nv = new ASTSpecificNameVisitor(fRenameTo) {
             @Override
 			protected int visitName(IASTName name, boolean isDestructor) {
@@ -1156,8 +1141,8 @@ public class ASTManager {
         return path;
     }
 
-    protected IPath analyzeAstMatch(IASTName name, CRefactoringMatchStore store, 
-            boolean isDestructor, RefactoringStatus status) {
+    protected IPath analyzeAstMatch(IASTName name, CRefactoringMatchStore store, boolean isDestructor,
+    		RefactoringStatus status) {
         IPath path= null;
         CRefactoringMatch match= null;
         
@@ -1250,7 +1235,8 @@ public class ASTManager {
         handleProblemBinding(tu, e.getProblem(), status);
     }
 
-    public void handleProblemBinding(IASTTranslationUnit tu, final IProblemBinding pb, RefactoringStatus status) {
+    public void handleProblemBinding(IASTTranslationUnit tu, final IProblemBinding pb,
+    		RefactoringStatus status) {
         if (tu != null) {
             String fpath= tu.getFilePath();
             if (fProblemUnits.add(fpath)) {
@@ -1316,11 +1302,11 @@ public class ASTManager {
         }
         
         Collection<IBinding>[] cflc=
-        		new Collection[] { new HashSet<IBinding>(), new ArrayList<IBinding>(), new ArrayList<IBinding>() };
+        		new Collection[] { new HashSet<IBinding>(), new ArrayList<IBinding>(),
+        		                  new ArrayList<IBinding>() };
         String[] errs= null;
         if (isMacro) {
-            errs= new String[] {
-                    RenameMessages.CRenameLocalProcessor_error_conflict };
+            errs= new String[] { RenameMessages.CRenameLocalProcessor_error_conflict };
             cflc[0]= fConflictingBinding;
         } else {
             errs= new String[] {
@@ -1464,9 +1450,8 @@ public class ASTManager {
         }
     }
 
-    protected void classifyConflictingBindings(IASTTranslationUnit tu, 
-            Set<IBinding> shadows, Collection<IBinding> redecl, Collection<IBinding> barriers, 
-            RefactoringStatus status) {
+    protected void classifyConflictingBindings(IASTTranslationUnit tu, Set<IBinding> shadows,
+    		Collection<IBinding> redecl, Collection<IBinding> barriers, RefactoringStatus status) {
         // collect bindings on higher or equal level
         String name= fArgument.getName();
         IBinding[] newBindingsAboverOrEqual= null;

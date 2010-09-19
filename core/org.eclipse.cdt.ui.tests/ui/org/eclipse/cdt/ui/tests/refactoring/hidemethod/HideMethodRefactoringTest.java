@@ -38,28 +38,26 @@ public class HideMethodRefactoringTest extends RefactoringTest {
 
 	@Override
 	protected void runTest() throws Throwable {
-
 		IFile refFile = project.getFile(fileWithSelection);
 		CRefactoring refactoring = new HideMethodRefactoring(refFile,selection, null, cproject);
 		RefactoringStatus checkInitialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-		if(errors > 0) {
+		if (errors > 0) {
 			assertConditionsError(checkInitialConditions, errors);
-		}else if(fatalerrors > 0) {
+		} else if (fatalerrors > 0) {
 			assertConditionsError(checkInitialConditions, errors);
 			return;
-		}else {
+		} else {
 			assertConditionsOk(checkInitialConditions);
 		}
 
 		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
-		if(warnings > 0){
+		if (warnings > 0) {
 			assertConditionsWarning(finalConditions, warnings);
-		}else{
+		} else {
 			assertConditionsOk(finalConditions);
 		}
 		createChange.perform(NULL_PROGRESS_MONITOR);
-
 		compareFiles(fileMap);
 	}
 
@@ -68,6 +66,5 @@ public class HideMethodRefactoringTest extends RefactoringTest {
 		warnings = new Integer(refactoringProperties.getProperty("warnings", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
 		errors = new Integer(refactoringProperties.getProperty("errors", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
 		fatalerrors = new Integer(refactoringProperties.getProperty("fatalerrors", "0")).intValue();  //$NON-NLS-1$//$NON-NLS-2$
-		
 	}
 }

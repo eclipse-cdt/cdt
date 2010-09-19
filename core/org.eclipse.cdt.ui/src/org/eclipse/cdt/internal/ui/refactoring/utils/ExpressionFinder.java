@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndexName;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
@@ -29,7 +28,7 @@ public class ExpressionFinder {
 	
 	public static IASTName findExpressionInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
 		final Container<IASTName> expName = new Container<IASTName>();
-		transUnit.accept(new CPPASTVisitor() {
+		transUnit.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;
 			}

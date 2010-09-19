@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -110,7 +110,7 @@ public class TranslationUnitHelper {
 		final IASTFileLocation pos = oldName.getFileLocation();
 		final Container<IASTName> nameCon = new Container<IASTName>();
 
-		transUnit.accept(new CPPASTVisitor() {
+		transUnit.accept(new ASTVisitor() {
 
 			{
 				shouldVisitNames = true;

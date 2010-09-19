@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -49,7 +48,7 @@ public class DeclarationFinder {
 	
 	public static IASTName findDeclarationInTranslationUnit(IASTTranslationUnit transUnit, final IIndexName indexName) {
 		final Container<IASTName> defName = new Container<IASTName>();
-		transUnit.accept(new CPPASTVisitor() {
+		transUnit.accept(new ASTVisitor() {
 			{
 				shouldVisitNames = true;
 			}

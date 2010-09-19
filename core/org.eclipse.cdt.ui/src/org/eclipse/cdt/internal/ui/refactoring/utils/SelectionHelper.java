@@ -19,6 +19,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
@@ -26,7 +27,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 
@@ -50,7 +50,7 @@ public class SelectionHelper {
 
 		final Container<IASTSimpleDeclaration> container = new Container<IASTSimpleDeclaration>();
 
-		translationUnit.accept(new CPPASTVisitor() {
+		translationUnit.accept(new ASTVisitor() {
 			{
 				shouldVisitDeclarations = true;
 			}

@@ -552,7 +552,7 @@ public class CPPSemantics {
        
 	static IBinding checkDeclSpecifier(IBinding binding, IASTName name, IASTNode decl) {
 		// check for empty declaration specifiers
-		if (!isCTorOrConversionOperator(binding)) {
+		if (!isCtorOrConversionOperator(binding)) {
 			IASTDeclSpecifier declspec= null;
 			if (decl instanceof IASTSimpleDeclaration) {
 				declspec= ((IASTSimpleDeclaration) decl).getDeclSpecifier();
@@ -566,7 +566,7 @@ public class CPPSemantics {
 		return binding;
 	}
 
-	private static boolean isCTorOrConversionOperator(IBinding binding) {
+	private static boolean isCtorOrConversionOperator(IBinding binding) {
 		if (binding instanceof ICPPConstructor)
 			return true;
 		

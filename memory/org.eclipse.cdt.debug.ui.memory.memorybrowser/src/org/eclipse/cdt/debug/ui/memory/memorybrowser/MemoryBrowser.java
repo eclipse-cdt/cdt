@@ -410,7 +410,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 				} catch (DebugException e1) {
 					fGotoAddressBar.handleExpressionStatus(new Status(Status.ERROR, MemoryBrowserPlugin.PLUGIN_ID, 
 							Messages.getString("MemoryBrowser.FailedToGoToAddressTitle"), e1));
-					item.dispose();
+					if ( item != null ) {
+						item.dispose();
+					}
 					return;
 				} 
 			} else {
@@ -457,9 +459,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 							else {
 								renderingFinal.goToAddress(newBase);
 							}
-							fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 							runOnUIThread(new Runnable(){
 								public void run() {
+									fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 									updateLabel(activeFolder.getSelection(), renderingFinal);
 								}
 							});

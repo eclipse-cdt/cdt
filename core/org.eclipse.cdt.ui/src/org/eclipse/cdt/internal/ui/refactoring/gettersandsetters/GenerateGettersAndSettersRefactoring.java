@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
@@ -60,7 +59,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  */
 public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
-	private final class CompositeTypeSpecFinder extends CPPASTVisitor {
+	private final class CompositeTypeSpecFinder extends ASTVisitor {
 		private final int start;
 		private final Container<IASTCompositeTypeSpecifier> container;
 		{
@@ -178,7 +177,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 
 	protected void findDeclarations(IASTCompositeTypeSpecifier compositeTypeSpecifier) {
 
-		compositeTypeSpecifier.accept(new CPPASTVisitor() {
+		compositeTypeSpecifier.accept(new ASTVisitor() {
 
 			{
 				shouldVisitDeclarations = true;

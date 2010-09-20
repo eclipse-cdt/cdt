@@ -23,32 +23,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
-      <import plugin="org.eclipse.cdt.ui"/>
-      <import plugin="org.eclipse.ui.ide" version="3.4.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.cdt.make.core"/>
-      <import plugin="org.eclipse.cdt.core" version="5.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.core.lrparser" version="5.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.ui" version="5.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core" version="5.0.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.core" version="5.0.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.4.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.ui" version="5.0.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.ui" version="5.0.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.core.parser.upc" version="5.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.xlc.ui" version="6.0.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.errorparsers.xlc"
          download-size="0"

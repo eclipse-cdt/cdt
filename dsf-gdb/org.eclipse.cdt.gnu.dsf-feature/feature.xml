@@ -21,30 +21,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.cdt.dsf"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.cdt.debug.core"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.cdt.dsf.ui"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.cdt.debug.ui"/>
-      <import plugin="org.eclipse.cdt.ui"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.core.expressions"/>
-      <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.cdt.launch" version="6.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.gdb" version="7.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.filesystem" version="1.2.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.dsf.gdb"
          download-size="0"

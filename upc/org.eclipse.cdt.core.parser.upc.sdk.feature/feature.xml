@@ -26,8 +26,4 @@
          id="org.eclipse.cdt.core.parser.upc.source"
          version="0.0.0"/>
 
-   <requires>
-      <import feature="org.eclipse.cdt.core.parser.upc.feature"/>
-   </requires>
-
 </feature>

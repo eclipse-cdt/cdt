@@ -26,8 +26,4 @@
          id="org.eclipse.cdt.xlc.source"
          version="0.0.0"/>
 
-   <requires>
-      <import feature="org.eclipse.cdt.xlc.feature"/>
-   </requires>
-
 </feature>

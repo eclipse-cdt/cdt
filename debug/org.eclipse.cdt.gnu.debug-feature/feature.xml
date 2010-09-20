@@ -21,28 +21,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.cdt.debug.core" version="7.0.0" match="compatible"/>
-      <import plugin="org.eclipse.core.resources" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.core" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.200" match="greaterOrEqual"/>
-      <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.ui" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.debug.ui" version="7.0.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.ui" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.debug.ui" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.console" version="3.1.100" match="compatible"/>
-      <import plugin="org.eclipse.jface.text" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.ui.ide" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.expressions" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.core.variables" version="3.1.100" match="compatible"/>
-      <import plugin="org.eclipse.ltk.core.refactoring" version="3.5.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.gdb" version="7.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.debug.mi.core" version="7.0.0" match="compatible"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.debug.mi.core"
          download-size="0"

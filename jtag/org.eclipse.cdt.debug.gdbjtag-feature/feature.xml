@@ -22,23 +22,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.cdt.launch"/>
-      <import plugin="org.eclipse.cdt.debug.core"/>
-      <import plugin="org.eclipse.cdt.debug.mi.core"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.cdt.ui"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import feature="org.eclipse.cdt.gnu.debug" version="6.0.0"/>
-      <import plugin="com.ibm.icu"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.debug.gdbjtag.core"
          download-size="0"

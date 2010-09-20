@@ -21,13 +21,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="compatible"/>
-      <import plugin="org.eclipse.cdt.core" version="5.0.0" match="compatible"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.cdt.managedbuilder.core" version="8.0.0" match="compatible"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.managedbuilder.gnu.ui"
          download-size="0"

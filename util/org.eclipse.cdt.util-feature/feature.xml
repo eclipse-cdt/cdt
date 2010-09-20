@@ -23,13 +23,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.junit"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.util"
          download-size="0"

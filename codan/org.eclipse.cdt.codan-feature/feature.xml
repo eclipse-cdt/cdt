@@ -21,21 +21,6 @@
       <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/helios"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.codan.core" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.core" version="5.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.codan.core.cxx" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.codan.checkers" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.cdt.ui" version="5.1.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.5.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="org.eclipse.cdt.codan.core"
          download-size="0"

@@ -465,11 +465,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 							else {
 								renderingFinal.goToAddress(newBase);
 							}
-							fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
+							
 							runOnUIThread(new Runnable(){
 								public void run() {
 									CTabItem selection = activeFolder.getSelection();
 									selection.setData(KEY_EXPRESSION, expression);
+									fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 									updateLabel(selection, renderingFinal);
 								}
 							});

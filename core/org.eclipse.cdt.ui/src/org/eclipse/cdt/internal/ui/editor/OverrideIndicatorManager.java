@@ -175,6 +175,7 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 				return PROCESS_SKIP;
 			}
 		}
+
 		class CompositeTypeFinder extends ASTVisitor {
 			{
 				shouldVisitDeclSpecifiers = true;

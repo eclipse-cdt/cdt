@@ -278,5 +278,19 @@
               name="%problem.name.AssignmentToItself">
 		      	</problem>
 		     </checker>
+             <checker
+                class="org.eclipse.cdt.codan.internal.checkers.ReturnStyleChecker"
+                id="org.eclipse.cdt.codan.internal.checkers.ReturnStyle"
+	            name="%checker.name.ReturnStyle">
+             <problem
+                   category="org.eclipse.cdt.codan.core.categories.CodeStyle"
+                   defaultEnabled="false"
+                   defaultSeverity="Warning"
+                   description="%problem.description.ReturnStyle"
+                   id="org.eclipse.cdt.codan.internal.checkers.ReturnStyleProblem"
+                   messagePattern="%problem.messagePattern.ReturnStyle"
+                   name="%problem.name.ReturnStyle">
+             </problem>
+      </checker>
    </extension>
 </plugin>

@@ -12,11 +12,15 @@ package org.eclipse.cdt.internal.ui.search;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -37,9 +41,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 
 /**
- * Finds locations of linked names. Used by Rename in File.
+ * Finds locations of linked names. Used by Rename in File and Rename in Workspace.
  */
 public class LinkedNamesFinder {
 	private static final IRegion[] EMPTY_LOCATIONS_ARRAY = new IRegion[0];
@@ -92,7 +97,36 @@ public class LinkedNamesFinder {
 						findBinding(method);
 					}
 				}
+			} else if (target instanceof ICPPMethod) {
+	        	ICPPMethod method= (ICPPMethod) target;
+        		try {
+					for (ICPPMethod m : ClassTypeHelper.findOverridden(method)) {
+						findBinding(m);
+					}
+				} catch (DOMException e) {
+					// Ignore.
+				}
+        		try {
+					for (ICPPMethod m : findOverridersInAST(method)) {
+						findBinding(m);
+					}
+				} catch (DOMException e) {
+					// Ignore.
+				}
 			}
+		}
+
+		private ICPPMethod[] findOverridersInAST(ICPPMethod method) throws DOMException {
+			if (!ClassTypeHelper.isVirtual(method))
+				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+
+			final ICPPClassType ownerClass = method.getClassOwner();
+			if (ownerClass  == null) 
+				return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+
+			SubclassFinder subclassFinder = new SubclassFinder(ownerClass);
+			root.accept(subclassFinder);
+			return ClassTypeHelper.findOverriders(subclassFinder.getSubclasses(), method);
 		}
 
 		public IRegion[] getLocations() {
@@ -259,6 +293,41 @@ public class LinkedNamesFinder {
 					j = -1;
 				}
 	    	}
+		}
+	}
+
+	/**
+	 * Finds subclasses of the given class referenced by the AST.
+	 */
+	static class SubclassFinder extends ASTVisitor {
+		{
+			shouldVisitNames= true;
+		}
+
+		private final ICPPClassType baseClass;
+		private Set<ICPPClassType> subclasses = new HashSet<ICPPClassType>();
+		private Set<IBinding> seenClasses = new HashSet<IBinding>();
+		
+		SubclassFinder(ICPPClassType baseClass) {
+			this.baseClass = baseClass;
+		}
+
+		@Override
+		public int visit(IASTName name) {
+			IBinding binding = name.resolveBinding();
+			if (binding instanceof ICPPClassType) {
+				if (seenClasses.add(binding)) {
+					ICPPClassType candidate = (ICPPClassType) binding;
+					if (ClassTypeHelper.isSubclass(candidate, baseClass)) {
+						subclasses.add(candidate);
+					}
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		public ICPPClassType[] getSubclasses() {
+			return subclasses.toArray(new ICPPClassType[subclasses.size()]);
 		}
 	}
 }

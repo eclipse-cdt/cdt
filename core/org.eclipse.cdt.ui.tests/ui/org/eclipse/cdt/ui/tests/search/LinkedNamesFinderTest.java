@@ -124,6 +124,33 @@ public class LinkedNamesFinderTest extends AST2BaseTest {
 		assertTrue(Arrays.equals(regions3, regions));
 	}
 
+	//	class A {
+	//	public:
+	//    virtual void m(int a);
+	//    virtual void m();
+	//	};
+	//  
+	//	class B : public A {
+	//	public:
+	//    void m();
+	//	};
+    //
+	//	class C : public B {
+	//	public:
+	//    void m(int c);
+	//	};
+	public void testVirtualMethod() throws Exception {
+		String code = getAboveComment();
+		IRegion[] regions = getLinkedRegions(code, "m(int c)", 1, true);
+		assertEquals(2, regions.length);
+		assertContents(code, regions[0].getOffset(), "m(int a)");
+		assertContents(code, regions[1].getOffset(), "m(int c)");
+		regions = getLinkedRegions(code, "m(int a)", 1, true);
+		assertEquals(2, regions.length);
+		assertContents(code, regions[0].getOffset(), "m(int a)");
+		assertContents(code, regions[1].getOffset(), "m(int c)");
+	}
+
 	//	#ifndef GUARD //1
 	//	#define GUARD //2
 	//	// This is a GUARD test

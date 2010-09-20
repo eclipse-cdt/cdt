@@ -156,6 +156,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	public IScope mapToASTScope(IIndexScope scope) {
 		return fScopeMapper.mapToASTScope(scope);
 	}
+
 	// bug 262719: class types from the index have to be mapped back to the AST.
 	public ICPPClassType mapToAST(ICPPClassType binding) {
 		return fScopeMapper.mapToAST(binding);

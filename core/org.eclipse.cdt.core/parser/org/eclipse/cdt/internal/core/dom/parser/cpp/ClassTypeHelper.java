@@ -234,7 +234,7 @@ public class ClassTypeHelper {
 	}
 	
 	/**
-	 * Returns all direct and indirect base classes that have at least a given visibility level. 
+	 * Returns all direct and indirect base classes. 
 	 * @param classType a class
 	 * @return An array of visible base classes in arbitrary order.
 	 */
@@ -258,7 +258,28 @@ public class ClassTypeHelper {
 			}
 		}
 	}
-	
+
+	/**
+	 * Checks inheritance relationship between two classes.
+	 * @return <code>true</code> if {@code subclass} is a subclass of {@code superclass}.
+	 */
+	public static boolean isSubclass(ICPPClassType subclass, ICPPClassType superclass) {
+		ICPPBase[] bases= subclass.getBases();
+		for (ICPPBase base : bases) {
+			IBinding b= base.getBaseClass();
+			if (b instanceof ICPPClassType) {
+				ICPPClassType baseClass = (ICPPClassType) b;
+				if (baseClass.isSameType(superclass)) {
+					return true;
+				}
+				if (isSubclass(baseClass, superclass)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static ICPPMethod[] getAllDeclaredMethods(ICPPClassType ct) {
 		ICPPMethod[] methods= ct.getDeclaredMethods();
 		ICPPClassType[] bases= getAllBases(ct);
@@ -572,17 +593,26 @@ public class ClassTypeHelper {
 	 * @throws CoreException 
 	 */
 	public static ICPPMethod[] findOverriders(IIndex index, ICPPMethod method) throws DOMException, CoreException {
-		if (!isVirtual(method)) 
+		if (!isVirtual(method))
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 
 		final ICPPClassType mcl= method.getClassOwner();
 		if (mcl == null) 
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 		
-		final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
+		ICPPClassType[] subclasses= getSubClasses(index, mcl);
+		return findOverriders(subclasses, method);
+	}
+
+	/**
+	 * Returns all methods belonging to the given set of classes that override the given {@code method}.
+	 * @throws DOMException 
+	 */
+	public static ICPPMethod[] findOverriders(ICPPClassType[] subclasses, ICPPMethod method)
+			throws DOMException {
 		final char[] mname= method.getNameCharArray();
 		final ICPPFunctionType mft= method.getType();
-		ICPPClassType[] subclasses= getSubClasses(index, mcl);
+		final ArrayList<ICPPMethod> result= new ArrayList<ICPPMethod>();
 		for (ICPPClassType subClass : subclasses) {
 			ICPPMethod[] methods= subClass.getDeclaredMethods();
 			for (ICPPMethod candidate : methods) {

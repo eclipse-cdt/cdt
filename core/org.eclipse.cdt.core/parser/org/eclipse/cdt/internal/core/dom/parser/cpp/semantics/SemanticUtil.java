@@ -6,10 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
- *    Andrew Ferguson (Symbian)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 

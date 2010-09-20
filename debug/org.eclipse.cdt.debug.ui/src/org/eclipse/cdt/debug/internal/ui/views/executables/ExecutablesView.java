@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -42,6 +43,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
@@ -52,6 +55,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
@@ -223,11 +227,13 @@ public class ExecutablesView extends ViewPart {
 	Action refreshAction;
 	Action importAction;
 	Action removeAction;
+	private Action copyAction;
 	private Action configureColumnsAction;
 
 	private IMemento memento;
 	
 	private IStructuredSelection oldSelection;
+	private ISelectionProvider focusedViewer;
 
 	/**
 	 * Create contents of the Executables View
@@ -243,8 +249,49 @@ public class ExecutablesView extends ViewPart {
 
 		// Create the two sub viewers.
 		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
+		focusedViewer = executablesViewer;
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(executablesViewer);
 		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER | SWT.MULTI);
+
+		executablesViewer.getTree().addFocusListener(new FocusListener() {
+			
+			public void focusLost(FocusEvent e) {}
+			
+			public void focusGained(FocusEvent e) {
+				focusedViewer = executablesViewer;
+			}
+		});
+
+		sourceFilesViewer.getTree().addFocusListener(new FocusListener() {
+			
+			public void focusLost(FocusEvent e) {}
+			
+			public void focusGained(FocusEvent e) {
+				focusedViewer = sourceFilesViewer;
+			}
+		});
+		
+		ExecutablesView.this.getViewSite().setSelectionProvider(new ISelectionProvider() {
+			
+			public void setSelection(ISelection selection) {
+				getFocusedViewer().setSelection(selection);
+			}
+			
+			public void removeSelectionChangedListener(
+					ISelectionChangedListener listener) {
+				executablesViewer.removeSelectionChangedListener(listener);
+				sourceFilesViewer.removeSelectionChangedListener(listener);
+			}
+			
+			public ISelection getSelection() {
+				return getFocusedViewer().getSelection();
+			}
+			
+			public void addSelectionChangedListener(ISelectionChangedListener listener) {
+				executablesViewer.addSelectionChangedListener(listener);
+				sourceFilesViewer.addSelectionChangedListener(listener);
+			}
+		});
 
 		sashForm.setWeights(new int[] { 1, 1 });
 
@@ -298,6 +345,10 @@ public class ExecutablesView extends ViewPart {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, EXECUTABLES_VIEW_CONTEXT);
 	}
 
+	protected ISelectionProvider getFocusedViewer() {
+		return focusedViewer;
+	}
+
 	private void setVisibleColumns(String[] ids) {
 		List<String> visibleNames = Arrays.asList(ids);
 		for (int i = 0; i < columnNames.length; i++) {
@@ -348,9 +399,20 @@ public class ExecutablesView extends ViewPart {
 
 		configureColumnsAction = createConfigureColumnsAction();
 		toolBarManager.add(configureColumnsAction);
+		
+		copyAction = createCopyAction();
+		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction );
 
 	}
 
+	private Action createCopyAction() {
+		Action action = new Action("Copy") { //$NON-NLS-1$
+			
+		};
+		return action;
+		
+	}
+	
 	private Action createRemoveAction() {
 		Action action = new Action(Messages.ExecutablesView_Remove) {
 			

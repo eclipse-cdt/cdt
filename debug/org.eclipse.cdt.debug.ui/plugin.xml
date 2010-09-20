@@ -2375,6 +2375,23 @@
            class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionHandler"
             commandId="org.eclipse.cdt.debug.ui.command.castToArray">
       </handler>
-	</extension>	
- 
+	</extension>
+		
+ 	<extension
+         point="org.eclipse.ui.handlers">
+    <handler commandId="org.eclipse.ui.edit.copy"
+            class="org.eclipse.cdt.debug.internal.ui.views.executables.ExecutablesViewCopyHandler">
+        <enabledWhen>
+            <not>
+                <count value="0" />
+            </not>
+        </enabledWhen>
+        <activeWhen>
+            <with variable="activePartId">
+                <equals value="org.eclipse.cdt.debug.ui.executablesView" />
+            </with>
+        </activeWhen>
+    </handler>
+    </extension>
+    
 </plugin>

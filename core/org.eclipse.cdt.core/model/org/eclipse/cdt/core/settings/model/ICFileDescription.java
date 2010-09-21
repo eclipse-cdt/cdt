@@ -10,6 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-public interface ICFileDescription extends ICResourceDescription{
+public interface ICFileDescription extends ICResourceDescription {
 	ICLanguageSetting getLanguageSetting();
 }

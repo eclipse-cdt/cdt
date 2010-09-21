@@ -34,7 +34,8 @@ public class ExtractLocalVariableRefactoringDescription extends CRefactoringDesc
 
 	public ExtractLocalVariableRefactoringDescription(String project, String description,
 			String comment, Map<String, String> arguments) {
-		super(ExtractLocalVariableRefactoring.ID, project, description, comment, CRefactoringDescription.MULTI_CHANGE, arguments);
+		super(ExtractLocalVariableRefactoring.ID, project, description, comment,
+				CRefactoringDescription.MULTI_CHANGE, arguments);
 	}
 
 	@Override
@@ -52,5 +53,4 @@ public class ExtractLocalVariableRefactoringDescription extends CRefactoringDesc
 		ISelection selection = getSelection();
 		return new ExtractLocalVariableRefactoring(file, selection, info, proj);
 	}
-
 }

@@ -29,16 +29,15 @@ import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
  */
 public class ExtractLocalVariableRefactoringRunner extends RefactoringRunner {
 
-	public ExtractLocalVariableRefactoringRunner(IFile file,
-			ISelection selection, IShellProvider shellProvider, ICProject cProject) {
+	public ExtractLocalVariableRefactoringRunner(IFile file, ISelection selection,
+			IShellProvider shellProvider, ICProject cProject) {
 		super(file, selection, null, shellProvider, cProject);
 	}
 
 	@Override
 	public void run() {
 		NameNVisibilityInformation info = new NameNVisibilityInformation();
-		CRefactoring refactoring = new ExtractLocalVariableRefactoring(file,
-				selection, info, project);
+		CRefactoring refactoring = new ExtractLocalVariableRefactoring(file, selection, info, project);
 		ExtractLocalVariableRefactoringWizard wizard = new ExtractLocalVariableRefactoringWizard(
 				refactoring, info);
 		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);

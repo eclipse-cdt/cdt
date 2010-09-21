@@ -57,25 +57,24 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.SelectionHelper;
 /**
  * The base class for all other refactorings, provides some common implementations for
  * condition checking, change generating, selection handling and translation unit loading.
- *
  */
 public abstract class CRefactoring extends Refactoring {
-	private static final int AST_STYLE = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
+	private static final int AST_STYLE =
+			ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT | ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
 
 	protected String name = Messages.Refactoring_name; 
 	protected IFile file;
 	protected Region region;
 	protected RefactoringStatus initStatus;
 	protected IASTTranslationUnit unit;
-	private IIndex fIndex;
-
 	protected ICProject project;
+	private IIndex fIndex;
 
 	public CRefactoring(IFile file, ISelection selection, ICElement element, ICProject proj) {
 		project = proj;
 		if (element instanceof ISourceReference) {
 			ISourceReference sourceRef= (ISourceReference) element;
-			ITranslationUnit tu= sourceRef.getTranslationUnit();
+			ITranslationUnit tu = sourceRef.getTranslationUnit();
 			IResource res= tu.getResource();
 			if (res instanceof IFile) 
 				this.file= (IFile) res;
@@ -91,7 +90,7 @@ public abstract class CRefactoring extends Refactoring {
 			this.region = SelectionHelper.getRegion(selection);
 		}
 
-		this.initStatus=new RefactoringStatus();
+		this.initStatus= new RefactoringStatus();
 		if (this.file == null || region == null) {
 			initStatus.addFatalError(Messages.Refactoring_SelectionNotValid);  
 		}
@@ -196,10 +195,9 @@ public abstract class CRefactoring extends Refactoring {
 		return initStatus;
 	}
 
-	protected boolean isProgressMonitorCanceld(IProgressMonitor sm,
-			RefactoringStatus initStatus2) {
+	protected static boolean isProgressMonitorCanceld(IProgressMonitor sm, RefactoringStatus status) {
 		if (sm.isCanceled()) {
-			initStatus2.addFatalError(Messages.Refactoring_CanceledByUser); 
+			status.addFatalError(Messages.Refactoring_CanceledByUser); 
 			return true;
 		}
 		return false;
@@ -217,15 +215,14 @@ public abstract class CRefactoring extends Refactoring {
 	abstract protected RefactoringDescriptor getRefactoringDescriptor();
 
 	abstract protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
-		throws CoreException, OperationCanceledException;
+			throws CoreException, OperationCanceledException;
 
 	@Override
 	public String getName() {
 		return name;
 	}
 
-	protected boolean loadTranslationUnit(RefactoringStatus status,
-			IProgressMonitor mon) {
+	protected boolean loadTranslationUnit(RefactoringStatus status, IProgressMonitor mon) {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
 		if (file != null) {
 			try {
@@ -247,7 +244,6 @@ public abstract class CRefactoring extends Refactoring {
 				subMonitor.done();
 				return false;
 			}
-
 		} else {
 			status.addFatalError(Messages.NO_FILE); 
 			subMonitor.done();

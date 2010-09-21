@@ -53,7 +53,7 @@ public abstract class CRefactoringDescription extends RefactoringDescriptor {
 		if (selectStrings.length >= 2) {
 			int offset = Integer.parseInt(selectStrings[0]);
 			int length = Integer.parseInt(selectStrings[1]);
-			selection = new TextSelection(offset,length);
+			selection = new TextSelection(offset, length);
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "Illegal Selection")); //$NON-NLS-1$
 		}

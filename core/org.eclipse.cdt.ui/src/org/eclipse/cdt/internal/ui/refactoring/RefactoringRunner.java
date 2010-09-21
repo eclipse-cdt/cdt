@@ -22,17 +22,16 @@ import org.eclipse.cdt.core.model.ICProject;
  * Base class for all refactoring runners.
  * 
  * @author Emanuel Graf
- *
  */
 public abstract class RefactoringRunner {
-
 	protected IFile file;
 	protected ISelection selection;
 	protected ICElement celement;
 	protected IShellProvider shellProvider;
 	protected ICProject project;
 
-	public RefactoringRunner(IFile file, ISelection selection, ICElement element, IShellProvider shellProvider, ICProject cProject) {
+	public RefactoringRunner(IFile file, ISelection selection, ICElement element,
+			IShellProvider shellProvider, ICProject cProject) {
 		this.file = file;
 		this.selection = selection;
 		this.celement= element;
@@ -41,5 +40,4 @@ public abstract class RefactoringRunner {
 	}
 
 	public abstract void run();
-
 }

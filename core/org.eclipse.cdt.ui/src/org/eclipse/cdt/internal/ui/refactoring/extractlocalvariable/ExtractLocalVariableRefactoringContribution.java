@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class ExtractLocalVariableRefactoringContribution extends CRefactoringContribution {
 
@@ -27,9 +26,9 @@ public class ExtractLocalVariableRefactoringContribution extends CRefactoringCon
 	@Override
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,
 			String comment, Map arguments, int flags) throws IllegalArgumentException {
-		if(id.equals(ExtractLocalVariableRefactoring.ID)) {
+		if (id.equals(ExtractLocalVariableRefactoring.ID)) {
 			return new ExtractLocalVariableRefactoringDescription(project, description, comment, arguments);
-		}else {
+		} else {
 			return null;
 		}
 	}

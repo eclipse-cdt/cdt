@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.executables;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -50,22 +53,30 @@ public class ExecutablesViewCopyHandler extends AbstractHandler {
 		}
 
 		if (selection instanceof IStructuredSelection) {
-			StringBuilder sb = new StringBuilder();
-			Iterator<?> iter = ((IStructuredSelection) selection).iterator();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos);
+
+            Iterator<?> iter = ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext()) {
 				Object obj = iter.next();
 				if (obj instanceof Executable) {
 					Executable exe = (Executable) obj;
-					sb.append(exe.getName()).append("\n"); //$NON-NLS-1$
+					ps.println(exe.getName());
 				} else if (obj instanceof ITranslationUnit) {
 					ITranslationUnit tu = (ITranslationUnit) obj;
-					sb.append(tu.getLocation().toFile().getName()).append("\n"); //$NON-NLS-1$
+					ps.println(tu.getLocation().toFile().getName());
 				} else
-					sb.append(obj.toString()).append("\n"); //$NON-NLS-1$
+					ps.println(obj.toString());
 
 			}
+            ps.flush();
+            try {
+				baos.flush();
+			} catch (IOException e) {
+				throw new ExecutionException("", e); //$NON-NLS-1$
+			}
 			Clipboard cp = getClipboard();
-			cp.setContents(new Object[] { sb.toString().trim() },
+			cp.setContents(new Object[] { baos.toString().trim() },
 					new Transfer[] { TextTransfer.getInstance() });
 		}
 

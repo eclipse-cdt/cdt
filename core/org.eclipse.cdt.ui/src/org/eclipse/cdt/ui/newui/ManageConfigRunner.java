@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 
@@ -51,7 +52,7 @@ public class ManageConfigRunner implements IConfigManager {
 		if (!canManage(obs))
 			return false;
 		
-		ManageConfigDialog d = new ManageConfigDialog(CUIPlugin.getActiveWorkbenchShell(),
+		ManageConfigDialog d = new ManageConfigDialog(Display.getDefault().getActiveShell(),
 				obs[0].getName()+ ": " + MANAGE_TITLE, obs[0]); //$NON-NLS-1$
 		boolean result = false;
 		if (d.open() == Window.OK) {

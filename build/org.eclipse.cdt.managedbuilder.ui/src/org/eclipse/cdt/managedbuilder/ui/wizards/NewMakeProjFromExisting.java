@@ -26,11 +26,13 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -63,7 +65,7 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 	@Override
 	public boolean performFinish() {
 		final String projectName = page.getProjectName();
-		final String location = page.getLocation();
+		final String locationStr = page.getLocation();
 		final boolean isCPP = page.isCPP();
 		final IToolChain toolChain = page.getToolChain();
 		
@@ -74,42 +76,50 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 				monitor.beginTask(Messages.NewMakeProjFromExisting_1, 10);
 				
 				// Create Project
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IProject project = workspace.getRoot().getProject(projectName);
-				
-				// TODO handle the case where a .project file was already there
-				IProjectDescription description = workspace.newProjectDescription(project.getName());
-				description.setLocation(new Path(location));
-				
-				CCorePlugin.getDefault().createCDTProject(description, project, monitor);
-				
-				// Optionally C++ natures
-				if (isCPP)
-					CCProjectNature.addCCNature(project, new SubProgressMonitor(monitor, 1));
-				
-				// Set up build information
-				ICProjectDescriptionManager pdMgr = CoreModel.getDefault().getProjectDescriptionManager();
-				ICProjectDescription projDesc = pdMgr.createProjectDescription(project, false);
-				ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-				ManagedProject mProj = new ManagedProject(projDesc);
-				info.setManagedProject(mProj);
-				monitor.worked(1);
-				
-				CfgHolder cfgHolder = new CfgHolder(toolChain, null);
-				String s = toolChain == null ? "0" : ((ToolChain)toolChain).getId(); //$NON-NLS-1$
-				Configuration config = new Configuration(mProj, (ToolChain)toolChain, ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
-				IBuilder builder = config.getEditableBuilder();
-				builder.setManagedBuildOn(false);
-				CConfigurationData data = config.getConfigurationData();
-				projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-				monitor.worked(1);
-				
-				pdMgr.setProjectDescription(project, projDesc);
-				
+				try {
+					IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					IProject project = workspace.getRoot().getProject(projectName);
+					
+					// TODO handle the case where a .project file was already there
+					
+					IProjectDescription description = workspace.newProjectDescription(projectName);
+					IPath defaultLocation = workspace.getRoot().getLocation().append(projectName);
+					Path location = new Path(locationStr);
+					if (!location.isEmpty() && !location.equals(defaultLocation)) {
+						description.setLocation(location);
+					}
+					
+					CCorePlugin.getDefault().createCDTProject(description, project, monitor);
+					
+					// Optionally C++ natures
+					if (isCPP)
+						CCProjectNature.addCCNature(project, new SubProgressMonitor(monitor, 1));
+					
+					// Set up build information
+					ICProjectDescriptionManager pdMgr = CoreModel.getDefault().getProjectDescriptionManager();
+					ICProjectDescription projDesc = pdMgr.createProjectDescription(project, false);
+					ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+					ManagedProject mProj = new ManagedProject(projDesc);
+					info.setManagedProject(mProj);
+					monitor.worked(1);
+					
+					CfgHolder cfgHolder = new CfgHolder(toolChain, null);
+					String s = toolChain == null ? "0" : ((ToolChain)toolChain).getId(); //$NON-NLS-1$
+					Configuration config = new Configuration(mProj, (ToolChain)toolChain, ManagedBuildManager.calculateChildId(s, null), cfgHolder.getName());
+					IBuilder builder = config.getEditableBuilder();
+					builder.setManagedBuildOn(false);
+					CConfigurationData data = config.getConfigurationData();
+					projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+					monitor.worked(1);
+					
+					pdMgr.setProjectDescription(project, projDesc);
+				} catch (Throwable e) {
+					ManagedBuilderUIPlugin.log(e);
+				}
 				monitor.done();
 			}
 		};
-		
+			
 		try {
 			getContainer().run(true, true, op);
 		} catch (InvocationTargetException e) {

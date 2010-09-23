@@ -53,6 +53,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class OverrideIndicatorManager implements ICReconcilingListener {
 
+	static final String ANNOTATION_TYPE = "org.eclipse.cdt.ui.overrideIndicator"; //$NON-NLS-1$
+	
 	private static final String MESSAGE_SEPARATOR = ";\n"; //$NON-NLS-1$
 
 	public static class OverrideInfo {

@@ -147,6 +147,7 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -1635,6 +1636,17 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 						sourceViewer.invalidateTextPresentation();
 					return;
 				}
+				
+				if (affectsOverrideIndicatorAnnotations(event)) {
+					if (isShowingOverrideIndicators()) {
+						if (fOverrideIndicatorManager == null)
+							installOverrideIndicator(true);
+					} else {
+						if (fOverrideIndicatorManager != null)
+							uninstallOverrideIndicator();
+					}
+					return;
+				}
 
 				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
 					if (fProjectionModelUpdater != null) {
@@ -2456,7 +2468,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (isMarkingOccurrences())
 			installOccurrencesFinder(false);
 		
-		installOverrideIndicator(true);
+		if(isShowingOverrideIndicators())
+			installOverrideIndicator(false);
 		
 	}
 
@@ -3513,6 +3526,53 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			removeReconcileListener(fOverrideIndicatorManager);
 			fOverrideIndicatorManager= null;
 		}
+	}
+	
+	/**
+	 * Determines whether the preference change encoded by the given event
+	 * changes the override indication.
+	 *
+	 * @param event the event to be investigated
+	 * @return <code>true</code> if event causes a change
+	 * @since 5.3
+	 */
+	protected boolean affectsOverrideIndicatorAnnotations(PropertyChangeEvent event) {
+		String key= event.getProperty();
+		AnnotationPreference preference= getAnnotationPreferenceLookup().getAnnotationPreference(OverrideIndicatorManager.ANNOTATION_TYPE);
+		if (key == null || preference == null)
+			return false;
+
+		return key.equals(preference.getHighlightPreferenceKey())
+			|| key.equals(preference.getVerticalRulerPreferenceKey())
+			|| key.equals(preference.getOverviewRulerPreferenceKey())
+			|| key.equals(preference.getTextPreferenceKey());
+	}
+	
+	/**
+	 * Returns the boolean preference for the given key.
+	 *
+	 * @param store the preference store
+	 * @param key the preference key
+	 * @return <code>true</code> if the key exists in the store and its value is <code>true</code>
+	 * @since 5.3
+	 */
+	private boolean getBoolean(IPreferenceStore store, String key) {
+		return key != null && store.getBoolean(key);
+	}
+	
+	/**
+	 * Tells whether override indicators are shown.
+	 *
+	 * @return <code>true</code> if the override indicators are shown
+	 * @since 5.3
+	 */
+	protected boolean isShowingOverrideIndicators() {
+		AnnotationPreference preference= getAnnotationPreferenceLookup().getAnnotationPreference(OverrideIndicatorManager.ANNOTATION_TYPE);
+		IPreferenceStore store= getPreferenceStore();
+		return getBoolean(store, preference.getHighlightPreferenceKey())
+			|| getBoolean(store, preference.getVerticalRulerPreferenceKey())
+			|| getBoolean(store, preference.getOverviewRulerPreferenceKey())
+			|| getBoolean(store, preference.getTextPreferenceKey());
 	}
 	
 	protected void installOverrideIndicator(boolean provideAST) {

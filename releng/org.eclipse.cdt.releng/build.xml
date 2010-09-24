@@ -303,7 +303,7 @@
 	</target>
 	
 	<target name="update.index.html" depends="init" unless="hasErrors">
-		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="copyToDir" value="/home/data/httpd/download.eclipse.org/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
 			<replacevalue><![CDATA[  <!-- add here -->
@@ -319,7 +319,7 @@
 	</target>
 	
 	<target name="copy" depends="init" unless="hasErrors">
-		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
+		<property name="copyToDir" value="/home/data/httpd/download.eclipse.org/tools/cdt/builds/${branchVersion}"/>
 		<mkdir dir="${copyToDir}/${buildType}.${buildId}"/>
 		<copy todir="${copyToDir}/${buildType}.${buildId}">
 			<fileset dir="${buildDirectory}/${buildType}.${buildId}"/>

@@ -33,4 +33,4 @@ cd ..
 # Let's go!
 java $CDT_BUILD_VMARGS -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-Djvm1.5=/opt/public/common/jdk-1.5.0_16/bin/java \
-	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*
+	-ws gtk -arch x86_64 -os linux -application org.eclipse.ant.core.antRunner $*
